@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject, input } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -21,7 +21,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
-  @Input() enableResponsiveHeight = false
+  responsiveHeight = input<boolean>(false)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *

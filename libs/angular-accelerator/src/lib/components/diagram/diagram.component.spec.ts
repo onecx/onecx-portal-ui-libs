@@ -46,6 +46,7 @@ describe('DiagramComponent', () => {
     }).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
+    fixture.componentRef.setInput('responsiveHeight', false)
     component = fixture.componentInstance
     component.data = diagramData
     component.sumKey = definedSumKey

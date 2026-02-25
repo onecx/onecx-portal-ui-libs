@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, input } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
@@ -63,7 +63,7 @@ export class DiagramComponent implements OnInit, OnChanges {
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
-  @Input() enableResponsiveHeight = false
+  responsiveHeight = input<boolean>(false)
 
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
@@ -92,7 +92,7 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   // enabled for only pie chart as it contains legends which overflows
   get isResponsiveHeight(): boolean {
-    return this._diagramType === DiagramType.PIE && this.enableResponsiveHeight 
+    return this._diagramType === DiagramType.PIE && this.responsiveHeight()
   }
 
   chartOptions: ChartOptions | undefined
