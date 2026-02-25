@@ -743,6 +743,114 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._listItemSubtitleLines()).toBe(listItemSubtitleLinesTemplate)
       expect(component._topCenter()).toBe(topCenterTemplate)
     })
+
+    it('should fall back to child template for all template types when no PrimeNG template is found', () => {
+      const { component } = createComponent(true)
+
+      const mockTemplate = {} as TemplateRef<any>
+
+      setInputSignal(component, 'templates', [])
+      setInputSignal(component, 'childTableCell', mockTemplate)
+      setInputSignal(component, 'childDateTableCell', mockTemplate)
+      setInputSignal(component, 'childRelativeDateTableCell', mockTemplate)
+      setInputSignal(component, 'childTranslationKeyTableCell', mockTemplate)
+      setInputSignal(component, 'childGridItemSubtitleLines', mockTemplate)
+      setInputSignal(component, 'childListItemSubtitleLines', mockTemplate)
+      setInputSignal(component, 'childStringTableCell', mockTemplate)
+      setInputSignal(component, 'childNumberTableCell', mockTemplate)
+      setInputSignal(component, 'childGridItem', mockTemplate)
+      setInputSignal(component, 'childListItem', mockTemplate)
+      setInputSignal(component, 'childTopCenter', mockTemplate)
+      setInputSignal(component, 'childListValue', mockTemplate)
+      setInputSignal(component, 'childTranslationKeyListValue', mockTemplate)
+      setInputSignal(component, 'childNumberListValue', mockTemplate)
+      setInputSignal(component, 'childRelativeDateListValue', mockTemplate)
+      setInputSignal(component, 'childStringListValue', mockTemplate)
+      setInputSignal(component, 'childDateListValue', mockTemplate)
+      setInputSignal(component, 'childTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childDateTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childRelativeDateTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childTranslationKeyTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childStringTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childNumberTableFilterCell', mockTemplate)
+
+      expect(component._tableCell()).toBe(mockTemplate)
+      expect(component._dateTableCell()).toBe(mockTemplate)
+      expect(component._relativeDateTableCell()).toBe(mockTemplate)
+      expect(component._translationKeyTableCell()).toBe(mockTemplate)
+      expect(component._gridItemSubtitleLines()).toBe(mockTemplate)
+      expect(component._listItemSubtitleLines()).toBe(mockTemplate)
+      expect(component._stringTableCell()).toBe(mockTemplate)
+      expect(component._numberTableCell()).toBe(mockTemplate)
+      expect(component._gridItem()).toBe(mockTemplate)
+      expect(component._listItem()).toBe(mockTemplate)
+      expect(component._topCenter()).toBe(mockTemplate)
+      expect(component._listValue()).toBe(mockTemplate)
+      expect(component._translationKeyListValue()).toBe(mockTemplate)
+      expect(component._numberListValue()).toBe(mockTemplate)
+      expect(component._relativeDateListValue()).toBe(mockTemplate)
+      expect(component._stringListValue()).toBe(mockTemplate)
+      expect(component._dateListValue()).toBe(mockTemplate)
+      expect(component._tableFilterCell()).toBe(mockTemplate)
+      expect(component._dateTableFilterCell()).toBe(mockTemplate)
+      expect(component._relativeDateTableFilterCell()).toBe(mockTemplate)
+      expect(component._translationKeyTableFilterCell()).toBe(mockTemplate)
+      expect(component._stringTableFilterCell()).toBe(mockTemplate)
+      expect(component._numberTableFilterCell()).toBe(mockTemplate)
+    })
+
+    it('should return undefined for all template types when neither PrimeNG nor child template is defined', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'templates', [])
+      setInputSignal(component, 'childTableCell', undefined)
+      setInputSignal(component, 'childDateTableCell', undefined)
+      setInputSignal(component, 'childRelativeDateTableCell', undefined)
+      setInputSignal(component, 'childTranslationKeyTableCell', undefined)
+      setInputSignal(component, 'childGridItemSubtitleLines', undefined)
+      setInputSignal(component, 'childListItemSubtitleLines', undefined)
+      setInputSignal(component, 'childStringTableCell', undefined)
+      setInputSignal(component, 'childNumberTableCell', undefined)
+      setInputSignal(component, 'childGridItem', undefined)
+      setInputSignal(component, 'childListItem', undefined)
+      setInputSignal(component, 'childTopCenter', undefined)
+      setInputSignal(component, 'childListValue', undefined)
+      setInputSignal(component, 'childTranslationKeyListValue', undefined)
+      setInputSignal(component, 'childNumberListValue', undefined)
+      setInputSignal(component, 'childRelativeDateListValue', undefined)
+      setInputSignal(component, 'childStringListValue', undefined)
+      setInputSignal(component, 'childDateListValue', undefined)
+      setInputSignal(component, 'childTableFilterCell', undefined)
+      setInputSignal(component, 'childDateTableFilterCell', undefined)
+      setInputSignal(component, 'childRelativeDateTableFilterCell', undefined)
+      setInputSignal(component, 'childTranslationKeyTableFilterCell', undefined)
+      setInputSignal(component, 'childStringTableFilterCell', undefined)
+      setInputSignal(component, 'childNumberTableFilterCell', undefined)
+
+      expect(component._tableCell()).toBeUndefined()
+      expect(component._dateTableCell()).toBeUndefined()
+      expect(component._relativeDateTableCell()).toBeUndefined()
+      expect(component._translationKeyTableCell()).toBeUndefined()
+      expect(component._gridItemSubtitleLines()).toBeUndefined()
+      expect(component._listItemSubtitleLines()).toBeUndefined()
+      expect(component._stringTableCell()).toBeUndefined()
+      expect(component._numberTableCell()).toBeUndefined()
+      expect(component._gridItem()).toBeUndefined()
+      expect(component._listItem()).toBeUndefined()
+      expect(component._topCenter()).toBeUndefined()
+      expect(component._listValue()).toBeUndefined()
+      expect(component._translationKeyListValue()).toBeUndefined()
+      expect(component._numberListValue()).toBeUndefined()
+      expect(component._relativeDateListValue()).toBeUndefined()
+      expect(component._stringListValue()).toBeUndefined()
+      expect(component._dateListValue()).toBeUndefined()
+      expect(component._tableFilterCell()).toBeUndefined()
+      expect(component._dateTableFilterCell()).toBeUndefined()
+      expect(component._relativeDateTableFilterCell()).toBeUndefined()
+      expect(component._translationKeyTableFilterCell()).toBeUndefined()
+      expect(component._stringTableFilterCell()).toBeUndefined()
+      expect(component._numberTableFilterCell()).toBeUndefined()
+    })
   })
 
   describe('effects behavior', () => {
@@ -965,6 +1073,77 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       // Then: Child's outputs are already observed, so don't subscribe again
       expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
       expect(mockDataView.viewItem.subscribe).not.toHaveBeenCalled()
+    })
+
+    it('should register viewItem listener when observed and not already registered', () => {
+      const { component } = createComponent(true)
+
+      component.viewItem.subscribe(jest.fn())
+
+      const mockDataView = {
+        deleteItem: { observed: () => false, subscribe: jest.fn() },
+        viewItem: { observed: () => false, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      setInputSignal(component, 'dataViewComponent', mockDataView)
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.viewItem.subscribe).toHaveBeenCalled()
+      expect(mockDataView.deleteItem.subscribe).not.toHaveBeenCalled()
+    })
+
+    it('should register editItem listener when observed and not already registered', () => {
+      const { component } = createComponent(true)
+
+      component.editItem.subscribe(jest.fn())
+
+      const mockDataView = {
+        deleteItem: { observed: () => false, subscribe: jest.fn() },
+        viewItem: { observed: () => false, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      setInputSignal(component, 'dataViewComponent', mockDataView)
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.editItem.subscribe).toHaveBeenCalled()
+    })
+
+    it('should register selectionChanged listener when observed and not already registered', () => {
+      const { component } = createComponent(true)
+
+      component.selectionChanged.subscribe(jest.fn())
+
+      const mockDataView = {
+        deleteItem: { observed: () => false, subscribe: jest.fn() },
+        viewItem: { observed: () => false, subscribe: jest.fn() },
+        editItem: { observed: () => false, subscribe: jest.fn() },
+        selectionChanged: { observed: () => false, subscribe: jest.fn() },
+      }
+
+      setInputSignal(component, 'dataViewComponent', mockDataView)
+
+      component.registerEventListenerForDataView()
+
+      expect(mockDataView.selectionChanged.subscribe).toHaveBeenCalled()
+    })
+
+    it('should handle undefined dataViewComponent gracefully when outputs are observed', () => {
+      const { component } = createComponent(true)
+
+      component.deleteItem.subscribe(jest.fn())
+      component.viewItem.subscribe(jest.fn())
+      component.editItem.subscribe(jest.fn())
+      component.selectionChanged.subscribe(jest.fn())
+
+      setInputSignal(component, 'dataViewComponent', undefined)
+
+      expect(() => component.registerEventListenerForDataView()).not.toThrow()
     })
   })
 
