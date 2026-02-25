@@ -1,11 +1,17 @@
-# accelerator
+# @onecx/accelerator
 
-This library contains all framework independent accelerators.
+`@onecx/accelerator` contains all framework-agnostic accelerators.
+More information about OneCX libraries can be found in the [OneCX documentation](https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/index.html).
 
-## Building
+## Installation
 
-Run `nx build accelerator` to build the library.
+```bash
+npm install @onecx/accelerator
+```
 
-## Running unit tests
-
-Run `nx test accelerator` to execute the unit tests via [Jest](https://jestjs.io).
+## Additional Commands
+- `npx nx run accelerator:build` - Builds the library and outputs the result to the `dist` folder.
+- `npx nx run accelerator:build-migrations` - Builds the migration files for the library.
+- `npx nx run accelerator:test` - Runs the unit tests for the library.
+- `npx nx run accelerator:lint` - Lints the library's codebase.
+- `npx nx run accelerator:release` - Releases a new version of the library to npm, following semantic versioning guidelines.

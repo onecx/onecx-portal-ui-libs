@@ -21,9 +21,20 @@ export class AuthServiceWrapper {
     this.eventsTopic$
       .pipe(filter((e) => e.type === EventType.AUTH_LOGOUT_BUTTON_CLICKED))
       .subscribe(() => this.authService?.logout())
+    // Shell defines these properties to support older library versions
     window.onecxAngularAuth ??= {}
     window.onecxAngularAuth.authServiceProxy ??= {}
     window.onecxAngularAuth.authServiceProxy.v1 ??= {
+      updateTokenIfNeeded: (): Promise<boolean> => {
+        return this.updateTokenIfNeeded()
+      },
+      getHeaderValues: (): Record<string, string> => {
+        return this.getHeaderValues()
+      },
+    }
+    window.onecxAuth ??= {}
+    window.onecxAuth.authServiceProxy ??= {}
+    window.onecxAuth.authServiceProxy.v1 ??= {
       updateTokenIfNeeded: (): Promise<boolean> => {
         return this.updateTokenIfNeeded()
       },
