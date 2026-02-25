@@ -17,6 +17,89 @@ import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
 
+export const mockData2: DiagramData[] = [
+  {
+    label: 'Apple',
+    value: 12,
+  },
+  {
+    label: 'Banana',
+    value: 9,
+  },
+  {
+    label: 'Cherry',
+    value: 6,
+  },
+  {
+    label: 'Date',
+    value: 4,
+  },
+  {
+    label: 'Elderberry',
+    value: 5,
+  },
+  {
+    label: 'Fig',
+    value: 3,
+  },
+  {
+    label: 'Grape',
+    value: 8,
+  },
+  {
+    label: 'Honeydew',
+    value: 2,
+  },
+  {
+    label: 'Kiwi',
+    value: 7,
+  },
+  {
+    label: 'Lemon',
+    value: 4,
+  },
+  {
+    label: 'Mango',
+    value: 11,
+  },
+  {
+    label: 'Nectarine',
+    value: 5,
+  },
+  {
+    label: 'Orange',
+    value: 10,
+  },
+  {
+    label: 'Papaya',
+    value: 6,
+  },
+  {
+    label: 'Quince',
+    value: 3,
+  },
+  {
+    label: 'Raspberry',
+    value: 4,
+  },
+  {
+    label: 'Strawberry',
+    value: 9,
+  },
+  {
+    label: 'Tangerine',
+    value: 5,
+  },
+  {
+    label: 'Ugli Fruit',
+    value: 2,
+  },
+  {
+    label: 'Watermelon',
+    value: 8,
+  }
+]
+
 export default {
   title: 'Components/DiagramComponent',
   component: DiagramComponent,
@@ -139,6 +222,41 @@ export const WithForcedCustomColors = {
     diagramType: DiagramType.PIE,
     data: [
       ...mockData,
+      {
+        label: 'Peaches',
+        value: 2,
+        backgroundColor: 'Yellow',
+      },
+    ],
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    fillMissingColors: true,
+  },
+}
+
+const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
+  template: `
+    <div class="flex justify-content-center">
+    <div style="height: 350px; width:350px"> <!--Container should have fixed height-->
+      <ocx-diagram
+        [diagramType]="diagramType"
+        [data]="data"
+        [sumKey]="sumKey"
+        [supportedDiagramTypes]="supportedDiagramTypes"
+        [fillMissingColors]="fillMissingColors"
+        [responsiveHeight]="true"     
+      ></ocx-diagram>
+      </div>
+    </div>
+  `,
+  props: args,
+})
+
+export const WithEnabledResponsiveHeight = {
+  render: TemplateWithContainer,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: [
+      ...mockData2,
       {
         label: 'Peaches',
         value: 2,

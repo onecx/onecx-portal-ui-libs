@@ -234,3 +234,38 @@ export const withAllLabelAndTranslationKeys = {
     allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3']
   },
 }
+
+const TemplateWithContainer: StoryFn<GroupByCountDiagramComponent> = (args) => ({
+  template: `
+    <div class="flex justify-content-center">
+      <div style="height: 350px; width:350px"> <!--Container should have fixed height-->
+        <ocx-group-by-count-diagram
+          [diagramType]="diagramType"
+          [data]="data"
+          [column]="column"
+          [sumKey]="sumKey"
+          [supportedDiagramTypes]="supportedDiagramTypes"
+          [colors]="colors"
+          [fillMissingColors]="fillMissingColors"
+          [responsiveHeight]="true"
+        ></ocx-group-by-count-diagram>
+      </div>
+    </div>
+  `,
+  props: args,
+})
+
+export const WithEnabledResponsiveHeight = {
+  render: TemplateWithContainer,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    column: {
+      id: 'fruitType',
+      type: ColumnType.STRING,
+    },
+    sumKey: 'Total Fruits',
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    fillMissingColors: true,
+  },
+}
