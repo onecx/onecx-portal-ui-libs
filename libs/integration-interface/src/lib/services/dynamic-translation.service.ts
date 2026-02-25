@@ -56,8 +56,8 @@ export interface DynamicTranslationsCache {
  * @returns Mutable cache object used by dynamic translation resolution.
  */
 export function getDynamicTranslationsCache(): DynamicTranslationsCache {
-    const global = ensureProperty(globalThis, ['@onecx/integration_interface', 'dynamicTranslationsCache'], {});
-    return global['@onecx/integration_interface'].dynamicTranslationsCache;
+    const global = ensureProperty(globalThis, ['@onecx/integration-interface', 'dynamicTranslationsCache'], {});
+    return global['@onecx/integration-interface'].dynamicTranslationsCache;
 }
 
 
