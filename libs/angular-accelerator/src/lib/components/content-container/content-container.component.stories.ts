@@ -15,7 +15,10 @@ export default {
     breakpoint: {
       options: ['sm', 'md', 'lg', 'xl'],
       control: { type: 'select' },
-    }
+    },
+    styleClass: {
+      control: { type: 'text' },
+    },
   },
   decorators: [
     moduleMetadata({
@@ -30,7 +33,7 @@ export const Basic = {
       ...args,
     },
     template: `
-        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}">
+        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
             <p>Content 1 nested in ocx-content-container</p>
             <p>Content 2 nested in ocx-content-container</p>
         </ocx-content-container>
@@ -38,7 +41,8 @@ export const Basic = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
+    styleClass: '',
   },
 }
 
@@ -48,7 +52,7 @@ export const WithNestedOCXContent = {
       ...args,
     },
     template: `
-        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}">
+        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
             <ocx-content class="w-full sm:w-8">
               <p>Content inside of ocx-content without title</p>
             </ocx-content>
@@ -60,7 +64,8 @@ export const WithNestedOCXContent = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
+    styleClass: ''
   },
 }
 
@@ -70,7 +75,7 @@ export const WithNestedOCXContentContainer = {
       ...args,
     },
     template: `
-        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}">
+        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
           <ocx-content-container>
             <p>Horizontal content in nested ocx-content-container 1</p>
             <p>Horizontal content in nested ocx-content-container 1</p>
@@ -84,7 +89,8 @@ export const WithNestedOCXContentContainer = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
+    styleClass: ''
   },
 }
 
@@ -94,7 +100,7 @@ export const DirectiveOnly = {
       ...args,
     },
     template: `
-        <div ocxContentContainer layout="${args.layout}" breakpoint="${args.breakpoint}">
+        <div ocxContentContainer layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
             <p>Content 1 nested inside of a div with the ocxContentContainer directive applied to it.</p>
             <p>Content 2 nested inside of a div with the ocxContentContainer directive applied to it.</p>
         </div>
@@ -102,7 +108,8 @@ export const DirectiveOnly = {
   }),
   args: {
     layout: 'horizontal',
-    breakpoint: 'md'
+    breakpoint: 'md',
+    styleClass: ''
   },
 }
 
@@ -112,13 +119,15 @@ export const WithCustomStyleClasses = {
       ...args,
     },
     template: `
-        <ocx-content-container styleClass="${args.styleClass}">
+        <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
             <p>Content 1 inside of ocx-content-container with styleClass</p>
             <p>Content 2 inside of ocx-content-container with styleClass</p>
         </ocx-content-container>
     `,
   }),
   args: {
-    styleClass: 'py-4 flex-row',
+    layout: 'horizontal',
+    breakpoint: 'md',
+    styleClass: 'text-blue-800',
   },
 }
