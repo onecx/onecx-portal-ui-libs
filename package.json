@@ -84,7 +84,7 @@
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "@storybook/addon-a11y": "^10.1.11",
+    "@storybook/addon-a11y": "^10.2.13",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/angular": "10.1.11",
     "@swc-node/register": "~1.11.1",
