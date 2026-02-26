@@ -11,6 +11,7 @@ export * from './lib/services/workspace.service'
 export * from './lib/services/shell-capability.service'
 export * from './lib/services/image-repository.service'
 export * from './lib/services/icon.service'
+export * from './lib/services/dynamic-translation.service'
 
 // models
 export * from './lib/model/config-key.model'
