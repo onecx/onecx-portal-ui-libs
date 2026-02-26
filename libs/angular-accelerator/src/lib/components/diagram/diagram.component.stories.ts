@@ -19,9 +19,9 @@ import { TooltipModule } from 'primeng/tooltip';
 
 function generateMockData(count = 10): DiagramData[] {
   const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
-  return fruits.slice(0, count).map((fruit) => ({
+  return fruits.slice(0, count).map((fruit, index) => ({
     label: fruit,
-    value: Math.floor(Math.random() * 20) + 1,
+    value: Math.floor(index * 20) + 1
   }))
 }
 
