@@ -139,7 +139,7 @@ describe('SlotComponent', () => {
     component['slotService'] = undefined as any
     component.ngOnInit()
     expect(loggerErrorFn).toHaveBeenCalledWith(
-      'SLOT_SERVICE token was not provided. test-slot slot will not be filled with data.'
+      'SLOT_SERVICE token was not provided. [Input Signal: test-slot] slot will not be filled with data.'
     )
   })
 

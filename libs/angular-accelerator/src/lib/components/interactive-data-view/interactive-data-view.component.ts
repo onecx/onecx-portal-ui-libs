@@ -1,5 +1,7 @@
 import {
   Component,
+  DestroyRef,
+  EventEmitter,
   Input,
   OnInit,
   Output,
@@ -63,6 +65,7 @@ export interface ColumnGroupData {
 })
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
+  private readonly destroyRef = inject(DestroyRef)
 
   dataViewComponent = viewChild(DataViewComponent)
 
@@ -446,12 +449,21 @@ export class InteractiveDataViewComponent implements OnInit {
   isColumnGroupSelectionComponentDefined: Signal<boolean | undefined>
   groupSelectionChangedSlotEmitter = output<ColumnGroupData | undefined>()
 
+  // Internal EventEmitter for handling slot's groupSelectionChanged output
+  // Used for communication between the slot component and this component's internal logic
+  readonly slotGroupSelectionChangeListener = new EventEmitter<ColumnGroupData | undefined>()
+
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
       .pipe(startWith(true))
 
     this.isColumnGroupSelectionComponentDefined = toSignal(this.isColumnGroupSelectionComponentDefined$)
+
+    const subscription = this.slotGroupSelectionChangeListener.subscribe((event) => {
+      this.triggerGroupSelectionChanged(event)
+    })
+    this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
     effect(() => {
       this.registerEventListenerForDataView()
@@ -508,19 +520,28 @@ export class InteractiveDataViewComponent implements OnInit {
       })
     })
 
-    this.groupSelectionChangedSlotEmitter.subscribe((event: ColumnGroupData | undefined) => {
-      event ??= {
-        activeColumns: this.displayedColumns(),
-        groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
-      }
-      const displayedColumnKeys = event.activeColumns.map((col) => col.id)
-      this.displayedColumnKeys.set(displayedColumnKeys)
-      this.selectedGroupKey.set(event.groupKey)
-      this.columnGroupSelectionComponentState$.next({
-        activeColumnGroupKey: event.groupKey,
-        displayedColumns: event.activeColumns,
-      })
+  }
+
+  /**
+   * Triggers the group selection changed logic. This method should be called
+   * when the column group selection changes, either from the UI or programmatically.
+   * It updates the displayed columns, selected group key, and emits the change event.
+   * 
+   * @param event The column group data, or undefined to use current state
+   */
+  triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
+    event ??= {
+      activeColumns: this.displayedColumns(),
+      groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
+    }
+    const displayedColumnKeys = event.activeColumns.map((col) => col.id)
+    this.displayedColumnKeys.set(displayedColumnKeys)
+    this.selectedGroupKey.set(event.groupKey)
+    this.columnGroupSelectionComponentState$.next({
+      activeColumnGroupKey: event.groupKey,
+      displayedColumns: event.activeColumns,
     })
+    this.groupSelectionChangedSlotEmitter.emit(event)
   }
 
   ngOnInit(): void {

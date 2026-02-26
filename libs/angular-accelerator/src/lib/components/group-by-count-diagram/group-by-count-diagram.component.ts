@@ -28,7 +28,7 @@ export class GroupByCountDiagramComponent {
   private translateService = inject(TranslateService)
 
   sumKey = input<string>('SEARCH.SUMMARY_TITLE')
-  diagramType = input<DiagramType>(DiagramType.PIE)
+  diagramType = model<DiagramType>(DiagramType.PIE)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -124,6 +124,7 @@ export class GroupByCountDiagramComponent {
   }
 
   onDiagramTypeChanged(newDiagramType: DiagramType) {
+    this.diagramType.set(newDiagramType)
     this.diagramTypeChanged.emit(newDiagramType)
     this.componentStateChanged.emit({
       activeDiagramType: newDiagramType,
