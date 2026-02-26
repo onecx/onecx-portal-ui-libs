@@ -65,7 +65,7 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() fillMissingColors = true
   responsiveHeight = input<boolean>(false)
 
-  private _diagramType = signal<DiagramType>(DiagramType.PIE)
+  private readonly _diagramType = signal<DiagramType>(DiagramType.PIE)
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
   @Input()
