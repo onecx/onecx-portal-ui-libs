@@ -51,6 +51,7 @@ describe('DiagramComponent', () => {
     component = fixture.componentInstance
     component.data = diagramData
     component.sumKey = definedSumKey
+    component.responsiveHeight = false
     translateService = TestBed.inject(TranslateService)
     translateService.setDefaultLang('en')
     translateService.use('en')

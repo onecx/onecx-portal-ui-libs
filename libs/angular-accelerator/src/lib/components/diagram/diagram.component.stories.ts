@@ -17,88 +17,15 @@ import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
 
-export const mockData2: DiagramData[] = [
-  {
-    label: 'Apple',
-    value: 12,
-  },
-  {
-    label: 'Banana',
-    value: 9,
-  },
-  {
-    label: 'Cherry',
-    value: 6,
-  },
-  {
-    label: 'Date',
-    value: 4,
-  },
-  {
-    label: 'Elderberry',
-    value: 5,
-  },
-  {
-    label: 'Fig',
-    value: 3,
-  },
-  {
-    label: 'Grape',
-    value: 8,
-  },
-  {
-    label: 'Honeydew',
-    value: 2,
-  },
-  {
-    label: 'Kiwi',
-    value: 7,
-  },
-  {
-    label: 'Lemon',
-    value: 4,
-  },
-  {
-    label: 'Mango',
-    value: 11,
-  },
-  {
-    label: 'Nectarine',
-    value: 5,
-  },
-  {
-    label: 'Orange',
-    value: 10,
-  },
-  {
-    label: 'Papaya',
-    value: 6,
-  },
-  {
-    label: 'Quince',
-    value: 3,
-  },
-  {
-    label: 'Raspberry',
-    value: 4,
-  },
-  {
-    label: 'Strawberry',
-    value: 9,
-  },
-  {
-    label: 'Tangerine',
-    value: 5,
-  },
-  {
-    label: 'Ugli Fruit',
-    value: 2,
-  },
-  {
-    label: 'Watermelon',
-    value: 8,
-  }
-]
+function generateMockData(count = 10): DiagramData[] {
+  const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
+  return fruits.slice(0, count).map((fruit) => ({
+    label: fruit,
+    value: Math.floor(Math.random() * 20) + 1,
+  }))
+}
+
+export const mockData2: DiagramData[] = generateMockData(20)
 
 export default {
   title: 'Components/DiagramComponent',
@@ -236,7 +163,7 @@ export const WithForcedCustomColors = {
 const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   template: `
     <div class="flex justify-content-center">
-    <div style="height: 350px; width:350px"> <!--Container should have fixed height-->
+    <div style="height: 410px; width:350px"> <!--Container should have fixed height-->
       <ocx-diagram
         [diagramType]="diagramType"
         [data]="data"
@@ -255,6 +182,7 @@ export const WithEnabledResponsiveHeight = {
   render: TemplateWithContainer,
   args: {
     diagramType: DiagramType.PIE,
+    sumKey: 'Responsive Height Enabled',
     data: [
       ...mockData2,
       {
