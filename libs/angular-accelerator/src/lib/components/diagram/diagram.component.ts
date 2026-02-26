@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, input } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, computed, inject, input, signal } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
@@ -65,15 +65,15 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() fillMissingColors = true
   responsiveHeight = input<boolean>(false)
 
-  private _diagramType: DiagramType = DiagramType.PIE
+  private _diagramType = signal<DiagramType>(DiagramType.PIE)
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
   @Input()
   get diagramType(): DiagramType {
-    return this._diagramType
+    return this._diagramType()
   }
   set diagramType(value: DiagramType) {
-    this._diagramType = value
+    this._diagramType.set(value)
     this.selectedDiagramType = allDiagramTypes.find((v) => v.layout === value)
     this.chartType = this.diagramTypeToChartType(value)
   }
@@ -90,10 +90,10 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<DiagramComponentState> = new EventEmitter()
 
-  // enabled for only pie chart as it contains legends which overflows
-  get isResponsiveHeight(): boolean {
-    return this._diagramType === DiagramType.PIE && this.responsiveHeight()
-  }
+  // enabled for only pie chart as it contains legends which are hidden
+  isResponsiveHeight = computed(() =>
+    this._diagramType() === DiagramType.PIE && this.responsiveHeight()
+  )
 
   chartOptions: ChartOptions | undefined
   chartData: ChartData | undefined
@@ -139,11 +139,11 @@ export class DiagramComponent implements OnInit, OnChanges {
         },
       },
       maintainAspectRatio: false,
-      ...(this._diagramType === DiagramType.VERTICAL_BAR && {
+      ...(this._diagramType() === DiagramType.VERTICAL_BAR && {
         plugins: { legend: { display: false } },
         scales: { y: { ticks: { precision: 0 } } },
       }),
-      ...(this._diagramType === DiagramType.HORIZONTAL_BAR && {
+      ...(this._diagramType() === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { precision: 0 } } },

@@ -296,4 +296,21 @@ describe('DiagramComponent', () => {
       },
     ])
   })
+
+  it('should test isResponsiveHeight when responsiveHeight is false', () => {
+    fixture.componentRef.setInput('responsiveHeight', false)
+    expect(component.isResponsiveHeight()).toBe(false)
+  })
+
+  it('should test isResponsiveHeight when responsiveHeight is true and diagramType is PIE', () => {
+    fixture.componentRef.setInput('responsiveHeight', true)
+    component.diagramType = DiagramType.PIE
+    const spy = jest.spyOn(component, 'isResponsiveHeight')
+
+    const result = component.isResponsiveHeight()
+
+    expect(result).toBe(true)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(true)
+  })
 })
