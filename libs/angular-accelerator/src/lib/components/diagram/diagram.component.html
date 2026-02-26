@@ -26,7 +26,7 @@
       id="diagram"
       [type]="chartType"
       [data]="chartData"
-      [height]="isResponsiveHeight ? '100%' : null"
+      [height]="isResponsiveHeight ? '100%' : undefined"
       [responsive]="isResponsiveHeight"
       [options]="chartOptions"
       (onDataSelect)="dataClicked($event)"
