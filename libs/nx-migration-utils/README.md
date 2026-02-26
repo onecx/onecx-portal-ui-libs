@@ -1,15 +1,17 @@
-# nx-migration-utils
+# @onecx/nx-migration-utils
 
-This library contains helpers for creating NX migrations.
+`@onecx/nx-migration-utils` contains helpers for creating NX migrations.
+More information about OneCX libraries can be found in the [OneCX documentation](https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/index.html).
 
-Framework agnostic utility functions are located in the `src/lib/utils` directory and can be imported from `@onecx/nx-migration-utils`. 
+## Installation
 
-Framework specific utilities are located in subdirectories of `src/lib` (e.g. `src/lib/angular`) and can be imported from `@onecx/nx-migration-utils/<framework>`.
+```bash
+npm install @onecx/nx-migration-utils
+```
 
-## Building
-
-Run `nx build nx-migration-utils` to build the library.
-
-## Running unit tests
-
-Run `nx test nx-migration-utils` to execute the unit tests via [Jest](https://jestjs.io).
+## Additional Commands
+- `npx nx run nx-migration-utils:build` - Builds the library and outputs the result to the `dist` folder.
+- `npx nx run nx-migration-utils:build-migrations` - Builds the migration files for the library.
+- `npx nx run nx-migration-utils:test` - Runs the unit tests for the library.
+- `npx nx run nx-migration-utils:lint` - Lints the library's codebase.
+- `npx nx run nx-migration-utils:release` - Releases a new version of the library to npm, following semantic versioning guidelines.

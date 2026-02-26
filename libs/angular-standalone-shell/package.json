@@ -19,6 +19,7 @@
     "@onecx/angular-utils": "^8.0.0-rc.4",
     "@onecx/integration-interface": "^8.0.0-rc.4",
     "@onecx/angular-auth": "^8.0.0-rc.4",
+    "@onecx/shell-auth": "^8.0.0-rc.4",
     "@onecx/nx-migration-utils": "^8.0.0-rc.4"
   },
   "dependencies": {},
