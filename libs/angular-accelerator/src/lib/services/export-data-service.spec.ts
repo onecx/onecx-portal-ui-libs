@@ -4,7 +4,7 @@ import { provideTranslateTestingService } from '@onecx/angular-testing'
 import * as ExcelJS from '@protobi/exceljs'
 import { ColumnType } from '../model/column-type.model'
 import { DateUtils } from '../utils/dateutils'
-import { EXCEL_TABLE_NAME, ExportDataService } from './export-data.service'
+import { ExportDataService } from './export-data.service'
 
 describe('ExportDataService', () => {
   class ElementMock {
@@ -34,6 +34,9 @@ describe('ExportDataService', () => {
     STATUS_NAME_1: 'status name 1',
     STATUS_NAME_2: 'status name 2',
     STATUS_NAME_3: 'status name 3',
+    OCX_DATA_EXPORT: {
+      EXCEL_TABLE_NAME: '{{fileName}} Export Table',
+    },
     COLUMN_HEADER_NAME: {
       NAME: 'Name',
       STATUS: 'Status',
@@ -54,6 +57,9 @@ describe('ExportDataService', () => {
     STATUS_NAME_1: 'Status Name 1',
     STATUS_NAME_2: 'Status Name 2',
     STATUS_NAME_3: 'Status Name 3',
+    OCX_DATA_EXPORT: {
+      EXCEL_TABLE_NAME: '{{fileName}} Exporttabelle',
+    },
     COLUMN_HEADER_NAME: {
       NAME: 'Name',
       STATUS: 'Status',
@@ -710,6 +716,8 @@ describe('ExportDataService', () => {
   })
 
   describe('exportToExcel', () => {
+    const EXCEL_TEST_FILE_NAME = 'test-export.xlsx'
+
     let capturedExcelBlob: Blob | undefined
 
     async function setupExcelExport() {
@@ -736,8 +744,10 @@ describe('ExportDataService', () => {
       return workbook
     }
 
-    function getWorksheetTable(worksheet: ExcelJS.Worksheet): any {
-      const table = worksheet.getTable(EXCEL_TABLE_NAME)
+    function getWorksheetTable(worksheet: ExcelJS.Worksheet, fileName: string): any {
+      const formattedFileName = fileName.replace('.xlsx', '')
+      const tableName = translateService.instant('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', {fileName: formattedFileName})
+      const table = worksheet.getTable(tableName)
       if (!table) {
         throw new Error('No table found in worksheet')
       }
@@ -745,7 +755,7 @@ describe('ExportDataService', () => {
     }
 
     function verifyTableStructure(table: any, expectedName: string, expectedColumnCount: number) {
-      expect(table.name).toBe(expectedName)
+      expect(table.name).toContain(expectedName)
       expect(table.table.columns).toHaveLength(expectedColumnCount)
     }
 
@@ -756,15 +766,15 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, mockData, 'some-test.xlsx')
+      await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe('some-test.xlsx')
+      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TABLE_NAME, mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(mockData.length)
       expect(table.getColumn(0).name).toBe('Name')
     })
@@ -776,15 +786,15 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, mockData, 'einige-test.xlsx')
+      await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe('einige-test.xlsx')
+      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TABLE_NAME, mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
       expect(table.getColumn(0).name).toBe('Name')
     })
 
@@ -795,15 +805,15 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, mockDataWithUndefinedDateValues, 'some-test-undefined.xlsx')
+      await exportDataService.exportToExcel(mockColumns, mockDataWithUndefinedDateValues, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe('some-test-undefined.xlsx')
+      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TABLE_NAME, mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(mockDataWithUndefinedDateValues.length)
     })
 
@@ -813,10 +823,10 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, mockData, 'test-data.xlsx')
+      await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
       expect(mock.attributes['href']).toBeDefined()
-      expect(mock.attributes['download']).toBe('test-data.xlsx')
+      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       expect(workbook.worksheets.length).toBe(1)
@@ -827,15 +837,15 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, [], 'empty.xlsx')
+      await exportDataService.exportToExcel(mockColumns, [], EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe('empty.xlsx')
+      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TABLE_NAME, mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(0)
     })
 
@@ -846,7 +856,7 @@ describe('ExportDataService', () => {
       jest.spyOn(document, 'createElement').mockReturnValue(<any>mock)
       URL.createObjectURL = jest.fn().mockReturnValue('blob:mock-url')
 
-      await exportDataService.exportToExcel([], mockData, 'no-columns.xlsx')
+      await exportDataService.exportToExcel([], mockData, EXCEL_TEST_FILE_NAME)
 
       expect(URL.createObjectURL).not.toHaveBeenCalled()
     })
@@ -857,11 +867,11 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, mockData, 'translated.xlsx')
+      await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
       expect(table.getColumn(0).name).toBe('Name')
       expect(table.getColumn(1).name).toBe('Description')
@@ -883,14 +893,14 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, testData, 'dates.xlsx')
+      await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
       expect(worksheet.rowCount - 1).toBe(1)
-      verifyTableStructure(table, EXCEL_TABLE_NAME, mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
     })
 
     it('should translate translation keys in excel data', async () => {
@@ -906,11 +916,11 @@ describe('ExportDataService', () => {
 
       const mock = await setupExcelExport()
 
-      await exportDataService.exportToExcel(mockColumns, testData, 'translations.xlsx')
+      await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
-      const table = getWorksheetTable(worksheet)
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
       expect(worksheet.rowCount - 1).toBe(1)
       expect(table.getColumn(4).name).toBe('Status')

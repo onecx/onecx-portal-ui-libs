@@ -5,15 +5,17 @@ import { DateUtils } from '../utils/dateutils'
 import { ColumnType } from '../model/column-type.model'
 import { ObjectUtils } from '../utils/objectutils'
 import * as ExcelJS from '@protobi/exceljs';
+import { DataTableColumn } from '../model/data-table-column.model'
 
 type DataExportColumn = { id: string; nameKey: string; columnType: ColumnType, name?: string }
-export const EXCEL_TABLE_NAME = 'table'
 
 @Injectable({ providedIn: 'any' })
 export class ExportDataService {
   private readonly dateUtils = inject(DateUtils)
   private readonly translateService = inject(TranslateService)
   private readonly locale = inject(LOCALE_ID)
+
+  private readonly EXCEL_TABLE_STARTING_CELL = 'A1'
 
   async exportCsv<T extends string | number | symbol>(
     columns: { id: string; nameKey: string; columnType: ColumnType }[],
@@ -23,11 +25,7 @@ export class ExportDataService {
     if (!columns.length) {
       return
     }
-    const flattenedData = data.map((d) =>
-      columns.reduce((obj, c) => ({ ...obj, [c.id]: ObjectUtils.resolveFieldData(d, c.id) }), {})
-    )
-    const translatedData = await firstValueFrom(this.translateData(columns, flattenedData))
-    const dataToExport = this.formatData(columns, translatedData)
+    const dataToExport = await this.getDataToExport(columns, data)
     const delimiter = this.locale.startsWith('de') ? ';' : ','
     const dataString = dataToExport
       .map((d) =>
@@ -47,13 +45,7 @@ export class ExportDataService {
     const blob = new Blob(['\ufeff' + csvString], {
       type: 'text/csv;charset=utf-8;',
     })
-    const dwldLink = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-
-    dwldLink.setAttribute('href', url)
-
-    dwldLink.setAttribute('download', fileName)
-    dwldLink.click()
+    this.handleFileDownload(blob, fileName)
   }
 
   async exportToExcel<T extends string | number>(
@@ -64,25 +56,24 @@ export class ExportDataService {
     if (!columns.length) {
       return
     }
-    const flattenedData = data.map((d) =>
-      columns.reduce((obj, c) => ({ ...obj, [c.id]: ObjectUtils.resolveFieldData(d, c.id) }), {})
-    )
-    const translatedData = await firstValueFrom(this.translateData(columns, flattenedData))
-    const formattedData = this.formatData(columns, translatedData)
+    const dataToExport = await this.getDataToExport(columns, data)
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet()
-    await this.addWorksheetTable(worksheet, columns, formattedData)
+    await this.addWorksheetTable(worksheet, columns, dataToExport, fileName)
 
     const excelBuffer = await workbook.xlsx.writeBuffer()
     const excelBlob = new Blob([excelBuffer], { 
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
     })
-    const downloadLink = document.createElement('a')
-    const excelURL = URL.createObjectURL(excelBlob)
-    downloadLink.setAttribute('href', excelURL)
-    downloadLink.setAttribute('download', fileName)
-    downloadLink.click()
-    URL.revokeObjectURL(excelURL)
+    this.handleFileDownload(excelBlob, fileName)
+  }
+
+  private async getDataToExport(columns: DataTableColumn[], data: Partial<Record<string, unknown | undefined>>[]) {
+    const flattenedData = data.map((d) =>
+      columns.reduce((obj, c) => ({ ...obj, [c.id]: ObjectUtils.resolveFieldData(d, c.id) }), {})
+    )
+    const translatedData = await firstValueFrom(this.translateData(columns, flattenedData))
+    return this.formatData(columns, translatedData)
   }
 
   private translateColumnNames(
@@ -155,11 +146,12 @@ export class ExportDataService {
   }
 
   private async addWorksheetTable(worksheet: ExcelJS.Worksheet, columns: DataExportColumn[], 
-                            data: {[columnId: string]: unknown}[]) {
+                            data: {[columnId: string]: unknown}[], fileName: string) {
     const translatedColumns = await firstValueFrom(this.getExcelColumnDefinitions(columns))
+    const tableName = await firstValueFrom(this.getTableName(fileName))
     worksheet.addTable({
-      name: EXCEL_TABLE_NAME,
-      ref: 'A1',
+      name: tableName,
+      ref: this.EXCEL_TABLE_STARTING_CELL,
       headerRow: true,
       totalsRow: false,
       style: {
@@ -173,7 +165,7 @@ export class ExportDataService {
   private getExcelColumnDefinitions(columns: DataExportColumn[]): Observable<ExcelJS.TableColumnProperties[]> {
     return this.translateColumnNames(columns).pipe(
       map((columns) => columns.map((column: DataExportColumn) => ({
-        name: column.name!,
+        name: column.name || column.id,
         filterButton: true
       })))
     )
@@ -181,5 +173,19 @@ export class ExportDataService {
 
   private transformDataForExcel(data: {[columnId: string]: unknown}[]): unknown[][] {
     return data.map((dataEntry) => Object.values(dataEntry));
+  }
+
+  private getTableName(fileName: string): Observable<string> {
+    const formattedFileName = fileName.replace('.xlsx', '')
+    return this.translateService.get('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', {fileName: formattedFileName})
+  }
+
+  private handleFileDownload(fileBlob: Blob, fileName: string) {
+    const downloadLink = document.createElement('a')
+    const excelURL = URL.createObjectURL(fileBlob)
+    downloadLink.setAttribute('href', excelURL)
+    downloadLink.setAttribute('download', fileName)
+    downloadLink.click()
+    URL.revokeObjectURL(excelURL)
   }
 }
