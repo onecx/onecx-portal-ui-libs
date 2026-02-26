@@ -15,13 +15,15 @@ import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip'
+
+const random = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 
 function generateMockData(count = 10): DiagramData[] {
   const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
   return fruits.slice(0, count).map((fruit) => ({
     label: fruit,
-    value: Math.floor(Math.random() * 20) + 1,
+    value: Math.floor(random() * 20) + 1,
   }))
 }
 
