@@ -197,5 +197,9 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "Die Daten konnten nicht geladen werden.",
     "MESSAGE": "Dies kann folgende Gründe haben: \n -Die Daten existieren nicht oder nicht mehr.\n - Die Daten konnten aufgrund eines Fehlers im System nicht geladen werden.\n - Ihnen fehlt die nötige Berechtigung um die Daten zu laden.\n Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
+  },
+  "OCX_DATA_EXPORT": {
+    "EXCEL_TABLE_NAME": "{{fileName}}_table",
+    "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
   }
 }
