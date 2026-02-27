@@ -19,6 +19,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
+import { of } from 'rxjs'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -79,5 +80,41 @@ describe('SearchHeaderComponent', () => {
     expect(slot).toBeTruthy()
 
     sub.unsubscribe()
+  })
+
+  it('should render reset then search when searchButtonsReversed is false and reset observed', () => {
+    const sub = component.resetted.subscribe()
+    component.searchButtonsReversed$ = of(false)
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
+
+    expect(order).toEqual(['resetButton', 'searchButton'])
+
+    sub.unsubscribe()
+  })
+
+  it('should render search then reset when searchButtonsReversed is true and reset observed', () => {
+    const sub = component.resetted.subscribe()
+    component.searchButtonsReversed$ = of(true)
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
+
+    expect(order).toEqual(['searchButton', 'resetButton'])
+
+    sub.unsubscribe()
+  })
+
+  it('should render no controls until searchButtonsReversed is resolved', () => {
+    component.searchButtonsReversed$ = of(null)
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const buttons = Array.from(controls.querySelectorAll('#resetButton, #searchButton'))
+
+    expect(buttons.length).toBe(0)
   })
 })

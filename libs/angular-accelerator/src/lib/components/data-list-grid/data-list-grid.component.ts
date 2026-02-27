@@ -38,6 +38,7 @@ import { observableOutput, ObservableOutputEmitterRef } from '../../utils/observ
 import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type ListGridData = {
   id: string | number
@@ -233,7 +234,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
             styleClass: (a.classes || []).join(' '),
             disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
             visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-            command: () => a.callback(row),
+            command: this.createMenuItemCommand(a, row),
           }))
         })
       )
@@ -713,7 +714,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => a.callback(selectedItem),
+          command: () => handleActionSync(this.router, a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
@@ -759,5 +760,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     }
 
     return this.userService.getPermissions()
+  }
+
+  async onActionClick(action: DataAction, item: any): Promise<void> {
+    await handleAction(this.router, action, item)
+  }
+
+  private createMenuItemCommand(action: DataAction, row: any): () => void {
+    return () => handleActionSync(this.router, action, row)
   }
 }

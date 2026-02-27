@@ -50,6 +50,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -408,7 +409,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
             styleClass: (a.classes || []).join(' '),
             disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
             visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-            command: () => a.callback(row),
+            command: this.createMenuItemCommand(a, row),
           }))
         })
       )
@@ -855,5 +856,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         })
       })
     )
+  }
+
+  async onActionClick(action: DataAction, rowObject: any): Promise<void> {
+    await handleAction(this.router, action, rowObject)
+  }
+  
+  private createMenuItemCommand(action: DataAction, row: any): () => void {
+    return () => handleActionSync(this.router, action, row)
   }
 }

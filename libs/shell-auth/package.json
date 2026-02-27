@@ -1,0 +1,29 @@
+{
+  "name": "@onecx/shell-auth",
+  "version": "8.0.0-rc.4",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
+  "peerDependencies": {
+    "@angular-architects/module-federation": "^20.0.0",
+    "@angular/core": "^20.3.16",
+    "@onecx/accelerator": "^8.0.0-rc.4",
+    "@onecx/angular-integration-interface": "^8.0.0-rc.4",
+    "@onecx/integration-interface": "^8.0.0-rc.4",
+    "keycloak-js": "^26.2.3",
+    "rxjs": "~7.8.0"
+  },
+  "peerDependenciesMeta": {
+    "keycloak-js": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
+  }
+}
