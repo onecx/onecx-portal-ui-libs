@@ -1,30 +1,32 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit, inject } from '@angular/core'
+import { Directive, ElementRef, OnInit, effect, inject, input, signal } from '@angular/core'
 
 @Directive({ selector: '[ocxContent]', standalone: false })
-export class OcxContentDirective implements OnInit, OnChanges {
+export class OcxContentDirective implements OnInit {
   private el = inject(ElementRef)
 
   /**
    * Used for passing a title text which should be rendered in the upper left corner of the content area.
    * @example [ocxContent]="My Cool Title"
    */
-  @Input() ocxContent = ''
+  ocxContent = input<string>('')
 
-  private baseId = 'ocx_content_title_element'
-  private titleElementId: string | undefined
+  private baseId = signal<string>('ocx_content_title_element')
+  private titleElementId = signal<string | undefined>(undefined)
 
-  ngOnInit() {
-    this.titleElementId = this.getUniqueTitleID(this.baseId)
-    this.init()
+  constructor() {
+    effect(() => {
+      this.init()
+    })
   }
 
-  ngOnChanges() {
+  ngOnInit() {
+    this.titleElementId.set(this.getUniqueTitleID(this.baseId()))
     this.init()
   }
 
   private init() {
     this.addContentStyles()
-    if (this.ocxContent) {
+    if (this.ocxContent()) {
       this.prependTitle()
     } else {
       this.removeTitle()
@@ -37,16 +39,17 @@ export class OcxContentDirective implements OnInit, OnChanges {
   }
 
   private prependTitle() {
-    if (this.titleElementId) {
-      const titleElement = this.el.nativeElement.querySelector(`#${this.titleElementId}`)
+    const titleElementId = this.titleElementId()
+    if (titleElementId) {
+      const titleElement = this.el.nativeElement.querySelector(`#${titleElementId}`)
       if (titleElement) {
-        titleElement.textContent = this.ocxContent
+        titleElement.textContent = this.ocxContent()
       } else {
         const title = document.createElement('p')
         title.classList.add('font-medium')
         title.classList.add('text-lg')
-        title.id = this.titleElementId
-        title.textContent = this.ocxContent
+        title.id = titleElementId
+        title.textContent = this.ocxContent()
         this.el.nativeElement.prepend(title)
       }
     }
@@ -65,8 +68,9 @@ export class OcxContentDirective implements OnInit, OnChanges {
   }
 
   private removeTitle() {
-    if (this.titleElementId) {
-      const titleElement = this.el.nativeElement.querySelector(`#${this.titleElementId}`)
+    const titleElementId = this.titleElementId()
+    if (titleElementId) {
+      const titleElement = this.el.nativeElement.querySelector(`#${titleElementId}`)
       if (titleElement) {
         titleElement.remove()
       }

@@ -37,7 +37,7 @@ describe('SearchHeaderComponent', () => {
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         provideUserServiceMock(),
-        provideTranslateTestingService({}),
+        provideTranslateTestingService({ en: require('../../../../assets/i18n/en.json') }),
       ],
     }).compileComponents()
 
@@ -69,9 +69,9 @@ describe('SearchHeaderComponent', () => {
   it('should display search config slot if search config change is observed, pageName is defined and permission is met', async () => {
     const userServiceMock = TestBed.inject(UserServiceMock)
     userServiceMock.permissionsTopic$.publish(['PRODUCT#USE_SEARCHCONFIGS'])
-    const sub = component.selectedSearchConfigChanged.subscribe()
-    component.pageName = 'myPageName'
-    component.searchConfigPermission = 'PRODUCT#USE_SEARCHCONFIGS'
+    const sub = component.selectedSearchConfigChanged.subscribe(() => undefined)
+    fixture.componentRef.setInput('pageName', 'myPageName')
+    fixture.componentRef.setInput('searchConfigPermission', 'PRODUCT#USE_SEARCHCONFIGS')
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -87,7 +87,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(false)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
 
     expect(order).toEqual(['resetButton', 'searchButton'])
@@ -100,7 +100,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(true)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
 
     expect(order).toEqual(['searchButton', 'resetButton'])
@@ -112,7 +112,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(null)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const buttons = Array.from(controls.querySelectorAll('#resetButton, #searchButton'))
 
     expect(buttons.length).toBe(0)

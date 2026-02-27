@@ -2,14 +2,19 @@ import {
   Component,
   ComponentRef,
   ElementRef,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
+  OutputEmitterRef,
   Type,
   ViewContainerRef,
+  EventEmitter,
   inject,
+  input,
+  signal,
+  model,
 } from '@angular/core'
+
+import { toObservable } from '@angular/core/rxjs-interop'
 
 import {
   ResizedEventsTopic,
@@ -32,9 +37,11 @@ interface AssignedComponent {
   remoteInfo: RemoteComponentInfo
 }
 
+export type RemoteComponentOutput = OutputEmitterRef<any> | EventEmitter<any>
+
 @Component({
   standalone: false,
-  selector: 'ocx-slot[name]',
+  selector: 'ocx-slot',
   template: ``,
   host: {
     '[attr.name]': 'name',
@@ -46,11 +53,10 @@ export class SlotComponent implements OnInit, OnDestroy {
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly logger = createLogger('SlotComponent')
 
-  @Input()
-  name!: string
+  name = input.required<string>()
 
   private slotService = inject<SlotService>(SLOT_SERVICE, { optional: true })
-  private _assignedComponents$ = new BehaviorSubject<AssignedComponent[]>([])
+  assignedComponents = signal<AssignedComponent[]>([])
 
   /**
    * Inputs to be passed to components inside a slot.
@@ -66,31 +72,60 @@ export class SlotComponent implements OnInit, OnDestroy {
    * ## Remote component definition
    * ```
    * export class MyRemoteComponent: {
-   * ⁣@Input() header: string = ''
+   * header = input<string>('')
    * }
    * ```
    *
    * ## Remote component template
    * ```
-   * <p>myInput = {{header}}</p>
+   * <p>myInput = {{header()}}</p>
    * ```
    */
-  private _inputs$ = new BehaviorSubject<Record<string, unknown>>({})
-  @Input()
-  get inputs(): Record<string, unknown> {
-    return this._inputs$.getValue()
-  }
-  set inputs(value: Record<string, unknown>) {
-    this._inputs$.next({
-      ...this._inputs$.getValue(),
-      ...value,
-    })
-  }
+  inputs = model<Record<string, unknown>>({})
 
   /**
-   * Outputs to be passed to components inside a slot as EventEmitters. It is important that the output property is annotated with ⁣@Input().
+   * Outputs to be passed to components inside a slot as EventEmitters or OutputEmitterRefs. It is important that the output property is annotated with ⁣@Input() or is an input signal.
    *
-   * @example
+   * @example with OutputEmitterRef
+   *
+   * ## Component with slot in a template
+   * ```
+   * ⁣@Component({
+   *  standalone: false, * selector: 'my-component',
+   *  templateUrl: './my-component.component.html',
+   * })
+   * export class MyComponent {
+   *  buttonClickedEmitter = new OutputEmitterRef<string>()
+   *  constructor() {
+   *    this.buttonClickedEmitter.subscribe((msg) => {
+   *      console.log(msg)
+   *    })
+   *  }
+   * }
+   * ```
+   *
+   * ## Slot usage in my-component.component.html
+   * ```
+   * <ocx-slot name="my-slot-name" [outputs]="{ buttonClicked: buttonClickedEmitter }">
+   * </ocx-slot>
+   * ```
+   *
+   * ## Remote component definition
+   * ```
+   * export class MyRemoteComponent: {
+   *  buttonClicked = input(output<string>())
+   *  onButtonClick() {
+   *    buttonClicked.emit('payload')
+   *  }
+   * }
+   * ```
+   *
+   * ## Remote component template
+   * ```
+   * <button (click)="onButtonClick()">Emit message</button>
+   * ```
+   *
+   * @example with EventEmitter
    *
    * ## Component with slot in a template
    * ```
@@ -129,25 +164,15 @@ export class SlotComponent implements OnInit, OnDestroy {
    * <button (click)="onButtonClick()">Emit message</button>
    * ```
    */
-  private _outputs$ = new BehaviorSubject<Record<string, EventEmitter<any>>>({})
-  @Input()
-  get outputs(): Record<string, EventEmitter<any>> {
-    return this._outputs$.getValue()
-  }
-  set outputs(value: Record<string, EventEmitter<any>>) {
-    this._outputs$.next({
-      ...this._outputs$.getValue(),
-      ...value,
-    })
-  }
+  outputs = model<Record<string, RemoteComponentOutput>>({})
 
   subscriptions: Subscription[] = []
   components$: Observable<SlotComponentConfiguration[]> | undefined
 
   private resizeObserver: ResizeObserver | undefined
-  private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
-  private resizeDebounceTimeMs = 100
 
+  private readonly componentSize$ = new BehaviorSubject<{ width: number; height: number }>({ width: -1, height: -1 })
+  private readonly resizeDebounceTimeMs = 100
   private _resizedEventsTopic: ResizedEventsTopic | undefined
   get resizedEventsTopic() {
     this._resizedEventsTopic ??= new ResizedEventsTopic()
@@ -160,15 +185,30 @@ export class SlotComponent implements OnInit, OnDestroy {
     filter((event): event is RequestedEventsChangedEvent => event.type === ResizedEventType.REQUESTED_EVENTS_CHANGED)
   )
 
+  constructor() {
+    const updateSub = combineLatest([
+      toObservable(this.assignedComponents),
+      toObservable(this.inputs),
+      toObservable(this.outputs),
+    ]).subscribe(([components, inputs, outputs]) => {
+      components.forEach((component) => {
+        this.updateComponentData(component.refOrElement, inputs, outputs)
+      })
+    })
+
+    this.subscriptions.push(updateSub)
+
+    this.observeSlotSizeChanges()
+  }
+
   ngOnDestroy(): void {
     this._resizedEventsTopic?.destroy()
     this.subscriptions.forEach((sub) => sub.unsubscribe())
     this.resizeObserver?.disconnect()
-    this.componentSize$.complete() // Complete the subject to avoid memory leaks
     // Removes RC styles on unmount to avoid ghost styles
-    this._assignedComponents$.getValue().forEach((component) => {
+    this.assignedComponents().forEach((component) => {
       const scopeId = scopeIdFromProductNameAndAppId(component.remoteInfo.productName, component.remoteInfo.appId)
-      removeAllRcUsagesFromStyles(scopeId, this.name)
+      removeAllRcUsagesFromStyles(scopeId, this.name())
     })
     this.viewContainerRef.clear()
   }
@@ -178,23 +218,13 @@ export class SlotComponent implements OnInit, OnDestroy {
       this.logger.error(`SLOT_SERVICE token was not provided. ${this.name} slot will not be filled with data.`)
       return
     }
-    this.components$ = this.slotService.getComponentsForSlot(this.name)
-    const updateSub = combineLatest([this._assignedComponents$, this._inputs$, this._outputs$]).subscribe(
-      ([components, inputs, outputs]) => {
-        components.forEach((component) => {
-          this.updateComponentData(component.refOrElement, inputs, outputs)
-        })
-      }
-    )
-    this.subscriptions.push(updateSub)
-
+    this.components$ = this.slotService.getComponentsForSlot(this.name())
     const createSub = this.components$.pipe(take(1)).subscribe((components) => {
       this.createSpansForComponents(components)
       this.createComponents(components)
     })
-    this.subscriptions.push(createSub)
 
-    this.observeSlotSizeChanges()
+    this.subscriptions.push(createSub)
   }
 
   private createSpansForComponents(components: SlotComponentConfiguration[]) {
@@ -212,8 +242,8 @@ export class SlotComponent implements OnInit, OnDestroy {
           ([componentType, permissions]) => {
             const component = this.createComponent(componentType, componentInfo, permissions, index)
             if (component) {
-              this._assignedComponents$.next([
-                ...this._assignedComponents$.getValue(),
+              this.assignedComponents.update((current) => [
+                ...current,
                 { refOrElement: component, remoteInfo: componentInfo.remoteComponent },
               ])
             }
@@ -237,7 +267,7 @@ export class SlotComponent implements OnInit, OnDestroy {
       const slotResizedEvent: SlotResizedEvent = {
         type: ResizedEventType.SLOT_RESIZED,
         payload: {
-          slotName: this.name,
+          slotName: this.name(),
           slotDetails: { width, height },
         },
       }
@@ -247,12 +277,12 @@ export class SlotComponent implements OnInit, OnDestroy {
     this.resizeObserver.observe(this.elementRef.nativeElement)
 
     const requestedEventsChangedSub = this.requestedEventsChanged$.subscribe((event) => {
-      if (event.payload.type === ResizedEventType.SLOT_RESIZED && event.payload.name === this.name) {
+      if (event.payload.type === ResizedEventType.SLOT_RESIZED && event.payload.name === this.name()) {
         const { width, height } = this.componentSize$.getValue()
         const slotResizedEvent: SlotResizedEvent = {
           type: ResizedEventType.SLOT_RESIZED,
           payload: {
-            slotName: this.name,
+            slotName: this.name(),
             slotDetails: { width, height },
           },
         }
@@ -368,14 +398,14 @@ export class SlotComponent implements OnInit, OnDestroy {
       componentInfo.remoteComponent.appId,
       this.http,
       componentInfo.remoteComponent.baseUrl,
-      this.name
+      this.name()
     )
   }
 
   private updateComponentData(
     component: ComponentRef<any> | HTMLElement,
     inputs: Record<string, unknown>,
-    outputs: Record<string, EventEmitter<unknown>>
+    outputs: Record<string, RemoteComponentOutput>
   ) {
     this.setProps(component, inputs)
     this.setProps(component, outputs)

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, input } from '@angular/core'
 
 @Component({
   standalone: false,
@@ -9,10 +9,10 @@ export class OcxContentComponent {
   /**
    * Optionally allows specifying a title for the content card
    */
-  @Input() title = ''
+  title = input<string>('')
 
   /**
    * Optionally allows specifying styles for the content card
    */
-  @Input() styleClass: string | undefined
+  styleClass = input<string | undefined>(undefined)
 }

@@ -5,16 +5,14 @@ on:
     branches:
       - main
       - develop
-      - v3
-      - v5
-      - v6
+      - v*
 
 jobs:
   dependency-review-pr:
     uses: onecx/ci-common/.github/workflows/dependency-review.yml@v1
     secrets: inherit
     with:
-      failOnSeverity: "high"
+      failOnSeverity: 'high'
 
   ci-pr:
     uses: ./.github/workflows/ci-common.yml

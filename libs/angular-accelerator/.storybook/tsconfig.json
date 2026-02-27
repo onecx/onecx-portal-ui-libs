@@ -1,8 +1,6 @@
 {
   "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "emitDecoratorMetadata": true
-  },
+  "compilerOptions": {},
   "exclude": ["../**/*.spec.ts", "main.ts"],
   "include": [
     "../src/**/*.stories.ts",
