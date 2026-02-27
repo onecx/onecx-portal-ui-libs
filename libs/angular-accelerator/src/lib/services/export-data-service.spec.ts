@@ -745,8 +745,7 @@ describe('ExportDataService', () => {
     }
 
     function getWorksheetTable(worksheet: ExcelJS.Worksheet, fileName: string): any {
-      const formattedFileName = fileName.replace('.xlsx', '')
-      const tableName = translateService.instant('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', {fileName: formattedFileName})
+      const tableName = getExpectedTableName(fileName, translateService)
       const table = worksheet.getTable(tableName)
       if (!table) {
         throw new Error('No table found in worksheet')
@@ -754,8 +753,8 @@ describe('ExportDataService', () => {
       return table
     }
 
-    function verifyTableStructure(table: any, expectedName: string, expectedColumnCount: number) {
-      expect(table.name).toContain(expectedName)
+    function verifyTableStructure(table: any, fileName: string, expectedColumnCount: number) {
+      expect(table.name).toContain(getNormalisedFileName(fileName))
       expect(table.table.columns).toHaveLength(expectedColumnCount)
     }
 
@@ -768,13 +767,13 @@ describe('ExportDataService', () => {
 
       await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
+      expect(mock.attributes['download']).toBe(getExpectedDownloadFileName(EXCEL_TEST_FILE_NAME))
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
       const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME, mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(mockData.length)
       expect(table.getColumn(0).name).toBe('Name')
     })
@@ -788,13 +787,13 @@ describe('ExportDataService', () => {
 
       await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
+      expect(mock.attributes['download']).toBe(getExpectedDownloadFileName(EXCEL_TEST_FILE_NAME))
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
       const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME, mockColumns.length)
       expect(table.getColumn(0).name).toBe('Name')
     })
 
@@ -807,13 +806,13 @@ describe('ExportDataService', () => {
 
       await exportDataService.exportToExcel(mockColumns, mockDataWithUndefinedDateValues, EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
+      expect(mock.attributes['download']).toBe(getExpectedDownloadFileName(EXCEL_TEST_FILE_NAME))
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
       const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME, mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(mockDataWithUndefinedDateValues.length)
     })
 
@@ -826,7 +825,7 @@ describe('ExportDataService', () => {
       await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
       expect(mock.attributes['href']).toBeDefined()
-      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
+      expect(mock.attributes['download']).toBe(getExpectedDownloadFileName(EXCEL_TEST_FILE_NAME))
 
       const workbook = await loadExcelWorkbook()
       expect(workbook.worksheets.length).toBe(1)
@@ -839,13 +838,13 @@ describe('ExportDataService', () => {
 
       await exportDataService.exportToExcel(mockColumns, [], EXCEL_TEST_FILE_NAME)
 
-      expect(mock.attributes['download']).toBe(EXCEL_TEST_FILE_NAME)
+      expect(mock.attributes['download']).toBe(getExpectedDownloadFileName(EXCEL_TEST_FILE_NAME))
 
       const workbook = await loadExcelWorkbook()
       const worksheet = workbook.worksheets[0]
       const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
-      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME, mockColumns.length)
       expect(worksheet.rowCount - 1).toBe(0)
     })
 
@@ -876,6 +875,7 @@ describe('ExportDataService', () => {
       expect(table.getColumn(0).name).toBe('Name')
       expect(table.getColumn(1).name).toBe('Description')
       expect(table.getColumn(4).name).toBe('Status')
+
     })
 
     it('should format dates in excel data', async () => {
@@ -900,7 +900,7 @@ describe('ExportDataService', () => {
       const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
 
       expect(worksheet.rowCount - 1).toBe(1)
-      verifyTableStructure(table, EXCEL_TEST_FILE_NAME.replace('.xlsx', ''), mockColumns.length)
+      verifyTableStructure(table, EXCEL_TEST_FILE_NAME, mockColumns.length)
     })
 
     it('should translate translation keys in excel data', async () => {
@@ -925,8 +925,96 @@ describe('ExportDataService', () => {
       expect(worksheet.rowCount - 1).toBe(1)
       expect(table.getColumn(4).name).toBe('Status')
     })
+
+    describe('file name and table name normalisation', () => {
+      const singleRowData = [mockData[0]]
+
+      beforeEach(() => {
+        translateService.use('en')
+        ;(<any>exportDataService).locale = 'en'
+      })
+
+      const cases: { input: string; expectedDownload: string; expectedTableFragment: string }[] = [
+        {
+          input: 'My Report 2024.xlsx',
+          expectedDownload: 'My_Report_2024.xlsx',
+          expectedTableFragment: 'My_Report_2024',
+        },
+        {
+          input: 'report-jan-2024.xlsx',
+          expectedDownload: 'report_jan_2024.xlsx',
+          expectedTableFragment: 'report_jan_2024',
+        },
+        {
+          input: '123leading.xlsx',
+          expectedDownload: '123leading.xlsx',
+          expectedTableFragment: 'leading',
+        },
+        {
+          input: '!!!special###chars.xlsx',
+          expectedDownload: '___special___chars.xlsx',
+          expectedTableFragment: '___special___chars',
+        },
+        {
+          input: 'already_valid_name.xlsx',
+          expectedDownload: 'already_valid_name.xlsx',
+          expectedTableFragment: 'already_valid_name',
+        },
+        {
+          input: 'file.with.dots.xlsx',
+          expectedDownload: 'file_with_dots.xlsx',
+          expectedTableFragment: 'file_with_dots',
+        },
+        {
+          input: 'data export (Q1/2024).xlsx',
+          expectedDownload: 'data_export__Q1_2024_.xlsx',
+          expectedTableFragment: 'data_export__Q1_2024_',
+        },
+        {
+          input: 'Ünïcödé_fïlé.xlsx',
+          expectedDownload: 'Ünïcödé_fïlé.xlsx',
+          expectedTableFragment: '_n_c_d__f_l_',
+        },
+        {
+          input: 'noExtension',
+          expectedDownload: 'noExtension.xlsx',
+          expectedTableFragment: 'noExtension',
+        },
+      ]
+
+      cases.forEach(({ input, expectedDownload, expectedTableFragment }) => {
+        it(`should normalise file name "${input}" → download: "${expectedDownload}", table contains: "${expectedTableFragment}"`, async () => {
+          const mock = await setupExcelExport()
+
+          await exportDataService.exportToExcel(mockColumns, singleRowData, input)
+
+          expect(mock.attributes['download']).toBe(expectedDownload)
+
+          const workbook = await loadExcelWorkbook()
+          const worksheet = workbook.worksheets[0]
+          const table = getWorksheetTable(worksheet, input)
+
+          expect(table.name).toContain(expectedTableFragment)
+        })
+      })
+    })
   })
 })
+
+function getNormalisedFileName(fileName: string): string {
+  return fileName.replace(/\.xlsx$/i, '').replace(/[^\p{L}\p{N}_]/gu, '_')
+}
+
+function getExpectedDownloadFileName(fileName: string): string {
+  return `${getNormalisedFileName(fileName)}.xlsx`
+}
+
+function getExpectedTableName(fileName: string, translateService: TranslateService): string {
+  const normalised = getNormalisedFileName(fileName)
+  const asciiOnly = normalised.replace(/[^a-zA-Z0-9_]/g, '_')
+  const withoutLeadingDigits = asciiOnly.replace(/^\d+/, '')
+  return translateService.instant('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', { fileName: withoutLeadingDigits })
+}
 
 function generateCsvContentForDate(value: string | undefined, dateUtils: DateUtils): string {
   if (value) {

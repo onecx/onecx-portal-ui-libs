@@ -4,10 +4,15 @@ import { Observable, firstValueFrom, map, of } from 'rxjs'
 import { DateUtils } from '../utils/dateutils'
 import { ColumnType } from '../model/column-type.model'
 import { ObjectUtils } from '../utils/objectutils'
-import * as ExcelJS from '@protobi/exceljs';
+import * as ExcelJS from '@protobi/exceljs'
 import { DataTableColumn } from '../model/data-table-column.model'
 
-type DataExportColumn = { id: string; nameKey: string; columnType: ColumnType, name?: string }
+type DataExportColumn = { 
+  id: string; 
+  nameKey: string; 
+  columnType: ColumnType; 
+  name?: string 
+}
 
 @Injectable({ providedIn: 'any' })
 export class ExportDataService {
@@ -48,6 +53,27 @@ export class ExportDataService {
     this.handleFileDownload(blob, fileName)
   }
 
+  /**
+   * Exports the provided data to an Excel (.xlsx) file and triggers a browser download.
+   *
+   * The `fileName` is sanitised before use: the `.xlsx` extension is stripped, and any
+   * characters outside `[a-zA-Z0-9_]` are replaced with underscores. The sanitised name
+   * is used for the worksheet name, the internal table name, and the final downloaded file
+   * (with `.xlsx` appended back).
+   *
+   * The table name additionally has any leading digits removed, as Excel does not allow
+   * table names to start with a number.
+   *
+   * Column headers are resolved via `ngx-translate` using each column's `nameKey`.
+   * Cells of type `DATE` or `RELATIVE_DATE` are formatted using the current locale.
+   * Cells of type `TRANSLATION_KEY` are translated before being written to the file.
+   *
+   * If no columns are provided, the method returns early without creating a file.
+   *
+   * @param columns - Column definitions including id, translation key and column type.
+   * @param data - Array of data records to export. Keys correspond to column ids.
+   * @param fileName - Desired file name (with or without `.xlsx` extension).
+   */
   async exportToExcel<T extends string | number>(
     columns: DataExportColumn[],
     data: Partial<Record<T, unknown | undefined>>[],
@@ -56,16 +82,19 @@ export class ExportDataService {
     if (!columns.length) {
       return
     }
+    const normalisedFileName = this.getNormalisedFileName(fileName);
     const dataToExport = await this.getDataToExport(columns, data)
     const workbook = new ExcelJS.Workbook()
-    const worksheet = workbook.addWorksheet()
-    await this.addWorksheetTable(worksheet, columns, dataToExport, fileName)
+    const worksheetName = await firstValueFrom(this.getSheetName(normalisedFileName))
+    const worksheet = workbook.addWorksheet(worksheetName)
+    await this.addWorksheetTable(worksheet, columns, dataToExport, normalisedFileName)
 
     const excelBuffer = await workbook.xlsx.writeBuffer()
     const excelBlob = new Blob([excelBuffer], { 
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
     })
-    this.handleFileDownload(excelBlob, fileName)
+    const finalFileName = `${normalisedFileName}.xlsx`
+    this.handleFileDownload(excelBlob, finalFileName)
   }
 
   private async getDataToExport(columns: DataTableColumn[], data: Partial<Record<string, unknown | undefined>>[]) {
@@ -158,7 +187,7 @@ export class ExportDataService {
         showRowStripes: true
       },
       columns: translatedColumns,
-      rows: this.transformDataForExcel(data)
+      rows: this.transformDataForExcel(columns, data)
     })
   }
 
@@ -171,21 +200,29 @@ export class ExportDataService {
     )
   }
 
-  private transformDataForExcel(data: {[columnId: string]: unknown}[]): unknown[][] {
-    return data.map((dataEntry) => Object.values(dataEntry));
+  private transformDataForExcel(columns: DataExportColumn[], data: {[columnId: string]: unknown}[]): unknown[][] {
+    return data.map((dataEntry) => columns.map((column) => dataEntry[column.id]))
   }
 
   private getTableName(fileName: string): Observable<string> {
-    const formattedFileName = fileName.replace('.xlsx', '')
+    const formattedFileName = fileName.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^\d+/, '') // table names require ASCII and must not start with a digit
     return this.translateService.get('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', {fileName: formattedFileName})
+  }
+
+  private getNormalisedFileName(fileName: string): string {
+    return fileName.replace(/\.xlsx$/i, '').replace(/[^\p{L}\p{N}_]/gu, '_')
+  }
+
+  private getSheetName(fileName: string): Observable<string> {
+    return this.translateService.get('OCX_DATA_EXPORT.EXCEL_SHEET_NAME', {fileName})
   }
 
   private handleFileDownload(fileBlob: Blob, fileName: string) {
     const downloadLink = document.createElement('a')
-    const excelURL = URL.createObjectURL(fileBlob)
-    downloadLink.setAttribute('href', excelURL)
+    const fileUrl = URL.createObjectURL(fileBlob)
+    downloadLink.setAttribute('href', fileUrl)
     downloadLink.setAttribute('download', fileName)
     downloadLink.click()
-    URL.revokeObjectURL(excelURL)
+    setTimeout(() => URL.revokeObjectURL(fileUrl), 0)
   }
 }
