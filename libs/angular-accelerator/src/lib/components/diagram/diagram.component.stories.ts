@@ -17,6 +17,16 @@ import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
 
+function generateMockData(count = 10): DiagramData[] {
+  const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
+  return fruits.slice(0, count).map((fruit, index) => ({
+    label: fruit,
+    value: Math.floor(index * 20) + 1
+  }))
+}
+
+export const mockData2: DiagramData[] = generateMockData(20)
+
 export default {
   title: 'Components/DiagramComponent',
   component: DiagramComponent,
@@ -139,6 +149,42 @@ export const WithForcedCustomColors = {
     diagramType: DiagramType.PIE,
     data: [
       ...mockData,
+      {
+        label: 'Peaches',
+        value: 2,
+        backgroundColor: 'Yellow',
+      },
+    ],
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    fillMissingColors: true,
+  },
+}
+
+const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
+  template: `
+    <div class="flex justify-content-center">
+    <div style="height: 410px; width:350px"> <!--Container should have fixed height-->
+      <ocx-diagram
+        [diagramType]="diagramType"
+        [data]="data"
+        [sumKey]="sumKey"
+        [supportedDiagramTypes]="supportedDiagramTypes"
+        [fillMissingColors]="fillMissingColors"
+        [fullHeight]="true"     
+      ></ocx-diagram>
+      </div>
+    </div>
+  `,
+  props: args,
+})
+
+export const WithChartFillingContainerHeight = {
+  render: TemplateWithContainer,
+  args: {
+    diagramType: DiagramType.PIE,
+    sumKey: 'Responsive Height Enabled',
+    data: [
+      ...mockData2,
       {
         label: 'Peaches',
         value: 2,

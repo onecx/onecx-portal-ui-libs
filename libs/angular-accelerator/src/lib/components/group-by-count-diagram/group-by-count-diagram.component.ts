@@ -21,6 +21,8 @@ export class GroupByCountDiagramComponent implements OnInit {
   private _data$ = new BehaviorSubject<unknown[]>([])
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
+  @Input() fullHeight = false
+  
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *

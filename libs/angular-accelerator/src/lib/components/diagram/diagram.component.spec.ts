@@ -51,6 +51,7 @@ describe('DiagramComponent', () => {
     component = fixture.componentInstance
     component.data = diagramData
     component.sumKey = definedSumKey
+    component.fullHeight = false
     translateService = TestBed.inject(TranslateService)
     translateService.setDefaultLang('en')
     translateService.use('en')
@@ -296,5 +297,41 @@ describe('DiagramComponent', () => {
         backgroundColor: ['blue', '0'],
       },
     ])
+  })
+
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.PIE
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(true)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(true)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(false)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.PIE
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(false)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(false)
   })
 })
