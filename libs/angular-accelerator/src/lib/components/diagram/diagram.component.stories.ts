@@ -170,7 +170,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
         [sumKey]="sumKey"
         [supportedDiagramTypes]="supportedDiagramTypes"
         [fillMissingColors]="fillMissingColors"
-        [useFullHeight]="true"     
+        [fullHeight]="true"     
       ></ocx-diagram>
       </div>
     </div>

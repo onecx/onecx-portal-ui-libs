@@ -15,7 +15,8 @@ import { GroupByCountDiagramComponent } from './group-by-count-diagram.component
 import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip'
+import { FormsModule } from '@angular/forms'
 
 function generateGroupByCountMockData(fruitCount = 10, itemsPerFruit = 2) {
   const fruits = Array.from({ length: fruitCount }, (_, i) => `Fruit ${i + 1}`)
@@ -65,6 +66,7 @@ export default {
         ChartModule,
         SelectButtonModule,
         TooltipModule,
+        FormsModule,
       ],
     }),
   ],
