@@ -1,11 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+} from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, Observable, combineLatest, map, mergeMap, of } from 'rxjs'
+import { combineLatest, map, mergeMap, of } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramColumn } from '../../model/diagram-column'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ObjectUtils } from '../../utils/objectutils'
+import { toObservable } from '@angular/core/rxjs-interop'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -16,138 +24,101 @@ export interface GroupByCountDiagramComponentState {
   selector: 'ocx-group-by-count-diagram',
   templateUrl: './group-by-count-diagram.component.html',
 })
-export class GroupByCountDiagramComponent implements OnInit {
+export class GroupByCountDiagramComponent {
   private translateService = inject(TranslateService)
-  private _data$ = new BehaviorSubject<unknown[]>([])
-  @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
-  @Input() diagramType = DiagramType.PIE
+
+  sumKey = input<string>('SEARCH.SUMMARY_TITLE')
+  diagramType = model<DiagramType>(DiagramType.PIE)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
    * Setting this property to false will result in using the provided colors only if every data item has one.
    *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
-  @Input() fillMissingColors = true
-  @Input() supportedDiagramTypes: DiagramType[] = [] 
+  fillMissingColors = input<boolean>(true)
+  supportedDiagramTypes = input<DiagramType[]>([])
 
-  private readonly _allLabelKeys$ = new BehaviorSubject<string[]>([])
-  @Input()
-  get allLabelKeys(): string[] {
-    return this._allLabelKeys$.getValue()
-  }
-  set allLabelKeys(value: string[]) {  
-    this._allLabelKeys$.next(value)
-  }
+  data = model<unknown[]>([])
 
-  private readonly _showAllLabels$ = new BehaviorSubject<boolean>(false)
-  @Input()
-  get showAllLabels(): boolean {
-    return this._showAllLabels$.getValue()
-  }
-  set showAllLabels(value: boolean) {
-    this._showAllLabels$.next(value)
-  }
+  allLabelKeys = input<string[]>([])
 
-  @Input()
-  get data(): unknown[] {
-    return this._data$.getValue()
-  }
-  set data(value: unknown[]) {
-    this._data$.next(value)
-  }
-  diagramData$: Observable<DiagramData[]> | undefined
+  showAllLabels = input<boolean>(false)
 
-  private _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
+  columnType = model<ColumnType>(ColumnType.STRING)
 
-  @Input()
-  get columnType(): ColumnType {
-    return this._columnType$.getValue()
-  }
-  set columnType(value: ColumnType) {
-    this._columnType$.next(value)
-  }
+  columnField = model<string>('')
 
-  private _columnField$ = new BehaviorSubject<string>('')
-  @Input()
-  get columnField(): string {
-    return this._columnField$.getValue()
-  }
-  set columnField(value: string) {
-    this._columnField$.next(value)
-  }
+  column = input<DiagramColumn>()
 
-  @Input()
-  get column(): DiagramColumn {
-    return { columnType: this.columnType, id: this.columnField }
-  }
-  set column(value: DiagramColumn) {
-    this.columnType = value.columnType
-    this.columnField = value.id
-  }
+  fullHeight = input<boolean>(false)
+  
+  colors = model<Record<string, string>>({})
 
-  private _colors$ = new BehaviorSubject<Record<string, string>>({})
-  @Input()
-  get colors(): Record<string, string> {
-    return this._colors$.getValue()
-  }
-  set colors(value: Record<string, string>) {
-    this._colors$.next(value)
-  }
+  dataSelected = output<any>()
+  diagramTypeChanged = output<DiagramType>()
+  componentStateChanged = output<GroupByCountDiagramComponentState>()
 
-  @Output() dataSelected: EventEmitter<any> = new EventEmitter()
-  @Output() diagramTypeChanged: EventEmitter<DiagramType> = new EventEmitter()
-  @Output() componentStateChanged: EventEmitter<GroupByCountDiagramComponentState> = new EventEmitter()
+  diagramData$ = combineLatest([
+    toObservable(this.data),
+    toObservable(this.columnField),
+    toObservable(this.columnType),
+    toObservable(this.colors),
+    toObservable(this.allLabelKeys),
+    toObservable(this.showAllLabels),
+  ]).pipe(
+    mergeMap(([data, columnField, columnType, colors, allLabelKeys, showAllLabels]) => {
+      const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField))
+      let occurrences: DiagramData[] = []
 
-  ngOnInit(): void {
-    this.diagramData$ = combineLatest([
-      this._data$,
-      this._columnField$,
-      this._columnType$,
-      this._colors$,
-      this._allLabelKeys$,
-      this._showAllLabels$,
-    ]).pipe(
-      mergeMap(([data, columnField, columnType, colors, allLabelKeys, showAllLabels]) => {
-        const columnData = data.map((d) => ObjectUtils.resolveFieldData(d, columnField));
-        let occurrences: DiagramData[] = [];
+      if (showAllLabels && allLabelKeys.length > 0) {
+        occurrences = allLabelKeys.map((label) => ({
+          label: label,
+          value: 0,
+          backgroundColor: colors[label],
+        }))
 
-        if (showAllLabels && allLabelKeys.length > 0) {
-          occurrences = allLabelKeys.map((label) => ({
-            label: label,
-            value: 0,
-            backgroundColor: colors[label],
-          }))
+        columnData.forEach((current) => {
+          const foundColumn = occurrences.find((e) => e.label === current)
+          if (foundColumn) {
+            foundColumn.value++
+          } else {
+            occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] })
+          }
+        })
+      } else {
+        occurrences = columnData.reduce((acc, current) => {
+          return acc.some((e: { label: string }) => e.label === current)
+            ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
+            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
+        }, [])
+      }
 
-          columnData.forEach((current) => {
-            const foundColumn = occurrences.find((e) => e.label === current);
-            if (foundColumn) {
-              foundColumn.value++;
-            } else {
-              occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] });
-            }
-          })
-        } else {
-          occurrences = columnData.reduce((acc, current) => {
-            return acc.some((e: { label: string }) => e.label === current)
-              ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
-              : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
-          }, [])
-        }
-
-        if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
-          return this.translateService.get(occurrences.map((o) => o.label)).pipe(
-            map((translations) =>
-              occurrences.map((o) => ({
-                label: translations[o.label],
-                value: o.value,
-                backgroundColor: o.backgroundColor,
-              }))
-            )
+      if (columnType === ColumnType.TRANSLATION_KEY && occurrences.length > 0) {
+        return this.translateService.get(occurrences.map((o) => o.label)).pipe(
+          map((translations) =>
+            occurrences.map((o) => ({
+              label: translations[o.label],
+              value: o.value,
+              backgroundColor: o.backgroundColor,
+            }))
           )
-        }
-        return of(occurrences)
-      })
-    )
+        )
+      }
+      return of(occurrences)
+    })
+  )
+
+  constructor() {
+    effect(() => {
+      const column = this.column()
+      if (column) {
+        this.columnType.set(column.columnType)
+        this.columnField.set(column.id)
+      }
+    })
+    effect(() => {
+      this.colors.set(this.colors())
+    })
   }
 
   dataClicked(event: any) {
@@ -155,7 +126,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   }
 
   onDiagramTypeChanged(newDiagramType: DiagramType) {
-    this.diagramType = newDiagramType
+    this.diagramType.set(newDiagramType)
     this.diagramTypeChanged.emit(newDiagramType)
     this.componentStateChanged.emit({
       activeDiagramType: newDiagramType,
