@@ -299,7 +299,7 @@ describe('DiagramComponent', () => {
     ])
   })
 
-  it('should set useFullHeight when fullHeight is true and diagramType is PIE', () => {
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
     component.fullHeight = true
     component.diagramType = DiagramType.PIE
     const spy = jest.spyOn(component, 'useFullHeight', 'get')
@@ -311,7 +311,7 @@ describe('DiagramComponent', () => {
     expect(spy).toHaveReturnedWith(true)
   })
 
-  it('should set useFullHeight when fullHeight is false and diagramType is not PIE', () => {
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
     component.fullHeight = false
     component.diagramType = DiagramType.HORIZONTAL_BAR
     const spy = jest.spyOn(component, 'useFullHeight', 'get')
@@ -323,7 +323,7 @@ describe('DiagramComponent', () => {
     expect(spy).toHaveReturnedWith(false)
   })
 
-  it('should set useFullHeight when fullHeight is false and diagramType is PIE', () => {
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
     component.fullHeight = false
     component.diagramType = DiagramType.PIE
     const spy = jest.spyOn(component, 'useFullHeight', 'get')
