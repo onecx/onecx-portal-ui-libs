@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import Keycloak, { KeycloakConfig, KeycloakServerConfig } from 'keycloak-js'
+import Keycloak, { KeycloakServerConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
 import { createLogger } from '../utils/logger.utils'
 
