@@ -46,7 +46,7 @@ describe('DiagramComponent', () => {
     }).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
-    fixture.componentRef.setInput('responsiveHeight', false)
+    fixture.componentRef.setInput('useFullHeight', false)
     component = fixture.componentInstance
     component.data = diagramData
     component.sumKey = definedSumKey
@@ -297,17 +297,17 @@ describe('DiagramComponent', () => {
     ])
   })
 
-  it('should test isResponsiveHeight when responsiveHeight is false', () => {
-    fixture.componentRef.setInput('responsiveHeight', false)
-    expect(component.isResponsiveHeight()).toBe(false)
+  it('should test isUseFullHeight when useFullHeight is false', () => {
+    fixture.componentRef.setInput('useFullHeight', false)
+    expect(component.isUseFullHeight()).toBe(false)
   })
 
-  it('should test isResponsiveHeight when responsiveHeight is true and diagramType is PIE', () => {
-    fixture.componentRef.setInput('responsiveHeight', true)
+  it('should test isUseFullHeight when useFullHeight is true and diagramType is PIE', () => {
+    fixture.componentRef.setInput('useFullHeight', true)
     component.diagramType = DiagramType.PIE
-    const spy = jest.spyOn(component, 'isResponsiveHeight')
+    const spy = jest.spyOn(component, 'isUseFullHeight')
 
-    const result = component.isResponsiveHeight()
+    const result = component.isUseFullHeight()
 
     expect(result).toBe(true)
     expect(spy).toHaveBeenCalledTimes(1)

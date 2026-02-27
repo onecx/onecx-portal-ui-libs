@@ -177,7 +177,7 @@ describe('GroupByCountDiagramComponent', () => {
     component.column = inputColumn
     component.sumKey = definedSumKey
     component.colors = { test0: 'green', test1: 'darkgreen' }
-    fixture.componentRef.setInput('responsiveHeight', false)
+    fixture.componentRef.setInput('useFullHeight', false)
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
     translateService.use('en')

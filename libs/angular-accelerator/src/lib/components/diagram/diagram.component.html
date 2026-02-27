@@ -21,13 +21,13 @@
       </p-selectbutton>
     </div>
   }
-  <div class="w-full flex justify-content-center" [ngClass]="{'h-full': isResponsiveHeight()}">
+  <div class="w-full flex justify-content-center" [ngClass]="{'h-full': isUseFullHeight()}">
     <p-chart
       id="diagram"
       [attr.data-automation-type]="chartType"
       [type]="chartType"
       [data]="chartData"
-      [responsive]="isResponsiveHeight()"
+      [responsive]="isUseFullHeight()"
       [attr.data-automation-options]="chartOptions"
       [options]="chartOptions"
       (onDataSelect)="dataClicked($event)"

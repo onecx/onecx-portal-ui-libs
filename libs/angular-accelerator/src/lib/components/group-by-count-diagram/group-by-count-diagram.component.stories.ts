@@ -267,7 +267,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
         [fillMissingColors]="fillMissingColors"
         [showAllLabels]="showAllLabels"
         [allLabelKeys]="allLabelKeys"
-        [responsiveHeight]="true"     
+        [useFullHeight]="true"     
       ></ocx-group-by-count-diagram>
       </div>
     </div>
@@ -275,7 +275,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   props: args,
 })
 
-export const withResponsiveHeight = {
+export const withUseFullHeight = {
   render: TemplateWithContainer,
   args: {
     diagramType: DiagramType.PIE,
