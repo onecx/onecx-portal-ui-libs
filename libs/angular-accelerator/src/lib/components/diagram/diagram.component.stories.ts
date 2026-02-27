@@ -170,7 +170,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
         [sumKey]="sumKey"
         [supportedDiagramTypes]="supportedDiagramTypes"
         [fillMissingColors]="fillMissingColors"
-        [responsiveHeight]="true"     
+        [useFullHeight]="true"     
       ></ocx-diagram>
       </div>
     </div>
@@ -178,7 +178,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   props: args,
 })
 
-export const WithEnabledResponsiveHeight = {
+export const WithEnabledUseFullHeight = {
   render: TemplateWithContainer,
   args: {
     diagramType: DiagramType.PIE,

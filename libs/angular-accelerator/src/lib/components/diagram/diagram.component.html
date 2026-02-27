@@ -21,13 +21,13 @@
       </p-selectbutton>
     </div>
   }
-  <div class="w-full flex justify-content-center"  [ngClass]="{'h-full': isResponsiveHeight}">
+  <div class="w-full flex justify-content-center"  [ngClass]="{'h-full': isUseFullHeight}">
     <p-chart
       id="diagram"
       [type]="chartType"
       [data]="chartData"
-      [height]="isResponsiveHeight ? '100%' : undefined"
-      [responsive]="isResponsiveHeight"
+      [height]="isUseFullHeight ? '100%' : undefined"
+      [responsive]="isUseFullHeight"
       [options]="chartOptions"
       (onDataSelect)="dataClicked($event)"
       [ariaLabel]="(data ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data), valueString: generateDiagramValueString(data)}"
