@@ -37,7 +37,7 @@ describe('SearchHeaderComponent', () => {
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         provideUserServiceMock(),
-        provideTranslateTestingService({}),
+        provideTranslateTestingService({ en: require('../../../../assets/i18n/en.json') }),
       ],
     }).compileComponents()
 
@@ -87,7 +87,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(false)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
 
     expect(order).toEqual(['resetButton', 'searchButton'])
@@ -100,7 +100,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(true)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
 
     expect(order).toEqual(['searchButton', 'resetButton'])
@@ -112,7 +112,7 @@ describe('SearchHeaderComponent', () => {
     component.searchButtonsReversed$ = of(null)
     fixture.detectChanges()
 
-    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search controls"]') as HTMLElement
     const buttons = Array.from(controls.querySelectorAll('#resetButton, #searchButton'))
 
     expect(buttons.length).toBe(0)

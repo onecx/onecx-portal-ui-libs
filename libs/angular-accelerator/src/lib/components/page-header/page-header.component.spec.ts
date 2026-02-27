@@ -221,7 +221,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     jest.spyOn(console, 'log')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Inline action with routerLink',
         show: 'always',
@@ -232,7 +232,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
       },
-    ]
+    ])
 
     const routerLinkInline = await pageHeaderHarness.getInlineActionButtonByLabel('Inline action with routerLink')
     expect(routerLinkInline).toBeTruthy()
@@ -247,7 +247,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     jest.spyOn(console, 'log')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow action with routerLink',
         show: 'asOverflow',
@@ -258,7 +258,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
@@ -276,7 +276,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkFunction = jest.fn(() => '/function-link')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with function routerLink',
         show: 'always',
@@ -284,7 +284,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with function routerLink')
     await inlineButton?.click()
@@ -297,7 +297,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with promise function routerLink',
         show: 'always',
@@ -305,7 +305,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkPromiseFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise function routerLink')
     await inlineButton?.click()
@@ -317,7 +317,7 @@ describe('PageHeaderComponent', () => {
   it('should handle routerLink as Promise<string>', async () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with promise routerLink',
         show: 'always',
@@ -325,7 +325,7 @@ describe('PageHeaderComponent', () => {
         routerLink: Promise.resolve('/promise-link'),
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise routerLink')
     await inlineButton?.click()
@@ -337,7 +337,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow function routerLink',
         show: 'asOverflow',
@@ -345,7 +345,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     await menuOverflowButton?.click()
@@ -361,7 +361,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with routerLink and callback',
         show: 'always',
@@ -369,7 +369,7 @@ describe('PageHeaderComponent', () => {
         routerLink: '/prioritized-link',
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with routerLink and callback')
     await inlineButton?.click()
@@ -383,7 +383,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow with routerLink and callback',
         show: 'asOverflow',
@@ -391,7 +391,7 @@ describe('PageHeaderComponent', () => {
         routerLink: '/overflow-prioritized',
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     await menuOverflowButton?.click()
@@ -408,14 +408,14 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with callback only',
         show: 'always',
         actionCallback: callbackSpy,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with callback only')
     await inlineButton?.click()

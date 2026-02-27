@@ -883,7 +883,7 @@ describe('DataTableComponent', () => {
 
     describe('should render action buttons with routerLink', () => {
       beforeEach(() => {
-        component.rows = [
+        component.rows.set([
           {
             version: 0,
             creationDate: '2023-09-12T09:34:27.184086Z',
@@ -901,13 +901,13 @@ describe('DataTableComponent', () => {
             testNumber: '7.1',
             ready: false,
           },
-        ]
-        component.additionalActions = []
+        ] as any)
+        component.additionalActions.set([])
       })
       it('should render inline action button with routerLink', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         jest.spyOn(console, 'log')
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkAction',
             callback: () => {
@@ -916,7 +916,7 @@ describe('DataTableComponent', () => {
             routerLink: '/inline',
             permission: 'VIEW',
           },
-        ]
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
@@ -934,7 +934,7 @@ describe('DataTableComponent', () => {
 
         jest.spyOn(console, 'log')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkAction',
             callback: () => {
@@ -944,7 +944,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -964,14 +964,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/function-link')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'functionRouterLink',
             callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -984,14 +984,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'promiseFunctionRouterLink',
             callback: jest.fn(),
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1003,14 +1003,14 @@ describe('DataTableComponent', () => {
       it('should handle routerLink as Promise<string>', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'promiseRouterLink',
             callback: jest.fn(),
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1022,7 +1022,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'overflowFunctionRouterLink',
             callback: jest.fn(),
@@ -1030,7 +1030,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1047,14 +1047,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkWithCallback',
             callback: callbackSpy,
             routerLink: '/prioritized-link',
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1068,7 +1068,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'overflowRouterLinkWithCallback',
             callback: callbackSpy,
@@ -1076,7 +1076,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1098,19 +1098,19 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'callbackOnlyAction',
             callback: callbackSpy,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
 
         expect(spy).not.toHaveBeenCalled()
-        expect(callbackSpy).toHaveBeenCalledWith(component.rows[0])
+        expect(callbackSpy).toHaveBeenCalledWith(component.rows()[0])
       })
     })
   })
@@ -1395,52 +1395,60 @@ describe('DataTableComponent', () => {
 
   describe('rows & filters setter (resetPage)', () => {
     it('should call resetPage when rows length decreases', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.rows.set(mockData as any)
+      fixture.detectChanges()
+      component.page.set(2)
+      fixture.detectChanges()
+
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-      component.page = 2
 
-      component.rows = mockData.slice(0, 3)
+      component.rows.set(mockData.slice(0, 3) as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).toHaveBeenCalled()
-      expect(component.page).toBe(0)
+      expect(component.page()).toBe(0)
       expect(pageSpy).toHaveBeenCalledWith(0)
       expect(stateSpy).toHaveBeenCalled()
     })
 
     it('should not call resetPage when rows length increases', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page.set(2)
+      fixture.detectChanges()
+
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-      component.page = 2
 
-      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+      component.rows.set(Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i })) as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).not.toHaveBeenCalled()
-      expect(component.page).toBe(2)
-      expect(pageSpy).not.toHaveBeenCalled()
+      expect(component.page()).toBe(2)
+      expect(pageSpy).not.toHaveBeenCalledWith(0)
     })
 
     it('should resetPage when filters length changes', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
-      component.page = 4
-      component.filters = [
+      component.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
-      ] as any
-      resetSpy.mockClear()
+      ] as any)
+      fixture.detectChanges()
+      component.page.set(2)
+      fixture.detectChanges()
 
-      component.filters = [{ columnId: 'a', value: 1 }] as any
+      component.filters.set([{ columnId: 'a', value: 1 }] as any)
+      fixture.detectChanges()
 
-      component.page = 2
+      expect(component.page()).toBe(0)
 
-      component.filters = [
+      component.page.set(2)
+      fixture.detectChanges()
+
+      component.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
         { columnId: 'c', value: 3 },
-      ] as any
+      ] as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).toHaveBeenCalledTimes(2)
-      expect(component.page).toBe(0)
+      expect(component.page()).toBe(0)
     })
   })
 

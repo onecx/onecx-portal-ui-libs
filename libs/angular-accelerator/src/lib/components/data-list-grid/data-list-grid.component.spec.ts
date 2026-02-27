@@ -907,7 +907,7 @@ describe('DataListGridComponent', () => {
           const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
           jest.spyOn(console, 'log')
 
-          component.additionalActions = [
+          fixture.componentRef.setInput('additionalActions', [
             {
               id: 'routerLinkAction',
               callback: () => {
@@ -916,7 +916,7 @@ describe('DataListGridComponent', () => {
               routerLink: '/inline',
               permission: 'CUSTOM#ACTION',
             },
-          ]
+          ])
 
           fixture.detectChanges()
           await fixture.whenStable()
@@ -936,7 +936,7 @@ describe('DataListGridComponent', () => {
 
           jest.spyOn(console, 'log')
 
-          component.additionalActions = [
+          fixture.componentRef.setInput('additionalActions', [
             {
               id: 'routerLinkAction',
               callback: () => {
@@ -946,7 +946,7 @@ describe('DataListGridComponent', () => {
               permission: 'CUSTOM#ACTION',
               showAsOverflow: true,
             },
-          ]
+          ])
 
           fixture.detectChanges()
           await fixture.whenStable()
@@ -971,14 +971,14 @@ describe('DataListGridComponent', () => {
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const routerLinkFunction = jest.fn(() => '/function-link')
 
-            component.additionalActions = [
+            fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'functionRouterLink',
                 callback: jest.fn(),
                 routerLink: routerLinkFunction,
                 permission: 'CUSTOM#ACTION',
               },
-            ]
+            ])
 
             fixture.detectChanges()
             await fixture.whenStable()
@@ -995,14 +995,14 @@ describe('DataListGridComponent', () => {
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-            component.additionalActions = [
+            fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'promiseFunctionRouterLink',
                 callback: jest.fn(),
                 routerLink: routerLinkPromiseFunction,
                 permission: 'CUSTOM#ACTION',
               },
-            ]
+            ])
 
             fixture.detectChanges()
             await fixture.whenStable()
@@ -1018,14 +1018,14 @@ describe('DataListGridComponent', () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-            component.additionalActions = [
+            fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'promiseRouterLink',
                 callback: jest.fn(),
                 routerLink: Promise.resolve('/promise-link'),
                 permission: 'CUSTOM#ACTION',
               },
-            ]
+            ])
 
             fixture.detectChanges()
             await fixture.whenStable()
@@ -1041,14 +1041,14 @@ describe('DataListGridComponent', () => {
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
-            component.additionalActions = [
+            fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'routerLinkWithCallback',
                 callback: callbackSpy,
                 routerLink: '/prioritized-link',
                 permission: 'CUSTOM#ACTION',
               },
-            ]
+            ])
 
             fixture.detectChanges()
             await fixture.whenStable()
@@ -1066,7 +1066,7 @@ describe('DataListGridComponent', () => {
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
-            component.additionalActions = [
+            fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'overflowRouterLinkWithCallback',
                 callback: callbackSpy,
@@ -1074,7 +1074,7 @@ describe('DataListGridComponent', () => {
                 permission: 'CUSTOM#ACTION',
                 showAsOverflow: true,
               },
-            ]
+            ])
 
             fixture.detectChanges()
             await fixture.whenStable()
@@ -1099,13 +1099,13 @@ describe('DataListGridComponent', () => {
           const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
           const callbackSpy = jest.fn()
 
-          component.additionalActions = [
+          fixture.componentRef.setInput('additionalActions', [
             {
               id: 'callbackOnlyAction',
               callback: callbackSpy,
               permission: 'CUSTOM#ACTION',
             },
-          ]
+          ])
 
           fixture.detectChanges()
           await fixture.whenStable()
@@ -1222,7 +1222,7 @@ describe('DataListGridComponent', () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
         const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'CUSTOM#ACTION',
             routerLink: '/test-route',
@@ -1230,7 +1230,7 @@ describe('DataListGridComponent', () => {
             labelKey: 'CUSTOM_ACTION_KEY',
             callback: jest.fn()
           },
-        ]
+        ])
         
         component.setSelectedItem(mockData[0])
         fixture.detectChanges()

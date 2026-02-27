@@ -458,7 +458,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       // Not track previousRows change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
-        if (previousRows.length && !equal(rows, previousRows)) {
+        if (previousRows.length && rows.length < previousRows.length) {
           this.page.set(0)
         }
       })
