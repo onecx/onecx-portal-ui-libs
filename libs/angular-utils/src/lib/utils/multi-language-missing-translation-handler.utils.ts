@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { APP_ID, inject, Injectable } from '@angular/core'
 import {
   getValue,
   MissingTranslationHandler,
@@ -6,19 +6,26 @@ import {
   TranslateParser,
 } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
-import { UserService } from '@onecx/angular-integration-interface'
+import { DynamicTranslationService, UserService } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
+import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'
+import { mergeDeep } from './deep-merge.utils'
+
+type DynamicAppId = { appElementName?: string }
 
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
   private readonly parser = inject(TranslateParser)
+  private readonly dynamicTranslationService = inject(DynamicTranslationService)
+  private readonly multiLanguageIdentifiers = this.createMultiLanguageIdentifiers()
+
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
         if (p.settings?.locales) {
-          return p.settings?.locales
+          return p.settings.locales
         }
         return getNormalizedBrowserLocales()
       }),
@@ -40,7 +47,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    */
   findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
     return params.translateService.reloadLang(lang).pipe(
-      map((interpolatableTranslationObject: Record<string, any>) => {
+      map((interpolatableTranslationObject: Record<string, unknown>) => {
         const translatedValue = this.parser.interpolate(
           getValue(interpolatableTranslationObject, params.key) as string,
           params.interpolateParams
@@ -49,18 +56,41 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
           throw new Error(`No translation found for key: ${params.key} in language: ${lang}`)
         }
         return translatedValue
+      }),
+      catchError(() => {
+        return this.dynamicTranslationService.getTranslations(lang, this.multiLanguageIdentifiers).pipe(
+          map((translationsPerIdentifier) => {
+            const values = Object.values(translationsPerIdentifier)
+            const translations = this.mergeTranslations(values)
+            const translatedValue = this.parser.interpolate(
+              getValue(translations, params.key) as string,
+              params.interpolateParams
+            )
+            if (!translatedValue) {
+              throw new Error(`No dynamic translation found for key: ${params.key} in language: ${lang}`)
+            }
+            return translatedValue
+          })
+        )
       })
+    )
+  }
+
+  private mergeTranslations(values: unknown[]): Record<string, unknown> {
+    return values.reduce<Record<string, unknown>>(
+      (acc, current) => mergeDeep(acc, (current as Record<string, unknown>) ?? {}),
+      {}
     )
   }
 
   loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<string> {
     return langConfig.pipe(
-      mergeMap((l) => {
-        const langs = [...l]
-        const chain = (o: Observable<string[]>): Observable<any> => {
-          return o.pipe(
-            mergeMap((lang) => {
-              return this.findTranslationForLang(lang[0], params)
+      mergeMap((configuredLanguages) => {
+        const langs = [...configuredLanguages]
+        const chain = (languages$: Observable<string[]>): Observable<string> => {
+          return languages$.pipe(
+            mergeMap((currentLanguages) => {
+              return this.findTranslationForLang(currentLanguages[0], params)
             }),
             catchError(() => {
               langs.shift()
@@ -74,5 +104,23 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
         return chain(of(langs))
       })
     )
+  }
+
+  private createMultiLanguageIdentifiers(): MultiLanguageIdentifier[] {
+    const identifiers = inject(MULTI_LANGUAGE_IDENTIFIER, { optional: true }) ?? []
+    const hasAppIdentifier = identifiers.some((id) => id.type === 'app')
+    const appId = inject(APP_ID, { optional: true }) as DynamicAppId | undefined
+
+    if (!hasAppIdentifier && appId?.appElementName) {
+      return [
+        ...identifiers,
+        {
+          name: appId.appElementName,
+          type: 'app',
+        },
+      ]
+    }
+
+    return identifiers
   }
 }
