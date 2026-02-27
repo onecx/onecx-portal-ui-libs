@@ -46,7 +46,7 @@ describe('DiagramComponent', () => {
     }).compileComponents()
 
     fixture = TestBed.createComponent(DiagramComponent)
-    fixture.componentRef.setInput('useFullHeight', false)
+    fixture.componentRef.setInput('fullHeight', false)
     component = fixture.componentInstance
     component.data = diagramData
     component.sumKey = definedSumKey
@@ -297,20 +297,21 @@ describe('DiagramComponent', () => {
     ])
   })
 
-  it('should test isUseFullHeight when useFullHeight is false', () => {
-    fixture.componentRef.setInput('useFullHeight', false)
-    expect(component.isUseFullHeight()).toBe(false)
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    fixture.componentRef.setInput('fullHeight', true)
+    component.diagramType = DiagramType.PIE
+    expect(component.useFullHeight()).toBe(true)
   })
 
-  it('should test isUseFullHeight when useFullHeight is true and diagramType is PIE', () => {
-    fixture.componentRef.setInput('useFullHeight', true)
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    fixture.componentRef.setInput('fullHeight', false)
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    expect(component.useFullHeight()).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    fixture.componentRef.setInput('fullHeight', false)
     component.diagramType = DiagramType.PIE
-    const spy = jest.spyOn(component, 'isUseFullHeight')
-
-    const result = component.isUseFullHeight()
-
-    expect(result).toBe(true)
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveReturnedWith(true)
+    expect(component.useFullHeight()).toBe(false)
   })
 })

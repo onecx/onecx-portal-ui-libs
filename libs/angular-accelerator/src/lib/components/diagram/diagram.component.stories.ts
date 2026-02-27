@@ -178,7 +178,7 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   props: args,
 })
 
-export const WithEnabledUseFullHeight = {
+export const WithChartFillingContainerHeight = {
   render: TemplateWithContainer,
   args: {
     diagramType: DiagramType.PIE,
