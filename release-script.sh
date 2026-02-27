@@ -18,6 +18,7 @@ done < <(find "$directory" -mindepth 1 -maxdepth 1 -type d | awk -F "/" '{print 
 
 for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
+    libPackageName=$(echo "$packageJsonDataLib" | jq -r '.name')
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$1'"/')
     echo $packageJsonDataLib > libs/$folder/package.json
@@ -25,7 +26,7 @@ for folder in "${folder_names[@]}"; do
     versionFilePath="libs/$folder/src/version.ts"
     if [[ -f "$versionFilePath" ]]
     then
-        echo "export const LIB_VERSION = '$1'" > "$versionFilePath"
+        printf "export const LIB_NAME = '%s'\nexport const LIB_VERSION = '%s'\n" "$libPackageName" "$1" > "$versionFilePath"
     fi
 
     if [[ $libPackageVersion != $1 ]]
