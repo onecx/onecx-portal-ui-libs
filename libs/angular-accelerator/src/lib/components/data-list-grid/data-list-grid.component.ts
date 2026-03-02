@@ -32,6 +32,7 @@ import { Filter } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
+import { PermissionInput } from '../../model/permission.model'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput, ObservableOutputEmitterRef } from '../../utils/observable-output.utils'
@@ -64,11 +65,11 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
-  private userService = inject(UserService)
-  private router = inject(Router)
-  private injector = inject(Injector)
-  private appStateService = inject(AppStateService)
-  private hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
+  private readonly userService = inject(UserService)
+  private readonly router = inject(Router)
+  private readonly injector = inject(Injector)
+  private readonly appStateService = inject(AppStateService)
+  private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
 
   titleLineId = input<string>()
@@ -90,9 +91,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   emptyResultsMessage = input<string | undefined>(undefined)
   fallbackImage = input<string>('placeholder.png')
   layout = input<'grid' | 'list'>('grid')
-  viewPermission = input<string | string[] | undefined>(undefined)
-  editPermission = input<string | string[] | undefined>(undefined)
-  deletePermission = input<string | string[] | undefined>(undefined)
+  viewPermission = input<PermissionInput>(undefined)
+  editPermission = input<PermissionInput>(undefined)
+  deletePermission = input<PermissionInput>(undefined)
   deleteActionVisibleField = input<string | undefined>(undefined)
   deleteActionEnabledField = input<string | undefined>(undefined)
   viewActionVisibleField = input<string | undefined>(undefined)
@@ -142,7 +143,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   sortDirection = input<DataSortDirection>(DataSortDirection.NONE)
   sortField = input<string>('')
 
-  private permissions$ = this.getPermissions()
+  private readonly permissions$ = this.getPermissions()
 
   gridItemSubtitleLinesTemplate = input<TemplateRef<any> | undefined>(undefined)
   gridItemSubtitleLinesChildTemplate = contentChild<TemplateRef<any>>('gridItemSubtitleLines')

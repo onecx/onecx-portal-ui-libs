@@ -89,12 +89,12 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit {
-  private translateService = inject(TranslateService)
-  private appStateService = inject(AppStateService)
-  private userService = inject(UserService)
-  router = inject(Router)
+  private readonly translateService = inject(TranslateService)
+  private readonly appStateService = inject(AppStateService)
+  private readonly userService = inject(UserService)
+  private readonly router = inject(Router)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
-  protected breadcrumbs = inject(BreadcrumbService)
+  protected readonly breadcrumbs = inject(BreadcrumbService)
 
   header = input<string | undefined>(undefined)
 
@@ -197,10 +197,10 @@ export class PageHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.manualBreadcrumbs()) {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
-    } else {
+    if (this.manualBreadcrumbs()) {
       this.breadcrumbs$ = this.breadcrumbs.itemsHandler
+    } else {
+      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
     }
   }
 

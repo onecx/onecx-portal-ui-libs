@@ -30,8 +30,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
     const defaultGroupKey = this.defaultGroupKey()
 
     return columns
-      .map((c) => c.predefinedGroupKeys || [])
-      .flat()
+      .flatMap((c) => c.predefinedGroupKeys || [])
       .concat([defaultGroupKey])
       .concat([selectedGroupKey])
       .filter((value) => !!value)

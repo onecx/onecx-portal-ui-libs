@@ -15,22 +15,23 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { from, Observable, of, switchMap } from 'rxjs'
 import { createLogger } from '../utils/logger.utils'
+import { OnMissingPermission, PermissionInput } from '../model/permission.model'
 
 @Directive({ selector: '[ocxIfPermission], [ocxIfNotPermission]', standalone: false })
 export class IfPermissionDirective {
   private readonly logger = createLogger('IfPermissionDirective')
-  private renderer = inject(Renderer2)
-  private viewContainer = inject(ViewContainerRef)
-  private hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
-  private templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
-  private userService = inject(UserService, { optional: true })
-  private destroyRef = inject(DestroyRef)
+  private readonly renderer = inject(Renderer2)
+  private readonly viewContainer = inject(ViewContainerRef)
+  private readonly hasPermissionChecker = inject<HasPermissionChecker>(HAS_PERMISSION_CHECKER, { optional: true })
+  private readonly templateRef = inject<TemplateRef<any>>(TemplateRef, { optional: true })
+  private readonly userService = inject(UserService, { optional: true })
+  private readonly destroyRef = inject(DestroyRef)
 
-  ocxIfPermission = input<string | string[] | undefined>(undefined)
-  ocxIfNotPermission = input<string | string[] | undefined>(undefined)
+  ocxIfPermission = input<PermissionInput>(undefined)
+  ocxIfNotPermission = input<PermissionInput>(undefined)
 
-  ocxIfPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
-  ocxIfNotPermissionOnMissingPermission = input<'hide' | 'disable'>('hide')
+  ocxIfPermissionOnMissingPermission = input<OnMissingPermission>('hide')
+  ocxIfNotPermissionOnMissingPermission = input<OnMissingPermission>('hide')
 
   ocxIfPermissionPermissions = input<string[] | undefined>(undefined)
   ocxIfNotPermissionPermissions = input<string[] | undefined>(undefined)
@@ -38,19 +39,19 @@ export class IfPermissionDirective {
   ocxIfPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
   ocxIfNotPermissionElseTemplate = input<TemplateRef<any> | undefined>(undefined)
 
-  private permissionChecker = computed<HasPermissionChecker | undefined>(() => {
+  private readonly permissionChecker = computed<HasPermissionChecker | undefined>(() => {
     return this.hasPermissionChecker ?? this.userService ?? undefined
   })
-  private isDisabled = signal<boolean>(false)
-  private directiveContentRef = signal<EmbeddedViewRef<any> | undefined>(undefined)
+  private readonly isDisabled = signal<boolean>(false)
+  private readonly directiveContentRef = signal<EmbeddedViewRef<any> | undefined>(undefined)
 
-  private permissionValidation = computed(() => {
+  private readonly permissionValidation = computed(() => {
     const positive = this.ocxIfPermission()
     const negative = this.ocxIfNotPermission()
     const negate = negative !== undefined
 
     const raw = negate ? negative : positive
-    const permissions = raw === undefined ? [] : Array.isArray(raw) ? raw : [raw]
+    const permissions = this.normalizePermissions(raw)
     return {
       permissions,
       negate,
@@ -59,6 +60,16 @@ export class IfPermissionDirective {
       overridePermissions: negate ? this.ocxIfNotPermissionPermissions() : this.ocxIfPermissionPermissions(),
     }
   })
+
+  private normalizePermissions(raw: string | string[] | undefined): string[] {
+    if (raw === undefined) {
+      return []
+    }
+    if (Array.isArray(raw)) {
+      return raw
+    }
+    return [raw]
+  }
 
   constructor() {
     const validChecker = this.hasPermissionChecker || this.userService

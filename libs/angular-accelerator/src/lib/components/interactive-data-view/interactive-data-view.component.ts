@@ -139,7 +139,7 @@ export class InteractiveDataViewComponent implements OnInit {
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return (
-      (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter((d) => d) as DataTableColumn[]) ??
+      (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]) ??
       []
     )
   })
@@ -510,7 +510,7 @@ export class InteractiveDataViewComponent implements OnInit {
         if (columnGroupComponentDefined) {
           if (
             !(
-              this.columns().find((c) => c.nameKey === this.selectedGroupKey()) ||
+              this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||
               this.selectedGroupKey() === this.customGroupKey()
             )
           ) {

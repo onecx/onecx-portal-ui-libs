@@ -1,7 +1,7 @@
 import { assertInInjectionContext, OutputEmitterRef, Signal, signal } from '@angular/core'
 
 class ListenerArray {
-  private _listeners: Array<(...args: any[]) => void> = []
+  private readonly _listeners: Array<(...args: any[]) => void> = []
   observed = signal<boolean>(false)
 
   indexOf(listener: (...args: any[]) => void): number {

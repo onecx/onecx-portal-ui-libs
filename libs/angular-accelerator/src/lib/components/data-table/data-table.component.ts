@@ -44,6 +44,7 @@ import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
+import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
@@ -122,9 +123,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   emptyResultsMessage = input<string | undefined>(undefined)
   name = model<string>('')
-  deletePermission = input<string | string[] | undefined>(undefined)
-  viewPermission = input<string | string[] | undefined>(undefined)
-  editPermission = input<string | string[] | undefined>(undefined)
+  deletePermission = input<PermissionInput>(undefined)
+  viewPermission = input<PermissionInput>(undefined)
+  editPermission = input<PermissionInput>(undefined)
   deleteActionVisibleField = input<string | undefined>(undefined)
   deleteActionEnabledField = input<string | undefined>(undefined)
   viewActionVisibleField = input<string | undefined>(undefined)
@@ -714,7 +715,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     },
   }
 
-  private filterTemplatesData: TemplatesData = {
+  private readonly filterTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableFilterCell', 'IdFilterCell', 'IdTableCell', 'IdCell'],
     templateNames: {

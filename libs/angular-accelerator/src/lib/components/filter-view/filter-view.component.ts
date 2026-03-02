@@ -117,8 +117,8 @@ export class FilterViewComponent {
   chipTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   tableTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
 
-  private chipIdSuffix: Array<string> = ['IdFilterChip', 'IdTableFilterCell', 'IdTableCell']
-  private chipTemplateNames: Record<ColumnType, Array<string>> = {
+  private readonly chipIdSuffix: Array<string> = ['IdFilterChip', 'IdTableFilterCell', 'IdTableCell']
+  private readonly chipTemplateNames: Record<ColumnType, Array<string>> = {
     [ColumnType.DATE]: ['dateFilterChipValue', 'dateTableFilterCell', 'dateTableCell', 'defaultDateValue'],
     [ColumnType.NUMBER]: ['numberFilterChipValue', 'numberTableFilterCell', 'numberTableCell', 'defaultNumberValue'],
     [ColumnType.RELATIVE_DATE]: [
@@ -135,10 +135,10 @@ export class FilterViewComponent {
     ],
     [ColumnType.STRING]: ['stringFilterChipValue', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
   }
-  private chipTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
+  private readonly chipTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  private tableIdSuffix: Array<string> = ['IdFilterViewCell', 'IdTableFilterCell', 'IdTableCell']
-  private tableTemplateNames: Record<ColumnType, Array<string>> = {
+  private readonly tableIdSuffix: Array<string> = ['IdFilterViewCell', 'IdTableFilterCell', 'IdTableCell']
+  private readonly tableTemplateNames: Record<ColumnType, Array<string>> = {
     [ColumnType.DATE]: ['dateFilterViewCell', 'dateTableFilterCell', 'dateTableCell', 'defaultDateValue'],
     [ColumnType.NUMBER]: ['numberFilterViewCell', 'numberTableFilterCell', 'numberTableCell', 'defaultNumberValue'],
     [ColumnType.RELATIVE_DATE]: [
@@ -155,7 +155,7 @@ export class FilterViewComponent {
     ],
     [ColumnType.STRING]: ['stringFilterViewCell', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
   }
-  private tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
+  private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor() {
     effect(() => {
