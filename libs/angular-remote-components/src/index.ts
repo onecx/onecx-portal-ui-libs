@@ -4,6 +4,7 @@ export * from './lib/components/slot/slot.component'
 export * from './lib/angular-remote-components.module'
 export * from './lib/services/slot.service'
 export * from './lib/services/permission.service'
+export * from './lib/services/manifest-cache.service'
 export * from './lib/utils/provide-translate-service-for-root.utils'
 
 export { RemoteComponentConfig, REMOTE_COMPONENT_CONFIG } from '@onecx/angular-utils'
