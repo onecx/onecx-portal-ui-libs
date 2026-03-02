@@ -11,11 +11,12 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
+import { By } from '@angular/platform-browser'
 
 describe('DiagramComponent', () => {
-  let translateService: TranslateService
-  let component: DiagramComponent
-  let fixture: ComponentFixture<DiagramComponent>
+  let translateService: TranslateService;
+  let component: DiagramComponent;
+  let fixture: ComponentFixture<DiagramComponent>;
 
   const definedSumKey = 'OCX_DIAGRAM.SUM'
 
@@ -314,5 +315,22 @@ describe('DiagramComponent', () => {
     fixture.componentRef.setInput('fullHeight', false)
     component.diagramType.set(DiagramType.PIE)
     expect(component.useFullHeight()).toBe(false)
+  })
+  it('should emit data clicked event', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    let dataSelectedEvent: number | undefined
+
+    component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
+    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', [{}, {}, {}])
+
+    expect(dataSelectedEvent).toEqual(3)
+    expect(chartHarness).toBeTruthy()
+  })
+
+  it('should fallback to pie chart type for unsupported diagramType', () => {
+    component.diagramType.set('unsupported-diagram-type' as any)
+
+    expect(component.chartType()).toEqual('pie')
   })
 })
