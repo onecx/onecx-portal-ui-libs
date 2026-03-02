@@ -1,6 +1,7 @@
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { By } from '@angular/platform-browser'
 import { FormsModule } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
@@ -333,5 +334,23 @@ describe('DiagramComponent', () => {
     expect(result).toBe(false)
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveReturnedWith(false)
+  })
+
+  it('should emit data clicked event', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    let dataSelectedEvent: number | undefined
+
+    component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
+    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', [{}, {}, {}])
+
+    expect(dataSelectedEvent).toEqual(3)
+    expect(chartHarness).toBeTruthy()
+  })
+
+  it('should fallback to pie chart type for unsupported diagramType', () => {
+    component.diagramType = 'unsupported-diagram-type' as any
+
+    expect(component.chartType).toEqual('pie')
   })
 })
