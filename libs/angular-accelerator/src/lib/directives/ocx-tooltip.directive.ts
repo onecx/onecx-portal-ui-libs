@@ -69,9 +69,8 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   }
 
   private applyIdToContainer(): void {
-    if (this.isTooltipCreated()) {
-      this.renderer.setAttribute(this.container, 'id', this.resolvedId ?? '')
-    }
+    if (!this.isTooltipCreated()) return
+    this.renderer.setAttribute(this.container, 'id', this.resolvedId ?? '')
   }
 
   private isTooltipCreated(): boolean {
@@ -80,20 +79,24 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
 
   private getOrCreateGeneratedId(): string {
     if (this.generatedId) return this.generatedId
-    const randomPart = Math.random().toString(36).slice(2, 10)
+    const randomPart = this.getRandomPart()
     const timePart = Date.now().toString(36)
     this.generatedId = `ocx-tooltip-${timePart}-${randomPart}`
     return this.generatedId
   }
 
+  private getRandomPart(): string {
+    const buffer = new Uint32Array(2)
+    globalThis.crypto.getRandomValues(buffer)
+    return Array.from(buffer, (value) => value.toString(36)).join('')
+  }
+
   private setEscapeKeyListener(): void {
-    if (this.container && !this.removeEscapeKeyListener) {
-      this.removeEscapeKeyListener = this.renderer.listen(this.container, 'keydown', (event: KeyboardEvent) => {
-        if (event.key === 'Escape' || event.key === 'Esc') {
-          this.hide()
-        }
-      })
-    }
+    if (!this.container || this.removeEscapeKeyListener) return
+    this.removeEscapeKeyListener = this.renderer.listen(this.container, 'keydown', (event: KeyboardEvent) => {
+      if (!(event.key === 'Escape' || event.key === 'Esc')) return
+      this.hide()
+    })
   }
 
   override ngOnDestroy(): void {

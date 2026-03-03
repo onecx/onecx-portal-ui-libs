@@ -151,6 +151,32 @@ describe('OcxTooltip', () => {
 				fixture.detectChanges();
 			}
 		}));
+
+		it('should show tooltip on focus and does not hide on enter', fakeAsync(async () => {
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const host = await tooltip.host();
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
+
+			for (const key of ['Enter']) {
+				await host.focus();
+				await host.dispatchEvent('focus');
+				tick(200);
+				fixture.detectChanges();
+
+				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+
+				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+				tick(500);
+				fixture.detectChanges();
+
+				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+
+				await host.blur();
+				tick(200);
+				fixture.detectChanges();
+			}
+		}));
 	});
 
 	describe('ID and aria-describedby', () => {
@@ -275,5 +301,16 @@ describe('OcxTooltip', () => {
 
 			expect(spy).toHaveBeenCalledWith(directive.container, 'id', '');
 		}));
+
+		it('should not set set id when tooltip is not created', () => {
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
+			const spy = jest.spyOn(directive.renderer, 'setAttribute');
+			jest.spyOn(directive, 'isTooltipCreated').mockReturnValue(false);
+			
+			directive.applyIdToContainer();
+
+			expect(spy).not.toHaveBeenCalledWith(directive.container, 'id', '');
+		});
 	});
 });
