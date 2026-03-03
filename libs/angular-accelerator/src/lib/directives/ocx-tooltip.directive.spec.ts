@@ -42,7 +42,7 @@ class TestHostComponent {
 })
 class TestHostComponentNoID {
 	tooltipText = 'Tooltip works!';
-	tooltipOptions: any = {id: '    '};
+	tooltipOptions: any = { id: '    ' };
 }
 
 @Component({
@@ -86,7 +86,7 @@ describe('OcxTooltip', () => {
 	});
 
 	const createFixture = <T>(component: any): { fixture: ComponentFixture<T>; loader: HarnessLoader } => {
-		const componentFixture = TestBed.createComponent(component);
+		const componentFixture = TestBed.createComponent(component) as ComponentFixture<T>;
 		componentFixture.detectChanges();
 		return {
 			fixture: componentFixture,
@@ -134,16 +134,21 @@ describe('OcxTooltip', () => {
 
 			for (const key of ['Escape', 'Esc']) {
 				await host.focus();
-				tick();
+				await host.dispatchEvent('focus');
+				tick(200);
 				fixture.detectChanges();
 
 				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
 
-				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key }));
-				tick();
+				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+				tick(500);
 				fixture.detectChanges();
 
 				expect(await tooltip.getTooltipText()).toBeNull();
+
+				await host.blur();
+				tick(200);
+				fixture.detectChanges();
 			}
 		}));
 	});
@@ -201,7 +206,7 @@ describe('OcxTooltip', () => {
 			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
 			expect(ariaDescribedBy).toEqual(tooltipId);
 		}));
-		
+
 		it('should generate and reuse an ID in getOrCreateGeneratedId', () => {
 			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
@@ -261,13 +266,13 @@ describe('OcxTooltip', () => {
 
 		it('should apply an empty string when resolvedId is undefined', fakeAsync(async () => {
 			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;			
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
 			directive.resolvedId = undefined;
-			directive.container = document.createElement('div');			
+			directive.container = document.createElement('div');
 			const spy = jest.spyOn(directive.renderer, 'setAttribute');
-			
+
 			directive.applyIdToContainer();
-			
+
 			expect(spy).toHaveBeenCalledWith(directive.container, 'id', '');
 		}));
 	});

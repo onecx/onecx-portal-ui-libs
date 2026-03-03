@@ -8,6 +8,7 @@ import 'jest-canvas-mock'
 import { PrimeIcons } from 'primeng/api'
 import { DiagramHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
@@ -33,7 +34,7 @@ describe('DiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DiagramComponent],
+      declarations: [DiagramComponent, OcxTooltipDirective],
       imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot()],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
