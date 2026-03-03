@@ -27,8 +27,8 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [DialogInlineComponent, DialogContentComponent, DialogFooterComponent, OcxTooltipDirective],
-      imports: [StorybookTranslateModule, ButtonModule, TooltipModule],
+      declarations: [DialogInlineComponent, DialogContentComponent, DialogFooterComponent],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, OcxTooltipDirective],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],

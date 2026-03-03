@@ -13,8 +13,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CustomGroupColumnSelectorComponent, OcxTooltipDirective],
-      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      declarations: [CustomGroupColumnSelectorComponent],
+      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 

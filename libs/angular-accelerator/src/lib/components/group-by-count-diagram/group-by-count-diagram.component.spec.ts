@@ -159,8 +159,8 @@ describe('GroupByCountDiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GroupByCountDiagramComponent, DiagramComponent, OcxTooltipDirective],
-      imports: [AngularAcceleratorModule],
+      declarations: [GroupByCountDiagramComponent, DiagramComponent],
+      imports: [AngularAcceleratorModule, OcxTooltipDirective],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

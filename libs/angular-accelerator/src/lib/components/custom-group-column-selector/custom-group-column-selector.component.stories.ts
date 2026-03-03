@@ -42,7 +42,7 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
       ],
     }),
     moduleMetadata({
-      declarations: [CustomGroupColumnSelectorComponent, OcxTooltipDirective],
+      declarations: [CustomGroupColumnSelectorComponent],
       imports: [
         SelectModule,
         DialogModule,
@@ -53,6 +53,7 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
         SelectButtonModule,
         TooltipModule,
         StorybookTranslateModule,
+        OcxTooltipDirective
       ],
     }),
   ],

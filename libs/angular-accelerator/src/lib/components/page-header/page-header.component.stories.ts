@@ -38,7 +38,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [PageHeaderComponent, DynamicPipe, OcxTooltipDirective],
+      declarations: [PageHeaderComponent, DynamicPipe],
       imports: [
         MenuModule,
         BreadcrumbModule,
@@ -50,6 +50,7 @@ export default {
           { labelKey: 'Level 2', url: '/' },
         ]),
         TooltipModule,
+        OcxTooltipDirective,
       ],
     }),
   ],

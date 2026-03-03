@@ -62,7 +62,7 @@ describe('PageHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe, OcxTooltipDirective],
+      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
       imports: [
         RouterTestingModule,
         BreadcrumbModule,
@@ -71,6 +71,7 @@ describe('PageHeaderComponent', () => {
         NoopAnimationsModule,
         TooltipModule,
         AngularAcceleratorModule,
+        OcxTooltipDirective,
       ],
       providers: [
         provideTranslateTestingService({

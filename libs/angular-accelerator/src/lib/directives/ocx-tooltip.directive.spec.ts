@@ -75,8 +75,8 @@ describe('OcxTooltip', () => {
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			declarations: [TestHostComponent, OcxTooltipDirective, TestHostComponentNoID, TestHostComponentNull],
-			imports: [NoopAnimationsModule]
+			declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull],
+			imports: [NoopAnimationsModule, OcxTooltipDirective]
 		}).compileComponents();
 
 		fixture = TestBed.createComponent(TestHostComponent);

@@ -13,8 +13,8 @@ describe('DataListGridSortingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataListGridSortingComponent, OcxTooltipDirective],
-      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      declarations: [DataListGridSortingComponent],
+      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 

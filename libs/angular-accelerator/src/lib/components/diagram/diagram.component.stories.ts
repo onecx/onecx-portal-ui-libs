@@ -36,7 +36,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [DiagramComponent, DynamicPipe, OcxTooltipDirective],
+      declarations: [DiagramComponent, DynamicPipe],
       imports: [
         MenuModule,
         BreadcrumbModule,
@@ -47,6 +47,7 @@ export default {
         SelectButtonModule,
         FormsModule,
         TooltipModule,
+        OcxTooltipDirective
       ],
     }),
   ],

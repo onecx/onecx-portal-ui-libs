@@ -36,7 +36,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [GroupByCountDiagramComponent, DiagramComponent, DynamicPipe, OcxTooltipDirective],
+      declarations: [GroupByCountDiagramComponent, DiagramComponent, DynamicPipe],
       imports: [
         MenuModule,
         BreadcrumbModule,
@@ -46,6 +46,7 @@ export default {
         ChartModule,
         SelectButtonModule,
         TooltipModule,
+        OcxTooltipDirective,
       ],
     }),
   ],

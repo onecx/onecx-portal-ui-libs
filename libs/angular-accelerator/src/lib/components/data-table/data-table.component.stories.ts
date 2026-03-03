@@ -50,7 +50,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
       ],
     }),
     moduleMetadata({
-      declarations: [DataTableComponent, IfPermissionDirective, OcxTooltipDirective],
+      declarations: [DataTableComponent, IfPermissionDirective],
       imports: [
         TableModule,
         ButtonModule,
@@ -61,6 +61,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         FormsModule,
         TooltipModule,
         SkeletonModule,
+        OcxTooltipDirective
       ],
     }),
   ],

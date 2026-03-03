@@ -73,6 +73,7 @@ function appInitializer(userService: UserService) {
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
+    OcxTooltipDirective
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -94,7 +95,6 @@ function appInitializer(userService: UserService) {
     IfPermissionDirective,
     IfBreakpointDirective,
     SrcDirective,
-    OcxTooltipDirective,
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,

@@ -1,8 +1,7 @@
 import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, NgZone, ViewContainerRef, SimpleChanges, Input } from "@angular/core"
-import { TooltipOptions } from "primeng/api"
 import { Tooltip, TooltipStyle } from "primeng/tooltip"
 
-@Directive({ selector: '[ocxTooltip]', standalone: false, providers: [TooltipStyle] })
+@Directive({ selector: '[ocxTooltip]', providers: [TooltipStyle] })
 export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnChanges {
   override readonly renderer = inject(Renderer2)
   private generatedId: string | undefined
@@ -53,7 +52,7 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     const resolvedId = this.normalizeId(idFromOptions) ?? this.normalizeId(idFromInternal) ?? this.getOrCreateGeneratedId()
     this.resolvedId = resolvedId
     if (this.tooltipOptions) {
-      const tooltipOptions = this.tooltipOptions as TooltipOptions & { id?: string }
+      const tooltipOptions = this.tooltipOptions
       if (!this.normalizeId(tooltipOptions.id)) {
         tooltipOptions.id = resolvedId
       }

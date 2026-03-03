@@ -34,8 +34,8 @@ describe('DiagramComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DiagramComponent, OcxTooltipDirective],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot()],
+      declarations: [DiagramComponent],
+      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
