@@ -1,4 +1,4 @@
-import { Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef, inject } from '@angular/core'
+import { Component, ComponentRef, OnDestroy, OnInit, ViewContainerRef, inject, viewChild } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { ButtonDialogData } from '../../../model/button-dialog'
@@ -28,8 +28,7 @@ export class DialogContentComponent implements OnInit, OnDestroy {
     componentData: {},
   }
 
-  @ViewChild('container', { static: true, read: ViewContainerRef })
-  dialogHost!: ViewContainerRef
+  dialogHost = viewChild('container', { read: ViewContainerRef })
 
   dialogData: ButtonDialogData = this.defaultDialogData
   componentRef!: ComponentRef<any>
@@ -66,7 +65,7 @@ export class DialogContentComponent implements OnInit, OnDestroy {
       this.dialogData.componentData = dynamicConfigData.componentData
     }
 
-    const viewContainerRef = this.dialogHost
+    const viewContainerRef = this.dialogHost()!
     viewContainerRef.clear()
 
     this.buttonClickedSub = portalDialogServiceData.buttonClicked$.subscribe((state) => {
@@ -107,19 +106,19 @@ export class DialogContentComponent implements OnInit, OnDestroy {
         this.primaryButtonEnabledSub = componentRef.instance.primaryButtonEnabled
           .pipe(startWith(false))
           .subscribe((isEnabled) => {
-            portalDialogServiceData.primaryButtonEnabled$.emit(isEnabled)
+            portalDialogServiceData.primaryButtonEnabled$.next(isEnabled)
           })
       }
       if (this.isDialogSecondaryButtonDisabledImplemented(componentRef.instance)) {
         this.secondaryButtonEnabledSub = componentRef.instance.secondaryButtonEnabled
           .pipe(startWith(false))
           .subscribe((isEnabled) => {
-            portalDialogServiceData.secondaryButtonEnabled$.emit(isEnabled)
+            portalDialogServiceData.secondaryButtonEnabled$.next(isEnabled)
           })
       }
       if (this.isDialogCustomButtonDisabledImplemented(componentRef.instance)) {
         this.customButtonEnabledSub = componentRef.instance.customButtonEnabled.subscribe((buttonEnabled) => {
-          portalDialogServiceData.customButtonEnabled$.emit(buttonEnabled)
+          portalDialogServiceData.customButtonEnabled$.next(buttonEnabled)
         })
       }
 

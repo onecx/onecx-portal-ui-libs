@@ -47,8 +47,8 @@ describe('DiagramComponent', () => {
 
     fixture = TestBed.createComponent(DiagramComponent)
     component = fixture.componentInstance
-    component.data = diagramData
-    component.sumKey = definedSumKey
+    fixture.componentRef.setInput('data', diagramData)
+    fixture.componentRef.setInput('sumKey', definedSumKey)
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
     translateService.use('en')
@@ -88,7 +88,7 @@ describe('DiagramComponent', () => {
   })
 
   it('should display horizontal bar chart', async () => {
-    component.diagramType = DiagramType.HORIZONTAL_BAR
+    fixture.componentRef.setInput('diagramType', DiagramType.HORIZONTAL_BAR)
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
     const chartType = await chartHarness.getType()
@@ -96,7 +96,7 @@ describe('DiagramComponent', () => {
   })
 
   it('should display vertical bar chart', async () => {
-    component.diagramType = DiagramType.VERTICAL_BAR
+    fixture.componentRef.setInput('diagramType', DiagramType.VERTICAL_BAR)
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
     const chartType = await chartHarness.getType()
@@ -104,8 +104,8 @@ describe('DiagramComponent', () => {
   })
 
   it('should not display a diagramType select button by default', async () => {
-    expect(component.supportedDiagramTypes).toEqual([])
-    expect(component.shownDiagramTypes).toEqual([])
+    expect(component.supportedDiagramTypes()).toEqual([])
+    expect(component.shownDiagramTypes()).toEqual([])
 
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
@@ -131,18 +131,18 @@ describe('DiagramComponent', () => {
       },
     ]
 
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(component.shownDiagramTypes).toEqual(expectedDiagramLayouts)
+    expect(component.shownDiagramTypes()).toEqual(expectedDiagramLayouts)
     expect(diagramTypeSelectButton).toBeTruthy()
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
   })
 
   it('should change the rendered diagram whenever the select button is used to change the diagramType', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
 
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
@@ -152,20 +152,20 @@ describe('DiagramComponent', () => {
     component.diagramTypeChanged.subscribe((event) => (diagramTypeChangedEvent = event))
 
     expect(diagramTypeSelectButton).toBeTruthy()
-    expect(component.diagramType).toBe(DiagramType.PIE)
+    expect(component.diagramType()).toBe(DiagramType.PIE)
     let chartHarness = await diagram.getChart()
     let chartType = await chartHarness.getType()
     expect(chartType).toEqual('pie')
 
     await diagramTypeSelectButtonOptions[1].click()
-    expect(component.diagramType).toBe(DiagramType.HORIZONTAL_BAR)
+    expect(component.diagramType()).toBe(DiagramType.HORIZONTAL_BAR)
     chartHarness = await diagram.getChart()
     chartType = await chartHarness.getType()
     expect(chartType).toEqual('bar')
     expect(diagramTypeChangedEvent).toBe(DiagramType.HORIZONTAL_BAR)
 
     await diagramTypeSelectButtonOptions[0].click()
-    expect(component.diagramType).toBe(DiagramType.PIE)
+    expect(component.diagramType()).toBe(DiagramType.PIE)
     chartHarness = await diagram.getChart()
     chartType = await chartHarness.getType()
     expect(chartType).toEqual('pie')
@@ -197,28 +197,32 @@ describe('DiagramComponent', () => {
       },
     ]
 
-    expect(component.shownDiagramTypes).toEqual([])
+    expect(component.shownDiagramTypes()).toEqual([])
 
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButton = await diagram.getDiagramTypeSelectButton()
 
     expect(diagramTypeSelectButton).toBeTruthy()
-    expect(component.shownDiagramTypes).toEqual(allDiagramLayouts.slice(0, 2))
+    expect(component.shownDiagramTypes()).toEqual(allDiagramLayouts.slice(0, 2))
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
 
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR]
+    fixture.componentRef.setInput('supportedDiagramTypes', [
+      DiagramType.PIE,
+      DiagramType.HORIZONTAL_BAR,
+      DiagramType.VERTICAL_BAR,
+    ])
     const diagramTypeSelectButtonAfterUpdate = await diagram.getDiagramTypeSelectButton()
     const diagramTypeSelectButtonOptionsAfterUpdate = await diagram.getAllSelectionButtons()
     expect(diagramTypeSelectButtonAfterUpdate).toBeTruthy()
-    expect(component.shownDiagramTypes).toEqual(allDiagramLayouts)
+    expect(component.shownDiagramTypes()).toEqual(allDiagramLayouts)
     expect(diagramTypeSelectButtonOptionsAfterUpdate.length).toBe(3)
   })
 
   it('should automatically select the button for the currently displayed diagram', async () => {
-    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
-    component.diagramType = DiagramType.HORIZONTAL_BAR
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
+    fixture.componentRef.setInput('diagramType', DiagramType.HORIZONTAL_BAR)
 
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
@@ -231,9 +235,9 @@ describe('DiagramComponent', () => {
     const mockResult = diagramData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
 
-    component.ngOnChanges()
+    fixture.detectChanges()
 
-    expect(component.chartData?.datasets).toEqual([
+    expect(component.chartData()?.datasets).toEqual([
       {
         data: diagramData.map((d) => d.value),
         backgroundColor: mockResult,
@@ -242,14 +246,13 @@ describe('DiagramComponent', () => {
   })
 
   it('should use custom colors', () => {
-    component.data = [
+    fixture.componentRef.setInput('data', [
       { label: 'test0', value: 1, backgroundColor: 'blue' },
       { label: 'test1', value: 2, backgroundColor: 'red' },
-    ]
+    ])
+    fixture.detectChanges()
 
-    component.ngOnChanges()
-
-    expect(component.chartData?.datasets).toEqual([
+    expect(component.chartData()?.datasets).toEqual([
       {
         data: [1, 2],
         backgroundColor: ['blue', 'red'],
@@ -263,13 +266,12 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
-    component.fillMissingColors = false
+    fixture.componentRef.setInput('fillMissingColors', false)
 
-    component.data = mockData
+    fixture.componentRef.setInput('data', mockData)
+    fixture.detectChanges()
 
-    component.ngOnChanges()
-
-    expect(component.chartData?.datasets).toEqual([
+    expect(component.chartData()?.datasets).toEqual([
       {
         data: [1, 2],
         backgroundColor: ['0', '1'],
@@ -284,11 +286,10 @@ describe('DiagramComponent', () => {
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
 
-    component.data = mockData
+    fixture.componentRef.setInput('data', mockData)
+    fixture.detectChanges()
 
-    component.ngOnChanges()
-
-    expect(component.chartData?.datasets).toEqual([
+    expect(component.chartData()?.datasets).toEqual([
       {
         data: [1, 2],
         backgroundColor: ['blue', '0'],

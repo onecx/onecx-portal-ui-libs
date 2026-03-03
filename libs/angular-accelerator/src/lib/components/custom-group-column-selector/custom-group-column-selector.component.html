@@ -2,13 +2,13 @@
   id="customGroupColumnSelectorButton"
   type="button"
   (onClick)="onOpenCustomGroupColumnSelectionDialogClick()"
-  [pTooltip]="openButtonTitle || (openButtonTitleKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+  [pTooltip]="openButtonTitle() || (openButtonTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
   tooltipPosition="top"
   icon="pi pi-cog"
   styleClass="p-button"
-  [ariaLabel]="(openButtonAriaLabelKey ? (openButtonAriaLabelKey | translate) : openButtonAriaLabel) || openButtonTitle || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
-  [attr.aria-controls]="visible ? 'customGroupColumnSelectorDialog' : null"
-  [attr.aria-expanded]="visible ? true : false"
+  [ariaLabel]="(openButtonAriaLabelKey() ? (openButtonAriaLabelKey() | translate) : openButtonAriaLabel()) || openButtonTitle() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+  [attr.aria-controls]="visible() ? 'customGroupColumnSelectorDialog' : null"
+  [attr.aria-expanded]="visible() ? true : false"
 ></p-button>
 
 <p-dialog
@@ -21,16 +21,16 @@
 >
   <ng-template pTemplate="header">
     <span [id]="dialog.ariaLabelledBy" class="text-xl font-bold"
-      >{{ dialogTitle || (dialogTitleKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate)
-      }}</span
+      >{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' |
+      translate) }}</span
     >
   </ng-template>
 
   <p-pickList
-    [source]="displayedColumnsModel"
-    [target]="hiddenColumnsModel"
-    [sourceHeader]="activeColumnsLabel || (activeColumnsLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)"
-    [targetHeader]="inactiveColumnsLabel || (inactiveColumnsLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)"
+    [source]="displayedColumnsModel()"
+    [target]="hiddenColumnsModel()"
+    [sourceHeader]="activeColumnsLabel() || (activeColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)"
+    [targetHeader]="inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate)"
     [dragdrop]="true"
     [responsive]="false"
     [sourceStyle]="{ height: '300px' }"
@@ -55,7 +55,7 @@
       <div>
         <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}</p>
         <p-selectbutton
-          [options]="frozenOptions"
+          [options]="frozenOptions()"
           [(ngModel)]="frozenActionColumnModel"
           optionLabel="label"
           optionValue="value"
@@ -69,7 +69,7 @@
       <div>
         <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}</p>
         <p-selectbutton
-          [options]="alignmentOptions"
+          [options]="alignmentOptions()"
           [(ngModel)]="actionColumnPositionModel"
           optionLabel="label"
           optionValue="value"
@@ -87,15 +87,15 @@
     <p-button
       id="cancelButton"
       (onClick)="onCancelClick()"
-      [label]="cancelButtonLabel || (cancelButtonLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
+      [label]="cancelButtonLabel() || (cancelButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
       styleClass="p-button"
-      [ariaLabel]="cancelButtonLabel || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
+      [ariaLabel]="cancelButtonLabel() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
     ></p-button>
     <p-button
       id="saveButton"
       (onClick)="onSaveClick()"
-      [label]="saveButtonLabel || (saveButtonLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
-      [ariaLabel]="saveButtonAriaLabelKey || (saveButtonAriaLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
+      [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
+      [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
     ></p-button>
   </ng-template>
 </p-dialog>

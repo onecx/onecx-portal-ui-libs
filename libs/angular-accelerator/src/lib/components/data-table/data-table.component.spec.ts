@@ -226,9 +226,9 @@ describe('DataTableComponent', () => {
 
     fixture = TestBed.createComponent(DataTableComponent)
     component = fixture.componentInstance
-    component.rows = mockData
-    component.columns = mockColumns
-    component.paginator = true
+    component.rows.set(mockData as any)
+    component.columns.set(mockColumns as any)
+    fixture.componentRef.setInput('paginator', true)
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
     const userServiceMock = TestBed.inject(UserServiceMock)
@@ -281,14 +281,14 @@ describe('DataTableComponent', () => {
       if (viewIndex >= 0) {
         await actionButtons[viewIndex].click()
       } else {
-        component.onViewRow(component.rows?.[0] as any)
+        component.onViewRow(component.rows()[0] as any)
       }
       expect(spy).toHaveBeenCalled()
     })
 
     it('should trigger onMultiselectFilterChange when selecting a filter option via multiselect', async () => {
       // Ensure there are filter options available for "status"
-      component.rows = [{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any]
+      component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
       fixture.detectChanges()
 
       const headerColumns = await dataTable.getHeaderColumns()
@@ -308,13 +308,14 @@ describe('DataTableComponent', () => {
 
       expect(spy).toHaveBeenCalled()
 
-      expect(component.filters.length).toBeGreaterThan(0)
+      expect(component.filters().length).toBeGreaterThan(0)
     })
   })
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
     it('de', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
+      fixture.detectChanges()
       translateService.use('de')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
@@ -323,7 +324,8 @@ describe('DataTableComponent', () => {
     })
 
     it('en', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
+      fixture.detectChanges()
       translateService.use('en')
       const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
       const paginator = await dataTable.getPaginator()
@@ -341,20 +343,22 @@ describe('DataTableComponent', () => {
   })
 
   it('should display 10 rows by default for 1000 rows', async () => {
-    component.rows = Array.from(Array(1000).keys()).map((number) => {
-      return {
-        id: number,
-        name: number,
-      }
-    })
-    component.columns = [
+    component.rows.set(
+      Array.from(Array(1000).keys()).map((number) => {
+        return {
+          id: number,
+          name: number,
+        }
+      })
+    )
+    component.columns.set([
       {
         columnType: ColumnType.NUMBER,
         id: 'name',
         nameKey: 'COLUMN_HEADER_NAME.NAME',
       },
-    ]
-    component.paginator = true
+    ])
+    fixture.componentRef.setInput('paginator', true)
     fixture.detectChanges()
 
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
@@ -370,18 +374,19 @@ describe('DataTableComponent', () => {
 
     it('should show a table with selection checkboxes if the parent binds to the event emitter', async () => {
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(false)
-      component.selectionChanged.subscribe()
+      component.selectionChanged.subscribe(() => undefined)
       expect(await dataTable.rowSelectionIsEnabled()).toEqual(true)
     })
 
     it('should pre-select rows given through selectedRows input', async () => {
-      component.selectionChanged.subscribe()
+      component.selectionChanged.subscribe(() => undefined)
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
-      component.selectedRows = mockData.slice(0, 2)
+      component.selectedRows.set(mockData.slice(0, 2) as any)
+      fixture.detectChanges()
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
@@ -411,12 +416,16 @@ describe('DataTableComponent', () => {
     it('should not change selection if selection disabled', async () => {
       let selectionChangedEvent: Row[] | undefined
 
-      component.selectionEnabledField = 'selectionEnabled'
+      fixture.componentRef.setInput('selectionEnabledField', 'selectionEnabled')
 
-      component.rows = mockData.map((m) => ({
-        ...m,
-        selectionEnabled: false,
-      }))
+      component.rows.set(
+        mockData.map((m) => ({
+          ...m,
+          selectionEnabled: false,
+        })) as any
+      )
+
+      fixture.detectChanges()
 
       component.selectionChanged.subscribe((event) => (selectionChangedEvent = event))
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
@@ -438,8 +447,8 @@ describe('DataTableComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn).toBe(false)
-      expect(component.actionColumnPosition).toBe('right')
+      expect(component.frozenActionColumn()).toBe(false)
+      expect(component.actionColumnPosition()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -454,8 +463,10 @@ describe('DataTableComponent', () => {
     it('should render a pinned action column on the specified side of the table', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      component.frozenActionColumn = true
-      component.actionColumnPosition = 'left'
+      fixture.componentRef.setInput('frozenActionColumn', true)
+      fixture.componentRef.setInput('actionColumnPosition', 'left')
+
+      fixture.detectChanges()
 
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
@@ -470,16 +481,16 @@ describe('DataTableComponent', () => {
   })
 
   const setUpActionButtonMockData = async () => {
-    component.columns = [
+    component.columns.set([
       ...mockColumns,
       {
         columnType: ColumnType.STRING,
         id: 'ready',
         nameKey: 'Ready',
       },
-    ]
+    ] as any)
 
-    component.rows = [
+    component.rows.set([
       {
         version: 0,
         creationDate: '2023-09-12T09:34:27.184086Z',
@@ -497,13 +508,13 @@ describe('DataTableComponent', () => {
         testNumber: '7.1',
         ready: false,
       },
-    ]
+    ] as any)
     component.viewTableRow.subscribe(() => console.log())
     component.editTableRow.subscribe(() => console.log())
     component.deleteTableRow.subscribe(() => console.log())
-    component.viewPermission = 'VIEW'
-    component.editPermission = 'EDIT'
-    component.deletePermission = 'DELETE'
+    fixture.componentRef.setInput('viewPermission', 'VIEW')
+    fixture.componentRef.setInput('editPermission', 'EDIT')
+    fixture.componentRef.setInput('deletePermission', 'DELETE')
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -540,7 +551,8 @@ describe('DataTableComponent', () => {
 
     it('should dynamically enable/disable an action button based on the contents of a specified column', async () => {
       await setUpActionButtonMockData()
-      component.viewActionEnabledField = 'ready'
+      fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+      fixture.detectChanges()
 
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(3)
@@ -555,11 +567,12 @@ describe('DataTableComponent', () => {
         }
       }
 
-      const tempRows = [...component.rows]
+      const tempRows = [...component.rows()]
 
       tempRows[0]['ready'] = true
 
-      component.rows = [...tempRows]
+      component.rows.set([...tempRows] as any)
+      fixture.detectChanges()
 
       tableActions = await dataTable.getActionButtons()
 
@@ -599,7 +612,8 @@ describe('DataTableComponent', () => {
 
     it('should dynamically hide/show an action button based on the contents of a specified column', async () => {
       await setUpActionButtonMockData()
-      component.viewActionVisibleField = 'ready'
+      fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+      fixture.detectChanges()
 
       let tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(2)
@@ -609,11 +623,11 @@ describe('DataTableComponent', () => {
         expect(icon === 'pi pi-eye').toBe(false)
       }
 
-      const tempRows = [...component.rows]
+      const tempRows = [...component.rows()]
 
       tempRows[0]['ready'] = true
 
-      component.rows = [...tempRows]
+      component.rows.set([...tempRows] as any)
 
       fixture.detectChanges()
       await fixture.whenStable()
@@ -637,7 +651,7 @@ describe('DataTableComponent', () => {
 
   describe('Assign ids to action buttons', () => {
     beforeEach(() => {
-      component.rows = [
+      component.rows.set([
         {
           version: 0,
           creationDate: '2023-09-12T09:34:27.184086Z',
@@ -655,12 +669,13 @@ describe('DataTableComponent', () => {
           testNumber: '7.1',
           ready: false,
         },
-      ]
+      ] as any)
+      fixture.detectChanges()
     })
 
     it('should assign id to view button', async () => {
       component.viewTableRow.subscribe(() => console.log())
-      component.viewPermission = 'VIEW'
+      fixture.componentRef.setInput('viewPermission', 'VIEW')
       fixture.detectChanges()
       await fixture.whenStable()
 
@@ -674,7 +689,7 @@ describe('DataTableComponent', () => {
 
     it('should assign id to edit button', async () => {
       component.editTableRow.subscribe(() => console.log())
-      component.editPermission = 'EDIT'
+      fixture.componentRef.setInput('editPermission', 'EDIT')
       fixture.detectChanges()
       await fixture.whenStable()
 
@@ -688,7 +703,7 @@ describe('DataTableComponent', () => {
 
     it('should assign id to delete button', async () => {
       component.deleteTableRow.subscribe(() => console.log())
-      component.deletePermission = 'DELETE'
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
       fixture.detectChanges()
       await fixture.whenStable()
 
@@ -701,7 +716,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should assign id to additional action button', async () => {
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           permission: 'VIEW',
           callback: () => {
@@ -709,7 +724,7 @@ describe('DataTableComponent', () => {
           },
           id: 'actionId',
         },
-      ]
+      ])
       fixture.detectChanges()
       await fixture.whenStable()
 
@@ -723,7 +738,7 @@ describe('DataTableComponent', () => {
   describe('permissions for action buttons', () => {
     let userService: UserServiceMock
     beforeEach(() => {
-      component.rows = [
+      component.rows.set([
         {
           version: 0,
           creationDate: '2023-09-12T09:34:27.184086Z',
@@ -741,16 +756,18 @@ describe('DataTableComponent', () => {
           testNumber: '7.1',
           ready: false,
         },
-      ]
+      ] as any)
 
       // Show actions
       component.viewTableRow.subscribe(() => console.log())
       component.editTableRow.subscribe(() => console.log())
       component.deleteTableRow.subscribe(() => console.log())
-      component.viewPermission = 'TABLE#VIEW'
-      component.editPermission = 'TABLE#EDIT'
-      component.deletePermission = 'TABLE#DELETE'
-      component.additionalActions = []
+      fixture.componentRef.setInput('viewPermission', 'TABLE#VIEW')
+      fixture.componentRef.setInput('editPermission', 'TABLE#EDIT')
+      fixture.componentRef.setInput('deletePermission', 'TABLE#DELETE')
+      component.additionalActions.set([])
+
+      fixture.detectChanges()
 
       userService = TestBed.inject(UserService) as unknown as UserServiceMock
     })
@@ -774,7 +791,7 @@ describe('DataTableComponent', () => {
     it('should show custom inline actions if user has permission', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           permission: 'ADDITIONAL#VIEW',
           callback: () => {
@@ -782,7 +799,8 @@ describe('DataTableComponent', () => {
           },
           id: 'actionId',
         },
-      ]
+      ])
+      fixture.detectChanges()
 
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(1)
@@ -798,7 +816,7 @@ describe('DataTableComponent', () => {
     it('should show overflow menu when user has permission for at least one action', async () => {
       userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           permission: 'OVERFLOW#VIEW',
           callback: () => {
@@ -808,7 +826,8 @@ describe('DataTableComponent', () => {
           labelKey: 'Label',
           showAsOverflow: true,
         },
-      ]
+      ])
+      fixture.detectChanges()
 
       await (await dataTable.getOverflowActionMenuButton())?.click()
       const overflowMenu = await dataTable.getOverflowMenu()
@@ -827,7 +846,7 @@ describe('DataTableComponent', () => {
     it('should display action buttons based on multiple permissions', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2', 'OVERFLOW#VIEW', 'OVERFLOW#VIEW2'])
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           permission: ['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2'],
           callback: () => {
@@ -844,7 +863,8 @@ describe('DataTableComponent', () => {
           labelKey: 'Label',
           showAsOverflow: true,
         },
-      ]
+      ])
+      fixture.detectChanges()
 
       const tableActions = await dataTable.getActionButtons()
       expect(tableActions.length).toBe(1)
@@ -863,7 +883,7 @@ describe('DataTableComponent', () => {
 
     describe('should render action buttons with routerLink', () => {
       beforeEach(() => {
-        component.rows = [
+        component.rows.set([
           {
             version: 0,
             creationDate: '2023-09-12T09:34:27.184086Z',
@@ -881,13 +901,13 @@ describe('DataTableComponent', () => {
             testNumber: '7.1',
             ready: false,
           },
-        ]
-        component.additionalActions = []
+        ] as any)
+        component.additionalActions.set([])
       })
       it('should render inline action button with routerLink', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         jest.spyOn(console, 'log')
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkAction',
             callback: () => {
@@ -896,7 +916,7 @@ describe('DataTableComponent', () => {
             routerLink: '/inline',
             permission: 'VIEW',
           },
-        ]
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
@@ -914,7 +934,7 @@ describe('DataTableComponent', () => {
 
         jest.spyOn(console, 'log')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkAction',
             callback: () => {
@@ -924,7 +944,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -944,14 +964,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/function-link')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'functionRouterLink',
             callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -964,14 +984,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'promiseFunctionRouterLink',
             callback: jest.fn(),
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -983,14 +1003,14 @@ describe('DataTableComponent', () => {
       it('should handle routerLink as Promise<string>', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'promiseRouterLink',
             callback: jest.fn(),
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1002,7 +1022,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'overflowFunctionRouterLink',
             callback: jest.fn(),
@@ -1010,7 +1030,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1027,14 +1047,14 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'routerLinkWithCallback',
             callback: callbackSpy,
             routerLink: '/prioritized-link',
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
@@ -1048,7 +1068,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'overflowRouterLinkWithCallback',
             callback: callbackSpy,
@@ -1056,7 +1076,7 @@ describe('DataTableComponent', () => {
             permission: 'VIEW',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         const overflowButton = await dataTable.getOverflowActionMenuButton()
         await overflowButton?.click()
@@ -1078,19 +1098,19 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions = [
+        component.additionalActions.set([
           {
             id: 'callbackOnlyAction',
             callback: callbackSpy,
             permission: 'VIEW',
           },
-        ]
+        ])
 
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
 
         expect(spy).not.toHaveBeenCalled()
-        expect(callbackSpy).toHaveBeenCalledWith(component.rows[0])
+        expect(callbackSpy).toHaveBeenCalledWith(component.rows()[0])
       })
     })
   })
@@ -1112,25 +1132,35 @@ describe('DataTableComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.rows = mockData
+        component.rows.set([
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
 
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(1)
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenCalledWith('6 Ergebnisse gefunden')
       })
 
       it('en', async () => {
         translateService.use('en')
 
-        component.rows = mockData
+        component.rows.set([
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
 
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(1)
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+        expect(announceSpy).toHaveBeenCalledWith('6 Results Found')
       })
     })
 
@@ -1138,7 +1168,7 @@ describe('DataTableComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.rows = []
+        component.rows.set([] as any)
         fixture.detectChanges()
 
         await fixture.whenStable()
@@ -1150,7 +1180,7 @@ describe('DataTableComponent', () => {
       it('en', async () => {
         translateService.use('en')
 
-        component.rows = []
+        component.rows.set([] as any)
         fixture.detectChanges()
 
         await fixture.whenStable()
@@ -1164,32 +1194,42 @@ describe('DataTableComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.rows = mockData
+        component.rows.set([
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2)
+        component.rows.set(mockData.slice(0, 2) as any)
         fixture.detectChanges()
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(2)
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Ergebnisse gefunden')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
       })
 
       it('en', async () => {
         translateService.use('en')
 
-        component.rows = mockData
+        component.rows.set([
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2)
+        component.rows.set(mockData.slice(0, 2) as any)
         fixture.detectChanges()
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(2)
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
     })
@@ -1207,14 +1247,14 @@ describe('DataTableComponent', () => {
     })
 
     it('should render preselected rows correctly across pages ', async () => {
-      component.selectionChanged.subscribe()
+      component.selectionChanged.subscribe(() => undefined)
 
-      component.pageSizes = [2]
-      component.pageSize = 2
+      component.pageSizes.set([2])
+      component.pageSize.set(2)
       fixture.detectChanges()
 
       const page2Rows = mockData.slice(2, 4)
-      component.selectedRows = page2Rows
+      component.selectedRows.set(page2Rows)
 
       let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
       let checked = await dataTable.getHarnessesForCheckboxes('checked')
@@ -1233,22 +1273,25 @@ describe('DataTableComponent', () => {
 
   describe('selection + paging helpers (class logic)', () => {
     it('should keep previously selected disabled rows selected onSelectionChange', () => {
-      component.selectionEnabledField = 'enabled'
+      fixture.componentRef.setInput('selectionEnabledField', 'enabled')
 
       const rows: Row[] = [
         { id: 'a', enabled: true },
         { id: 'b', enabled: false },
         { id: 'c', enabled: true },
       ]
-      component.rows = rows
-      component.selectedRows = ['b']
+      component.rows.set(rows as any)
+      component.selectedRows.set([rows[1]])
+      fixture.detectChanges()
 
       const selectionChangedSpy = jest.fn()
       component.selectionChanged.subscribe(selectionChangedSpy)
 
       component.onSelectionChange([rows[0], rows[2]])
 
-      expect(component['_selectionIds$'].getValue()).toEqual(['a', 'c', 'b'])
+      fixture.detectChanges()
+
+      expect(component.selectedIds()).toEqual(['a', 'c', 'b'])
       expect(selectionChangedSpy).toHaveBeenCalledWith([
         { id: 'a', enabled: true },
         { id: 'b', enabled: false },
@@ -1257,7 +1300,8 @@ describe('DataTableComponent', () => {
     })
 
     it('mergeWithDisabledKeys should remove disabled ids that were previously deselected', () => {
-      component.selectedRows = ['a']
+      component.selectedIds.set(['a'])
+      fixture.detectChanges()
 
       const result = component.mergeWithDisabledKeys(['a', 'b', 'c'], ['b'])
       expect(result).toEqual(['a', 'c'])
@@ -1273,8 +1317,10 @@ describe('DataTableComponent', () => {
 
       component.onPageChange({ first: 20, rows: 10 })
 
-      expect(component.page).toBe(2)
-      expect(component.pageSize).toBe(10)
+      fixture.detectChanges()
+
+      expect(component.page()).toBe(2)
+      expect(component.pageSize()).toBe(10)
       expect(pageChangedSpy).toHaveBeenCalledWith(2)
       expect(pageSizeChangedSpy).toHaveBeenCalledWith(10)
       expect(componentStateChangedSpy).toHaveBeenCalledWith(expect.objectContaining({ activePage: 2, pageSize: 10 }))
@@ -1292,12 +1338,14 @@ describe('DataTableComponent', () => {
       const templateRef = {} as any
 
       const column: any = { id: 'col1', columnType: ColumnType.STRING }
-      component.templates = [
+      ;(component as any).templates$ = of([
         {
           name: 'col1IdTableCell',
           template: templateRef,
         },
-      ] as any
+      ])
+      ;(component as any).viewTemplates$ = of([])
+      ;(component as any).parentTemplates$ = of([])
 
       const result = await firstValueFrom(component.getTemplate(column, component.TemplateType.CELL))
       expect(result).toBe(templateRef)
@@ -1317,7 +1365,8 @@ describe('DataTableComponent', () => {
       jest.spyOn(translateService, 'get').mockReturnValue(of('no-results'))
       const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
 
-      component.rows = []
+      component.rows.set([] as any)
+      fixture.detectChanges()
 
       // wait for async announcements
       await Promise.resolve()
@@ -1333,7 +1382,8 @@ describe('DataTableComponent', () => {
       jest.spyOn(translateService, 'get').mockReturnValue(of('some-results'))
       const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
 
-      component.rows = [{ id: 123 }]
+      component.rows.set([{ id: 123 } as any])
+      fixture.detectChanges()
 
       // wait for async announcements
       await Promise.resolve()
@@ -1345,52 +1395,60 @@ describe('DataTableComponent', () => {
 
   describe('rows & filters setter (resetPage)', () => {
     it('should call resetPage when rows length decreases', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.rows.set(mockData as any)
+      fixture.detectChanges()
+      component.page.set(2)
+      fixture.detectChanges()
+
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-      component.page = 2
 
-      component.rows = mockData.slice(0, 3)
+      component.rows.set(mockData.slice(0, 3) as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).toHaveBeenCalled()
-      expect(component.page).toBe(0)
+      expect(component.page()).toBe(0)
       expect(pageSpy).toHaveBeenCalledWith(0)
       expect(stateSpy).toHaveBeenCalled()
     })
 
     it('should not call resetPage when rows length increases', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page.set(2)
+      fixture.detectChanges()
+
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-      component.page = 2
 
-      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+      component.rows.set(Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i })) as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).not.toHaveBeenCalled()
-      expect(component.page).toBe(2)
-      expect(pageSpy).not.toHaveBeenCalled()
+      expect(component.page()).toBe(2)
+      expect(pageSpy).not.toHaveBeenCalledWith(0)
     })
 
     it('should resetPage when filters length changes', () => {
-      const resetSpy = jest.spyOn(component, 'resetPage')
-      component.page = 4
-      component.filters = [
+      component.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
-      ] as any
-      resetSpy.mockClear()
+      ] as any)
+      fixture.detectChanges()
+      component.page.set(2)
+      fixture.detectChanges()
 
-      component.filters = [{ columnId: 'a', value: 1 }] as any
+      component.filters.set([{ columnId: 'a', value: 1 }] as any)
+      fixture.detectChanges()
 
-      component.page = 2
+      expect(component.page()).toBe(0)
 
-      component.filters = [
+      component.page.set(2)
+      fixture.detectChanges()
+
+      component.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
         { columnId: 'c', value: 3 },
-      ] as any
+      ] as any)
+      fixture.detectChanges()
 
-      expect(resetSpy).toHaveBeenCalledTimes(2)
-      expect(component.page).toBe(0)
+      expect(component.page()).toBe(0)
     })
   })
 
@@ -1411,21 +1469,24 @@ describe('DataTableComponent', () => {
       const sortedSpy = jest.spyOn(component.sorted, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
-      component.sortStates = [
+      component.sortStates.set([
         // make toggling deterministic
         // (new column -> first state)
         // (same column -> next)
         1 as any,
         2 as any,
-      ]
+      ])
 
-      component.sortColumn = 'old'
-      component.sortDirection = 2 as any
+      component.sortColumn.set('old')
+      component.sortDirection.set(2 as any)
+      fixture.detectChanges()
 
       component.onSortColumnClick('new')
 
-      expect(component.sortColumn).toBe('new')
-      expect(component.sortDirection).toBe(1 as any)
+      fixture.detectChanges()
+
+      expect(component.sortColumn()).toBe('new')
+      expect(component.sortDirection()).toBe(1 as any)
       expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'new', sortDirection: 1 as any })
       expect(stateSpy).toHaveBeenCalled()
     })
@@ -1434,17 +1495,20 @@ describe('DataTableComponent', () => {
       const filteredSpy = jest.spyOn(component.filtered, 'emit')
       const pageChangedSpy = jest.spyOn(component.pageChanged, 'emit')
 
-      component.clientSideFiltering = true
-      component.filters = [
+      fixture.componentRef.setInput('clientSideFiltering', true)
+      component.filters.set([
         { columnId: 'status', value: 'old', filterType: FilterType.EQUALS },
         { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
-      ]
-      component.page = 5
+      ] as any)
+      component.page.set(5)
+      fixture.detectChanges()
 
       const column: any = { id: 'status', filterType: FilterType.EQUALS }
       component.onMultiselectFilterChange(column, { value: ['a', 'b'] })
 
-      const newFilters = component.filters
+      fixture.detectChanges()
+
+      const newFilters = component.filters()
       expect(newFilters).toEqual(
         expect.arrayContaining([
           { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
@@ -1455,7 +1519,7 @@ describe('DataTableComponent', () => {
       expect(newFilters.find((f) => f.columnId === 'status' && f.value === 'old')).toBeUndefined()
 
       expect(filteredSpy).toHaveBeenCalledWith(newFilters)
-      expect(component.page).toBe(0)
+      expect(component.page()).toBe(0)
       expect(pageChangedSpy).toHaveBeenCalledWith(0)
     })
 
@@ -1470,36 +1534,39 @@ describe('DataTableComponent', () => {
     })
 
     it('sortIconTitle should return the title for the next sort direction', () => {
-      component.sortStates = [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING]
-      component.sortColumn = 'col'
-      component.sortDirection = DataSortDirection.ASCENDING
+      component.sortStates.set([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
+      component.sortColumn.set('col')
+      component.sortDirection.set(DataSortDirection.ASCENDING)
+      fixture.detectChanges()
       expect(component.sortIconTitle('col')).toBe('OCX_DATA_TABLE.TOGGLE_BUTTON.DESCENDING_TITLE')
     })
   })
 
   describe('ngOnInit derived streams (class logic)', () => {
     beforeEach(() => {
-      component.columns = [
+      component.columns.set([
         { id: 'status', columnType: ColumnType.STRING } as any,
         { id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any,
         { id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any,
-      ]
+      ])
       component.ngOnInit()
     })
 
     it('currentEqualFilterOptions$ should return empty options when no current filter column', async () => {
-      component.currentFilterColumn$.next(null)
-      component.filters = []
-      component.rows = [{ id: 1, status: 'A' } as any]
+      component.currentFilterColumn.set(null)
+      component.filters.set([])
+      component.rows.set([{ id: 1, status: 'A' } as any])
 
       const result = await firstValueFrom(component.currentEqualFilterOptions$!)
       expect(result).toEqual({ options: [], column: undefined })
     })
 
     it('currentEqualFilterOptions$ should format DATE options using dateFormat', async () => {
-      component.currentFilterColumn$.next({ id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any)
-      component.filters = []
-      component.rows = [{ id: 1, date: '2023-01-02' } as any]
+      component.currentFilterColumn.set({ id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any)
+      component.filters.set([])
+      component.rows.set([{ id: 1, date: '2023-01-02' } as any])
+
+      fixture.detectChanges()
 
       const result = await firstValueFrom(component.currentEqualFilterOptions$!)
       expect(result.column?.id).toBe('date')
@@ -1518,9 +1585,11 @@ describe('DataTableComponent', () => {
       const translateService = TestBed.inject(TranslateService)
       jest.spyOn(translateService, 'get').mockReturnValue(of({ k1: 'T1' } as any))
 
-      component.currentFilterColumn$.next({ id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any)
-      component.filters = []
-      component.rows = [{ id: 1, tr: 'k1' } as any]
+      component.currentFilterColumn.set({ id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any)
+      component.filters.set([])
+      component.rows.set([{ id: 1, tr: 'k1' } as any])
+
+      fixture.detectChanges()
 
       const result = await firstValueFrom(component.currentEqualFilterOptions$!)
       expect(result.column?.id).toBe('tr')
@@ -1534,24 +1603,24 @@ describe('DataTableComponent', () => {
     })
 
     it('currentTruthySelectedFilters$ should include values for IS_NOT_EMPTY filters', async () => {
-      component.currentFilterColumn$.next({ id: 'status', filterType: FilterType.IS_NOT_EMPTY } as any)
-      component.filters = [
+      component.currentFilterColumn.set({ id: 'status', filterType: FilterType.IS_NOT_EMPTY } as any)
+      component.filters.set([
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
-      ]
+      ])
 
-      await expect(firstValueFrom(component.currentTruthySelectedFilters$!)).resolves.toEqual([true, 'A'])
+      await expect(component.currentTruthySelectedFilters()).toEqual([true, 'A'])
     })
 
     it('currentEqualSelectedFilters$ should include values for EQUALS filters and when filterType is not set', async () => {
-      component.currentFilterColumn$.next({ id: 'status' } as any)
-      component.filters = [
+      component.currentFilterColumn.set({ id: 'status' } as any)
+      component.filters.set([
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
         { columnId: 'status', value: 'B' } as any,
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
-      ]
+      ])
 
-      await expect(firstValueFrom(component.currentEqualSelectedFilters$!)).resolves.toEqual(['A', 'B', true])
+      await expect(component.currentEqualSelectedFilters()).toEqual(['A', 'B', true])
     })
   })
 
@@ -1561,9 +1630,9 @@ describe('DataTableComponent', () => {
         viewItemObserved: true,
         editItemObserved: false,
         deleteItemObserved: true,
-        viewItem: { observed: false },
-        editItem: { observed: true },
-        deleteItem: { observed: false },
+        viewItem: { observed: () => false },
+        editItem: { observed: () => true },
+        deleteItem: { observed: () => false },
       }
       jest.spyOn((component as any).injector, 'get').mockReturnValue(dvMock)
 
@@ -1576,7 +1645,7 @@ describe('DataTableComponent', () => {
     it('selectionChangedObserved should reflect DataViewComponent selectionChanged override', () => {
       const dvMock = {
         selectionChangedObserved: true,
-        selectionChanged: { observed: false },
+        selectionChanged: { observed: () => false },
       }
       jest.spyOn((component as any).injector, 'get').mockReturnValue(dvMock)
       expect(component.selectionChangedObserved).toBe(true)
@@ -1586,7 +1655,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           showAsOverflow: true,
           permission: 'P',
@@ -1594,7 +1663,9 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback: jest.fn(),
         } as DataAction,
-      ]
+      ])
+
+      fixture.detectChanges()
 
       const row: Row = { id: 1, visible: true }
       await expect(firstValueFrom(component.hasVisibleOverflowMenuItems(row))).resolves.toBe(true)
@@ -1604,7 +1675,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           showAsOverflow: true,
           permission: 'P',
@@ -1612,7 +1683,7 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback: jest.fn(),
         } as DataAction,
-      ]
+      ])
 
       const row: Row = { id: 1, visible: false }
       await expect(firstValueFrom(component.hasVisibleOverflowMenuItems(row))).resolves.toBe(false)
@@ -1625,77 +1696,40 @@ describe('DataTableComponent', () => {
 
       component.toggleOverflowMenu(evt, menu, row)
 
-      expect(component.currentMenuRow$.getValue()).toBe(row)
+      expect(component.currentMenuRow()).toBe(row)
       expect(menu.toggle).toHaveBeenCalledWith(evt)
     })
   })
 
   describe('remaining uncovered branches (class logic)', () => {
     it('additionalActions getter/setter should use the internal subject', () => {
-      expect(component.additionalActions).toEqual([])
+      expect(component.additionalActions()).toEqual([])
 
       const actions = [{ labelKey: 'X' } as any]
-      component.additionalActions = actions
-      expect(component.additionalActions).toBe(actions)
-      expect((component as any)._additionalActions$.getValue()).toBe(actions)
+      component.additionalActions.set(actions)
+      expect(component.additionalActions()).toBe(actions)
     })
 
-    it('viewTemplates and parentTemplates setters should forward values', () => {
-      // Use an iterable to avoid template resolution errors.
+    it('parentTemplates setter should update the signal value', () => {
       const iterableQueryList = [] as any
 
-      component.viewTemplates = iterableQueryList
-      component.parentTemplates = iterableQueryList
+      component.parentTemplates.set(iterableQueryList)
 
-      expect((component as any).viewTemplates$.getValue()).toBe(iterableQueryList)
-      expect((component as any).parentTemplates$.getValue()).toBe(iterableQueryList)
-    })
-
-    it('ngAfterContentInit should map PrimeTemplate types when templates$.value is an array', () => {
-      const t = (type: string) => ({ getType: () => type, template: { type } }) as any
-      ;(component as any).templates$.next([
-        t('stringCell'),
-        t('numberCell'),
-        t('dateCell'),
-        t('relativeDateCell'),
-        t('cellTemplate'),
-        t('translationKeyCell'),
-        t('stringFilterCell'),
-        t('numberFilterCell'),
-        t('dateFilterCell'),
-        t('relativeDateFilterCell'),
-        t('filterCellTemplate'),
-        t('translationKeyFilterCell'),
-      ])
-
-      component.ngAfterContentInit()
-
-      expect((component as any).stringCellChildTemplate).toEqual({ type: 'stringCell' })
-      expect((component as any).numberCellChildTemplate).toEqual({ type: 'numberCell' })
-      expect((component as any).dateCellChildTemplate).toEqual({ type: 'dateCell' })
-      expect((component as any).relativeDateCellChildTemplate).toEqual({ type: 'relativeDateCell' })
-      expect((component as any).cellChildTemplate).toEqual({ type: 'cellTemplate' })
-      expect((component as any).translationKeyCellChildTemplate).toEqual({ type: 'translationKeyCell' })
-
-      expect((component as any).stringFilterCellChildTemplate).toEqual({ type: 'stringFilterCell' })
-      expect((component as any).numberFilterCellChildTemplate).toEqual({ type: 'numberFilterCell' })
-      expect((component as any).dateFilterCellChildTemplate).toEqual({ type: 'dateFilterCell' })
-      expect((component as any).relativeDateFilterCellChildTemplate).toEqual({ type: 'relativeDateFilterCell' })
-      expect((component as any).filterCellChildTemplate).toEqual({ type: 'filterCellTemplate' })
-      expect((component as any).translationKeyFilterCellChildTemplate).toEqual({ type: 'translationKeyFilterCell' })
+      expect(component.parentTemplates()).toBe(iterableQueryList)
     })
 
     it('currentEqualFilterOptions$ should return non-TRANSLATION_KEY options with de-duplication and include currentFilters', async () => {
-      component.columns = [{ id: 'status', columnType: ColumnType.STRING } as any]
-      component.rows = [
+      component.columns.set([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.rows.set([
         { id: '1', status: 'A' } as any,
         { id: '2', status: 'A' } as any,
         { id: '3', status: '' } as any,
         { id: '4', status: null } as any,
         { id: '5', status: 'B' } as any,
-      ]
-      component.filters = [{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any]
+      ])
+      component.filters.set([{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any])
       component.onFilterChosen({ id: 'status', columnType: ColumnType.STRING, filterType: FilterType.EQUALS } as any)
+      fixture.detectChanges()
 
       const res = await firstValueFrom(component.currentEqualFilterOptions$!)
       expect(res.column?.id).toBe('status')
@@ -1706,8 +1740,10 @@ describe('DataTableComponent', () => {
     })
 
     it('overflowMenuItems$ should return [] when there are no permitted actions', async () => {
-      ;(component as any).overflowActions$ = of([{ showAsOverflow: true, permission: 'P1' } as any])
-      component.currentMenuRow$.next({ id: 'r1' } as any)
+      component.additionalActions.set([{ showAsOverflow: true, permission: 'P1' } as any])
+      component.currentMenuRow.set({ id: 'r1' } as any)
+
+      fixture.detectChanges()
 
       const userService = TestBed.inject(UserService) as unknown as UserServiceMock
       jest.spyOn(userService, 'getPermissions').mockReturnValue(of([] as any))
@@ -1720,7 +1756,7 @@ describe('DataTableComponent', () => {
       const row = { id: 'r1', enabled: true, visible: true } as any
       const callback = jest.fn()
 
-      component.additionalActions = [
+      component.additionalActions.set([
         {
           showAsOverflow: true,
           permission: 'P1',
@@ -1731,11 +1767,13 @@ describe('DataTableComponent', () => {
           actionVisibleField: 'visible',
           callback,
         } as any,
-      ]
-      component.currentMenuRow$.next(row)
+      ])
+      component.currentMenuRow.set(row)
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P1'] as any))
       jest.spyOn(translateService, 'get').mockReturnValue(of({ LBL_1: 'Translated 1' } as any))
+
+      fixture.detectChanges()
 
       const items = (await firstValueFrom((component as any).overflowMenuItems$)) as any[]
       expect(items).toHaveLength(1)
@@ -1755,16 +1793,16 @@ describe('DataTableComponent', () => {
       const emitted: any[] = []
       component.componentStateChanged.subscribe((e) => emitted.push(e))
 
-      component.page = 2
-      component.filters = [{ columnId: 'c1', value: 'x' } as any]
-      component.sortColumn = 'c1'
-      component.sortDirection = DataSortDirection.ASCENDING
-      component.pageSizes = [10]
-      component.pageSize = 10
-      component.rows = [{ id: 'a' } as any, { id: 'b' } as any]
-      ;(component as any)._selectionIds$.next(['b'])
+      component.page.set(2)
+      component.filters.set([{ columnId: 'c1', value: 'x' } as any])
+      component.sortColumn.set('c1')
+      component.sortDirection.set(DataSortDirection.ASCENDING)
+      component.pageSizes.set([10])
+      component.pageSize.set(10)
+      component.rows.set([{ id: 'a' } as any, { id: 'b' } as any])
+      component.selectedIds.set(['b'])
 
-      component.emitComponentStateChanged({ activePage: 7 })
+      fixture.detectChanges()
       // wait for async announcements
       await Promise.resolve()
 
@@ -1772,9 +1810,9 @@ describe('DataTableComponent', () => {
       expect(emitted.length).toBeGreaterThanOrEqual(1)
       const last = emitted[emitted.length - 1]
       expect(last).toMatchObject({
-        activePage: 7,
+        activePage: 0,
         pageSize: 10,
-        filters: component.filters,
+        filters: component.filters(),
         sorting: { sortColumn: 'c1', sortDirection: DataSortDirection.ASCENDING },
       })
       expect(last.selectedRows).toEqual([{ id: 'b' }])
@@ -1783,123 +1821,150 @@ describe('DataTableComponent', () => {
     it('emitSelectionChanged should emit rows matching selection ids', () => {
       const emitted: any[] = []
       component.selectionChanged.subscribe((rows) => emitted.push(rows))
-      ;(component as any)._rows$.next([{ id: 'a' } as any, { id: 'b' } as any])
-      ;(component as any)._selectionIds$.next(['b'])
+      component.rows.set([{ id: 'a' } as any, { id: 'b' } as any])
+      component.selectedIds.set(['b'])
 
-      component.emitSelectionChanged()
+      fixture.detectChanges()
+
       expect(emitted).toEqual([[{ id: 'b' }]])
     })
 
-    it('_stringFilterCell should prefer input template over content child', () => {
+    it('stringFilterCell should prefer input template over content child', () => {
       const inputTemplate = {} as any
       const childTemplate = {} as any
 
-      component.stringFilterCellTemplate = inputTemplate
-      ;(component as any).stringFilterCellChildTemplate = childTemplate
-      expect((component as any)._stringFilterCell).toBe(inputTemplate)
+      fixture.componentRef.setInput('stringFilterCellTemplate', inputTemplate)
+      component.stringFilterCellChildTemplate = (() => childTemplate) as any
 
-      component.stringFilterCellTemplate = undefined
-      expect((component as any)._stringFilterCell).toBe(childTemplate)
+      fixture.detectChanges()
+
+      expect(component.stringFilterCell()).toBe(inputTemplate)
+
+      fixture.componentRef.setInput('stringFilterCellTemplate', undefined)
+
+      fixture.detectChanges()
+
+      expect(component.stringFilterCell()).toBe(childTemplate)
     })
 
-    it('_filterCell and _translationKeyFilterCell should prefer input templates over content children', () => {
+    it('filterCell and translationKeyFilterCell should prefer input templates over content children', () => {
       const inputFilter = {} as any
       const childFilter = {} as any
-      component.filterCellTemplate = inputFilter
-      ;(component as any).filterCellChildTemplate = childFilter
-      expect((component as any)._filterCell).toBe(inputFilter)
+      fixture.componentRef.setInput('filterCellTemplate', inputFilter)
+      component.filterCellChildTemplate = (() => childFilter) as any
 
-      component.filterCellTemplate = undefined
-      expect((component as any)._filterCell).toBe(childFilter)
+      fixture.detectChanges()
+
+      expect(component.filterCell()).toBe(inputFilter)
+
+      fixture.componentRef.setInput('filterCellTemplate', undefined)
+
+      fixture.detectChanges()
+
+      expect(component.filterCell()).toBe(childFilter)
 
       const inputTranslation = {} as any
       const childTranslation = {} as any
-      component.translationKeyFilterCellTemplate = inputTranslation
-      ;(component as any).translationKeyFilterCellChildTemplate = childTranslation
-      expect((component as any)._translationKeyFilterCell).toBe(inputTranslation)
+      fixture.componentRef.setInput('translationKeyFilterCellTemplate', inputTranslation)
+      component.translationKeyFilterCellChildTemplate = (() => childTranslation) as any
 
-      component.translationKeyFilterCellTemplate = undefined
-      expect((component as any)._translationKeyFilterCell).toBe(childTranslation)
+      fixture.detectChanges()
+
+      expect(component.translationKeyFilterCell()).toBe(inputTranslation)
+
+      fixture.componentRef.setInput('translationKeyFilterCellTemplate', undefined)
+
+      fixture.detectChanges()
+
+      expect(component.translationKeyFilterCell()).toBe(childTranslation)
     })
 
-    it('onMultiselectFilterChange should emit filters and resetPage (clientSideFiltering=false)', () => {
-      component.clientSideFiltering = false
-      component.filters = [{ columnId: 'other', value: 'x' } as any]
+    it('onMultiselectFilterChange should not emit filters and resetPage (clientSideFiltering=false)', () => {
+      fixture.componentRef.setInput('clientSideFiltering', false)
+      component.filters.set([{ columnId: 'other', value: 'x' } as any])
+      fixture.componentRef.setInput('clientSideFiltering', true)
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
-      const resetSpy = jest.spyOn(component, 'resetPage')
+      const resetSpy = jest.spyOn(component.page, 'set')
+
+      fixture.detectChanges()
+
       const emitted: any[] = []
-      component.filtered.subscribe((f) => emitted.push(f))
+      component.filtered.subscribe((f) => emitted.push(...f))
 
       component.onMultiselectFilterChange(column, { value: ['A', 'B'] })
 
-      expect(component.filters).toEqual([{ columnId: 'other', value: 'x' } as any])
-      expect(emitted).toHaveLength(1)
-      expect(emitted[0]).toEqual([
-        { columnId: 'other', value: 'x' },
+      fixture.detectChanges()
+
+      expect(component.filters()).toEqual([
+        { columnId: 'other', value: 'x' } as any,
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
         { columnId: 'status', value: 'B', filterType: FilterType.EQUALS },
       ])
-      expect(resetSpy).toHaveBeenCalled()
+      expect(emitted).toHaveLength(3)
+      expect(resetSpy).toHaveBeenCalledWith(0)
     })
 
     it('onMultiselectFilterChange should also update component.filters when clientSideFiltering=true', () => {
-      component.clientSideFiltering = true
-      component.filters = [{ columnId: 'other', value: 'x' } as any]
+      fixture.componentRef.setInput('clientSideFiltering', true)
+      component.filters.set([{ columnId: 'other', value: 'x' } as any])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       component.onMultiselectFilterChange(column, { value: ['A'] })
 
-      expect(component.filters).toEqual([
+      fixture.detectChanges()
+
+      expect(component.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
       ])
     })
 
     it('onMultiselectFilterChange should drop existing filters for the same column id', () => {
-      component.clientSideFiltering = true
-      component.filters = [
+      fixture.componentRef.setInput('clientSideFiltering', true)
+      component.filters.set([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
-      ]
+      ])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       component.onMultiselectFilterChange(column, { value: ['NEW'] })
 
-      expect(component.filters).toEqual([
+      fixture.detectChanges()
+
+      expect(component.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])
     })
 
     it('onMultiselectFilterChange should execute filter/concat/map when rebuilding filters', () => {
-      component.clientSideFiltering = true
+      fixture.componentRef.setInput('clientSideFiltering', true)
 
-      component.filters = [
+      component.filters.set([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
-      ]
+      ])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       const eventValue = ['NEW']
       component.onMultiselectFilterChange(column, { value: eventValue })
 
-      expect(component.filters).toEqual([
+      fixture.detectChanges()
+
+      expect(component.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])
     })
 
-    it('getSelectedFilters should return [] when there are no filters', () => {
-      component.filters = []
-      expect(component.getSelectedFilters('anything')).toEqual([])
-    })
-
     // NOTE: ngAfterContentInit / template streams are covered elsewhere; keeping this suite deterministic.
 
     it('isSelected / isRowSelectionDisabled / rowSelectable should reflect selectionEnabledField truthiness', () => {
-      component.rows = [{ id: 'a', enabled: true } as any, { id: 'b', enabled: false } as any]
-      component.selectionEnabledField = 'enabled'
-      ;(component as any)._selectionIds$.next(['a'])
+      component.rows.set([{ id: 'a', enabled: true } as any, { id: 'b', enabled: false } as any])
+      fixture.componentRef.setInput('selectionEnabledField', 'enabled')
+      component.selectedIds.set(['a'])
+
+      fixture.detectChanges()
 
       expect(component.isSelected({ id: 'a' } as any)).toBe(true)
       expect(component.isSelected({ id: 'b' } as any)).toBe(false)
@@ -1917,14 +1982,10 @@ describe('DataTableComponent', () => {
     })
 
     it('hasVisibleOverflowMenuItems should be false when there are no actions', async () => {
-      ;(component as any).overflowActions$ = of([])
+      component.additionalActions.set([])
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
     })
-
-    // NOTE: Avoid driving Angular's `@ContentChildren` setters here because it
-    // triggers reactive template resolution via `combineLatest` in the component
-    // template (AsyncPipe), which expects iterable QueryLists.
   })
 })

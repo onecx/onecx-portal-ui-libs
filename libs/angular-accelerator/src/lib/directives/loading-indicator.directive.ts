@@ -1,51 +1,40 @@
-import {
-  ComponentRef,
-  Directive,
-  ElementRef,
-  Input,
-  OnChanges,
-  Renderer2,
-  SimpleChanges,
-  ViewContainerRef,
-  inject,
-} from '@angular/core'
+import { ComponentRef, Directive, ElementRef, Renderer2, ViewContainerRef, effect, inject, input } from '@angular/core'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
-
 
 @Directive({
   selector: '[ocxLoadingIndicator]',
   standalone: false,
 })
-export class LoadingIndicatorDirective implements OnChanges {
+export class LoadingIndicatorDirective {
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly el = inject(ElementRef)
   private readonly renderer = inject(Renderer2)
 
-  @Input() ocxLoadingIndicator = false
-  @Input() overlayFullPage = false
-  @Input() isLoaderSmall? = false
+  ocxLoadingIndicator = input<boolean>(false)
+  overlayFullPage = input<boolean>(false)
+  isLoaderSmall = input<boolean>(false)
 
   private componentRef: ComponentRef<LoadingIndicatorComponent> | undefined
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['ocxLoadingIndicator'] || changes['overlayFullPage']) {
+  constructor() {
+    effect(() => {
       this.toggleLoadingIndicator()
-    }
+    })
   }
 
   private elementLoader() {
     this.renderer.addClass(this.el.nativeElement, 'element-overlay')
     const loaderElement = document.createElement('div')
     loaderElement.className = 'loader'
-    if (this.isLoaderSmall) {
+    if (this.isLoaderSmall()) {
       loaderElement.className = 'loader loader-small'
     }
     this.renderer.appendChild(this.el.nativeElement, loaderElement)
   }
 
   private toggleLoadingIndicator() {
-    if (this.ocxLoadingIndicator) {
-      if (this.overlayFullPage) {
+    if (this.ocxLoadingIndicator()) {
+      if (this.overlayFullPage()) {
         this.componentRef = this.viewContainerRef.createComponent(LoadingIndicatorComponent)
       } else {
         this.elementLoader()

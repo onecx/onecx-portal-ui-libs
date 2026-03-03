@@ -1,6 +1,5 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookThemeModule } from '../../storybook-theme.module'
@@ -13,11 +12,7 @@ export default {
   component: LifecycleComponent,
   decorators: [
     applicationConfig({
-      providers: [
-        importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
-        importProvidersFrom(StorybookThemeModule),
-      ],
+      providers: [importProvidersFrom(BrowserModule), importProvidersFrom(StorybookThemeModule)],
     }),
     moduleMetadata({
       declarations: [LifecycleComponent],
@@ -26,37 +21,37 @@ export default {
   ],
 } as Meta<LifecycleComponent>
 
-const Template: StoryFn<LifecycleComponent> = (args: LifecycleComponent) => ({
+const Template: StoryFn<LifecycleComponent> = (args) => ({
   props: args,
 })
 
 const mockData: LifecycleStep[] = [
-    {
-        id: "todo",
-        title: "ToDo"
-    },
-    {
-        id: "in_progress",
-        title: "In Progress",
-        details: "This event is currently in progress"
-    },
-    {
-        id: "done",
-        title: "Done"
-    }
+  {
+    id: 'todo',
+    title: 'ToDo',
+  },
+  {
+    id: 'in_progress',
+    title: 'In Progress',
+    details: 'This event is currently in progress',
+  },
+  {
+    id: 'done',
+    title: 'Done',
+  },
 ]
 
 export const WithoutHighlightedStep = {
   render: Template,
   args: {
-    steps: mockData
-  }
+    steps: mockData,
+  },
 }
 
 export const WithHighlightedStep = {
-    render: Template,
-    args: {
-      steps: mockData,
-      activeStepId: 'in_progress'
-    }
-  }
+  render: Template,
+  args: {
+    steps: mockData,
+    activeStepId: 'in_progress',
+  },
+}

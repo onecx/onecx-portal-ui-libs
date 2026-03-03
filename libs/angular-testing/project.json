@@ -3,18 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/angular-testing/src",
   "prefix": "onecx",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build-migrations": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "tsc -p libs/angular-testing/migrations/tsconfig.migrations.json"
-        ]
+        "commands": ["tsc -p libs/angular-testing/migrations/tsconfig.migrations.json"]
       }
     },
     "build": {

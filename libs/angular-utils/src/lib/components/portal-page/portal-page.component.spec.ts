@@ -43,7 +43,7 @@ describe('PortalPageComponent', () => {
     const permissionService = TestBed.inject(PermissionService) as unknown as { hasPermission: jest.Mock }
     permissionService.hasPermission.mockReturnValue(of(false))
 
-    component.permission = 'TEST_PERMISSION'
+    fixture.componentRef.setInput('permission', 'TEST_PERMISSION')
     fixture.detectChanges()
 
     tick(10000)
@@ -57,7 +57,7 @@ describe('PortalPageComponent', () => {
   }))
 
   it('should not show unauthorized message when access is granted (immediate)', () => {
-    component.permission = ''
+    fixture.componentRef.setInput('permission', '')
     fixture.detectChanges()
     const unauthorizedHeader = fixture.nativeElement.querySelector('h3') as HTMLElement | null
     expect(unauthorizedHeader).toBeNull()

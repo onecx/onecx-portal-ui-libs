@@ -1,15 +1,15 @@
 <div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
-  @if (viewingLayouts.length > 1) {
-    <p-selectbutton
-      [options]="viewingLayouts"
-      [(ngModel)]="selectedViewLayout"
-      optionLabel="id"
-      (onChange)="onDataViewLayoutChange($event.value)"
-      >
-      <ng-template #item let-item>
-        <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top"></i>
-        <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
-      </ng-template>
-    </p-selectbutton>
+  @if (viewingLayouts().length > 1) {
+  <p-selectbutton
+    [options]="viewingLayouts()"
+    [ngModel]="selectedViewLayout()"
+    optionLabel="id"
+    (onChange)="onDataViewLayoutChange($event.value)"
+  >
+    <ng-template #item let-item>
+      <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top"></i>
+      <label style="display: none" id="{{ item.id }}">{{ item.labelKey | translate }}</label>
+    </ng-template>
+  </p-selectbutton>
   }
 </div>

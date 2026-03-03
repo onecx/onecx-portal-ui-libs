@@ -54,7 +54,8 @@ describe('OcxContentComponent', () => {
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
 
-      component.title = testComponentTitle
+      fixture.componentRef.setInput('title', testComponentTitle)
+      fixture.detectChanges()
 
       const expectedTitleClasses = ['font-medium', 'text-lg']
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(true)
@@ -63,7 +64,8 @@ describe('OcxContentComponent', () => {
       expect(await ocxContentHarness.getTitleClasses(titleBaseId)).toEqual(expectedTitleClasses)
     })
     it('should apply classes specified via input', async () => {
-      component.styleClass = 'py-4 mt-2'
+      fixture.componentRef.setInput('styleClass', 'py-4 mt-2')
+      fixture.detectChanges()
       const expectedStyleClasses = ['card', 'py-4', 'mt-2']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
     })

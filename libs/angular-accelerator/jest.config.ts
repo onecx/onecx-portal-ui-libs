@@ -35,9 +35,8 @@ export default {
       },
     ],
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|d3-(.*))'],
   moduleNameMapper: {
-    '^d3-(.*)$': `d3-$1/dist/d3-$1`,
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },
   snapshotSerializers: [

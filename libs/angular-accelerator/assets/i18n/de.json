@@ -161,7 +161,10 @@
       "ARIA_LABEL": "Suche starten",
       "DETAIL": "Suche starten"
     },
-    "EXPORT": "Alle Ereignisse exportieren"
+    "EXPORT": "Alle Ereignisse exportieren",
+    "CONTROLS": {
+      "ARIA_LABEL": "Suchsteuerungen"
+    }
   },
   "OCX_PAGE_HEADER": {
     "IMAGE": "Seitentitelbild",

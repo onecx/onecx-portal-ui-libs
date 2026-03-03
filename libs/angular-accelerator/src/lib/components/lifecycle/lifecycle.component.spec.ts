@@ -48,7 +48,7 @@ describe('LifecycleComponent', () => {
   })
 
   it('should render given lifecycle steps', async () => {
-    component.steps = mockSteps
+    fixture.componentRef.setInput('steps', mockSteps)
     const steps = await lifecycle.getSteps()
     const highlightedSteps = await lifecycle.getHighlightedSteps()
     expect(steps.length).toBe(3)
@@ -59,12 +59,12 @@ describe('LifecycleComponent', () => {
   })
 
   it('should highlight a given lifecycle step', async () => {
-    component.steps = mockSteps
-    component.activeStepId = 'test2'
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.componentRef.setInput('activeStepId', 'test2')
     const steps = await lifecycle.getSteps()
     const highlightedSteps = await lifecycle.getHighlightedSteps()
     mockSteps.forEach(async (step, index) => {
-      if (step.id == component.activeStepId) {
+      if (step.id == component.activeStepId()) {
         expect(await steps[index].hasClass('bg-primary')).toEqual(true)
       }
     })

@@ -1,38 +1,47 @@
-import { Meta, StoryFn } from '@storybook/angular'
+import { argsToTemplate, Meta, StoryFn } from '@storybook/angular'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import {
   InteractiveDataViewComponentSBConfig,
+  defaultInteractiveDataViewActionsArgs,
   defaultInteractiveDataViewArgs,
-  InteractiveDataViewTemplate,
-  defaultInteractiveDataViewArgTypes,
 } from './storybook-config'
 import { ColumnType } from '../../model/column-type.model'
+import { action } from 'storybook/actions'
 
 const InteractiveDataViewComponentDefaultSBConfig: Meta<InteractiveDataViewComponent> = {
   ...InteractiveDataViewComponentSBConfig,
   title: 'Components/InteractiveDataViewComponent',
 }
-type InteractiveDataViewInputTypes = Pick<InteractiveDataViewComponent, 'data' | 'columns' | 'emptyResultsMessage'>
 
-const defaultComponentArgs: InteractiveDataViewInputTypes = {
+const defaultComponentArgs = {
   ...defaultInteractiveDataViewArgs,
 }
 
-const defaultComponentArgTypes = {
-  ...defaultInteractiveDataViewArgTypes,
+const defaultComponentActionsArgs = {
+  ...defaultInteractiveDataViewActionsArgs,
+}
+
+const componentStageChangedAction = action('componentStateChanged')
+
+const selectionChangedAction = {
+  observed: () => true,
+  emit: action('selectionChanged'),
 }
 
 export const WithMockData = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-    componentStateChanged: { action: 'componentStateChanged' },
-    selectionChanged: { action: 'selectionChanged' },
-  },
-  render: InteractiveDataViewTemplate,
   args: {
     ...defaultComponentArgs,
     selectedRows: [],
   },
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultComponentActionsArgs,
+      componentStateChanged: componentStageChangedAction,
+      selectionChanged: selectionChangedAction,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)"></ocx-interactive-data-view>`,
+  }),
 }
 
 function generateColumns(count: number) {
@@ -78,19 +87,19 @@ const columnCount = 30
 const rowCount = 500
 
 const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    ...defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+    selectionChanged: selectionChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
-    ${generateColumnTemplates(Math.ceil(columnCount / 3))}
+  <ocx-interactive-data-view ${argsToTemplate(args)} (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)" (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
+  ${generateColumnTemplates(Math.ceil(columnCount / 3))}
   </ocx-interactive-data-view>`,
 })
 
 export const WithHugeMockData = {
-  argTypes: {
-    ...defaultComponentArgTypes,
-    componentStateChanged: { action: 'componentStateChanged' },
-    selectionChanged: { action: 'selectionChanged' },
-  },
   render: HugeMockDataTemplate,
   args: {
     ...defaultComponentArgs,
@@ -104,22 +113,31 @@ export const WithHugeMockData = {
 
 export const WithPageSizes = {
   argTypes: {
-    ...defaultComponentArgTypes,
     componentStateChanged: { action: 'componentStateChanged' },
   },
-  render: InteractiveDataViewTemplate,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultComponentActionsArgs,
+      componentStateChanged: componentStageChangedAction,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)"></ocx-interactive-data-view>`,
+  }),
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
-    showAllOption: false,
   },
 }
 
 export const WithCustomStyleClasses = {
-  argTypes: {
-    componentStateChanged: { action: 'componentStateChanged' },
-  },
-  render: InteractiveDataViewTemplate,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultComponentActionsArgs,
+      componentStateChanged: componentStageChangedAction,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)"></ocx-interactive-data-view>`,
+  }),
   args: {
     ...defaultComponentArgs,
     headerStyleClass: 'py-2',
@@ -130,7 +148,7 @@ export const WithCustomStyleClasses = {
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
     <ng-template #list let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
@@ -155,9 +173,13 @@ export const WithCustomContentTemplates = {
 }
 
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    ...defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -178,9 +200,13 @@ export const WithCustomTableCellTemplates = {
 }
 
 const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    ...defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -207,9 +233,13 @@ export const WithCustomTableFilterCellTemplates = {
 }
 
 const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    ...defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -248,9 +278,13 @@ export const WithCustomTableColumnTemplates = {
 }
 
 const ExampleTemplate: StoryFn<InteractiveDataViewComponent & { content: any }> = (args) => ({
-  props: args,
+  props: {
+    ...args,
+    ...defaultComponentActionsArgs,
+    componentStateChanged: componentStageChangedAction,
+  },
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)">
     ${args.content}
   </ocx-interactive-data-view>`,
 })

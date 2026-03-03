@@ -6,14 +6,12 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-// eslint-disable-next-line @typescript-eslint/no-deprecated
-import { RouterTestingModule } from '@angular/router/testing'
-
 import { AdvancedDirective } from './advanced.directive'
 import { SearchHeaderComponent } from '../components/search-header/search-header.component'
 import { PageHeaderComponent } from '../components/page-header/page-header.component'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { SearchHeaderHarness } from '../../../testing/search-header.harness'
+import { provideRouter } from '@angular/router'
 
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
@@ -71,12 +69,12 @@ describe('AdvancedDirective', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, AdvancedDirective],
-        // eslint-disable-next-line @typescript-eslint/no-deprecated
-        imports: [RouterTestingModule, AngularAcceleratorModule],
+        imports: [AngularAcceleratorModule],
         providers: [
           provideHttpClient(withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideTranslateTestingService({}),
+          provideRouter([]),
         ],
       }).compileComponents()
 
@@ -88,7 +86,7 @@ describe('AdvancedDirective', () => {
     })
 
     it('should mark search header as having advanced fields', () => {
-      expect(component.searchHeader.hasAdvanced).toBe(true)
+      expect(component.searchHeader.hasAdvanced()).toBe(true)
     })
 
     it('should not render advanced template when viewMode is basic', async () => {
@@ -105,7 +103,7 @@ describe('AdvancedDirective', () => {
 
     it('should render advanced template when viewMode is advanced', () => {
       // uses component state for sync test setup
-      component.searchHeader.viewMode = 'advanced'
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
 
       const advancedEl = fixture.debugElement.query(By.css('#advanced-content'))
@@ -113,17 +111,17 @@ describe('AdvancedDirective', () => {
     })
 
     it('should clear advanced template when toggling from advanced to basic', () => {
-      component.searchHeader.viewMode = 'advanced'
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
       expect(fixture.debugElement.query(By.css('#advanced-content'))).not.toBeNull()
 
-      component.searchHeader.viewMode = 'basic'
+      component.searchHeader.viewMode.set('basic')
       fixture.detectChanges()
       expect(fixture.debugElement.query(By.css('#advanced-content'))).toBeNull()
     })
 
     it('should not create a second embedded view when change detection runs again in advanced mode', () => {
-      component.searchHeader.viewMode = 'advanced'
+      component.searchHeader.viewMode.set('advanced')
       fixture.detectChanges()
 
       expect(fixture.debugElement.queryAll(By.css('#advanced-content'))).toHaveLength(1)

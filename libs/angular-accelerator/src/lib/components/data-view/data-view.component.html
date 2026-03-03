@@ -1,276 +1,273 @@
-@if (layout !== 'table') {
+@if (layout() !== 'table') {
 <div>
   <ocx-data-list-grid
     #ocxdatalistgrid
-    [name]="name"
-    [data]="data"
-    [columns]="columns"
-    [filters]="filters"
-    [sortDirection]="sortDirection"
-    [sortField]="sortField"
-    [sortStates]="sortStates"
-    [clientSideFiltering]="clientSideFiltering"
-    [clientSideSorting]="clientSideSorting"
-    [titleLineId]="titleLineId"
-    [subtitleLineIds]="subtitleLineIds"
+    [name]="name()"
+    [data]="data()"
+    [columns]="columns()"
+    [filters]="filters()"
+    [sortDirection]="sortDirection()"
+    [sortField]="sortField()"
+    [sortStates]="sortStates()"
+    [clientSideFiltering]="clientSideFiltering()"
+    [clientSideSorting]="clientSideSorting()"
+    [titleLineId]="titleLineId()"
+    [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="true"
-    [pageSizes]="pageSizes"
-    [pageSize]="pageSize"
-    [paginator]="listGridPaginator"
-    [page]="page"
+    [pageSizes]="pageSizes()"
+    [pageSize]="pageSize()"
+    [paginator]="listGridPaginator()"
+    [page]="page()"
     (pageChanged)="onPageChange($event)"
     (pageSizeChanged)="onPageSizeChange($event)"
     (componentStateChanged)="dataListGridComponentState$.next($event)"
-    [emptyResultsMessage]="emptyResultsMessage"
-    [layout]="layout"
-    [deletePermission]="deletePermission"
-    [editPermission]="editPermission"
-    [viewPermission]="viewPermission"
-    [deleteActionEnabledField]="deleteActionEnabledField"
-    [deleteActionVisibleField]="deleteActionVisibleField"
-    [editActionEnabledField]="editActionEnabledField"
-    [editActionVisibleField]="editActionVisibleField"
-    [viewActionEnabledField]="viewActionEnabledField"
-    [viewActionVisibleField]="viewActionVisibleField"
-    [additionalActions]="additionalActions"
-    [gridItemSubtitleLinesTemplate]="_gridItemSubtitleLines ? gridItemSubtitleLines : undefined"
-    [listItemSubtitleLinesTemplate]="_listItemSubtitleLines ? listItemSubtitleLines : undefined"
-    [listItemTemplate]="_listItem ? listItem : undefined"
-    [listValueTemplate]="_listValue ? listValue : undefined"
-    [translationKeyListValueTemplate]="_translationKeyListValue ? translationKeyListValue : undefined"
-    [numberListValueTemplate]="_numberListValue ? numberListValue : undefined"
-    [relativeDateListValueTemplate]="_relativeDateListValue ? relativeDateListValue : undefined"
-    [stringListValueTemplate]="_stringListValue ? stringListValue : undefined"
-    [dateListValueTemplate]="_dateListValue ? dateListValue : undefined"
-    [gridItemTemplate]="_gridItem ? gridItem  : undefined"
-    [totalRecordsOnServer]="totalRecordsOnServer"
-    [parentTemplates]="templatesForChildren$ | async"
+    [emptyResultsMessage]="emptyResultsMessage()"
+    [layout]="layout()"
+    [deletePermission]="deletePermission()"
+    [editPermission]="editPermission()"
+    [viewPermission]="viewPermission()"
+    [deleteActionEnabledField]="deleteActionEnabledField()"
+    [deleteActionVisibleField]="deleteActionVisibleField()"
+    [editActionEnabledField]="editActionEnabledField()"
+    [editActionVisibleField]="editActionVisibleField()"
+    [viewActionEnabledField]="viewActionEnabledField()"
+    [viewActionVisibleField]="viewActionVisibleField()"
+    [additionalActions]="additionalActions()"
+    [gridItemSubtitleLinesTemplate]="gridItemSubtitleLines"
+    [listItemSubtitleLinesTemplate]="listItemSubtitleLines"
+    [listItemTemplate]="listItem"
+    [gridItemTemplate]="gridItem"
+    [listValueTemplate]="listValue"
+    [translationKeyListValueTemplate]="translationKeyListValue"
+    [numberListValueTemplate]="numberListValue"
+    [relativeDateListValueTemplate]="relativeDateListValue"
+    [stringListValueTemplate]="stringListValue"
+    [dateListValueTemplate]="dateListValue"
+    [totalRecordsOnServer]="totalRecordsOnServer()"
+    [parentTemplates]="templatesForChildren()"
   >
   </ocx-data-list-grid>
-  <ng-template #listItemSubtitleLines let-item>
-    @if (_listItemSubtitleLines) {
-    <ng-container [ngTemplateOutlet]="_listItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
+  <ng-template #listItemSubtitleLinesTemplate let-item>
+    @if (listItemSubtitleLines) {
+    <ng-container [ngTemplateOutlet]="listItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
     </ng-container>
     }</ng-template
   >
-  <ng-template #gridItemSubtitleLines let-item>
-    @if (_gridItemSubtitleLines) {
-    <ng-container [ngTemplateOutlet]="_gridItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
+  <ng-template #gridItemSubtitleLinesTemplate let-item>
+    @if (gridItemSubtitleLines) {
+    <ng-container [ngTemplateOutlet]="gridItemSubtitleLines" [ngTemplateOutletContext]="{$implicit:item}">
     </ng-container>
     }</ng-template
   >
-  <ng-template #gridItem let-item>
-    @if (_gridItem) {
-    <ng-container [ngTemplateOutlet]="_gridItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
+  <ng-template #gridItemTemplate let-item>
+    @if (gridItem) {
+    <ng-container [ngTemplateOutlet]="gridItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
     }</ng-template
   >
-  <ng-template #listItem let-item>
-    @if (_listItem) {
-    <ng-container [ngTemplateOutlet]="_listItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
+  <ng-template #listItemTemplate let-item>
+    @if (listItem) {
+    <ng-container [ngTemplateOutlet]="listItem" [ngTemplateOutletContext]="{$implicit:item}"> </ng-container>
     }</ng-template
   >
-  <ng-template #listValue let-rowObject="rowObject" let-column="column">
-    @if (_listValue) {
-    <ng-container [ngTemplateOutlet]="_listValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+  <ng-template #listValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (listValue) {
+    <ng-container [ngTemplateOutlet]="listValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
     </ng-container>
     }</ng-template
   >
-  <ng-template #translationKeyListValue let-rowObject="rowObject" let-column="column">
-    @if (_translationKeyListValue) {
+  <ng-template #translationKeyListValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (translationKeyListValue) {
     <ng-container
-      [ngTemplateOutlet]="_translationKeyListValue"
+      [ngTemplateOutlet]="translationKeyListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #numberListValue let-rowObject="rowObject" let-column="column">
-    @if (_numberListValue) {
+  <ng-template #numberListValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (numberListValue) {
     <ng-container
-      [ngTemplateOutlet]="_numberListValue"
+      [ngTemplateOutlet]="numberListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #relativeDateListValue let-rowObject="rowObject" let-column="column">
-    @if (_relativeDateListValue) {
+  <ng-template #relativeDateListValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (relativeDateListValue) {
     <ng-container
-      [ngTemplateOutlet]="_relativeDateListValue"
+      [ngTemplateOutlet]="relativeDateListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #stringListValue let-rowObject="rowObject" let-column="column">
-    @if (_stringListValue) {
+  <ng-template #stringListValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (stringListValue) {
     <ng-container
-      [ngTemplateOutlet]="_stringListValue"
+      [ngTemplateOutlet]="stringListValue"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #dateListValue let-rowObject="rowObject" let-column="column">
-    @if (_dateListValue) {
-    <ng-container [ngTemplateOutlet]="_dateListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+  <ng-template #dateListValueTemplate let-rowObject="rowObject" let-column="column">
+    @if (dateListValue) {
+    <ng-container [ngTemplateOutlet]="dateListValue" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
     </ng-container>
     }</ng-template
   >
 </div>
-} @if (layout === 'table') {
+} @if (layout() === 'table') {
 <div>
   <ocx-data-table
     #ocxdatatable
-    [rows]="data"
-    [columns]="columns"
-    [filters]="filters"
-    [sortDirection]="sortDirection"
-    [sortColumn]="sortField"
-    [sortStates]="sortStates"
-    [clientSideFiltering]="clientSideFiltering"
-    [clientSideSorting]="clientSideSorting"
-    [pageSizes]="pageSizes"
-    [pageSize]="pageSize"
-    [paginator]="tablePaginator"
-    [page]="page"
+    [rows]="data()"
+    [columns]="columns()"
+    [filters]="filters()"
+    [sortDirection]="sortDirection()"
+    [sortColumn]="sortField()"
+    [sortStates]="sortStates()"
+    [clientSideFiltering]="clientSideFiltering()"
+    [clientSideSorting]="clientSideSorting()"
+    [pageSizes]="pageSizes()"
+    [pageSize]="pageSize()"
+    [paginator]="tablePaginator()"
+    [page]="page()"
     (pageChanged)="onPageChange($event)"
     (pageSizeChanged)="onPageSizeChange($event)"
     (componentStateChanged)="dataTableComponentState$.next($event)"
-    [selectedRows]="selectedRows"
-    [frozenActionColumn]="frozenActionColumn"
-    [actionColumnPosition]="actionColumnPosition"
-    [emptyResultsMessage]="emptyResultsMessage"
-    [name]="name"
-    [deletePermission]="deletePermission"
-    [editPermission]="editPermission"
-    [viewPermission]="viewPermission"
-    [deleteActionEnabledField]="deleteActionEnabledField"
-    [deleteActionVisibleField]="deleteActionVisibleField"
-    [editActionEnabledField]="editActionEnabledField"
-    [editActionVisibleField]="editActionVisibleField"
-    [viewActionEnabledField]="viewActionEnabledField"
-    [viewActionVisibleField]="viewActionVisibleField"
-    [additionalActions]="additionalActions"
-    [stringCellTemplate]="_stringTableCell ? stringCell : undefined"
-    [numberCellTemplate]="_numberTableCell ? numberCell : undefined"
-    [dateCellTemplate]="_dateTableCell ? dateCell : undefined"
-    [relativeDateCellTemplate]="_relativeDateTableCell ? relativeDateCell : undefined"
-    [cellTemplate]="_tableCell ? cell : undefined"
-    [translationKeyCellTemplate]="_translationKeyTableCell ? translationKeyCell : undefined"
-    [filterCellTemplate]="_tableFilterCell ? filterCell : undefined"
-    [dateFilterCellTemplate]="_dateTableFilterCell ? dateFilterCell : undefined"
-    [numberFilterCellTemplate]="_numberTableFilterCell ? numberFilterCell : undefined"
-    [stringFilterCellTemplate]="_stringTableFilterCell ? stringFilterCell : undefined"
-    [relativeDateFilterCellTemplate]="_relativeDateTableFilterCell ? relativeDateFilterCell : undefined"
-    [translationKeyFilterCellTemplate]="_translationKeyTableFilterCell ? translationKeyFilterCell : undefined"
+    [selectedRows]="selectedRows()"
+    [frozenActionColumn]="frozenActionColumn()"
+    [actionColumnPosition]="actionColumnPosition()"
+    [emptyResultsMessage]="emptyResultsMessage()"
+    [name]="name()"
+    [deletePermission]="deletePermission()"
+    [editPermission]="editPermission()"
+    [viewPermission]="viewPermission()"
+    [deleteActionEnabledField]="deleteActionEnabledField()"
+    [deleteActionVisibleField]="deleteActionVisibleField()"
+    [editActionEnabledField]="editActionEnabledField()"
+    [editActionVisibleField]="editActionVisibleField()"
+    [viewActionEnabledField]="viewActionEnabledField()"
+    [viewActionVisibleField]="viewActionVisibleField()"
+    [additionalActions]="additionalActions()"
+    [stringCellTemplate]="stringTableCell"
+    [numberCellTemplate]="numberTableCell"
+    [dateCellTemplate]="dateTableCell"
+    [relativeDateCellTemplate]="relativeDateTableCell"
+    [cellTemplate]="tableCell"
+    [translationKeyCellTemplate]="translationKeyTableCell"
+    [filterCellTemplate]="tableFilterCell"
+    [dateFilterCellTemplate]="dateTableFilterCell"
+    [numberFilterCellTemplate]="numberTableFilterCell"
+    [stringFilterCellTemplate]="stringTableFilterCell"
+    [relativeDateFilterCellTemplate]="relativeDateTableFilterCell"
+    [translationKeyFilterCellTemplate]="translationKeyTableFilterCell"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
-    [totalRecordsOnServer]="totalRecordsOnServer"
-    [currentPageShowingKey]="currentPageShowingKey"
-    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey"
-    [parentTemplates]="templatesForChildren$ | async"
-    [allowSelectAll]="tableAllowSelectAll"
-    [selectionEnabledField]="tableSelectionEnabledField"
+    [totalRecordsOnServer]="totalRecordsOnServer()"
+    [currentPageShowingKey]="currentPageShowingKey()"
+    [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey()"
+    [parentTemplates]="templatesForChildren()"
+    [allowSelectAll]="tableAllowSelectAll()"
+    [selectionEnabledField]="tableSelectionEnabledField()"
   >
   </ocx-data-table>
-  <ng-template #stringCell let-rowObject="rowObject" let-column="column">
-    @if (_stringTableCell) {
+  <ng-template #stringCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (stringTableCell) {
     <ng-container
-      [ngTemplateOutlet]="_stringTableCell"
+      [ngTemplateOutlet]="stringTableCell"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #numberCell let-rowObject="rowObject" let-column="column">
-    @if (_numberTableCell) {
+  <ng-template #numberCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (numberTableCell) {
     <ng-container
-      [ngTemplateOutlet]="_numberTableCell"
+      [ngTemplateOutlet]="numberTableCell"
       [ngTemplateOutletContext]="{rowObject: rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #dateCell let-rowObject="rowObject" let-column="column">
-    @if (_dateTableCell) {
-    <ng-container [ngTemplateOutlet]="_dateTableCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
+  <ng-template #dateCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (dateTableCell) {
+    <ng-container [ngTemplateOutlet]="dateTableCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
     </ng-container>
     }</ng-template
   >
-  <ng-template #relativeDateCell let-rowObject="rowObject" let-column="column">
-    @if (_relativeDateTableCell) {
+  <ng-template #relativeDateCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (relativeDateTableCell) {
     <ng-container
-      [ngTemplateOutlet]="_relativeDateTableCell"
+      [ngTemplateOutlet]="relativeDateTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #cell let-rowObject="rowObject" let-column="column">
-    @if (_tableCell) {
-    <ng-container [ngTemplateOutlet]="_tableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
+  <ng-template #cellTemplate let-rowObject="rowObject" let-column="column">
+    @if (tableCell) {
+    <ng-container [ngTemplateOutlet]="tableCell" [ngTemplateOutletContext]="{rowObject: rowObject, column:column}">
     </ng-container>
     }</ng-template
   >
-  <ng-template #translationKeyCell let-rowObject="rowObject" let-column="column">
-    @if (_translationKeyTableCell) {
+  <ng-template #translationKeyCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (translationKeyTableCell) {
     <ng-container
-      [ngTemplateOutlet]="_translationKeyTableCell"
+      [ngTemplateOutlet]="translationKeyTableCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #stringFilterCell let-rowObject="rowObject" let-column="column">
-    @if (_stringTableFilterCell) {
+  <ng-template #stringFilterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (stringTableFilterCell) {
     <ng-container
-      [ngTemplateOutlet]="_stringTableFilterCell"
+      [ngTemplateOutlet]="stringTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }</ng-template
   >
-  <ng-template #filterCell let-rowObject="rowObject" let-column="column">
-    @if (_tableFilterCell) {
+  <ng-template #filterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (tableFilterCell) {
+    <ng-container [ngTemplateOutlet]="tableFilterCell" [ngTemplateOutletContext]="{rowObject:rowObject, column:column}">
+    </ng-container>
+    }
+  </ng-template>
+  <ng-template #dateFilterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (dateTableFilterCell) {
     <ng-container
-      [ngTemplateOutlet]="_tableFilterCell"
+      [ngTemplateOutlet]="dateTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }
   </ng-template>
-  <ng-template #dateFilterCell let-rowObject="rowObject" let-column="column">
-    @if (_dateTableFilterCell) {
+  <ng-template #numberFilterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (numberTableFilterCell) {
     <ng-container
-      [ngTemplateOutlet]="_dateTableFilterCell"
+      [ngTemplateOutlet]="numberTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }
   </ng-template>
-  <ng-template #numberFilterCell let-rowObject="rowObject" let-column="column">
-    @if (_numberTableFilterCell) {
+  <ng-template #relativeDateFilterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (relativeDateTableFilterCell) {
     <ng-container
-      [ngTemplateOutlet]="_numberTableFilterCell"
+      [ngTemplateOutlet]="relativeDateTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>
     }
   </ng-template>
-  <ng-template #relativeDateFilterCell let-rowObject="rowObject" let-column="column">
-    @if (_relativeDateTableFilterCell) {
+  <ng-template #translationKeyFilterCellTemplate let-rowObject="rowObject" let-column="column">
+    @if (translationKeyTableFilterCell) {
     <ng-container
-      [ngTemplateOutlet]="_relativeDateTableFilterCell"
-      [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
-    >
-    </ng-container>
-    }
-  </ng-template>
-  <ng-template #translationKeyFilterCell let-rowObject="rowObject" let-column="column">
-    @if (_translationKeyTableFilterCell) {
-    <ng-container
-      [ngTemplateOutlet]="_translationKeyTableFilterCell"
+      [ngTemplateOutlet]="translationKeyTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
     >
     </ng-container>

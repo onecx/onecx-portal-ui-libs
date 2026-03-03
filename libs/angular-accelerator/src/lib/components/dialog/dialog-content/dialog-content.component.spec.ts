@@ -1,8 +1,8 @@
-import { Component, EventEmitter } from '@angular/core'
+import { Component } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
 import { DialogContentHarness, provideTranslateTestingService } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
@@ -82,23 +82,23 @@ class TestWithButtonDisableComponent
   primaryState = false
   secondaryState = false
   customState = false
-  customButtonEnabled: EventEmitter<{ id: string; enabled: boolean }> = new EventEmitter()
-  secondaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
-  primaryButtonEnabled: EventEmitter<boolean> = new EventEmitter()
+  customButtonEnabled: Subject<{ id: string; enabled: boolean }> = new Subject()
+  secondaryButtonEnabled: Subject<boolean> = new Subject()
+  primaryButtonEnabled: Subject<boolean> = new Subject()
 
   togglePrimaryButtonEnable() {
     this.primaryState = !this.primaryState
-    this.primaryButtonEnabled.emit(this.primaryState)
+    this.primaryButtonEnabled.next(this.primaryState)
   }
 
   toggleSecondaryButtonEnable() {
     this.secondaryState = !this.secondaryState
-    this.secondaryButtonEnabled.emit(this.secondaryState)
+    this.secondaryButtonEnabled.next(this.secondaryState)
   }
 
   toggleCustomButtonEnable() {
     this.customState = !this.customState
-    this.customButtonEnabled.emit({
+    this.customButtonEnabled.next({
       id: 'id',
       enabled: this.customState,
     })
@@ -134,7 +134,7 @@ describe('DialogContentComponent', () => {
   })
 
   it('should close dialog with result of button click', () => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       portalDialogServiceData: {
@@ -153,12 +153,12 @@ describe('DialogContentComponent', () => {
       result: undefined,
       id: undefined,
     }
-    buttonClickedEmitter.emit(clickedState)
+    buttonClickedEmitter.next(clickedState)
 
     expect(dynamicDialogRefSpy).toHaveBeenCalledWith(clickedState)
   })
   it('should close dialog with overwritten state result with component result if DialogResult is implemented', async () => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithDialogResultComponent,
@@ -174,7 +174,7 @@ describe('DialogContentComponent', () => {
     component = fixture.componentInstance
 
     component.componentRef.instance.dialogResult = 'componentResult'
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -187,7 +187,7 @@ describe('DialogContentComponent', () => {
     })
   })
   it('should close dialog with state result if DialogButtonClicked resulted in undefined', async () => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithButtonClickedComponent,
@@ -203,7 +203,7 @@ describe('DialogContentComponent', () => {
     component = fixture.componentInstance
 
     component.componentRef.instance.returnUndefined = true
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -216,7 +216,7 @@ describe('DialogContentComponent', () => {
     })
   })
   it('should close dialog with overwritten state result if DialogButtonClicked resulted in undefined', async () => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithButtonClickedComponent,
@@ -233,7 +233,7 @@ describe('DialogContentComponent', () => {
 
     component.componentRef.instance.returnUndefined = true
 
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -246,7 +246,7 @@ describe('DialogContentComponent', () => {
     })
   })
   it('should close dialog with state result if DialogButtonClicked resulted in true', fakeAsync(() => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithButtonClickedComponent,
@@ -263,7 +263,7 @@ describe('DialogContentComponent', () => {
 
     component.componentRef.instance.expectedButton = 'primary'
 
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -278,7 +278,7 @@ describe('DialogContentComponent', () => {
     })
   }))
   it('should close dialog with overwritten state result if DialogButtonClicked resulted in true', fakeAsync(() => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithDialogResultAndButtonClickedComponent,
@@ -297,7 +297,7 @@ describe('DialogContentComponent', () => {
     component.componentRef.instance.expectedResult = 'my-result'
     component.componentRef.instance.dialogResult = 'my-result'
 
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -312,7 +312,7 @@ describe('DialogContentComponent', () => {
     })
   }))
   it('should not close dialog if DialogButtonClicked resulted in false', async () => {
-    const buttonClickedEmitter = new EventEmitter<DialogState<unknown>>()
+    const buttonClickedEmitter = new Subject<DialogState<unknown>>()
     const dialogConfig = TestBed.inject(DynamicDialogConfig)
     dialogConfig.data = {
       component: TestWithDialogResultAndButtonClickedComponent,
@@ -331,7 +331,7 @@ describe('DialogContentComponent', () => {
     component.componentRef.instance.expectedResult = 'my-result'
     component.componentRef.instance.dialogResult = 'my-other-result'
 
-    buttonClickedEmitter.emit({
+    buttonClickedEmitter.next({
       button: 'primary',
       result: 'buttonClickResult',
       id: undefined,
@@ -342,13 +342,13 @@ describe('DialogContentComponent', () => {
 
   describe('buttons enablement', () => {
     it('should emit when primary button enablement changes', () => {
-      const primaryButtonEnabledEmitter = new EventEmitter<boolean>()
+      const primaryButtonEnabledEmitter = new Subject<boolean>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
         component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           primaryButtonEnabled$: primaryButtonEnabledEmitter,
-          buttonClicked$: new EventEmitter(),
+          buttonClicked$: new Subject(),
         },
       }
 
@@ -356,19 +356,19 @@ describe('DialogContentComponent', () => {
       fixture.detectChanges()
       component = fixture.componentInstance
 
-      const emitterSpy = jest.spyOn(primaryButtonEnabledEmitter, 'emit')
+      const emitterSpy = jest.spyOn(primaryButtonEnabledEmitter, 'next')
       component.componentRef.instance.togglePrimaryButtonEnable()
 
       expect(emitterSpy).toHaveBeenCalledWith(true)
     })
     it('should emit when secondary button enablement changes', () => {
-      const secondaryButtonEnabledEmitter = new EventEmitter<boolean>()
+      const secondaryButtonEnabledEmitter = new Subject<boolean>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
         component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           secondaryButtonEnabled$: secondaryButtonEnabledEmitter,
-          buttonClicked$: new EventEmitter(),
+          buttonClicked$: new Subject(),
         },
       }
 
@@ -376,19 +376,19 @@ describe('DialogContentComponent', () => {
       fixture.detectChanges()
       component = fixture.componentInstance
 
-      const emitterSpy = jest.spyOn(secondaryButtonEnabledEmitter, 'emit')
+      const emitterSpy = jest.spyOn(secondaryButtonEnabledEmitter, 'next')
       component.componentRef.instance.toggleSecondaryButtonEnable()
 
       expect(emitterSpy).toHaveBeenCalledWith(true)
     })
     it('should emit when custom button enablement changes', () => {
-      const customButtonEnabledEmitter = new EventEmitter<{ id: string; enabled: boolean }>()
+      const customButtonEnabledEmitter = new Subject<{ id: string; enabled: boolean }>()
       const dialogConfig = TestBed.inject(DynamicDialogConfig)
       dialogConfig.data = {
         component: TestWithButtonDisableComponent,
         portalDialogServiceData: {
           customButtonEnabled$: customButtonEnabledEmitter,
-          buttonClicked$: new EventEmitter(),
+          buttonClicked$: new Subject(),
         },
       }
 
@@ -396,7 +396,7 @@ describe('DialogContentComponent', () => {
       fixture.detectChanges()
       component = fixture.componentInstance
 
-      const emitterSpy = jest.spyOn(customButtonEnabledEmitter, 'emit')
+      const emitterSpy = jest.spyOn(customButtonEnabledEmitter, 'next')
       component.componentRef.instance.toggleCustomButtonEnable()
 
       expect(emitterSpy).toHaveBeenCalledWith({
