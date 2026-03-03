@@ -427,14 +427,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
         return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
-            }))
+            return this.mapActions(actions, translations, row)
           })
         )
       })
@@ -955,5 +948,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         })
       })
     )
+  }
+
+  private mapActions(actions: DataAction[], translations: any, row: Row | null) {
+    return actions.map((a) => ({
+      label: translations[a.labelKey || ''],
+      icon: a.icon,
+      styleClass: (a.classes || []).join(' '),
+      disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
+      visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
+      command: () => a.callback(row),
+    }))
   }
 }

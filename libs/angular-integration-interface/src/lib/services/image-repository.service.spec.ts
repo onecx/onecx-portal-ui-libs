@@ -20,7 +20,7 @@ describe('ImageRepositoryService', () => {
     service = TestBed.inject(ImageRepositoryService);
     imageRepositoryInterface = (service as any).imageRepositoryInterface;
     imageRepositoryInterface.imageRepositoryTopic = mockTopic as any as ImageRepositoryTopic;
-    imageRepositoryInterface.imageRepositoryTopic?.publish(MOCK_URLS);
+    service.imageRepositoryTopic?.publish(MOCK_URLS);
   });
 
   it('should call getUrl without fallback', async () => {
