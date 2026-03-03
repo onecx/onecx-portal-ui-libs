@@ -2,11 +2,12 @@ import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, Ng
 import { TooltipOptions } from "primeng/api"
 import { Tooltip, TooltipStyle } from "primeng/tooltip"
 
-// todo - check if We need to convert this into module 
 @Directive({ selector: '[ocxTooltip]', standalone: false, providers: [TooltipStyle] })
 export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnChanges {
   override readonly renderer = inject(Renderer2)
   private generatedId: string | undefined
+  private resolvedId: string | undefined
+  private removeEscapeKeyListener: (() => void) | undefined
 
   @Input()
   get ocxTooltip(): string | TemplateRef<HTMLElement> | undefined {
@@ -23,7 +24,7 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     const zone = inject(NgZone)
     const viewContainer = inject(ViewContainerRef)
     super(zone, viewContainer)
-    this.ensureIdAndAriaDescribedBy()
+    this.tooltipEvent = 'both'
   }
 
   override ngAfterViewInit(): void {
@@ -31,15 +32,26 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     this.ensureIdAndAriaDescribedBy()
   }
 
-  override onChanges(simpleChange: SimpleChanges): void {
-    super.onChanges(simpleChange)
+  override ngOnChanges(simpleChange: SimpleChanges): void {
+    super.ngOnChanges(simpleChange)
     this.ensureIdAndAriaDescribedBy()
+  }
+
+  override create(): void {
+    super.create()
+    this.applyIdToContainer()
+    this.setEscapeKeyListener()
+  }
+
+  override show(): void {
+    super.show()
   }
 
   private ensureIdAndAriaDescribedBy(): void {
     const idFromOptions = this.tooltipOptions?.id
     const idFromInternal = this._tooltipOptions?.id
     const resolvedId = this.normalizeId(idFromOptions) ?? this.normalizeId(idFromInternal) ?? this.getOrCreateGeneratedId()
+    this.resolvedId = resolvedId
     if (this.tooltipOptions) {
       const tooltipOptions = this.tooltipOptions as TooltipOptions & { id?: string }
       if (!this.normalizeId(tooltipOptions.id)) {
@@ -47,7 +59,7 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
       }
     }
 
-    this.setOption({ id: resolvedId })
+    this.setOption({ id: resolvedId, tooltipEvent: 'both' })
     this.renderer.setAttribute(this.el.nativeElement, 'aria-describedby', resolvedId)
   }
 
@@ -57,11 +69,39 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     return trimmed.length ? trimmed : null
   }
 
+  private applyIdToContainer(): void {
+    if (this.isTooltipCreated()) {
+      this.renderer.setAttribute(this.container, 'id', this.resolvedId ?? '')
+    }
+  }
+
+  private isTooltipCreated(): boolean {
+    return this.container !== null && this.container !== undefined
+  }
+
   private getOrCreateGeneratedId(): string {
     if (this.generatedId) return this.generatedId
     const randomPart = Math.random().toString(36).slice(2, 10)
     const timePart = Date.now().toString(36)
     this.generatedId = `ocx-tooltip-${timePart}-${randomPart}`
     return this.generatedId
+  }
+
+  private setEscapeKeyListener(): void {
+    if (this.container && !this.removeEscapeKeyListener) {
+      this.removeEscapeKeyListener = this.renderer.listen(this.container, 'keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Escape' || event.key === 'Esc') {
+          this.hide()
+        }
+      })
+    }
+  }
+
+  override ngOnDestroy(): void {
+    if (this.removeEscapeKeyListener) {
+      this.removeEscapeKeyListener()
+      this.removeEscapeKeyListener = undefined
+    }
+    super.ngOnDestroy()
   }
 }

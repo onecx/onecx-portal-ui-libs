@@ -2,11 +2,9 @@ import {
   AfterViewInit,
   Directive,
   Input,
-  NgZone,
   OnDestroy,
   Renderer2,
   TemplateRef,
-  ViewContainerRef,
   inject,
 } from '@angular/core'
 import { TooltipStyle } from 'primeng/tooltip'
@@ -26,7 +24,7 @@ export class TooltipOnOverflowDirective extends OcxTooltipDirective implements O
     return this.content
   }
   set ocxTooltipOnOverflow(value: string | TemplateRef<HTMLElement> | undefined) {
-    this.content = value
+    //this.content = value
     this.setOption({ tooltipLabel: value })
   }
 
@@ -48,9 +46,7 @@ export class TooltipOnOverflowDirective extends OcxTooltipDirective implements O
     }, 0)
   }
   constructor() {
-    // const zone = inject(NgZone)
     const renderer = inject(Renderer2)
-    // const viewContainer = inject(ViewContainerRef)
 
     super()
     renderer.setStyle(this.el.nativeElement, 'text-overflow', 'ellipsis')
