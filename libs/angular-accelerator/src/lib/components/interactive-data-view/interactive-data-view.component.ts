@@ -111,7 +111,7 @@ export class InteractiveDataViewComponent implements OnInit {
   pageSizes = input<number[]>([10, 25, 50])
   pageSize = model<number | undefined>(undefined)
   totalRecordsOnServer = input<number | undefined>(undefined)
-  layout = model<'grid' | 'list' | 'table'>('table')
+  layout = model<ViewLayout>('table')
   defaultGroupKey = input<string>('')
   customGroupKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP')
   groupSelectionNoGroupSelectedKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
@@ -642,7 +642,7 @@ export class InteractiveDataViewComponent implements OnInit {
     }
   }
 
-  onDataViewLayoutChange(layout: 'grid' | 'list' | 'table') {
+  onDataViewLayoutChange(layout: ViewLayout) {
     this.layout.set(layout)
   }
 
