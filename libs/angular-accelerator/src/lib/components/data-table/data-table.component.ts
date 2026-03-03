@@ -572,9 +572,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   columnNextSortDirection(sortColumn: string) {
     const sortStates = this.sortStates()
-    return sortColumn !== this.sortColumn()
-      ? sortStates[0]
-      : sortStates[(sortStates.indexOf(this.sortDirection()) + 1) % sortStates.length]
+    return sortColumn === this.sortColumn()
+      ? sortStates[(sortStates.indexOf(this.sortDirection()) + 1) % sortStates.length]
+      : sortStates[0]
   }
 
   onDeleteRow(selectedTableRow: Row) {
@@ -703,7 +703,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return isValidDate(d)
   }
 
-  private cellTemplatesData: TemplatesData = {
+  private readonly cellTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableCell', 'IdCell'],
     templateNames: {
@@ -751,7 +751,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     },
   }
 
-  private templatesDataMap: Record<TemplateType, TemplatesData> = {
+  private readonly templatesDataMap: Record<TemplateType, TemplatesData> = {
     [TemplateType.CELL]: this.cellTemplatesData,
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
   }

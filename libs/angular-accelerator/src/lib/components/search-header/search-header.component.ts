@@ -22,6 +22,7 @@ import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
 import { observableOutput } from '../../utils/observable-output.utils'
+import { PermissionInput } from '../../model/permission.model'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -57,7 +58,7 @@ export class SearchHeaderComponent {
 
   actions = input<Action[]>([])
 
-  searchConfigPermission = input<string | string[] | undefined>(undefined)
+  searchConfigPermission = input<PermissionInput>(undefined)
   searchButtonDisabled = input<boolean>(false)
   resetButtonDisabled = input<boolean>(false)
   pageName = input<string | undefined>(getLocation().applicationPath)

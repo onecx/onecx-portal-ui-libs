@@ -366,14 +366,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
           deletePermission: params.deletePermission,
         },
         {
-          viewAction: params.viewActionVisibleField,
-          editAction: params.editActionVisibleField,
-          deleteAction: params.deleteActionVisibleField,
-        },
-        {
-          viewAction: params.viewActionEnabledField,
-          editAction: params.editActionEnabledField,
-          deleteAction: params.deleteActionEnabledField,
+          visible: {
+            viewAction: params.viewActionVisibleField,
+            editAction: params.editActionVisibleField,
+            deleteAction: params.deleteActionVisibleField,
+          },
+          enabled: {
+            viewAction: params.viewActionEnabledField,
+            editAction: params.editActionEnabledField,
+            deleteAction: params.deleteActionEnabledField,
+          },
         }
       )
     )
@@ -640,19 +642,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       deleteMenuItem: string
     },
     actionPermissions: {
-      viewPermission: string | string[] | undefined
-      editPermission: string | string[] | undefined
-      deletePermission: string | string[] | undefined
+      viewPermission: PermissionInput
+      editPermission: PermissionInput
+      deletePermission: PermissionInput
     },
-    visibleField: {
-      viewAction?: string
-      editAction?: string
-      deleteAction?: string
-    },
-    enableField: {
-      viewAction?: string
-      editAction?: string
-      deleteAction?: string
+    actionFields: {
+      visible: {
+        viewAction?: string
+        editAction?: string
+        deleteAction?: string
+      }
+      enabled: {
+        viewAction?: string
+        editAction?: string
+        deleteAction?: string
+      }
     }
   ): MenuItem[] {
     let deleteDisabled = false
@@ -664,13 +668,17 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     let viewVisible = true
 
     if (selectedItem) {
-      viewDisabled = !!enableField.viewAction && !this.fieldIsTruthy(selectedItem, enableField.viewAction)
-      editDisabled = !!enableField.editAction && !this.fieldIsTruthy(selectedItem, enableField.editAction)
-      deleteDisabled = !!enableField.deleteAction && !this.fieldIsTruthy(selectedItem, enableField.deleteAction)
+      viewDisabled =
+        !!actionFields.enabled.viewAction && !this.fieldIsTruthy(selectedItem, actionFields.enabled.viewAction)
+      editDisabled =
+        !!actionFields.enabled.editAction && !this.fieldIsTruthy(selectedItem, actionFields.enabled.editAction)
+      deleteDisabled =
+        !!actionFields.enabled.deleteAction && !this.fieldIsTruthy(selectedItem, actionFields.enabled.deleteAction)
 
-      viewVisible = !visibleField.viewAction || this.fieldIsTruthy(selectedItem, visibleField.viewAction)
-      editVisible = !visibleField.editAction || this.fieldIsTruthy(selectedItem, visibleField.editAction)
-      deleteVisible = !visibleField.deleteAction || this.fieldIsTruthy(selectedItem, visibleField.deleteAction)
+      viewVisible = !actionFields.visible.viewAction || this.fieldIsTruthy(selectedItem, actionFields.visible.viewAction)
+      editVisible = !actionFields.visible.editAction || this.fieldIsTruthy(selectedItem, actionFields.visible.editAction)
+      deleteVisible =
+        !actionFields.visible.deleteAction || this.fieldIsTruthy(selectedItem, actionFields.visible.deleteAction)
     }
 
     const menuItems: MenuItem[] = []
@@ -740,7 +748,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   }
 
   private shouldDisplayAction(
-    permission: string | string[] | undefined,
+    permission: PermissionInput,
     emitter: ObservableOutputEmitterRef<any>,
     userPermissions: string[]
   ): boolean {

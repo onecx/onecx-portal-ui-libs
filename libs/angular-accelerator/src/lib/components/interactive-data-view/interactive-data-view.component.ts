@@ -44,6 +44,9 @@ import { DataViewComponent, DataViewComponentState, RowListGridData } from '../d
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
+import { PermissionInput } from '../../model/permission.model'
+
+export type ViewLayout = 'grid' | 'list' | 'table'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -76,10 +79,10 @@ export class InteractiveDataViewComponent implements OnInit {
   dataViewComponentState$ = new ReplaySubject<DataViewComponentState>(1)
   filterViewComponentState$ = new ReplaySubject<FilterViewComponentState>(1)
 
-  searchConfigPermission = input<string | string[] | undefined>(undefined)
-  deletePermission = input<string | string[] | undefined>(undefined)
-  editPermission = input<string | string[] | undefined>(undefined)
-  viewPermission = input<string | string[] | undefined>(undefined)
+  searchConfigPermission = input<PermissionInput>(undefined)
+  deletePermission = input<PermissionInput>(undefined)
+  editPermission = input<PermissionInput>(undefined)
+  viewPermission = input<PermissionInput>(undefined)
   deleteActionVisibleField = input<string | undefined>(undefined)
   deleteActionEnabledField = input<string | undefined>(undefined)
   viewActionVisibleField = input<string | undefined>(undefined)
@@ -91,7 +94,7 @@ export class InteractiveDataViewComponent implements OnInit {
   name = input<string>('Data')
   titleLineId = input<string | undefined>(undefined)
   subtitleLineIds = input<string[] | undefined>(undefined)
-  supportedViewLayouts = input<('grid' | 'list' | 'table')[]>(['grid', 'list', 'table'])
+  supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
   columns = input<DataTableColumn[]>([])
   emptyResultsMessage = input<string | undefined>(undefined)
   clientSideSorting = input<boolean>(true)
