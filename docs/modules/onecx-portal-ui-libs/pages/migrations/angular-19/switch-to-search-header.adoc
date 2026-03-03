@@ -67,7 +67,7 @@ export class SearchPageComponent {
         pInputText
         type="text"
         class="w-18rem"
-        [pTooltip]="'Search term'"
+        [ocxTooltip]="'Search term'"
         tooltipPosition="top"
         tooltipEvent="hover"
       />

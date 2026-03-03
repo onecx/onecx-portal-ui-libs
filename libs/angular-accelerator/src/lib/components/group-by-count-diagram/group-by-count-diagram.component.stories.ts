@@ -16,6 +16,7 @@ import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 export default {
   title: 'Components/GroupByCountDiagramComponent',
@@ -35,7 +36,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [GroupByCountDiagramComponent, DiagramComponent, DynamicPipe],
+      declarations: [GroupByCountDiagramComponent, DiagramComponent, DynamicPipe, OcxTooltipDirective],
       imports: [
         MenuModule,
         BreadcrumbModule,

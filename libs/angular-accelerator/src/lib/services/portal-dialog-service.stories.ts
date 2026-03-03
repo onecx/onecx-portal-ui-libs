@@ -22,6 +22,7 @@ import {
   PortalDialogService,
 } from './portal-dialog.service'
 import { StorybookThemeModule } from '../storybook-theme.module'
+import { OcxTooltipDirective } from '../directives/ocx-tooltip.directive'
 
 @Component({
   standalone: false,
@@ -106,6 +107,7 @@ export default {
         DialogFooterComponent,
         DialogContentComponent,
         WithDisabledButtonsComponent,
+        OcxTooltipDirective
       ],
       imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
     }),

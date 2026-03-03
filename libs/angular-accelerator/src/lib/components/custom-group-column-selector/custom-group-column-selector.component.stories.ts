@@ -15,6 +15,7 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 type CustomGroupColumnSelectorInputs = Pick<
   CustomGroupColumnSelectorComponent,
@@ -41,7 +42,7 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
       ],
     }),
     moduleMetadata({
-      declarations: [CustomGroupColumnSelectorComponent],
+      declarations: [CustomGroupColumnSelectorComponent, OcxTooltipDirective],
       imports: [
         SelectModule,
         DialogModule,

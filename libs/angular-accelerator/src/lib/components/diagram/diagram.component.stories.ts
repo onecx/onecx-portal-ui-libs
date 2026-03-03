@@ -16,6 +16,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 export default {
   title: 'Components/DiagramComponent',
@@ -35,7 +36,7 @@ export default {
       ],
     }),
     moduleMetadata({
-      declarations: [DiagramComponent, DynamicPipe],
+      declarations: [DiagramComponent, DynamicPipe, OcxTooltipDirective],
       imports: [
         MenuModule,
         BreadcrumbModule,

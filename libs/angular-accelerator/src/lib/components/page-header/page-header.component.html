@@ -47,7 +47,7 @@
       <div class="toolbar flex flex-wrap gap-1 sm:gap-2">
         @for (action of inlineActions; track action) {
         <span
-          [pTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
+          [ocxTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
           tooltipPosition="top"
           tooltipEvent="hover"
         >
@@ -81,7 +81,7 @@
             (click)="menu.toggle($event)"
             name="ocx-page-header-overflow-action-button"
             [attr.aria-label]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
-            [pTooltip]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
+            [ocxTooltip]="'OCX_PAGE_HEADER.MORE_ACTIONS' | translate"
             tooltipEvent="hover"
             tooltipPosition="top"
           ></button>
@@ -106,7 +106,7 @@
       <span
         class="flex font-medium text-600 object-info-grid-label"
         name="object-detail-label"
-        [pTooltip]="item.labelTooltipKey ? ((typeof item.labelTooltipKey === 'string' ? item.labelTooltipKey : item.labelTooltipKey.key) | translate : (typeof item.labelTooltipKey === 'object' ? item.labelTooltipKey.parameters : undefined)) : ''"
+        [ocxTooltip]="item.labelTooltipKey ? ((typeof item.labelTooltipKey === 'string' ? item.labelTooltipKey : item.labelTooltipKey.key) | translate : (typeof item.labelTooltipKey === 'object' ? item.labelTooltipKey.parameters : undefined)) : ''"
         tooltipEvent="hover"
         tooltipPosition="top"
       >
@@ -121,7 +121,7 @@
         >
           <span
             class="flex align-items-center gap-2"
-            [pTooltip]="item.valueTooltipKey ? ((typeof item.valueTooltipKey === 'string' ? item.valueTooltipKey : item.valueTooltipKey.key) | translate : (typeof item.valueTooltipKey === 'object' ? item.valueTooltipKey.parameters : undefined)) : ''"
+            [ocxTooltip]="item.valueTooltipKey ? ((typeof item.valueTooltipKey === 'string' ? item.valueTooltipKey : item.valueTooltipKey.key) | translate : (typeof item.valueTooltipKey === 'object' ? item.valueTooltipKey.parameters : undefined)) : ''"
             tooltipEvent="hover"
             tooltipPosition="top"
           >
@@ -134,7 +134,7 @@
             [icon]="item.actionItemIcon"
             styleClass="p-button-text p-0 w-full"
             [ariaLabel]="item.actionItemAriaLabelKey ? ((typeof item.actionItemAriaLabelKey === 'string' ? item.actionItemAriaLabelKey : item.actionItemAriaLabelKey.key) | translate : (typeof item.actionItemAriaLabelKey === 'object' ? item.actionItemAriaLabelKey.parameters : undefined)) : 'button for ' + item.actionItemIcon"
-            [pTooltip]="item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : ''"
+            [ocxTooltip]="item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : ''"
             tooltipPosition="top"
             tooltipEvent="hover"
             (onClick)="item.actionItemCallback()"

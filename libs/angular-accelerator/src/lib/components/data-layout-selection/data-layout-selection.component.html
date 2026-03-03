@@ -1,14 +1,18 @@
 <div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
   @if (viewingLayouts.length > 1) {
     <p-selectbutton
+      id="data-layout-selection"
       [options]="viewingLayouts"
       [(ngModel)]="selectedViewLayout"
       optionLabel="id"
+      [attr.aria-label]="'OCX_DATA_LAYOUT_SELECTION.ARIA_LABEL' | translate"
       (onChange)="onDataViewLayoutChange($event.value)"
-      >
+      [pt]="{
+        root: {role: 'group'}
+      }">
       <ng-template #item let-item>
-        <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top"></i>
-        <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
+          <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" [attr.aria-label]="item.labelKey | translate"></i>
+          <label style="display: none" id="{{item.id}}">{{item.labelKey | translate}}</label>
       </ng-template>
     </p-selectbutton>
   }

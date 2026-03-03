@@ -16,6 +16,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { UserService } from '@onecx/angular-integration-interface'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -45,7 +46,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
       ],
     }),
     moduleMetadata({
-      declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
+      declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective, OcxTooltipDirective],
       imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule],
     }),
   ],

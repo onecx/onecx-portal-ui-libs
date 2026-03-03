@@ -103,6 +103,7 @@
     "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
+    "ARIA_LABEL": "Select layout type",
     "LAYOUT": {
       "LIST": "List",
       "GRID": "Grid",
