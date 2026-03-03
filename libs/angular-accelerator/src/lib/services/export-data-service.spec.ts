@@ -864,8 +864,6 @@ describe('ExportDataService', () => {
       translateService.use('en')
       ;(<any>exportDataService).locale = 'en'
 
-      const mock = await setupExcelExport()
-
       await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
@@ -891,8 +889,6 @@ describe('ExportDataService', () => {
         },
       ]
 
-      const mock = await setupExcelExport()
-
       await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
@@ -913,8 +909,6 @@ describe('ExportDataService', () => {
           status: 'SOME_STATUS',
         },
       ]
-
-      const mock = await setupExcelExport()
 
       await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
