@@ -9,6 +9,7 @@ import {
     DynamicTranslationsMessageType,
     TranslationsRequested,
 } from '../topics/dynamic-translations/v1/dynamic-translations.model';
+import { LIB_NAME } from '../../version';
 import { createLogger } from '../utils/logger.utils';
 import { ShellCapability } from '../models/shell-capability.model';
 import { hasShellCapability } from '../utils/shell-capability.utils';
@@ -56,8 +57,8 @@ export interface DynamicTranslationsCache {
  * @returns Mutable cache object used by dynamic translation resolution.
  */
 export function getDynamicTranslationsCache(): DynamicTranslationsCache {
-    const global = ensureProperty(globalThis, ['@onecx/integration-interface', 'dynamicTranslationsCache'], {});
-    return global['@onecx/integration-interface'].dynamicTranslationsCache;
+    const global = ensureProperty(globalThis, [LIB_NAME, 'dynamicTranslationsCache'], {});
+    return global[LIB_NAME].dynamicTranslationsCache;
 }
 
 
