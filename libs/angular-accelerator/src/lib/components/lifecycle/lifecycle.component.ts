@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, input } from '@angular/core'
 
 export interface LifecycleStep {
   id: string
@@ -12,6 +12,6 @@ export interface LifecycleStep {
   templateUrl: './lifecycle.component.html',
 })
 export class LifecycleComponent {
-  @Input() steps: LifecycleStep[] = []
-  @Input() activeStepId: string | undefined
+  steps = input<LifecycleStep[]>([])
+  activeStepId = input<string | undefined>(undefined)
 }
