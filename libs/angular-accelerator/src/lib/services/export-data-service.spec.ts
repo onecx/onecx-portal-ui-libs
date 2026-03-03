@@ -35,7 +35,8 @@ describe('ExportDataService', () => {
     STATUS_NAME_2: 'status name 2',
     STATUS_NAME_3: 'status name 3',
     OCX_DATA_EXPORT: {
-      EXCEL_TABLE_NAME: '{{fileName}} Export Table',
+      EXCEL_TABLE_NAME: '{{fileName}}_table',
+      EXCEL_SHEET_NAME: '{{fileName}}_sheet',
     },
     COLUMN_HEADER_NAME: {
       NAME: 'Name',
@@ -58,7 +59,8 @@ describe('ExportDataService', () => {
     STATUS_NAME_2: 'Status Name 2',
     STATUS_NAME_3: 'Status Name 3',
     OCX_DATA_EXPORT: {
-      EXCEL_TABLE_NAME: '{{fileName}} Exporttabelle',
+      EXCEL_TABLE_NAME: '{{fileName}}_table',
+      EXCEL_SHEET_NAME: '{{fileName}}_sheet',
     },
     COLUMN_HEADER_NAME: {
       NAME: 'Name',
@@ -864,6 +866,8 @@ describe('ExportDataService', () => {
       translateService.use('en')
       ;(<any>exportDataService).locale = 'en'
 
+      await setupExcelExport()
+
       await exportDataService.exportToExcel(mockColumns, mockData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
@@ -889,6 +893,8 @@ describe('ExportDataService', () => {
         },
       ]
 
+      await setupExcelExport()
+
       await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
       const workbook = await loadExcelWorkbook()
@@ -909,6 +915,8 @@ describe('ExportDataService', () => {
           status: 'SOME_STATUS',
         },
       ]
+
+      await setupExcelExport()
 
       await exportDataService.exportToExcel(mockColumns, testData, EXCEL_TEST_FILE_NAME)
 
