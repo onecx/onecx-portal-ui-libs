@@ -18,6 +18,8 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { FormsModule } from '@angular/forms'
 
+const FRUIT_TYPE: string[] = []
+
 function generateGroupByCountMockData(fruitCount = 10, itemsPerFruit = 2) {
   const fruits = Array.from({ length: fruitCount }, (_, i) => `Fruit ${i + 1}`)
 
@@ -26,6 +28,8 @@ function generateGroupByCountMockData(fruitCount = 10, itemsPerFruit = 2) {
   const fruitNames = fruits.slice(0, fruitCount)
 
   fruitNames.forEach((fruit, index) => {
+    const fruitType = `chart.fruit${index + 1}`;
+    FRUIT_TYPE.push(fruitType)
     for (let i = 0; i < itemsPerFruit; i++) {
       data.push({
         id: id++,
@@ -257,7 +261,7 @@ export const withAllLabelAndTranslationKeys = {
   }
 }
 
-const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
+const TemplateWithContainer: StoryFn<GroupByCountDiagramComponent> = (args) => ({
   template: `
     <div class="flex justify-content-center">
     <div style="height: 450px; width:350px;"> <!--Container should have fixed height-->
@@ -289,6 +293,6 @@ export const WithChartFillingContainerHeight = {
     },
     fillMissingColors: false,
     showAllLabels: true,
-    allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3', 'chart.fruit4', 'chart.fruit5', 'chart.fruit6', 'chart.fruit7', 'chart.fruit8', 'chart.fruit9', 'chart.fruit10', 'chart.fruit11', 'chart.fruit12', 'chart.fruit13', 'chart.fruit14', 'chart.fruit15', 'chart.fruit16', 'chart.fruit17', 'chart.fruit18', 'chart.fruit19', 'chart.fruit20']
+    allLabelKeys: FRUIT_TYPE
   }
 }

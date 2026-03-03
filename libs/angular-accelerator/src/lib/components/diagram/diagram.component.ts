@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, effect, input, model, output, signal } from '@angular/core'
+import { Component, computed, effect, input, model, output, signal } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'
@@ -20,6 +20,8 @@ export interface DiagramLayouts {
 export interface DiagramComponentState {
   activeDiagramType?: DiagramType
 }
+
+export type ChartType = 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'
 
 const allDiagramTypes: DiagramLayouts[] = [
   {
@@ -51,7 +53,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],
 })
-export class DiagramComponent implements OnInit {
+export class DiagramComponent {
   data = input<DiagramData[] | undefined>(undefined)
   sumKey = input<string>('OCX_DIAGRAM.SUM')
   fullHeight = input<boolean>(false)
@@ -62,18 +64,16 @@ export class DiagramComponent implements OnInit {
    */
   fillMissingColors = input<boolean>(true)
 
-  selectedDiagramType = signal<DiagramLayouts | undefined>(undefined)
-  public chartType = signal<'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'>('pie')
-
-
   diagramType = model<DiagramType>(DiagramType.PIE)
 
   supportedDiagramTypes = input<DiagramType[]>([])
 
+  selectedDiagramType = computed(() => allDiagramTypes.find((v) => v.layout === this.diagramType()))
+  chartType = computed(() => this.diagramTypeToChartType(this.diagramType()))
   dataSelected = output<any>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<DiagramComponentState>()
-  chartOptions = signal<ChartOptions>('' as any)
+  chartOptions = signal<ChartOptions>({})
   chartData = signal<ChartData | undefined>(undefined)
   amountOfData = signal<number | undefined | null>(undefined)
   shownDiagramTypes = signal<DiagramLayouts[]>([])
@@ -92,12 +92,6 @@ export class DiagramComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const value = this.diagramType()
-      this.selectedDiagramType.set(allDiagramTypes.find((v) => v.layout === value))
-      this.chartType.set(this.diagramTypeToChartType(value))
-    })
-
-    effect(() => {
       const value = this.supportedDiagramTypes()
       this.shownDiagramTypes.set(allDiagramTypes.filter((vl) => value.includes(vl.layout)))
     })
@@ -105,10 +99,6 @@ export class DiagramComponent implements OnInit {
     effect(() => {
       this.generateChart(this.colorScale, this.colorRangeInfo)
     })
-  }
-
-  ngOnInit(): void {
-    this.generateChart(this.colorScale, this.colorRangeInfo)
   }
 
   public generateChart(colorScale: any, colorRangeInfo: any) {
@@ -170,9 +160,7 @@ export class DiagramComponent implements OnInit {
     return data.map((item) => `${item.label}:${item.value}`).join(', ')
   }
 
-  private diagramTypeToChartType(
-    value: DiagramType
-  ): 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' {
+  private diagramTypeToChartType(value: DiagramType): ChartType {
     if (value === DiagramType.PIE) return 'pie'
     else if (value === DiagramType.HORIZONTAL_BAR || value === DiagramType.VERTICAL_BAR) return 'bar'
     return 'pie'
@@ -184,7 +172,6 @@ export class DiagramComponent implements OnInit {
 
   onDiagramTypeChanged(event: any) {
     this.diagramType.set(event.value.layout)
-    this.generateChart(this.colorScale, this.colorRangeInfo)
     this.diagramTypeChanged.emit(event.value.layout)
     this.componentStateChanged.emit({
       activeDiagramType: event.value.layout,

@@ -3,7 +3,7 @@
     <div class="flex justify-content-center pb-2">
       <p-selectbutton
         [options]="shownDiagramTypes()"
-        [(ngModel)]="selectedDiagramType"
+        [ngModel]="selectedDiagramType()"
         optionLabel="id"
         (onChange)="onDiagramTypeChanged($event)"
         name="diagram-type-select-button"
@@ -33,7 +33,7 @@
       [attr.data-automation-options]="chartOptions()"
       [options]="chartOptions()"
       (onDataSelect)="dataClicked($event)"
-      [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data()!), valueString: generateDiagramValueString(data()!)}"
+      [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data() ?? []), valueString: generateDiagramValueString(data() ?? [])}"
     ></p-chart>
   </div>
   <div class="w-full flex justify-content-center mt-2 sumKey">

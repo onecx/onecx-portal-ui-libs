@@ -116,9 +116,6 @@ export class GroupByCountDiagramComponent {
         this.columnField.set(column.id)
       }
     })
-    effect(() => {
-      this.colors.set(this.colors())
-    })
   }
 
   dataClicked(event: any) {

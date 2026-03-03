@@ -14,9 +14,9 @@ import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
 
 describe('DiagramComponent', () => {
-  let translateService: TranslateService;
-  let component: DiagramComponent;
-  let fixture: ComponentFixture<DiagramComponent>;
+  let translateService: TranslateService
+  let component: DiagramComponent
+  let fixture: ComponentFixture<DiagramComponent>
 
   const definedSumKey = 'OCX_DIAGRAM.SUM'
 
@@ -229,8 +229,8 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toBe(false)
-    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toBe(true)
+    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toEqual(false)
+    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toEqual(true)
   })
 
   it('should interpolate colors by default', () => {
@@ -305,6 +305,12 @@ describe('DiagramComponent', () => {
     expect(component.useFullHeight()).toBe(true)
   })
 
+  it('should set useFullHeight to false when fullHeight is true and diagramType is not PIE', () => {
+    fixture.componentRef.setInput('fullHeight', true)
+    component.diagramType.set(DiagramType.HORIZONTAL_BAR)
+    expect(component.useFullHeight()).toBe(false)
+  })
+
   it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
     fixture.componentRef.setInput('fullHeight', false)
     component.diagramType.set(DiagramType.HORIZONTAL_BAR)
@@ -316,6 +322,7 @@ describe('DiagramComponent', () => {
     component.diagramType.set(DiagramType.PIE)
     expect(component.useFullHeight()).toBe(false)
   })
+  
   it('should emit data clicked event', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
