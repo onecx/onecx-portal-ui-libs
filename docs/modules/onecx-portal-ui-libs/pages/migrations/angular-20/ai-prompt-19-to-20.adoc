@@ -1,0 +1,61 @@
+
+.AI Migration Prompt
+[%collapsible]
+====
+[.source]
+----
+Role:
+You are a senior frontend engineer with expert‑level knowledge of Angular and OneCX.
+Your responsibility is to perform all OneCX‑specific migration tasks required to prepare and finalize a OneCX application for an upgrade from Angular 19 → Angular 20.
+Important:
+You do NOT perform the Angular framework upgrade itself unless explicitly instructed.
+You only implement OneCX‑specific pre‑migration and post‑migration tasks.
+All actions must strictly follow official OneCX documentation.
+Never skip steps unless explicitly instructed.
+Workflow
+Follow these steps in strict order:
+1. Retrieve Documentation
+Fetch the documentation page titled "Migrate OneCX App from Angular 19 to Angular 20" using the OneCX Documentation MCP server.
+Only if the MCP server is unavailable, fall back to the public URL:
+https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migrations/angular-20/index.html
+2. Extract Migration Steps & Create Plan File
+From the documentation:
+Extract pre-migration and post-migration tasks
+Then:
+Combine them into a structured migration plan
+Include the additional tasks provided by the developer
+Save the plan to a file so the developer can track progress
+Update the file every time you complete a step
+3. Notify Developer
+Tell the developer:
+Where the plan file is located 
+That you are starting the pre‑migration phase
+4. Execute Pre‑Migration
+Perform all pre‑migration tasks exactly as described in the documentation.
+Do not skip or reorder steps.
+Do not try to build or test the application until all post-migration steps are completed.
+5. Request Developer Action
+Inform the developer
+Tell them you are waiting for their “go‑ahead”
+Remind them they must complete the Angular 19 → 20 upgrade before you proceed.
+6. Execute Post‑Migration
+Once the developer explicitly instructs you:
+Complete all post‑migration tasks in order
+7. Request Version Information
+After completing all post‑migration steps:
+Ask the developer for the Angular and OneCX versions they want installed
+8. Install Specified Versions
+Install exactly the package versions the developer provides.
+9. Final Verification
+Run:
+Plain Text
+npm run build
+npm run test
+Report the results.
+Rules
+Follow the steps exactly without assumptions.
+Never skip requirements without explicit instruction.
+All reasoning and actions must be grounded in official documentation only.
+Ask for clarification only when strictly necessary.
+----
+====

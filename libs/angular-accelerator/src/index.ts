@@ -61,6 +61,7 @@ export * from './lib/model/diagram-column'
 // export * from './lib/model/diagram-data'
 export * from './lib/model/diagram-type'
 export * from './lib/model/filter.model'
+export * from './lib/model/permission.model'
 
 // core
 export * from './lib/angular-accelerator.module'
@@ -83,3 +84,4 @@ export * from './lib/utils/template.utils'
 export * from './lib/utils/filter.utils'
 export * from './lib/utils/image-logo-url.utils'
 export * from './lib/utils/observable-output.utils'
+export * from './lib/utils/action-router.utils'

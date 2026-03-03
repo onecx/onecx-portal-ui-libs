@@ -16,6 +16,9 @@
     "typescript": "^5.5.4"
   },
   "type": "commonjs",
+    "dependencies": {
+      "semver": "^7.7.3"
+    },
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "publishConfig": {

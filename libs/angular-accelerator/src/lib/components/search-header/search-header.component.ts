@@ -91,7 +91,7 @@ export class SearchHeaderComponent {
 
   headerActions = signal<Action[]>([])
 
-  searchButtonsReversed$ = of(false)
+  searchButtonsReversed$: Observable<boolean | null> = of(null)
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = combineLatest([
     toObservable(this.formGroup).pipe(
       filter((fg) => !!fg),

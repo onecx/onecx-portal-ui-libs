@@ -1,31 +1,22 @@
-import { Injectable, inject } from '@angular/core'
+import { Injectable } from '@angular/core'
 import './declarations'
-import { AuthServiceWrapper } from './auth-service-wrapper'
 import { createLogger } from './utils/logger.utils'
+import { ensureProperty } from '@onecx/accelerator'
 
 @Injectable()
 export class AuthProxyService {
   private readonly logger = createLogger('AuthProxyService')
-  authServiceWrapper?: AuthServiceWrapper | null
 
   getHeaderValues(): Record<string, string> {
-    return (
-      window.onecxAngularAuth?.authServiceProxy?.v1?.getHeaderValues() ??
-      this.authServiceWrapper?.getHeaderValues() ??
-      {}
-    )
+    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'getHeaderValues'], () => ({}))
+    return global.onecxAuth.authServiceProxy.v1.getHeaderValues()
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!window.onecxAngularAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-      this.logger.info('AuthProxyService uses injected fallback.')
-      this.authServiceWrapper = inject(AuthServiceWrapper, { optional: true })
-      await this.authServiceWrapper?.init()
-    }
-    return (
-      window.onecxAngularAuth?.authServiceProxy?.v1?.updateTokenIfNeeded() ??
-      this.authServiceWrapper?.updateTokenIfNeeded() ??
-      Promise.reject('No authServiceWrapper provided.')
-    )
+    const global = ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'updateTokenIfNeeded'], (): Promise<boolean> => Promise.reject(new Error('No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.')))
+    return global.onecxAuth.authServiceProxy.v1.updateTokenIfNeeded().catch((error) => {
+      this.logger.error('Error updating token:', error)
+      throw error
+    })
   }
 }

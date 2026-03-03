@@ -21,6 +21,9 @@ import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { Router } from '@angular/router'
+import { RouterLink } from '../../model/data-action'
+import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 /**
  * Action definition.
@@ -41,6 +44,7 @@ export interface Action {
   ariaLabelKey?: string
   btnClass?: string
   actionCallback(): void
+  routerLink?: RouterLink
   loading?: boolean
   disabled?: boolean
   disabledTooltip?: string
@@ -85,11 +89,12 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit {
-  private translateService = inject(TranslateService)
-  private appStateService = inject(AppStateService)
-  private userService = inject(UserService)
+  private readonly translateService = inject(TranslateService)
+  private readonly appStateService = inject(AppStateService)
+  private readonly userService = inject(UserService)
+  private readonly router = inject(Router)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
-  protected breadcrumbs = inject(BreadcrumbService)
+  protected readonly breadcrumbs = inject(BreadcrumbService)
 
   header = input<string | undefined>(undefined)
 
@@ -192,10 +197,10 @@ export class PageHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.manualBreadcrumbs()) {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
-    } else {
+    if (this.manualBreadcrumbs()) {
       this.breadcrumbs$ = this.breadcrumbs.itemsHandler
+    } else {
+      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
     }
   }
 
@@ -276,8 +281,12 @@ export class PageHeaderComponent implements OnInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: a.actionCallback,
+      command: () => handleActionSync(this.router, a),
       disabled: a.disabled,
     }))
+  }
+
+  async onActionClick(action: Action): Promise<void> {
+    await handleAction(this.router, action)
   }
 }

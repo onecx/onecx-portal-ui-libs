@@ -2,8 +2,8 @@ import { Directive, HostListener, OnInit, TemplateRef, ViewContainerRef, inject,
 
 @Directive({ selector: '[ocxIfBreakpoint]', standalone: false })
 export class IfBreakpointDirective implements OnInit {
-  private viewContainer = inject(ViewContainerRef)
-  private templateRef = inject<TemplateRef<unknown>>(TemplateRef, { optional: true })
+  private readonly viewContainer = inject(ViewContainerRef)
+  private readonly templateRef = inject<TemplateRef<unknown>>(TemplateRef, { optional: true })
 
   breakpoint = input<'mobile' | 'desktop' | undefined>(undefined, { alias: 'ocxIfBreakpoint' })
 
@@ -30,11 +30,9 @@ export class IfBreakpointDirective implements OnInit {
         this.viewContainer.clear()
         this.viewContainer.createEmbeddedView(this.templateRef)
       }
-    } else {
-      if (elseTemplate && newState !== this.state()) {
-        this.viewContainer.clear()
-        this.viewContainer.createEmbeddedView(elseTemplate)
-      }
+    } else if (elseTemplate && newState !== this.state()) {
+      this.viewContainer.clear()
+      this.viewContainer.createEmbeddedView(elseTemplate)
     }
 
     this.state.set(newState)

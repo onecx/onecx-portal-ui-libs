@@ -2,7 +2,7 @@ import { Directive, ElementRef, OnInit, effect, inject, input, signal } from '@a
 
 @Directive({ selector: '[ocxContent]', standalone: false })
 export class OcxContentDirective implements OnInit {
-  private el = inject(ElementRef)
+  private readonly el = inject(ElementRef)
 
   /**
    * Used for passing a title text which should be rendered in the upper left corner of the content area.
@@ -10,8 +10,8 @@ export class OcxContentDirective implements OnInit {
    */
   ocxContent = input<string>('')
 
-  private baseId = signal<string>('ocx_content_title_element')
-  private titleElementId = signal<string | undefined>(undefined)
+  private readonly baseId = signal<string>('ocx_content_title_element')
+  private readonly titleElementId = signal<string | undefined>(undefined)
 
   constructor() {
     effect(() => {

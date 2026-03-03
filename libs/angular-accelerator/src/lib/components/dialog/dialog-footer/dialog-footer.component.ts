@@ -160,7 +160,7 @@ export class DialogFooterComponent implements OnInit {
     this.secondaryButtonDisabled$ = portalDialogServiceData.secondaryButtonEnabled$.pipe(map((isEnabled) => !isEnabled))
 
     const initCustomButtons: Record<string, boolean> = {}
-    rightButtons.concat(leftButtons).map((button) => {
+    rightButtons.concat(leftButtons).forEach((button) => {
       initCustomButtons[button.id] = true
     })
     this.customButtonsDisabled$.next(initCustomButtons)

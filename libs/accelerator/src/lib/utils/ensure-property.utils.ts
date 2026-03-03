@@ -51,40 +51,80 @@ type SetPathTuple<T, Path extends ReadonlyArray<string | number>, Value> =
  * about intermediate objects being missing. It will not overwrite existing values - only
  * null or undefined values are replaced.
  *
+ * **Returns the typed object** - you should use the return value to access the properties
+ * with full type safety.
+ *
+ * Supports property names with special characters that can only be accessed via bracket notation.
+ *
  * @template T - The object type
  * @template Path - The path as a tuple of keys
  * @template Value - The type of the value to set
  * @param obj - The object to modify
  * @param path - An array representing the path to the property (e.g., ['user', 'profile', 'name'])
  * @param initialValue - The value to set if the property is currently null or undefined
+ * @returns The same object with updated type information including the new property
  *
  * @example
- * // Ensure a global debug flag exists
- * ensureProperty(globalThis, ['myApp', 'config', 'debug'], false);
- * // Access it safely:
- * if (globalThis.myApp.config.debug) {
+ * // Recommended: Use the return value for full type safety
+ * const g = ensureProperty(globalThis, ['myApp', 'config', 'debug'], false);
+ * if (g.myApp.config.debug) {
  *   console.log('Debug mode enabled');
  * }
  *
  * @example
- * // Initialize nested configuration
- * const config = {};
- * ensureProperty(config, ['database', 'host'], 'localhost');
- * ensureProperty(config, ['database', 'port'], 5432);
- * // config is now { database: { host: 'localhost', port: 5432 } }
+ * // For regular property names (no special chars), both ways work:
+ * // 1. Using return value (recommended for consistency)
+ * let config = {};
+ * config = ensureProperty(config, ['database', 'host'], 'localhost');
+ * console.log(config.database.host); // TypeScript knows about this
+ *
+ * // 2. Without using return value (works for non-special chars)
+ * const settings = {};
+ * ensureProperty(settings, ['server', 'port'], 3000);
+ * console.log(settings.server.port); // Also works, but less type-safe
+ *
+ * @example
+ * // For globalThis with regular names, you can declare it globally:
+ * declare global {
+ *   var myApp: { config: { debug: boolean } };
+ * }
+ * ensureProperty(globalThis, ['myApp', 'config', 'debug'], false);
+ * if (globalThis.myApp.config.debug) { // Works without using return value
+ *   console.log('Debug enabled');
+ * }
+ *
+ * @example
+ * // For special characters, MUST use return value:
+ * const g = ensureProperty(globalThis, ['@onecx/accelerator', 'version'], '1.0.0');
+ * console.log(g['@onecx/accelerator'].version); // TypeScript knows this exists
+ * // globalThis['@onecx/accelerator'].version won't work without the return value
  *
  * @example
  * // Won't overwrite existing values
- * const obj = { name: 'John' };
- * ensureProperty(obj, ['name'], 'Jane');
- * // obj.name remains 'John'
+ * let obj = { name: 'John' };
+ * obj = ensureProperty(obj, ['name'], 'Jane');
+ * console.log(obj.name); // Still 'John'
  *
  * @example
  * // Replaces null values
- * const obj = { name: null };
- * ensureProperty(obj, ['name'], 'Default');
- * // obj.name is now 'Default'
+ * let obj = { name: null };
+ * obj = ensureProperty(obj, ['name'], 'Default');
+ * console.log(obj.name); // Now 'Default'
+ *
+ * @example
+ * // Nested paths with special characters
+ * const g = ensureProperty(globalThis, ['@myapp/config', 'feature-flags', 'enabled'], true);
+ * console.log(g['@myapp/config']['feature-flags'].enabled);
  */
+export function ensureProperty<
+    const Path extends ReadonlyArray<string | number>,
+    Value
+>(
+    obj: typeof globalThis,
+    path: Path,
+    initialValue: Value
+): typeof globalThis & SetPathTuple<typeof globalThis, Path, Value>;
+
 export function ensureProperty<
     T extends object,
     const Path extends ValidPaths<T>,
@@ -93,7 +133,7 @@ export function ensureProperty<
     obj: T,
     path: Path,
     initialValue: Value
-): asserts obj is T & SetPathTuple<T, Path, Value>;
+): T & SetPathTuple<T, Path, Value>;
 
 export function ensureProperty<
     T extends object,
@@ -103,13 +143,13 @@ export function ensureProperty<
     obj: T,
     path: Path,
     initialValue: Value
-): asserts obj is T & SetPathTuple<T, Path, Value>;
+): T & SetPathTuple<T, Path, Value>;
 
 export function ensureProperty<T extends object, Path extends ReadonlyArray<string | number>, Value>(
     obj: T,
     path: Path,
     initialValue: Value
-): asserts obj is T & SetPathTuple<T, Path, Value> {
+): T & SetPathTuple<T, Path, Value> {
     let current: any = obj;
 
     for (let i = 0; i < path.length - 1; i++) {
@@ -122,7 +162,8 @@ export function ensureProperty<T extends object, Path extends ReadonlyArray<stri
 
     const lastKey = path.at(-1);
     if (lastKey === undefined) {
-        return;
+        return obj as T & SetPathTuple<T, Path, Value>;
     }
     current[lastKey] ??= initialValue;
+    return obj as T & SetPathTuple<T, Path, Value>;
 }
