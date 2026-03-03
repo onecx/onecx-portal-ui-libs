@@ -179,7 +179,9 @@ describe('IconService', () => {
         ensureIconCache()
 
         expect(globalThis.onecxIcons).toBe(existing)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(globalThis.onecxIcons!['mdi:home']).toBeUndefined()
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(globalThis.onecxIcons!['prime:user']).toBeNull()
       })
     })

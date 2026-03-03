@@ -8,7 +8,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
-import { Icon, IconService as IconServiceInterface} from '@onecx/integration-interface';
+import { Icon, IconService as IconServiceInterface, IconTopic} from '@onecx/integration-interface';
 import {IconCache} from "@onecx/integration-interface";
 
 
@@ -21,7 +21,7 @@ describe('IconService', () => {
     globalThis.onecxIcons = {}
     iconService = TestBed.inject(IconService)
     iconServiceInterface = (iconService as any).iconServiceInterface;
-    iconServiceInterface.iconTopic = FakeTopic.create<Icon>();
+    iconServiceInterface.iconTopic = new FakeTopic<Icon>() as any as IconTopic;
   })
 
   afterEach(() => {
@@ -61,7 +61,7 @@ describe('IconService', () => {
     })
 
     it('should not publish when icon already present in cache', () => {
-      const topic = FakeTopic.create<any>()
+      const topic = new FakeTopic<Icon>() as any as IconTopic;
       const publishSpy = jest.spyOn(topic, 'publish')
       ensureProperty(globalThis, ['onecxIcons', 'mdi:cached'], { name: 'mdi:cached', type: 'svg', body: '' } as IconCache)
 
