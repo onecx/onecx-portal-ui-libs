@@ -1,6 +1,5 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
 import { action } from 'storybook/actions'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
@@ -27,7 +26,6 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(StorybookThemeModule),
         provideUserServiceMock(),
@@ -517,5 +515,5 @@ export const TranslationKeysAndParams = {
     actions: demoActions,
     objectDetails: demoFieldsWithTranslationKeys,
     showBreadcrumbs: false,
-  }
+  },
 }

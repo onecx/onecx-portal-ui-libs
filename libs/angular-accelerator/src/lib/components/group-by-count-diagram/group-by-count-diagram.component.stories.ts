@@ -15,8 +15,8 @@ import { GroupByCountDiagramComponent } from './group-by-count-diagram.component
 import { DiagramComponent } from '../diagram/diagram.component'
 import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip';
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { TooltipModule } from 'primeng/tooltip'
+import { FormsModule } from '@angular/forms'
 
 export default {
   title: 'Components/GroupByCountDiagramComponent',
@@ -46,7 +46,7 @@ export default {
         ChartModule,
         SelectButtonModule,
         TooltipModule,
-        OcxTooltipDirective,
+        FormsModule,
       ],
     }),
   ],

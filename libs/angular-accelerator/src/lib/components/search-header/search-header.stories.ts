@@ -1,7 +1,6 @@
 import { importProvidersFrom } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
@@ -28,7 +27,6 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(ConfigurationService),
         provideHttpClient(),
