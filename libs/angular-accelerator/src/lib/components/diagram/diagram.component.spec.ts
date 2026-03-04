@@ -335,8 +335,17 @@ describe('DiagramComponent', () => {
     expect(chartHarness).toBeTruthy()
   })
 
-  it('should fallback to pie chart type for unsupported diagramType', () => {
-    component.diagramType.set('unsupported-diagram-type' as any)
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('data', null)
+    fixture.detectChanges()
+
+    expect(component.amountOfData()).toBeUndefined()
+    expect(component.chartOptions()).toEqual({})
+  })
+
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('diagramType', null)
+    fixture.detectChanges()
 
     expect(component.chartType()).toEqual('pie')
   })

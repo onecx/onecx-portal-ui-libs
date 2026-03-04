@@ -111,10 +111,9 @@ export class GroupByCountDiagramComponent {
   constructor() {
     effect(() => {
       const column = this.column()
-      if (column) {
-        this.columnType.set(column.columnType)
-        this.columnField.set(column.id)
-      }
+      if (!column) return
+      this.columnType.set(column.columnType)
+      this.columnField.set(column.id)
     })
   }
 

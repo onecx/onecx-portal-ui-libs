@@ -28,7 +28,7 @@ function generateGroupByCountMockData(fruitCount = 10, itemsPerFruit = 2) {
   const fruitNames = fruits.slice(0, fruitCount)
 
   fruitNames.forEach((fruit, index) => {
-    const fruitType = `chart.fruit${index + 1}`;
+    const fruitType = `chart.fruit${index + 1}`
     FRUIT_TYPE.push(fruitType)
     for (let i = 0; i < itemsPerFruit; i++) {
       data.push({

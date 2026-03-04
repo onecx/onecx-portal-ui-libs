@@ -103,21 +103,20 @@ export class DiagramComponent {
 
   public generateChart(colorScale: any, colorRangeInfo: any) {
     const data = this.data()
-    if (data) {
-      const inputData = data.map((diagramData) => diagramData.value)
+    if (!data) return
+    const inputData = data.map((diagramData) => diagramData.value)
 
-      this.amountOfData.set(data.reduce((acc, current) => acc + current.value, 0))
-      const COLORS = this.generateColors(data, colorScale, colorRangeInfo)
-      this.chartData.set({
-        labels: data.map((d) => d.label),
-        datasets: [
-          {
-            data: inputData,
-            backgroundColor: COLORS,
-          },
-        ],
-      })
-    }
+    this.amountOfData.set(data.reduce((acc, current) => acc + current.value, 0))
+    const COLORS = this.generateColors(data, colorScale, colorRangeInfo)
+    this.chartData.set({
+      labels: data.map((d) => d.label),
+      datasets: [
+        {
+          data: inputData,
+          backgroundColor: COLORS,
+        },
+      ],
+    })
 
     this.chartOptions.set({
       plugins: {
@@ -163,7 +162,7 @@ export class DiagramComponent {
   private diagramTypeToChartType(value: DiagramType): ChartType {
     if (value === DiagramType.PIE) return 'pie'
     else if (value === DiagramType.HORIZONTAL_BAR || value === DiagramType.VERTICAL_BAR) return 'bar'
-    return 'pie'
+    else return 'pie'
   }
 
   dataClicked(event: []) {
