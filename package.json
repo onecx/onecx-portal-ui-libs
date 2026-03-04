@@ -148,7 +148,8 @@
     "brace-expansion": "^2.0.2",
     "cross-spawn": "^7.0.6",
     "undici": "^6.23.0",
-    "semver": "^7.7.3"
+    "semver": "^7.7.3",
+    "minimatch": "^9.0.6"
   },
   "nx": {
     "includedScripts": []
