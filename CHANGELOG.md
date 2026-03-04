@@ -1,3 +1,14 @@
+## [7.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.6...v7.1.0) (2026-03-04)
+
+### Features
+
+* v7 icon service ([#1256](https://github.com/onecx/onecx-portal-ui-libs/issues/1256)) ([be8ec7d](https://github.com/onecx/onecx-portal-ui-libs/commit/be8ec7d629010f0aa8f9cf2c2e18e079f3f2590e)), closes [#1222](https://github.com/onecx/onecx-portal-ui-libs/issues/1222) [#1210](https://github.com/onecx/onecx-portal-ui-libs/issues/1210)
+
+### Bug Fixes
+
+* portal-page-componenent resolves the value first ([#1232](https://github.com/onecx/onecx-portal-ui-libs/issues/1232)) ([c4a0ff4](https://github.com/onecx/onecx-portal-ui-libs/commit/c4a0ff40e52349b67c20331a31d82526e0d2de0b))
+* search-header-component resolves value first ([#1231](https://github.com/onecx/onecx-portal-ui-libs/issues/1231)) ([1bad601](https://github.com/onecx/onecx-portal-ui-libs/commit/1bad601a970320bb6fe1d0b661a9d0e2cfab221f))
+
 ## [7.0.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.5...v7.0.6) (2026-02-04)
 
 ### Bug Fixes
