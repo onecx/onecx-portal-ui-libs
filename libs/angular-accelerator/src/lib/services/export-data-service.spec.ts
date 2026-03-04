@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import * as ExcelJS from '@protobi/exceljs'
+import { of } from 'rxjs'
 import { ColumnType } from '../model/column-type.model'
 import { DateUtils } from '../utils/dateutils'
 import { ExportDataService } from './export-data.service'
@@ -717,6 +718,15 @@ describe('ExportDataService', () => {
     expect(csv).not.toContain('"Name A"')
   })
 
+  it('should not export csv if columns array is empty', async () => {
+    translateService.use('en')
+    URL.createObjectURL = jest.fn()
+
+    await exportDataService.exportCsv([], mockData, 'test.csv')
+
+    expect(URL.createObjectURL).not.toHaveBeenCalled()
+  })
+
   describe('exportToExcel', () => {
     const EXCEL_TEST_FILE_NAME = 'test-export.xlsx'
 
@@ -878,6 +888,32 @@ describe('ExportDataService', () => {
       expect(table.getColumn(1).name).toBe('Description')
       expect(table.getColumn(4).name).toBe('Status')
 
+    })
+
+    it('should use column id as fallback name when translation returns empty string', async () => {
+      translateService.use('en')
+      ;(<any>exportDataService).locale = 'en'
+
+      jest.spyOn(translateService, 'get').mockImplementation((key: string | string[], interpolateParams?: object) => {
+        if (Array.isArray(key)) {
+          const result: Record<string, string> = {}
+          key.forEach((k) => (result[k] = ''))
+          return of(result) as any
+        }
+        return of(translateService.instant(key as string, interpolateParams)) as any
+      })
+
+      const singleColumn = [{ columnType: ColumnType.STRING, id: 'name', nameKey: 'COLUMN_HEADER_NAME.NAME' }]
+      const mock = await setupExcelExport()
+
+      await exportDataService.exportToExcel(singleColumn, [{ name: 'alice' }], EXCEL_TEST_FILE_NAME)
+
+      expect(mock.attributes['download']).toBeDefined()
+      const workbook = await loadExcelWorkbook()
+      const worksheet = workbook.worksheets[0]
+      const table = getWorksheetTable(worksheet, EXCEL_TEST_FILE_NAME)
+
+      expect(table.getColumn(0).name).toBe('name')
     })
 
     it('should format dates in excel data', async () => {

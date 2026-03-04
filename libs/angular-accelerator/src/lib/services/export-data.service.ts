@@ -76,7 +76,7 @@ export class ExportDataService {
    */
   async exportToExcel<T extends string | number>(
     columns: DataExportColumn[],
-    data: Partial<Record<T, unknown | undefined>>[],
+    data: Partial<Record<T, unknown>>[],
     fileName: string
   ): Promise<void> {
     if (!columns.length) {
@@ -97,7 +97,7 @@ export class ExportDataService {
     this.handleFileDownload(excelBlob, finalFileName)
   }
 
-  private async getDataToExport(columns: DataTableColumn[], data: Partial<Record<string, unknown | undefined>>[]) {
+  private async getDataToExport(columns: DataTableColumn[], data: Partial<Record<string, unknown>>[]) {
     const flattenedData = data.map((d) =>
       columns.reduce((obj, c) => ({ ...obj, [c.id]: ObjectUtils.resolveFieldData(d, c.id) }), {})
     )
@@ -205,12 +205,12 @@ export class ExportDataService {
   }
 
   private getTableName(fileName: string): Observable<string> {
-    const formattedFileName = fileName.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^\d+/, '') // table names require ASCII and must not start with a digit
+    const formattedFileName = fileName.replaceAll(/\W/g, '_').replace(/^\d+/, '') // table names require ASCII and must not start with a digit
     return this.translateService.get('OCX_DATA_EXPORT.EXCEL_TABLE_NAME', {fileName: formattedFileName})
   }
 
   private getNormalisedFileName(fileName: string): string {
-    return fileName.replace(/\.xlsx$/i, '').replace(/[^\p{L}\p{N}_]/gu, '_')
+    return fileName.replace(/\.xlsx$/i, '').replaceAll(/[^\p{L}\p{N}_]/gu, '_')
   }
 
   private getSheetName(fileName: string): Observable<string> {
