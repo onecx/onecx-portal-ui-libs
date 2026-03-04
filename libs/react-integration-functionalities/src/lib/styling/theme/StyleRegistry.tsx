@@ -21,7 +21,6 @@ export default function StyleRegistry({ children }: Props) {
 
   useEffect(() => {
     const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {
-      console.log('THEME_UPDATE:', theme)
       applyThemeVariables(theme, themeStyleId)
       setIsThemed(true)
     })

@@ -8,8 +8,8 @@
 export function normalizeForHash(css: string, normalize: boolean): string {
   if (!normalize) return css
   return css
-    .replace(/\/\*[^]*?\*\//g, '')
-    .replace(/\s+/g, ' ')
+    .replaceAll(/\/\*[^]*?\*\//g, '')
+    .replaceAll(/\s+/g, ' ')
     .trim()
 }
 
@@ -21,7 +21,7 @@ export function normalizeForHash(css: string, normalize: boolean): string {
  */
 export function hash(s: string): string {
   let h = 5381
-  for (let i = 0; i < s.length; i++) h = (h * 33) ^ s.charCodeAt(i)
+  for (let i = 0; i < s.length; i++) h = (h * 33) ^ (s.codePointAt(i) ?? 0)
   return (h >>> 0).toString(36)
 }
 
@@ -86,6 +86,6 @@ export function scopeCss(css: string, scopeRootSelector: string, scopeLimitSelec
   const prelude = scopeLimitSelector
     ? `@scope(${scopeRootSelector}) to (${scopeLimitSelector})`
     : `@scope(${scopeRootSelector})`
-  const body = css.replace(/:root\b/g, ':scope')
+  const body = css.replaceAll(/:root\b/g, ':scope')
   return `${prelude}{\n${body}\n}\n`
 }

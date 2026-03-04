@@ -144,7 +144,7 @@ export function attachPrimeReactScoper({
                 node.parentElement.id.startsWith(`${productName}|${productName}-ui`)))
           ) {
             const attrName = node.parentElement.hasAttribute('data-app-styles') ? 'data-app-styles' : 'id'
-            processStyleElement(node.parentElement as HTMLStyleElement, attrName)
+            processStyleElement(node.parentElement, attrName)
           }
         })
       } else if (record.type === 'characterData') {

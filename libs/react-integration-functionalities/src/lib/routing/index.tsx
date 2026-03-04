@@ -7,19 +7,8 @@ const initValue = {
   isFirst: true,
 }
 
-/**
- * Context holding the current synced location payload.
- *
- * @returns CurrentLocationTopicPayload via context.
- */
 export const SyncedLocationContext = createContext<CurrentLocationTopicPayload>(initValue)
 
-/**
- * Internal component syncing router state with the current location topic.
- *
- * @param children - React subtree rendered within the sync layer.
- * @returns Synced router context provider.
- */
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const locationHook = useLocation()
@@ -30,9 +19,16 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     const locationSubscription = new CurrentLocationTopic().subscribe((location) => {
+      const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
+      const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
       if (locationHook.pathname !== location.url) {
         setCurrentLocation(() => {
-          locationHook.pathname = location.url ?? locationHook.pathname
+          const rawUrl = location.url ?? locationHook.pathname
+          const normalizedUrl = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`
+          const urlWithBase = normalizedUrl.startsWith(normalizedBaseHref)
+            ? normalizedUrl
+            : `${normalizedBaseHref}${normalizedUrl.replace(/^\//, '')}`
+          locationHook.pathname = urlWithBase
           const newValue = {
             url: locationHook.pathname,
             isFirst: location.isFirst,
@@ -48,15 +44,9 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [])
 
-  return <SyncedLocationContext value={currentLocation}>{children}</SyncedLocationContext>
+  return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
 
-/**
- * Provides a browser router that stays in sync with portal location events.
- *
- * @param children - React subtree rendered inside the router.
- * @returns Browser router provider with location sync.
- */
 export const SyncedRouterProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <BrowserRouter>
