@@ -1,13 +1,16 @@
-<p-timeline [value]="steps">
+<p-timeline [value]="steps()">
   <ng-template pTemplate="marker" let-step>
-    <span class="p-timeline-event-marker" [ngClass]="activeStepId && activeStepId === step.id ? 'bg-primary' : ''"></span>
+    <span
+      class="p-timeline-event-marker"
+      [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''"
+    ></span>
   </ng-template>
   <ng-template pTemplate="content" let-step>
     <div class="pb-4 h-full">
-      <div class="card h-full" [ngClass]="activeStepId && activeStepId === step.id ? 'bg-primary' : ''">
+      <div class="card h-full" [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''">
         <p class="font-bold text-xl" [ngClass]="step.details ? 'mb-2' : ''">{{ step.title }}</p>
         @if (step.details) {
-          <p [ngClass]="activeStepId && activeStepId === step.id ? '' : 'text-color-secondary'">{{ step.details }}</p>
+        <p [ngClass]="activeStepId() && activeStepId() === step.id ? '' : 'text-color-secondary'">{{ step.details }}</p>
         }
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
-import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -12,15 +11,13 @@ import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { MenuModule } from 'primeng/menu'
-import { DynamicLocaleId } from '../../utils/dynamic-locale-id'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { DynamicLocaleId, HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { SkeletonModule } from 'primeng/skeleton'
-
-type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows'>
+import { action } from 'storybook/actions'
 
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
   title: 'Components/DataTableComponent',
@@ -29,7 +26,6 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
@@ -64,22 +60,8 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     }),
   ],
 }
-const Template: StoryFn = (args) => ({
-  props: args,
-})
 
-const dataTableActionsArgTypes = {
-  deleteTableRow: { action: 'deleteTableRow' },
-  editTableRow: { action: 'editTableRow' },
-  viewTableRow: { action: 'viewTableRow' },
-}
-
-const dataTableSelectionArgTypes = {
-  selectionChanged: { action: 'selectionChanged' },
-  componentStateChanged: { action: 'componentStateChanged' },
-}
-
-const defaultComponentArgs: DataTableInputTypes = {
+const defaultComponentArgs = {
   columns: [
     {
       id: 'product',
@@ -135,30 +117,88 @@ const defaultComponentArgs: DataTableInputTypes = {
   selectedRows: [],
 }
 
+const dataTableSelectionArgs = {
+  selectionChanged: {
+    observed: () => true,
+    emit: action('Selection changed'),
+  },
+  componentStateChanged: action('Component state changed'),
+}
+
+const dataTableActionsArgs = {
+  editTableRow: {
+    observed: () => true,
+    emit: action('Edit action clicked'),
+  },
+  deleteTableRow: {
+    observed: () => true,
+    emit: action('Delete action clicked'),
+  },
+  viewTableRow: {
+    observed: () => true,
+    emit: action('View action clicked'),
+  },
+}
+
+// Using render instead of template to pass output handlers with action logger
 export const WithMockData = {
-  render: Template,
-  args: defaultComponentArgs,
+  args: {
+    ...defaultComponentArgs,
+  },
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)}>
+      </ocx-data-table>
+    `,
+  }),
 }
 
 export const NoData = {
-  render: Template,
   args: {
     ...defaultComponentArgs,
     rows: [],
   },
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)}>
+      </ocx-data-table>
+    `,
+  }),
 }
 
 export const WithRowSelection = {
-  argTypes: dataTableSelectionArgTypes,
-  render: Template,
   args: {
     ...defaultComponentArgs,
   },
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableSelectionArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      </ocx-data-table>
+    `,
+  }),
 }
 
 export const WithRowSelectionAndDefaultSelection = {
-  argTypes: dataTableSelectionArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableSelectionArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     selectedRows: [
@@ -170,8 +210,16 @@ export const WithRowSelectionAndDefaultSelection = {
 }
 
 export const WithRowSelectionAndDisabledDefaultSelection = {
-  argTypes: dataTableSelectionArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableSelectionArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     selectedRows: [1],
@@ -179,7 +227,7 @@ export const WithRowSelectionAndDisabledDefaultSelection = {
   },
 }
 
-const extendedComponentArgs: DataTableInputTypes = {
+const extendedComponentArgs = {
   columns: [
     {
       id: '1',
@@ -264,13 +312,29 @@ const extendedComponentArgs: DataTableInputTypes = {
 }
 
 export const ResponsiveWithScroll = {
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)}>
+      </ocx-data-table>
+    `,
+  }),
   args: extendedComponentArgs,
 }
 
 export const ResponsiveWithScrollAndFrozenActionsColumn = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...extendedComponentArgs,
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -282,8 +346,16 @@ export const ResponsiveWithScrollAndFrozenActionsColumn = {
 }
 
 export const WithConditionallyDisabledActionButtons = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionEnabledField: 'available',
@@ -295,8 +367,16 @@ export const WithConditionallyDisabledActionButtons = {
 }
 
 export const WithConditionallyHiddenActionButtons = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -308,8 +388,16 @@ export const WithConditionallyHiddenActionButtons = {
 }
 
 export const WithAdditionalActions = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -323,14 +411,25 @@ export const WithAdditionalActions = {
         labelKey: 'Additional 1',
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
+        callback: () => {
+          console.log('Additional action 1 clicked')
+        },
       },
     ],
   },
 }
 
 export const WithConditionallyEnabledAdditionalActions = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -345,14 +444,25 @@ export const WithConditionallyEnabledAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionEnabledField: 'available',
+        callback: () => {
+          console.log('Additional action 1 clicked')
+        },
       },
     ],
   },
 }
 
 export const WithConditionallyVisibleAdditionalActions = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
@@ -367,14 +477,25 @@ export const WithConditionallyVisibleAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
+        callback: () => {
+          console.log('Additional action 1 clicked')
+        },
       },
     ],
   },
 }
 
 export const WithAdditionalOverflowActions = {
-  argTypes: dataTableActionsArgTypes,
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     deletePermission: 'TEST_MGMT#TEST_DELETE',
@@ -387,6 +508,9 @@ export const WithAdditionalOverflowActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
+        callback: () => {
+          console.log('Additional action clicked')
+        },
       },
       {
         id: '2',
@@ -395,6 +519,9 @@ export const WithAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionVisibleField: 'available',
+        callback: () => {
+          console.log('Conditionally Hidden action clicked')
+        },
       },
       {
         id: '3',
@@ -403,13 +530,24 @@ export const WithAdditionalOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionEnabledField: 'available',
+        callback: () => {
+          console.log('Conditionally Enabled action clicked')
+        },
       },
     ],
   },
 }
 
 export const WithOnlyOverflowActions = {
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)}>
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     additionalActions: [
@@ -419,6 +557,9 @@ export const WithOnlyOverflowActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
+        callback: () => {
+          console.log('Additional action clicked')
+        },
       },
       {
         id: '2',
@@ -427,6 +568,9 @@ export const WithOnlyOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionVisibleField: 'available',
+        callback: () => {
+          console.log('Conditionally Hidden action clicked')
+        },
       },
       {
         id: '3',
@@ -435,17 +579,27 @@ export const WithOnlyOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionEnabledField: 'available',
+        callback: () => {
+          console.log('Conditionally Enabled action clicked')
+        },
       },
     ],
   },
 }
 
 export const WithPageSizes = {
-  render: Template,
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)}>
+      </ocx-data-table>
+    `,
+  }),
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
-    showAllOption: false,
   },
 }
 
