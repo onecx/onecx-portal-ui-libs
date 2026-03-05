@@ -1,8 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
@@ -21,7 +19,7 @@ import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnviro
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
-import { Router } from '@angular/router'
+import { provideRouter, Router } from '@angular/router'
 
 const mockActions: Action[] = [
   {
@@ -62,15 +60,7 @@ describe('PageHeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
-      imports: [
-        RouterTestingModule,
-        BreadcrumbModule,
-        MenuModule,
-        ButtonModule,
-        NoopAnimationsModule,
-        TooltipModule,
-        AngularAcceleratorModule,
-      ],
+      imports: [BreadcrumbModule, MenuModule, ButtonModule, TooltipModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService({
           en: require('./../../../../assets/i18n/en.json'),
@@ -84,6 +74,7 @@ describe('PageHeaderComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        provideRouter([]),
       ],
     }).compileComponents()
 
@@ -120,7 +111,7 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
@@ -132,7 +123,7 @@ describe('PageHeaderComponent', () => {
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
     expect(await pageHeaderHarness.getOverflowActionMenuButton()).toBeNull()
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
     expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
@@ -149,7 +140,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should render inline actions buttons with icons', async () => {
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with left icon',
         show: 'always',
@@ -169,7 +160,7 @@ describe('PageHeaderComponent', () => {
         icon: PrimeIcons.LOCK,
         iconPos: 'right',
       },
-    ]
+    ])
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
@@ -178,7 +169,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should render inline actions buttons with icons', async () => {
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with left icon',
         show: 'always',
@@ -198,7 +189,7 @@ describe('PageHeaderComponent', () => {
         icon: PrimeIcons.LOCK,
         iconPos: 'right',
       },
-    ]
+    ])
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
@@ -209,7 +200,7 @@ describe('PageHeaderComponent', () => {
   it('should show a loading spinner when action is loading', async () => {
     const mockFn = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'My Test Loading Action',
         show: 'always',
@@ -217,7 +208,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         loading: true,
       },
-    ]
+    ])
 
     const loadingActionElement = await pageHeaderHarness.getInlineActionButtonByLabel('My Test Loading Action')
     expect(loadingActionElement).toBeTruthy()
@@ -230,7 +221,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     jest.spyOn(console, 'log')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Inline action with routerLink',
         show: 'always',
@@ -241,7 +232,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
       },
-    ]
+    ])
 
     const routerLinkInline = await pageHeaderHarness.getInlineActionButtonByLabel('Inline action with routerLink')
     expect(routerLinkInline).toBeTruthy()
@@ -256,7 +247,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     jest.spyOn(console, 'log')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow action with routerLink',
         show: 'asOverflow',
@@ -267,7 +258,7 @@ describe('PageHeaderComponent', () => {
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     expect(menuOverflowButton).toBeTruthy()
@@ -285,7 +276,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkFunction = jest.fn(() => '/function-link')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with function routerLink',
         show: 'always',
@@ -293,7 +284,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with function routerLink')
     await inlineButton?.click()
@@ -306,7 +297,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with promise function routerLink',
         show: 'always',
@@ -314,7 +305,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkPromiseFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise function routerLink')
     await inlineButton?.click()
@@ -326,7 +317,7 @@ describe('PageHeaderComponent', () => {
   it('should handle routerLink as Promise<string>', async () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with promise routerLink',
         show: 'always',
@@ -334,7 +325,7 @@ describe('PageHeaderComponent', () => {
         routerLink: Promise.resolve('/promise-link'),
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with promise routerLink')
     await inlineButton?.click()
@@ -346,7 +337,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow function routerLink',
         show: 'asOverflow',
@@ -354,7 +345,7 @@ describe('PageHeaderComponent', () => {
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     await menuOverflowButton?.click()
@@ -370,7 +361,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with routerLink and callback',
         show: 'always',
@@ -378,7 +369,7 @@ describe('PageHeaderComponent', () => {
         routerLink: '/prioritized-link',
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with routerLink and callback')
     await inlineButton?.click()
@@ -392,7 +383,7 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow with routerLink and callback',
         show: 'asOverflow',
@@ -400,7 +391,7 @@ describe('PageHeaderComponent', () => {
         routerLink: '/overflow-prioritized',
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
     await menuOverflowButton?.click()
@@ -417,14 +408,14 @@ describe('PageHeaderComponent', () => {
     const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
-    component.actions = [
+    fixture.componentRef.setInput('actions', [
       {
         label: 'Action with callback only',
         show: 'always',
         actionCallback: callbackSpy,
         permission: 'TEST#TEST_PERMISSION',
       },
-    ]
+    ])
 
     const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with callback only')
     await inlineButton?.click()
@@ -446,7 +437,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithoutIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithoutIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(2)
 
@@ -481,7 +472,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(4)
     const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
@@ -512,7 +503,7 @@ describe('PageHeaderComponent', () => {
     ]
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(0)
 
-    component.objectDetails = objectDetailsWithIcons
+    fixture.componentRef.setInput('objectDetails', objectDetailsWithIcons)
 
     expect((await pageHeaderHarness.getObjectInfos()).length).toEqual(1)
     const firstDetail = await pageHeaderHarness.getObjectInfoByLabel('Venue')
@@ -522,7 +513,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should show overflow actions when menu overflow button clicked', async () => {
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -541,7 +532,7 @@ describe('PageHeaderComponent', () => {
   it('should use provided action callback on overflow button click', async () => {
     jest.spyOn(console, 'log')
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -562,7 +553,7 @@ describe('PageHeaderComponent', () => {
   it('should disable overflow button when action is disabled', async () => {
     jest.spyOn(console, 'log')
 
-    component.actions = mockActions
+    fixture.componentRef.setInput('actions', mockActions)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -606,7 +597,7 @@ describe('PageHeaderComponent', () => {
     )
     translate.use('en')
 
-    component.objectDetails = [
+    fixture.componentRef.setInput('objectDetails', [
       {
         label: 'Venue',
         value: 'AIE Munich',
@@ -618,7 +609,7 @@ describe('PageHeaderComponent', () => {
           console.log('Action!')
         },
       },
-    ]
+    ])
     fixture.detectChanges()
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
@@ -637,7 +628,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should fallback to empty string if *Key properties are not provided', async () => {
-    component.objectDetails = [
+    fixture.componentRef.setInput('objectDetails', [
       {
         label: 'Venue',
         value: 'AIE Munich',
@@ -646,7 +637,7 @@ describe('PageHeaderComponent', () => {
           console.log('Action!')
         },
       },
-    ]
+    ])
     fixture.detectChanges()
 
     const objectInfo = (await pageHeaderHarness.getObjectInfos())[0]
