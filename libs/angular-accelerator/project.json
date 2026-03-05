@@ -3,8 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/angular-accelerator/src",
   "prefix": "onecx",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "copyPrimelocaleTranslations": {
       "executor": "nx:run-commands",
@@ -31,15 +31,14 @@
       "dependsOn": ["^build", "copyPrimelocaleTranslations"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/angular-accelerator/ng-package.json"
+        "project": "libs/angular-accelerator/ng-package.json",
+        "tsConfig": "libs/angular-accelerator/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
           "tsConfig": "libs/angular-accelerator/tsconfig.lib.prod.json"
         },
-        "development": {
-          "tsConfig": "libs/angular-accelerator/tsconfig.lib.json"
-        }
+        "development": {}
       },
       "defaultConfiguration": "production"
     },
@@ -48,6 +47,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-accelerator/jest.config.ts",
+        "tsConfig": "libs/angular-accelerator/tsconfig.spec.json",
         "codeCoverage": true,
         "passWithNoTests": true
       },

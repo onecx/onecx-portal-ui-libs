@@ -27,33 +27,31 @@ describe('DataSortBase', () => {
       const { sut, translateService } = createSut()
 
       const items = [{ status: 'A' }]
-      const filters: any[] = []
       const columns: any[] = [{ id: 'status', columnType: ColumnType.TRANSLATION_KEY }]
 
       const result = await firstValueFrom(
-        sut.translateItems([items as any, filters as any, 'status', DataSortDirection.ASCENDING], columns, false, false)
+        sut.translateItems(items as any, columns, false, false)
       )
 
       expect(translateService.get).not.toHaveBeenCalled()
-      expect(result).toEqual([items, filters, 'status', DataSortDirection.ASCENDING, {}])
+      expect(result).toEqual({})
     })
 
     it('should request translation keys and build per-column translation map', async () => {
       const { sut, translateService } = createSut({ translated: { A: 'Active', B: 'Blocked' } })
 
       const items = [{ status: 'A' }, { status: 'B' }]
-      const filters: any[] = []
       const columns: any[] = [
         { id: 'status', columnType: ColumnType.TRANSLATION_KEY },
         { id: 'name', columnType: ColumnType.STRING },
       ]
 
       const result = await firstValueFrom(
-        sut.translateItems([items as any, filters as any, 'status', DataSortDirection.ASCENDING], columns, true, false)
+        sut.translateItems(items as any, columns, true, false)
       )
 
       expect(translateService.get).toHaveBeenCalledWith(['A', 'B'])
-      expect(result?.[4]).toEqual({
+      expect(result).toEqual({
         status: {
           A: 'Active',
           B: 'Blocked',
@@ -69,9 +67,9 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: FilterType.EQUALS, value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, 'status', DataSortDirection.ASCENDING, {}], false)
+      const result = sut.filterItems([items as any, filters as any, {}], false)
 
-      expect(result[0]).toEqual(items)
+      expect(result).toEqual(items)
     })
 
     it('should filter by unique column ids and support EQUALS and IS_NOT_EMPTY', () => {
@@ -83,9 +81,9 @@ describe('DataSortBase', () => {
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true },
       ]
 
-      const result = sut.filterItems([items as any, filters as any, 'status', DataSortDirection.ASCENDING, {}], true)
+      const result = sut.filterItems([items as any, filters as any, {}], true)
 
-      expect(result[0]).toEqual([{ status: 'A' }])
+      expect(result).toEqual([{ status: 'A' }])
     })
 
     it('should default to true for unknown filter types', () => {
@@ -94,9 +92,9 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: 'SOMETHING_ELSE', value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, 'status', DataSortDirection.ASCENDING, {}], true)
+      const result = sut.filterItems([items as any, filters as any, {}], true)
 
-      expect(result[0]).toEqual(items)
+      expect(result).toEqual(items)
     })
   })
 
@@ -105,35 +103,33 @@ describe('DataSortBase', () => {
       const { sut } = createSut()
 
       const items = [{ name: 'b' }, { name: 'a' }]
-      const filters: any[] = []
       const columns: any[] = [{ id: 'name', columnType: ColumnType.STRING }]
 
-      const noSort = sut.sortItems([items as any, filters as any, '', DataSortDirection.ASCENDING, {}], columns, true)
-      expect(noSort[0]).toEqual(items)
+      const noSort = sut.sortItems([items as any, '', DataSortDirection.ASCENDING, {}], columns, true)
+      expect(noSort).toEqual(items)
 
       const disabled = sut.sortItems(
-        [items as any, filters as any, 'name', DataSortDirection.ASCENDING, {}],
+        [items as any, 'name', DataSortDirection.ASCENDING, {}],
         columns,
         false
       )
-      expect(disabled[0]).toEqual(items)
+      expect(disabled).toEqual(items)
     })
 
     it('should sort using translations for TRANSLATION_KEY columns', () => {
       const { sut } = createSut()
 
       const items = [{ status: 'B' }, { status: 'A' }]
-      const filters: any[] = []
       const columns: any[] = [{ id: 'status', columnType: ColumnType.TRANSLATION_KEY }]
       const translations = { status: { A: 'Active', B: 'Blocked' } }
 
       const result = sut.sortItems(
-        [items as any, filters as any, 'status', DataSortDirection.ASCENDING, translations as any],
+        [items as any, 'status', DataSortDirection.ASCENDING, translations as any],
         columns,
         true
       )
 
-      expect(result[0]).toEqual([{ status: 'A' }, { status: 'B' }])
+      expect(result).toEqual([{ status: 'A' }, { status: 'B' }])
     })
 
     it('should build date-based values map for DATE/RELATIVE_DATE columns', () => {
@@ -142,32 +138,30 @@ describe('DataSortBase', () => {
       const d1 = new Date('2020-01-01T00:00:00.000Z')
       const d2 = new Date('2021-01-01T00:00:00.000Z')
       const items = [{ created: d2 }, { created: d1 }]
-      const filters: any[] = []
       const columns: any[] = [{ id: 'created', columnType: ColumnType.DATE }]
 
       const result = sut.sortItems(
-        [items as any, filters as any, 'created', DataSortDirection.ASCENDING, {}],
+        [items as any, 'created', DataSortDirection.ASCENDING, {}],
         columns,
         true
       )
 
-      expect(result[0]).toEqual([{ created: d1 }, { created: d2 }])
+      expect(result).toEqual([{ created: d1 }, { created: d2 }])
     })
 
     it('should sort descending when sort direction is DESCENDING', () => {
       const { sut } = createSut()
 
       const items = [{ name: 'a' }, { name: 'b' }]
-      const filters: any[] = []
       const columns: any[] = [{ id: 'name', columnType: ColumnType.STRING }]
 
       const result = sut.sortItems(
-        [items as any, filters as any, 'name', DataSortDirection.DESCENDING, {}],
+        [items as any, 'name', DataSortDirection.DESCENDING, {}],
         columns,
         true
       )
 
-      expect(result[0]).toEqual([{ name: 'b' }, { name: 'a' }])
+      expect(result).toEqual([{ name: 'b' }, { name: 'a' }])
     })
   })
 

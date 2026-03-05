@@ -2,7 +2,6 @@ import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/ang
 import { TranslateModule } from '@ngx-translate/core'
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
 import { SelectModule } from 'primeng/select'
@@ -16,18 +15,6 @@ import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { TooltipModule } from 'primeng/tooltip'
 
-type CustomGroupColumnSelectorInputs = Pick<
-  CustomGroupColumnSelectorComponent,
-  | 'columns'
-  | 'displayedColumns'
-  | 'actionColumnPosition'
-  | 'frozenActionColumn'
-  | 'dialogTitle'
-  | 'saveButtonLabel'
-  | 'cancelButtonLabel'
-  | 'activeColumnsLabel'
-  | 'inactiveColumnsLabel'
->
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
   component: CustomGroupColumnSelectorComponent,
@@ -35,7 +22,6 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(TranslateModule.forRoot({})),
         importProvidersFrom(StorybookThemeModule),
       ],
@@ -60,7 +46,7 @@ const Template: StoryFn = (args) => ({
   props: args,
 })
 
-const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
+const defaultComponentArgs = {
   columns: [
     {
       id: 'product',
