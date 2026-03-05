@@ -10,7 +10,7 @@
     @if (item.routerLink || item.url) {
     <a [routerLink]="item?.routerLink" [href]="item?.url" class="menuitem-link flex align-items-center gap-2" [attr.aria-label]="item.label ? ('OCX_PAGE_HEADER.GO_TO_PAGE' | translate: { page: (item.label | translate) }) : ''">
       @if (item.icon) {
-      <i [class]="item.icon"></i>
+      <i [class]="item.icon" [attr.aria-label]="item.label ? ('OCX_PAGE_HEADER.GO_TO_PAGE' | translate: { page: (item.label | translate) }) : ''"></i>
       }
       <span class="menuitem-text">{{ item.label ? (item.label | translate) : '' }}</span>
     </a>
@@ -18,7 +18,7 @@
     @if (!item.routerLink && !item.url) {
     <span class="menuitem-link flex align-items-center gap-2" [attr.aria-label]="item.label ? (item.label | translate) : ''" aria-current="page">
       @if (item.icon) {
-      <i [class]="item.icon"></i>
+      <i [class]="item.icon" [attr.aria-label]="item.label ? ('OCX_PAGE_HEADER.GO_TO_PAGE' | translate: { page: (item.label | translate) }) : ''"></i>
       }
       <span class="menuitem-text">{{ item.label ? (item.label | translate) : '' }}</span>
     </span>

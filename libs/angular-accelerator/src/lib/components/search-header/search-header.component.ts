@@ -146,7 +146,6 @@ export class SearchHeaderComponent {
   }
 
   onSearchClicked() {
-    alert('Search clicked! Please implement the search logic in the searched event handler.')
     this.searched.emit()
   }
 

@@ -12,9 +12,11 @@
     tooltipPosition="top"
     tooltipEvent="hover"
   ></p-button>
-  <div *ngIf="noResults()" class="p-error mt-2 sr-only" role="alert" aria-live="polite">
+  @if (noResults()) {
+  <div class="p-error mt-2 sr-only" role="alert" aria-live="polite">
     {{ 'OCX_SEARCH_HEADER.NO_RESULTS' | translate }}
   </div>
+  }
 </ng-template>
 <ng-template #resetBtn>
   <p-button
