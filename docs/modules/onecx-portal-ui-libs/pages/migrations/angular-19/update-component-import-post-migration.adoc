@@ -1,0 +1,16 @@
+[#update-component-imports-post-migration]
+= Update Component Imports Post Migration
+
+The following section covers component, service, and directive changes in OneCX v6. Components have been reorganized across libraries and have to be updated after v6 migration.
+
+[#moved-to-libraries]
+== Components Moved to Different Libraries
+
+The imports of the following components, services and directives need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-accelerator`:
+
+* `DialogMessageContentComponent`, `DialogInlineComponent`, `DialogFooterComponent`, `DialogContentComponent`
+* `GlobalErrorComponent`, `LoadingIndicatorComponent`, `LoadingIndicatorDirective`
+* `BasicDirective`, `RelativeDatePipe`
+* `OcxContentContainerDirective`, `OcxContentDirective`
+* `ExportDataService`, `PortalDialogService`, `ImageLogoUrlUtils`
+* `DialogContentHarness`, `DialogFooterHarness`, `DialogInlineHarness`, `DialogMessageContentHarness`

@@ -43,27 +43,9 @@ If the following packages are used in your project, update them to ensure compat
 [#installation-commands]
 == Installation Commands
 
-Run these commands to update the supporting packages:
+Run this command to update the supporting packages:
 
 [source, bash]
 ----
-# Update translation packages
-npm install @ngx-translate/core@^17.0.0
-npm install @ngx-translate/http-loader@^17.0.0
-
-# Update UI components
-npm install @primeng@^20.3.0
-npm install @primeng/themes@^20.0.0
-
-# Update state management
-npm install ngrx-store-localstorage@^20.0.0
-
-# Update validation / schema utilities
-npm install zod@^4.0.0
-
-# Update Module Federation tooling
-npm install @angular-architects/module-federation@^20.0.0
-
-# Update build tools
-npm install ngx-build-plus@^20.0.0
+npm install @ngx-translate/core@^17.0.0 @ngx-translate/http-loader@^17.0.0 @primeng@^20.3.0 @primeng/themes@^20.0.0 ngrx-store-localstorage@^20.0.0 zod@^4.0.0 @angular-architects/module-federation@^20.0.0 ngx-build-plus@^20.0.0
 ----
