@@ -1,8 +1,6 @@
 .image {
-  display: block;
   width: 100%;
-  height: auto;
-  object-fit: cover;
+  height: 100%;
 }
 
 .menu-btn {
@@ -17,11 +15,7 @@
 }
 
 .grid-border-divider {
-  border: none;
-}
-
-.data-grid-item.card {
-  border: 0.0625rem solid var(--p-surface-200);
-  padding: 1.5rem;
-  box-sizing: border-box;
+  border: 0.0625rem;
+  border-style: solid;
+  border-color: var(--p-surface-200);
 }
