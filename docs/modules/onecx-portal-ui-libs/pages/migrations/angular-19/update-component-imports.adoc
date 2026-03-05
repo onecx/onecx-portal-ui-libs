@@ -1,7 +1,7 @@
 [#update-component-imports]
 = Update Component Imports
 
-The following section covers component, service, and directive changes in OneCX v6. Components have been deleted, reorganized across libraries or converted to remote components.
+The following section covers component, service, and directive changes in OneCX v6. Components have been deleted, reorganized across libraries or converted to remote components. The following updates can be applied before v6 migration.
 
 [#moved-to-libraries]
 == Components Moved to Different Libraries
@@ -15,13 +15,8 @@ The imports of the following components, services and directives need to be chan
 * `DataTableComponent`, `DataViewComponent`, `DiagramComponent`
 * `FilterViewComponent`, `GroupByCountDiagramComponent`, `InteractiveDataViewComponent`
 * `LifecycleComponent`, `PageHeaderComponent`, `SearchHeaderComponent`
-* `DialogMessageContentComponent`, `DialogInlineComponent`, `DialogFooterComponent`, `DialogContentComponent`
-* `GlobalErrorComponent`, `LoadingIndicatorComponent`, `LoadingIndicatorDirective`
-* `BasicDirective`, `RelativeDatePipe`, `AdvancedDirective`
-* `OcxContentContainerDirective`, `OcxContentDirective`, `IfBreakpointDirective`
+* `AdvancedDirective`, `IfBreakpointDirective`
 * `IfPermissionDirective`, `SrcDirective`, `TooltipOnOverflowDirective`
-* `ExportDataService`, `PortalDialogService`, `ImageLogoUrlUtils`
-* `DialogContentHarness`, `DialogFooterHarness`, `DialogInlineHarness`, `DialogMessageContentHarness`
 
 === 2. Update import from @onecx/portal-integration-angular to @onecx/angular-utils
 
