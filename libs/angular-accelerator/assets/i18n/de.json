@@ -178,6 +178,12 @@
     "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
+    "TABLE_DETAILS": "Detaillierte Werte sind in der folgenden Tabelle verfügbar",
+    "TABLE": {
+      "COLOR": "Farbe",
+      "REGION": "Region",
+      "COUNT": "Anzahl"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Zu Tortendiagramm wechseln",
       "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",

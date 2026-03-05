@@ -1,33 +1,40 @@
+@if (chartTitleKey() || chartDescriptionKey()) {
+<div class="w-full text-center">
+  @if (chartTitleKey()) {
+  <p class="diagram-title" id="diagram-title">{{ chartTitleKey()! | translate }}</p>
+  }
+  @if (chartDescriptionKey()) {
+  <p class="diagram-description" id="diagram-description">{{ chartDescriptionKey()! | translate }}</p>
+  }
+</div>
+}
+
 @if (data()) { @if (shownDiagramTypes().length > 1) {
 <div class="flex justify-content-center pb-2">
-  <p-selectbutton
-    [options]="shownDiagramTypes()"
-    [(ngModel)]="selectedDiagramType"
-    optionLabel="id"
-    (onChange)="onDiagramTypeChanged($event)"
-    name="diagram-type-select-button"
-    [allowEmpty]="false"
-  >
+  <p-selectbutton [options]="shownDiagramTypes()" [(ngModel)]="selectedDiagramType" optionLabel="id"
+    (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false">
     <ng-template #item let-item>
       <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
-      <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
+      <label id="{{item.id}}" class="sr-only"> {{item.label ? item.label : item.labelKey | translate}} </label>
     </ng-template>
   </p-selectbutton>
 </div>
 }
-<div class="w-full flex justify-content-center">
-  <p-chart
-    id="diagram"
-    [attr.data-automation-type]="chartType()"
-    [type]="chartType()"
-    [data]="chartData()"
+<div class="w-full flex justify-content-center diagram__container">
+  <div id="short-description" class="sr-only">{{ chartDescriptionKey()! | translate }}. {{ 'OCX_DIAGRAM.TABLE_DETAILS' | translate }}</div>
+  <p-chart id="diagram" 
+    [type]="chartType()" 
+    [data]="chartData()" 
     [responsive]="false"
-    [attr.data-automation-options]="chartOptions()"
-    [options]="chartOptions()"
-    (onDataSelect)="dataClicked($event)"
+    [attr.data-automation-options]="chartOptions()" 
+    [attr.aria-labelledby]="chartTitleKey() ? 'diagram-title' : null"
+    [attr.aria-describedby]="'short-description'"
+    [attr.data-automation-type]="chartType()"
     [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data()!), valueString: generateDiagramValueString(data()!)}"
-  ></p-chart>
+    [options]="chartOptions()" (onDataSelect)="dataClicked($event)"
+    tabindex="0" role="img"></p-chart>    
 </div>
+<ng-container [ngTemplateOutlet]="accessibleTable"></ng-container>
 <div class="w-full flex justify-content-center mt-2 sumKey">
   <p class="text-md font-medium text-700">
     <span name="sumLabel"> {{ sumKey() | translate }}</span> : <span name="amountOfData">{{ amountOfData() }}</span>
@@ -38,3 +45,30 @@
   <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
 </div>
 }
+
+<!-- Table for screen readers -->
+<ng-template #accessibleTable>
+<div class="w-full flex justify-content-center sr-only" aria-labelledby="diagram-title">
+  <table>
+    <caption id="diagram-table-caption"> {{ chartTitleKey() | translate }} </caption>
+    <thead>
+      <tr>
+        <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COLOR' | translate }}</th>
+        <th scope="col">{{ 'OCX_DIAGRAM.TABLE.REGION' | translate }}</th>
+        <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (label of chartData()?.labels; track $index) {
+      <tr>
+        <td>
+          <span>{{ chartData()!.datasets[0].backgroundColor[$index] }}</span>
+        </td>
+        <td>{{ label }}</td>
+        <td>{{ chartData()!.datasets[0].data[$index] }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+</ng-template>

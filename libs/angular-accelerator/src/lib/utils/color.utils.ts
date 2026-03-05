@@ -1,3 +1,5 @@
+import { ColorAccessibilityUtils } from './color-accessiblity.utils'
+
 export class ColorUtils {
   public static calculatePoint(
     i: number,
@@ -11,7 +13,8 @@ export class ColorUtils {
   public static interpolateColors(
     dataLength: number,
     colorScale: (arg0: any) => any,
-    colorRangeInfo: { colorStart: any; colorEnd: any; useEndAsStart: any }
+    colorRangeInfo: { colorStart: any; colorEnd: any; useEndAsStart: any },
+    bgColor: string
   ): any {
     const { colorStart, colorEnd } = colorRangeInfo
     const colorRange = colorEnd - colorStart
@@ -21,7 +24,7 @@ export class ColorUtils {
 
     for (i = 0; i < dataLength; i++) {
       colorPoint = this.calculatePoint(i, intervalSize, colorRangeInfo)
-      colorArray.push(colorScale(colorPoint))
+      colorArray.push(ColorAccessibilityUtils.ensureAccessible(colorScale(colorPoint), bgColor))
     }
 
     return colorArray

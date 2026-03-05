@@ -1,11 +1,11 @@
-import { Component, OnInit, effect, input, model, output, signal } from '@angular/core'
+import { Component, ElementRef, OnInit, effect, inject, input, model, output, signal } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
-import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { ColorUtils } from '../../utils/color.utils'
 
 export interface DiagramLayouts {
   id: string
@@ -54,6 +54,8 @@ const allDiagramTypes: DiagramLayouts[] = [
 export class DiagramComponent implements OnInit {
   data = input<DiagramData[] | undefined>(undefined)
   sumKey = input<string>('OCX_DIAGRAM.SUM')
+  chartTitleKey = input<string>('')
+  chartDescriptionKey = input<string>('')
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -83,6 +85,7 @@ export class DiagramComponent implements OnInit {
   }
   // Changing the colorScale, will change the thematic color appearance of the diagram.
   private colorScale = d3.interpolateCool
+  private el = inject(ElementRef)
 
   constructor() {
     effect(() => {
@@ -148,11 +151,11 @@ export class DiagramComponent implements OnInit {
       return dataColors
     } else if (this.fillMissingColors()) {
       // it is intended to generate more colors than needed, so interval for generated colors is same as amount of items on the diagram
-      const interpolatedColors = interpolateColors(dataColors.length, colorScale, colorRangeInfo)
+      const interpolatedColors = interpolateColors(dataColors.length, colorScale, colorRangeInfo, this.el.nativeElement)
       let interpolatedIndex = 0
       return dataColors.map((color) => (color === undefined ? interpolatedColors[interpolatedIndex++] : color))
     } else {
-      return interpolateColors(data.length, colorScale, colorRangeInfo)
+      return interpolateColors(data.length, colorScale, colorRangeInfo, this.el.nativeElement)
     }
   }
 
@@ -185,6 +188,8 @@ export class DiagramComponent implements OnInit {
     })
   }
 }
-function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
-  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo)
+function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any, element?: HTMLElement): string[] {
+  const bgColor = element ? window.getComputedStyle(element).backgroundColor : undefined;
+  const fallback = element ? getComputedStyle(element).getPropertyValue('--p-onecx-body-bg-color').trim() : '#ffffff';
+  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo, bgColor || fallback)
 }

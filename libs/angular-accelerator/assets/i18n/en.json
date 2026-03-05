@@ -178,6 +178,12 @@
     "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
+    "TABLE_DETAILS": "Detailed values available in table below",
+    "TABLE": {
+      "COLOR": "Color",
+      "REGION": "Region",
+      "COUNT": "Count"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Switch to pie chart",
       "HORIZONTAL_BAR": "Switch to horizontal bar chart",

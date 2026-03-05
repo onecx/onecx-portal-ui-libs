@@ -72,7 +72,8 @@ export * from './lib/functions/flatten-object'
 export * from './lib/functions/at-least-one-field-filled-validator'
 
 // utils
-export * from './lib/utils/colorutils'
+export * from './lib/utils/color.utils'
+export * from './lib/utils/color-accessiblity.utils'
 export * from './lib/utils/data-operation-strategy'
 export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'

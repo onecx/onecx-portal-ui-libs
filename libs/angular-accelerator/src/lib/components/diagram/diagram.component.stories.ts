@@ -76,6 +76,8 @@ export const PieChart = {
   args: {
     diagramType: DiagramType.PIE,
     data: mockData,
+    chartTitle: 'OCX_DIAGRAM.TITLE',
+    chartDescription: 'OCX_DIAGRAM.DESCRIPTION',
   },
 }
 
@@ -147,5 +149,17 @@ export const WithForcedCustomColors = {
     ],
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
     fillMissingColors: true,
+  },
+}
+
+export const AccessibilityShowcase = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
+    chartDescriptionKey: 'OCX_DIAGRAM.ACCESSIBILITY_DESCRIPTION',
+    sumKey: 'OCX_DIAGRAM.SUM',
   },
 }
