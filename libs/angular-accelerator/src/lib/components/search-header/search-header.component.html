@@ -3,6 +3,8 @@
     id="searchButton"
     icon="pi pi-search"
     (onClick)="onSearchClicked()"
+    (keydown.enter)="onSearchClicked()"
+    (keydown.space)="onSearchClicked()"
     [disabled]="searchButtonDisabled() || formGroup()?.invalid"
     [label]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate"
     [ariaLabel]="'OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate"
@@ -10,12 +12,17 @@
     tooltipPosition="top"
     tooltipEvent="hover"
   ></p-button>
+  <div *ngIf="noResults()" class="p-error mt-2 sr-only" role="alert" aria-live="polite">
+    {{ 'OCX_SEARCH_HEADER.NO_RESULTS' | translate }}
+  </div>
 </ng-template>
 <ng-template #resetBtn>
   <p-button
     id="resetButton"
     icon="pi pi-eraser"
     (onClick)="onResetClicked()"
+    (keydown.enter)="onResetClicked()"
+    (keydown.space)="onResetClicked()"
     [disabled]="resetButtonDisabled()"
     [label]="'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate"
     [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"

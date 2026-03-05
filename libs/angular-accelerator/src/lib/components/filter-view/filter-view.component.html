@@ -7,6 +7,8 @@
       #chipFilterResetButton
       id="ocxFilterViewReset"
       (onClick)="onResetFilersClick()"
+      (keydown.enter)="onResetFilersClick()"
+      (keydown.space)="onResetFilersClick()"
       icon="pi pi-eraser"
       pTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
       tooltipPosition="top"
@@ -88,6 +90,8 @@
       #manageButton
       id="ocxFilterViewManage"
       (onClick)="showPanel($event)"
+      (keydown.enter)="showPanel($event)"
+      (keydown.space)="showPanel($event)"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
       pTooltip="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate }}"
@@ -111,6 +115,8 @@
                 [autofocus]="true"
                 id="ocxFilterViewOverlayReset"
                 (onClick)="onResetFilersClick()"
+                (keydown.enter)="onResetFilersClick()"
+                (keydown.space)="onResetFilersClick()"
                 icon="pi pi-eraser"
                 pTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
                 tooltipPosition="top"

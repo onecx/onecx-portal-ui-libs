@@ -5,7 +5,26 @@
     [home]="(home$ | async)?.menuItem ?? {}"
     [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
     [attr.manual]="manualBreadcrumbs()"
-  ></p-breadcrumb>
+  >
+  <ng-template let-item pTemplate="item">
+    @if (item.routerLink || item.url) {
+    <a [routerLink]="item?.routerLink" [href]="item?.url" class="menuitem-link flex align-items-center gap-2" [attr.aria-label]="item.label ? ('OCX_PAGE_HEADER.GO_TO_PAGE' | translate: { page: (item.label | translate) }) : ''">
+      @if (item.icon) {
+      <i [class]="item.icon"></i>
+      }
+      <span class="menuitem-text">{{ item.label ? (item.label | translate) : '' }}</span>
+    </a>
+    }
+    @if (!item.routerLink && !item.url) {
+    <span class="menuitem-link flex align-items-center gap-2" [attr.aria-label]="item.label ? (item.label | translate) : ''" aria-current="page">
+      @if (item.icon) {
+      <i [class]="item.icon"></i>
+      }
+      <span class="menuitem-text">{{ item.label ? (item.label | translate) : '' }}</span>
+    </span>
+    }
+  </ng-template>
+</p-breadcrumb>
   } }
   <div class="title-bar flex flex-row md:justify-content-between align-items-center p-3">
     <div class="title-wrap">
@@ -63,6 +82,8 @@
             type="button"
             class="action-button"
             (onClick)="onActionClick(action)"
+            (keydown.enter)="onActionClick(action)"
+            (keydown.space)="onActionClick(action)"
             [disabled]="action.disabled ? action.disabled : false"
             [loading]="action.loading ?? false"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
@@ -143,6 +164,8 @@
             tooltipPosition="top"
             tooltipEvent="hover"
             (onClick)="item.actionItemCallback()"
+            (keydown.enter)="item.actionItemCallback()"
+            (keydown.space)="item.actionItemCallback()"
           ></p-button>
           }
         </span>

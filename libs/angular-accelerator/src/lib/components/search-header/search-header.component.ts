@@ -51,7 +51,7 @@ export interface SearchConfigData {
 export class SearchHeaderComponent {
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
-
+  noResults = input<boolean>(false)
   viewMode = model<'basic' | 'advanced'>('basic')
 
   manualBreadcrumbs = input<boolean>(false)
@@ -146,6 +146,7 @@ export class SearchHeaderComponent {
   }
 
   onSearchClicked() {
+    alert('Search clicked! Please implement the search logic in the searched event handler.')
     this.searched.emit()
   }
 

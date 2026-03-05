@@ -31,8 +31,10 @@
     [attr.aria-describedby]="'short-description'"
     [attr.data-automation-type]="chartType()"
     [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data()!), valueString: generateDiagramValueString(data()!)}"
-    [options]="chartOptions()" (onDataSelect)="dataClicked($event)"
-    tabindex="0" role="img"></p-chart>    
+    [options]="chartOptions()" 
+    (onDataSelect)="dataClicked($event)"
+    tabindex="0"
+    role="img"></p-chart>    
 </div>
 <ng-container [ngTemplateOutlet]="accessibleTable"></ng-container>
 <div class="w-full flex justify-content-center mt-2 sumKey">

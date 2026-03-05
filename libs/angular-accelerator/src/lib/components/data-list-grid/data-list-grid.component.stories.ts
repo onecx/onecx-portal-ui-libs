@@ -2,10 +2,13 @@ import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storyb
 import { RouterModule } from '@angular/router'
 import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
+import { FormsModule } from '@angular/forms'
 import { ButtonModule } from 'primeng/button'
+import { FloatLabelModule } from 'primeng/floatlabel'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { DataViewModule } from 'primeng/dataview'
 import { MenuModule } from 'primeng/menu'
+import { SelectModule } from 'primeng/select'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
@@ -16,6 +19,9 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { UserService } from '@onecx/angular-integration-interface'
 import { action } from 'storybook/actions'
+import { DataSortDirection } from '../../model/data-sort-direction'
+import { ColumnType } from '../../model/column-type.model'
+import { DataListGridSortingComponent } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 
 const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
   title: 'Components/DataListGridComponent',
@@ -39,8 +45,23 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
       ],
     }),
     moduleMetadata({
-      declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule],
+      declarations: [
+        DataListGridComponent,
+        DataListGridSortingComponent,
+        IfPermissionDirective,
+        TooltipOnOverflowDirective,
+      ],
+      imports: [
+        DataViewModule,
+        MenuModule,
+        ButtonModule,
+        MultiSelectModule,
+        TooltipModule,
+        StorybookTranslateModule,
+        FormsModule,
+        SelectModule,
+        FloatLabelModule,
+      ],
     }),
   ],
 }
@@ -179,6 +200,69 @@ export const ListWithMockData = {
     template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
   }),
   args: defaultComponentArgs,
+}
+
+export const ListWithSorting = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    columns: [
+      { id: 'property1', nameKey: 'Property 1', columnType: ColumnType.STRING, sortable: true },
+      { id: 'available', nameKey: 'Available', columnType: ColumnType.STRING, sortable: false },
+    ],
+    sortField: 'property1',
+    sortDirection: DataSortDirection.DESCENDING,
+    sortStates: [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING],
+    clientSideSorting: true,
+    layout: 'list',
+  },
+}
+
+export const ListWithSortingControl = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultActionsArgs,
+      selectedSortField: args.sortField,
+      selectedSortDirection: args.sortDirection,
+    },
+    template: `
+      <div class="flex flex-column gap-3">
+        <ocx-data-list-grid-sorting
+          [columns]="columns"
+          [sortStates]="sortStates"
+          [sortField]="selectedSortField"
+          [sortDirection]="selectedSortDirection"
+          (sortChange)="selectedSortField = $event"
+          (sortDirectionChange)="selectedSortDirection = $event"
+        ></ocx-data-list-grid-sorting>
+
+        <ocx-data-list-grid
+          ${argsToTemplate(args)}
+          [sortField]="selectedSortField"
+          [sortDirection]="selectedSortDirection"
+          (deleteItem)="deleteItem($event)"
+          (editItem)="editItem($event)"
+          (viewItem)="viewItem($event)"
+        ></ocx-data-list-grid>
+      </div>
+    `,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    columns: [
+      { id: 'property1', nameKey: 'Property 1', columnType: ColumnType.STRING, sortable: true },
+      { id: 'available', nameKey: 'Available', columnType: ColumnType.STRING, sortable: true },
+    ],
+    sortStates: [DataSortDirection.NONE, DataSortDirection.ASCENDING, DataSortDirection.DESCENDING],
+    sortField: 'property1',
+    sortDirection: DataSortDirection.NONE,
+    clientSideSorting: true,
+    layout: 'list',
+  },
 }
 
 export const ListWithNoData = {

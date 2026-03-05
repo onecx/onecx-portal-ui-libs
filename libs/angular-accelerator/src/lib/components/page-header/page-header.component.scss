@@ -98,3 +98,9 @@
 .min-w-120 {
   min-width: 120px !important;
 }
+
+.menuitem-link{
+    color: var(--text-color, var(--text-color-default));
+    text-decoration: none;
+    font-size: var(--font-size, var(--font-size-default));
+}

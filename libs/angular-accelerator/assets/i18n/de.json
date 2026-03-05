@@ -104,6 +104,9 @@
     "MORE_ACTIONS_TOOLTIP": "Weitere Aktionen anzeigen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Layout auswählen"
+    },
     "LAYOUT": {
       "LIST": "Liste",
       "GRID": "Raster",
@@ -148,6 +151,7 @@
         "DETAIL": "Zu erweiterten Suchkriterien wechseln"
       }
     },
+    "NO_RESULTS": "Keine Ergebnisse gefunden",
     "OCX_SEARCH_CONFIG": {
       "DROPDOWN_DEFAULT": "Gespeicherte Suchvorlage auswählen"
     },
@@ -171,6 +175,7 @@
     "IMAGE": "Seitentitelbild",
     "SUBHEADER": "Seiteninhalt",
     "MORE_ACTIONS": "Weitere Aktionen",
+    "GO_TO_PAGE": "Gehe zur {{page}}-Seite",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
     "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
   },
