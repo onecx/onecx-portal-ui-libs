@@ -11,19 +11,23 @@
   [rowsPerPageOptions]="pageSizes() ?? []"
   [id]="'dataListGrid_' + name()"
   paginatorDropdownAppendTo="body"
+  aria-labelledby="data-view-title"
 >
+<p id="data-view-title" class="sr-only">{{ dataViewTitleKey() }}</p>
   <ng-template #grid let-rows>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-4" role="grid">
       @for (item of rows; track item) {
-      <ng-container
-        [ngTemplateOutlet]="gridItem ?? defaultGridItem"
-        [ngTemplateOutletContext]="{$implicit:item}"
-      ></ng-container>
+      <div role="row">
+        <ng-container
+          [ngTemplateOutlet]="gridItem ?? defaultGridItem"
+          [ngTemplateOutletContext]="{$implicit:item}"
+        ></ng-container>
+      </div>
       }
     </div>
   </ng-template>
   <ng-template #list let-rows>
-    <div class="p-grid p-nogutter grid grid-nogutter">
+    <div class="p-grid p-nogutter grid grid-nogutter" role="list">
       @for (item of rows; track item; let first = $first) { @defer (on viewport; on idle){
       <ng-container
         [ngTemplateOutlet]="listItem ?? defaultListItem"
@@ -46,7 +50,7 @@
 }
 
 <ng-template #defaultGridItem let-item>
-  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider">
+  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider" role="gridcell">
     <div class="data-grid-item card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
       <div class="flex justify-content-center mb-3">
         <img
@@ -96,7 +100,7 @@
 </ng-template>
 <ng-template #defaultListItem let-item="item" let-first="first" let-columnTemplates="columnTemplates">
   @if (columnTemplates) {
-  <div class="col-12">
+  <div class="col-12" role="listitem">
     <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">
@@ -119,6 +123,8 @@
             }"
             [attr.aria-label]="(viewMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
             (click)="onViewRow(item)"
+            (keydown.enter)="onViewRow(item)"
+            (keydown.space)="onViewRow(item)"
             *ocxIfPermission="viewPermission()"
             [disabled]="!!viewActionEnabledField() && !fieldIsTruthy(item, viewActionEnabledField())"
             [attr.name]="'data-list-action-button'"
@@ -137,6 +143,8 @@
             }"
             [attr.aria-label]="(editMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
             (click)="onEditRow(item)"
+            (keydown.enter)="onEditRow(item)"
+            (keydown.space)="onEditRow(item)"
             *ocxIfPermission="editPermission()"
             [disabled]="!!editActionEnabledField() && !fieldIsTruthy(item, editActionEnabledField())"
             [attr.name]="'data-list-action-button'"
@@ -156,6 +164,8 @@
             }"
             [attr.aria-label]="(deleteMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
             (click)="onDeleteRow(item)"
+            (keydown.enter)="onDeleteRow(item)"
+            (keydown.space)="onDeleteRow(item)"
             *ocxIfPermission="deletePermission()"
             [disabled]="!!deleteActionEnabledField() && !fieldIsTruthy(item, deleteActionEnabledField())"
             [attr.name]="'data-list-action-button'"
@@ -170,6 +180,8 @@
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
             (click)="onActionClick(action, item)"
+            (keydown.enter)="onActionClick(action, item)"
+            (keydown.space)="onActionClick(action, item)"
             [pTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
             tooltipPosition="top"
             [tooltipOptions]="{
@@ -186,6 +198,8 @@
             class="p-button-rounded p-button-text"
             [icon]="'pi pi-ellipsis-v'"
             (click)="toggleOverflowMenu($event, menu, item)"
+            (keydown.enter)="toggleOverflowMenu($event, menu, item)"
+            (keydown.space)="toggleOverflowMenu($event, menu, item)"
             [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
             [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"

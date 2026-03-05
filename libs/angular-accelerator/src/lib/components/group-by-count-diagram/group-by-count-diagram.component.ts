@@ -28,6 +28,8 @@ export class GroupByCountDiagramComponent {
   private translateService = inject(TranslateService)
 
   sumKey = input<string>('SEARCH.SUMMARY_TITLE')
+  chartTitleKey = input<string>('')
+  chartDescriptionKey = input<string>('')
   diagramType = model<DiagramType>(DiagramType.PIE)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.

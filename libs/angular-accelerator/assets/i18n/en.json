@@ -94,6 +94,7 @@
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
     "NO_SEARCH_RESULTS_FOUND": "No Results Found",
     "EMPTY_RESULT": "No data found.",
+    "PAGE_CHANGED": "Page changed to {{page}}",
     "MENU": {
       "VIEW": "View",
       "EDIT": "Edit",

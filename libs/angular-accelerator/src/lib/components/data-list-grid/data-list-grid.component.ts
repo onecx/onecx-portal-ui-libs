@@ -77,6 +77,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
   sortStates = input<DataSortDirection[]>([])
+  dataViewTitleKey = input<string>('')
 
   pageSize = model<number | undefined>(undefined)
   pageSizes = input<number[]>([10, 25, 50])
@@ -551,6 +552,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page.set(page)
     this.pageSize.set(event.rows)
+    firstValueFrom(this.translateService.get('OCX_DATA_LIST_GRID.PAGE_CHANGED', { page: page + 1 })).then(
+      (translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText)
+      }
+    )
   }
 
   fieldIsTruthy(object: any, key: any) {
