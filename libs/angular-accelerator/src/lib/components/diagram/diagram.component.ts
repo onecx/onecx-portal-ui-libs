@@ -76,7 +76,9 @@ export class DiagramComponent {
   chartOptions = signal<ChartOptions>({})
   chartData = signal<ChartData | undefined>(undefined)
   amountOfData = signal<number | undefined | null>(undefined)
-  shownDiagramTypes = signal<DiagramLayouts[]>([])
+  shownDiagramTypes = computed(() => 
+    allDiagramTypes.filter((vl) => this.supportedDiagramTypes().includes(vl.layout))
+  )
   // enabled for only pie chart as it contains legends which are hidden
   useFullHeight = computed(() =>
     this.diagramType() === DiagramType.PIE && this.fullHeight()
@@ -91,11 +93,6 @@ export class DiagramComponent {
   private colorScale = d3.interpolateCool
 
   constructor() {
-    effect(() => {
-      const value = this.supportedDiagramTypes()
-      this.shownDiagramTypes.set(allDiagramTypes.filter((vl) => value.includes(vl.layout)))
-    })
-
     effect(() => {
       this.generateChart(this.colorScale, this.colorRangeInfo)
     })
