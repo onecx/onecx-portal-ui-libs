@@ -353,4 +353,35 @@ describe('DiagramComponent', () => {
 
     expect(component.chartType).toEqual('pie')
   })
+
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('data', null)
+    fixture.detectChanges()
+
+    expect(component.amountOfData).toBeUndefined()
+  })
+
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.PIE
+    expect(component.useFullHeight).toBe(true)
+  })
+
+  it('should set useFullHeight to false when fullHeight is true and diagramType is not PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    expect(component.useFullHeight).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    expect(component.useFullHeight).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.PIE
+    expect(component.useFullHeight).toBe(false)
+  })
 })
