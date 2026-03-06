@@ -2,7 +2,7 @@
 <div class="flex justify-content-center pb-2">
   <p-selectbutton
     [options]="shownDiagramTypes()"
-    [(ngModel)]="selectedDiagramType"
+    [ngModel]="selectedDiagramType()"
     optionLabel="id"
     (onChange)="onDiagramTypeChanged($event)"
     name="diagram-type-select-button"
@@ -15,19 +15,19 @@
   </p-selectbutton>
 </div>
 }
-<div class="w-full flex justify-content-center">
-  <p-chart
-    id="diagram"
-    [attr.data-automation-type]="chartType()"
-    [type]="chartType()"
-    [data]="chartData()"
-    [responsive]="false"
-    [attr.data-automation-options]="chartOptions()"
-    [options]="chartOptions()"
-    (onDataSelect)="dataClicked($event)"
-    [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data()!), valueString: generateDiagramValueString(data()!)}"
-  ></p-chart>
-</div>
+<div class="w-full flex justify-content-center" [ngClass]="{'h-full': useFullHeight()}">
+    <p-chart
+      id="diagram"
+      [attr.data-automation-type]="chartType()"
+      [type]="chartType()"
+      [data]="chartData()"
+      [responsive]="useFullHeight()"
+      [attr.data-automation-options]="chartOptions()"
+      [options]="chartOptions()"
+      (onDataSelect)="dataClicked($event)"
+      [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data() ?? []), valueString: generateDiagramValueString(data() ?? [])}"
+    ></p-chart>
+  </div>
 <div class="w-full flex justify-content-center mt-2 sumKey">
   <p class="text-md font-medium text-700">
     <span name="sumLabel"> {{ sumKey() | translate }}</span> : <span name="amountOfData">{{ amountOfData() }}</span>
