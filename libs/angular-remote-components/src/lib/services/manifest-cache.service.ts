@@ -35,7 +35,9 @@ export class ManifestCacheService implements OnDestroy {
     this._manifestTopic$ = source
   }
 
-  cache = ensureProperty(globalThis, ['onecxManifests'], {}) as Record<string, Manifest | undefined | null>;
+  cache = ensureProperty(globalThis, ['onecxManifests'], {} as Record<string, Manifest | undefined | null>)[
+    'onecxManifests'
+  ]
 
   ngOnDestroy(): void {
     this._manifestTopic$?.destroy()
