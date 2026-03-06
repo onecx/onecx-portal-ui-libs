@@ -18,19 +18,39 @@ Before starting this migration:
 * You have OneCX UI libraries v6.x installed  
 * You have a working development environment
 
-[#migration-checklist]
-== OneCx v7 Libs migration checklist
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
 
-This checklist summarizes all breaking changes introduced in OneCx v7 libraries.  
-Each item represents a required migration step that must be completed before your application can run with the new version.  
+To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+
+include::ai-prompt-19-to-20.adoc[]
+
+[#migration-steps-before-angular-20]
+== Migration Steps before upgrading to Angular 20
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 20.
 You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
 
 [%interactive]
+** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
 ** [ ] xref:./remove-shell-core.adoc[Remove @onecx/shell-core]
+
+[#upgrade-to-angular-20]
+== Upgrade to Angular 20
+Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
+
+=== Upgrade NX application to Angular 20
+To upgrade an NX application to Angular 20, follow this guide: xref:./update-nx-angular-version-20.adoc[Upgrade NX Application to Angular 20].
+
+[#migration-steps-after-angular-20]
+== Migration Steps after upgrading to Angular 20
+
+Once the previous steps are completed, **the application should be upgraded to Angular 20 and libs v7 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed.
+
+[%interactive]
 ** [ ] xref:./adjust-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
 ** [ ] xref:./update-primeng-package.adoc[Update package imports for PrimeNG theming]
 ** [ ] xref:./update-style-package.adoc[Update package imports for style utilities]
-** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
 ** [ ] xref:./migrate-to-onecx-translate-loader.adoc[Migrate to OnecxTranslateLoader translation mechanism]
 ** [ ] xref:./use-new-object-detail-item-interface.adoc[Use updated ObjectDetailItem interface for PageHeaderComponent]
 ** [ ] xref:./portal-dialog-service-signature-changes.adoc[Be aware of the PortalDialogService signature changes]

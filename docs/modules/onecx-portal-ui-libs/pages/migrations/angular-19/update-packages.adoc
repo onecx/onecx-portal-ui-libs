@@ -11,9 +11,17 @@ If the following packages are used in your project, update them to ensure compat
 | `^16.0.0`
 | Updated for Angular 19 compatibility
 
+| `@primeng`
+| `^19.0.0`
+| Updated for Angular 19 compatibility
+
 | `@ngx-translate/http-loader`
 | `^8.0.0`
 | Compatible with @ngx-translate/core v16
+
+| `ngrx-store-localstorage`
+| `^19.0.0`
+| Updated for Angular 19 compatibility
 
 | `ngx-build-plus`
 | `^19.0.0`
@@ -23,14 +31,9 @@ If the following packages are used in your project, update them to ensure compat
 [#installation-commands]
 == Installation Commands
 
-Run these commands to update the supporting packages:
+Run this command to update the supporting packages:
 
 [source, bash]
 ----
-# Update translation packages
-npm install @ngx-translate/core@^16.0.0
-npm install @ngx-translate/http-loader@^8.0.0
-
-# Update build tools
-npm install ngx-build-plus@^19.0.0
+npm install @ngx-translate/core@^16.0.0 @ngx-translate/http-loader@^8.0.0 @primeng@^19.0.0 ngrx-store-localstorage@^19.0.0 ngx-build-plus@^19.0.0
 ----

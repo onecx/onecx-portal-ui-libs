@@ -3,33 +3,28 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/angular-remote-components/src",
   "prefix": "onecx",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build-migrations": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "tsc -p libs/angular-remote-components/migrations/tsconfig.migrations.json"
-        ]
+        "commands": ["tsc -p libs/angular-remote-components/migrations/tsconfig.migrations.json"]
       }
     },
     "build": {
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
-        "project": "libs/angular-remote-components/ng-package.json"
+        "project": "libs/angular-remote-components/ng-package.json",
+        "tsConfig": "libs/angular-remote-components/tsconfig.lib.json"
       },
       "configurations": {
         "production": {
           "tsConfig": "libs/angular-remote-components/tsconfig.lib.prod.json"
         },
-        "development": {
-          "tsConfig": "libs/angular-remote-components/tsconfig.lib.json"
-        }
+        "development": {}
       },
       "defaultConfiguration": "production"
     },
@@ -38,6 +33,7 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/angular-remote-components/jest.config.ts",
+        "tsConfig": "libs/angular-remote-components/tsconfig.spec.json",
         "codeCoverage": true,
         "passWithNoTests": true
       },

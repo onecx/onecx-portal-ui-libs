@@ -60,3 +60,15 @@ export * from './lib/topics/resized-events/v1/resized-events.topic'
 export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
+
+
+export * from './lib/topics/icons/v1/icon.model'
+export * from './lib/topics/icons/v1/icon.topic'
+export * from './lib/services/icon.service'
+export * from './lib/topics/dynamic-translations/v1/dynamic-translations.model'
+export * from './lib/topics/dynamic-translations/v1/dynamic-translations.topic'
+
+export * from './lib/services/dynamic-translation.service'
+
+export * from './lib/models/shell-capability.model'
+export * from './lib/utils/shell-capability.utils'
