@@ -59,8 +59,8 @@ export class GroupByCountDiagramComponent implements OnInit {
   }
   diagramData$: Observable<DiagramData[]> | undefined
 
-  private _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
-  private _data$ = new BehaviorSubject<unknown[]>([])
+  private readonly _columnType$ = new BehaviorSubject<ColumnType>(ColumnType.STRING)
+  private readonly _data$ = new BehaviorSubject<unknown[]>([])
   @Input()
   get columnType(): ColumnType {
     return this._columnType$.getValue()
@@ -69,7 +69,7 @@ export class GroupByCountDiagramComponent implements OnInit {
     this._columnType$.next(value)
   }
 
-  private _columnField$ = new BehaviorSubject<string>('')
+  private readonly _columnField$ = new BehaviorSubject<string>('')
   @Input()
   get columnField(): string {
     return this._columnField$.getValue()
@@ -87,7 +87,7 @@ export class GroupByCountDiagramComponent implements OnInit {
     this.columnField = value.id
   }
 
-  private _colors$ = new BehaviorSubject<Record<string, string>>({})
+  private readonly _colors$ = new BehaviorSubject<Record<string, string>>({})
   @Input()
   get colors(): Record<string, string> {
     return this._colors$.getValue()
