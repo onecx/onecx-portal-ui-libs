@@ -1,4 +1,3 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
@@ -11,6 +10,8 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
+import { By } from '@angular/platform-browser'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -294,5 +295,90 @@ describe('DiagramComponent', () => {
         backgroundColor: ['blue', '0'],
       },
     ])
+  })
+
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.PIE
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(true)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(true)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(false)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.PIE
+    const spy = jest.spyOn(component, 'useFullHeight', 'get')
+
+    const result = component.useFullHeight
+
+    expect(result).toBe(false)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveReturnedWith(false)
+  })
+
+  it('should emit data clicked event', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    let dataSelectedEvent: number | undefined
+
+    component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
+    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', [{}, {}, {}])
+
+    expect(dataSelectedEvent).toEqual(3)
+    expect(chartHarness).toBeTruthy()
+  })
+
+  it('should fallback to pie chart type for unsupported diagramType', () => {
+    component.diagramType = 'unsupported-diagram-type' as any
+
+    expect(component.chartType).toEqual('pie')
+  })
+
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('data', null)
+    fixture.detectChanges()
+
+    expect(component.amountOfData).toBeUndefined()
+  })
+
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.PIE
+    expect(component.useFullHeight).toBe(true)
+  })
+
+  it('should set useFullHeight to false when fullHeight is true and diagramType is not PIE', () => {
+    component.fullHeight = true
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    expect(component.useFullHeight).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.HORIZONTAL_BAR
+    expect(component.useFullHeight).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    component.fullHeight = false
+    component.diagramType = DiagramType.PIE
+    expect(component.useFullHeight).toBe(false)
   })
 })
