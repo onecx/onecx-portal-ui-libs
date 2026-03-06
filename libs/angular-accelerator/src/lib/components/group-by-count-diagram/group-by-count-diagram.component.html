@@ -2,6 +2,7 @@
   [data]="(diagramData$ | async) || []"
   [fillMissingColors]="fillMissingColors()"
   [sumKey]="sumKey()"
+  [fullHeight]="fullHeight()"
   [diagramType]="diagramType()"
   (onDataSelect)="dataClicked($event)"
   [supportedDiagramTypes]="supportedDiagramTypes()"
