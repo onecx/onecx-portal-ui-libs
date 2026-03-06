@@ -1,4 +1,4 @@
-import { loadRemoteModule } from '@angular-architects/module-federation'
+import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { Injectable, InjectionToken, OnDestroy, Type, inject } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
@@ -19,6 +19,14 @@ export type SlotComponentConfiguration = {
   componentType: Promise<Type<unknown> | undefined> | Type<unknown> | undefined
   remoteComponent: RemoteComponentInfo
   permissions: Promise<string[]> | string[]
+}
+
+type LoadComponentOptions = {
+  remoteEntryUrl: string
+  exposedModule: string
+  productName: string
+  remoteName: string
+  technology: string
 }
 
 export interface SlotServiceInterface {
@@ -80,38 +88,39 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     )
   }
 
-  private async loadComponent(component: {
-    remoteEntryUrl: string
-    exposedModule: string
-    productName: string
-    remoteName: string
-    technology: string
-  }): Promise<Type<unknown> | undefined> {
+  private async loadComponent(component: LoadComponentOptions): Promise<Type<unknown> | undefined> {
+    const exposedModule = component.exposedModule.startsWith('./')
+      ? component.exposedModule.slice(2)
+      : component.exposedModule
     try {
-      const exposedModule = component.exposedModule.startsWith('./')
-        ? component.exposedModule.slice(2)
-        : component.exposedModule
+      registerRemotes([this.toLoadRemoteEntryOptions(component, exposedModule)])
+      const m = await loadRemote<any>(component.productName + '/' + component.remoteName + '/' + exposedModule)
       if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
-        const m = await loadRemoteModule({
-          type: 'module',
-          remoteEntry: component.remoteEntryUrl,
-          exposedModule: './' + exposedModule,
-        })
         if (component.technology === Technologies.Angular) {
           return m[exposedModule]
         }
         return undefined
       }
-      await loadRemoteModule({
-        type: 'script',
-        remoteName: component.remoteName,
-        remoteEntry: component.remoteEntryUrl,
-        exposedModule: './' + exposedModule,
-      })
       return undefined
     } catch (e) {
       this.logger.error('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
+    }
+  }
+
+  private toLoadRemoteEntryOptions(component: LoadComponentOptions, exposedModule: string) {
+    if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
+      return {
+        type: 'module',
+        entry: component.remoteEntryUrl,
+        name: component.productName + '/' + component.remoteName,
+      }
+    }
+    return {
+      type: 'script',
+      alias: component.remoteName ?? '',
+      entry: component.remoteEntryUrl,
+      name: './' + exposedModule,
     }
   }
 }
