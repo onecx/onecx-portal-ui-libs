@@ -1,0 +1,5 @@
+{
+    "chat.promptFilesRecommendations": {
+        "resourceLangId == markdown": true
+    }
+}

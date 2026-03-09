@@ -1,6 +1,5 @@
 import { importProvidersFrom } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule } from '@angular/router'
 import { action } from 'storybook/actions'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
@@ -26,7 +25,6 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         importProvidersFrom(StorybookThemeModule),
         provideUserServiceMock(),
@@ -110,6 +108,16 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Disabled',
     disabled: true,
+  },
+  {
+    label: 'Loading',
+    actionCallback: () => {
+      console.log(`you clicked 'Loading'`)
+    },
+    title: 'This action is currently loading',
+    loading: true,
+    icon: PrimeIcons.SPINNER,
+    show: 'always',
   },
   {
     icon: PrimeIcons.BOOK,
@@ -505,5 +513,5 @@ export const TranslationKeysAndParams = {
     actions: demoActions,
     objectDetails: demoFieldsWithTranslationKeys,
     showBreadcrumbs: false,
-  }
+  },
 }

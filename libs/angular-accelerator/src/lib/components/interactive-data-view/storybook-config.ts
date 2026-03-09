@@ -1,8 +1,7 @@
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
-import { importProvidersFrom } from '@angular/core'
+import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ActivatedRoute } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
@@ -42,6 +41,8 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { TooltipStyle } from 'primeng/tooltip'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { action } from 'storybook/actions'
+import { UserService } from '@onecx/angular-integration-interface'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -50,7 +51,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
-        importProvidersFrom(BrowserAnimationsModule),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -73,6 +73,14 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         importProvidersFrom(StorybookThemeModule),
         TooltipStyle,
+        provideAppInitializer(() => {
+          const userServiceMock = inject(UserService) as unknown as UserServiceMock
+          userServiceMock.permissionsTopic$.publish([
+            'TEST_MGMT#TEST_DELETE',
+            'TEST_MGMT#TEST_EDIT',
+            'TEST_MGMT#TEST_VIEW',
+          ])
+        }),
       ],
     }),
     moduleMetadata({
@@ -117,9 +125,6 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
     selectDisplayedChips: { type: 'function', control: false },
   },
 }
-export const InteractiveDataViewTemplate: StoryFn = (args) => ({
-  props: args,
-})
 
 export const defaultInteractiveDataViewArgs = {
   columns: [
@@ -187,8 +192,17 @@ export const defaultInteractiveDataViewArgs = {
   defaultGroupKey: 'test',
 }
 
-export const defaultInteractiveDataViewArgTypes = {
-  deleteItem: { action: 'deleteItem' },
-  editItem: { action: 'editItem' },
-  viewItem: { action: 'viewItem' },
+export const defaultInteractiveDataViewActionsArgs = {
+  deleteItem: {
+    observed: () => true,
+    emit: action('deleteItem'),
+  },
+  editItem: {
+    observed: () => true,
+    emit: action('editItem'),
+  },
+  viewItem: {
+    observed: () => true,
+    emit: action('viewItem'),
+  },
 }

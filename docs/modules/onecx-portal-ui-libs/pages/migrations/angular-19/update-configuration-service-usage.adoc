@@ -1,9 +1,9 @@
 [#update-configuration-service]
-=== Update ConfigurationService Usage
+= Update ConfigurationService Usage
 
 In OneCX v6, three methods of `ConfigurationService` have been updated to be asynchronous, returning `Promise` results instead of synchronous values.
 
-==== Update the following methods
+== Update the following methods
 
 * `getProperty(key)` → `await getProperty(key)`
 * `getConfig()` → `await getConfig()`
@@ -22,7 +22,7 @@ Guidelines::
 ** Jasmine -> `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
 
 
-==== Example
+== Example
 
 .Before
 [source, typescript]

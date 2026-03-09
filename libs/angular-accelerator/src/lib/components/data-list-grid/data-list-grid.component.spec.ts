@@ -1,7 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { ActivatedRoute, RouterModule } from '@angular/router'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
@@ -12,8 +12,8 @@ import {
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
+import { firstValueFrom } from 'rxjs'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
-import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -39,6 +39,7 @@ describe('DataListGridComponent', () => {
   let component: DataListGridComponent
   let translateService: TranslateService
   let listGrid: DataListGridHarness
+  let router: Router
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -253,15 +254,16 @@ describe('DataListGridComponent', () => {
 
     fixture = TestBed.createComponent(DataListGridComponent)
     component = fixture.componentInstance
-    component.data = mockData
-    component.columns = mockColumns
-    component.paginator = true
+    fixture.componentRef.setInput('data', mockData)
+    fixture.componentRef.setInput('columns', mockColumns)
+    fixture.componentRef.setInput('paginator', true)
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
     const userServiceMock = TestBed.inject(UserServiceMock)
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+    router = TestBed.inject(Router)
   })
 
   it('should create the data list grid component', () => {
@@ -293,7 +295,7 @@ describe('DataListGridComponent', () => {
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
     it('de', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('de')
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
       const paginator = await dataListGrid.getPaginator()
@@ -302,7 +304,7 @@ describe('DataListGridComponent', () => {
     })
 
     it('en', async () => {
-      component.totalRecordsOnServer = 10
+      fixture.componentRef.setInput('totalRecordsOnServer', 10)
       translateService.use('en')
       const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
       const paginator = await dataListGrid.getPaginator()
@@ -312,7 +314,7 @@ describe('DataListGridComponent', () => {
   })
 
   it('should display the paginator rowsPerPageOptions', async () => {
-    const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+    const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     const paginator = await dataListGrid.getPaginator()
     const rowsPerPageOptions = await paginator.getRowsPerPageOptions()
     const rowsPerPageOptionsText = await rowsPerPageOptions.selectedSelectItemText(0)
@@ -320,16 +322,16 @@ describe('DataListGridComponent', () => {
   })
 
   const setUpListActionButtonMockData = async () => {
-    component.columns = [
+    fixture.componentRef.setInput('columns', [
       ...mockColumns,
       {
         columnType: ColumnType.STRING,
         id: 'ready',
         nameKey: 'Ready',
       },
-    ]
+    ])
 
-    component.data = [
+    fixture.componentRef.setInput('data', [
       {
         version: 0,
         creationDate: '2023-09-12T09:34:27.184086Z',
@@ -347,20 +349,22 @@ describe('DataListGridComponent', () => {
         testNumber: '7.1',
         ready: false,
       },
-    ]
+    ])
     component.viewItem.subscribe(() => console.log())
     component.editItem.subscribe(() => console.log())
     component.deleteItem.subscribe(() => console.log())
-    component.viewPermission = 'VIEW'
-    component.editPermission = 'EDIT'
-    component.deletePermission = 'DELETE'
+    fixture.componentRef.setInput('viewPermission', 'VIEW')
+    fixture.componentRef.setInput('editPermission', 'EDIT')
+    fixture.componentRef.setInput('deletePermission', 'DELETE')
 
     fixture.detectChanges()
     await fixture.whenStable()
   }
   describe('Disable list action buttons based on field path', () => {
     it('should not disable any list action button by default', async () => {
-      component.layout = 'list'
+      fixture.componentRef.setInput('layout', 'list')
+
+      fixture.detectChanges()
 
       expect(component.viewItemObserved).toBe(false)
       expect(component.editItemObserved).toBe(false)
@@ -390,9 +394,9 @@ describe('DataListGridComponent', () => {
     })
 
     it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
-      component.layout = 'list'
+      fixture.componentRef.setInput('layout', 'list')
       await setUpListActionButtonMockData()
-      component.viewActionEnabledField = 'ready'
+      fixture.componentRef.setInput('viewActionEnabledField', 'ready')
 
       let listActions = await listGrid.getActionButtons('list')
       expect(listActions.length).toBe(3)
@@ -407,11 +411,11 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data]
+      const tempData = [...component.data()]
 
       tempData[0]['ready'] = true
 
-      component.data = [...tempData]
+      fixture.componentRef.setInput('data', [...tempData])
 
       listActions = await listGrid.getActionButtons('list')
 
@@ -423,7 +427,8 @@ describe('DataListGridComponent', () => {
 
   describe('Hide list action buttons based on field path', () => {
     it('should not hide any list action button by default', async () => {
-      component.layout = 'list'
+      fixture.componentRef.setInput('layout', 'list')
+      fixture.detectChanges()
 
       expect(component.viewItemObserved).toBe(false)
       expect(component.editItemObserved).toBe(false)
@@ -452,9 +457,9 @@ describe('DataListGridComponent', () => {
     })
 
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
-      component.layout = 'list'
+      fixture.componentRef.setInput('layout', 'list')
       await setUpListActionButtonMockData()
-      component.viewActionVisibleField = 'ready'
+      fixture.componentRef.setInput('viewActionVisibleField', 'ready')
 
       let listActions = await listGrid.getActionButtons('list')
       expect(listActions.length).toBe(2)
@@ -464,12 +469,11 @@ describe('DataListGridComponent', () => {
         expect(icon === 'pi pi-eye').toBe(false)
       }
 
-      const tempData = [...component.data]
+      const tempData = [...component.data()]
 
       tempData[0]['ready'] = true
 
-      component.data = [...tempData]
-
+      fixture.componentRef.setInput('data', [...tempData])
       listActions = await listGrid.getActionButtons('list')
 
       expect(listActions.length).toBe(3)
@@ -477,9 +481,9 @@ describe('DataListGridComponent', () => {
   })
   describe('Assign ids to list action buttons', () => {
     beforeEach(() => {
-      component.layout = 'list'
+      fixture.componentRef.setInput('layout', 'list')
 
-      component.data = [
+      fixture.componentRef.setInput('data', [
         {
           version: 0,
           creationDate: '2023-09-12T09:34:27.184086Z',
@@ -497,12 +501,12 @@ describe('DataListGridComponent', () => {
           testNumber: '7.1',
           ready: false,
         },
-      ]
+      ])
     })
 
     it('should assign id to view button', async () => {
       component.viewItem.subscribe(() => console.log())
-      component.viewPermission = 'VIEW'
+      fixture.componentRef.setInput('viewPermission', 'VIEW')
 
       fixture.autoDetectChanges()
       await fixture.whenStable()
@@ -517,7 +521,7 @@ describe('DataListGridComponent', () => {
 
     it('should assign id to edit button', async () => {
       component.editItem.subscribe(() => console.log())
-      component.editPermission = 'EDIT'
+      fixture.componentRef.setInput('editPermission', 'EDIT')
 
       fixture.autoDetectChanges()
       await fixture.whenStable()
@@ -532,7 +536,7 @@ describe('DataListGridComponent', () => {
 
     it('should assign id to delete button', async () => {
       component.deleteItem.subscribe(() => console.log())
-      component.deletePermission = 'DELETE'
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
 
       fixture.autoDetectChanges()
       await fixture.whenStable()
@@ -546,7 +550,7 @@ describe('DataListGridComponent', () => {
     })
 
     it('should assign id to additional action button', async () => {
-      component.additionalActions = [
+      fixture.componentRef.setInput('additionalActions', [
         {
           permission: 'VIEW',
           callback: () => {
@@ -554,7 +558,7 @@ describe('DataListGridComponent', () => {
           },
           id: 'actionId',
         },
-      ]
+      ])
 
       fixture.autoDetectChanges()
       await fixture.whenStable()
@@ -567,15 +571,15 @@ describe('DataListGridComponent', () => {
   })
 
   const setUpGridActionButtonMockData = async () => {
-    component.columns = [
+    fixture.componentRef.setInput('columns', [
       ...mockColumns,
       {
         columnType: ColumnType.STRING,
         id: 'ready',
         nameKey: 'Ready',
       },
-    ]
-    component.data = [
+    ])
+    fixture.componentRef.setInput('data', [
       {
         id: 'Test',
         imagePath:
@@ -583,21 +587,23 @@ describe('DataListGridComponent', () => {
         property1: 'Card 1',
         ready: false,
       },
-    ]
-    component.titleLineId = 'property1'
+    ])
+    fixture.componentRef.setInput('titleLineId', 'property1')
     component.viewItem.subscribe(() => console.log())
     component.editItem.subscribe(() => console.log())
     component.deleteItem.subscribe(() => console.log())
-    component.viewPermission = 'VIEW'
-    component.editPermission = 'EDIT'
-    component.deletePermission = 'DELETE'
+    fixture.componentRef.setInput('viewPermission', 'VIEW')
+    fixture.componentRef.setInput('editPermission', 'EDIT')
+    fixture.componentRef.setInput('deletePermission', 'DELETE')
 
     fixture.detectChanges()
     await fixture.whenStable()
   }
   describe('Disable grid action buttons based on field path', () => {
     it('should not disable any grid action button by default', async () => {
-      component.layout = 'grid'
+      fixture.componentRef.setInput('layout', 'grid')
+      fixture.detectChanges()
+
       expect(component.viewItemObserved).toBe(false)
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
@@ -621,9 +627,9 @@ describe('DataListGridComponent', () => {
     })
 
     it('should dynamically enable/disable an action button based on the contents of a specified field', async () => {
-      component.layout = 'grid'
+      fixture.componentRef.setInput('layout', 'grid')
       await setUpGridActionButtonMockData()
-      component.viewActionEnabledField = 'ready'
+      fixture.componentRef.setInput('viewActionEnabledField', 'ready')
       const gridMenuButton = await listGrid.getGridMenuButton()
 
       await gridMenuButton.click()
@@ -643,16 +649,18 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data]
+      const tempData = [...component.data()]
 
       tempData[0]['ready'] = true
 
-      component.data = [...tempData]
+      fixture.componentRef.setInput('data', [...tempData])
+      fixture.detectChanges()
 
       await gridMenuButton.click()
       await gridMenuButton.click()
 
       gridActions = await listGrid.getActionButtons('grid')
+      expect(gridActions.length).toBe(3)
 
       for (const action of gridActions) {
         expect(await listGrid.actionButtonIsDisabled(action, 'grid')).toBe(false)
@@ -662,7 +670,9 @@ describe('DataListGridComponent', () => {
 
   describe('Hide grid action buttons based on field path', () => {
     it('should not hide any grid action button by default', async () => {
-      component.layout = 'grid'
+      fixture.componentRef.setInput('layout', 'grid')
+      fixture.detectChanges()
+
       expect(component.viewItemObserved).toBe(false)
       expect(component.editItemObserved).toBe(false)
       expect(component.deleteItemObserved).toBe(false)
@@ -682,7 +692,7 @@ describe('DataListGridComponent', () => {
     })
 
     it('should dynamically hide/show an action button based on the contents of a specified field', async () => {
-      component.layout = 'grid'
+      fixture.componentRef.setInput('layout', 'grid')
       await setUpGridActionButtonMockData()
       const gridMenuButton = await listGrid.getGridMenuButton()
 
@@ -692,7 +702,7 @@ describe('DataListGridComponent', () => {
       expect(gridActions.length).toBe(3)
       await gridMenuButton.click()
 
-      component.viewActionVisibleField = 'ready'
+      fixture.componentRef.setInput('viewActionVisibleField', 'ready')
 
       await gridMenuButton.click()
       gridActions = await listGrid.getActionButtons('grid')
@@ -703,12 +713,11 @@ describe('DataListGridComponent', () => {
         expect(text === 'OCX_DATA_LIST_GRID.MENU.VIEW').toBe(false)
       }
 
-      const tempData = [...component.data]
+      const tempData = [...component.data()]
 
       tempData[0]['ready'] = true
 
-      component.data = [...tempData]
-
+      fixture.componentRef.setInput('data', [...tempData])
       await gridMenuButton.click()
       await gridMenuButton.click()
       gridActions = await listGrid.getActionButtons('grid')
@@ -720,7 +729,7 @@ describe('DataListGridComponent', () => {
     let userService: UserServiceMock
 
     beforeEach(() => {
-      component.data = [
+      fixture.componentRef.setInput('data', [
         {
           version: 0,
           creationDate: '2023-09-12T09:34:11.997048Z',
@@ -737,7 +746,7 @@ describe('DataListGridComponent', () => {
           imagePath: '/path/to/image1',
           testNumber: '1',
         },
-      ]
+      ])
 
       component.viewItem.subscribe(() => console.log('view item'))
       component.editItem.subscribe(() => console.log('edit item'))
@@ -748,11 +757,12 @@ describe('DataListGridComponent', () => {
 
     describe('list layout', () => {
       beforeEach(() => {
-        component.layout = 'list'
-        component.viewPermission = 'LIST#VIEW'
-        component.editPermission = 'LIST#EDIT'
-        component.deletePermission = 'LIST#DELETE'
-        component.additionalActions = []
+        fixture.componentRef.setInput('layout', 'list')
+        fixture.componentRef.setInput('viewPermission', 'LIST#VIEW')
+        fixture.componentRef.setInput('editPermission', 'LIST#EDIT')
+        fixture.componentRef.setInput('deletePermission', 'LIST#DELETE')
+        fixture.componentRef.setInput('additionalActions', [])
+        fixture.detectChanges()
       })
 
       it('should show view, delete and edit action buttons when user has VIEW, EDIT and DELETE permissions', async () => {
@@ -777,7 +787,7 @@ describe('DataListGridComponent', () => {
       it('should show custom inline actions if user has the required permission', async () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
 
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'CUSTOM#ACTION',
             callback: () => {
@@ -787,7 +797,7 @@ describe('DataListGridComponent', () => {
             icon: 'pi pi-check',
             showAsOverflow: false,
           },
-        ]
+        ])
 
         fixture.detectChanges()
         await fixture.whenStable()
@@ -804,7 +814,7 @@ describe('DataListGridComponent', () => {
       it('should show overflow menu when user has permission for at least one action', async () => {
         userService.permissionsTopic$.publish(['OVERFLOW#ACTION'])
 
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'OVERFLOW#ACTION',
             callback: () => {
@@ -814,7 +824,7 @@ describe('DataListGridComponent', () => {
             labelKey: 'OVERFLOW_ACTION_KEY',
             showAsOverflow: true,
           },
-        ]
+        ])
 
         fixture.detectChanges()
         await fixture.whenStable()
@@ -833,7 +843,7 @@ describe('DataListGridComponent', () => {
         expect(newMenuItems!.length).toBe(0)
       })
       it('should display action buttons based on multiple permissions', async () => {
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
             callback: () => {
@@ -852,11 +862,11 @@ describe('DataListGridComponent', () => {
             labelKey: 'OVERFLOW_ACTION_KEY',
             showAsOverflow: true,
           },
-        ]
+        ])
 
-        component.viewPermission = ['LIST#VIEW1', 'LIST#VIEW2']
-        component.editPermission = ['LIST#EDIT1', 'LIST#EDIT2']
-        component.deletePermission = ['LIST#DELETE1', 'LIST#DELETE2']
+        fixture.componentRef.setInput('viewPermission', ['LIST#VIEW1', 'LIST#VIEW2'])
+        fixture.componentRef.setInput('editPermission', ['LIST#EDIT1', 'LIST#EDIT2'])
+        fixture.componentRef.setInput('deletePermission', ['LIST#DELETE1', 'LIST#DELETE2'])
 
         userService.permissionsTopic$.publish([
           'LIST#VIEW1',
@@ -890,18 +900,237 @@ describe('DataListGridComponent', () => {
         expect(menuItems!.length).toBe(1)
         expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
       })
+
+      describe('action buttons with routerLink', () => {
+        it('should render inline action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+          jest.spyOn(console, 'log')
+
+          fixture.componentRef.setInput('additionalActions', [
+            {
+              id: 'routerLinkAction',
+              callback: () => {
+                console.log('My routing Action')
+              },
+              routerLink: '/inline',
+              permission: 'CUSTOM#ACTION',
+            },
+          ])
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const tableActions = await listGrid.getActionButtons('list')
+          expect(tableActions.length).toBe(1)
+
+          await tableActions[0].click()
+          expect(spy).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledWith(['/inline'])
+          expect(console.log).not.toHaveBeenCalledWith('My routing Action')
+        })
+
+        it('should render overflow action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+          jest.spyOn(console, 'log')
+
+          fixture.componentRef.setInput('additionalActions', [
+            {
+              id: 'routerLinkAction',
+              callback: () => {
+                console.log('My overflow routing Action')
+              },
+              routerLink: '/overflow',
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: true,
+            },
+          ])
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const overflowButton = await listGrid.getListOverflowMenuButton()
+          await overflowButton.click()
+
+          const overflowMenu = await listGrid.getListOverflowMenu()
+          expect(overflowMenu).toBeTruthy()
+          const tableActions = await overflowMenu?.getAllMenuItems()
+          expect(tableActions!.length).toBe(1)
+
+          await tableActions![0].selectItem()
+          expect(spy).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledWith(['/overflow'])
+          expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
+        })
+
+        describe('callback actions', () => {
+          it('should handle routerLink as function returning string', async () => {
+            userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+            const routerLinkFunction = jest.fn(() => '/function-link')
+
+            fixture.componentRef.setInput('additionalActions', [
+              {
+                id: 'functionRouterLink',
+                callback: jest.fn(),
+                routerLink: routerLinkFunction,
+                permission: 'CUSTOM#ACTION',
+              },
+            ])
+
+            fixture.detectChanges()
+            await fixture.whenStable()
+
+            const tableActions = await listGrid.getActionButtons('list')
+            await tableActions[0].click()
+
+            expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+            expect(spy).toHaveBeenCalledWith(['/function-link'])
+          })
+
+          it('should handle routerLink as function returning Promise<string>', async () => {
+            userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+            const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
+
+            fixture.componentRef.setInput('additionalActions', [
+              {
+                id: 'promiseFunctionRouterLink',
+                callback: jest.fn(),
+                routerLink: routerLinkPromiseFunction,
+                permission: 'CUSTOM#ACTION',
+              },
+            ])
+
+            fixture.detectChanges()
+            await fixture.whenStable()
+
+            const tableActions = await listGrid.getActionButtons('list')
+            await tableActions[0].click()
+
+            expect(routerLinkPromiseFunction).toHaveBeenCalledTimes(1)
+            expect(spy).toHaveBeenCalledWith(['/promise-function-link'])
+          })
+
+          it('should handle routerLink as Promise<string>', async () => {
+            userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+            fixture.componentRef.setInput('additionalActions', [
+              {
+                id: 'promiseRouterLink',
+                callback: jest.fn(),
+                routerLink: Promise.resolve('/promise-link'),
+                permission: 'CUSTOM#ACTION',
+              },
+            ])
+
+            fixture.detectChanges()
+            await fixture.whenStable()
+
+            const tableActions = await listGrid.getActionButtons('list')
+            await tableActions[0].click()
+
+            expect(spy).toHaveBeenCalledWith(['/promise-link'])
+          })
+
+          it('should prioritize routerLink over actionCallback when both are provided', async () => {
+            userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+            const callbackSpy = jest.fn()
+
+            fixture.componentRef.setInput('additionalActions', [
+              {
+                id: 'routerLinkWithCallback',
+                callback: callbackSpy,
+                routerLink: '/prioritized-link',
+                permission: 'CUSTOM#ACTION',
+              },
+            ])
+
+            fixture.detectChanges()
+            await fixture.whenStable()
+
+            const tableActions = await listGrid.getActionButtons('list')
+            await tableActions[0].click()
+
+            expect(spy).toHaveBeenCalledTimes(1)
+            expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+            expect(callbackSpy).not.toHaveBeenCalled()
+          })
+
+          it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
+            userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+            const callbackSpy = jest.fn()
+
+            fixture.componentRef.setInput('additionalActions', [
+              {
+                id: 'overflowRouterLinkWithCallback',
+                callback: callbackSpy,
+                routerLink: '/overflow-prioritized',
+                permission: 'CUSTOM#ACTION',
+                showAsOverflow: true,
+              },
+            ])
+
+            fixture.detectChanges()
+            await fixture.whenStable()
+
+            const overflowButton = await listGrid.getListOverflowMenuButton()
+            await overflowButton.click()
+
+            const overflowMenu = await listGrid.getListOverflowMenu()
+            expect(overflowMenu).toBeTruthy()
+            const tableActions = await overflowMenu?.getAllMenuItems()
+            expect(tableActions!.length).toBe(1)
+
+            await tableActions![0].selectItem()
+            expect(spy).toHaveBeenCalledTimes(1)
+            expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+            expect(callbackSpy).not.toHaveBeenCalled()
+          })
+        })
+    
+        it('should execute actionCallback when no routerLink is provided', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+          const callbackSpy = jest.fn()
+
+          fixture.componentRef.setInput('additionalActions', [
+            {
+              id: 'callbackOnlyAction',
+              callback: callbackSpy,
+              permission: 'CUSTOM#ACTION',
+            },
+          ])
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const tableActions = await listGrid.getActionButtons('list')
+          await tableActions[0].click()
+
+          expect(spy).not.toHaveBeenCalled()
+          expect(callbackSpy).toHaveBeenCalledTimes(1)
+        })
+      })
     })
 
     describe('grid layout', () => {
       beforeEach(() => {
-        component.layout = 'grid'
-        component.viewPermission = 'GRID#VIEW'
-        component.viewMenuItemKey = 'GRID_VIEW_KEY'
-        component.editPermission = 'GRID#EDIT'
-        component.editMenuItemKey = 'GRID_EDIT_KEY'
-        component.deletePermission = 'GRID#DELETE'
-        component.deleteMenuItemKey = 'GRID_DELETE_KEY'
-        component.additionalActions = []
+        fixture.componentRef.setInput('layout', 'grid')
+        fixture.componentRef.setInput('viewPermission', 'GRID#VIEW')
+        fixture.componentRef.setInput('viewMenuItemKey', 'GRID_VIEW_KEY')
+        fixture.componentRef.setInput('editPermission', 'GRID#EDIT')
+        fixture.componentRef.setInput('editMenuItemKey', 'GRID_EDIT_KEY')
+        fixture.componentRef.setInput('deletePermission', 'GRID#DELETE')
+        fixture.componentRef.setInput('deleteMenuItemKey', 'GRID_DELETE_KEY')
+        fixture.componentRef.setInput('additionalActions', [])
+
+        fixture.detectChanges()
       })
       it('should show view, delete and edit action buttons when user has VIEW, DELETE and EDIT permissions', async () => {
         userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE'])
@@ -926,7 +1155,7 @@ describe('DataListGridComponent', () => {
       it('should show custom additional action buttons when user has the required permission', async () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
 
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'CUSTOM#ACTION',
             callback: () => {
@@ -935,7 +1164,7 @@ describe('DataListGridComponent', () => {
             id: 'customAction',
             labelKey: 'CUSTOM_ACTION_KEY',
           },
-        ]
+        ])
 
         const gridMenuButton = await listGrid.getGridMenuButton()
         await gridMenuButton.click()
@@ -952,7 +1181,7 @@ describe('DataListGridComponent', () => {
       })
 
       it('should display action buttons based on multiple permissions', async () => {
-        component.additionalActions = [
+        fixture.componentRef.setInput('additionalActions', [
           {
             permission: ['CUSTOM#ACTION1', 'CUSTOM#ACTION2'],
             callback: () => {
@@ -961,11 +1190,11 @@ describe('DataListGridComponent', () => {
             id: 'customAction',
             labelKey: 'CUSTOM_ACTION_KEY',
           },
-        ]
+        ])
 
-        component.viewPermission = ['GRID#VIEW1', 'GRID#VIEW2']
-        component.editPermission = ['GRID#EDIT1', 'GRID#EDIT2']
-        component.deletePermission = ['GRID#DELETE1', 'GRID#DELETE2']
+        fixture.componentRef.setInput('viewPermission', ['GRID#VIEW1', 'GRID#VIEW2'])
+        fixture.componentRef.setInput('editPermission', ['GRID#EDIT1', 'GRID#EDIT2'])
+        fixture.componentRef.setInput('deletePermission', ['GRID#DELETE1', 'GRID#DELETE2'])
 
         userService.permissionsTopic$.publish([
           'GRID#VIEW1',
@@ -988,6 +1217,38 @@ describe('DataListGridComponent', () => {
         expect(await gridActions[2].text()).toEqual('GRID_DELETE_KEY')
         expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
       })
+
+      it('should execute handleActionSync when grid menu item with routerLink is clicked', async () => {
+        userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+        const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+        
+        fixture.componentRef.setInput('additionalActions', [
+          {
+            permission: 'CUSTOM#ACTION',
+            routerLink: '/test-route',
+            id: 'customAction',
+            labelKey: 'CUSTOM_ACTION_KEY',
+            callback: jest.fn()
+          },
+        ])
+        
+        component.setSelectedItem(mockData[0])
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const menuItems = await firstValueFrom(component.gridMenuItems$)
+        
+        const customMenuItem = menuItems.find(item => item.label === 'CUSTOM_ACTION_KEY')
+        expect(customMenuItem).toBeTruthy()
+        expect(customMenuItem?.command).toBeDefined()
+        
+        const dummyEvent = { originalEvent: new Event('click') } as any
+        customMenuItem!.command!(dummyEvent)
+
+        await fixture.whenStable()
+        
+        expect(routerSpy).toHaveBeenCalledWith(['/test-route'])
+      })
     })
   })
 
@@ -1008,25 +1269,35 @@ describe('DataListGridComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.data = mockData
+        fixture.componentRef.setInput('data', [
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
 
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(1)
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenCalledWith('6 Ergebnisse gefunden')
       })
 
       it('en', async () => {
         translateService.use('en')
 
-        component.data = mockData
+        fixture.componentRef.setInput('data', [
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
 
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(1)
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+        expect(announceSpy).toHaveBeenCalledWith('6 Results Found')
       })
     })
 
@@ -1034,7 +1305,7 @@ describe('DataListGridComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.data = []
+        fixture.componentRef.setInput('data', [])
         fixture.detectChanges()
 
         await fixture.whenStable()
@@ -1046,7 +1317,7 @@ describe('DataListGridComponent', () => {
       it('en', async () => {
         translateService.use('en')
 
-        component.data = []
+        fixture.componentRef.setInput('data', [])
         fixture.detectChanges()
 
         await fixture.whenStable()
@@ -1060,32 +1331,42 @@ describe('DataListGridComponent', () => {
       it('de', async () => {
         translateService.use('de')
 
-        component.data = mockData
+        fixture.componentRef.setInput('data', [
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
-        component.data = mockData.slice(0, 2)
+        fixture.componentRef.setInput('data', mockData.slice(0, 2))
         fixture.detectChanges()
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(2)
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Ergebnisse gefunden')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
       })
 
       it('en', async () => {
         translateService.use('en')
 
-        component.data = mockData
+        fixture.componentRef.setInput('data', [
+          ...mockData,
+          {
+            id: 'additionalRow',
+          } as any,
+        ])
         fixture.detectChanges()
         await fixture.whenStable()
 
-        component.data = mockData.slice(0, 2)
+        fixture.componentRef.setInput('data', mockData.slice(0, 2))
         fixture.detectChanges()
         await fixture.whenStable()
 
         expect(announceSpy).toHaveBeenCalledTimes(2)
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
     })

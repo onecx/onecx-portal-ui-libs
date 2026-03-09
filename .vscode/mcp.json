@@ -1,0 +1,25 @@
+{
+  "servers": {
+    "npm-sentinel": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@nekzus/mcp-server@latest"]
+    },
+
+    "onecx-docs-mcp": {
+      "url": "https://onecx-docs-ai-dev.dev.one-cx.org/mcp",
+      "type": "http"
+    },
+
+    "io.github.ChromeDevTools/chrome-devtools-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["chrome-devtools-mcp@latest"]
+    },
+
+    "primeng": {
+      "command": "npx",
+      "args": ["-y", "@primeng/mcp"]
+    }
+  }
+}

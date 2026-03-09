@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, input, output } from '@angular/core'
 import { ButtonDialogConfig } from '../../../model/button-dialog'
 import { DialogState } from '../../../services/portal-dialog.service'
 
@@ -9,9 +9,9 @@ import { DialogState } from '../../../services/portal-dialog.service'
   styleUrls: ['./dialog-inline.component.scss'],
 })
 export class DialogInlineComponent {
-  @Input() config: ButtonDialogConfig = {}
+  config = input<ButtonDialogConfig>({})
 
-  @Output() resultEmitter = new EventEmitter()
+  resultEmitter = output<unknown>()
 
   buttonClicked(event: DialogState<unknown>) {
     this.resultEmitter.emit(event.button)

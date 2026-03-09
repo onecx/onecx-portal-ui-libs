@@ -74,7 +74,6 @@ describe('SrcDirective', () => {
   })
 
   it('should request blob for same-origin and set blob src on 200', async () => {
-
     httpClientMock.get.mockReturnValue(
       of({
         status: 200,
@@ -113,7 +112,6 @@ describe('SrcDirective', () => {
   })
 
   it('should emit error on 204', async () => {
-
     httpClientMock.get.mockReturnValue(
       of({
         status: 204,
@@ -231,7 +229,7 @@ describe('SrcDirective', () => {
     component.src = 'https://other.example/assets/getter.png'
     fixture.detectChanges()
 
-    expect(component.directive.ocxSrc).toBe('https://other.example/assets/getter.png')
+    expect(component.directive.ocxSrc()).toBe('https://other.example/assets/getter.png')
   })
 
   it('harness should read id and return TestElement', async () => {

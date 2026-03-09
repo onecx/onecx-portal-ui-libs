@@ -1,0 +1,57 @@
+= Migrate OneCX App from Angular 19 to Angular 20
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+This guide provides comprehensive step-by-step instructions for migrating OneCX applications from Angular 19 to Angular 20.
+As part of upgrading to Angular 20, you must update your OneCX UI libraries to version 7. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v7 libraries provide Angular 20 compatibility and include necessary breaking changes.
+
+[#prerequisites]
+== Prerequisites
+
+Before starting this migration:
+
+* Your OneCX application is currently running on Angular 19
+* You have OneCX UI libraries v6.x installed  
+* You have a working development environment
+
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
+
+To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+
+include::ai-prompt-19-to-20.adoc[]
+
+[#migration-steps-before-angular-20]
+== Migration Steps before upgrading to Angular 20
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 20.
+You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
+
+[%interactive]
+** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
+** [ ] xref:./remove-shell-core.adoc[Remove @onecx/shell-core]
+
+[#upgrade-to-angular-20]
+== Upgrade to Angular 20
+Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
+
+=== Upgrade NX application to Angular 20
+To upgrade an NX application to Angular 20, follow this guide: xref:./update-nx-angular-version-20.adoc[Upgrade NX Application to Angular 20].
+
+[#migration-steps-after-angular-20]
+== Migration Steps after upgrading to Angular 20
+
+Once the previous steps are completed, **the application should be upgraded to Angular 20 and libs v7 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed.
+
+[%interactive]
+** [ ] xref:./adjust-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
+** [ ] xref:./update-primeng-package.adoc[Update package imports for PrimeNG theming]
+** [ ] xref:./update-style-package.adoc[Update package imports for style utilities]
+** [ ] xref:./migrate-to-onecx-translate-loader.adoc[Migrate to OnecxTranslateLoader translation mechanism]
+** [ ] xref:./use-new-object-detail-item-interface.adoc[Use updated ObjectDetailItem interface for PageHeaderComponent]
+** [ ] xref:./portal-dialog-service-signature-changes.adoc[Be aware of the PortalDialogService signature changes]
+** [ ] xref:./updated-guards-usage.adoc[Leverage Angular guards]

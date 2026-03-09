@@ -1,9 +1,9 @@
 [#remove-add-initialize-module-guard]
-=== Remove addInitializeModuleGuard()
+= Remove addInitializeModuleGuard()
 
 In OneCX v6, `addInitializeModuleGuard()` has been removed.  Translations are now handled by `TranslationConnectionService`.
 
-==== Update imports and providers
+== Update imports and providers
 
 * Remove the `addInitializeModuleGuard()` guard wrapper from router configuration.
 * Register routes using `RouterModule.forRoot(routes)` and `RouterModule.forChild(routes)`.
@@ -15,7 +15,7 @@ In OneCX v6, `addInitializeModuleGuard()` has been removed.  Translations are no
 `AngularAcceleratorModule` already provides `TranslationConnectionService`
 ====
 
-==== Example
+== Example
 
 .Before
 [source,typescript]

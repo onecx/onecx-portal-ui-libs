@@ -9,6 +9,7 @@ export * from './lib/topics/global-loading/v1/global-loading.topic'
 
 export * from './lib/topics/current-theme/v1/current-theme.topic'
 export * from './lib/topics/current-theme/v1/theme.model'
+export * from './lib/topics/current-theme/v1/theme-override.model'
 
 export * from './lib/topics/user-profile/v1/user-profile.model'
 export * from './lib/topics/user-profile/v1/user-profile.topic'
@@ -59,3 +60,15 @@ export * from './lib/topics/resized-events/v1/resized-events.topic'
 export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
+
+
+export * from './lib/topics/icons/v1/icon.model'
+export * from './lib/topics/icons/v1/icon.topic'
+export * from './lib/services/icon.service'
+export * from './lib/topics/dynamic-translations/v1/dynamic-translations.model'
+export * from './lib/topics/dynamic-translations/v1/dynamic-translations.topic'
+
+export * from './lib/services/dynamic-translation.service'
+
+export * from './lib/models/shell-capability.model'
+export * from './lib/utils/shell-capability.utils'

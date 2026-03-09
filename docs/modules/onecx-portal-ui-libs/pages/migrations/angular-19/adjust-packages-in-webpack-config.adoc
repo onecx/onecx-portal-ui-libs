@@ -1,14 +1,14 @@
 [#adjust-packages-in-webpack-config]
-=== Adjust Packages in Webpack Config
+= Adjust Packages in Webpack Config
 
 In OneCX v6, packages  in the webpack configuration that depend on a specific Angular version should not have `singleton: true`.
 
-**Update configuration**:
+== Update configuration
 
 * In `'webpack.config.js'`, within `'withModuleFederationPlugin( ... )'`,
   remove the `'singleton: true'` property from all packages.
 
-**Example**:
+== Example
 
 .Before
 [source, javascript]

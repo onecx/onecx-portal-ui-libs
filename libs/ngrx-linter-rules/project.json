@@ -1,0 +1,28 @@
+{
+  "name": "ngrx-linter-rules",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ngrx-linter-rules/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/ngrx-linter-rules",
+        "main": "libs/ngrx-linter-rules/src/index.ts",
+        "tsConfig": "libs/ngrx-linter-rules/tsconfig.lib.json",
+        "assets": ["libs/ngrx-linter-rules/*.md"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/ngrx-linter-rules/jest.config.ts",
+        "codeCoverage": true,
+        "passWithNoTests": true
+      }
+    }
+  }
+}
