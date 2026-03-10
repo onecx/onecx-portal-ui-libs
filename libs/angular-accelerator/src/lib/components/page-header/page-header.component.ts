@@ -93,7 +93,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PageHeaderComponent implements OnInit, AfterViewInit {
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)
@@ -102,7 +102,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   protected readonly breadcrumbs = inject(BreadcrumbService)
   private breadcrumbRef?: ElementRef<HTMLElement>
-  private breadcrumbSubscription?: Subscription
   @ViewChild('breadcrumbRef', { read: ElementRef })
   set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
     this.breadcrumbRef = ref
@@ -229,10 +228,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.applyBreadcrumbAriaLabels()
-  }
-
-  ngOnDestroy() {
-    this.breadcrumbSubscription?.unsubscribe()
   }
 
   onAction(action: string) {
