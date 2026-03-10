@@ -20,6 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
+import { of } from 'rxjs'
 
 const mockActions: Action[] = [
   {
@@ -103,6 +104,49 @@ describe('PageHeaderComponent', () => {
     expect(component).toBeTruthy()
     const pageHeaderWrapper = await pageHeaderHarness.getPageHeaderWrapperHarness()
     expect(pageHeaderWrapper).toBeTruthy()
+  })
+
+  it('should apply translated aria-label to breadcrumb links', async () => {
+    component.breadcrumbs$ = of([
+      {
+        label: 'Test breadcrumb',
+        show: 'always',
+        routerLink: '/test-breadcrumb',
+        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+      },
+    ])
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    expect(breadcrumbItem).toBeTruthy()
+    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb page')
+  })
+
+  it('should test if breadcrumb is not rendered when there are no breadcrumbs', async () => {
+    component.breadcrumbs$ = of([])
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    expect(breadcrumbItem).toBeNull()
+    expect(await breadcrumbItem?.getText()).toBeUndefined()
+  })
+
+  it('should handle null ViewChild', async () => {
+    component.breadcrumbElementRef = undefined
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    expect(breadcrumbItem).toBeNull()
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {

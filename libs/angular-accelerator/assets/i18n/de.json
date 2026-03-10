@@ -171,7 +171,8 @@
     "SUBHEADER": "Seiteninhalt",
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
-    "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
+    "HOME_ARIA_LABEL": "Zu {{page}} navigieren",
+    "BREADCRUMB_ARIA_LABEL": "Zu {{breadcrumb}} navigieren" 
   },
   "OCX_DIAGRAM": {
     "ARIA_LABEL": "Diagramm: Gesamtanzahl: {{total}}. {{valueString}}.",
