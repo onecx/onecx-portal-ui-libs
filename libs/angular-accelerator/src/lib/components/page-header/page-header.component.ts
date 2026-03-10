@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  OnDestroy,
   OnInit,
   Renderer2,
   TemplateRef,
@@ -20,7 +19,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { Observable, Subscription, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
