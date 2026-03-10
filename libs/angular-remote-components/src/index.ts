@@ -6,5 +6,7 @@ export * from './lib/services/slot.service'
 export * from './lib/services/permission.service'
 export * from './lib/services/manifest-cache.service'
 export * from './lib/utils/provide-translate-service-for-root.utils'
+export * from './lib/utils/get-share-scope.utils'
+export * from './lib/utils/get-load-remote-entry-options.utils'
 
 export { RemoteComponentConfig, REMOTE_COMPONENT_CONFIG } from '@onecx/angular-utils'

@@ -4,6 +4,7 @@ import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/int
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 import { createLogger } from '../utils/logger.utils'
+import { toLoadRemoteEntryOptions } from '../utils/get-load-remote-entry-options.utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
@@ -21,7 +22,7 @@ export type SlotComponentConfiguration = {
   permissions: Promise<string[]> | string[]
 }
 
-type LoadComponentOptions = {
+export type LoadComponentOptions = {
   remoteEntryUrl: string
   exposedModule: string
   productName: string
@@ -93,8 +94,9 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
       ? component.exposedModule.slice(2)
       : component.exposedModule
     try {
-      registerRemotes([this.toLoadRemoteEntryOptions(component, exposedModule)])
-      const m = await loadRemote<any>(component.productName + '/' + component.remoteName + '/' + exposedModule)
+      const remoteEntryOptions = await toLoadRemoteEntryOptions(component)
+      registerRemotes([remoteEntryOptions])
+      const m = await loadRemote<any>(remoteEntryOptions.name + '/' + exposedModule)
       if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
         if (component.technology === Technologies.Angular) {
           return m[exposedModule]
@@ -105,22 +107,6 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     } catch (e) {
       this.logger.error('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
-    }
-  }
-
-  private toLoadRemoteEntryOptions(component: LoadComponentOptions, exposedModule: string) {
-    if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
-      return {
-        type: 'module',
-        entry: component.remoteEntryUrl,
-        name: component.productName + '/' + component.remoteName,
-      }
-    }
-    return {
-      type: 'script',
-      alias: component.remoteName ?? '',
-      entry: component.remoteEntryUrl,
-      name: './' + exposedModule,
     }
   }
 }
