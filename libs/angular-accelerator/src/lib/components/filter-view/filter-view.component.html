@@ -84,15 +84,24 @@
   <ng-container [ngTemplateOutlet]="noChipsContent"></ng-container>
   }
   <ng-template #noChipsContent>
+    <!--When disabled button is not focusable, to fix that need to add tabindex="0", It will trigger tooltip and allow keyboard users to interact -->
     <p-button
+      tabindex="0"
       #manageButton
       id="ocxFilterViewManage"
       (onClick)="showPanel($event)"
+      [disabled]="filters.length === 0"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
-      pTooltip="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate }}"
+      [pTooltip]="
+        filters.length === 0
+          ? ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DISABLED_DETAIL' | translate)
+          : ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate)
+      "
       tooltipPosition="top"
       tooltipEvent="hover"
+      aria-describedby="ocx-manage-filters-tooltip"
+      [tooltipOptions]="{ showOnDisaled: true, id: 'ocx-manage-filters-tooltip' }"
       [badge]="filters.length.toString()"
       [ariaLabel]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
