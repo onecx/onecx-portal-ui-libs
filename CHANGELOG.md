@@ -1,3 +1,13 @@
+## [7.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.1.0...v7.2.0) (2026-03-10)
+
+### Features
+
+* add config key ONECX_KEYBOARD_FOCUSABLE_SELECTOR ([#1212](https://github.com/onecx/onecx-portal-ui-libs/issues/1212)) ([#1267](https://github.com/onecx/onecx-portal-ui-libs/issues/1267)) ([e0ae614](https://github.com/onecx/onecx-portal-ui-libs/commit/e0ae61442444971d851410ad248e7812403fb49a))
+
+### Refactoring
+
+* remove keycloak dep ([#1272](https://github.com/onecx/onecx-portal-ui-libs/issues/1272)) ([a8259d4](https://github.com/onecx/onecx-portal-ui-libs/commit/a8259d40069a4a89423a537b5a9de312dda0118f))
+
 ## [7.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.0.6...v7.1.0) (2026-03-04)
 
 ### Features
