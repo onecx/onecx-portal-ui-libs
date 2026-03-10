@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import Keycloak, { KeycloakConfig } from 'keycloak-js'
 import { AuthService } from '../auth.service'
+import { KeycloakConfig, KeycloakInstance } from './keycloak.types'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
@@ -10,7 +10,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 @Injectable()
 export class KeycloakAuthService implements AuthService {
   private configService = inject(ConfigurationService)
-  private keycloak: Keycloak | undefined
+  private keycloak: KeycloakInstance | undefined
 
   config?: Record<string, unknown>
 
