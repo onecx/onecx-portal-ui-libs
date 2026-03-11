@@ -1,3 +1,9 @@
+## [6.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.16.0...v6.16.1) (2026-03-11)
+
+### Bug Fixes
+
+* chart overflow hidden issue v6 ([#1248](https://github.com/onecx/onecx-portal-ui-libs/issues/1248)) ([4430eb2](https://github.com/onecx/onecx-portal-ui-libs/commit/4430eb29ea1b6c61745ed01d70564ed2aaf9e240))
+
 ## [6.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.15.1...v6.16.0) (2026-03-10)
 
 ### Features
