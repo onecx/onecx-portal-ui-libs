@@ -17,6 +17,28 @@ import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
 
+const FRUIT_TYPE: string[] = []
+
+function generateGroupByCountMockData(fruitCount = 10, itemsPerFruit = 2) {
+  const fruits = Array.from({ length: fruitCount }, (_, i) => `Fruit ${i + 1}`)
+
+  let id = 1
+  const data: { id: number; fruitType: string; name: string }[] = []
+  const fruitNames = fruits.slice(0, fruitCount)
+
+  fruitNames.forEach((fruit, index) => {
+    for (let i = 0; i < itemsPerFruit; i++) {
+      data.push({
+        id: id++,
+        fruitType: `chart.fruit${index + 1}`,
+        name: `${fruit}${i + 1}`,
+      })
+    }
+  })
+
+  return data
+}
+
 export default {
   title: 'Components/GroupByCountDiagramComponent',
   component: GroupByCountDiagramComponent,
@@ -202,7 +224,7 @@ export const WithForcedCustomColors = {
   },
 }
 
-export const withAllLabels= {
+export const withAllLabels = {
   render: Template,
   args: {
     diagramType: DiagramType.VERTICAL_BAR,
@@ -232,5 +254,41 @@ export const withAllLabelAndTranslationKeys = {
     fillMissingColors: false,
     showAllLabels: true,
     allLabelKeys: ['chart.fruit1', 'chart.fruit2', 'chart.fruit3']
-  },
+  }
+}
+
+const TemplateWithContainer: StoryFn<GroupByCountDiagramComponent> = (args) => ({
+  template: `
+    <div class="flex justify-content-center">
+    <div style="height: 450px; width:350px;"> <!--Container should have fixed height-->
+      <ocx-group-by-count-diagram
+        [diagramType]="diagramType"
+        [data]="data"
+        [sumKey]="sumKey"
+        [column]="column"
+        [fillMissingColors]="fillMissingColors"
+        [showAllLabels]="showAllLabels"
+        [allLabelKeys]="allLabelKeys"
+        [fullHeight]="true"     
+      ></ocx-group-by-count-diagram>
+      </div>
+    </div>
+  `,
+  props: args,
+})
+
+export const WithChartFillingContainerHeight = {
+  render: TemplateWithContainer,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: generateGroupByCountMockData(20, 1),
+    sumKey: 'Responsive Height Enabled',
+    column: {
+      id: 'fruitType',
+      columnType: ColumnType.TRANSLATION_KEY,
+    },
+    fillMissingColors: false,
+    showAllLabels: true,
+    allLabelKeys: FRUIT_TYPE
+  }
 }
