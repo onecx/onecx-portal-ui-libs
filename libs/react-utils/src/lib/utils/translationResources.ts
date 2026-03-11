@@ -31,7 +31,7 @@ export const getTranslationPathFromMeta = (metaUrl: string | undefined, path = '
 export const registerPortalPageTranslations = (
   instance: i18n,
   metaUrl: string | undefined,
-  path = 'onecx-react-integration-functionalities/assets/i18n/'
+  path = 'onecx-react-utils/assets/i18n/'
 ) => {
   if (!metaUrl || metaUrl.startsWith('file://')) {
     return

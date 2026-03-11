@@ -1,8 +1,7 @@
-/* eslint-disable */
 import { createReportsConfig } from '../../jest-config-factory'
 
 export default {
-  displayName: 'react-integration-functionalities',
+  displayName: 'react-utils',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
   transform: {
@@ -14,5 +13,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  ...createReportsConfig('react-integration-functionalities'),
+  ...createReportsConfig('react-utils'),
 }

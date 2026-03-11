@@ -6,7 +6,7 @@ import * as path from 'path'
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/libs/react-integration-functionalities',
+  cacheDir: '../../node_modules/.vite/libs/react-utils',
   plugins: [
     react(),
 
@@ -16,16 +16,22 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '../../dist/libs/react-integration-functionalities',
+    outDir: '../../dist/libs/react-utils',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/lib/index.ts',
-      name: 'react-integration-functionalities',
-      fileName: 'index',
+      entry: {
+        index: 'src/lib/index.ts',
+        routing: 'src/lib/routing/index.tsx',
+        styling: 'src/lib/styling/index.ts',
+        theme: 'src/lib/styling/theme/index.ts',
+        utils: 'src/lib/utils/index.ts',
+      },
+      name: 'react-utils',
+      fileName: (format, entryName) => entryName,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {

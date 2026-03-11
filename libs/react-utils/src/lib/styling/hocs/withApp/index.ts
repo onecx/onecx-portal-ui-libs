@@ -18,8 +18,8 @@ interface AppGlobals {
  * @param appGlobals - App globals required for scoping.
  * @returns Wrapped component with providers applied.
  */
-export const withApp = (Component: ComponentType, appGlobals: AppGlobals) =>
-  composeProviders(
+export const withApp = <P extends object>(Component: ComponentType<P>, appGlobals: AppGlobals) =>
+  composeProviders<P>(
     (Component: ComponentType) => withAppGlobals(Component, appGlobals),
     withAppPrimereactStylesIsolation,
     withAppStyles,

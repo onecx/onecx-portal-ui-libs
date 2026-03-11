@@ -132,7 +132,7 @@ $buttonPadding: 0.75rem 1.25rem !default;
 $buttonIconOnlyWidth: 3rem !default;
 $buttonIconOnlyPadding: 0.75rem 0 !default;
 $buttonBg: $primaryColor !default;
-$buttonTextColor: $primaryTextColor !default;
+$buttonTextColor: #fff !default;
 $buttonBorder: 1px solid $primaryColor !default;
 $buttonHoverBg: var(--button-hover-bg) !default;
 $buttonTextHoverColor: $primaryTextColor !default;

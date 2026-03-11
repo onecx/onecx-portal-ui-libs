@@ -20,7 +20,7 @@ The React libraries in `onecx-portal-ui-libs` provide building blocks for integr
 | **@onecx/react-integration-interface**
 | React-friendly wrappers and types for working with OneCX integration topics and interfaces.
 
-| **@onecx/react-integration-functionalities**
+| **@onecx/react-utils**
 | Utilities and HOCs for styling isolation, scoping, and common integration patterns in React microfrontends.
 
 | **@onecx/react-remote-components**
