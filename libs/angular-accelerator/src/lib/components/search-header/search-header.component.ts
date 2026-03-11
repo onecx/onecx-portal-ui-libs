@@ -17,12 +17,14 @@ import {
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, filter, from, map, mergeMap, of, startWith } from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, firstValueFrom, from, map, mergeMap, of, startWith } from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { PermissionInput } from '../../model/permission.model'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { TranslateService } from '@ngx-translate/core'
 
 export interface SearchHeaderComponentState {
   activeViewMode?: 'basic' | 'advanced'
@@ -49,14 +51,19 @@ export interface SearchConfigData {
   providers: [],
 })
 export class SearchHeaderComponent {
+  private readonly translate = inject(TranslateService)
+  private readonly liveAnnouncer = inject(LiveAnnouncer)
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
+  loading = input<boolean>(false)
+  
   viewMode = model<'basic' | 'advanced'>('basic')
 
   manualBreadcrumbs = input<boolean>(false)
 
   actions = input<Action[]>([])
+  searchResultsCount = input<number | null>(null)
 
   searchConfigPermission = input<PermissionInput>(undefined)
   searchButtonDisabled = input<boolean>(false)
@@ -124,6 +131,8 @@ export class SearchHeaderComponent {
       setTimeout(() => this.addKeyUpEventListener())
     })
 
+    this.announceSearchResults()    
+
     const configurationService = inject(ConfigurationService)
 
     this.searchConfigChangedSlotEmitter.subscribe((config) => {
@@ -189,5 +198,25 @@ export class SearchHeaderComponent {
     return this.visibleFormControls().some(
       (formControl) => formControl.name !== null && String(formControl.name) === control
     )
+  }
+
+  private announceSearchResults() {
+    effect(() => {
+      let announmentKey = ''
+      if (this.loading()) {
+        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.SEARCHING'
+      } else if (!this.loading() && (this.searchResultsCount() === 0 || !this.searchResultsCount())) {
+        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
+      } else {
+        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+      }
+      
+      firstValueFrom(
+        this.translate.get(announmentKey, { count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null })
+      ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText, 'polite')
+      });
+
+    });
   }
 }
