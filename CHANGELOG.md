@@ -1,3 +1,15 @@
+## [6.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.15.1...v6.16.0) (2026-03-10)
+
+### Features
+
+* add config key ONECX_KEYBOARD_FOCUSABLE_SELECTOR ([#1211](https://github.com/onecx/onecx-portal-ui-libs/issues/1211)) ([89f1fd5](https://github.com/onecx/onecx-portal-ui-libs/commit/89f1fd516bb6a3b6d8d942effaa08ea1115ab693))
+* v6 icon service ([#1257](https://github.com/onecx/onecx-portal-ui-libs/issues/1257)) ([755cdfb](https://github.com/onecx/onecx-portal-ui-libs/commit/755cdfbed9bd265cf62e43b6a13f8120e2b4af9f)), closes [#1222](https://github.com/onecx/onecx-portal-ui-libs/issues/1222) [#1210](https://github.com/onecx/onecx-portal-ui-libs/issues/1210)
+
+### Bug Fixes
+
+* add getter setter for image topic- v6 ([#1242](https://github.com/onecx/onecx-portal-ui-libs/issues/1242)) ([cade77d](https://github.com/onecx/onecx-portal-ui-libs/commit/cade77d1688ef727c5ec80b8bc401a15ebb5bc38))
+* remove hard dependency to keycloak-js ([#1273](https://github.com/onecx/onecx-portal-ui-libs/issues/1273)) ([cd801c8](https://github.com/onecx/onecx-portal-ui-libs/commit/cd801c82ca0e1c8c3f8e39fb75ce0b0d9b70f2f6))
+
 ## [6.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.15.0...v6.15.1) (2026-02-18)
 
 ### Bug Fixes
