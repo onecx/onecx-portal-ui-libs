@@ -1,34 +1,39 @@
+@if (chartTitleKey() || chartDescriptionKey()) {
+  @if (chartTitleKey()) {
+    <header class="diagram-title  w-full flex justify-content-center" [attr.id]="uniqueInstanceId + '-title'">
+      {{ chartTitleKey() | translate }}
+    </header>
+  }
+  @if (chartDescriptionKey()) {
+    <p class="diagram-description  w-full flex justify-content-center" [attr.id]="uniqueInstanceId + '-description'">
+      {{chartDescriptionKey() | translate }}</p>
+  }
+}
 @if (data()) { @if (shownDiagramTypes().length > 1) {
 <div class="flex justify-content-center pb-2">
-  <p-selectbutton
-    [options]="shownDiagramTypes()"
-    [ngModel]="selectedDiagramType()"
-    optionLabel="id"
-    (onChange)="onDiagramTypeChanged($event)"
-    name="diagram-type-select-button"
-    [allowEmpty]="false"
-  >
+  <p-selectbutton [options]="shownDiagramTypes()" [ngModel]="selectedDiagramType()" optionLabel="id"
+    (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false"
+    [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate">
     <ng-template #item let-item>
       <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
-      <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
+      <span class="sr-only" [attr.id]="uniqueInstanceId + '-' + item.id">{{item.label ? item.label : item.labelKey | translate}}</span>
     </ng-template>
   </p-selectbutton>
 </div>
 }
 <div class="w-full flex justify-content-center" [ngClass]="{'h-full': useFullHeight()}">
-    <p-chart
-      id="diagram"
-      [attr.data-automation-type]="chartType()"
-      [type]="chartType()"
-      [data]="chartData()"
-      [responsive]="useFullHeight()"
-      [attr.data-automation-options]="chartOptions()"
-      [options]="chartOptions()"
-      (onDataSelect)="dataClicked($event)"
-      [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data() ?? []), valueString: generateDiagramValueString(data() ?? [])}"
-    ></p-chart>
-  </div>
-<div class="w-full flex justify-content-center mt-2 sumKey">
+  <p-chart tabindex="0" 
+    [attr.aria-describedby]="uniqueInstanceId + '-sr-only-table'" 
+    [attr.id]="uniqueInstanceId + '-chart'"
+    [attr.data-automation-type]="chartType()"
+    [type]="chartType()"
+    [data]="chartData()"
+    [responsive]="useFullHeight()"
+    [attr.data-automation-options]="chartOptions()" [options]="chartOptions()" (onDataSelect)="dataClicked($event)"
+    [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data() ?? []), valueString: generateDiagramValueString(data() ?? [])}"></p-chart>
+  <ng-container [ngTemplateOutlet]="chartDetailsForSr"></ng-container>
+</div>
+<div class="w-full flex justify-content-center mt-2 sumKey" aria-hidden="true">
   <p class="text-md font-medium text-700">
     <span name="sumLabel"> {{ sumKey() | translate }}</span> : <span name="amountOfData">{{ amountOfData() }}</span>
   </p>
@@ -38,3 +43,35 @@
   <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
 </div>
 }
+
+
+<!-- Table for screen readers -->
+<ng-template #chartDetailsForSr>
+  <div class="w-full flex justify-content-center sr-only" [attr.id]="uniqueInstanceId + '-sr-only-diagram-details'">
+    <table [attr.id]="uniqueInstanceId + '-sr-only-table'">
+      <caption [attr.id]="uniqueInstanceId + '-table-caption'"> {{ chartTitleKey() | translate }} </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COLOR' | translate }}</th>
+          <th scope="col">{{ 'OCX_DIAGRAM.TABLE.LABEL' | translate }}</th>
+          <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (label of chartData()?.labels; track $index) {
+        <tr>
+          <td>
+            <span>{{ chartData()!.datasets[0].backgroundColor[$index] }}</span>
+          </td>
+          <td>{{ label }}</td>
+          <td>{{ chartData()!.datasets[0].data[$index] }}</td>
+        </tr>
+        }
+        <tr>
+          <td colspan="2" class="font-bold">{{ sumKey() | translate }}</td>
+          <td class="font-bold">{{ amountOfData() }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>

@@ -57,6 +57,8 @@ export class DiagramComponent {
   data = input<DiagramData[] | undefined>(undefined)
   sumKey = input<string>('OCX_DIAGRAM.SUM')
   fullHeight = input<boolean>(false)
+  chartTitleKey = input<string>('')
+  chartDescriptionKey = input<string>('')
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -92,7 +94,11 @@ export class DiagramComponent {
   // Changing the colorScale, will change the thematic color appearance of the diagram.
   private colorScale = d3.interpolateCool
 
+  private static nextUniqueId = 0;
+  private uniqueInstanceId: number;
+
   constructor() {
+    this.uniqueInstanceId = DiagramComponent.nextUniqueId++;
     effect(() => {
       this.generateChart(this.colorScale, this.colorRangeInfo)
     })
