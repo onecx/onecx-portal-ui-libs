@@ -15,7 +15,7 @@ type BffGeneratedRoute = {
   remoteEntryUrl: string
   productName: string
   appId: string
-  technology: Technologies
+  technology?: Technologies
   baseUrl: string
   shareScope?: string
 }
