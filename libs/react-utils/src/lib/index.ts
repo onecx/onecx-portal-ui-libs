@@ -1,5 +1,3 @@
 export * from './styling'
-export * from './routing'
-export * from './routing/useSyncedLocation'
 export * from './utils/portalPage'
 export * from './utils/translationResources'

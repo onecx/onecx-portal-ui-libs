@@ -14,11 +14,6 @@
       "import": "./styling.mjs",
       "require": "./styling.js"
     },
-    "./routing": {
-      "types": "./routing.d.ts",
-      "import": "./routing.mjs",
-      "require": "./routing.js"
-    },
     "./theme": {
       "types": "./theme.d.ts",
       "import": "./theme.mjs",
