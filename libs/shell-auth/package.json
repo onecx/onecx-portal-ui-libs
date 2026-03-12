@@ -7,11 +7,12 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular-architects/module-federation": "^20.0.0",
     "@angular/core": "^21.0.0",
     "@onecx/accelerator": "^8.0.0-rc.6",
     "@onecx/angular-integration-interface": "^8.0.0-rc.6",
     "@onecx/integration-interface": "^8.0.0-rc.6",
+    "@onecx/angular-remote-components": "^8.0.0-rc.6",
+    "@module-federation/enhanced": "^2.0.1",
     "keycloak-js": "^26.2.3",
     "rxjs": "~7.8.0"
   },

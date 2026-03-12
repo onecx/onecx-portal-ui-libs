@@ -43,7 +43,7 @@ export class ManifestCacheService implements OnDestroy {
     this._manifestTopic$?.destroy()
   }
 
-  getManifest(url: string): Observable<Manifest | {}> {
+  getManifest(url: string): Observable<Manifest | object> {
     // If value is !undefined, it means the manifest has already been loaded (successfully or with error)
     if (this.cache[url] !== undefined) {
       return of(this.cache[url] ?? {})

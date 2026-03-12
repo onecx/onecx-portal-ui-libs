@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule, HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing'
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing'
 import { ManifestCacheService } from './manifest-cache.service'
 import { FakeTopic } from '@onecx/accelerator'
 import { Manifest } from '../model/manifest'

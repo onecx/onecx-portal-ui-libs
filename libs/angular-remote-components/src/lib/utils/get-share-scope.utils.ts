@@ -7,7 +7,7 @@ import { ManifestCacheService } from '../services/manifest-cache.service'
 export async function getShareScope(manifestUrl: string): Promise<string> {
   const manifestCacheService = inject(ManifestCacheService)
   const logger = createLogger('getShareScope')
-  let manifest: Manifest | {}
+  let manifest: Manifest | object
 
   try {
     manifest = await firstValueFrom(manifestCacheService.getManifest(manifestUrl))
