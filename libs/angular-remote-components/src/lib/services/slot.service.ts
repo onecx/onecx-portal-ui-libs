@@ -14,20 +14,13 @@ export type RemoteComponentInfo = {
   baseUrl: string
   technology: Technologies
   elementName?: string
+  shareScope?: string
 }
 
 export type SlotComponentConfiguration = {
   componentType: Promise<Type<unknown> | undefined> | Type<unknown> | undefined
   remoteComponent: RemoteComponentInfo
   permissions: Promise<string[]> | string[]
-}
-
-export type LoadComponentOptions = {
-  remoteEntryUrl: string
-  exposedModule: string
-  productName: string
-  remoteName: string
-  technology: string
 }
 
 export interface SlotServiceInterface {
@@ -89,7 +82,7 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     )
   }
 
-  private async loadComponent(component: LoadComponentOptions): Promise<Type<unknown> | undefined> {
+  private async loadComponent(component: RemoteComponent): Promise<Type<unknown> | undefined> {
     const exposedModule = component.exposedModule.startsWith('./')
       ? component.exposedModule.slice(2)
       : component.exposedModule

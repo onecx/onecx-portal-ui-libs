@@ -1,4 +1,4 @@
-import { SharedLibraryConfig, SharedFunction } from '@nx/module-federation'
+import { SharedLibraryConfig } from '@nx/module-federation'
 
 const sharedLibraryPatterns: RegExp[] = [
   /^@angular.*$/,
