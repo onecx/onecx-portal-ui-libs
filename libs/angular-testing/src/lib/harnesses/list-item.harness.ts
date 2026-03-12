@@ -7,7 +7,7 @@ export interface ListItemHarnessFilters extends BaseHarnessFilters {
 export class ListItemHarness extends ComponentHarness {
   static hostSelector = 'li'
 
-  private getLinkElement = this.locatorForOptional('a')
+  private readonly getLinkElement = this.locatorForOptional('a')
 
   static with(options: ListItemHarnessFilters): HarnessPredicate<ListItemHarness> {
     return new HarnessPredicate(ListItemHarness, options).addOption('text', options.text, (harness, text) =>
