@@ -135,7 +135,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       done()
     })
   })
-  it('should throw an error if no translation is found', (done) => {
+
+  it('should return the key if no translation is found', (done) => {
     userServiceMock.profile$.publish({
       settings: {
         locales: ['fr', 'en', 'pl'],
@@ -153,12 +154,33 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       } as any,
     }
 
-    handler.handle(params).subscribe({
-      error: (err) => {
-        expect(err.message).toBe('No translation found for key: missing.key')
-        expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
-        done()
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('missing.key')
+      expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
+      done()
+    })
+  })
+
+  it('should return the key if locales are empty (without loading translations)', (done) => {
+    userServiceMock.profile$.publish({
+      userId: 'test-user',
+      person: {},
+      settings: {
+        locales: [] as string[],
       },
+    } as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService: {
+        reloadLang: jest.fn().mockReturnValue(of({ 'test.key': 'Should Not Be Used' })),
+      } as any,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('test.key')
+      expect(params.translateService.reloadLang).not.toHaveBeenCalled()
+      done()
     })
   })
 })
