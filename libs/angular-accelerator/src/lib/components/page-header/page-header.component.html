@@ -1,6 +1,8 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
   @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) {
   <p-breadcrumb
+    #breadcrumbRef
+    id="pageHeaderBreadcrumb"
     [model]="items"
     [home]="(home$ | async)?.menuItem ?? {}"
     [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"

@@ -1,8 +1,12 @@
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   OnInit,
+  Renderer2,
   TemplateRef,
   Type,
+  ViewChild,
   ViewEncapsulation,
   computed,
   contentChild,
@@ -15,7 +19,7 @@ import {
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeIcons } from 'primeng/api'
-import { Observable, concat, map, of, switchMap } from 'rxjs'
+import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -88,13 +92,20 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   styleUrls: ['./page-header.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent implements OnInit, AfterViewInit {
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
+  private readonly renderer = inject(Renderer2)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   protected readonly breadcrumbs = inject(BreadcrumbService)
+  private breadcrumbRef?: ElementRef<HTMLElement>
+  @ViewChild('breadcrumbRef', { read: ElementRef })
+  set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
+    this.breadcrumbRef = ref
+    this.applyBreadcrumbAriaLabels()
+  }
 
   header = input<string | undefined>(undefined)
 
@@ -198,10 +209,22 @@ export class PageHeaderComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.manualBreadcrumbs()) {
-      this.breadcrumbs$ = this.breadcrumbs.itemsHandler
+      this.breadcrumbs$ = this.breadcrumbs.itemsHandler.pipe(
+        tap(() => {
+          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
+        })
+      )
     } else {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource
+      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource.pipe(
+        tap(() => {
+          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
+        })
+      )
     }
+  }
+
+  ngAfterViewInit() {
+    this.applyBreadcrumbAriaLabels()
   }
 
   onAction(action: string) {
@@ -288,5 +311,24 @@ export class PageHeaderComponent implements OnInit {
 
   async onActionClick(action: Action): Promise<void> {
     await handleAction(this.router, action)
+  }
+
+  private applyBreadcrumbAriaLabels(): void {
+    const breadcrumbHost = this.breadcrumbRef?.nativeElement
+    if (!breadcrumbHost) {
+      return
+    }
+
+    const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
+    breadcrumbItems.forEach((item: Element, index: number) => {
+      const text = (item as HTMLElement).innerText.trim()
+      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
+        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+      })
+
+      if (index === breadcrumbItems.length - 1 && text) {
+        this.renderer.setAttribute(item, 'aria-current', 'page')
+      }
+    })
   }
 }
