@@ -164,6 +164,11 @@
     "EXPORT": "Alle Ereignisse exportieren",
     "CONTROLS": {
       "ARIA_LABEL": "Suchsteuerungen"
+    },
+    "ANNOUNCEMENTS": {
+      "SEARCHING": "Suche läuft...",
+      "NO_RESULTS": "Keine Ergebnisse gefunden",
+      "RESULTS_FOUND": "{{count}} Ergebnisse gefunden"
     }
   },
   "OCX_PAGE_HEADER": {
