@@ -21,12 +21,6 @@ describe('GroupByCountDiagramComponent', () => {
 
   const definedSumKey = 'Total'
 
-  const diagramData: { label: string; value: number; backgroundColor?: string }[] = [
-    { label: 'test0', value: 1, backgroundColor: 'green' },
-    { label: 'test1', value: 2, backgroundColor: 'darkgreen' },
-    { label: 'test2', value: 4, backgroundColor: undefined },
-  ]
-
   const originalData = [
     {
       version: 0,
