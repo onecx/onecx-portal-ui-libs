@@ -7,10 +7,13 @@
       [options]="dropdownOptions()"
       (onChange)="selectSorting($event)"
       [ariaLabel]="('OCX_LIST_GRID_SORT.DROPDOWN.ARIA_LABEL' | translate)"
+      optionLabel="columnName"
     >
-      <ng-template let-item #item> {{ item?.columnName ? (item.columnName | translate) : ''}} </ng-template>
+      <ng-template let-item #item> 
+        <span [attr.aria-label]="item?.columnName ? (item.columnName | translate) : ''">{{ item?.columnName ? (item.columnName | translate) : ''}}</span> 
+      </ng-template>
       <ng-template let-item #selectedItem>
-        {{ item?.columnName ? (item.columnName | translate) : ''}}
+        <span [attr.aria-label]="item?.columnName ? (item.columnName | translate) : ''">{{ item?.columnName ? (item.columnName | translate) : ''}}</span>
       </ng-template></p-select
     >
     <label for="dataListGridSortingDropdownInput">{{ ("OCX_LIST_GRID_SORT.DROPDOWN.LABEL" | translate) }}</label>
@@ -21,8 +24,10 @@
     icon="pi {{sortIcon()}}"
     styleClass="p-button-outlined"
     (onClick)="sortDirectionChanged()"
+    (keydown.enter)="sortDirectionChanged()"
+    (keydown.space)="sortDirectionChanged()"
     [pTooltip]="(sortIconTitle() | translate)"
     tooltipPosition="top"
-    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
+    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{currentDirection: sortDirection(), nextDirection: (sortDirectionToTitle(nextSortDirection())) | translate})"
   ></p-button>
 </div>
