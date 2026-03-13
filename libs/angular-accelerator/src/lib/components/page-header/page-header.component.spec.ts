@@ -6,6 +6,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
+  provideBreadcrumbServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
@@ -21,6 +22,7 @@ import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
 import { of } from 'rxjs'
+import { BreadcrumbService } from '../../services/breadcrumb.service'
 
 const mockActions: Action[] = [
   {
@@ -57,6 +59,7 @@ describe('PageHeaderComponent', () => {
   let pageHeaderHarness: PageHeaderHarness
   let userServiceMock: UserServiceMock
   let router: Router
+  let breadcrumbService: BreadcrumbService
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -76,11 +79,13 @@ describe('PageHeaderComponent', () => {
           useExisting: UserService,
         },
         provideRouter([]),
+        provideBreadcrumbServiceMock(),
       ],
     }).compileComponents()
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
     userServiceMock = TestBed.inject(UserServiceMock)
+    breadcrumbService = TestBed.inject(BreadcrumbService)
     userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',
@@ -106,24 +111,33 @@ describe('PageHeaderComponent', () => {
     expect(pageHeaderWrapper).toBeTruthy()
   })
 
-  it('should apply translated aria-label to breadcrumb links', async () => {
-    component.breadcrumbs$ = of([
-      {
-        label: 'Test breadcrumb',
-        show: 'always',
-        routerLink: '/test-breadcrumb',
-        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      },
-    ])
+  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is true', async () => {
+    fixture = TestBed.createComponent(PageHeaderComponent)
+    component = fixture.componentInstance
+    fixture.componentRef.setInput('manualBreadcrumbs', true)
+      
+    fixture.detectChanges()
+    await fixture.whenStable()
+    pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from itemsHandler')
+    expect(breadcrumbItem).toBeTruthy()
+    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from itemsHandler page')
+  })
+
+  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
+    fixture.componentRef.setInput('manualBreadcrumbs', false)   
 
     fixture.detectChanges()
     await fixture.whenStable()
     component.ngAfterViewInit()
 
-    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from generated source')
     expect(breadcrumbItem).toBeTruthy()
     expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
-    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb page')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from generated source page')
   })
 
   it('should test if breadcrumb is not rendered when there are no breadcrumbs', async () => {

@@ -211,14 +211,12 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     if (this.manualBreadcrumbs()) {
       this.breadcrumbs$ = this.breadcrumbs.itemsHandler.pipe(
         tap(() => {
-          // Apply aria-labels after breadcrumb items change
           setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
         })
       )
     } else {
       this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource.pipe(
         tap(() => {
-          // Apply aria-labels after breadcrumb items change
           setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
         })
       )
