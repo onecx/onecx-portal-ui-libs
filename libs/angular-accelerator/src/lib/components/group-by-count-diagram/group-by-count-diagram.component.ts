@@ -82,7 +82,7 @@ export class GroupByCountDiagramComponent {
           if (foundColumn) {
             foundColumn.value++
           } else {
-            occurrences.push({ label: current, value: 1, backgroundColor: colors[current.toString()] })
+            occurrences.push({ label: current, value: 1, backgroundColor: colors[current!.toString()] })
           }
         })
       } else {

@@ -6,12 +6,11 @@ import { UserService } from '@onecx/angular-integration-interface'
 import {
   AppStateServiceMock,
   provideAppStateServiceMock,
-  provideBreadcrumbServiceMock,
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { PrimeIcons } from 'primeng/api'
+import { MenuItem, PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { MenuModule } from 'primeng/menu'
@@ -23,6 +22,34 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { provideRouter, Router } from '@angular/router'
 import { of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
+import { Injectable } from '@angular/core'
+
+export function provideBreadcrumbServiceMock() {
+  return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
+}
+
+@Injectable({ providedIn: 'root' })
+export class BreadcrumbServiceMock {
+  itemsHandler = of<MenuItem[]>([
+    {
+      label: 'Test breadcrumb from itemsHandler',
+      show: 'always',
+      routerLink: '/test-breadcrumb',
+      permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+    },
+  ])
+
+  generatedItemsSource = of<MenuItem[]>([{
+      label: 'Test breadcrumb from generated source',
+      show: 'always',
+      routerLink: '/test-breadcrumb',
+      permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+    }])
+
+  generateBreadcrumbs() {
+    return this.generatedItemsSource
+  }
+}
 
 const mockActions: Action[] = [
   {
@@ -59,7 +86,6 @@ describe('PageHeaderComponent', () => {
   let pageHeaderHarness: PageHeaderHarness
   let userServiceMock: UserServiceMock
   let router: Router
-  let breadcrumbService: BreadcrumbService
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -85,7 +111,6 @@ describe('PageHeaderComponent', () => {
 
     mockAppStateService = TestBed.inject(AppStateServiceMock)
     userServiceMock = TestBed.inject(UserServiceMock)
-    breadcrumbService = TestBed.inject(BreadcrumbService)
     userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
     mockAppStateService.currentWorkspace$.publish({
       id: 'i-am-test-portal',

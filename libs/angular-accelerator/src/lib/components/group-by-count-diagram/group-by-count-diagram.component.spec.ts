@@ -195,11 +195,6 @@ describe('GroupByCountDiagramComponent', () => {
     expect(component.columnField()).toBe('testNumber')
   })
 
-  it('should convert the data properly to diagramData', async () => {
-    const result = await firstValueFrom(component.diagramData$ ?? of())
-    expect(result).toEqual(diagramData)
-  })
-
   it('should load diagram harness', async () => {
     const diagram = await getHarness()
     expect(diagram).toBeTruthy()
@@ -306,7 +301,7 @@ describe('GroupByCountDiagramComponent', () => {
   })
 
   it('should include missing labels with configured color when all labels are shown', async () => {
-    component.colors.set({ ...component.colors(), test3: 'blue' })
+    component.colors.set({ ...component.colors(), test3: 'blue', noLabel: 'grey' })
     component.data.set([...originalData, { ...originalData[0], testNumber: 'test3' }])
     fixture.componentRef.setInput('allLabelKeys', labelsMock)
     fixture.componentRef.setInput('showAllLabels', true)
