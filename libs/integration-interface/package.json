@@ -15,7 +15,7 @@
     "@phenomnomnominal/tsquery": "^6",
     "typescript": "^5.5.4"
   },
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "semver": "^7.7.3"
   },

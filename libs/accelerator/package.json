@@ -13,7 +13,7 @@
     "@onecx/nx-migration-utils": "^8.0.0-rc.6",
     "debug": "^4.4.3"
   },
-  "type": "commonjs",
+  "type": "module",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "publishConfig": {
