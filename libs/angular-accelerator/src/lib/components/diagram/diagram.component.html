@@ -1,11 +1,11 @@
 @if (chartTitleKey() || chartDescriptionKey()) {
   @if (chartTitleKey()) {
-    <header class="diagram-title  w-full flex justify-content-center" [attr.id]="uniqueInstanceId + '-title'">
+    <header class="diagram-title  w-full flex justify-content-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">
       {{ chartTitleKey() | translate }}
     </header>
   }
   @if (chartDescriptionKey()) {
-    <p class="diagram-description  w-full flex justify-content-center" [attr.id]="uniqueInstanceId + '-description'">
+    <p class="diagram-description  w-full flex justify-content-center" [attr.id]="'ocx-' + uniqueInstanceId + '-description'">
       {{chartDescriptionKey() | translate }}</p>
   }
 }
@@ -16,15 +16,15 @@
     [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate">
     <ng-template #item let-item>
       <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
-      <span class="sr-only" [attr.id]="uniqueInstanceId + '-' + item.id">{{item.label ? item.label : item.labelKey | translate}}</span>
+      <span class="sr-only" [attr.id]="'ocx-' + uniqueInstanceId + '-' + item.id">{{item.label ? item.label : item.labelKey | translate}}</span>
     </ng-template>
   </p-selectbutton>
 </div>
 }
 <div class="w-full flex justify-content-center" [ngClass]="{'h-full': useFullHeight()}">
   <p-chart tabindex="0" 
-    [attr.aria-describedby]="uniqueInstanceId + '-sr-only-table'" 
-    [attr.id]="uniqueInstanceId + '-chart'"
+    [attr.aria-describedby]="'ocx-' + uniqueInstanceId + '-sr-only-table'" 
+    [attr.id]="'ocx-' + uniqueInstanceId + '-chart'"
     [attr.data-automation-type]="chartType()"
     [type]="chartType()"
     [data]="chartData()"
@@ -47,9 +47,10 @@
 
 <!-- Table for screen readers -->
 <ng-template #chartDetailsForSr>
-  <div class="w-full flex justify-content-center sr-only" [attr.id]="uniqueInstanceId + '-sr-only-diagram-details'">
-    <table [attr.id]="uniqueInstanceId + '-sr-only-table'">
-      <caption [attr.id]="uniqueInstanceId + '-table-caption'"> {{ chartTitleKey() | translate }} </caption>
+  @if (data()) {
+  <div class="w-full flex justify-content-center sr-only" [attr.id]="'ocx-' + uniqueInstanceId + '-sr-only-diagram-details'">
+    <table [attr.id]="'ocx-' + uniqueInstanceId + '-sr-only-table'">
+      <caption [attr.id]="'ocx-' + uniqueInstanceId + '-table-caption'"> {{ chartTitleKey() | translate }} </caption>
       <thead>
         <tr>
           <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COLOR' | translate }}</th>
@@ -58,20 +59,21 @@
         </tr>
       </thead>
       <tbody>
-        @for (label of chartData()?.labels; track $index) {
+        @for (item of data(); track item) {
         <tr>
           <td>
-            <span>{{ chartData()!.datasets[0].backgroundColor[$index] }}</span>
+            <span>{{ item.backgroundColor || ' ' }}</span>
           </td>
-          <td>{{ label }}</td>
-          <td>{{ chartData()!.datasets[0].data[$index] }}</td>
+          <td>{{ item.label }}</td>
+          <td>{{ item.value }}</td>
         </tr>
         }
         <tr>
-          <td colspan="2" class="font-bold">{{ sumKey() | translate }}</td>
-          <td class="font-bold">{{ amountOfData() }}</td>
+          <td colspan="2">{{ sumKey() | translate }}</td>
+          <td>{{ amountOfData() }}</td>
         </tr>
       </tbody>
     </table>
   </div>
+}
 </ng-template>

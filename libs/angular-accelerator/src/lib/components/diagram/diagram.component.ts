@@ -95,7 +95,7 @@ export class DiagramComponent {
   private colorScale = d3.interpolateCool
 
   private static nextUniqueId = 0;
-  private uniqueInstanceId: number;
+  uniqueInstanceId: number;
 
   constructor() {
     this.uniqueInstanceId = DiagramComponent.nextUniqueId++;
