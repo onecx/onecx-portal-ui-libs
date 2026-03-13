@@ -1,3 +1,13 @@
+## [8.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.6...v8.0.0-rc.7) (2026-03-13)
+
+### Features
+
+* main-add visible keyboard focus for interactive elements ([#1175](https://github.com/onecx/onecx-portal-ui-libs/issues/1175)) ([8fa3c2b](https://github.com/onecx/onecx-portal-ui-libs/commit/8fa3c2b18f8368869dde4dd91c9a814027c79afc))
+
+### Chores
+
+* switch to accelarator and integration-interface from commonjs to module ([#1286](https://github.com/onecx/onecx-portal-ui-libs/issues/1286)) ([703ffe7](https://github.com/onecx/onecx-portal-ui-libs/commit/703ffe735ce3f8854d533c00ec0138f4a64b7346))
+
 ## [8.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.5...v8.0.0-rc.6) (2026-03-06)
 
 ### Bug Fixes
