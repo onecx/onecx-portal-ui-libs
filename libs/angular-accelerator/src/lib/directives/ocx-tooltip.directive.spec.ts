@@ -105,7 +105,7 @@ describe('OcxTooltip', () => {
 
 			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			expect(directive.ocxTooltip).toBe(TOOLTIP_TEXT);
+			expect(directive.ocxTooltip()).toBe(TOOLTIP_TEXT);
 
 			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
 		}));

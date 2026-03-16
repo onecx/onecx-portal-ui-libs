@@ -1,29 +1,26 @@
-import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, NgZone, ViewContainerRef, SimpleChanges, Input } from "@angular/core"
+import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, NgZone, ViewContainerRef, SimpleChanges, input, effect } from "@angular/core"
 import { Tooltip, TooltipStyle } from "primeng/tooltip"
 
 @Directive({ selector: '[ocxTooltip]', providers: [TooltipStyle] })
 export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnChanges {
   override readonly renderer = inject(Renderer2)
+  readonly ocxTooltip = input<string | TemplateRef<HTMLElement> | undefined>(undefined)
+
   private generatedId: string | undefined
   private resolvedId: string | undefined
   private removeEscapeKeyListener: (() => void) | undefined
-
-  @Input()
-  get ocxTooltip(): string | TemplateRef<HTMLElement> | undefined {
-    return this.content
-  }
-
-  set ocxTooltip(value: string | TemplateRef<HTMLElement> | undefined) {
-    this.content = value
-    this.setOption({ tooltipLabel: value })
-    this.ensureIdAndAriaDescribedBy()
-  }
-
+  
   constructor() {
     const zone = inject(NgZone)
     const viewContainer = inject(ViewContainerRef)
     super(zone, viewContainer)
     this.tooltipEvent = 'both'
+    effect(() => {
+      const value = this.ocxTooltip()
+      this.content = value
+      this.setOption({ tooltipLabel: value })
+      this.ensureIdAndAriaDescribedBy()
+    })
   }
 
   override ngAfterViewInit(): void {
