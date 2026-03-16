@@ -24,7 +24,7 @@ export class TooltipOnOverflowDirective extends OcxTooltipDirective implements O
     return this.content
   }
   set ocxTooltipOnOverflow(value: string | TemplateRef<HTMLElement> | undefined) {
-    //this.content = value
+    this.content = value
     this.setOption({ tooltipLabel: value })
   }
 

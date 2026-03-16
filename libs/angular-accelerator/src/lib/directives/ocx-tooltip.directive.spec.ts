@@ -289,19 +289,7 @@ describe('OcxTooltip', () => {
 			const tooltipId = await tooltip.getTooltipId();
 			expect(tooltipId).toBeTruthy();
 		}));
-
-		it('should apply an empty string when resolvedId is undefined', fakeAsync(async () => {
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			directive.resolvedId = undefined;
-			directive.container = document.createElement('div');
-			const spy = jest.spyOn(directive.renderer, 'setAttribute');
-
-			directive.applyIdToContainer();
-
-			expect(spy).toHaveBeenCalledWith(directive.container, 'id', '');
-		}));
-
+		
 		it('should not set set id when tooltip is not created', () => {
 			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any;

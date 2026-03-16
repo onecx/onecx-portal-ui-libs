@@ -66,8 +66,8 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   }
 
   private applyIdToContainer(): void {
-    if (!this.isTooltipCreated()) return
-    this.renderer.setAttribute(this.container, 'id', this.resolvedId ?? '')
+    if (!this.isTooltipCreated() || !this.resolvedId) return
+    this.renderer.setAttribute(this.container, 'id', this.resolvedId)
   }
 
   private isTooltipCreated(): boolean {
