@@ -15,12 +15,6 @@ class ManifestCacheTopic extends Topic<{
   }
 }
 
-declare global {
-  interface Window {
-    onecxManifests: Record<string, Manifest | undefined | null>
-  }
-}
-
 @Injectable({ providedIn: 'root' })
 export class ManifestCacheService implements OnDestroy {
   private http = inject(HttpClient)

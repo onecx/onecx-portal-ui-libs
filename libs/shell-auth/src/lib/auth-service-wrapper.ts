@@ -104,7 +104,7 @@ export class AuthServiceWrapper {
   }
 
   async getAuthServiceFactory(): Promise<AuthServiceFactory> {
-    if (await !this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+    if (!(await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL))) {
       throw new Error('URL of the custom auth service is not defined')
     }
     const remoteEntry = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? ''

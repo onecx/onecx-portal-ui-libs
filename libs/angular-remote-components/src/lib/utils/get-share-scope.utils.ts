@@ -4,8 +4,8 @@ import { createLogger } from './logger.utils'
 import { firstValueFrom } from 'rxjs'
 import { ManifestCacheService } from '../services/manifest-cache.service'
 
-export async function getShareScope(manifestUrl: string): Promise<string> {
-  const manifestCacheService = inject(ManifestCacheService)
+export async function getShareScope(manifestUrl: string, cacheServiceOverride?: ManifestCacheService): Promise<string> {
+  const manifestCacheService = cacheServiceOverride || inject(ManifestCacheService)
   const logger = createLogger('getShareScope')
   let manifest: Manifest | object
 
