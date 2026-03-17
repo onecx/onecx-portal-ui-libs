@@ -205,7 +205,7 @@ export class SearchHeaderComponent {
       let announmentKey = ''
       if (this.loading()) {
         announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.SEARCHING'
-      } else if (!this.loading() && (this.searchResultsCount() === 0 || !this.searchResultsCount())) {
+      } else if (!this.loading() && !this.searchResultsCount()) {
         announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
       } else {
         announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
