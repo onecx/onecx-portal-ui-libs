@@ -125,7 +125,8 @@
     "MANAGE_FILTERS_BUTTON": {
       "LABEL": "Filters",
       "ARIA_LABEL": "Manage active filters",
-      "DETAIL": "Manage active filters"
+      "DETAIL": "Manage active filters",
+      "DISABLED_DETAIL": "No active filters to manage"
     },
     "TABLE": {
       "COLUMN_NAME": "Column name",
