@@ -9,7 +9,7 @@
     [allowEmpty]="false"
   >
     <ng-template #item let-item>
-      <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
+      <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
       <label style="display: none" id="{{item.id}}"> {{item.label ? item.label : item.labelKey | translate}} </label>
     </ng-template>
   </p-selectbutton>
