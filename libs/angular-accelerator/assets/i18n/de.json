@@ -178,6 +178,9 @@
     "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Diagrammtyp auswählen"
+    },
     "TABLE": {
       "COLOR": "Farbe",
       "LABEL": "Bezeichnung",
