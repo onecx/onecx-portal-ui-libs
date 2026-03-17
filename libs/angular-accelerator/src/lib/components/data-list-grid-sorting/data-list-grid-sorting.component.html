@@ -21,7 +21,7 @@
     icon="pi {{sortIcon()}}"
     styleClass="p-button-outlined"
     (onClick)="sortDirectionChanged()"
-    [pTooltip]="(sortIconTitle() | translate)"
+    [ocxTooltip]="(sortIconTitle() | translate)"
     tooltipPosition="top"
     [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{direction: (sortDirectionToTitle(nextSortDirection())) | translate})"
   ></p-button>

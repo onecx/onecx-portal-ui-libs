@@ -18,6 +18,7 @@ import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { SkeletonModule } from 'primeng/skeleton'
 import { action } from 'storybook/actions'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 const DataTableComponentSBConfig: Meta<DataTableComponent> = {
   title: 'Components/DataTableComponent',
@@ -56,6 +57,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         FormsModule,
         TooltipModule,
         SkeletonModule,
+        OcxTooltipDirective
       ],
     }),
   ],

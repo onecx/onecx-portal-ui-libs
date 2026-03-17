@@ -79,7 +79,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />
@@ -93,7 +93,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />
@@ -107,7 +107,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />
