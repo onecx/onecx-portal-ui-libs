@@ -20,7 +20,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return loadTranslations(locales$, params)
+    return loadTranslations(locales$, params).pipe(catchError(() => { return of(params.key);}))
   }
 }
 /**
