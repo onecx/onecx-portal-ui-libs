@@ -53,7 +53,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnInit, OnChanges {
-  private translateService = inject(TranslateService)
+  private readonly translateService = inject(TranslateService)
 
   @Input() data: DiagramData[] | undefined
   @Input() sumKey = 'OCX_DIAGRAM.SUM'
