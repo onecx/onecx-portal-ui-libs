@@ -1,7 +1,7 @@
 import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, NgZone, ViewContainerRef, SimpleChanges, input, effect } from "@angular/core"
 import { Tooltip, TooltipStyle } from "primeng/tooltip"
 
-@Directive({ selector: '[ocxTooltip]', providers: [TooltipStyle] })
+@Directive({ selector: '[ocxTooltip]', providers: [TooltipStyle], standalone: true })
 export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnChanges {
   override readonly renderer = inject(Renderer2)
   readonly ocxTooltip = input<string | TemplateRef<HTMLElement> | undefined>(undefined)

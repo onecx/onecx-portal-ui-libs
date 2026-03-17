@@ -106,10 +106,9 @@ export default {
         DialogMessageContentComponent,
         DialogFooterComponent,
         DialogContentComponent,
-        WithDisabledButtonsComponent,
-        OcxTooltipDirective
+        WithDisabledButtonsComponent        
       ],
-      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule, OcxTooltipDirective],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
