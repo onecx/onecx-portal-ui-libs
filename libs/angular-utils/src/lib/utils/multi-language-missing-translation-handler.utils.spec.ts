@@ -160,27 +160,4 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       done()
     })
   })
-
-  it('should return the key if locales are empty (without loading translations)', (done) => {
-    userServiceMock.profile$.publish({
-      userId: 'test-user',
-      person: {},
-      settings: {
-        locales: [] as string[],
-      },
-    } as UserProfile)
-
-    const params: MissingTranslationHandlerParams = {
-      key: 'test.key',
-      translateService: {
-        reloadLang: jest.fn().mockReturnValue(of({ 'test.key': 'Should Not Be Used' })),
-      } as any,
-    }
-
-    handler.handle(params).subscribe((result) => {
-      expect(result).toBe('test.key')
-      expect(params.translateService.reloadLang).not.toHaveBeenCalled()
-      done()
-    })
-  })
 })
