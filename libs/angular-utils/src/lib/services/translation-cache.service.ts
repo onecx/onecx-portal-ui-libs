@@ -69,7 +69,6 @@ export class TranslationCacheService implements OnDestroy {
       }),
       map(() => window['onecxTranslations'][url]),
       catchError(() => {
-        console.error(`Failed to load translation file: ${url}`)
         delete window['onecxTranslations'][url]
         this.translationTopic$.publish(url)
         return of({})
