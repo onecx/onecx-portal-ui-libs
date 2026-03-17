@@ -15,7 +15,7 @@
     (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false"
     [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate">
     <ng-template #item let-item>
-      <i [class]="item.icon" [pTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
+      <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
       <span class="sr-only" [attr.id]="'ocx-' + uniqueInstanceId + '-' + item.id">{{item.label ? item.label : item.labelKey | translate}}</span>
     </ng-template>
   </p-selectbutton>
