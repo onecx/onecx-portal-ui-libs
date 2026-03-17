@@ -413,7 +413,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       })
     })
 
-    it('should throw an error if no translation is found in any language', (done) => {
+    it('should return the key if no translation is found in any language', (done) => {
       userServiceMock.profile$.publish({
         settings: {
           locales: ['fr', 'en', 'pl'],
@@ -434,12 +434,10 @@ describe('MultiLanguageMissingTranslationHandler', () => {
         })
       )
 
-      handler.handle(params).subscribe({
-        error: (err) => {
-          expect(err.message).toBe('No translation found for key: missing.key')
-          expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
-          done()
-        },
+      handler.handle(params).subscribe((result) => {
+        expect(result).toBe('missing.key')
+        expect(params.translateService.reloadLang).toHaveBeenCalledTimes(3)
+        done()
       })
     })
 
