@@ -58,7 +58,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     return langConfig.pipe(
       mergeMap((l) => {
         const langs = [...l]
-        
+
         const chain = (o: Observable<string[]>): Observable<any> => {
           return o.pipe(
             mergeMap((lang) => {
@@ -67,7 +67,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
             catchError(() => {
               langs.shift()
               if (langs.length === 0) {
-                throw new Error(`No translation found for test key: ${params.key}`)
+                throw new Error(`No translation found for key: ${params.key}`)
               }
               return chain(of(langs))
             })
