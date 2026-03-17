@@ -23,6 +23,7 @@ import { provideRouter, Router } from '@angular/router'
 import { of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Injectable } from '@angular/core'
+import { By } from '@angular/platform-browser'
 
 export function provideBreadcrumbServiceMock() {
   return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
@@ -175,6 +176,30 @@ describe('PageHeaderComponent', () => {
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
     expect(breadcrumbItem).toBeNull()
     expect(await breadcrumbItem?.getText()).toBeUndefined()
+  })
+
+  it('should not add aria-current for non-last breadcrumb with empty label', async () => {
+    component.breadcrumbs$ = of([
+      {
+        label: 'Second breadcrumb',
+        show: 'always',
+        routerLink: '/second',
+        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+      },
+      {
+        label: '',
+        show: 'always',
+        routerLink: '/empty',
+        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+      }      
+    ]);
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbLinks = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item-link'))
+    expect(breadcrumbLinks[0].attributes['aria-current']).toBeUndefined()
   })
 
   it('should handle null ViewChild', async () => {

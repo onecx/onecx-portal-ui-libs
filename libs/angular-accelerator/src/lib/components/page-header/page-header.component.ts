@@ -322,11 +322,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement).innerText.trim()
+      if (!text) return
+      
       this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
         this.renderer.setAttribute(item, 'aria-label', ariaLabel)
       })
-
-      if (index === breadcrumbItems.length - 1 && text) {
+      
+      if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }
     })
