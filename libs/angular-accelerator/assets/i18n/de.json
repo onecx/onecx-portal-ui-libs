@@ -128,7 +128,9 @@
     "MANAGE_FILTERS_BUTTON": {
       "LABEL": "Filter",
       "ARIA_LABEL": "Aktive Filter verwalten",
-      "DETAIL": "Aktive Filter verwalten"
+      "DETAIL": "Aktive Filter verwalten",
+      "DISABLED_DETAIL": "Keine aktiven Filter zum Verwalten"
+
     },
     "TABLE": {
       "COLUMN_NAME": "Spaltenname",
