@@ -14,6 +14,7 @@ import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
   private readonly parser = inject(TranslateParser)
+
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
@@ -26,7 +27,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return this.loadTranslations(locales$, params)
+    return this.loadTranslations(locales$, params).pipe(catchError(() => { return of(params.key);}))
   }
 
   /**
@@ -57,6 +58,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     return langConfig.pipe(
       mergeMap((l) => {
         const langs = [...l]
+
         const chain = (o: Observable<string[]>): Observable<any> => {
           return o.pipe(
             mergeMap((lang) => {
