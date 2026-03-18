@@ -180,7 +180,8 @@
     "SUBHEADER": "Page Content",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
-    "HOME_ARIA_LABEL": "Go to {{page}} home page"
+    "HOME_ARIA_LABEL": "Go to home page",
+    "BREADCRUMB_ARIA_LABEL": "Go to {{breadcrumb}} page"
   },
   "OCX_DIAGRAM": {
     "ARIA_LABEL": "Chart Summary: Total amount: {{total}}. {{valueString}}.",
