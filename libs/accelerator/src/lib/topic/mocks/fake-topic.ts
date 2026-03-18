@@ -1,5 +1,5 @@
 import { Subject, Observable, Observer, Subscription, UnaryFunction, BehaviorSubject, ReplaySubject } from 'rxjs'
-import { Topic } from '../topic'
+import type { Topic } from '../topic.js'
 
 export class FakeTopic<T> {
   private state: Subject<T>

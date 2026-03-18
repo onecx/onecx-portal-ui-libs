@@ -1,4 +1,4 @@
-import { normalizeLocales } from './normalize-locales.utils'
+import { normalizeLocales } from './normalize-locales.utils.js'
 
 export function getNormalizedBrowserLocales(): string[] {
   if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {

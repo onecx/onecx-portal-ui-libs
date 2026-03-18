@@ -1,5 +1,5 @@
-import '../declarations'
-import { TopicMessageType } from '../topic/topic-message-type'
+import '../declarations.js'
+import { TopicMessageType } from '../topic/topic-message-type.js'
 
 export function isStatsEnabled(): boolean {
   return window['@onecx/accelerator']?.topic?.statsEnabled === true

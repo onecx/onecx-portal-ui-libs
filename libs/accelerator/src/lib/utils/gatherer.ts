@@ -1,9 +1,9 @@
 import { Subscription } from 'rxjs'
-import { Topic } from '../topic/topic'
+import { Topic } from '../topic/topic.js'
 
-import { createLogger } from './logger.utils'
+import { createLogger } from './logger.utils.js'
 
-import '../declarations'
+import '../declarations.js'
 
 /**
  * Implementation of the Scatter-Gather pattern.

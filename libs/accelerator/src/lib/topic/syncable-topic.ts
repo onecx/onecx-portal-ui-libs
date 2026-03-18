@@ -1,5 +1,5 @@
-import { Topic } from './topic'
-import { TopicDataMessage } from './topic-data-message'
+import { Topic } from './topic.js'
+import { TopicDataMessage } from './topic-data-message.js'
 
 /**
  * This class allows sync access to the value of a Topic.

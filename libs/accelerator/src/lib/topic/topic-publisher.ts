@@ -1,9 +1,9 @@
-import { TopicDataMessage } from './topic-data-message'
-import { TopicMessage } from './topic-message'
-import { TopicMessageType } from './topic-message-type'
-import { TopicResolveMessage } from './topic-resolve-message'
-import { createLogger } from '../utils/logger.utils'
-import { ComponentLogger } from '../utils/create-logger.utils'
+import { TopicDataMessage } from './topic-data-message.js'
+import { TopicMessage } from './topic-message.js'
+import { TopicMessageType } from './topic-message-type.js'
+import { TopicResolveMessage } from './topic-resolve-message.js'
+import { createLogger } from '../utils/logger.utils.js'
+import { ComponentLogger } from '../utils/create-logger.utils.js'
 
 
 export class TopicPublisher<T> {

@@ -8,14 +8,14 @@ import {
   Subscription,
   UnaryFunction,
 } from 'rxjs'
-import { TopicDataMessage } from './topic-data-message'
-import { TopicMessage } from './topic-message'
-import { TopicMessageType } from './topic-message-type'
-import { TopicPublisher } from './topic-publisher'
-import { TopicResolveMessage } from './topic-resolve-message'
-import '../declarations'
-import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
-import { createLogger } from '../utils/logger.utils'
+import { TopicDataMessage } from './topic-data-message.js'
+import { TopicMessage } from './topic-message.js'
+import { TopicMessageType } from './topic-message-type.js'
+import { TopicPublisher } from './topic-publisher.js'
+import { TopicResolveMessage } from './topic-resolve-message.js'
+import '../declarations.js'
+import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils.js'
+import { createLogger } from '../utils/logger.utils.js'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private readonly logger = createLogger(`Topic:${this.name}`)

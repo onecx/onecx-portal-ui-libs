@@ -1,5 +1,5 @@
-import { TopicMessage } from './topic-message'
-import { TopicMessageType } from './topic-message-type'
+import { TopicMessage } from './topic-message.js'
+import { TopicMessageType } from './topic-message-type.js'
 
 export class TopicResolveMessage extends TopicMessage {
   constructor(

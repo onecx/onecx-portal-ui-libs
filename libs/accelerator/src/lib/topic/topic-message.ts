@@ -1,6 +1,6 @@
-import { increaseMessageCount, isStatsEnabled } from '../utils/logs.utils'
-import { Message } from './message'
-import { TopicMessageType } from './topic-message-type'
+import { increaseMessageCount, isStatsEnabled } from '../utils/logs.utils.js'
+import { Message } from './message.js'
+import { TopicMessageType } from './topic-message-type.js'
 
 export class TopicMessage extends Message {
   constructor(
