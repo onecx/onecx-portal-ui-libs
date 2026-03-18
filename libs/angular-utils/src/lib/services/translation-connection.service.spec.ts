@@ -11,7 +11,6 @@ describe('ConnectionService', () => {
   let service: TranslationConnectionService
   let userService: UserService
   let translateService: TranslateService
-  let configuration: PrimeNG
   
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,7 +22,6 @@ describe('ConnectionService', () => {
     })
     userService = TestBed.inject(UserService)
     translateService = TestBed.inject(TranslateService)
-    configuration = TestBed.inject(PrimeNG)    
   })
 
 
