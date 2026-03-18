@@ -179,10 +179,18 @@
     "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
   },
   "OCX_DIAGRAM": {
-    "ARIA_LABEL": "Diagramm: Gesamtanzahl: {{total}}. {{valueString}}.",
+    "ARIA_LABEL": "Diagramm Zusammenfassung: Gesamtanzahl: {{total}}. {{valueString}}.",
     "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Diagrammtyp auswählen"
+    },
+    "TABLE": {
+      "COLOR": "Farbe",
+      "LABEL": "Bezeichnung",
+      "COUNT": "Anzahl"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Zu Tortendiagramm wechseln",
       "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
