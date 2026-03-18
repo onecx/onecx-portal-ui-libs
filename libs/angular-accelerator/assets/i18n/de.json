@@ -58,7 +58,7 @@
       "DESCENDING_TOOLTIP": "Absteigend sortieren",
       "DEFAULT_TOOLTIP": "Standardsortierung"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
+    "SORTING_BUTTON_ARIA_LABEL": "Aktuelle Sortierrichtung: {{currentDirection}}. Sortierrichtung auf {{nextDirection}} ändern"
   },
   "OCX_DATA_TABLE": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
@@ -169,6 +169,11 @@
     "EXPORT": "Alle Ereignisse exportieren",
     "CONTROLS": {
       "ARIA_LABEL": "Suchsteuerungen"
+    },
+    "ANNOUNCEMENTS": {
+      "SEARCHING": "Suche läuft...",
+      "NO_RESULTS": "Keine Ergebnisse gefunden",
+      "RESULTS_FOUND": "{{count}} Ergebnisse gefunden"
     }
   },
   "OCX_PAGE_HEADER": {
