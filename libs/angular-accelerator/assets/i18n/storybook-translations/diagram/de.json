@@ -3,5 +3,9 @@
     "fruit1": "Apfel",
     "fruit2": "Banane",
     "fruit3": "Orange"
-  }
+  },
+  "OCX_DIAGRAM": {
+     "ACCESSIBILITY_TITLE": "Verteilung des Obstverkaufs",
+    "ACCESSIBILITY_DESCRIPTION": "Interaktives Kreisdiagramm, das die Verteilung der Obstverk\u00e4ufe nach Typ zeigt. Verwenden Sie die Schaltfl\u00e4chen unten, um zwischen Kreis-, horizontalem Balken- und vertikalem Balkendiagramm zu wechseln. Eine Datentabelle f\u00fcr Bildschirmleser ist unter dem Diagramm verf\u00fcgbar."
+  }  
 }
