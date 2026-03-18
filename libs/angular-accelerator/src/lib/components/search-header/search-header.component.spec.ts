@@ -20,12 +20,14 @@ import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
   let component: SearchHeaderComponent
   let fixture: ComponentFixture<SearchHeaderComponent>
   let loader: HarnessLoader
+  let liveAnnouncer: LiveAnnouncer
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -53,7 +55,7 @@ describe('SearchHeaderComponent', () => {
     fixture = TestBed.createComponent(SearchHeaderComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-
+    liveAnnouncer = TestBed.inject(LiveAnnouncer)
     loader = TestbedHarnessEnvironment.loader(fixture)
   })
 
@@ -116,5 +118,37 @@ describe('SearchHeaderComponent', () => {
     const buttons = Array.from(controls.querySelectorAll('#resetButton, #searchButton'))
 
     expect(buttons.length).toBe(0)
+  })
+
+  it('should announce loading when loading is true', async () => {
+    const spy = jest.spyOn(liveAnnouncer, 'announce')
+    fixture.componentRef.setInput('loading', true)
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(spy).toHaveBeenCalledWith('Searching...', 'polite')
+  })
+
+  it('should announce no results when loading is false and searchResultsCount is 0', async () => {
+    const spy = jest.spyOn(liveAnnouncer, 'announce')
+    fixture.componentRef.setInput('loading', false)
+    fixture.componentRef.setInput('searchResultsCount', 0)
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(spy).toHaveBeenCalledWith('No results found', 'polite')
+  })
+
+  it('should announce results found when loading is false and searchResultsCount is 5', async () => {
+    const spy = jest.spyOn(liveAnnouncer, 'announce')
+    fixture.componentRef.setInput('loading', false)
+    fixture.componentRef.setInput('searchResultsCount', 5)
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(spy).toHaveBeenCalledWith('5 results found', 'polite')
   })
 })
