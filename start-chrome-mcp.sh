@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This sciprt helps the agent to interact with the Chrome DevTools Protocol (CDP) by starting the Chrome DevTools MCP (Multi-Client Protocol) in headless mode.
+# It first checks for a Chrome binary from Puppeteer's cache, then falls back to the system's Google Chrome if available.
+# Note : Need to install google-chrome in wsl environment for this script to work.
+
 set -euo pipefail
 
 MCP_LOG_FILE="/tmp/chrome-devtools-mcp.log"
