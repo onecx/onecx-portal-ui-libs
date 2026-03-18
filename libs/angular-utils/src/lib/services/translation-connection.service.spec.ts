@@ -4,7 +4,6 @@ import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslationConnectionService } from './translation-connection.service'
-import { PrimeNG } from 'primeng/config'
 import { Subject } from 'rxjs'
 
 describe('ConnectionService', () => {
