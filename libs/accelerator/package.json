@@ -10,6 +10,7 @@
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^22.0.2",
+    "@nx/module-federation": "^22.3.3",
     "@onecx/nx-migration-utils": "^7.2.0"
   },
   "type": "commonjs",
