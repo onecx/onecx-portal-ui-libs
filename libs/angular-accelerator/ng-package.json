@@ -6,6 +6,7 @@
   },
   "assets": [
     "./assets/**",
+    "/src/lib/directives/loading-indicator.directive.scss",
     {
       "input": "tmp/primelocale/",
       "glob": "{en,de}.json",
