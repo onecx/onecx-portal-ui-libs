@@ -29,6 +29,8 @@ export class GroupByCountDiagramComponent {
 
   sumKey = input<string>('SEARCH.SUMMARY_TITLE')
   diagramType = model<DiagramType>(DiagramType.PIE)
+  chartTitleKey = input<string>('')
+  chartDescriptionKey = input<string>('')
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
