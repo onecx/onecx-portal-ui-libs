@@ -24,5 +24,6 @@
 *** xref:onecx-portal-ui-libs:components/group-by-count-diagram.adoc[GroupByCountDiagram]
 *** xref:onecx-portal-ui-libs:components/search-header.adoc[SearchHeader]
 *** xref:onecx-portal-ui-libs:components/consent.adoc[Consent]
+*** xref:onecx-portal-ui-libs:components/data-list-grid.adoc[DataListGrid]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]

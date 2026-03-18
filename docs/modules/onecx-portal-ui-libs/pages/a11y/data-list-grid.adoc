@@ -1,8 +1,5 @@
 [#data-list-grid-a11y-overview]
-= Data List Grid Accessibility
-
-:idprefix:
-:idseparator: -
+== Data List Grid Accessibility
 
 This component displays data as a list or grid and allows you to switch between them. It uses the p-data-view component from the PrimeNG library to manage the view. The following roles have been added to the template in the component to improve accessibility:
 
