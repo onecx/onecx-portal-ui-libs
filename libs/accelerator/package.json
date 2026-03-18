@@ -10,6 +10,7 @@
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^22.0.2",
+    "@nx/module-federation": "^22.3.3",
     "@onecx/nx-migration-utils": "^8.0.0-rc.7",
     "debug": "^4.4.3"
   },
