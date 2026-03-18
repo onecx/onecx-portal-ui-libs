@@ -33,7 +33,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return this.loadTranslations(locales$, params)
+    return this.loadTranslations(locales$, params).pipe(catchError(() => { return of(params.key);}))
   }
 
   /**
