@@ -8,7 +8,7 @@
       id="ocxFilterViewReset"
       (onClick)="onResetFilersClick()"
       icon="pi pi-eraser"
-      pTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
+      ocxTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
       tooltipPosition="top"
       tooltipEvent="hover"
       [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
@@ -92,7 +92,7 @@
       [disabled]="filters.length === 0"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
-      [pTooltip]="
+      [ocxTooltip]="
         filters.length === 0
           ? ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DISABLED_DETAIL' | translate)
           : ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate)
@@ -120,7 +120,7 @@
                 id="ocxFilterViewOverlayReset"
                 (onClick)="onResetFilersClick()"
                 icon="pi pi-eraser"
-                pTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
+                ocxTooltip="{{ 'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.DETAIL' | translate }}"
                 tooltipPosition="top"
                 tooltipEvent="hover"
                 [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
