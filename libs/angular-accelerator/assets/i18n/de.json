@@ -58,7 +58,7 @@
       "DESCENDING_TOOLTIP": "Absteigend sortieren",
       "DEFAULT_TOOLTIP": "Standardsortierung"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
+    "SORTING_BUTTON_ARIA_LABEL": "Aktuelle Sortierrichtung: {{currentDirection}}. Sortierrichtung auf {{nextDirection}} ändern"
   },
   "OCX_DATA_TABLE": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
