@@ -6,7 +6,6 @@ import { provideUserServiceMock } from '@onecx/angular-integration-interface/moc
 import { TranslationConnectionService } from './translation-connection.service'
 import { of, Subject } from 'rxjs'
 import { PrimeNG } from 'primeng/config'
-import { mock } from 'node:test'
 
 const mockTranslationChangeEvent: TranslationChangeEvent = {
   translations: {},
