@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
+import { TranslateModule } from '@ngx-translate/core'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -9,6 +10,7 @@ describe('DataLayoutSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
+      imports: [TranslateModule.forRoot()],
       schemas: [],
     }).compileComponents()
 

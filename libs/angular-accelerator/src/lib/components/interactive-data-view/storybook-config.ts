@@ -97,8 +97,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         DataListGridComponent,
         DataListGridSortingComponent,
         FilterViewComponent,
-        TooltipOnOverflowDirective,
-        OcxTooltipDirective
+        TooltipOnOverflowDirective
       ],
       imports: [
         TableModule,
@@ -120,6 +119,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ChipModule,
         SkeletonModule,
         TooltipModule,
+        OcxTooltipDirective
       ],
     }),
   ],

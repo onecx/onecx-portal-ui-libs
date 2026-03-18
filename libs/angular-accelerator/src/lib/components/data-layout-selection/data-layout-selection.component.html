@@ -5,10 +5,11 @@
     [ngModel]="selectedViewLayout()"
     optionLabel="id"
     (onChange)="onDataViewLayoutChange($event.value)"
+    [ariaLabel]="'OCX_DATA_LAYOUT_SELECTION.SELECT_BUTTON.ARIA_LABEL' | translate"
   >
     <ng-template #item let-item>
-      <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top"></i>
-      <label style="display: none" id="{{ item.id }}">{{ item.labelKey | translate }}</label>
+      <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" aria-hidden="true"></i>
+      <span class="sr-only" [attr.id]="item.id">{{ item.labelKey | translate }}</span>
     </ng-template>
   </p-selectbutton>
   }
