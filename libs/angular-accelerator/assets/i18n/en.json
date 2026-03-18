@@ -103,6 +103,9 @@
     "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Select layout"
+    },
     "LAYOUT": {
       "LIST": "List",
       "GRID": "Grid",
@@ -125,7 +128,8 @@
     "MANAGE_FILTERS_BUTTON": {
       "LABEL": "Filters",
       "ARIA_LABEL": "Manage active filters",
-      "DETAIL": "Manage active filters"
+      "DETAIL": "Manage active filters",
+      "DISABLED_DETAIL": "No active filters to manage"
     },
     "TABLE": {
       "COLUMN_NAME": "Column name",
@@ -175,10 +179,18 @@
     "BREADCRUMB_ARIA_LABEL": "Go to {{breadcrumb}} page"
   },
   "OCX_DIAGRAM": {
-    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "ARIA_LABEL": "Chart Summary: Total amount: {{total}}. {{valueString}}.",
     "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Select chart type"
+    },
+    "TABLE": {
+      "COLOR": "Color",
+      "LABEL": "Label",
+      "COUNT": "Count"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Switch to pie chart",
       "HORIZONTAL_BAR": "Switch to horizontal bar chart",

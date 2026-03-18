@@ -15,6 +15,7 @@ import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 import { TooltipModule } from 'primeng/tooltip'
 
 function generateMockData(count = 10): DiagramData[] {
@@ -56,6 +57,7 @@ export default {
         SelectButtonModule,
         FormsModule,
         TooltipModule,
+        OcxTooltipDirective
       ],
     }),
   ],
@@ -86,6 +88,8 @@ export const PieChart = {
   args: {
     diagramType: DiagramType.PIE,
     data: mockData,
+    chartTitle: 'OCX_DIAGRAM.TITLE',
+    chartDescription: 'OCX_DIAGRAM.DESCRIPTION',
   },
 }
 
@@ -160,6 +164,17 @@ export const WithForcedCustomColors = {
   },
 }
 
+export const WithAccessibilityImprovements = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: mockData,
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
+    chartDescriptionKey: 'OCX_DIAGRAM.ACCESSIBILITY_DESCRIPTION',
+    sumKey: 'OCX_DIAGRAM.SUM',
+  },
+}
 const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   template: `
     <div class="flex justify-content-center">

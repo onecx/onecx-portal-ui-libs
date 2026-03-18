@@ -3,5 +3,9 @@
     "fruit1": "Apple",
     "fruit2": "Banana",
     "fruit3": "Orange"
+  },
+  "OCX_DIAGRAM": {
+  "ACCESSIBILITY_TITLE": "Fruit Sales Distribution",
+  "ACCESSIBILITY_DESCRIPTION": "Interactive pie chart showing the distribution of fruit sales by type. Use the buttons below to switch between pie, horizontal bar, and vertical bar chart views. A data table for screen readers is available below the chart."
   }
 }
