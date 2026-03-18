@@ -1,80 +1,87 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { TranslateService } from '@ngx-translate/core'
+import { FallbackLangChangeEvent, LangChangeEvent, TranslateService, TranslationChangeEvent } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslationConnectionService } from './translation-connection.service'
-import { Subject } from 'rxjs'
+import { of, Subject } from 'rxjs'
+import { PrimeNG } from 'primeng/config'
+import { mock } from 'node:test'
 
-describe('ConnectionService', () => {
+const mockTranslationChangeEvent: TranslationChangeEvent = {
+  translations: {},
+  lang: 'en'
+}
+
+const mockLangChangeEvent: LangChangeEvent = {
+  lang: 'en',
+  translations: {}
+}
+
+const mockFallbackLangChangeEvent: FallbackLangChangeEvent = {
+  lang: 'en',
+  translations: {}
+}
+
+const mockGetTranslation = { accept: 'Accept' };
+
+describe('TranslationConnectionService', () => {
   let service: TranslationConnectionService
   let userService: UserService
   let translateService: TranslateService
-  
+  let configuration: PrimeNG
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideUserServiceMock(), provideTranslateTestingService({})],
+      providers: [
+        provideUserServiceMock(),
+        provideTranslateTestingService({}),
+        TranslationConnectionService,
+        PrimeNG
+      ],
     })
 
-    TestBed.runInInjectionContext(() => {
-      service = new TranslationConnectionService()
-    })
     userService = TestBed.inject(UserService)
     translateService = TestBed.inject(TranslateService)
+    configuration = TestBed.inject(PrimeNG)
   })
 
 
-  it('should create', fakeAsync(() => {    
-    expect(service).toBeTruthy();
-    expect(translateService.getCurrentLang()).toBe('en');
+  it('should create', fakeAsync(() => {
+    service = TestBed.inject(TranslationConnectionService)
+    
+    expect(service).toBeTruthy()
+    expect(translateService.getCurrentLang()).toBe('en')
 
-    userService.lang$.next('de');
+    userService.lang$.next('de')
     tick(100);
-    expect(translateService.getCurrentLang()).toBe('de');
-  }));
-
-  it('should react to onTranslationChange', fakeAsync(() => {
-    const translationChangeSubject = new Subject<{ lang: string; translations: any }>()
-    Object.defineProperty(translateService, 'onTranslationChange', {
-      get: () => translationChangeSubject.asObservable(),
-    })
-
-    const spy = jest.fn();
-    translateService.onTranslationChange.subscribe(spy);
-
-    translationChangeSubject.next({ lang: 'de', translations: {} });
-    tick(0);
-    expect(spy).toHaveBeenCalledWith({ lang: 'de', translations: {} });
+    expect(translateService.getCurrentLang()).toBe('de')
   }))
 
-  it('should react to onLangChange', fakeAsync(() => {
-    expect(translateService.getCurrentLang()).toBe('en')
+  it('should set primeng configuration on translation events', fakeAsync(() => {
+    const translationChangeSubject = new Subject<TranslationChangeEvent>()
+    const langChangeSubject = new Subject<LangChangeEvent>()
+    const fallbackLangChangeSubject = new Subject<FallbackLangChangeEvent>()
 
-    const langChangeSubject = new Subject<{ lang: string; translations: any }>();
-    Object.defineProperty(translateService, 'onLangChange', {
-      get: () => langChangeSubject.asObservable(),
-    })
+    jest.spyOn(translateService, 'onTranslationChange', 'get').mockReturnValue(translationChangeSubject.asObservable())
+    jest.spyOn(translateService, 'onLangChange', 'get').mockReturnValue(langChangeSubject.asObservable())
+    jest.spyOn(translateService, 'onFallbackLangChange', 'get').mockReturnValue(fallbackLangChangeSubject.asObservable())
+    jest.spyOn(translateService, 'get').mockReturnValue(of(mockGetTranslation))
+    const setTranslationSpy = jest.spyOn(configuration, 'setTranslation')
 
-    const spy = jest.fn();
-    translateService.onLangChange.subscribe(spy)
+    service = TestBed.inject(TranslationConnectionService)
 
-    langChangeSubject.next({ lang: 'de', translations: {} })
-    tick(0);
-    expect(spy).toHaveBeenCalledWith({ lang: 'de', translations: {} })
-  }))
+    translationChangeSubject.next(mockTranslationChangeEvent)
+    tick()
+    expect(configuration.setTranslation).toHaveBeenCalledWith(mockGetTranslation)
 
-  it('should react to onFallbackLangChange', fakeAsync(() => {
-    expect(translateService.getCurrentLang()).toBe('en')
-
-    const fallbackLangChangeSubject = new Subject<{ lang: string; translations: any }>()
-    Object.defineProperty(translateService, 'onFallbackLangChange', {
-      get: () => fallbackLangChangeSubject.asObservable(),
-    })
-
-    const spy = jest.fn();
-    translateService.onFallbackLangChange.subscribe(spy);
-    fallbackLangChangeSubject.next({ lang: 'de', translations: {} })
-    tick(0);
-    expect(spy).toHaveBeenCalledWith({ lang: 'de', translations: {} })
-  }))
+    langChangeSubject.next(mockLangChangeEvent)
+    tick()
+    expect(configuration.setTranslation).toHaveBeenCalledWith(mockGetTranslation)
+    fallbackLangChangeSubject.next(mockFallbackLangChangeEvent)
+    tick()
+    expect(configuration.setTranslation).toHaveBeenCalledWith(mockGetTranslation)
+    expect(setTranslationSpy).toHaveBeenCalledTimes(3)
+  })
+  )
 })
