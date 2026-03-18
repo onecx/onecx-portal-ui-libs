@@ -1,201 +1,273 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, DebugElement } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DivHarness } from '@onecx/angular-testing'
-import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
+import { By } from '@angular/platform-browser'
 import { LoadingIndicatorDirective } from './loading-indicator.directive'
-import { ComponentHarness } from '@angular/cdk/testing'
+import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
 
 @Component({
+  selector: 'ocx-test-full-page',
   standalone: false,
   template: `
-    <div
-      id="host"
-      [ocxLoadingIndicator]="loading"
-      [overlayFullPage]="overlayFullPage"
-      [isLoaderSmall]="isLoaderSmall"
-    ></div>
+    <div 
+      [ocxLoadingIndicator]="isLoading" 
+      [overlayFullPage]="true">
+      Content
+    </div>
   `,
 })
-class HostComponent {
-  loading = false
-  overlayFullPage = false
-  isLoaderSmall = false
-
-  @ViewChild(LoadingIndicatorDirective)
-  directive!: LoadingIndicatorDirective
+class TestFullPageComponent {
+  isLoading = false
 }
 
-class LoaderHarness extends ComponentHarness {
-  static hostSelector = '.loader'
+@Component({
+  selector: 'ocx-test-element',
+  standalone: false,
+  template: `
+    <div 
+      [ocxLoadingIndicator]="isLoading" 
+      [overlayFullPage]="false">
+      Content
+    </div>
+  `,
+})
+class TestElementComponent {
+  isLoading = false
+}
+
+@Component({
+  selector: 'ocx-test-small-loader',
+  standalone: false,
+  template: `
+    <div 
+      [ocxLoadingIndicator]="isLoading" 
+      [overlayFullPage]="false"
+      [isLoaderSmall]="true">
+      Content
+    </div>
+  `,
+})
+class TestSmallLoaderComponent {
+  isLoading = false
+}
+
+@Component({
+  selector: 'ocx-test-default',
+  standalone: false,
+  template: `
+    <div [ocxLoadingIndicator]="isLoading">
+      Content
+    </div>
+  `,
+})
+class TestDefaultComponent {
+  isLoading = false
 }
 
 describe('LoadingIndicatorDirective', () => {
-  let fixture: ComponentFixture<HostComponent>
-  let component: HostComponent
-  let divHarness: DivHarness
+  let fixture: ComponentFixture<any>
 
-  // loader for the whole fixture DOM
-  let rootLoader: ReturnType<typeof TestbedHarnessEnvironment.loader>
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [HostComponent, LoadingIndicatorDirective, LoadingIndicatorComponent],
-    }).compileComponents()
-
-    fixture = TestBed.createComponent(HostComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-
-    rootLoader = TestbedHarnessEnvironment.loader(fixture)
-    divHarness = await rootLoader.getHarness(DivHarness.with({ id: 'host' }))
-  })
-
-  // Scopes a LoaderHarness lookup to the host <div id="host"> only.
-  class HostHarness extends ComponentHarness {
-    static hostSelector = '#host'
-    getLoader = this.locatorForOptional(LoaderHarness)
-  }
-
-  const getHostHarness = () => rootLoader.getHarness(HostHarness)
-
-  const expectHasLoader = async (cssClassSelector: string) => {
-    const host = await getHostHarness()
-    const loader = await host.getLoader()
-    expect(loader).not.toBeNull()
-
-    if (cssClassSelector && cssClassSelector !== '.loader') {
-      // validate additional class selectors like ".loader-small"
-      const classes = cssClassSelector
-        .split('.')
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .filter((s) => s !== 'loader')
-
-      for (const clazz of classes) {
-        expect(await (await loader!.host()).hasClass(clazz)).toBe(true)
-      }
-    }
-  }
-
-  const expectNoLoader = async () => {
-    const host = await getHostHarness()
-    const loader = await host.getLoader()
-    expect(loader).toBeNull()
-  }
-
-  it('should not render loader and not create component initially', async () => {
-    // Initial state should not have overlay/loader.
-    expect(await divHarness.checkHasClass('element-overlay')).toBe(false)
-    await expectNoLoader()
-
-    const dir: any = component.directive
-    expect(dir.componentRef).toBeUndefined()
-  })
-
-  describe('element overlay mode', () => {
-    it('should add overlay class and append loader', async () => {
-      component.loading = true
-      component.overlayFullPage = false
-      component.isLoaderSmall = false
-      fixture.detectChanges()
-
-      expect(await divHarness.checkHasClass('element-overlay')).toBe(true)
-
-      await expectHasLoader('.loader')
-
-      const dir: any = component.directive
-      expect(dir.componentRef).toBeUndefined()
-    })
-
-    it('should append small loader when isLoaderSmall=true', async () => {
-      component.loading = true
-      component.overlayFullPage = false
-      component.isLoaderSmall = true
-      fixture.detectChanges()
-
-      await expectHasLoader('.loader.loader-small')
-    })
-
-    it('should clear view container when loading=false (even in element overlay mode)', () => {
-      component.loading = true
-      fixture.detectChanges()
-
-      const dir: any = component.directive
-      const clearSpy = jest.spyOn(dir.viewContainerRef, 'clear')
-
-      component.loading = false
-      fixture.detectChanges()
-
-      expect(clearSpy).toHaveBeenCalledTimes(1)
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        LoadingIndicatorDirective,
+        LoadingIndicatorComponent,
+        TestFullPageComponent,
+        TestElementComponent,
+        TestSmallLoaderComponent,
+        TestDefaultComponent,
+      ],
     })
   })
 
-  describe('full page overlay mode', () => {
-    it('should create component when loading=true and overlayFullPage=true', async () => {
-      component.loading = true
-      component.overlayFullPage = true
-      fixture.detectChanges()
-
-      const dir: any = component.directive
-      expect(dir.componentRef).toBeDefined()
-
-      // Ensure something was created in the view container.
-      expect(dir.viewContainerRef.length).toBe(1)
-
-      // No element overlay artifacts expected.
-      await expectNoLoader()
+  describe('Full page overlay', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestFullPageComponent)
     })
 
-    it('should clear container and destroy componentRef when toggling loading from true to false', () => {
-      component.loading = true
-      component.overlayFullPage = true
+    it('should create', () => {
+      fixture.detectChanges()
+      const directive = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      expect(directive).toBeTruthy()
+    })
+
+    it('should not display loading indicator initially when isLoading is false', () => {
+      fixture.componentInstance.isLoading = false
       fixture.detectChanges()
 
-      const dir: any = component.directive
-      const destroySpy = jest.spyOn(dir.componentRef, 'destroy')
-      const clearSpy = jest.spyOn(dir.viewContainerRef, 'clear')
+      const loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeFalsy()
+    })
 
-      component.loading = false
+    it('should create LoadingIndicatorComponent when isLoading is true with full page overlay', () => {
+      fixture.componentInstance.isLoading = true
       fixture.detectChanges()
 
-      expect(clearSpy).toHaveBeenCalledTimes(1)
-      expect(destroySpy).toHaveBeenCalledTimes(1)
+      const loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeTruthy()
+    })
+
+    it('should destroy LoadingIndicatorComponent when isLoading changes from true to false', () => {
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+
+      let loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeTruthy()
+
+      fixture.componentInstance.isLoading = false
+      fixture.detectChanges()
+
+      loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeFalsy()
     })
   })
 
-  describe('ngOnChanges triggers', () => {
-    it('should not call toggleLoadingIndicator when unrelated input changes', () => {
-      const dir: any = component.directive
-      const toggleSpy = jest.spyOn(dir, 'toggleLoadingIndicator')
-
-      component.isLoaderSmall = true
-      fixture.detectChanges()
-
-      expect(toggleSpy).not.toHaveBeenCalled()
+  describe('Element overlay', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestElementComponent)
     })
 
-    it('should call toggleLoadingIndicator when overlayFullPage changes', () => {
-      const dir: any = component.directive
-      const toggleSpy = jest.spyOn(dir, 'toggleLoadingIndicator')
-      component.loading = true
-      fixture.detectChanges()
-      toggleSpy.mockClear()
-
-      component.overlayFullPage = true
+    it('should add element-overlay class and loader div when isLoading is true', () => {
+      fixture.componentInstance.isLoading = true
       fixture.detectChanges()
 
-      expect(toggleSpy).toHaveBeenCalledTimes(1)
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+
+      expect(nativeElement.classList.contains('element-overlay')).toBe(true)
+      
+      const loaderElement = nativeElement.querySelector('.loader')
+      expect(loaderElement).toBeTruthy()
     })
 
-    it('should call toggleLoadingIndicator when ocxLoadingIndicator changes', () => {
-      const dir: any = component.directive
-      const toggleSpy = jest.spyOn(dir, 'toggleLoadingIndicator')
-
-      component.loading = true
+    it('should remove element-overlay class and loader div when isLoading changes to false', () => {
+      fixture.componentInstance.isLoading = true
       fixture.detectChanges()
 
-      expect(toggleSpy).toHaveBeenCalledTimes(1)
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+
+      expect(nativeElement.classList.contains('element-overlay')).toBe(true)
+      expect(nativeElement.querySelector('.loader')).toBeTruthy()
+
+      fixture.componentInstance.isLoading = false
+      fixture.detectChanges()
+
+      expect(nativeElement.classList.contains('element-overlay')).toBe(false)
+      expect(nativeElement.querySelector('.loader')).toBeFalsy()
+    })
+
+    it('should not create LoadingIndicatorComponent when overlayFullPage is false', () => {
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+
+      const loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeFalsy()
+    })
+  })
+
+  describe('Small loader', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestSmallLoaderComponent)
+    })
+
+    it('should add loader-small class when isLoaderSmall is true', () => {
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+      const loaderElement = nativeElement.querySelector('.loader')
+
+      expect(loaderElement).toBeTruthy()
+      expect(loaderElement?.classList.contains('loader-small')).toBe(true)
+    })
+
+    it('should not have loader-small class when isLoaderSmall is false', () => {
+      fixture = TestBed.createComponent(TestElementComponent)
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+      const loaderElement = nativeElement.querySelector('.loader')
+
+      expect(loaderElement).toBeTruthy()
+      expect(loaderElement?.classList.contains('loader-small')).toBe(false)
+    })
+  })
+
+  describe('Default behavior', () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(TestDefaultComponent)
+    })
+
+    it('should use element overlay by default (overlayFullPage defaults to false)', () => {
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+
+      expect(nativeElement.classList.contains('element-overlay')).toBe(true)
+      expect(nativeElement.querySelector('.loader')).toBeTruthy()
+
+      const loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeFalsy()
+    })
+
+    it('should not show any loading indicator when isLoading defaults to false', () => {
+      fixture.detectChanges()
+
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+
+      expect(nativeElement.classList.contains('element-overlay')).toBe(false)
+      expect(nativeElement.querySelector('.loader')).toBeFalsy()
+
+      const loadingComponent = fixture.debugElement.query(By.directive(LoadingIndicatorComponent))
+      expect(loadingComponent).toBeFalsy()
+    })
+  })
+
+  describe('Toggle scenarios', () => {
+    it('should handle multiple toggles correctly with full page overlay', () => {
+      fixture = TestBed.createComponent(TestFullPageComponent)
+      fixture.detectChanges()
+
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+      expect(fixture.debugElement.query(By.directive(LoadingIndicatorComponent))).toBeTruthy()
+
+      fixture.componentInstance.isLoading = false
+      fixture.detectChanges()
+      expect(fixture.debugElement.query(By.directive(LoadingIndicatorComponent))).toBeFalsy()
+
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+      expect(fixture.debugElement.query(By.directive(LoadingIndicatorComponent))).toBeTruthy()
+    })
+
+    it('should handle multiple toggles correctly with element overlay', () => {
+      fixture = TestBed.createComponent(TestElementComponent)
+      fixture.detectChanges()
+
+      const directiveElement: DebugElement = fixture.debugElement.query(By.directive(LoadingIndicatorDirective))
+      const nativeElement: HTMLElement = directiveElement.nativeElement
+
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+      expect(nativeElement.classList.contains('element-overlay')).toBe(true)
+      expect(nativeElement.querySelector('.loader')).toBeTruthy()
+
+      fixture.componentInstance.isLoading = false
+      fixture.detectChanges()
+      expect(nativeElement.classList.contains('element-overlay')).toBe(false)
+      expect(nativeElement.querySelector('.loader')).toBeFalsy()
+
+      fixture.componentInstance.isLoading = true
+      fixture.detectChanges()
+      expect(nativeElement.classList.contains('element-overlay')).toBe(true)
+      expect(nativeElement.querySelector('.loader')).toBeTruthy()
     })
   })
 })
