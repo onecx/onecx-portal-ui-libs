@@ -168,6 +168,11 @@
     "EXPORT": "Export all events",
     "CONTROLS": {
       "ARIA_LABEL": "Search controls"
+    },
+    "ANNOUNCEMENTS": {
+      "SEARCHING": "Searching...",
+      "NO_RESULTS": "No results found",
+      "RESULTS_FOUND": "{{count}} results found" 
     }
   },
   "OCX_PAGE_HEADER": {
