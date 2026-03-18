@@ -16,12 +16,14 @@ export class TranslationConnectionService implements OnDestroy {
 
     this.languageSub = userService.lang$.subscribe((lang) => translateService.use(lang))
 
-    this.translationSub = merge(translateService.onLangChange,
+    this.translationSub = merge(
+      translateService.onLangChange,
       translateService.onTranslationChange,
       translateService.onFallbackLangChange)
       .pipe(mergeMap(() => translateService.get('primeng')))
       .subscribe((res) => configuration.setTranslation(res))
   }
+
   ngOnDestroy(): void {
     this.languageSub.unsubscribe()
     this.translationSub.unsubscribe()
