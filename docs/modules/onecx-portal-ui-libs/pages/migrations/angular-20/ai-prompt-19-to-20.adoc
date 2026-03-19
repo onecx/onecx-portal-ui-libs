@@ -18,12 +18,19 @@ Follow these steps in strict order:
 Fetch the documentation page titled "Migrate OneCX App from Angular 19 to Angular 20" using the OneCX Documentation MCP server.
 Only if the MCP server is unavailable, fall back to the public URL:
 https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migrations/angular-20/index.html
+Additionally check for PrimeNG migration information.
+If the repository uses PrimeNG (for example dependencies such as primeng, primeicons or primeflex are present):
+* Check if a PrimeNG MCP server is available; if it is, retrieve PrimeNG migration or upgrade information for the target version
+Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v19
+* Record any required PrimeNG migration steps or breaking changes and include them in the migration plan
+PrimeNG migration steps must be executed during the post-migration phase after the Angular upgrade.
 2. Extract Migration Steps & Create Plan File
 From the documentation:
 Extract pre-migration and post-migration tasks
 Then:
 Combine them into a structured migration plan
 Include the additional tasks provided by the developer
+Include any required PrimeNG migration steps if PrimeNG is used  
 Save the plan to a file so the developer can track progress
 Update the file every time you complete a step
 3. Notify Developer
@@ -41,6 +48,7 @@ Remind them they must complete the Angular 19 → 20 upgrade before you proceed.
 6. Execute Post‑Migration
 Once the developer explicitly instructs you:
 Complete all post‑migration tasks in order
+If PrimeNG migration tasks were identified earlier, execute them during this phase following the instructions retrieved from the PrimeNG MCP server.
 7. Request Version Information
 After completing all post‑migration steps:
 Ask the developer for the Angular and OneCX versions they want installed
