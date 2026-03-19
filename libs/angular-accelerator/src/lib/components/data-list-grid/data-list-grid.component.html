@@ -13,7 +13,7 @@
   paginatorDropdownAppendTo="body"
 >
   <ng-template #grid let-rows>
-    <div class="grid grid-cols-12 grid-nogutter gap-4 w-full">
+    <div class="grid grid-cols-12 grid-nogutter gap-4 w-full" role="list">
       @for (item of rows; track item) {
       <ng-container
         [ngTemplateOutlet]="gridItem ?? defaultGridItem"
@@ -23,7 +23,7 @@
     </div>
   </ng-template>
   <ng-template #list let-rows>
-    <div class="p-grid p-nogutter grid grid-nogutter">
+    <div class="p-grid p-nogutter grid grid-nogutter" role="list">
       @for (item of rows; track item; let first = $first) { @defer (on viewport; on idle){
       <ng-container
         [ngTemplateOutlet]="listItem ?? defaultListItem"
@@ -46,7 +46,7 @@
 }
 
 <ng-template #defaultGridItem let-item>
-  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider">
+  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider" role="listitem">
     <div class="data-grid-item card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
       <div class="flex justify-content-center mb-3">
         <img
@@ -96,7 +96,7 @@
 </ng-template>
 <ng-template #defaultListItem let-item="item" let-first="first" let-columnTemplates="columnTemplates">
   @if (columnTemplates) {
-  <div class="col-12">
+  <div class="col-12" role="listitem">
     <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
       <div class="item-name-row flex flex-row justify-content-between">
         <div class="item-name mr-3 text-2xl font-medium align-content-center">

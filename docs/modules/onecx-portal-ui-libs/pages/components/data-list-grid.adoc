@@ -1,0 +1,11 @@
+[#DataListGrid]
+= OneCX DataListGrid
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+DataListGrid provides way to render tabular data as a list of cards or in a grid.
+
+include::../a11y/data-list-grid.adoc[]

@@ -1,0 +1,9 @@
+[#data-list-grid-a11y-overview]
+== Data List Grid Accessibility
+
+This component displays data as a list or grid and allows you to switch between them. It uses the p-data-view component from the PrimeNG library to manage the view. The following roles have been added to the template in the component to improve accessibility:
+
+* `list` role on the container element
+* `listitem` role on each item element
+
+To ensure the component is accessible, please add `role="listitem"` to each `item` element rendered in the template. This helps screen readers properly identify and navigate through the list or grid items.
