@@ -179,8 +179,10 @@ describe('IconService', () => {
         ensureIconCache()
 
         expect(globalThis.onecxIcons).toBe(existing)
-        expect(globalThis.onecxIcons!['mdi:home']).toBeUndefined()
-        expect(globalThis.onecxIcons!['prime:user']).toBeNull()
+        expect(globalThis.onecxIcons).toBeDefined()
+        const iconCache = globalThis.onecxIcons as typeof existing
+        expect(iconCache['mdi:home']).toBeUndefined()
+        expect(iconCache['prime:user']).toBeNull()
       })
     })
 

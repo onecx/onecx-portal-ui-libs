@@ -5,6 +5,17 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "build-types": {
+      "dependsOn": ["^build"],
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/accelerator",
+        "main": "libs/accelerator/src/index.ts",
+        "tsConfig": "libs/accelerator/tsconfig.lib.json",
+        "generatePackageJson": false
+      }
+    },
     "build-migrations": {
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
@@ -13,12 +24,25 @@
       }
     },
     "build": {
-      "executor": "@nx/js:tsc",
+      "dependsOn": ["build-types", "^build"],
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/accelerator",
         "main": "libs/accelerator/src/index.ts",
         "tsConfig": "libs/accelerator/tsconfig.lib.json",
+        "bundle": true,
+        "platform": "browser",
+        "format": ["esm", "cjs"],
+        "outputFileName": "dist/index.js",
+        "declaration": false,
+        "skipTypeCheck": true,
+        "deleteOutputPath": false,
+        "esbuildOptions": {
+          "outExtension": {
+            ".js": ".mjs"
+          }
+        },
         "assets": [
           "libs/accelerator/*.md",
           {
