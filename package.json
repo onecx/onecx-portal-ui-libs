@@ -33,6 +33,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@nx/devkit": "19.8.0",
+    "@nx/module-federation": "20.4.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.6.15",
