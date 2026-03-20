@@ -34,7 +34,7 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
   const contextValue = useMemo(() => ({ rootRef }), [rootRef])
 
   return (
-    <PrimeReactStyleContext value={contextValue}>
+    <PrimeReactStyleContext.Provider value={contextValue}>
       <div
         ref={rootRef}
         data-style-id={appId}
@@ -44,6 +44,6 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
       >
         {children}
       </div>
-    </PrimeReactStyleContext>
+    </PrimeReactStyleContext.Provider>
   )
 }

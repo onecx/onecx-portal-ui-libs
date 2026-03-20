@@ -40,7 +40,7 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
   if (!isScoped) return null // spinner or smthing
 
   return (
-    <PrimeReactStyleContext value={contextValue}>
+    <PrimeReactStyleContext.Provider value={contextValue}>
       <div
         ref={rootRef}
         data-style-id={remoteId}
@@ -50,6 +50,6 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
       >
         {children}
       </div>
-    </PrimeReactStyleContext>
+    </PrimeReactStyleContext.Provider>
   )
 }

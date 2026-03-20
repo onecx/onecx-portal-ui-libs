@@ -43,7 +43,7 @@ export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const contextValue = useMemo(() => ({ permissions, getPermissions }), [permissions])
 
-  return <PermissionContext value={contextValue}>{children}</PermissionContext>
+  return <PermissionContext.Provider value={contextValue}>{children}</PermissionContext.Provider>
 }
 
 /**

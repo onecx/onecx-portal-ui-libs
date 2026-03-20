@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { useAppState, useConfiguration } from '../../../../react-integration-interface/src'
+import { useAppState, useConfiguration } from '@onecx/react-integration-interface'
 
 const normalizeHref = (appBaseHref: string, baseHref: string): string => {
   const cleanedAppBaseHref = appBaseHref.replace(/\/$/, '')

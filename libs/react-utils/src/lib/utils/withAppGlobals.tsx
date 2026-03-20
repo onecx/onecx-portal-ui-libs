@@ -18,7 +18,7 @@ const AppGlobalsContext = createContext<AppGlobals | null>(null)
  * @returns Provider wrapping the given children.
  */
 const AppGlobalsProvider = ({ children, globals }: { children: ReactNode; globals: AppGlobals }) => (
-  <AppGlobalsContext value={globals}>{children}</AppGlobalsContext>
+  <AppGlobalsContext.Provider value={globals}>{children}</AppGlobalsContext.Provider>
 )
 
 /**

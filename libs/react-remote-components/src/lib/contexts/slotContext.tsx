@@ -107,7 +107,7 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     [remoteComponents$, getComponentsForSlot, isSomeComponentDefinedForSlot, loadComponent]
   )
 
-  return <SlotContext value={contextValue}>{children}</SlotContext>
+  return <SlotContext.Provider value={contextValue}>{children}</SlotContext.Provider>
 }
 
 /**
