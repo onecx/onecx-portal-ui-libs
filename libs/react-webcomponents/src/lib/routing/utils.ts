@@ -40,8 +40,7 @@ export const useAppHref = () => {
     }
 
     fetchBaseHref()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMfe$, config])
+  }, [currentMfe$, currentWorkspace$, config])
 
   const href = normalizeHref(hrefs.appBaseHref, hrefs.baseHref)
 

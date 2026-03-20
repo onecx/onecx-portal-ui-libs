@@ -2,13 +2,7 @@ import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffe
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
-const initValue = {
-  url: '',
-  isFirst: true,
-}
-
-
-export const SyncedLocationContext = createContext<CurrentLocationTopicPayload>(initValue)
+export const SyncedLocationContext = createContext<CurrentLocationTopicPayload | undefined>(undefined)
 
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
