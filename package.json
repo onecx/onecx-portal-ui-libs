@@ -136,7 +136,8 @@
   "overrides": {
     "jsdom": "25.0.1",
     "rrweb-cssom": "0.8.0",
-    "koa": "2.16.4"
+    "koa": "2.16.4",
+    "flatted": "3.4.0"
   },
   "nx": {
     "includedScripts": []
