@@ -1,6 +1,10 @@
 import r2wc from '@r2wc/react-to-web-component'
-
-function createViteAppWebComponent(component: React.ComponentType, elementName: string) {
+import type { ComponentType } from 'react'
+/**
+ * Wraps a React component as a custom element for Vite-based builds and
+ * initializes portal-related dataset flags on connection.
+ */
+function createViteAppWebComponent(component: ComponentType, elementName: string) {
   const AppWebComponent = r2wc(component, {
     props: {},
   })

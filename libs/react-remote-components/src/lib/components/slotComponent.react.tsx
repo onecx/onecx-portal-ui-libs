@@ -3,15 +3,16 @@ import {
   useState,
   useRef,
   useCallback,
+  useMemo,
   type FC,
   type ReactElement,
   type ReactNode,
   type ComponentType,
   ComponentPropsWithRef,
 } from 'react'
-import { type RemoteComponentConfig } from '@onecx/angular-utils'
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
 import { type RemoteComponentInfo, type SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
+import { RemoteComponentConfig } from '../models/remoteComponentConfig'
 
 type SlotProps = {
   name: string
@@ -34,18 +35,17 @@ const viewContainers$ = new BehaviorSubject<ViewContainersRef[]>([])
 
 const _assignedComponents$ = new BehaviorSubject<(ComponentPropsWithRef<any> | HTMLElement)[]>([])
 
+/**
+ * Renders remote components registered for a slot and manages their inputs/outputs.
+ */
 export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, skeleton }) => {
   const slotService = useSlot()
   const [components, setComponents] = useState<any[]>([])
 
-  let components$: Observable<SlotComponentConfiguration[]>
+  const components$ = useMemo(() => slotService?.getComponentsForSlot(name), [slotService, name])
 
   const inputs$ = useRef(new BehaviorSubject(inputs))
   const outputs$ = useRef(new BehaviorSubject(outputs))
-
-  const setComponentsObservable = () => {
-    components$ = slotService.getComponentsForSlot(name)
-  }
 
   const setViewContainerRef = (element: HTMLDivElement | null) => {
     if (element) {
@@ -58,7 +58,9 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       console.error(`SLOT_SERVICE token was not provided. ${name} slot will not be filled with data.`)
       return
     }
-    setComponentsObservable()
+    if (!components$) {
+      return
+    }
 
     const assignedCompsSub = combineLatest([_assignedComponents$, inputs$.current, outputs$.current]).subscribe(
       ([components, inputs, outputs]) => {
@@ -97,7 +99,7 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       subscription.unsubscribe()
       assignedCompsSub.unsubscribe()
     }
-  }, [])
+  }, [components$, name, slotService])
 
   const createComponent = ({
     componentType,
@@ -136,15 +138,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
   const addDataStyleIsolation = (element: HTMLElement) => {
     element.dataset['styleIsolation'] = ''
   }
-
-  const updateComponentData = useCallback(
-    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
-      setProps(component, inputs)
-      setProps(component, outputs)
-    },
-    []
-  )
-
   const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
     if (!component) return
 
@@ -159,9 +152,20 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       }
     })
   }
+  const updateComponentData = useCallback(
+    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
+      setProps(component, inputs)
+      setProps(component, outputs)
+    },
+    []
+  )
 
   useEffect(() => {
-    const subscription = components$?.subscribe({
+    if (!components$) {
+      return
+    }
+
+    const subscription = components$.subscribe({
       next: (newComponents) => {
         setComponents(newComponents)
       },
@@ -169,8 +173,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     })
 
     return () => subscription?.unsubscribe()
-
-    // @ts-ignore
   }, [components$])
 
   return (
