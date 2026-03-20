@@ -1,0 +1,21 @@
+@use "./onecx-variables" as onecx;
+
+$primaryColor: var(--primary-color) !default;
+$primaryLightColor: var(--primary-color) !default;
+$primaryDarkColor: var(--primary-color) !default;
+$primaryDarkerColor: var(--primary-color) !default;
+$primaryTextColor: var(--text-color) !default;
+
+$highlightBg: #eff6ff !default;
+$highlightTextColor: $primaryDarkerColor !default;
+$highlightFocusBg: rgba($primaryColor, 0.24) !default;
+
+@import "./_variables";
+@import "../theme-base/_components";
+@import "./_extensions";
+
+@layer tokens {
+  :scope {
+    @include onecx.onecx-variables;
+  }
+}

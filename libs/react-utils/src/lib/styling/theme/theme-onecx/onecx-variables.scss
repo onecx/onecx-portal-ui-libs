@@ -1,0 +1,31 @@
+@mixin onecx-variables {
+  --body-bg-color: #f7f7f7;
+  --button-hover-bg: #ad1457;
+  --content-bg-color: #ffffff;
+  --danger-button-bg: #d32f2f;
+  --divider-color: #e4e4e4;
+  --error-message-bg: #ffcdd2;
+  --hover-bg-color: #ad1457;
+  --info-message-bg: #b3e5fc;
+  --logo-color: #ffffff;
+  --menu-active-item-bg-color: rgba(0, 0, 0, 0.04);
+  --menu-active-item-text-color: #515c66;
+  --menu-bg-color: #fdfeff;
+  --menu-item-hover-bg-color: #e4e4e4;
+  --menu-item-text-color: #515c66;
+  --menu-text-color: #274b5f;
+  --overlay-content-bg-color: #ffffff;
+  --primary-color: #550e0e33;
+  --secondary-color: #1c4257;
+  --solid-surface-text-color: #ffffff;
+  --success-message-bg: #c8e6c9;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --text-secondary-color: #262626;
+  --topbar-bg-color: #0d3650;
+  --topbar-item-text-color: #ffffff;
+  --topbar-item-text-hover-bg-color: #262626;
+  --topbar-left-bg-color: #124a6e;
+  --topbar-menu-button-bg-color: rgb(255 0 68);
+  --topbar-text-color: #ffffff;
+  --warning-message-bg: #ffecb3;
+}

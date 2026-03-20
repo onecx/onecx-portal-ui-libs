@@ -1,0 +1,28 @@
+{
+  "name": "@onecx/react-integration-interface",
+  "version": "8.0.0-rc.1",
+  "license": "Apache-2.0",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./mocks": {
+      "import": "./mocks/index.mjs",
+      "require": "./mocks/index.js"
+    }
+  },
+  "peerDependencies": {
+    "@onecx/accelerator": "^8.0.0-rc.1",
+    "@onecx/integration-interface": "^8.0.0-rc.1",
+    "@onecx/angular-integration-interface": "^8.0.0-rc.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}
