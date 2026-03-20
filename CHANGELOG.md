@@ -1,3 +1,14 @@
+## [6.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.16.1...v6.17.0) (2026-03-20)
+
+### Features
+
+* add shared recommendations for v6 ([#1296](https://github.com/onecx/onecx-portal-ui-libs/issues/1296)) ([416cd05](https://github.com/onecx/onecx-portal-ui-libs/commit/416cd055fd9e7d0c366e1eef3890204a93bed556))
+
+### Bug Fixes
+
+* loading-indicator-directive & loading-indicator-component ([#1287](https://github.com/onecx/onecx-portal-ui-libs/issues/1287)) ([#1294](https://github.com/onecx/onecx-portal-ui-libs/issues/1294)) ([ea11c6d](https://github.com/onecx/onecx-portal-ui-libs/commit/ea11c6d92f9672da7e0fcfb74d274001cb7fa4bf))
+* missing translation handler returns key when translation not found, translation not found error logging removed ([#1288](https://github.com/onecx/onecx-portal-ui-libs/issues/1288)) ([841feb5](https://github.com/onecx/onecx-portal-ui-libs/commit/841feb559c27cd4e081c9a04b3f8be4d2a7dcc11))
+
 ## [6.16.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.16.0...v6.16.1) (2026-03-11)
 
 ### Bug Fixes
