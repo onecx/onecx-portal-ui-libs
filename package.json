@@ -137,7 +137,7 @@
     "jsdom": "25.0.1",
     "rrweb-cssom": "0.8.0",
     "koa": "2.16.4",
-    "flatted": "3.4.0"
+    "flatted": "3.4.2"
   },
   "nx": {
     "includedScripts": []
