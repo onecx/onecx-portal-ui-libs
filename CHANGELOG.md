@@ -1,3 +1,9 @@
+## [8.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.8...v8.0.0-rc.9) (2026-03-20)
+
+### Features
+
+* add shared recommendations function ([#1291](https://github.com/onecx/onecx-portal-ui-libs/issues/1291)) ([be3eda4](https://github.com/onecx/onecx-portal-ui-libs/commit/be3eda42432c0491a58c0abf3841de6b8e0f7da0))
+
 ## [8.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.7...v8.0.0-rc.8) (2026-03-20)
 
 ### Features
