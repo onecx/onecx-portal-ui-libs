@@ -45,7 +45,7 @@ export class LoadingIndicatorDirective implements OnChanges {
 
   private toggleLoadingIndicator() {
     if (this.ocxLoadingIndicator) {
-      if (this.overlayFullPage == false) {
+      if (!this.overlayFullPage) {
         this.elementLoader()
       } else {
         this.componentRef = this.viewContainerRef.createComponent(LoadingIndicatorComponent)
