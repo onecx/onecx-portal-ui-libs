@@ -71,6 +71,30 @@ It is recommended to modify the package.json file to include the following style
 }
 ----
 
+=== For local development
+
+To make your styles.css available when serving your app using `npm run start` and include it directly into onecx, you need to adapt your `project.json` to prevent CORS issues.
+
+.project.json
+[source, json]
+----
+{
+  "serve": {
+    ...
+    "options": {
+        ...
+        "headers": {
+          "Allow": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+        }
+    } 
+  }
+}
+----
+
+
 === Import @Onecx Library styles
 
 Please include related OneCX library styles in your global styles when using OneCX components.
