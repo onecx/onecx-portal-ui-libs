@@ -1,6 +1,6 @@
 {
   "name": "@onecx/accelerator",
-  "version": "8.0.0-rc.8",
+  "version": "8.0.0-rc.9",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "rxjs": "^7.8.1",
     "@nx/devkit": "^22.0.2",
     "@nx/module-federation": "^22.3.3",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.8",
+    "@onecx/nx-migration-utils": "^8.0.0-rc.9",
     "debug": "^4.4.3"
   },
   "type": "module",
