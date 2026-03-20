@@ -1,3 +1,15 @@
+## [5.53.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.8...v5.53.0) (2026-03-20)
+
+### Features
+
+* add config key ONECX_KEYBOARD_FOCUSABLE_SELECTOR ([#1212](https://github.com/onecx/onecx-portal-ui-libs/issues/1212)) ([bc11766](https://github.com/onecx/onecx-portal-ui-libs/commit/bc11766eee5e2fb605cd5a5058c3acf957344902))
+* add shared recommendations to v5 ([#1297](https://github.com/onecx/onecx-portal-ui-libs/issues/1297)) ([2f3db15](https://github.com/onecx/onecx-portal-ui-libs/commit/2f3db15d9654a04d2d198fcb068ea93319e3f341))
+* v5 icon service ([#1258](https://github.com/onecx/onecx-portal-ui-libs/issues/1258)) ([78621c6](https://github.com/onecx/onecx-portal-ui-libs/commit/78621c648fb0b81da803def49f150d16821d166f)), closes [#1222](https://github.com/onecx/onecx-portal-ui-libs/issues/1222) [#1210](https://github.com/onecx/onecx-portal-ui-libs/issues/1210)
+
+### Bug Fixes
+
+* loading-indicator-directive infinite loading ([#1295](https://github.com/onecx/onecx-portal-ui-libs/issues/1295)) ([cf4b009](https://github.com/onecx/onecx-portal-ui-libs/commit/cf4b009088a2a562295ff4c93fbd0d6331e50de3))
+
 ## [5.52.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.7...v5.52.8) (2026-02-18)
 
 ### Bug Fixes
