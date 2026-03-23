@@ -13,6 +13,8 @@ import { DiagramComponent } from '../diagram/diagram.component'
 import { GroupByCountDiagramComponent } from './group-by-count-diagram.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { FormsModule } from '@angular/forms'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 describe('GroupByCountDiagramComponent', () => {
   let translateService: TranslateService
@@ -164,6 +166,8 @@ describe('GroupByCountDiagramComponent', () => {
         AngularAcceleratorPrimeNgModule,
         FormsModule,
         TranslateModule.forRoot(),
+        TooltipModule,
+        OcxTooltipDirective
       ],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),

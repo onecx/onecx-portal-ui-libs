@@ -11,7 +11,7 @@ import {
 } from '@onecx/angular-integration-interface/mocks'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { TooltipStyle } from 'primeng/tooltip'
+import { TooltipModule, TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -20,6 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -228,7 +229,7 @@ describe('DataListGridComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
-      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule, TooltipModule, OcxTooltipDirective],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         {

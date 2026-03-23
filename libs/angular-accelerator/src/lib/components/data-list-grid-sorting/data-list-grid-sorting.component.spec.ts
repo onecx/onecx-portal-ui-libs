@@ -5,6 +5,8 @@ import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent
@@ -13,7 +15,7 @@ describe('DataListGridSortingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridSortingComponent],
-      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), TooltipModule, OcxTooltipDirective],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
