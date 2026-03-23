@@ -1,3 +1,15 @@
+## [7.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.2.0...v7.3.0) (2026-03-20)
+
+### Features
+
+* add shared recommendations for v7 ([#1293](https://github.com/onecx/onecx-portal-ui-libs/issues/1293)) ([3530abe](https://github.com/onecx/onecx-portal-ui-libs/commit/3530abefb45934801cf1fdbce89cae5d11acc738))
+
+### Bug Fixes
+
+* chart overflow hidden issue v7 ([#1266](https://github.com/onecx/onecx-portal-ui-libs/issues/1266)) ([1433571](https://github.com/onecx/onecx-portal-ui-libs/commit/1433571260d48bf46256f1d021ce6c8379b05707))
+* loading-indicator-directive & loading-indicator-component ([#1287](https://github.com/onecx/onecx-portal-ui-libs/issues/1287)) ([3adcc70](https://github.com/onecx/onecx-portal-ui-libs/commit/3adcc70eb19c094a585f9f7df3d52f5e21f330da))
+* MultiLanguageMissingTranslationHandler breaking pages when key translation not found, endless loop when key translation not found ([#1280](https://github.com/onecx/onecx-portal-ui-libs/issues/1280)) ([07480ba](https://github.com/onecx/onecx-portal-ui-libs/commit/07480ba72c607ab92a08b9578bfd3972a41732d6))
+
 ## [7.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.1.0...v7.2.0) (2026-03-10)
 
 ### Features
