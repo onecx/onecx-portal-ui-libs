@@ -4,6 +4,8 @@ import { CustomGroupColumnSelectorComponent } from './custom-group-column-select
 import { CommonModule } from '@angular/common'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { FormsModule } from '@angular/forms'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -15,6 +17,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
       imports: [
         CommonModule,
         TranslateTestingModule.withTranslations({}),
+        TooltipModule,
+        OcxTooltipDirective,
         AngularAcceleratorPrimeNgModule,
         FormsModule,
       ],
