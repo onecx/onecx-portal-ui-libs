@@ -8,6 +8,7 @@ import 'jest-canvas-mock'
 import { firstValueFrom, of } from 'rxjs'
 import { DiagramHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent } from '../diagram/diagram.component'
@@ -159,7 +160,7 @@ describe('GroupByCountDiagramComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [GroupByCountDiagramComponent, DiagramComponent],
-      imports: [AngularAcceleratorModule],
+      imports: [AngularAcceleratorModule, OcxTooltipDirective],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -176,6 +177,7 @@ describe('GroupByCountDiagramComponent', () => {
     fixture.componentRef.setInput('data', originalData)
     fixture.componentRef.setInput('column', inputColumn)
     fixture.componentRef.setInput('sumKey', definedSumKey)
+    fixture.componentRef.setInput('fullHeight', false)
     component.colors.set({ test0: 'green', test1: 'darkgreen' })
 
     translateService = TestBed.inject(TranslateService)
@@ -317,5 +319,16 @@ describe('GroupByCountDiagramComponent', () => {
     expect(result.length).toBe(5)
     expect(extraLabel?.value).toBe(1)
     expect(extraLabel?.backgroundColor).toBe('blue')
+  })
+
+  it('should not set columnType and columnField when column is null', async () => {
+    component.columnType.set(ColumnType.STRING)
+    component.columnField.set('')
+    fixture.componentRef.setInput('column', null)
+
+    fixture.detectChanges()
+
+    expect(component.columnType()).toEqual(ColumnType.STRING);
+    expect(component.columnField()).toEqual('');
   })
 })

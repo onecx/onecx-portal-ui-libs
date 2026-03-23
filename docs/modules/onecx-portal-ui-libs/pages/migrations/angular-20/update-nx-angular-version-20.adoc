@@ -14,9 +14,9 @@ nx migrate 22.3.0 --interactive
 
 This command prompts you to apply updates for each major version of Angular and TypeScript. Apply all proposed updates up to Angular 20.3 and TypeScript 5.9.
 
-For details on NX / Angular compatibility, refer to the xref:https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
+For details on NX / Angular compatibility, refer to the https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
 
-For details on `nx migrate`, refer to the official documentation: xref:https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
+For details on `nx migrate`, refer to the official documentation: https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
 
 == Update Package Versions in package.json
 

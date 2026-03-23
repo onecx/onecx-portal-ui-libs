@@ -29,6 +29,8 @@ export class GroupByCountDiagramComponent {
 
   sumKey = input<string>('SEARCH.SUMMARY_TITLE')
   diagramType = model<DiagramType>(DiagramType.PIE)
+  chartTitleKey = input<string>('')
+  chartDescriptionKey = input<string>('')
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -50,6 +52,8 @@ export class GroupByCountDiagramComponent {
 
   column = input<DiagramColumn>()
 
+  fullHeight = input<boolean>(false)
+  
   colors = model<Record<string, string>>({})
 
   dataSelected = output<any>()
@@ -109,13 +113,9 @@ export class GroupByCountDiagramComponent {
   constructor() {
     effect(() => {
       const column = this.column()
-      if (column) {
-        this.columnType.set(column.columnType)
-        this.columnField.set(column.id)
-      }
-    })
-    effect(() => {
-      this.colors.set(this.colors())
+      if (!column) return
+      this.columnType.set(column.columnType)
+      this.columnField.set(column.id)
     })
   }
 

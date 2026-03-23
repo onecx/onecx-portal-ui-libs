@@ -1,3 +1,90 @@
+## [8.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.8...v8.0.0-rc.9) (2026-03-20)
+
+### Features
+
+* add shared recommendations function ([#1291](https://github.com/onecx/onecx-portal-ui-libs/issues/1291)) ([be3eda4](https://github.com/onecx/onecx-portal-ui-libs/commit/be3eda42432c0491a58c0abf3841de6b8e0f7da0))
+
+## [8.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.7...v8.0.0-rc.8) (2026-03-20)
+
+### Features
+
+* pTooltip to ocxTootip ([#1255](https://github.com/onecx/onecx-portal-ui-libs/issues/1255)) ([f803ab6](https://github.com/onecx/onecx-portal-ui-libs/commit/f803ab603132d5d3221c2e11260b80f870dd8b3d))
+
+### Bug Fixes
+
+* [data-layout-selection]  a11y - view layout button ([#1268](https://github.com/onecx/onecx-portal-ui-libs/issues/1268)) ([5b55d21](https://github.com/onecx/onecx-portal-ui-libs/commit/5b55d21476a2d96bd5f75f02c6407c17c478d7a8))
+* [data-list-grid] a11y - adjust role to make list sr readable ([#1278](https://github.com/onecx/onecx-portal-ui-libs/issues/1278)) ([a0803b3](https://github.com/onecx/onecx-portal-ui-libs/commit/a0803b3c559b541615a16db91663864c603cab9a))
+* [filter-view] a11y - filter button ([#1271](https://github.com/onecx/onecx-portal-ui-libs/issues/1271)) ([24d600a](https://github.com/onecx/onecx-portal-ui-libs/commit/24d600a5078282ab26fe4424e1e21a8b2e62b2e2))
+* [page-header]  a11y - adjust breadcrumb aria-label ([#1270](https://github.com/onecx/onecx-portal-ui-libs/issues/1270)) ([785f371](https://github.com/onecx/onecx-portal-ui-libs/commit/785f371d1d88916cd8edf57bf187b72666ec9f63))
+* [search-header] a11y - announce no result for sr ([#1276](https://github.com/onecx/onecx-portal-ui-libs/issues/1276)) ([bdc8e96](https://github.com/onecx/onecx-portal-ui-libs/commit/bdc8e962a5809c2a56ac6c5f750009f619916b25))
+* adjust aria label for sort dropdown ([#1277](https://github.com/onecx/onecx-portal-ui-libs/issues/1277)) ([a3e659e](https://github.com/onecx/onecx-portal-ui-libs/commit/a3e659e30c9f4b8221e6b517fa1bf706fc33bc0f))
+* build libraries differently after lib type change to module ([#1303](https://github.com/onecx/onecx-portal-ui-libs/issues/1303)) ([92eac54](https://github.com/onecx/onecx-portal-ui-libs/commit/92eac54d83d321bbaa774780becac54133fc69a3))
+* external nx links not working in migration guides ([#1299](https://github.com/onecx/onecx-portal-ui-libs/issues/1299)) ([aa9918c](https://github.com/onecx/onecx-portal-ui-libs/commit/aa9918c9c43ad719aac39a05ef3f018dfa138836))
+* loading-indicator-directive & loading-indicator-component ([#1287](https://github.com/onecx/onecx-portal-ui-libs/issues/1287)) ([#1292](https://github.com/onecx/onecx-portal-ui-libs/issues/1292)) ([aa7bca1](https://github.com/onecx/onecx-portal-ui-libs/commit/aa7bca120121027930f854a58da86975661ae295))
+* missing translation handler returns key instead of throwing errors ([#1289](https://github.com/onecx/onecx-portal-ui-libs/issues/1289)) ([0bc8243](https://github.com/onecx/onecx-portal-ui-libs/commit/0bc8243ae3b93320f84ab62e4d41f1458336f87b))
+* primng translation in search header ([#1290](https://github.com/onecx/onecx-portal-ui-libs/issues/1290)) ([f7ae940](https://github.com/onecx/onecx-portal-ui-libs/commit/f7ae9402a2f483edaf249a16f8ce3f67c9092123))
+
+## [8.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.6...v8.0.0-rc.7) (2026-03-13)
+
+### Features
+
+* main-add visible keyboard focus for interactive elements ([#1175](https://github.com/onecx/onecx-portal-ui-libs/issues/1175)) ([8fa3c2b](https://github.com/onecx/onecx-portal-ui-libs/commit/8fa3c2b18f8368869dde4dd91c9a814027c79afc))
+
+### Chores
+
+* switch to accelarator and integration-interface from commonjs to module ([#1286](https://github.com/onecx/onecx-portal-ui-libs/issues/1286)) ([703ffe7](https://github.com/onecx/onecx-portal-ui-libs/commit/703ffe735ce3f8854d533c00ec0138f4a64b7346))
+
+## [8.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.5...v8.0.0-rc.6) (2026-03-06)
+
+### Bug Fixes
+
+* chart overflow hidden issue ([#1247](https://github.com/onecx/onecx-portal-ui-libs/issues/1247)) ([b0bad23](https://github.com/onecx/onecx-portal-ui-libs/commit/b0bad231437a21a6254dc9d78ce86b0671669a7b))
+
+## [8.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.4...v8.0.0-rc.5) (2026-03-05)
+
+### Features
+
+* add aria label to p-selectbuttons ([#1260](https://github.com/onecx/onecx-portal-ui-libs/issues/1260)) ([6976c29](https://github.com/onecx/onecx-portal-ui-libs/commit/6976c295251d4666ecc332fa9ed8059012f38f32))
+* add consent component ([#1172](https://github.com/onecx/onecx-portal-ui-libs/issues/1172)) ([5624dee](https://github.com/onecx/onecx-portal-ui-libs/commit/5624deed2fed6af542887151a2eefdabcf300c9a))
+* add ensureProperty ([#1222](https://github.com/onecx/onecx-portal-ui-libs/issues/1222)) ([642ef28](https://github.com/onecx/onecx-portal-ui-libs/commit/642ef28e609d182dec3a067aa66438df11d42dcc))
+* add loading action to storybook ([#1220](https://github.com/onecx/onecx-portal-ui-libs/issues/1220)) ([4669b65](https://github.com/onecx/onecx-portal-ui-libs/commit/4669b653652d66949a5acfab00b677a9baa15969))
+* add loading to pageHeader action button ([#1137](https://github.com/onecx/onecx-portal-ui-libs/issues/1137)) ([5a3e06d](https://github.com/onecx/onecx-portal-ui-libs/commit/5a3e06d91b3757102fecafb011b29b0ae01a74f4))
+* add routerLink to action buttons ([#1204](https://github.com/onecx/onecx-portal-ui-libs/issues/1204)) ([13ea646](https://github.com/onecx/onecx-portal-ui-libs/commit/13ea6463e3b290f7f9bc4cffbc108c559eec04d4))
+* added and tested angular 19 to 20 ai migration prompt ([#1237](https://github.com/onecx/onecx-portal-ui-libs/issues/1237)) ([0ab43a1](https://github.com/onecx/onecx-portal-ui-libs/commit/0ab43a1ea768ee6b50621f22629bf0135f5a25af))
+* added migration prompt and angular update guidance for angular 18-19 ([#1221](https://github.com/onecx/onecx-portal-ui-libs/issues/1221)) ([68a830b](https://github.com/onecx/onecx-portal-ui-libs/commit/68a830bfe7b3726130d21d3e421e0fd03c9670ef))
+* added nx migration instructions ([#1243](https://github.com/onecx/onecx-portal-ui-libs/issues/1243)) ([d38b4c3](https://github.com/onecx/onecx-portal-ui-libs/commit/d38b4c36f7bce2217de29286dde35951e070a99f))
+* apply advanced primeng overrides ([#1165](https://github.com/onecx/onecx-portal-ui-libs/issues/1165)) ([c7616e9](https://github.com/onecx/onecx-portal-ui-libs/commit/c7616e9363c26940c2ee2e68a0a5dd049799eade))
+* document v7 breaking changes ([#1174](https://github.com/onecx/onecx-portal-ui-libs/issues/1174)) ([809717e](https://github.com/onecx/onecx-portal-ui-libs/commit/809717eb1278744da11429ed798198a0829f3d5a))
+* dynamic translations ([#1238](https://github.com/onecx/onecx-portal-ui-libs/issues/1238)) ([63cb00d](https://github.com/onecx/onecx-portal-ui-libs/commit/63cb00d5997e505ccc57a4595a2bcaf298576e51))
+* icon service implementation ([#1210](https://github.com/onecx/onecx-portal-ui-libs/issues/1210)) ([77342e0](https://github.com/onecx/onecx-portal-ui-libs/commit/77342e0f617de27cb44c2ac69e918801c8612a62))
+* linter rules ([#1163](https://github.com/onecx/onecx-portal-ui-libs/issues/1163)) ([d8d1dcf](https://github.com/onecx/onecx-portal-ui-libs/commit/d8d1dcf4ed499de536a3606295e52762f5e5e9ee))
+* move keycloak dependent auth logic to shell-auth ([#1106](https://github.com/onecx/onecx-portal-ui-libs/issues/1106)) ([12f5581](https://github.com/onecx/onecx-portal-ui-libs/commit/12f5581436433dd413d2ec899d1480574e9da866))
+
+### Bug Fixes
+
+* add getter setter for image topic ([#1241](https://github.com/onecx/onecx-portal-ui-libs/issues/1241)) ([50417cf](https://github.com/onecx/onecx-portal-ui-libs/commit/50417cf51bb04e94b241762789157c70012e7d00))
+* added missing styleClass parameter to ContentContainerComponent storybook ([#1244](https://github.com/onecx/onecx-portal-ui-libs/issues/1244)) ([8d17db0](https://github.com/onecx/onecx-portal-ui-libs/commit/8d17db010b32f5b42964d6cecf177803d939b47e))
+* angular 19 migration guide typos ([#1239](https://github.com/onecx/onecx-portal-ui-libs/issues/1239)) ([4d151e7](https://github.com/onecx/onecx-portal-ui-libs/commit/4d151e7a328ceeb7df96d334c16fcabaf1e4388b))
+* correct typos ([#1235](https://github.com/onecx/onecx-portal-ui-libs/issues/1235)) ([8942c14](https://github.com/onecx/onecx-portal-ui-libs/commit/8942c14a4cf519064f5142e76a4e5183d4c81b64))
+* data-table row selection now re-render ([#1223](https://github.com/onecx/onecx-portal-ui-libs/issues/1223)) ([7fd6310](https://github.com/onecx/onecx-portal-ui-libs/commit/7fd63105246637013851c6daa8c01fc3e028256f))
+* fixed data-list-grid component image card overflow ([#1250](https://github.com/onecx/onecx-portal-ui-libs/issues/1250)) ([67dbbe2](https://github.com/onecx/onecx-portal-ui-libs/commit/67dbbe25019962750277fcf8e9c66f5697375864))
+* main reset pagination on data change ([#1215](https://github.com/onecx/onecx-portal-ui-libs/issues/1215)) ([75fb43a](https://github.com/onecx/onecx-portal-ui-libs/commit/75fb43a4742676438087b196d5fea613aa4f5098))
+* migration step added and fixed error in styles import from angular-accelerator ([#1218](https://github.com/onecx/onecx-portal-ui-libs/issues/1218)) ([eb5529b](https://github.com/onecx/onecx-portal-ui-libs/commit/eb5529bddf60789518ef9ab478155abe5938b965))
+* portal-page-componenent resolves the value first ([#1233](https://github.com/onecx/onecx-portal-ui-libs/issues/1233)) ([5f524ef](https://github.com/onecx/onecx-portal-ui-libs/commit/5f524ef0751cbedf18570277ce69601315f85f8b))
+* search-header-component resolves value first ([#1229](https://github.com/onecx/onecx-portal-ui-libs/issues/1229)) ([dfcf9e8](https://github.com/onecx/onecx-portal-ui-libs/commit/dfcf9e8616d973283afe7afe98cad3e862d2a077))
+* separated component import updates in 18 -> 19 migration ([#1252](https://github.com/onecx/onecx-portal-ui-libs/issues/1252)) ([cfa01ca](https://github.com/onecx/onecx-portal-ui-libs/commit/cfa01cab179efe9e7d6b7b8d2b8a15bb0cbf8bc7))
+
+### Chores
+
+* Angular 21 update ([#1149](https://github.com/onecx/onecx-portal-ui-libs/issues/1149)) ([458e7b8](https://github.com/onecx/onecx-portal-ui-libs/commit/458e7b86e1e0b9a077bf509126f9312e1c9f56fc))
+* bump sub package angular version + storybook ([#1262](https://github.com/onecx/onecx-portal-ui-libs/issues/1262)) ([dd9cb2c](https://github.com/onecx/onecx-portal-ui-libs/commit/dd9cb2c5a841faebaee198057204067d2efac3de))
+* create effect to manage uri params ([#1205](https://github.com/onecx/onecx-portal-ui-libs/issues/1205)) ([84c808e](https://github.com/onecx/onecx-portal-ui-libs/commit/84c808eddb120adc25f7d073205bcf3d21caf8c3))
+* fix CVEs ([#1164](https://github.com/onecx/onecx-portal-ui-libs/issues/1164)) ([624620c](https://github.com/onecx/onecx-portal-ui-libs/commit/624620ca5602f23aa142c4247ef7a14720a8b58d))
+
+### Refactoring
+
+* add LIB_NAME ([#1249](https://github.com/onecx/onecx-portal-ui-libs/issues/1249)) ([0c6f2a6](https://github.com/onecx/onecx-portal-ui-libs/commit/0c6f2a6e286063bbb03cbbac04d5743aee397c4d))
+
 ## [8.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.3...v8.0.0-rc.4) (2026-02-02)
 
 ### Bug Fixes

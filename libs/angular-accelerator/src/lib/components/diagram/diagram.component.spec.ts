@@ -8,9 +8,11 @@ import 'jest-canvas-mock'
 import { PrimeIcons } from 'primeng/api'
 import { DiagramHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
+import { By } from '@angular/platform-browser'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -34,7 +36,7 @@ describe('DiagramComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot()],
+      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -49,6 +51,7 @@ describe('DiagramComponent', () => {
     component = fixture.componentInstance
     fixture.componentRef.setInput('data', diagramData)
     fixture.componentRef.setInput('sumKey', definedSumKey)
+    fixture.componentRef.setInput('fullHeight', false)
     translateService = TestBed.inject(TranslateService)
     translateService.setFallbackLang('en')
     translateService.use('en')
@@ -227,8 +230,8 @@ describe('DiagramComponent', () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const diagramTypeSelectButtonOptions = await diagram.getAllSelectionButtons()
 
-    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toBe(false)
-    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toBe(true)
+    expect(await diagramTypeSelectButtonOptions[0].hasClass('p-togglebutton-checked')).toEqual(false)
+    expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toEqual(true)
   })
 
   it('should interpolate colors by default', () => {
@@ -295,5 +298,56 @@ describe('DiagramComponent', () => {
         backgroundColor: ['blue', '0'],
       },
     ])
+  })
+
+  it('should set useFullHeight to true when fullHeight is true and diagramType is PIE', () => {
+    fixture.componentRef.setInput('fullHeight', true)
+    component.diagramType.set(DiagramType.PIE)
+    expect(component.useFullHeight()).toBe(true)
+  })
+
+  it('should set useFullHeight to false when fullHeight is true and diagramType is not PIE', () => {
+    fixture.componentRef.setInput('fullHeight', true)
+    component.diagramType.set(DiagramType.HORIZONTAL_BAR)
+    expect(component.useFullHeight()).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is not PIE', () => {
+    fixture.componentRef.setInput('fullHeight', false)
+    component.diagramType.set(DiagramType.HORIZONTAL_BAR)
+    expect(component.useFullHeight()).toBe(false)
+  })
+
+  it('should set useFullHeight to false when fullHeight is false and diagramType is PIE', () => {
+    fixture.componentRef.setInput('fullHeight', false)
+    component.diagramType.set(DiagramType.PIE)
+    expect(component.useFullHeight()).toBe(false)
+  })
+  
+  it('should emit data clicked event', async () => {
+    const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
+    const chartHarness = await diagram.getChart()
+    let dataSelectedEvent: number | undefined
+
+    component.dataSelected.subscribe((event) => (dataSelectedEvent = event))
+    fixture.debugElement.query(By.css('p-chart')).triggerEventHandler('onDataSelect', [{}, {}, {}])
+
+    expect(dataSelectedEvent).toEqual(3)
+    expect(chartHarness).toBeTruthy()
+  })
+
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('data', null)
+    fixture.detectChanges()
+
+    expect(component.amountOfData()).toBeUndefined()
+    expect(component.chartOptions()).toEqual({})
+  })
+
+  it('should not set chartOptions and amoutOfData when data is null', () => {
+    fixture.componentRef.setInput('diagramType', null)
+    fixture.detectChanges()
+
+    expect(component.chartType()).toEqual('pie')
   })
 })

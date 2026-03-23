@@ -2,7 +2,7 @@
   id="customGroupColumnSelectorButton"
   type="button"
   (onClick)="onOpenCustomGroupColumnSelectionDialogClick()"
-  [pTooltip]="openButtonTitle() || (openButtonTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
+  [ocxTooltip]="openButtonTitle() || (openButtonTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
   tooltipPosition="top"
   icon="pi pi-cog"
   styleClass="p-button"
@@ -53,7 +53,9 @@
     <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
     <div class="flex gap-6 px-3">
       <div>
-        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}</p>
+        <p id="frozenActionColumnLabel" class="mb-1">
+          {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}
+        </p>
         <p-selectbutton
           [options]="frozenOptions()"
           [(ngModel)]="frozenActionColumnModel"
@@ -62,12 +64,15 @@
           id="frozenActionColumn"
           name="frozen-action-column-select-button"
           [allowEmpty]="false"
+          ariaLabelledBy="frozenActionColumnLabel"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
       </div>
       <div>
-        <p class="mb-1">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}</p>
+        <p id="actionColumnPositionLabel" class="mb-1">
+          {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}
+        </p>
         <p-selectbutton
           [options]="alignmentOptions()"
           [(ngModel)]="actionColumnPositionModel"
@@ -76,6 +81,7 @@
           id="actionColumnPosition"
           name="action-column-position-select-button"
           [allowEmpty]="false"
+          ariaLabelledBy="actionColumnPositionLabel"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
