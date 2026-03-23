@@ -1,0 +1,49 @@
+/// <reference types='vitest' />
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import dts from 'vite-plugin-dts'
+import * as path from 'path'
+
+export default defineConfig({
+  root: __dirname,
+  cacheDir: '../../node_modules/.vite/libs/react-utils',
+  plugins: [
+    react(),
+
+    dts({
+      entryRoot: 'src',
+      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+    }),
+  ],
+  build: {
+    outDir: '../../dist/libs/react-utils',
+    emptyOutDir: true,
+    reportCompressedSize: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    lib: {
+      entry: {
+        index: 'src/lib/index.ts',
+        routing: 'src/lib/routing/index.tsx',
+        styling: 'src/lib/styling/index.ts',
+        theme: 'src/lib/styling/theme/index.ts',
+        utils: 'src/lib/utils/index.ts',
+      },
+      name: 'react-utils',
+      fileName: (format, entryName) => entryName,
+      formats: ['es', 'cjs'],
+    },
+    rollupOptions: {
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'primereact',
+        'react-router',
+        '@onecx/integration-interface',
+        '@onecx/react-integration-interface',
+      ],
+    },
+  },
+})
