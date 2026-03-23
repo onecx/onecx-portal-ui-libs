@@ -8,6 +8,7 @@ import 'jest-canvas-mock'
 import { firstValueFrom, of } from 'rxjs'
 import { DiagramHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramComponent } from '../diagram/diagram.component'
@@ -159,7 +160,7 @@ describe('GroupByCountDiagramComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [GroupByCountDiagramComponent, DiagramComponent],
-      imports: [AngularAcceleratorModule],
+      imports: [AngularAcceleratorModule, OcxTooltipDirective],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

@@ -7,6 +7,8 @@ export interface ListItemHarnessFilters extends BaseHarnessFilters {
 export class ListItemHarness extends ComponentHarness {
   static hostSelector = 'li'
 
+  private readonly getLinkElement = this.locatorForOptional('a')
+
   static with(options: ListItemHarnessFilters): HarnessPredicate<ListItemHarness> {
     return new HarnessPredicate(ListItemHarness, options).addOption('text', options.text, (harness, text) =>
       HarnessPredicate.stringMatches(harness.getText(), text)
@@ -15,6 +17,10 @@ export class ListItemHarness extends ComponentHarness {
 
   async getText() {
     return await (await this.host()).text()
+  }
+
+  async getLinkAriaLabel(): Promise<string | null> {
+    return (await this.getLinkElement())?.getAttribute('aria-label') ?? null
   }
 
   async isSelected(): Promise<boolean> {
