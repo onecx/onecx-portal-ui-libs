@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { TooltipModule } from 'primeng/tooltip'
 import { MessageService } from 'primeng/api'
 import { provideTranslationPathFromMeta } from '@onecx/angular-utils'
+import { OcxTooltipDirective } from '@onecx/angular-accelerator'
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { provideTranslationPathFromMeta } from '@onecx/angular-utils'
     ToastModule,
     TooltipModule,
     TranslateModule,
+    OcxTooltipDirective
   ],
   declarations: [
     PortalViewportComponent,
