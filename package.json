@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "5.52.8",
+  "version": "5.53.0",
   "license": "Apache-2.0",
   "scripts": {
     "sass": "npx sass libs/portal-integration-angular/assets/styles.scss libs/portal-integration-angular/assets/output.css",
@@ -33,6 +33,7 @@
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
     "@nx/devkit": "19.8.0",
+    "@nx/module-federation": "20.4.0",
     "@onecx/portal-layout-styles": "file:libs/portal-layout-styles",
     "@phenomnomnominal/tsquery": "^6",
     "@storybook/addon-interactions": "^8.6.15",
@@ -134,7 +135,10 @@
   },
   "overrides": {
     "jsdom": "25.0.1",
-    "rrweb-cssom": "0.8.0"
+    "rrweb-cssom": "0.8.0",
+    "koa": "2.16.4",
+    "flatted": "3.4.2",
+    "serialize-javascript": "7.0.3"
   },
   "nx": {
     "includedScripts": []
