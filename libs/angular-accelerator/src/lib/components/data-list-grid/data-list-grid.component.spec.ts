@@ -20,7 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()

@@ -5,7 +5,7 @@ import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvi
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import { DialogFooterComponent } from './dialog-footer.component'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent

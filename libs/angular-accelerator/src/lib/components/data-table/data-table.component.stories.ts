@@ -19,7 +19,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { SkeletonModule } from 'primeng/skeleton'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 type DataTableInputTypes = Pick<DataTableComponent, 'rows' | 'columns' | 'emptyResultsMessage' | 'selectedRows' | 'totalRecordsOnServer'>
 

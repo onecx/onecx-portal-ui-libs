@@ -6,7 +6,7 @@ import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent

@@ -21,7 +21,7 @@ import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock

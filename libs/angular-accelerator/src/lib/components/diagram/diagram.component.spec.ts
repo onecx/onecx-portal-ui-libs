@@ -13,7 +13,7 @@ import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService

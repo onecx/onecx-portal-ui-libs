@@ -16,7 +16,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip';
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 function generateMockData(count = 10): DiagramData[] {
   const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
