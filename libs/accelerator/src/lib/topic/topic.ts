@@ -38,11 +38,18 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
     })
-    window.addEventListener('message', this.eventListener)
+    const addEventListener = (globalThis as any).addEventListener
+    if (typeof addEventListener === 'function') {
+      addEventListener.call(globalThis, 'message', this.eventListener)
+    }
 
     if (sendGetMessage) {
       const message = new TopicMessage(TopicMessageType.TopicGet, this.name, this.version)
-      window.postMessage(message, '*')
+      const postMessage = (globalThis as any).postMessage
+      if (typeof postMessage !== 'function') {
+        throw new Error('postMessage is not available in this environment')
+      }
+      postMessage.call(globalThis, message, '*')
     }
   }
 
@@ -150,12 +157,15 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   destroy() {
-    window.removeEventListener('message', this.eventListener, true)
+    const removeEventListener = (globalThis as any).removeEventListener
+    if (typeof removeEventListener === 'function') {
+      removeEventListener.call(globalThis, 'message', this.eventListener, true)
+    }
   }
 
   private onMessage(m: MessageEvent<TopicMessage>): any {
     if (
-      window['@onecx/accelerator']?.topic?.debug?.includes(this.name) &&
+      (globalThis as any)['@onecx/accelerator']?.topic?.debug?.includes(this.name) &&
       m.data?.name === this.name &&
       m.data?.version === this.version
     ) {
@@ -192,7 +202,11 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
       }
       case TopicMessageType.TopicGet: {
         if (m.data.name === this.name && m.data.version === this.version && this.isInit && this.data.value) {
-          window.postMessage(this.data.value, '*')
+          const postMessage = (globalThis as any).postMessage
+          if (typeof postMessage !== 'function') {
+            throw new Error('postMessage is not available in this environment')
+          }
+          postMessage.call(globalThis, this.data.value, '*')
           m.stopImmediatePropagation()
           m.stopPropagation()
         }

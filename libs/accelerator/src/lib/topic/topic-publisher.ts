@@ -12,12 +12,20 @@ export class TopicPublisher<T> {
 
   public publish(value: T): Promise<void> {
     const message = new TopicDataMessage<T>(TopicMessageType.TopicNext, this.name, this.version, value)
-    window.postMessage(message, '*')
+    const postMessage = (globalThis as any).postMessage
+    if (typeof postMessage !== 'function') {
+      throw new Error('postMessage is not available in this environment')
+    }
+    postMessage.call(globalThis, message, '*')
     const resolveMessage = new TopicResolveMessage(TopicMessageType.TopicResolve, this.name, this.version, message.id)
     const promise = new Promise<void>((resolve) => {
       this.publishPromiseResolver[message.id] = resolve
     })
-    window.postMessage(resolveMessage, '*')
+    const postMessageResolve = (globalThis as any).postMessage
+    if (typeof postMessageResolve !== 'function') {
+      throw new Error('postMessage is not available in this environment')
+    }
+    postMessageResolve.call(globalThis, resolveMessage, '*')
     return promise
   }
 }
