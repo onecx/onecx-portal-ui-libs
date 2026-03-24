@@ -3,9 +3,9 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { OcxTooltipDirective } from './ocx-tooltip.directive';
+import { OcxTooltipDirective } from './tooltip.directive';
 import { HarnessLoader } from '@onecx/angular-testing';
-import { OcxTooltipHarness } from '../../../testing/ocx-tooltip.harness';
+import { OcxTooltipHarness } from '../../../testing/tooltip.harness';
 // If the file does not exist, create it at libs/angular-accelerator/testing/ocx-tooltip-harness.ts or update the import path accordingly.
 
 @Component({
