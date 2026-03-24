@@ -1,10 +1,11 @@
 import { normalizeLocales } from './normalize-locales.utils'
 
 export function getNormalizedBrowserLocales(): string[] {
-  if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
+  const navigator = (globalThis as any).navigator as Navigator | undefined
+  if (!navigator) {
     return ['en']
   }
 
-  const langs = window.navigator.languages || [window.navigator.language]
+  const langs = navigator.languages || [navigator.language]
   return normalizeLocales(langs.filter(Boolean))
 }
