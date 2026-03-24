@@ -6,7 +6,6 @@ import { By } from '@angular/platform-browser';
 import { OcxTooltipDirective } from './tooltip.directive';
 import { HarnessLoader } from '@onecx/angular-testing';
 import { OcxTooltipHarness } from '../../../testing/tooltip.harness';
-// If the file does not exist, create it at libs/angular-accelerator/testing/ocx-tooltip-harness.ts or update the import path accordingly.
 
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
