@@ -73,6 +73,7 @@ export interface DataTableComponentState {
   filters?: Filter[]
   sorting?: Sort
   selectedRows?: Row[]
+  expandedRows?: Row[]
   activePage?: number
   pageSize?: number
 }
@@ -87,28 +88,24 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   TemplateType = TemplateType
   checked = true
 
-
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if (this._rows$.getValue().length > value.length ) {
-      this.resetPage();
+    if (this._rows$.getValue().length > value.length) {
+      this.resetPage()
     }
     this._rows$.next(value)
-    
-    const currentResults = value.length;
-    const newStatus = currentResults === 0
-        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
-        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
-    
-    firstValueFrom(
-      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText);
-      }
-    );
+
+    const currentResults = value.length
+    const newStatus =
+      currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
+
+    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -131,7 +128,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   set filters(value: Filter[]) {
     if (this._filters$.getValue().length) {
-      this.resetPage();
+      this.resetPage()
     }
     this._filters$.next(value)
   }
@@ -226,7 +223,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params= computed(() => {    
+  params = computed(() => {
     return {
       currentPage: '{currentPage}',
       totalPages: '{totalPages}',
@@ -234,7 +231,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       first: '{first}',
       last: '{last}',
       totalRecords: '{totalRecords}',
-      totalRecordsOnServer: this.totalRecordsOnServer()
+      totalRecordsOnServer: this.totalRecordsOnServer(),
     }
   })
 
@@ -344,6 +341,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input()
+  set expandedRows(value: Row[] | string[] | number[]) {
+    const ids = value.map((row) => {
+      if (typeof row === 'object') {
+        return row.id
+      }
+      return row
+    })
+    this.expandedRowIds$.next(ids)
+    this.expandedRowKeys = Object.fromEntries(ids.map((id) => [id, true]))
+  }
+
+  @Input() expandable = false
+  @Input() frozenExpandColumn = false
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
@@ -354,6 +365,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Output() pageChanged = new EventEmitter<number>()
   @Output() pageSizeChanged = new EventEmitter<number>()
   @Output() componentStateChanged = new EventEmitter<DataTableComponentState>()
+  @Output() rowExpanded = new EventEmitter<Row>()
+  @Output() rowCollapsed = new EventEmitter<Row>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -425,6 +438,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+
+  allTemplates$: Observable<PrimeTemplate[]> | undefined
+  expansionTemplate$: Observable<PrimeTemplate | undefined> | undefined
+
+  expandedRowIds$ = new BehaviorSubject<(string | number)[]>([])
+  expandedRowKeys: Record<string, boolean> = {}
 
   constructor(
     @Inject(LOCALE_ID) locale: string,
@@ -592,8 +611,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
     this.displayedPageSize$
-      .pipe(withLatestFrom(this._selectionIds$, this._rows$), first())
-      .subscribe(([pageSize, selectedIds, rows]) => {
+      .pipe(withLatestFrom(this._selectionIds$, this.expandedRowIds$, this._rows$), first())
+      .subscribe(([pageSize, selectedIds, expandedIds, rows]) => {
         this.componentStateChanged.emit({
           filters: this.filters,
           sorting: {
@@ -603,6 +622,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           pageSize,
           activePage: this.page,
           selectedRows: rows.filter((row) => selectedIds.includes(row.id)),
+          expandedRows: rows.filter((row) => expandedIds.includes(row.id)),
           ...state,
         })
       })
@@ -655,6 +675,54 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           break
       }
     })
+
+    this.allTemplates$ = combineLatest([this.templates$, this.viewTemplates$, this.parentTemplates$]).pipe(
+      map(([templates, viewTemplates, parentTemplates]) => {
+        const all =
+          templates
+            ?.toArray()
+            .concat(viewTemplates?.toArray() ?? [])
+            .concat(parentTemplates?.toArray() ?? []) ?? []
+        return all.filter((t, index, self) => self.findIndex((pt) => pt.getType() === t.getType()) === index)
+      })
+    )
+
+    this.expansionTemplate$ = this.allTemplates$.pipe(
+      map((templates) => templates.find((t) => t.getType() === 'expansion'))
+    )
+  }
+
+  onRowExpand(event: any) {
+    const expandedIds = this.expandedRowIds$.getValue()
+    if (!expandedIds.includes(event.data.id)) {
+      this.expandedRowIds$.next([...expandedIds, event.data.id])
+    }
+    this.rowExpanded.emit(event.data)
+    this.emitComponentStateChanged()
+  }
+
+  onRowCollapse(event: any) {
+    const expandedIds = this.expandedRowIds$.getValue()
+    this.expandedRowIds$.next(expandedIds.filter((id) => id !== event.data.id))
+    this.rowCollapsed.emit(event.data)
+    this.emitComponentStateChanged()
+  }
+
+  isRowExpanded(row: Row): boolean {
+    return this.expandedRowIds$.getValue().includes(row.id)
+  }
+
+  toggleRowExpansion(row: Row) {
+    const isExpanded = this.isRowExpanded(row)
+    if (isExpanded) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [row.id]: _removed, ...rest } = this.expandedRowKeys
+      this.expandedRowKeys = rest
+      this.onRowCollapse({ data: row })
+    } else {
+      this.expandedRowKeys = { ...this.expandedRowKeys, [row.id]: true }
+      this.onRowExpand({ data: row })
+    }
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -719,9 +787,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   sortIconTitle(sortColumn: string) {
-    return this.sortDirectionToTitle(
-      this.columnNextSortDirection(sortColumn)
-    )
+    return this.sortDirectionToTitle(this.columnNextSortDirection(sortColumn))
   }
 
   sortDirectionToTitle(sortDirection: DataSortDirection) {
