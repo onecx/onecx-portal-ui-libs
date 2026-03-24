@@ -11,6 +11,21 @@ export class OcxTooltipHarness extends ComponentHarness {
 
   static get hostSelector(): string {
     return OcxTooltipHarness.configuredHostSelector;
+  } 
+
+  static with(options: OcxTooltipHarnessFilters = {}) {
+    const { hostSelector, selector, ...rest } = options;
+    return new HarnessPredicate(OcxTooltipHarness, {
+      ...rest,
+      selector: hostSelector ?? selector ?? OcxTooltipHarness.hostSelector
+    })
+      .addOption('text', options.text, async (harness, text) =>
+        (await harness.getTooltipText()) === text
+      );
+  }
+
+  static withHostSelector(hostSelector: string) {
+    return OcxTooltipHarness.with({ hostSelector });
   }
 
   async hover(): Promise<void> {
@@ -42,20 +57,5 @@ export class OcxTooltipHarness extends ComponentHarness {
       .locatorForOptional('.p-tooltip')();
 
     return !!tooltip;
-  }
-
-  static with(options: OcxTooltipHarnessFilters = {}) {
-    const { hostSelector, selector, ...rest } = options;
-    return new HarnessPredicate(OcxTooltipHarness, {
-      ...rest,
-      selector: hostSelector ?? selector ?? OcxTooltipHarness.hostSelector
-    })
-      .addOption('text', options.text, async (harness, text) =>
-        (await harness.getTooltipText()) === text
-      );
-  }
-
-  static withHostSelector(hostSelector: string) {
-    return OcxTooltipHarness.with({ hostSelector });
   }
 }
