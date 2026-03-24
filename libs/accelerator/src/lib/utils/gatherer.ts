@@ -24,14 +24,15 @@ export class Gatherer<Request, Response> {
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
     // Perform a callback every time a request is received in the topic.
     this.topicSub = this.topic.subscribe((m) => {
-      if (!this.isOwnerOfRequest(m) && window['@onecx/accelerator']?.gatherer?.promises) {
+      const accelerator = (globalThis as any)['@onecx/accelerator']
+      if (!this.isOwnerOfRequest(m) && accelerator?.gatherer?.promises) {
         this.logReceivedIfDebug(name, version, m)
-        if (!window['@onecx/accelerator'].gatherer.promises[m.id]) {
+        if (!accelerator.gatherer.promises[m.id]) {
           this.logger.warn('Expected an array of promises to gather for id ', m.id, ' but the id was not present')
           return
         }
         let resolve: (value: Response) => void
-        window['@onecx/accelerator'].gatherer.promises[m.id].push(
+        accelerator.gatherer.promises[m.id].push(
           new Promise((r) => {
             resolve = r
           })
@@ -50,29 +51,31 @@ export class Gatherer<Request, Response> {
     this.topicSub?.unsubscribe()
     this.topic.destroy()
     for (const id of this.ownIds) {
-      if (window['@onecx/accelerator']?.gatherer?.promises?.[id]) {
-        delete window['@onecx/accelerator'].gatherer.promises[id]
+      const accelerator = (globalThis as any)['@onecx/accelerator']
+      if (accelerator?.gatherer?.promises?.[id]) {
+        delete accelerator.gatherer.promises[id]
       }
     }
   }
 
   async gather(request: Request): Promise<Response[]> {
-    if (!window['@onecx/accelerator']?.gatherer?.promises) {
+    const accelerator = (globalThis as any)['@onecx/accelerator']
+    if (!accelerator?.gatherer?.promises) {
       throw new Error('Gatherer is not initialized')
     }
 
     const id = Gatherer.id++
     // Save the id to ownIds to prevent processing own requests.
     this.ownIds.add(id)
-    window['@onecx/accelerator'].gatherer.promises[id] = []
+    accelerator.gatherer.promises[id] = []
     // Publish the request to the topic.
     // This will trigger the callback for all instances of gatherer.
     // Await is crucial here to ensure that promises are created before awaiting them.
     // See Why Awaiting the Promise Works in dev-docs/topics/scheduling.adoc.
     const message = { id, request }
     await this.topic.publish(message)
-    const promises = window['@onecx/accelerator'].gatherer.promises[id] as Promise<Response>[]
-    delete window['@onecx/accelerator'].gatherer.promises[id]
+    const promises = accelerator.gatherer.promises[id] as Promise<Response>[]
+    delete accelerator.gatherer.promises[id]
     this.ownIds.delete(id)
     return Promise.all(promises).then((v) => {
       this.logger.debug('Finished gathering responses', v)

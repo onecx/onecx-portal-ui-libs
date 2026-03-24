@@ -6,10 +6,15 @@ type ocxLocation = Location & { deploymentPath: string; applicationPath: string 
  * applicationPath contains the rest of the path which is identifying the workspace and the application to be opened
  */
 export function getLocation(): ocxLocation {
-  const baseHref = document.getElementsByTagName('base')[0]?.href ?? window.location.origin + '/'
-  const location = window.location as ocxLocation
-  location.deploymentPath = baseHref.substring(window.location.origin.length)
-  location.applicationPath = window.location.href.substring(baseHref.length - 1)
-
+  const doc = (globalThis as any).document as Document | undefined
+  const loc = (globalThis as any).location as Location | undefined
+  if (!doc || !loc) {
+    throw new Error('getLocation() is only available in browser environments')
+  }
+  
+  const baseHref = doc.getElementsByTagName('base')[0]?.href ?? loc.origin + '/'
+  const location = loc as ocxLocation
+  location.deploymentPath = baseHref.substring(loc.origin.length)
+  location.applicationPath = loc.href.substring(baseHref.length - 1)
   return location
 }
