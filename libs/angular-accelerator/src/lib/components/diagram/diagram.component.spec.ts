@@ -13,7 +13,7 @@ import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ColorUtils } from '../../utils/colorutils'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { TooltipModule } from 'primeng/tooltip'
 
 describe('DiagramComponent', () => {

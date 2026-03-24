@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { FormsModule } from '@angular/forms'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent

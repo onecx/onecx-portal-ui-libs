@@ -20,7 +20,7 @@ import { provideHttpClient } from '@angular/common/http'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { FloatLabelModule } from 'primeng/floatlabel'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 export default {
   title: 'Components/SearchHeaderComponent',

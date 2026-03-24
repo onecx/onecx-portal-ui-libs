@@ -14,7 +14,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TooltipModule } from 'primeng/tooltip'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>

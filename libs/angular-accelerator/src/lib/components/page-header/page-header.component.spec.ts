@@ -21,7 +21,7 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { TranslateService } from '@ngx-translate/core'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 const mockActions: Action[] = [
   {

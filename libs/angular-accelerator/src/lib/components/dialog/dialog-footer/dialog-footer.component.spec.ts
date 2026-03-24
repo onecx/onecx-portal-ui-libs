@@ -5,7 +5,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { PrimeIcons } from 'primeng/api'
 import { DialogFooterHarness, TestbedHarnessEnvironment } from '../../../../../testing'
-import { OcxTooltipDirective } from '../../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 import { TooltipModule } from 'primeng/tooltip'
 
 describe('DialogFooterComponent', () => {
