@@ -14,7 +14,7 @@
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           @if (figureImage && !figureImageLoadError) {
-          <img [ocxSrc]="figureImage" alt="Figure Image" class="w-full border-round-sm" (error)="handleImageError()" />
+          <img [ocxSrc]="figureImage" alt="Figure" class="w-full border-round-sm" (error)="handleImageError()" />
           }
         </div>
         @if (previewImage.children.length === 0 || figureImageLoadError) {
