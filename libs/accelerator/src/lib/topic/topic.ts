@@ -28,19 +28,18 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate ??= Date.now()
+    const accelerator = (globalThis as any)['@onecx/accelerator']
+    accelerator.topic ??= {}
+    accelerator.topic.initDate ??= Date.now()
 
-    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+    if (accelerator?.topic?.useBroadcastChannel) {
       if (typeof BroadcastChannel === 'undefined') {
         console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic')
-        window['@onecx/accelerator'] ??= {}
-        window['@onecx/accelerator'].topic ??= {}
-        window['@onecx/accelerator'].topic.useBroadcastChannel = false
+        accelerator.topic ??= {}
+        accelerator.topic.useBroadcastChannel = false
       } else {
         this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
+        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${accelerator.topic.tabId}`)
       }
     }
 
@@ -51,14 +50,18 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
     })
-    window.addEventListener('message', this.windowEventListener)
+
+    const addEventListener = (globalThis as any).addEventListener
+    if (typeof addEventListener === 'function') {
+      addEventListener.call(globalThis, 'message', this.windowEventListener)
+    }
     this.readBroadcastChannel?.addEventListener('message', (m) => this.onBroadcastChannelMessage(m))
     this.readBroadcastChannelV2?.addEventListener('message', (m) => this.onBroadcastChannelMessageV2(m))
 
     if (sendGetMessage) {
       if (
-        window['@onecx/accelerator'].topic.initDate &&
-        Date.now() - window['@onecx/accelerator'].topic.initDate < 2000
+        accelerator.topic.initDate &&
+        Date.now() - accelerator.topic.initDate < 2000
       ) {
         // Delay the get message a bit to give other topics time to initialize
         setTimeout(() => {
@@ -220,7 +223,10 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   destroy() {
-    window.removeEventListener('message', this.windowEventListener, true)
+    const removeEventListener = (globalThis as any).removeEventListener
+    if (typeof removeEventListener === 'function') {
+      removeEventListener.call(globalThis, 'message', this.windowEventListener, true)
+    }
     this.readBroadcastChannel?.close()
     this.publishBroadcastChannel?.close()
     this.readBroadcastChannelV2?.close()
@@ -282,25 +288,25 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private disableBroadcastChannel() {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    if (window['@onecx/accelerator'].topic.useBroadcastChannel === true) {
+    const accelerator = (globalThis as any)['@onecx/accelerator']
+    accelerator.topic ??= {}
+    if (accelerator.topic.useBroadcastChannel === true) {
       console.log('Disabling BroadcastChannel for topic')
     }
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    accelerator.topic.useBroadcastChannel = false
   }
 
   private disableBroadcastChannelV2() {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    if (window['@onecx/accelerator'].topic.useBroadcastChannel === "V2") {
+    const accelerator = (globalThis as any)['@onecx/accelerator']
+    accelerator.topic ??= {}
+    if (accelerator.topic.useBroadcastChannel === "V2") {
       console.log('Disabling BroadcastChannel V2 for topic')
     }
-    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+    accelerator.topic.useBroadcastChannel = true
   }
 
   private isLogEnabled() {
-    return window['@onecx/accelerator']?.topic?.debug?.includes(this.name)
+    return (globalThis as any)['@onecx/accelerator']?.topic?.debug?.includes(this.name)
   }
 
   private handleTopicResolveMessage(m: MessageEvent<TopicMessage>) {
