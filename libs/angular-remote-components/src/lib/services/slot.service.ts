@@ -1,5 +1,5 @@
 import { loadRemoteModule } from '@angular-architects/module-federation'
-import { Injectable, InjectionToken, Type } from '@angular/core'
+import { Injectable, InjectionToken, OnDestroy, Type } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
@@ -27,13 +27,24 @@ export interface SlotServiceInterface {
 }
 
 @Injectable({ providedIn: 'root' })
-export class SlotService implements SlotServiceInterface {
-  remoteComponents$ = new RemoteComponentsTopic()
+export class SlotService implements SlotServiceInterface, OnDestroy {
+  private _remoteComponents$: RemoteComponentsTopic | undefined
+  get remoteComponents$() {
+    this._remoteComponents$ ??= new RemoteComponentsTopic()
+    return this._remoteComponents$
+  }
+  set remoteComponents$(value: RemoteComponentsTopic) {
+    this._remoteComponents$ = value
+  }
 
   constructor(private permissionsService: PermissionService) {}
 
   async init(): Promise<void> {
     return Promise.resolve()
+  }
+
+  ngOnDestroy(): void {
+    this._remoteComponents$?.destroy()
   }
 
   getComponentsForSlot(slotName: string): Observable<SlotComponentConfiguration[]> {

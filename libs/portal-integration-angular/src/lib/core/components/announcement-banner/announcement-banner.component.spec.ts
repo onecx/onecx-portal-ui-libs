@@ -7,31 +7,9 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { AnnouncementBannerComponent } from './announcement-banner.component'
 import { AnnouncementsApiService } from '../../../services/announcements-api.service'
 import { AnnouncementItem, AnnouncementPriorityType } from '../../../model/announcement-item'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('AnnouncementBannerComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
   let component: AnnouncementBannerComponent
   let fixture: ComponentFixture<AnnouncementBannerComponent>
   let announcementsApiService: AnnouncementsApiService
@@ -40,10 +18,16 @@ describe('AnnouncementBannerComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-    declarations: [AnnouncementBannerComponent],
-    imports: [],
-    providers: [ConfigurationService, AnnouncementsApiService, AppStateService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents()
+      declarations: [AnnouncementBannerComponent],
+      imports: [],
+      providers: [
+        ConfigurationService,
+        AnnouncementsApiService,
+        AppStateService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents()
 
     const appStateService = getTestBed().inject(AppStateService)
     await appStateService.currentPortal$.publish({

@@ -121,7 +121,8 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
     show: 'always',
   }
   headerActions: Action[] = []
-  searchButtonsReversed = false
+  searchButtonsReversed : boolean | null  = null;
+
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = of({})
   searchConfigChangedSlotEmitter: EventEmitter<SearchConfigData | undefined> = new EventEmitter()
 
@@ -132,8 +133,8 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
       })
       this.selectedSearchConfigChanged.emit(config)
     })
-    this.searchButtonsReversed =
-      configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED) === 'true'
+    
+    this.searchButtonsReversed = configurationService.getProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED) === 'true';
   }
 
   ngAfterContentInit(): void {

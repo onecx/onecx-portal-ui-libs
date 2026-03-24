@@ -8,7 +8,7 @@
     [rows]="displayedPageSize"
     [layout]="layout"
     [showCurrentPageReport]="true"
-    currentPageReportTemplate="{{ (totalRecordsOnServer ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params }}"
+    currentPageReportTemplate="{{ (totalRecordsOnServer() ? currentPageShowingWithTotalOnServerKey : currentPageShowingKey) | translate:params() }}"
     [rowsPerPageOptions]="(displayedPageSizes$ | async) ?? []"
     id="dataListGrid_{{name}}"
     paginatorDropdownAppendTo="body"

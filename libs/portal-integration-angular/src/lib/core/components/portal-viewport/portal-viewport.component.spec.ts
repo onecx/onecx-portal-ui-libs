@@ -22,37 +22,15 @@ import { AppInlineProfileComponent } from '../inline-profile/inline-profile.comp
 import { IfBreakpointDirective } from '@onecx/angular-accelerator'
 import { MockAuthService } from '../../../mock-auth/mock-auth.service'
 import { PortalCoreModule } from '../../portal-core.module'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 describe('PortalViewportComponent', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
-
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
-
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
-
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
-
-  afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
-  })
-
   let component: PortalViewportComponent
   let fixture: ComponentFixture<PortalViewportComponent>
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    declarations: [
+      declarations: [
         PortalViewportComponent,
         SupportTicketComponent,
         HelpItemEditorComponent,
@@ -63,8 +41,9 @@ describe('PortalViewportComponent', () => {
         PortalMenuComponent,
         AppInlineProfileComponent,
         IfBreakpointDirective,
-    ],
-    imports: [ToastModule,
+      ],
+      imports: [
+        ToastModule,
         DialogModule,
         NoopAnimationsModule,
         FormsModule,
@@ -72,25 +51,26 @@ describe('PortalViewportComponent', () => {
         RouterModule,
         TooltipModule,
         TranslateTestingModule.withTranslations({}),
-        PortalCoreModule],
-    providers: [
+        PortalCoreModule,
+      ],
+      providers: [
         ConfigurationService,
         MessageService,
         { provide: AUTH_SERVICE, useClass: MockAuthService },
         {
-            provide: ActivatedRoute,
-            useValue: {
-                snapshot: {
-                    paramMap: {
-                        get: () => '1',
-                    },
-                },
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1',
+              },
             },
+          },
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-    ]
-}).compileComponents()
+      ],
+    }).compileComponents()
   })
 
   beforeEach(async () => {

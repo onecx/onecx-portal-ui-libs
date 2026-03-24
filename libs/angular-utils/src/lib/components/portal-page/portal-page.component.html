@@ -1,13 +1,15 @@
 <div class="content-wrapper">
-  <ng-container *ngIf="hasAccess() | async; else noAccess">
-    <ng-content></ng-content>
-  </ng-container>
-</div>
+  @let accessAllowed = (hasAccess() | async);
 
-<ng-template #noAccess>
-  <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
-  <p>
-    {{'OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE' | translate}}
-    <span>{{'OCX_PORTAL_PAGE.MISSING_PERMISSION' | translate : {permission: permission} }}</span>
-  </p>
-</ng-template>
+  @if(accessAllowed !== null){
+    @if(accessAllowed){
+      <ng-content></ng-content>
+    } @else {
+      <h3>{{'OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE' | translate}}</h3>
+      <p>
+        {{'OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE' | translate}}
+        <span>{{'OCX_PORTAL_PAGE.MISSING_PERMISSION' | translate : {permission: permission} }}</span>
+      </p>
+    }
+  }
+</div>

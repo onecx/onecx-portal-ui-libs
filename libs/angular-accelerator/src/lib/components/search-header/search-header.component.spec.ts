@@ -78,4 +78,40 @@ describe('SearchHeaderComponent', () => {
 
     sub.unsubscribe()
   })
+
+  it('should render reset then search when searchButtonsReversed is false and reset observed', () => {
+    const sub = component.resetted.subscribe()
+    component.searchButtonsReversed = false
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
+    
+    expect(order).toEqual(['resetButton', 'searchButton'])
+
+    sub.unsubscribe()
+  })
+
+  it('should render search then reset when searchButtonsReversed is true and reset observed', () => {
+    const sub = component.resetted.subscribe()
+    component.searchButtonsReversed = true
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const order = Array.from(controls.querySelectorAll('#resetButton, #searchButton')).map((el: any) => el.id)
+    
+    expect(order).toEqual(['searchButton', 'resetButton'])
+
+    sub.unsubscribe()
+  })
+
+  it('should render no controls until searchButtonsReversed is resolved', () => {
+    component.searchButtonsReversed = null
+    fixture.detectChanges()
+
+    const controls = fixture.nativeElement.querySelector('section[aria-label="Search Controls"]') as HTMLElement
+    const buttons = Array.from(controls.querySelectorAll('#resetButton, #searchButton'))
+
+    expect(buttons.length).toBe(0)
+  })
 })

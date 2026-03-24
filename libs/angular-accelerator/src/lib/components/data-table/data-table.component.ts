@@ -2,11 +2,13 @@ import { formatDate } from '@angular/common'
 import {
   AfterContentInit,
   Component,
+  computed,
   ContentChild,
   ContentChildren,
   EventEmitter,
   Inject,
   Injector,
+  input,
   Input,
   LOCALE_ID,
   OnInit,
@@ -30,6 +32,7 @@ import {
   debounceTime,
   filter,
   first,
+  firstValueFrom,
   map,
   mergeMap,
   of,
@@ -45,6 +48,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -82,15 +86,31 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   FilterType = FilterType
   TemplateType = TemplateType
   checked = true
+
+
   _rows$ = new BehaviorSubject<Row[]>([])
   @Input()
   get rows(): Row[] {
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    !this._rows$.getValue().length ?? this.resetPage()
+    if (this._rows$.getValue().length > value.length ) {
+      this.resetPage();
+    }
     this._rows$.next(value)
+    
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
+
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
   @Input()
   set selectedRows(value: Row[] | string[] | number[]) {
@@ -110,7 +130,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    if (this._filters$.getValue().length) {
+      this.resetPage();
+    }
     this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -201,23 +223,20 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   @Input() tableStyle: { [klass: string]: any } | undefined
-  @Input()
-  get totalRecordsOnServer(): number | undefined {
-    return this.params['totalRecordsOnServer'] ? Number(this.params['totalRecordsOnServer']) : undefined
-  }
-  set totalRecordsOnServer(value: number | undefined) {
-    this.params['totalRecordsOnServer'] = value?.toString() ?? '0'
-  }
+  totalRecordsOnServer = input<number | undefined>(undefined)
   @Input() currentPageShowingKey = 'OCX_DATA_TABLE.SHOWING'
   @Input() currentPageShowingWithTotalOnServerKey = 'OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER'
-  params: { [key: string]: string } = {
-    currentPage: '{currentPage}',
-    totalPages: '{totalPages}',
-    rows: '{rows}',
-    first: '{first}',
-    last: '{last}',
-    totalRecords: '{totalRecords}',
-  }
+  params= computed(() => {    
+    return {
+      currentPage: '{currentPage}',
+      totalPages: '{totalPages}',
+      rows: '{rows}',
+      first: '{first}',
+      last: '{last}',
+      totalRecords: '{totalRecords}',
+      totalRecordsOnServer: this.totalRecordsOnServer()
+    }
+  })
 
   @Input() stringCellTemplate: TemplateRef<any> | undefined
   @ContentChild('stringCell') stringCellChildTemplate: TemplateRef<any> | undefined
@@ -413,6 +432,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     private router: Router,
     private injector: Injector,
     private userService: UserService,
+    private readonly liveAnnouncer: LiveAnnouncer,
     @Inject(HAS_PERMISSION_CHECKER) @Optional() private hasPermissionChecker?: HasPermissionChecker
   ) {
     super(locale, translateService)
@@ -700,9 +720,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   sortIconTitle(sortColumn: string) {
     return this.sortDirectionToTitle(
-      sortColumn !== this.sortDirection
-        ? DataSortDirection.NONE
-        : this.sortStates[this.sortStates.indexOf(this.sortDirection) % this.sortStates.length]
+      this.columnNextSortDirection(sortColumn)
     )
   }
 
