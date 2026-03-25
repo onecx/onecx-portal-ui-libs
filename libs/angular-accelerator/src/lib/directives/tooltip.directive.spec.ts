@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { HarnessLoader } from '@onecx/angular-testing';
 import { OcxTooltipDirective } from './tooltip.directive';
-import { OcxTooltipHarness } from '../../../testing/tooltip.harness';
+import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing';
 
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
