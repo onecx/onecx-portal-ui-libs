@@ -3,6 +3,7 @@ import { map, Observable, shareReplay } from 'rxjs'
 import { type RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { usePermission } from './permissionContext'
 import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
+import { createLogger } from '../utils/logger.utils'
 
 export type RemoteComponentInfo = {
   appId: string
@@ -27,6 +28,7 @@ export interface SlotServiceInterface {
 
 const SlotContext = createContext<SlotServiceInterface | undefined>(undefined)
 const remoteComponents$ = new RemoteComponentsTopic()
+const logger = createLogger('SlotProvider')
 
 /**
  * Provides slot services for loading and resolving remote components.
@@ -92,7 +94,7 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
       return m
     } catch (e) {
-      console.log('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
+      logger.error('Failed to load remote module', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
     }
   }
