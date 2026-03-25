@@ -11,7 +11,7 @@ export * from './lib/directives/tooltipOnOverflow.directive'
 export * from './lib/directives/template.directive'
 export * from './lib/directives/basic.directive'
 export * from './lib/directives/loading-indicator.directive'
-export * from './lib/directives/ocx-tooltip.directive'
+export * from './lib/directives/tooltip.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'

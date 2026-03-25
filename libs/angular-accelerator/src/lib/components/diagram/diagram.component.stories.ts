@@ -15,7 +15,7 @@ import { DiagramComponent } from './diagram.component'
 import { DiagramType } from '../../model/diagram-type'
 import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { TooltipModule } from 'primeng/tooltip'
 
 function generateMockData(count = 10): DiagramData[] {

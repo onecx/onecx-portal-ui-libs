@@ -11,7 +11,7 @@ import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { TooltipModule } from 'primeng/tooltip'
 import { StorybookThemeModule } from '../../../storybook-theme.module'
-import { OcxTooltipDirective } from '../../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 
 export default {
   title: 'Components/DialogInlineComponent',

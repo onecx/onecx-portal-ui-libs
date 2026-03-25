@@ -22,7 +22,7 @@ import {
   PortalDialogService,
 } from './portal-dialog.service'
 import { StorybookThemeModule } from '../storybook-theme.module'
-import { OcxTooltipDirective } from '../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../directives/tooltip.directive'
 
 @Component({
   standalone: false,

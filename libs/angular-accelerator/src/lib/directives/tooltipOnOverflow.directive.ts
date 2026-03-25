@@ -8,7 +8,7 @@ import {
   inject,
 } from '@angular/core'
 import { TooltipStyle } from 'primeng/tooltip'
-import { OcxTooltipDirective } from './ocx-tooltip.directive'
+import { OcxTooltipDirective } from './tooltip.directive'
 
 @Directive({ selector: '[ocxTooltipOnOverflow]', standalone: false, providers: [TooltipStyle] })
 export class TooltipOnOverflowDirective extends OcxTooltipDirective implements OnDestroy, AfterViewInit {

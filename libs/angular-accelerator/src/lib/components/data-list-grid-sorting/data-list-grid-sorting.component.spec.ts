@@ -7,7 +7,7 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
-import { OcxTooltipDirective } from '../../directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent

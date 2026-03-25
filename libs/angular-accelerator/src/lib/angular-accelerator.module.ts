@@ -32,7 +32,7 @@ import {
   provideMultiLanguageIdentifier,
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
-import { OcxTooltipDirective } from './directives/ocx-tooltip.directive'
+import { OcxTooltipDirective } from './directives/tooltip.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
