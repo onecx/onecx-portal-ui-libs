@@ -1,7 +1,11 @@
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import type { Workspace } from '@onecx/integration-interface'
-import { constructRouteUrl, doesUrlExistForWorkspace, type EndpointParameters } from '@onecx/integration-interface'
+import {
+  constructRouteUrl,
+  doesUrlExistForWorkspace,
+  type EndpointParameters,
+  type Workspace,
+} from '@onecx/integration-interface'
 import { useAppState } from './appStateContext'
 import { createLogger } from '../utils/logger.utils'
 

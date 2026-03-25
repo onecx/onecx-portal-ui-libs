@@ -3,7 +3,7 @@ import { ParametersTopic, findParameterValue, type ParameterValue } from '@onecx
 import { firstValueFrom, map } from 'rxjs'
 import { useAppState } from './appStateContext'
 import { useShellCapability } from './shellCapability'
-import { Capability } from '@onecx/integration-interface'
+import { ShellCapability } from '@onecx/integration-interface'
 
 interface ParametersContextValue {
   parameters$: ParametersTopic
@@ -64,7 +64,7 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
     productName = undefined,
     appId = undefined
   ): Promise<any> => {
-    if (!hasCapability(Capability.PARAMETERS_TOPIC)) {
+    if (!hasCapability(ShellCapability.PARAMETERS_TOPIC)) {
       return Promise.resolve(defaultValue)
     }
 

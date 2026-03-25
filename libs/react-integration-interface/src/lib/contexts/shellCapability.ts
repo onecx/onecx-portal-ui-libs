@@ -1,11 +1,11 @@
-import { Capability, hasShellCapability, setShellCapabilities } from '@onecx/integration-interface'
+import { ShellCapability, hasShellCapability, setShellCapabilities } from '@onecx/integration-interface'
 
 /**
  * Registers shell capabilities globally for the host application.
  *
  * @param capabilities - List of capabilities provided by the host shell.
  */
-const setCapabilities = (capabilities: Capability[]): void => {
+const setCapabilities = (capabilities: ShellCapability[]): void => {
   setShellCapabilities(capabilities)
 }
 
@@ -15,7 +15,7 @@ const setCapabilities = (capabilities: Capability[]): void => {
  * @returns Helper for capability checks.
  */
 const useShellCapability = () => {
-  const hasCapability = (capability: Capability): boolean => {
+  const hasCapability = (capability: ShellCapability): boolean => {
     return hasShellCapability(capability)
   }
 
