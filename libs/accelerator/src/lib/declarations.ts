@@ -1,3 +1,5 @@
+import { ensureProperty } from './utils/ensure-property.utils'
+
 declare global {
   interface Window {
     '@onecx/accelerator': {
@@ -24,13 +26,9 @@ declare global {
   }
 }
 
-const g = globalThis as any
-g['@onecx/accelerator'] ??= {}
-g['@onecx/accelerator'].gatherer ??= {}
-g['@onecx/accelerator'].gatherer.promises ??= {}
-g['@onecx/accelerator'].topic ??= {}
-g['@onecx/accelerator'].topic.useBroadcastChannel ??= 'V2'
-g['@onecx/accelerator'].topic.initDate ??= Date.now()
-g['@onecx/accelerator'].topic.tabId ??= Math.ceil(globalThis.performance?.now?.() ?? 0)
+ensureProperty(globalThis as any, ['@onecx/accelerator', 'gatherer', 'promises'], {})
+ensureProperty(globalThis as any, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], 'V2')
+ensureProperty(globalThis as any, ['@onecx/accelerator', 'topic', 'initDate'], Date.now())
+ensureProperty(globalThis as any, ['@onecx/accelerator', 'topic', 'tabId'], Math.ceil(globalThis.performance?.now?.() ?? 0))
 
 export default globalThis

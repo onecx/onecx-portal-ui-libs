@@ -2,6 +2,7 @@ import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
 import { createLogger } from './logger.utils'
+import { ensureProperty } from './ensure-property.utils'
 
 import '../declarations'
 
@@ -24,7 +25,7 @@ export class Gatherer<Request, Response> {
     this.topic = new Topic<{ id: number; request: Request }>(name, version, false)
     // Perform a callback every time a request is received in the topic.
     this.topicSub = this.topic.subscribe((m) => {
-      const accelerator = (globalThis as any)['@onecx/accelerator']
+      const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
       if (!this.isOwnerOfRequest(m) && accelerator?.gatherer?.promises) {
         this.logReceivedIfDebug(name, version, m)
         if (!accelerator.gatherer.promises[m.id]) {
@@ -51,7 +52,7 @@ export class Gatherer<Request, Response> {
     this.topicSub?.unsubscribe()
     this.topic.destroy()
     for (const id of this.ownIds) {
-      const accelerator = (globalThis as any)['@onecx/accelerator']
+      const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
       if (accelerator?.gatherer?.promises?.[id]) {
         delete accelerator.gatherer.promises[id]
       }
@@ -59,7 +60,7 @@ export class Gatherer<Request, Response> {
   }
 
   async gather(request: Request): Promise<Response[]> {
-    const accelerator = (globalThis as any)['@onecx/accelerator']
+    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
     if (!accelerator?.gatherer?.promises) {
       throw new Error('Gatherer is not initialized')
     }

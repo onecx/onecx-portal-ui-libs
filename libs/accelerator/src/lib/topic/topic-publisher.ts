@@ -4,6 +4,7 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicResolveMessage } from './topic-resolve-message'
 import { createLogger } from '../utils/logger.utils'
 import { ComponentLogger } from '../utils/create-logger.utils'
+import { ensureProperty } from '../utils/ensure-property.utils'
 
 
 export class TopicPublisher<T> {
@@ -35,11 +36,11 @@ export class TopicPublisher<T> {
       return
     }
 
-    const accelerator = ((globalThis as any)['@onecx/accelerator'] ??= {})
+    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
     if (accelerator.topic?.useBroadcastChannel) {
       if (typeof BroadcastChannel === 'undefined') {
         this.baseLogger.info('BroadcastChannel not supported. Disabling BroadcastChannel for topic publisher')
-        accelerator.topic ??= {}
+        ensureProperty(accelerator, ['topic'], {})
         accelerator.topic.useBroadcastChannel = false
       } else {
         this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
@@ -50,7 +51,7 @@ export class TopicPublisher<T> {
 
   protected sendMessage(message: TopicMessage): void {
     this.createBroadcastChannel()
-    const accelerator = ((globalThis as any)['@onecx/accelerator'] ??= {})
+    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
     if (accelerator.topic?.useBroadcastChannel === "V2") {
       this.publishBroadcastChannelV2?.postMessage(message)
     } else if (accelerator.topic?.useBroadcastChannel) {

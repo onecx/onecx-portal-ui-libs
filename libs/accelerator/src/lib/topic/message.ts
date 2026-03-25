@@ -1,11 +1,12 @@
+import { ensureProperty } from '../utils/ensure-property.utils'
+
 declare global {
   interface Window {
     onecxMessageId: number
   }
 }
 
-const g = globalThis as any
-g.onecxMessageId ??= 1
+const g = ensureProperty(globalThis as any, ['onecxMessageId'], 1)
 
 export class Message {
   timestamp: number
