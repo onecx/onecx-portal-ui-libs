@@ -80,7 +80,7 @@
             [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
             class="more-actions-menu-button menu-btn"
             [attr.name]="'data-grid-item-menu-button'"
-            [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
+            [ocxTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"
           ></button>
         </div>
@@ -111,7 +111,7 @@
             icon="pi pi-eye"
             pButton
             class="p-button-rounded p-button-text mb-1 mr-2 viewListItemButton"
-            [pTooltip]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
+            [ocxTooltip]="(viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
             tooltipPosition="top"
             [tooltipOptions]="{
               disabled: !!viewActionEnabledField && !fieldIsTruthy(item, viewActionEnabledField)
@@ -129,7 +129,7 @@
             class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
             icon="pi pi-pencil"
             pButton
-            [pTooltip]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
+            [ocxTooltip]="(editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
             tooltipPosition="top"
             [tooltipOptions]="{
               disabled: !!editActionEnabledField && !fieldIsTruthy(item, editActionEnabledField)
@@ -147,7 +147,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
             pButton
-            [pTooltip]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
+            [ocxTooltip]="(deleteMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
             tooltipPosition="top"
             [tooltipOptions]="{
               disabled: !!deleteActionEnabledField && !fieldIsTruthy(item, deleteActionEnabledField)
@@ -168,7 +168,7 @@
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
             (click)="action.callback(item)"
-            [pTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
+            [ocxTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
             tooltipPosition="top"
             [tooltipOptions]="{
               disabled: action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))
@@ -185,7 +185,7 @@
             [icon]="'pi pi-ellipsis-v'"
             (click)="toggleOverflowMenu($event, menu, item)"
             [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
-            [pTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
+            [ocxTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"
             [attr.name]="'data-list-overflow-item-menu-button'"
           ></button>
