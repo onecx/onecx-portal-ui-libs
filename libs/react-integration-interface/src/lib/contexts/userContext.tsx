@@ -10,6 +10,9 @@ import {
 } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { createLogger } from '../utils/logger.utils'
+
+const logger = createLogger('UserService')
 
 interface UserContextValue {
   profile$: UserProfileTopic
@@ -108,7 +111,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
           map((permissions) => {
             const result = permissions.includes(permissionKey)
             if (!result) {
-              console.log(`👮‍♀️ No permission for: ${permissionKey}`)
+              logger.debug(`No permission for: ${permissionKey}`)
             }
             return !!result
           })

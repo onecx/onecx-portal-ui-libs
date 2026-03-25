@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
+import { authServiceProxy, MISSING_PROXY_ERROR } from './auth-proxy-service'
 
 const WHITELIST = ['assets']
 export interface AuthenticatedAxiosInstance extends AxiosInstance {
@@ -20,11 +21,15 @@ export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (b
         return config
       }
 
-      if (window.onecxAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-        await window.onecxAuth.authServiceProxy.v1.updateTokenIfNeeded()
+      try {
+        await authServiceProxy.updateTokenIfNeeded()
+      } catch (error) {
+        if ((error as Error).message !== MISSING_PROXY_ERROR) {
+          throw error
+        }
       }
 
-      const headerValues = window.onecxAuth?.authServiceProxy?.v1?.getHeaderValues()
+      const headerValues = authServiceProxy.getHeaderValues()
 
       if (headerValues) {
         if (!config.headers) {
