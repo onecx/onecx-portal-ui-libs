@@ -1,9 +1,9 @@
 import type { ComponentType } from 'react'
-import { withBaseProviders } from '../../../utils/withBaseProviders'
+import { withBaseProviders } from '../../../../utils/withBaseProviders'
 import { withRemotesPrimereactStylesIsolation } from '../withRemotesPrimereactStylesIsolation'
-import { composeProviders } from '../../../utils/composeProviders'
+import { composeProviders } from '../../../../utils/composeProviders'
 import { withRemoteStyles } from '../withRemoteStyles'
-import { withAppGlobals } from '../../../utils/withAppGlobals'
+import { withAppGlobals } from '../../../../utils/withAppGlobals'
 
 interface AppGlobals {
   PRODUCT_NAME: string

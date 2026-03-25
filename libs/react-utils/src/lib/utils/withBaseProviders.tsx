@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 import { AppStateProvider, ConfigurationProvider, UserProvider } from '@onecx/react-integration-interface'
 import { SyncedRouterProvider } from '@onecx/react-webcomponents'
-import '../styling/dynamicScoping/index'
+import '../styling/primeReact/dynamicScoping/index'
 import { TranslationBridge } from './translationBridge'
 
 /**

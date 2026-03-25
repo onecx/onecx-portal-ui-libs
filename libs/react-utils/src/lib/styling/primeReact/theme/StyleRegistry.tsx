@@ -2,7 +2,7 @@ import { type ReactNode, useState, useEffect } from 'react'
 import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
-import { useAppGlobals } from '../../utils/withAppGlobals'
+import { useAppGlobals } from '../../../utils/withAppGlobals'
 
 type Props = Readonly<{
   children?: ReactNode

@@ -25,9 +25,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: 'src/lib/index.ts',
-        routing: 'src/lib/routing/index.tsx',
-        styling: 'src/lib/styling/index.ts',
-        theme: 'src/lib/styling/theme/index.ts',
+        styling: 'src/lib/styling/primeReact/index.ts',
         utils: 'src/lib/utils/index.ts',
       },
       name: 'react-utils',

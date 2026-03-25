@@ -5,7 +5,7 @@ import {
   dataMfeElementKey,
   dataNoPortalLayoutStylesKey,
   dataStyleIdKey,
-} from '../../../utils/styleAttributes'
+} from '../../../../utils/styleAttributes'
 import { findElementWithStyleDataOrIntermediateStyleData } from './findElementWithStyleDataOrIntermediateStyleData'
 import type { StyleData } from '../types'
 

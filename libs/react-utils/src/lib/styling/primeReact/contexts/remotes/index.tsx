@@ -1,6 +1,6 @@
-import { createContext, useEffect, type RefObject, useRef, type ReactNode, useMemo } from 'react'
+import { createContext, useEffect, useMemo, useRef, type ReactNode, useState, type RefObject } from 'react'
 import { attachPrimeReactScoper } from '../../scopingFunctionality'
-import { useAppGlobals } from '../../../utils/withAppGlobals'
+import { useAppGlobals } from '../../../../utils/withAppGlobals'
 
 interface PrimeReactStyleProviderProps {
   children: ReactNode
@@ -9,35 +9,41 @@ interface PrimeReactStyleProviderProps {
 const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement | null> } | undefined>(undefined)
 
 /**
- * Provides PrimeReact style scoping for the main application.
+ * Provides PrimeReact style scoping for remote components.
  *
  * @param children - React subtree rendered within the scoped container.
  * @returns Provider wrapping the scoped subtree.
  */
 export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
   const rootRef = useRef<HTMLDivElement>(null)
+  const [isScoped, setIsScoped] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
-  const appId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
+
+  const remoteId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
 
   useEffect(() => {
     const detach = attachPrimeReactScoper({
-      id: appId,
-      productName: PRODUCT_NAME,
-      scopeRootSelector: `[data-style-id="${appId}"]`,
+      id: remoteId,
+      scopeRootSelector: `[data-style-id="${remoteId}"]`,
       bootstrapExisting: true,
-      blockFurtherUpdatesForCapturedIds: false,
+      blockFurtherUpdatesForCapturedIds: true,
+      dataPrimereactStyleName: 'remote',
+      freezeAfterFirstUpdate: true,
+      productName: PRODUCT_NAME,
     })
-
+    setIsScoped(true)
     return () => detach()
-  }, [appId])
+  }, [remoteId])
 
   const contextValue = useMemo(() => ({ rootRef }), [rootRef])
+
+  if (!isScoped) return null // spinner or smthing
 
   return (
     <PrimeReactStyleContext.Provider value={contextValue}>
       <div
         ref={rootRef}
-        data-style-id={appId}
+        data-style-id={remoteId}
         data-style-isolation
         data-no-portal-layout-styles
         style={{ display: 'contents' }}
