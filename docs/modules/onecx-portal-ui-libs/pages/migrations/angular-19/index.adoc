@@ -35,8 +35,6 @@ You can click the name of any change to open a detailed migration guide with ins
 ** [ ] xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth]
 ** [ ] xref:./update-component-imports.adoc[Update Component Imports]
 ** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
-** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
-** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]
 ** [ ] xref:./adjust-packages-in-webpack-config.adoc[Adjust Packages in Webpack Config]
 ** [ ] xref:./adjust-standalone-mode.adoc[Adjust Standalone Mode]
 ** [ ] xref:./remove-menuservice.adoc[Remove MenuService]
@@ -63,6 +61,8 @@ Once the previous steps are completed, **the application should be upgraded to A
 
 [%interactive]
 ** [ ] xref:./update-packages.adoc[Required Package Updates]
+** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
+** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]
 ** [ ] xref:./update-component-import-post-migration.adoc[Update Component Imports after Migration]
 ** [ ] xref:./update-portal-api-configuration.adoc[Update Portal API Configuration object parameters]
 ** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
