@@ -5,6 +5,7 @@ module.exports = {
       channel: 'rc',
       prerelease: 'rc',
     },
+    { name: 'v5.52.x', range: '5.52.x', channel: 'v5-lts' },
     {
       name: 'v5',
       range: '5.x.x',
