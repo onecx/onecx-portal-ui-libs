@@ -49,6 +49,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import equal from 'fast-deep-equal'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -131,9 +132,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
+    const shouldResetPage = !equal(this._filters$.getValue(), value)
     this._filters$.next(value)
-
-    this.resetPage()
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
   @Input()

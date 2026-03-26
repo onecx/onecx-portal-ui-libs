@@ -46,6 +46,7 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { Filter } from '../../model/filter.model'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import equal from 'fast-deep-equal'
 
 export type ListGridData = {
   id: string | number
@@ -183,9 +184,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
+    const shouldResetPage = !equal(this._filters$.getValue(), value)
     this._filters$.next(value)
-    
-    this.resetPage()
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _originalData: RowListGridData[] = []
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)

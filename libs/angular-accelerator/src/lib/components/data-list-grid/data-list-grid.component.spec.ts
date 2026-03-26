@@ -1167,15 +1167,26 @@ describe('DataListGridComponent', () => {
       expect(component.page).toBe(0)
     })
 
-    it('should not call resetPage when filters were empty', () => {
+    it('should call resetPage when filters were empty', () => {
       component.filters = []
       const resetSpy = jest.spyOn(component, 'resetPage')
       component.page = 2
 
       component.filters = [{ columnId: 'name', value: 'a' }] as any
 
-      expect(resetSpy).not.toHaveBeenCalled()
-      expect(component.page).toBe(2)
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+    })
+
+    it('should call resetPage when filter value changed', () => {
+      component.filters = [{ columnId: 'name', value: 'a' }] as any
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 2
+
+      component.filters = [{ columnId: 'name', value: 'b' }] as any
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
     })
 
     it('should update BehaviorSubject before resetPage so emitted state is current', () => {
