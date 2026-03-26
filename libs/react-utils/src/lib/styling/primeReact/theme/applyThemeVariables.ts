@@ -23,7 +23,7 @@ function mapThemeToCSSVariables(themeProperties: Record<string, any>): Record<st
   const cssVariables: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(flattenedProperties)) {
-    const cssVarName = `--${key}`
+    const cssVarName = `--app${key}`
     cssVariables[cssVarName] = value
   }
 

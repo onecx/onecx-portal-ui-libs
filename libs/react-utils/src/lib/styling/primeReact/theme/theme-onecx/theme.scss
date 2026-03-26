@@ -1,10 +1,10 @@
 @use "./onecx-variables" as onecx;
 
-$primaryColor: var(--primary-color) !default;
-$primaryLightColor: var(--primary-color) !default;
-$primaryDarkColor: var(--primary-color) !default;
-$primaryDarkerColor: var(--primary-color) !default;
-$primaryTextColor: var(--text-color) !default;
+$primaryColor: var(--app-primary-color) !default;
+$primaryLightColor: var(--app-primary-color) !default;
+$primaryDarkColor: var(--app-primary-color) !default;
+$primaryDarkerColor: var(--app-primary-color) !default;
+$primaryTextColor: var(--app-text-color) !default;
 
 $highlightBg: #eff6ff !default;
 $highlightTextColor: $primaryDarkerColor !default;
