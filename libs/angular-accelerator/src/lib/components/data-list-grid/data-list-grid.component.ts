@@ -183,11 +183,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    const shouldResetPage = this._filters$.getValue().length > 0
     this._filters$.next(value)
-    if (shouldResetPage) {
-      this.resetPage()
-    }
+    
+    this.resetPage()
   }
   _originalData: RowListGridData[] = []
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
