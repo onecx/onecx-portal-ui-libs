@@ -94,10 +94,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if (this._rows$.getValue().length > value.length ) {
-      this.resetPage();
-    }
+    const shouldResetPage = this._rows$.getValue().length > value.length
     this._rows$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
     
     const currentResults = value.length;
     const newStatus = currentResults === 0
@@ -130,10 +131,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if (this._filters$.getValue().length) {
-      this.resetPage();
-    }
+    const shouldResetPage = this._filters$.getValue().length > 0
     this._filters$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
   @Input()
@@ -706,12 +708,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       )
     if (this.clientSideFiltering) {
       this.filters = filters
+    } else {
+      this.resetPage()
     }
     this.filtered.emit(filters)
     this.emitComponentStateChanged({
       filters,
     })
-    this.resetPage()
   }
 
   getSelectedFilters(columnId: string): unknown[] | undefined {

@@ -161,9 +161,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    !this._data$.getValue().length ?? this.resetPage()
+    const shouldResetPage = this._data$.getValue().length > value.length
     this._originalData = [...value]
     this._data$.next([...value])
+    if (shouldResetPage) {
+      this.resetPage()
+    }
 
     const currentResults = value.length
     const newStatus =
@@ -180,8 +183,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    const shouldResetPage = this._filters$.getValue().length > 0
     this._filters$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _originalData: RowListGridData[] = []
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
