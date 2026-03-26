@@ -706,13 +706,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       )
     if (this.clientSideFiltering) {
       this.filters = filters
-    } else {
-      this.resetPage()
     }
     this.filtered.emit(filters)
     this.emitComponentStateChanged({
       filters,
     })
+    if (!this.clientSideFiltering) {
+      this.resetPage()
+    }
   }
 
   getSelectedFilters(columnId: string): unknown[] | undefined {
