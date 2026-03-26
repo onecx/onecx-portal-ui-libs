@@ -1,3 +1,11 @@
+## [5.52.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.8...v5.52.9) (2026-03-26)
+
+### Bug Fixes
+
+* add release config ([9e03505](https://github.com/onecx/onecx-portal-ui-libs/commit/9e03505aa5e4fe1cdcfc05e3ed2eb2e26d256d0f))
+* fix infinite rerender after filter change ([bd82216](https://github.com/onecx/onecx-portal-ui-libs/commit/bd82216019dafd376420301557627dba92b351f1))
+* fix peer dependencies ([5f9cec9](https://github.com/onecx/onecx-portal-ui-libs/commit/5f9cec9691d3284f8218b5ae2c2428e78ecb9fd4))
+
 ## [5.52.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.7...v5.52.8) (2026-02-18)
 
 ### Bug Fixes
