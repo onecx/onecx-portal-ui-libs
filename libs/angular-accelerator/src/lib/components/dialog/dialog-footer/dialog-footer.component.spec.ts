@@ -4,6 +4,8 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import { DialogFooterComponent } from './dialog-footer.component'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 
 describe('DialogFooterComponent', () => {
   let component: DialogFooterComponent
@@ -24,7 +26,7 @@ describe('DialogFooterComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DialogFooterComponent],
-      imports: [AngularAcceleratorModule],
+      imports: [AngularAcceleratorModule, TooltipModule, OcxTooltipDirective],
       providers: [
         DynamicDialogConfig,
         DynamicDialogRef,

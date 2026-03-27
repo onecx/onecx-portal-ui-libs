@@ -5,6 +5,8 @@ import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -13,7 +15,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), TooltipModule, OcxTooltipDirective],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
