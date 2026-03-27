@@ -2,6 +2,7 @@ import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicResolveMessage } from './topic-resolve-message'
+import { acceleratorState } from '../declarations'
 
 export class TopicPublisher<T> {
   protected publishPromiseResolver: Record<number, () => void> = {}
@@ -29,17 +30,14 @@ export class TopicPublisher<T> {
       return
     }
 
-    const accelerator = ((globalThis as any)['@onecx/accelerator'] ??= {})
-    if (accelerator?.topic?.useBroadcastChannel) {
-      if (typeof (globalThis as any).BroadcastChannel === 'undefined') {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel) {
+      if (typeof BroadcastChannel === 'undefined') {
         console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic publisher')
-        accelerator.topic ??= {}
-        accelerator.topic.useBroadcastChannel = false
+        acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        accelerator.topic ??= {}
         this.publishBroadcastChannelV2 = new BroadcastChannel(
-          `TopicV2-${this.name}|${this.version}-${accelerator.topic.tabId}`
+          `TopicV2-${this.name}|${this.version}-${acceleratorState['@onecx/accelerator'].topic.tabId}`
         )
       }
     }
@@ -47,17 +45,16 @@ export class TopicPublisher<T> {
 
   protected sendMessage(message: TopicMessage): void {
     this.createBroadcastChannel()
-    const accelerator = (globalThis as any)['@onecx/accelerator']
-    if (accelerator?.topic?.useBroadcastChannel === 'V2') {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === 'V2') {
       this.publishBroadcastChannelV2?.postMessage(message)
-    } else if (accelerator?.topic?.useBroadcastChannel) {
+    } else if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel) {
       this.publishBroadcastChannel?.postMessage(message)
     } else {
-      const postMessage = (globalThis as any).postMessage
+      const postMessage = globalThis.postMessage
       if (typeof postMessage !== 'function') {
         throw new Error('postMessage is not available in this environment')
       }
-      postMessage.call(globalThis, message, '*')
+      postMessage( message, '*')
     }
   }
 }
