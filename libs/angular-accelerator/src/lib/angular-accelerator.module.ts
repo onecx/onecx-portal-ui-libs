@@ -51,6 +51,7 @@ import { LoadingIndicatorComponent } from './components/loading-indicator/loadin
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from 'primeng/api'
+import { OcxTooltipDirective } from './directives/tooltip.directive'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -69,6 +70,7 @@ function appInitializer(userService: UserService) {
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
+    OcxTooltipDirective
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -162,6 +164,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
+    OcxTooltipDirective
   ],
 })
 export class AngularAcceleratorModule {}

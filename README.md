@@ -8,10 +8,11 @@ OneCx portal UI libraries
 
 # Release configuration
 
-OneCX Portal UI Libs is using https://semantic-release.gitbook.io/semantic-release[semantic-release]for packages release. In this repository the following branches are important in context of making new releases:
+OneCX Portal UI Libs is using [semantic-release](https://semantic-release.gitbook.io/semantic-release) for packages release. In this repository the following branches are important in context of making new releases:
 
 - **v5** - contains source code for `v5` distribution tag compatible with Angular 18.
-- **v6** - contains source code for `v5` distribution tag compatible with Angular 19.
+- **v6** - contains source code for `v6` distribution tag compatible with Angular 19.
+- **v7** - contains source code for `v7` distribution tag compatible with Angular 20.
 - **main** - contains source code for `rc` distribution tag with features for future release of OneCX.
 
 # Releasing libs
@@ -29,7 +30,7 @@ Depending on the commits included for a release in the `v5` or `v6` branch, the 
 
 # Pre-releases
 
-The https://semantic-release.gitbook.io/semantic-release[semantic-release] allows to create pre-releases. In this repository, `main` branch should contain source code which could be released as a release candidate.
+The [semantic-release](https://semantic-release.gitbook.io/semantic-release) allows to create pre-releases. In this repository, `main` branch should contain source code which could be released as a release candidate.
 
 In order to release new version of pre-release (`rc` distribution tag) of OneCX libraries, use `create-release` action to run the release workflow for **main branch**.
 

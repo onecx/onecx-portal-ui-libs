@@ -11,7 +11,7 @@ import {
 } from '@onecx/angular-integration-interface/mocks'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { TooltipStyle } from 'primeng/tooltip'
+import { TooltipModule, TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -20,6 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -228,7 +229,7 @@ describe('DataListGridComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent],
-      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule, TooltipModule, OcxTooltipDirective],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         {
@@ -1088,6 +1089,111 @@ describe('DataListGridComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('data & filters setter (resetPage)', () => {
+    it('should call resetPage when data length decreases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.page = 2
+
+      component.data = mockData.slice(0, 3)
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+      expect(pageSpy).toHaveBeenCalledWith(0)
+      expect(stateSpy).toHaveBeenCalled()
+    })
+
+    it('should not call resetPage when data length increases', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
+      component.page = 2
+
+      component.data = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: `name ${i}` } as any))
+
+      expect(resetSpy).not.toHaveBeenCalled()
+      expect(component.page).toBe(2)
+      expect(pageSpy).not.toHaveBeenCalled()
+    })
+
+    it('should not call resetPage when data length stays the same', () => {
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 2
+
+      component.data = mockData.map((d) => ({ ...d }))
+
+      expect(resetSpy).not.toHaveBeenCalled()
+      expect(component.page).toBe(2)
+    })
+
+    it('should call resetPage when filters had entries', () => {
+      component.filters = [
+        { columnId: 'name', value: 'a' },
+        { columnId: 'description', value: 'b' },
+      ] as any
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 3
+
+      component.filters = [{ columnId: 'name', value: 'a' }] as any
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+    })
+
+    it('should call resetPage when filters were empty', () => {
+      component.filters = []
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 2
+
+      component.filters = [{ columnId: 'name', value: 'a' }] as any
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+    })
+
+    it('should call resetPage when filter value changed', () => {
+      component.filters = [{ columnId: 'name', value: 'a' }] as any
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 2
+
+      component.filters = [{ columnId: 'name', value: 'b' }] as any
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+    })
+
+    it('should update BehaviorSubject before resetPage so emitted state is current', () => {
+      component.filters = [
+        { columnId: 'name', value: 'a' },
+        { columnId: 'description', value: 'b' },
+      ] as any
+
+      const newFilters = [{ columnId: 'name', value: 'a' }] as any
+      const emittedPages: number[] = []
+      component.pageChanged.subscribe((p: number) => emittedPages.push(p))
+
+      component.page = 3
+      component.filters = newFilters
+
+      expect(emittedPages).toContain(0)
+      expect(component.filters).toEqual(newFilters)
+    })
+
+    it('should update data BehaviorSubject before resetPage', () => {
+      component.data = mockData
+      const reducedData = mockData.slice(0, 2)
+
+      const emittedPages: number[] = []
+      component.pageChanged.subscribe((p: number) => emittedPages.push(p))
+
+      component.page = 2
+      component.data = reducedData
+
+      expect(emittedPages).toContain(0)
+      expect(component.data).toEqual(reducedData)
     })
   })
 })
