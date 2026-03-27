@@ -1,3 +1,10 @@
+## [5.53.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.53.0...v5.53.1) (2026-03-27)
+
+### Bug Fixes
+
+* fix infinite rerender after filter change ([#1320](https://github.com/onecx/onecx-portal-ui-libs/issues/1320)) ([aa4ff80](https://github.com/onecx/onecx-portal-ui-libs/commit/aa4ff80301abd59d58aca54eb7cad122a6b91ba2))
+* update ensure-property-utils  from main to include latest fixes ([#1285](https://github.com/onecx/onecx-portal-ui-libs/issues/1285)) ([9df7003](https://github.com/onecx/onecx-portal-ui-libs/commit/9df7003c2fee3a69ad33bf764171e83fe9c85e35))
+
 ## [5.53.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.8...v5.53.0) (2026-03-20)
 
 ### Features
