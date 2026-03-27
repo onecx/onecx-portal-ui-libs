@@ -63,6 +63,7 @@ export interface ListGridDataMenuItem extends MenuItem {
 export interface DataListGridComponentState {
   activePage?: number
   pageSize?: number
+  filters?: Filter[]
 }
 
 @Component({
@@ -531,6 +532,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   emitComponentStateChanged(state: DataListGridComponentState = {}) {
     this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
       this.componentStateChanged.emit({
+        filters: this.filters,
         pageSize,
         activePage: this.page,
         ...state,
