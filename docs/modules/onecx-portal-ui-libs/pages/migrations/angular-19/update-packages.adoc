@@ -11,10 +11,6 @@ If the following packages are used in your project, update them to ensure compat
 | `^6.x.y`
 | Update to the latest `6.x.y` version available. 
 
-| `@onecx/nx-plugin`
-| `^x.y.z`
-| Update to the latest `@onecx/nx-plugin` version available. 
-
 | `@onecx/portal-layout-styles`
 | `-`
 | Removed in Angular 19.
@@ -71,7 +67,6 @@ npm install @ngx-translate/core@^16.0.0 \
   primeflex@^4.0.0 \
   ngrx-store-localstorage@^19.0.0 \
   ngx-build-plus@^19.0.0 \
-  @onecx/nx-plugin@^22.1.3 
 
 npm install @ngrx/<package-name>@^19
 

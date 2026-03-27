@@ -5,11 +5,11 @@ This guide describes how to upgrade an NX-based OneCX application to Angular 19.
 
 == Update @onecx/nx-plugin
 
-Update `@onecx/nx-plugin` to latest version available. 
+Update `@onecx/nx-plugin` to latest 6.x.y available. 
 
 [source, bash]
 ----
-npm install @onecx/nx-plugin@latest
+npm install @onecx/nx-plugin@^6
 ----
 
 == Update NX Packages
