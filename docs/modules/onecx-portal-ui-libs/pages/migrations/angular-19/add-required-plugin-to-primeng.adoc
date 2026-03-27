@@ -10,11 +10,11 @@ This setup will be replaced by a OneCX-provided Webpack plugin in a future versi
 
 == Install and Configure the Webpack Plugin
 
-. Install `modify-source-webpack-plugin`
+. Install `modify-source-webpack-plugin` compatible with Webpack 5:
 +
 [source,bash]
 ----
-npm install modify-source-webpack-plugin --save-dev
+npm install modify-source-webpack-plugin@^4 --save-dev
 ----
 . Import `ModifySourcePlugin` and `ReplaceOperation` from `modify-source-webpack-plugin` in `webpack.config.js`
 . Create a `modifyPrimeNgPlugin` instance with a rules array containing one rule object:
