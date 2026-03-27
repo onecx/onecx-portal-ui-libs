@@ -1,3 +1,9 @@
+## [5.52.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.9...v5.52.10) (2026-03-27)
+
+### Bug Fixes
+
+* fix filters sync ([8204cd6](https://github.com/onecx/onecx-portal-ui-libs/commit/8204cd6117ddff529de7ab7de62c9f12ab0abf59))
+
 ## [5.52.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.52.8...v5.52.9) (2026-03-26)
 
 ### Bug Fixes
