@@ -4,7 +4,6 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicResolveMessage } from './topic-resolve-message'
 import { createLogger } from '../utils/logger.utils'
 import { ComponentLogger } from '../utils/create-logger.utils'
-import { ensureProperty } from '../utils/ensure-property.utils'
 import { acceleratorState } from '../declarations'
 
 

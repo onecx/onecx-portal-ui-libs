@@ -16,7 +16,6 @@ import { TopicResolveMessage } from './topic-resolve-message'
 import '../declarations'
 import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
 import { createLogger } from '../utils/logger.utils'
-import { ensureProperty } from '../utils/ensure-property.utils'
 import { acceleratorState } from '../declarations'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
