@@ -945,7 +945,7 @@ describe('DataTableComponent', () => {
       expect(pageSpy).not.toHaveBeenCalled()
     })
 
-    it('should resetPage when filters length changes', () => {
+    it('should resetPage on every filters assignment', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
       component.page = 4
       component.filters = [
@@ -966,6 +966,116 @@ describe('DataTableComponent', () => {
 
       expect(resetSpy).toHaveBeenCalledTimes(2)
       expect(component.page).toBe(0)
+    })
+
+    it('should update BehaviorSubject before resetPage so emitted state contains current filters', () => {
+      const initialFilters = [
+        { columnId: 'name', value: 'a' },
+        { columnId: 'description', value: 'b' },
+      ] as any
+      component.filters = initialFilters
+
+      const newFilters = [{ columnId: 'name', value: 'a' }] as any
+      const emittedStates: any[] = []
+      component.componentStateChanged.subscribe((state: any) => emittedStates.push(state))
+
+      component.filters = newFilters
+
+      const statesWithFilters = emittedStates.filter((s) => s.filters)
+      statesWithFilters.forEach((state) => {
+        expect(state.filters).toEqual(newFilters)
+      })
+    })
+
+    it('should update BehaviorSubject before resetPage so emitted state contains current rows', () => {
+      component.rows = mockData
+      const reducedRows = mockData.slice(0, 2)
+
+      const emittedStates: any[] = []
+      component.componentStateChanged.subscribe((state: any) => emittedStates.push(state))
+
+      component.rows = reducedRows
+
+      const statesWithRows = emittedStates.filter((s) => s.selectedRows !== undefined)
+      statesWithRows.forEach((state) => {
+        expect(state.selectedRows).toBeDefined()
+      })
+    })
+  })
+
+  describe('onMultiselectFilterChange', () => {
+    it('should call resetPage via filters setter when clientSideFiltering is true', () => {
+      component.clientSideFiltering = true
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 3
+
+      component.onMultiselectFilterChange(
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
+        { value: ['a', 'b'] }
+      )
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+      expect(component.filters.length).toBe(2)
+    })
+
+    it('should call resetPage directly when clientSideFiltering is false', () => {
+      component.clientSideFiltering = false
+      const resetSpy = jest.spyOn(component, 'resetPage')
+      component.page = 3
+
+      component.onMultiselectFilterChange(
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
+        { value: ['a', 'b'] }
+      )
+
+      expect(resetSpy).toHaveBeenCalled()
+      expect(component.page).toBe(0)
+    })
+
+    it('should emit filtered event with correct filters', () => {
+      component.clientSideFiltering = true
+      const filteredSpy = jest.spyOn(component.filtered, 'emit')
+
+      component.onMultiselectFilterChange(
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
+        { value: ['test1', 'test2'] }
+      )
+
+      expect(filteredSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ columnId: 'name', value: 'test1' }),
+          expect.objectContaining({ columnId: 'name', value: 'test2' }),
+        ])
+      )
+    })
+
+    it('should emit componentStateChanged with correct filters', () => {
+      component.clientSideFiltering = true
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      component.onMultiselectFilterChange(
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
+        { value: ['test1'] }
+      )
+
+      expect(stateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.arrayContaining([expect.objectContaining({ columnId: 'name', value: 'test1' })]),
+        })
+      )
+    })
+
+    it('should not update internal filters when clientSideFiltering is false', () => {
+      component.clientSideFiltering = false
+      component.filters = []
+
+      component.onMultiselectFilterChange(
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
+        { value: ['test1'] }
+      )
+
+      expect(component.filters).toEqual([])
     })
   })
 

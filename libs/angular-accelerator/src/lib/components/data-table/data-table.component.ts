@@ -49,6 +49,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import equal from 'fast-deep-equal'
 
 
 export type Primitive = number | string | boolean | bigint | Date
@@ -101,10 +102,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if (this._rows$.getValue().length > value.length ) {
-      this.resetPage();
-    }
+    const shouldResetPage = this._rows$.getValue().length > value.length
     this._rows$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
 
     const currentResults = value.length;
     const newStatus = currentResults === 0
@@ -137,10 +139,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if (this._filters$.getValue().length) {
-      this.resetPage();
-    }
+    const shouldResetPage = !equal(this._filters$.getValue(), value)
     this._filters$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
   @Input()
@@ -662,7 +665,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.emitComponentStateChanged({
       filters,
     })
-    this.resetPage()
+    if (!this.clientSideFiltering) {
+      this.resetPage()
+    }
   }
 
   getSelectedFilters(columnId: string): unknown[] | undefined {
