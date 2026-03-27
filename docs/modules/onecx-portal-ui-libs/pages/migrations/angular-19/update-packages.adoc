@@ -11,14 +11,6 @@ If the following packages are used in your project, update them to ensure compat
 | `^6.x.y`
 | Update to the latest `6.x.y` version available. 
 
-| `@onecx/portal-layout-styles`
-| `-`
-| Removed in Angular 19.
-
-| `@onecx/portal-integration-angular`
-| `-`
-| Removed in Angular 19.
-
 | `@ngrx/*`
 | `^19.x.y`
 | Update to the latest Angular 19 compatible version.
