@@ -293,7 +293,7 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private isLogEnabled() {
-    return acceleratorState['@onecx/accelerator'].topic.debug.includes(this.name)
+    return acceleratorState['@onecx/accelerator'].topic.debug?.includes(this.name)
   }
 
 

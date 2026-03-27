@@ -8,6 +8,7 @@
 
 import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
+import { acceleratorState } from '../declarations'
 
 import { BroadcastChannelMock } from '../topic/mocks/broadcast-channel.mock'
 
@@ -40,9 +41,7 @@ describe('Gatherer', () => {
   let gatherer2: Gatherer<string, string>
 
   beforeEach(() => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    acceleratorState['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
 
     listeners = []
 
@@ -70,15 +69,15 @@ describe('Gatherer', () => {
   })
 
   it('should throw an error if gatherer is not initialized', async () => {
-    delete (window as any)['@onecx/accelerator'].gatherer.promises
+    delete (acceleratorState['@onecx/accelerator'].gatherer as {promises?: Record<number, any[]>}).promises
 
     await expect(gatherer1.gather('request3')).rejects.toThrow('Gatherer is not initialized')
     // Ensure that promises are reset for the next test
-    ;(window as any)['@onecx/accelerator'].gatherer.promises = {}
+    acceleratorState['@onecx/accelerator'].gatherer.promises = {}
   })
 
   it('should log received and answered requests if debug is enabled', async () => {
-    ;(window as any)['@onecx/accelerator'].gatherer.debug = ['test']
+    acceleratorState['@onecx/accelerator'].gatherer.debug = ['test']
     const consoleLogSpy = jest.spyOn(console, 'log')
 
     await gatherer1.gather('request4')
@@ -108,10 +107,10 @@ describe('Gatherer', () => {
 
   it('should clean up promises on destroy', () => {
     gatherer1['ownIds'].add(1)
-    ;(window as any)['@onecx/accelerator'].gatherer.promises[1] = []
+    acceleratorState['@onecx/accelerator'].gatherer.promises[1] = []
 
     gatherer1.destroy()
 
-    expect((window as any)['@onecx/accelerator'].gatherer.promises[1]).toBeUndefined()
+    expect(acceleratorState['@onecx/accelerator'].gatherer.promises[1]).toBeUndefined()
   })
 })
