@@ -3,6 +3,15 @@
 
 This guide describes how to upgrade an NX-based OneCX application to Angular 19. Complete the pre-migration steps from the main migration guide before you continue.
 
+== Update @onecx/nx-plugin
+
+Update `@onecx/nx-plugin` to latest version available. 
+
+[source, bash]
+----
+npm install @onecx/nx-plugin@latest
+----
+
 == Update NX Packages
 
 Update the Angular and NX packages in your workspace by running:
@@ -20,7 +29,13 @@ For details on `nx migrate`, refer to the official documentation: https://nx.dev
 
 == Update Package Versions in package.json
 
-1. After running the migration command, update the remaining packages manually. Update all `@onecx/*` packages to version `^6.0.0`.
+1. After running the migration command, update the remaining packages manually. Update all `@onecx/*` packages to latest available `6.x.y` version.
++
+.Example:
+[source, json]
+----
+npm install @onecx/<package-name>@^6
+----
 
 2. Update the packages listed here to the specified versions: xref:./update-packages.adoc[Required Package Updates].
 

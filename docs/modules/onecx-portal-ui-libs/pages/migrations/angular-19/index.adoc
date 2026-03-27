@@ -49,10 +49,13 @@ npm run build
 
 [#upgrade-to-angular-19]
 == Upgrade to Angular 19
-After completing the pre-migration steps, you can proceed with upgrading your application to Angular 19. Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=18.0-19.0&l=3[Angular Update Guide].
 
-=== Upgrade NX application to Angular 19
-To upgrade an NX application to Angular 19, follow this guide: xref:./upgrade-nx-angular-version.adoc[Upgrade NX Application to Angular 19].
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 19. 
+
+If the project is an NX workspace, follow the instructions in xref:./upgrade-nx-angular-version.adoc[Upgrade NX Application to Angular 19]. After completing the NX migration steps, also review the  official Angular update guide for any additional steps or considerations: https://angular.dev/update-guide?v=18.0-19.0&l=3[Angular Update Guide].
+
+If the project is not an NX workspace, follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=18.0-19.0&l=3[Angular Update Guide]. 
+
 
 [#migration-steps-after-angular-19]
 == Migration Steps after upgrading to Angular 19
