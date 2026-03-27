@@ -53,7 +53,7 @@ describe('TranslationConnectionService', () => {
     expect(translateService.getCurrentLang()).toBe('en')
 
     userService.lang$.next('de')
-    tick(100);
+    tick(100)
     expect(translateService.getCurrentLang()).toBe('de')
   }))
 
