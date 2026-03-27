@@ -17,6 +17,7 @@ import '../declarations'
 import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
 import { createLogger } from '../utils/logger.utils'
 import { ensureProperty } from '../utils/ensure-property.utils'
+import { acceleratorState } from '../declarations'
 
 export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   private readonly logger = createLogger(`Topic:${this.name}`)
@@ -31,16 +32,14 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
 
   constructor(name: string, version: number, sendGetMessage = true) {
     super(name, version)
-    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
-    ensureProperty(accelerator, ['topic', 'initDate'], Date.now())
 
-    if (accelerator.topic?.useBroadcastChannel) {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel) {
       if (typeof BroadcastChannel === 'undefined') {
         this.logger.info('BroadcastChannel not supported. Disabling BroadcastChannel for topic')
-        accelerator.topic.useBroadcastChannel = false
+        acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.readBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${accelerator.topic.tabId}`)
+        this.readBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${acceleratorState['@onecx/accelerator'].topic.tabId}`)
       }
     }
 
@@ -51,17 +50,17 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
     this.isInitializedPromise = new Promise<void>((resolve) => {
       this.resolveInitPromise = resolve
     })
-    const addEventListener = (globalThis as any).addEventListener
+    const addEventListener = globalThis.addEventListener
     if (typeof addEventListener === 'function') {
-      addEventListener.call(globalThis, 'message', this.windowEventListener)
+      addEventListener('message', this.windowEventListener)
     }
     this.readBroadcastChannel?.addEventListener('message', (m) => this.onBroadcastChannelMessage(m))
     this.readBroadcastChannelV2?.addEventListener('message', (m) => this.onBroadcastChannelMessageV2(m))
 
     if (sendGetMessage) {
       if (
-        accelerator.topic.initDate &&
-        Date.now() - accelerator.topic.initDate < 2000
+        acceleratorState['@onecx/accelerator'].topic.initDate &&
+        Date.now() - acceleratorState['@onecx/accelerator'].topic.initDate < 2000
       ) {
         // Delay the get message a bit to give other topics time to initialize
         setTimeout(() => {
@@ -223,9 +222,9 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   destroy() {
-    const removeEventListener = (globalThis as any).removeEventListener
+    const removeEventListener = globalThis.removeEventListener
     if (typeof removeEventListener === 'function') {
-      removeEventListener.call(globalThis, 'message', this.windowEventListener, true)
+      removeEventListener('message', this.windowEventListener, true)
     }
     this.readBroadcastChannel?.close()
     this.publishBroadcastChannel?.close()
@@ -286,21 +285,17 @@ export class Topic<T> extends TopicPublisher<T> implements Subscribable<T> {
   }
 
   private disableBroadcastChannel() {
-    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
-    ensureProperty(accelerator, ['topic'], {})
-    if (accelerator.topic.useBroadcastChannel === true) {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === true) {
       this.logger.info('Disabling BroadcastChannel for topic')
     }
-    accelerator.topic.useBroadcastChannel = false
+    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
   }
 
   private disableBroadcastChannelV2() {
-    const accelerator = ensureProperty(globalThis as any, ['@onecx/accelerator'], {})['@onecx/accelerator']
-    ensureProperty(accelerator, ['topic'], {})
-    if (accelerator.topic.useBroadcastChannel === "V2") {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === "V2") {
       this.logger.info('Disabling BroadcastChannel V2 for topic')
     }
-    accelerator.topic.useBroadcastChannel = true
+    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = true
   }
 
   private handleTopicResolveMessage(m: MessageEvent<TopicMessage>) {
