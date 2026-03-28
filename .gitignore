@@ -145,3 +145,4 @@ libs/angular-accelerator/tmp/
 
 reports
 .claude/worktrees
+.claude/settings.local.json
