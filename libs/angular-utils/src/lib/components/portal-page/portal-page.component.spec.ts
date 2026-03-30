@@ -37,7 +37,7 @@ window.removeEventListener = (_type: any, listener: any) => {
 
 window.postMessage = (m: any) => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
+  setTimeout(() => listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} })), 0)
 }
 
 describe('PortalPageComponent', () => {
@@ -66,6 +66,11 @@ describe('PortalPageComponent', () => {
     fixture = TestBed.createComponent(PortalPageComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
+  })
+
+  afterEach(() => {
+    fixture.destroy()
+    listeners = []
   })
 
   afterAll(() => {
