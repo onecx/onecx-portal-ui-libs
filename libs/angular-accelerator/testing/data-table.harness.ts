@@ -111,4 +111,19 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     }
     return await column.hasClass('p-frozen-column')
   }
+
+  getExpansionColumnHeaderElement = this.locatorForOptional('[name="expansion-column-header"]')
+  getExpansionToggleButtonElements = this.locatorForAll('[name="expansion-column"] button')
+
+  async expansionColumnHeaderExists(): Promise<boolean> {
+    return (await this.getExpansionColumnHeaderElement()) !== null
+  }
+
+  async clickExpansionToggle(rowIndex: number): Promise<void> {
+    const buttons = await this.getExpansionToggleButtonElements()
+    if (rowIndex >= buttons.length) {
+      throw new Error(`No expansion toggle at index ${rowIndex}. Found ${buttons.length} toggle(s).`)
+    }
+    await buttons[rowIndex].click()
+  }
 }
