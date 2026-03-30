@@ -1,7 +1,5 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  <ng-container
-    *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0"
-  >
+  <ng-container *ngIf="actionColumnVisible">
     <td
       class="actions"
       pFrozenColumn
@@ -93,10 +91,20 @@
   </ng-container>
 </ng-template>
 
+<ng-template #expansionColumnHeader>
+  @if (expandable && (expansionTemplate$ | async)) {
+  <th
+    pFrozenColumn
+    [frozen]="frozenExpandColumn"
+    alignFrozen="left"
+    [attr.name]="'expansion-column-header'"
+    style="width: 4rem"
+  ></th>
+  }
+</ng-template>
+
 <ng-template #actionColumnHeader>
-  <ng-container
-    *ngIf="anyRowActionObserved || this.additionalActions.length > 0  || ((this.overflowActions$ | async) ?? []).length > 0"
-  >
+  <ng-container *ngIf="actionColumnVisible">
     <th
       pFrozenColumn
       [frozen]="frozenActionColumn"
@@ -132,9 +140,13 @@
     paginatorDropdownAppendTo="body"
     [rowSelectable]="rowSelectable"
     tableStyleClass="h-full"
+    [expandedRowKeys]="expandedRowKeys"
+    (onRowExpand)="onRowExpand($event)"
+    (onRowCollapse)="onRowCollapse($event)"
   >
     <ng-template pTemplate="header">
       <tr style="vertical-align: top">
+        <ng-container *ngTemplateOutlet="expansionColumnHeader"></ng-container>
         <th style="width: 4rem" scope="col" *ngIf="selectionChangedObserved">
           <p-tableHeaderCheckbox
             *ngIf="allowSelectAll"
@@ -245,6 +257,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-rowObject>
       <tr *ngIf="columnTemplates">
+        <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
         <td *ngIf="selectionChangedObserved">
           <p-checkbox
             *ngIf="isRowSelectionDisabled(rowObject) && isSelected(rowObject); else defaultCheckbox"
@@ -286,20 +299,49 @@
         </ng-container>
       </tr>
     </ng-template>
+
+    <ng-template pTemplate="rowexpansion" let-rowObject>
+      @if (expansionTemplate$ | async; as expansionTemplate) {
+      <tr>
+        <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
+          <ng-container
+            [ngTemplateOutlet]="expansionTemplate.template"
+            [ngTemplateOutletContext]="{
+            rowObject: rowObject
+          }"
+          >
+          </ng-container>
+        </td>
+      </tr>
+      }
+    </ng-template>
+
     <ng-template pTemplate="emptymessage">
       <tr>
-        <!-- If allowSelectAll is set to true, an additional column for checkbox selection is added and
-       the colSpan needs to be increased by one so that the row is rendered the whole width of the table. -->
-        <td
-          [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
-  (allowSelectAll ? 1 : 0)"
-        >
+        <td [colSpan]="getRowColspan(!!(expansionTemplate$ | async))">
           {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
         </td>
       </tr>
     </ng-template>
   </p-table>
 </ng-container>
+
+<ng-template #expansionColumn let-rowObject="localRowObject">
+  @if (expandable && (expansionTemplate$ | async)) {
+  <td pFrozenColumn [frozen]="frozenExpandColumn" alignFrozen="left" [attr.name]="'expansion-column'">
+    <button
+      type="button"
+      pButton
+      pRipple
+      [icon]="isRowExpanded(rowObject) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+      class="p-button-rounded p-button-text"
+      (click)="toggleRowExpansion(rowObject)"
+      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
+      [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
+    ></button>
+  </td>
+  }
+</ng-template>
 
 <ng-template pTemplate="defaultStringCell" let-rowObject="rowObject" let-column="column">
   <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>

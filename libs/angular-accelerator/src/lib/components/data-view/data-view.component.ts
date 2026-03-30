@@ -92,6 +92,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() selectedRows: Row[] = []
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() expandable = false
+  @Input() frozenExpandColumn = false
+  @Input() expandedRows: Row[] | string[] | number[] = []
 
   @Input()
   get paginator(): boolean {
@@ -335,6 +338,8 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Output() pageChanged = new EventEmitter<number>()
   @Output() pageSizeChanged = new EventEmitter<number>()
   @Output() componentStateChanged = new EventEmitter<DataViewComponentState>()
+  @Output() rowExpanded = new EventEmitter<Row>()
+  @Output() rowCollapsed = new EventEmitter<Row>()
   isDeleteItemObserved: boolean | undefined
   isViewItemObserved: boolean | undefined
   IsEditItemObserved: boolean | undefined

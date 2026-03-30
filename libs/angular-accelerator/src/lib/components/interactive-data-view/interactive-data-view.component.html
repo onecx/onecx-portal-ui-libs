@@ -145,6 +145,11 @@
     [parentTemplates]="templates$ | async"
     [tableAllowSelectAll]="tableAllowSelectAll"
     [tableSelectionEnabledField]="tableSelectionEnabledField"
+    [expandable]="expandable"
+    [frozenExpandColumn]="frozenExpandColumn"
+    [expandedRows]="expandedRows"
+    (rowExpanded)="rowExpanded.emit($event)"
+    (rowCollapsed)="rowCollapsed.emit($event)"
   >
   </ocx-data-view>
 </div>
