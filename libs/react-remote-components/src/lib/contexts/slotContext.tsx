@@ -46,16 +46,16 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
       ),
       map((infos) =>
         infos.map((remoteComponent) => {
+          if (remoteComponent.technology === Technologies.Angular) {
+            throw new Error(`Remote component "${remoteComponent.name}" cannot be loaded in React.`)
+          }
+
           registerRemotes(
             [
               {
                 name: remoteComponent.appId,
                 entry: remoteComponent.remoteEntryUrl,
-                type:
-                  remoteComponent.technology === Technologies.Angular ||
-                  remoteComponent.technology === Technologies.WebComponentModule
-                    ? 'module'
-                    : 'script',
+                type: remoteComponent.technology === Technologies.WebComponentModule ? 'module' : 'script',
               },
             ],
             { force: true }
