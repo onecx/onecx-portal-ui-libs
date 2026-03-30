@@ -46,6 +46,7 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { Filter } from '../../model/filter.model'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
+import equal from 'fast-deep-equal'
 
 export type ListGridData = {
   id: string | number
@@ -62,6 +63,7 @@ export interface ListGridDataMenuItem extends MenuItem {
 export interface DataListGridComponentState {
   activePage?: number
   pageSize?: number
+  filters?: Filter[]
 }
 
 @Component({
@@ -161,9 +163,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._data$.getValue()
   }
   set data(value: RowListGridData[]) {
-    !this._data$.getValue().length ?? this.resetPage()
+    const shouldResetPage = this._data$.getValue().length > value.length
     this._originalData = [...value]
     this._data$.next([...value])
+    if (shouldResetPage) {
+      this.resetPage()
+    }
 
     const currentResults = value.length
     const newStatus =
@@ -180,8 +185,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    !this._filters$.getValue().length ?? this.resetPage()
+    const shouldResetPage = !equal(this._filters$.getValue(), value)
     this._filters$.next(value)
+    if (shouldResetPage) {
+      this.resetPage()
+    }
   }
   _originalData: RowListGridData[] = []
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
@@ -524,6 +532,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   emitComponentStateChanged(state: DataListGridComponentState = {}) {
     this.displayedPageSize$.pipe(first()).subscribe((pageSize) => {
       this.componentStateChanged.emit({
+        filters: this.filters,
         pageSize,
         activePage: this.page,
         ...state,

@@ -49,6 +49,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER, HasPermissionChecker } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import equal from 'fast-deep-equal'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -94,18 +95,22 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._rows$.getValue()
   }
   set rows(value: Row[]) {
-    if (this._rows$.getValue().length > value.length) {
+    const shouldResetPage = this._rows$.getValue().length > value.length
+    this._rows$.next(value)
+    if (shouldResetPage) {
       this.resetPage()
     }
-    this._rows$.next(value)
-
-    const currentResults = value.length
-    const newStatus =
-      currentResults === 0 ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND'
-
-    firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then((translatedText: string) => {
-      this.liveAnnouncer.announce(translatedText)
-    })
+    
+    const currentResults = value.length;
+    const newStatus = currentResults === 0
+        ? 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND'
+        : 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND';
+    
+    firstValueFrom(
+      this.translateService.get(newStatus, { results: currentResults }) ).then((translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText);
+      }
+    );
   }
 
   _selectionIds$ = new BehaviorSubject<(string | number)[]>([])
@@ -127,10 +132,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this._filters$.getValue()
   }
   set filters(value: Filter[]) {
-    if (this._filters$.getValue().length) {
+    const shouldResetPage = !equal(this._filters$.getValue(), value)
+    this._filters$.next(value)
+    if (shouldResetPage) {
       this.resetPage()
     }
-    this._filters$.next(value)
   }
   _sortDirection$ = new BehaviorSubject<DataSortDirection>(DataSortDirection.NONE)
   @Input()
@@ -779,7 +785,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this.emitComponentStateChanged({
       filters,
     })
-    this.resetPage()
+    if (!this.clientSideFiltering) {
+      this.resetPage()
+    }
   }
 
   getSelectedFilters(columnId: string): unknown[] | undefined {
