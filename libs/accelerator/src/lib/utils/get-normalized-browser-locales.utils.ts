@@ -1,7 +1,7 @@
 import { normalizeLocales } from './normalize-locales.utils'
 
 export function getNormalizedBrowserLocales(): string[] {
-  const navigator = (globalThis as any).navigator as Navigator | undefined
+  const navigator = globalThis.navigator as Navigator | undefined
   if (!navigator) {
     return ['en']
   }

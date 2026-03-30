@@ -6,8 +6,8 @@ type ocxLocation = Location & { deploymentPath: string; applicationPath: string 
  * applicationPath contains the rest of the path which is identifying the workspace and the application to be opened
  */
 export function getLocation(): ocxLocation {
-  const doc = (globalThis as any).document as Document | undefined
-  const loc = (globalThis as any).location as Location | undefined
+  const doc = globalThis.document as Document | undefined
+  const loc = globalThis.location as Location | undefined
   if (!doc || !loc) {
     throw new Error('getLocation() is only available in browser environments')
   }
