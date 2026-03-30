@@ -6,8 +6,22 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { PermissionService } from '../../services/permission.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of } from 'rxjs'
-import en from '../../../../assets/i18n/en.json'
-import de from '../../../../assets/i18n/de.json'
+
+const en = {
+  OCX_PORTAL_PAGE: {
+    UNAUTHORIZED_TITLE: 'Unauthorized',
+    UNAUTHORIZED_MESSAGE: 'Sorry, you do not have the permission required to view this page.',
+    MISSING_PERMISSION: 'Missing permission key: {{permission}}'
+  }
+}
+
+const de = {
+  OCX_PORTAL_PAGE: {
+    UNAUTHORIZED_TITLE: 'Nicht autorisiert',
+    UNAUTHORIZED_MESSAGE: 'Leider verfügen Sie nicht über die erforderliche Berechtigung zum Anzeigen dieser Seite.',
+    MISSING_PERMISSION: 'Fehlender Berechtigungsschlüssel: {{permission}}'
+  }
+}
 
 const origAddEventListener = window.addEventListener
 const origPostMessage = window.postMessage
