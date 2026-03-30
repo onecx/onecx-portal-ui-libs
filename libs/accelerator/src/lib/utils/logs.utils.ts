@@ -1,17 +1,16 @@
 import '../declarations'
 import { TopicMessageType } from '../topic/topic-message-type'
+import { ensureProperty } from './ensure-property.utils'
 
 export function isStatsEnabled(): boolean {
-  return (globalThis as any)['@onecx/accelerator']?.topic?.statsEnabled === true
+  const g = ensureProperty(globalThis as object, ['@onecx/accelerator', 'topic', 'statsEnabled'], false)
+  return g['@onecx/accelerator']?.topic?.statsEnabled === true
 }
 
 export function increaseMessageCount(topicName: string, messageType: TopicMessageType): void {
- const accelerator = (globalThis as any)['@onecx/accelerator']
-  accelerator.topic ??= {}
-  accelerator.topic.stats ??= {}
-  accelerator.topic.stats.messagesPublished ??= {}
   if (isStatsEnabled()) {
-    const messageStats = accelerator.topic.stats.messagesPublished
+    const g = ensureProperty(globalThis as object, ['@onecx/accelerator', 'topic', 'stats', 'messagesPublished'], {} as Record<string, Record<TopicMessageType, number>>)
+    const messageStats = g['@onecx/accelerator'].topic.stats.messagesPublished
     if (!messageStats[topicName]) {
       messageStats[topicName] = {
         TopicNext: 0,
@@ -24,12 +23,9 @@ export function increaseMessageCount(topicName: string, messageType: TopicMessag
 }
 
 export function increaseInstanceCount(topicName: string): void {
-  const accelerator = (globalThis as any)['@onecx/accelerator']
-  accelerator.topic ??= {}
-  accelerator.topic.stats ??= {}
-  accelerator.topic.stats.instancesCreated ??= {}
   if (isStatsEnabled()) {
-    const instanceStats = accelerator.topic.stats.instancesCreated
+    const g = ensureProperty(globalThis as object, ['@onecx/accelerator', 'topic', 'stats', 'instancesCreated'], {} as Record<string, number>)
+    const instanceStats = g['@onecx/accelerator'].topic.stats.instancesCreated
     if (!instanceStats[topicName]) {
       instanceStats[topicName] = 0
     }
