@@ -20,6 +20,7 @@ import { provideHttpClient } from '@angular/common/http'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { FloatLabelModule } from 'primeng/floatlabel'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 export default {
   title: 'Components/SearchHeaderComponent',
@@ -52,6 +53,7 @@ export default {
         ]),
         TooltipModule,
         FloatLabelModule,
+        OcxTooltipDirective
       ],
     }),
   ],
@@ -81,7 +83,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />
@@ -95,7 +97,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />
@@ -109,7 +111,7 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
                     pInputText
                     type="text"
                     class="w-18rem"
-                    [pTooltip]="'Name'"
+                    [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
                 />

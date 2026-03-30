@@ -13,6 +13,8 @@ import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ColorUtils } from '../../utils/colorutils'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { TooltipModule } from 'primeng/tooltip'
 
 describe('DiagramComponent', () => {
   let translateService: TranslateService
@@ -40,6 +42,8 @@ describe('DiagramComponent', () => {
         NoopAnimationsModule,
         FormsModule,
         AngularAcceleratorPrimeNgModule,
+        TooltipModule,
+        OcxTooltipDirective,
         TranslateTestingModule.withTranslations({
           en: require('./../../../../assets/i18n/en.json'),
           de: require('./../../../../assets/i18n/de.json'),

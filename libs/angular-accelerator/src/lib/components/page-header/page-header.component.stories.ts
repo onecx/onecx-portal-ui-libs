@@ -14,10 +14,10 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 export default {
   title: 'Components/PageHeaderComponent',
@@ -48,7 +48,7 @@ export default {
           { labelKey: 'Level 1', routerLink: ['/something'] },
           { labelKey: 'Level 2', url: '/' },
         ]),
-        TooltipModule,
+        OcxTooltipDirective,
       ],
     }),
   ],

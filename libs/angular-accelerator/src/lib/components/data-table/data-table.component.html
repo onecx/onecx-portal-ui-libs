@@ -22,6 +22,8 @@
         icon="pi pi-eye"
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+        tooltipPosition="top"
       ></button>
       } @if (editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))) {
       <button
@@ -35,6 +37,8 @@
         icon="pi pi-pencil"
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+        tooltipPosition="top"
       ></button>
       } @if (deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject,
       deleteActionVisibleField))) {
@@ -49,6 +53,8 @@
         icon="pi pi-trash"
         (click)="onDeleteRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
+        tooltipPosition="top"
       ></button>
       } @for (action of inlineActions$ | async; track action) { @if ((!action.actionVisibleField ||
       fieldIsTruthy(rowObject, action.actionVisibleField))) {
@@ -126,7 +132,7 @@
       <th style="width: 4rem" scope="col">
         @if (allowSelectAll) {
         <p-tableHeaderCheckbox
-          pTooltip="{{'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate}}"
+          ocxTooltip="{{'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate}}"
           ariaLabel="{{'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate}}"
         ></p-tableHeaderCheckbox>
         }
@@ -139,7 +145,14 @@
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
         >
-          <span class="flex" id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
+          <span
+            class="flex"
+            id="{{column.id}}-header-name"
+            [ocxTooltip]="column.tooltipKey ? (column.tooltipKey | translate) : ''"
+            tooltipPosition="top"
+          >
+            {{ column.nameKey | translate }}
+          </span>
           <span class="flex icon-button-header-wrapper">
             @if (column.sortable) {
             <button
@@ -148,8 +161,8 @@
               [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
-              [pTooltip]="sortIconTitle(column.id) | translate "
-              tooltipPosition="bottom"              
+              [ocxTooltip]="sortIconTitle(column.id) | translate "
+              tooltipPosition="top"              
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
@@ -169,6 +182,8 @@
               filterBy="toFilterBy"
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              tooltipPosition="top"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
               [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
             >
@@ -206,6 +221,8 @@
               appendTo="body"
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              tooltipPosition="top"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
               [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
             >

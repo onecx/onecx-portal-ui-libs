@@ -20,6 +20,8 @@ import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
+import { TooltipModule } from 'primeng/tooltip'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -36,6 +38,8 @@ describe('SearchHeaderComponent', () => {
         ButtonModule,
         BreadcrumbModule,
         AngularAcceleratorModule,
+        TooltipModule,
+        OcxTooltipDirective
       ],
       providers: [
         AppStateService,
