@@ -6,6 +6,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { PermissionService } from '../../services/permission.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of } from 'rxjs'
+import en from '../../../../assets/i18n/en.json'
+import de from '../../../../assets/i18n/de.json'
 
 const origAddEventListener = window.addEventListener
 const origPostMessage = window.postMessage
@@ -34,8 +36,8 @@ describe('PortalPageComponent', () => {
       imports: [
         PortalPageComponent,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+          en,
+          de,
         }),
       ],
       providers: [
@@ -109,8 +111,8 @@ describe('PortalPageComponent host projection', () => {
         PortalPageComponent,
         HostComponent,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+          en,
+          de,
         }),
       ],
       providers: [
