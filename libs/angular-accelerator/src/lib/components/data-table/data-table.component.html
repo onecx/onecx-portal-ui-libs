@@ -1,7 +1,5 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  <ng-container
-    *ngIf="anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0"
-  >
+  <ng-container *ngIf="actionColumnVisible">
     <td
       class="actions"
       pFrozenColumn
@@ -106,9 +104,7 @@
 </ng-template>
 
 <ng-template #actionColumnHeader>
-  <ng-container
-    *ngIf="anyRowActionObserved || this.additionalActions.length > 0  || ((this.overflowActions$ | async) ?? []).length > 0"
-  >
+  <ng-container *ngIf="actionColumnVisible">
     <th
       pFrozenColumn
       [frozen]="frozenActionColumn"
@@ -307,9 +303,7 @@
     <ng-template pTemplate="rowexpansion" let-rowObject>
       @if (expansionTemplate$ | async; as expansionTemplate) {
       <tr>
-        <td
-          [attr.colspan]="columns.length + (selectionChangedObserved ? 1 : 0) + (expandable && expansionTemplate ? 1 : 0) + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0)"
-        >
+        <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
           <ng-container
             [ngTemplateOutlet]="expansionTemplate.template"
             [ngTemplateOutletContext]="{
@@ -324,12 +318,7 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <!-- If allowSelectAll is set to true, an additional column for checkbox selection is added and
-       the colSpan needs to be increased by one so that the row is rendered the whole width of the table. -->
-        <td
-          [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
-  (allowSelectAll ? 1 : 0)"
-        >
+        <td [colSpan]="getRowColspan(!!(expansionTemplate$ | async))">
           {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
         </td>
       </tr>
@@ -339,12 +328,7 @@
 
 <ng-template #expansionColumn let-rowObject="localRowObject">
   @if (expandable && (expansionTemplate$ | async)) {
-  <td
-    pFrozenColumn
-    [frozen]="frozenExpandColumn"
-    alignFrozen="left"
-    [attr.name]="'expansion-column'"
-  >
+  <td pFrozenColumn [frozen]="frozenExpandColumn" alignFrozen="left" [attr.name]="'expansion-column'">
     <button
       type="button"
       pButton

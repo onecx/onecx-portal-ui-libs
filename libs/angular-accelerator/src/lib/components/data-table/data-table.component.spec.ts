@@ -1164,6 +1164,36 @@ describe('DataTableComponent', () => {
         expect(component.expandedRowIds$.getValue()).toEqual([])
         expect(component.expandedRowKeys).toEqual({})
       })
+
+      it('should treat null as an empty array and clear expanded state', () => {
+        component.expandedRows = [row1]
+        component.expandedRows = null as any
+
+        expect(component.expandedRowIds$.getValue()).toEqual([])
+        expect(component.expandedRowKeys).toEqual({})
+      })
+
+      it('should treat undefined as an empty array and clear expanded state', () => {
+        component.expandedRows = [row1]
+        component.expandedRows = undefined as any
+
+        expect(component.expandedRowIds$.getValue()).toEqual([])
+        expect(component.expandedRowKeys).toEqual({})
+      })
+
+      it('should filter out null entries inside the array', () => {
+        component.expandedRows = [row1, null as any, row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should filter out undefined entries inside the array', () => {
+        component.expandedRows = [row1, undefined as any, row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
     })
 
     describe('isRowExpanded', () => {
@@ -1351,6 +1381,80 @@ describe('DataTableComponent', () => {
           expect(result).toBe(expansionTemplate)
         }
       })
+    })
+  })
+
+  describe('actionColumnVisible', () => {
+    it('should return false when no row actions are observed and no additional actions are set', () => {
+      expect(component.actionColumnVisible).toBe(false)
+    })
+
+    it('should return true when any row action is observed', () => {
+      jest.spyOn(component, 'anyRowActionObserved', 'get').mockReturnValue(true)
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return true when additionalActions is non-empty', () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ]
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return false when additionalActions becomes empty', () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ]
+      component.additionalActions = []
+      expect(component.actionColumnVisible).toBe(false)
+    })
+  })
+
+  describe('getRowColspan', () => {
+    it('should return columns.length when no optional columns are active', () => {
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for selection column when selectionChanged is observed', () => {
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should add 1 for expansion column when expandable is true and hasExpansionTemplate is true', () => {
+      component.expandable = true
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 1)
+    })
+
+    it('should not add expansion column when expandable is false even if hasExpansionTemplate is true', () => {
+      component.expandable = false
+      expect(component.getRowColspan(true)).toBe(mockColumns.length)
+    })
+
+    it('should not add expansion column when hasExpansionTemplate is false even if expandable is true', () => {
+      component.expandable = true
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for action column when action column is visible', () => {
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should count all active columns correctly when all optional columns are active', () => {
+      component.expandable = true
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
     })
   })
 })

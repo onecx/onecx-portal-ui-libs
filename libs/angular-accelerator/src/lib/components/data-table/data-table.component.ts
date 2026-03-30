@@ -349,12 +349,14 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @Input()
   set expandedRows(value: Row[] | string[] | number[]) {
-    const ids = value.map((row) => {
-      if (typeof row === 'object') {
-        return row.id
-      }
-      return row
-    })
+    const ids = (value ?? [])
+      .filter((row): row is Row | string | number => row !== null && row !== undefined)
+      .map((row) => {
+        if (typeof row === 'object') {
+          return row.id
+        }
+        return row
+      })
     this.expandedRowIds$.next(ids)
     this.expandedRowKeys = Object.fromEntries(ids.map((id) => [id, true]))
   }
@@ -436,6 +438,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   get anyRowActionObserved(): boolean {
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
+  }
+
+  get actionColumnVisible(): boolean {
+    return this.anyRowActionObserved || this.additionalActions.length > 0
+  }
+
+  getRowColspan(hasExpansionTemplate: boolean): number {
+    return (
+      this.columns.length +
+      (this.selectionChangedObserved ? 1 : 0) +
+      (this.expandable && hasExpansionTemplate ? 1 : 0) +
+      (this.actionColumnVisible ? 1 : 0)
+    )
   }
 
   get selectionChangedObserved(): boolean {
