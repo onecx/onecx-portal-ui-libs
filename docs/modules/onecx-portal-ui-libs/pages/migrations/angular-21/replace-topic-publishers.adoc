@@ -1,0 +1,56 @@
+[#replace-topic-publishers]
+= Replace removed topic publisher classes
+
+In OneCX libs v8, deprecated publisher wrapper classes were removed from `@onecx/integration-interface` topic APIs.
+
+If your app still uses these classes, TypeScript compilation will fail.
+
+== Removed classes
+
+* `CurrentLocationPublisher`
+* `EventsPublisher`
+* `ParametersPublisher`
+* `ResizedEventsPublisher`
+
+== Required migration
+
+Replace publisher wrappers with their corresponding topic classes.
+
+[cols="2,2"]
+|===
+| Removed in v8 | Use instead
+
+| `CurrentLocationPublisher`
+| `CurrentLocationTopic`
+
+| `EventsPublisher`
+| `EventsTopic`
+
+| `ParametersPublisher`
+| `ParametersTopic`
+
+| `ResizedEventsPublisher`
+| `ResizedEventsTopic`
+|===
+
+=== Example
+
+.Before
+[source,typescript]
+----
+import { EventsPublisher } from '@onecx/integration-interface'
+
+const eventsPublisher$ = new EventsPublisher()
+this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
+
+----
+
+.After
+[source,typescript]
+----
+import { EventsTopic } from '@onecx/integration-interface'
+
+const eventsTopic = new EventsTopic()
+this.eventsTopic.publish({ type: 'authentication#logoutButtonClicked' })
+
+----

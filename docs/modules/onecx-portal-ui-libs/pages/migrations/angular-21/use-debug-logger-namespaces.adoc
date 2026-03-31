@@ -1,0 +1,31 @@
+[#use-debug-logger-namespaces]
+= Optional debugging preference: debug-js namespaces
+
+In v8, OneCX libraries use `debug-js` namespaces for runtime logging.
+Library `console.log` usage was reduced/removed in favor of namespace-based debug logging.
+
+This is not a breaking change for consumers.
+
+== What to do
+
+No migration is required.
+
+Use this only as a debugging preference when troubleshooting.
+
+For troubleshooting, enable logs via browser local storage:
+
+[source,js]
+----
+localStorage.debug = '@onecx*'
+location.reload()
+----
+
+You can narrow logging to specific libraries, for example:
+
+[source,js]
+----
+localStorage.debug = '@onecx/angular-auth*'
+location.reload()
+----
+
+See also xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging].

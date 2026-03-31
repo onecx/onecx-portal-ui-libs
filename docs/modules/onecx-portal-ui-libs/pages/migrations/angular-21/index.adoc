@@ -1,0 +1,58 @@
+= Migrate OneCX App from Angular 20 to Angular 21
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+This guide provides step-by-step instructions for migrating OneCX applications from Angular 20 to Angular 21.
+As part of upgrading to Angular 21, you must update your OneCX UI libraries to version 8. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v8 libraries provide Angular 21 compatibility and include required breaking changes.
+
+[#prerequisites]
+== Prerequisites
+
+Before starting this migration:
+
+* Your OneCX application is currently running on Angular 20
+* You have OneCX UI libraries v7.x installed
+* You have a working development environment
+
+[#ai-driven-migration-assistance]
+== AI Driven Migration Assistance
+
+To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+
+include::ai-prompt-20-to-21.adoc[]
+
+[#migration-steps-before-angular-21]
+== Migration Steps before upgrading to Angular 21
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 21.
+You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
+
+[%interactive]
+** [ ] xref:./replace-topic-publishers.adoc[Replace deprecated topic publisher classes]
+** [ ] xref:./adjust-ngrx-utilities.adoc[Adjust ngrx utilities usage]
+** [ ] xref:./esm-bundling.adoc[Note: Onecx V8 bundling Changes]
+
+[#upgrade-to-angular-21]
+== Upgrade to Angular 21
+
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 19. 
+
+If the project is an NX workspace, follow the instructions in xref:./update-nx-angular-version-21.adoc[Upgrade NX Application to Angular 21]. After completing the NX migration steps, also review the  official Angular update guide for any additional steps or considerations: https://angular.dev/update-guide?v=20.0-21.0&l=1[Angular Update Guide].
+
+If the project is not an NX workspace, follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=20.0-21.0&l=1[Angular Update Guide]. 
+
+
+[#migration-steps-after-angular-21]
+== Migration Steps after upgrading to Angular 21
+
+Once the previous steps are completed, **the application should be upgraded to Angular 21 and libs v8 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed.
+
+[%interactive]
+** [ ] xref:./update-v8-packages.adoc[Required Package Updates]
+** [ ] xref:./add-share-scope-angular-21.adoc[Set shareScope values in Helm]
+** [ ] xref:./move-auth-to-shell-auth.adoc[Move auth implementation imports from `@onecx/angular-auth` to `@onecx/shell-auth`]
+** [ ] xref:./update-public-api-imports.adoc[Update imports to supported public APIs]
