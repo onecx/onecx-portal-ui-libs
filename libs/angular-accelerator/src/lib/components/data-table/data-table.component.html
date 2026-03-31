@@ -163,7 +163,7 @@
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
               [ocxTooltip]="sortIconTitle(column.id) | translate "
-              tooltipPosition="top"
+              tooltipPosition="bottom"
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
