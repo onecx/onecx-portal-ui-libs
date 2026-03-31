@@ -17,6 +17,7 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
+import { PrimeTemplate } from 'primeng/api'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -1986,6 +1987,317 @@ describe('DataTableComponent', () => {
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
+    })
+  })
+
+  describe('Row expansion', () => {
+    const row1 = mockData[0]
+    const row2 = mockData[1]
+
+    describe('expandedRows model', () => {
+      it('should set expandedRowIds and expandedRowKeys from Row objects', () => {
+        component.expandedRows.set([row1, row2])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys()).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should set expandedRowIds and expandedRowKeys from string ids', () => {
+        component.expandedRows.set([row1.id, row2.id])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys()).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should overwrite previously expanded rows', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row1.id])
+        expect(component.expandedRowKeys()).toEqual({ [row1.id]: true })
+
+        component.expandedRows.set([row2])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row2.id])
+        expect(component.expandedRowKeys()).toEqual({ [row2.id]: true })
+      })
+
+      it('should clear expandedRowIds and expandedRowKeys when empty array is passed', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+        component.expandedRows.set([])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([])
+        expect(component.expandedRowKeys()).toEqual({})
+      })
+
+      it('should treat null as an empty array and clear expanded state', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+        component.expandedRows.set(null as any)
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([])
+        expect(component.expandedRowKeys()).toEqual({})
+      })
+
+      it('should treat undefined as an empty array and clear expanded state', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+        component.expandedRows.set(undefined as any)
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([])
+        expect(component.expandedRowKeys()).toEqual({})
+      })
+
+      it('should filter out null entries inside the array', () => {
+        component.expandedRows.set([row1, null as any, row2])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys()).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should filter out undefined entries inside the array', () => {
+        component.expandedRows.set([row1, undefined as any, row2])
+        fixture.detectChanges()
+
+        expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys()).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+    })
+
+    describe('isRowExpanded', () => {
+      it('should return true when row is expanded', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+
+        expect(component.isRowExpanded(row1)).toBe(true)
+      })
+
+      it('should return false when row is not expanded', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+
+        expect(component.isRowExpanded(row2)).toBe(false)
+      })
+
+      it('should return false when no rows are expanded', () => {
+        component.expandedRows.set([])
+        fixture.detectChanges()
+
+        expect(component.isRowExpanded(row1)).toBe(false)
+      })
+    })
+
+    describe('onRowExpand', () => {
+      it('should add row id to expandedRowIds if not already present', () => {
+        component.expandedRows.set([])
+        fixture.detectChanges()
+        component.onRowExpand({ data: row1 })
+
+        expect(component.expandedRowIds()).toContain(row1.id)
+      })
+
+      it('should not add duplicate row id to expandedRowIds', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+        component.onRowExpand({ data: row1 })
+
+        const ids = component.expandedRowIds()
+        const matchingIds = ids.filter((id) => id === row1.id)
+        expect(matchingIds.length).toBe(1)
+      })
+
+      it('should emit rowExpanded with the row data', () => {
+        const spy = jest.spyOn(component.rowExpanded, 'emit')
+
+        component.onRowExpand({ data: row1 })
+
+        expect(spy).toHaveBeenCalledWith(row1)
+      })
+
+      it('should emit componentStateChanged after change detection', () => {
+        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+        component.onRowExpand({ data: row1 })
+        fixture.detectChanges()
+
+        expect(stateSpy).toHaveBeenCalled()
+      })
+    })
+
+    describe('onRowCollapse', () => {
+      beforeEach(() => {
+        component.expandedRows.set([row1, row2])
+        fixture.detectChanges()
+      })
+
+      it('should remove row id from expandedRowIds', () => {
+        component.onRowCollapse({ data: row1 })
+
+        expect(component.expandedRowIds()).not.toContain(row1.id)
+        expect(component.expandedRowIds()).toContain(row2.id)
+      })
+
+      it('should emit rowCollapsed with the row data', () => {
+        const spy = jest.spyOn(component.rowCollapsed, 'emit')
+
+        component.onRowCollapse({ data: row1 })
+
+        expect(spy).toHaveBeenCalledWith(row1)
+      })
+
+      it('should emit componentStateChanged after change detection', () => {
+        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+        component.onRowCollapse({ data: row1 })
+        fixture.detectChanges()
+
+        expect(stateSpy).toHaveBeenCalled()
+      })
+    })
+
+    describe('toggleRowExpansion', () => {
+      it('should expand a collapsed row', () => {
+        component.expandedRows.set([])
+        fixture.detectChanges()
+        component.toggleRowExpansion(row1)
+
+        expect(component.isRowExpanded(row1)).toBe(true)
+        expect(component.expandedRowKeys()[row1.id]).toBe(true)
+      })
+
+      it('should collapse an expanded row', () => {
+        component.expandedRows.set([row1])
+        fixture.detectChanges()
+        component.toggleRowExpansion(row1)
+
+        expect(component.isRowExpanded(row1)).toBe(false)
+        expect(component.expandedRowKeys()[row1.id]).toBeUndefined()
+      })
+    })
+
+    describe('expansionTemplate computed signal', () => {
+      it('should return undefined when no expansion template is provided', () => {
+        component.parentTemplates.set([])
+        fixture.detectChanges()
+
+        expect(component.expansionTemplate()).toBeUndefined()
+      })
+
+      it('should return the expansion template when present in parentTemplates', () => {
+        const expansionTemplate = { getType: () => 'expansion' } as PrimeTemplate
+        component.parentTemplates.set([expansionTemplate])
+        fixture.detectChanges()
+
+        expect(component.expansionTemplate()).toBe(expansionTemplate)
+      })
+
+      it('should return undefined when parentTemplates has no expansion type', () => {
+        const otherTemplate = { getType: () => 'stringCell' } as PrimeTemplate
+        component.parentTemplates.set([otherTemplate])
+        fixture.detectChanges()
+
+        expect(component.expansionTemplate()).toBeUndefined()
+      })
+
+      it('should deduplicate, keeping the first expansion template', () => {
+        const first = { getType: () => 'expansion' } as PrimeTemplate
+        const second = { getType: () => 'expansion' } as PrimeTemplate
+        component.parentTemplates.set([first, second])
+        fixture.detectChanges()
+
+        expect(component.expansionTemplate()).toBe(first)
+      })
+
+      it('should return undefined when parentTemplates is null', () => {
+        component.parentTemplates.set(null)
+        fixture.detectChanges()
+
+        expect(component.expansionTemplate()).toBeUndefined()
+      })
+    })
+  })
+
+  describe('actionColumnVisible', () => {
+    it('should return false when no row actions are observed and no additional actions are set', () => {
+      expect(component.actionColumnVisible).toBe(false)
+    })
+
+    it('should return true when any row action is observed', () => {
+      jest.spyOn(component, 'anyRowActionObserved', 'get').mockReturnValue(true)
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return true when additionalActions is non-empty', () => {
+      component.additionalActions.set([
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ])
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return false when additionalActions becomes empty', () => {
+      component.additionalActions.set([
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ])
+      component.additionalActions.set([])
+      expect(component.actionColumnVisible).toBe(false)
+    })
+  })
+
+  describe('getRowColspan', () => {
+    it('should return columns.length when no optional columns are active', () => {
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for selection column when selectionChanged is observed', () => {
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should add 1 for expansion column when expandable is true and hasExpansionTemplate is true', () => {
+      fixture.componentRef.setInput('expandable', true)
+      fixture.detectChanges()
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 1)
+    })
+
+    it('should not add expansion column when expandable is false even if hasExpansionTemplate is true', () => {
+      fixture.componentRef.setInput('expandable', false)
+      fixture.detectChanges()
+      expect(component.getRowColspan(true)).toBe(mockColumns.length)
+    })
+
+    it('should not add expansion column when hasExpansionTemplate is false even if expandable is true', () => {
+      fixture.componentRef.setInput('expandable', true)
+      fixture.detectChanges()
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for action column when action column is visible', () => {
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should count all active columns correctly when all optional columns are active', () => {
+      fixture.componentRef.setInput('expandable', true)
+      fixture.detectChanges()
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
     })
   })
 })
