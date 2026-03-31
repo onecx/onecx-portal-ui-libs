@@ -88,7 +88,9 @@
     "SELECT_ALL_TOOLTIP": "Selektiere alle",
     "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
     "FILTER_YES": "Ja",
-    "FILTER_NO": "Nein"
+    "FILTER_NO": "Nein",
+    "COLLAPSED_ROW": "Eingeklappte Zeile",
+    "EXPANDED_ROW": "Ausgeklappte Zeile"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",

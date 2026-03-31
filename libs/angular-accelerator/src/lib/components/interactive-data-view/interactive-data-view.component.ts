@@ -150,6 +150,9 @@ export class InteractiveDataViewComponent implements OnInit {
   actionColumnPosition = model<'left' | 'right'>('right')
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
+  expandable = input<boolean>(false)
+  frozenExpandColumn = input<boolean>(false)
+  expandedRows = model<Row[] | string[] | number[]>([])
 
   childTableCell = contentChild<TemplateRef<any> | undefined>('tableCell')
   primeNgTableCell = computed(() => {
@@ -440,6 +443,9 @@ export class InteractiveDataViewComponent implements OnInit {
 
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
+
+  @Output() rowExpanded = observableOutput<Row>()
+  @Output() rowCollapsed = observableOutput<Row>()
 
   componentStateChanged = output<InteractiveDataViewComponentState>()
 

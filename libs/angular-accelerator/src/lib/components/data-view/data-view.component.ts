@@ -93,6 +93,9 @@ export class DataViewComponent implements OnInit {
   selectedRows = input<Row[]>([])
   frozenActionColumn = input<boolean>(false)
   actionColumnPosition = input<'left' | 'right'>('right')
+  expandable = input<boolean>(false)
+  frozenExpandColumn = input<boolean>(false)
+  expandedRows = model<Row[] | string[] | number[]>([])
 
   sortStates = input<DataSortDirection[]>([])
   pageSizes = input<number[]>([10, 25, 50])
@@ -229,6 +232,9 @@ export class DataViewComponent implements OnInit {
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataViewComponentState>()
+  @Output() rowExpanded = observableOutput<Row>()
+  @Output() rowCollapsed = observableOutput<Row>()
+
   firstColumnId = signal<string | undefined>(undefined)
 
   parentTemplates = input<readonly PrimeTemplate[] | null | undefined>()
