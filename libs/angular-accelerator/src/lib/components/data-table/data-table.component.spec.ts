@@ -2129,6 +2129,14 @@ describe('DataTableComponent', () => {
 
         expect(stateSpy).toHaveBeenCalled()
       })
+
+      it('should treat null expandedRows as empty array and add the row', () => {
+        component.expandedRows.set(null as any)
+        fixture.detectChanges()
+        component.onRowExpand({ data: row1 })
+
+        expect(component.expandedRowIds()).toContain(row1.id)
+      })
     })
 
     describe('onRowCollapse', () => {
@@ -2158,6 +2166,23 @@ describe('DataTableComponent', () => {
         fixture.detectChanges()
 
         expect(stateSpy).toHaveBeenCalled()
+      })
+
+      it('should treat null expandedRows as empty array and result in empty state', () => {
+        component.expandedRows.set(null as any)
+        fixture.detectChanges()
+        component.onRowCollapse({ data: row1 })
+
+        expect(component.expandedRowIds()).toEqual([])
+      })
+
+      it('should remove a primitive id when expandedRows contains primitive ids', () => {
+        component.expandedRows.set([row1.id, row2.id])
+        fixture.detectChanges()
+        component.onRowCollapse({ data: row1 })
+
+        expect(component.expandedRowIds()).not.toContain(row1.id)
+        expect(component.expandedRowIds()).toContain(row2.id)
       })
     })
 
