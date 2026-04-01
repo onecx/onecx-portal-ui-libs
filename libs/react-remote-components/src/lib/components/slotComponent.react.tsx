@@ -10,7 +10,7 @@ import {
   type ComponentType,
   ComponentPropsWithRef,
 } from 'react'
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs'
+import { BehaviorSubject, combineLatest } from 'rxjs'
 import { type RemoteComponentInfo, type SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
 import { RemoteComponentConfig } from '../models/remoteComponentConfig'
 
