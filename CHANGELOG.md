@@ -1,3 +1,14 @@
+## [7.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.3.0...v7.4.0) (2026-04-01)
+
+### Features
+
+* pTooltip to ocxTooltip ([#1308](https://github.com/onecx/onecx-portal-ui-libs/issues/1308)) ([20a19fe](https://github.com/onecx/onecx-portal-ui-libs/commit/20a19fe3e78b3c21f5a3255408e595c2008dc858))
+
+### Bug Fixes
+
+* fix filter rendering ([#1322](https://github.com/onecx/onecx-portal-ui-libs/issues/1322)) ([65cee95](https://github.com/onecx/onecx-portal-ui-libs/commit/65cee95512d3bbafc83322cc1aa51f51a0b68fdc))
+* update ensure-property-utils from main to include latest fixes ([#1283](https://github.com/onecx/onecx-portal-ui-libs/issues/1283)) ([49a3a46](https://github.com/onecx/onecx-portal-ui-libs/commit/49a3a4634ec3a97dd631d0c2e55f0632c95ed8c7))
+
 ## [7.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.2.0...v7.3.0) (2026-03-20)
 
 ### Features
