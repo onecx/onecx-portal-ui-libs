@@ -8,11 +8,11 @@ import {
   type ReactElement,
   type ReactNode,
   type ComponentType,
-  ComponentPropsWithRef,
+  type ComponentPropsWithRef,
 } from 'react'
 import { BehaviorSubject, combineLatest } from 'rxjs'
 import { type RemoteComponentInfo, type SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
-import { RemoteComponentConfig } from '../models/remoteComponentConfig'
+import type { RemoteComponentConfig } from '../models/remoteComponentConfig'
 
 type SlotProps = {
   name: string
