@@ -2,6 +2,25 @@
 
 ### Features
 
+* add expandable row to ocx data table - v7 ([#1328](https://github.com/onecx/onecx-portal-ui-libs/issues/1328)) ([5d8db84](https://github.com/onecx/onecx-portal-ui-libs/commit/5d8db8471d79a061822185f5b7937aff77890b6e))
+* pTooltip to ocxTooltip ([#1308](https://github.com/onecx/onecx-portal-ui-libs/issues/1308)) ([20a19fe](https://github.com/onecx/onecx-portal-ui-libs/commit/20a19fe3e78b3c21f5a3255408e595c2008dc858))
+* update readme to trigger new version release ([#1324](https://github.com/onecx/onecx-portal-ui-libs/issues/1324)) ([ae3c813](https://github.com/onecx/onecx-portal-ui-libs/commit/ae3c81388b782236eef3b83e1fe6f185372eae89))
+
+### Bug Fixes
+
+* fix filter rendering ([#1322](https://github.com/onecx/onecx-portal-ui-libs/issues/1322)) ([65cee95](https://github.com/onecx/onecx-portal-ui-libs/commit/65cee95512d3bbafc83322cc1aa51f51a0b68fdc))
+* fix readme ([61be845](https://github.com/onecx/onecx-portal-ui-libs/commit/61be8459c58652d8335f9b39583f72e78e781212))
+* primng translation in search header v7 ([#1316](https://github.com/onecx/onecx-portal-ui-libs/issues/1316)) ([c79d065](https://github.com/onecx/onecx-portal-ui-libs/commit/c79d065db0f1245ff70af9855d5e8c452c75a5fe))
+* update ensure-property-utils  from main to include latest fixes ([#1283](https://github.com/onecx/onecx-portal-ui-libs/issues/1283)) ([49a3a46](https://github.com/onecx/onecx-portal-ui-libs/commit/49a3a4634ec3a97dd631d0c2e55f0632c95ed8c7))
+
+### Chores
+
+* **release:** -v7.4.0 [skip ci] ([bdd36a8](https://github.com/onecx/onecx-portal-ui-libs/commit/bdd36a8a26aef77f3e844feb48c82f055497ec6c))
+
+## [7.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.3.0...v7.4.0) (2026-04-01)
+
+### Features
+
 * pTooltip to ocxTooltip ([#1308](https://github.com/onecx/onecx-portal-ui-libs/issues/1308)) ([20a19fe](https://github.com/onecx/onecx-portal-ui-libs/commit/20a19fe3e78b3c21f5a3255408e595c2008dc858))
 
 ### Bug Fixes
