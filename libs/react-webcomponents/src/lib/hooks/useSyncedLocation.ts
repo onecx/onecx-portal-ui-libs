@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { SyncedLocationContext } from '.'
+import { SyncedLocationContext } from '../contexts/syncedLocationContext'
 
 /**
  * Hook to access the synced location payload.

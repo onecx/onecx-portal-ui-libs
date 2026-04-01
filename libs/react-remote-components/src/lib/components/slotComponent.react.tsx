@@ -11,8 +11,8 @@ import {
   type ComponentPropsWithRef,
 } from 'react'
 import { BehaviorSubject, combineLatest } from 'rxjs'
-import { type RemoteComponentInfo, type SlotComponentConfiguration, useSlot } from '../contexts/slotContext'
-import type { RemoteComponentConfig } from '../models/remoteComponentConfig'
+import type { RemoteComponentInfo, SlotComponentConfiguration, RemoteComponentConfig } from '../models'
+import { useSlot } from '../hooks/useSlot'
 
 type SlotProps = {
   name: string
@@ -52,7 +52,63 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       viewContainers$.next([...viewContainers$.value, element])
     }
   }
+  const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
+    if (!component) return
 
+    Object.entries(props).forEach(([name, value]) => {
+      if (component instanceof HTMLElement) {
+        ;(component as any)[name] = value
+      } else {
+        component.props = {
+          ...(component.props as object),
+          [name]: value,
+        }
+      }
+    })
+  }
+  const updateComponentData = useCallback(
+    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
+      setProps(component, inputs)
+      setProps(component, outputs)
+    },
+    []
+  )
+  const addDataStyleId = (element: HTMLElement, rcInfo: RemoteComponentInfo) => {
+    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
+  }
+
+  const addDataStyleIsolation = (element: HTMLElement) => {
+    element.dataset['styleIsolation'] = ''
+  }
+  const createComponent = ({
+    componentType,
+    componentInfo,
+    viewContainer,
+    permissions,
+  }: CreateComponentProps): ReactElement | HTMLElement | null => {
+    if (!viewContainer) return null
+
+    const rcConfig = {
+      appId: componentInfo.remoteComponent.appId,
+      productName: componentInfo.remoteComponent.productName,
+      baseUrl: componentInfo.remoteComponent.baseUrl,
+      permissions: permissions,
+    } satisfies RemoteComponentConfig
+
+    if (componentType) {
+      const element = document.createElement(componentInfo.remoteComponent.elementName || '')
+      ;(element as any)['ocxRemoteComponentConfig'] = rcConfig
+
+      addDataStyleId(element, componentInfo.remoteComponent)
+      addDataStyleIsolation(element)
+
+      viewContainer.appendChild(element)
+
+      return element
+    }
+
+    return null
+  }
   useEffect(() => {
     if (!slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${name} slot will not be filled with data.`)
@@ -100,65 +156,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       assignedCompsSub.unsubscribe()
     }
   }, [components$, name, slotService])
-
-  const createComponent = ({
-    componentType,
-    componentInfo,
-    viewContainer,
-    permissions,
-  }: CreateComponentProps): ReactElement | HTMLElement | null => {
-    if (!viewContainer) return null
-
-    const rcConfig = {
-      appId: componentInfo.remoteComponent.appId,
-      productName: componentInfo.remoteComponent.productName,
-      baseUrl: componentInfo.remoteComponent.baseUrl,
-      permissions: permissions,
-    } satisfies RemoteComponentConfig
-
-    if (componentType) {
-      const element = document.createElement(componentInfo.remoteComponent.elementName || '')
-      ;(element as any)['ocxRemoteComponentConfig'] = rcConfig
-
-      addDataStyleId(element, componentInfo.remoteComponent)
-      addDataStyleIsolation(element)
-
-      viewContainer.appendChild(element)
-
-      return element
-    }
-
-    return null
-  }
-
-  const addDataStyleId = (element: HTMLElement, rcInfo: RemoteComponentInfo) => {
-    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
-  }
-
-  const addDataStyleIsolation = (element: HTMLElement) => {
-    element.dataset['styleIsolation'] = ''
-  }
-  const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
-    if (!component) return
-
-    Object.entries(props).forEach(([name, value]) => {
-      if (component instanceof HTMLElement) {
-        ;(component as any)[name] = value
-      } else {
-        component.props = {
-          ...(component.props as object),
-          [name]: value,
-        }
-      }
-    })
-  }
-  const updateComponentData = useCallback(
-    (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
-      setProps(component, inputs)
-      setProps(component, outputs)
-    },
-    []
-  )
 
   useEffect(() => {
     if (!components$) {

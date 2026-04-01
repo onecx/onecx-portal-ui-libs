@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { SyncedRouterProvider } from '.'
+import { SyncedRouterProvider } from '../contexts/syncedLocationContext'
 
 /**
  * Wraps a component with the synced router provider.

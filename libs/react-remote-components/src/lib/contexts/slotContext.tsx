@@ -1,32 +1,12 @@
-import { type FC, createContext, useContext, useMemo, type PropsWithChildren } from 'react'
-import { map, Observable, shareReplay } from 'rxjs'
+import { type FC, createContext, useMemo, type PropsWithChildren } from 'react'
+import { map, shareReplay } from 'rxjs'
 import { type RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
-import { usePermission } from './permissionContext'
+import { usePermission } from '../hooks/usePermission'
 import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { createLogger } from '../utils/logger.utils'
+import type { SlotServiceInterface } from '../models/slot-types'
 
-export type RemoteComponentInfo = {
-  appId: string
-  productName: string
-  baseUrl: string
-  technology: Technologies
-  elementName?: string
-}
-
-export type SlotComponentConfiguration = {
-  componentType: Promise<unknown | undefined> | unknown | undefined
-  remoteComponent: RemoteComponentInfo
-  permissions: Promise<string[]> | string[]
-}
-
-export interface SlotServiceInterface {
-  remoteComponents$: RemoteComponentsTopic
-  getComponentsForSlot(slotName: string): Observable<SlotComponentConfiguration[]>
-  isSomeComponentDefinedForSlot(slotName: string): Observable<boolean>
-  loadComponent(component: RemoteComponent): Promise<unknown> | undefined
-}
-
-const SlotContext = createContext<SlotServiceInterface | undefined>(undefined)
+export const SlotContext = createContext<SlotServiceInterface | undefined>(undefined)
 const remoteComponents$ = new RemoteComponentsTopic()
 const logger = createLogger('SlotProvider')
 
@@ -110,16 +90,4 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   )
 
   return <SlotContext.Provider value={contextValue}>{children}</SlotContext.Provider>
-}
-
-/**
- * Hook to access slot services.
- */
-export const useSlot = (): SlotServiceInterface => {
-  const context = useContext(SlotContext)
-
-  if (!context) {
-    throw new Error('useSlot must be used within a SlotProvider')
-  }
-  return context
 }

@@ -1,4 +1,4 @@
-import { type FC, createContext, useContext, useState, useEffect, useMemo, type PropsWithChildren } from 'react'
+import { type FC, createContext, useState, useEffect, useMemo, type PropsWithChildren } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
 import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 
@@ -7,7 +7,7 @@ interface PermissionContextType {
   getPermissions: (appId: string, productName: string) => Promise<string[]>
 }
 
-const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
+export const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
 
 const permissionsTopic$ = new PermissionsRpcTopic()
 
@@ -44,15 +44,4 @@ export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const contextValue = useMemo(() => ({ permissions, getPermissions }), [permissions])
 
   return <PermissionContext.Provider value={contextValue}>{children}</PermissionContext.Provider>
-}
-
-/**
- * Hook to access permission context.
- */
-export const usePermission = (): PermissionContextType => {
-  const context = useContext(PermissionContext)
-  if (!context) {
-    throw new Error('usePermission must be used within a PermissionProvider')
-  }
-  return context
 }

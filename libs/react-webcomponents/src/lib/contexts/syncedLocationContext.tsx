@@ -2,9 +2,6 @@ import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffe
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
-export { withSyncedRouter } from './hoc'
-export { useSyncedLocation } from './useSyncedLocation'
-
 const initValue = {
   url: '',
   isFirst: true,
