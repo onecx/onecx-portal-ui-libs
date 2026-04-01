@@ -1,3 +1,9 @@
+## [7.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.4.0...v7.5.0) (2026-04-01)
+
+### Features
+
+* manual release trigger ([#1331](https://github.com/onecx/onecx-portal-ui-libs/issues/1331)) ([531ef4a](https://github.com/onecx/onecx-portal-ui-libs/commit/531ef4a1d724f86765a9d92d95075b174d927ccd))
+
 ## [7.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.3.0...v7.4.0) (2026-04-01)
 
 ### Features

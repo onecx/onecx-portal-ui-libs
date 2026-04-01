@@ -1,1 +1,20 @@
-{ "name": "@onecx/ngrx-integration-interface", "version": "7.4.0", "license": "Apache-2.0", "repository": { "type": "git", "url": "https://github.com/onecx/onecx-portal-ui-libs" }, "peerDependencies": { "@angular/core": "^20.0.0", "@ngrx/store": "^20.0.0", "@onecx/angular-integration-interface": "^7.4.0", "@onecx/integration-interface": "^7.4.0", "@ngneat/until-destroy": "^10.0.0", "rxjs": "^7.8.1" }, "publishConfig": { "access": "public" } }
+{
+  "name": "@onecx/ngrx-integration-interface",
+  "version": "7.5.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
+  "peerDependencies": {
+    "@angular/core": "^20.0.0",
+    "@ngrx/store": "^20.0.0",
+    "@onecx/angular-integration-interface": "^7.5.0",
+    "@onecx/integration-interface": "^7.4.0",
+    "@ngneat/until-destroy": "^10.0.0",
+    "rxjs": "^7.8.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
