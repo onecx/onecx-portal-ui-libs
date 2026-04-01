@@ -56,3 +56,4 @@ Once the previous steps are completed, **the application should be upgraded to A
 ** [ ] xref:./add-share-scope-angular-21.adoc[Set shareScope values in Helm]
 ** [ ] xref:./move-auth-to-shell-auth.adoc[Move auth implementation imports from `@onecx/angular-auth` to `@onecx/shell-auth`]
 ** [ ] xref:./update-public-api-imports.adoc[Update imports to supported public APIs]
+** [ ] xref:./use-debug-logger-namespaces.adoc[Optional: Setup Logging with debug-js namespaces]
