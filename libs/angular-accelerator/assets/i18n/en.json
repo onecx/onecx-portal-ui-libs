@@ -88,7 +88,9 @@
     "SELECT_ALL_TOOLTIP": "Select all",
     "SELECT_ARIA_LABEL": "Select table row with id {{key}}",
     "FILTER_YES": "Yes",
-    "FILTER_NO": "No"
+    "FILTER_NO": "No",
+    "COLLAPSED_ROW": "Collapsed row",
+    "EXPANDED_ROW": "Expanded row"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",

@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
-import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -602,6 +602,64 @@ export const WithPageSizes = {
   args: {
     ...defaultComponentArgs,
     pageSizes: [2, 15, 25],
+  },
+}
+
+const RowExpansionTemplate: StoryFn<DataTableComponent> = (args) => ({
+  props: args,
+  template: `
+    <ocx-data-table
+      [expandable]="expandable"
+      [frozenExpandColumn]="frozenExpandColumn"
+      [expandedRows]="expandedRows"
+      [rows]="rows"
+      [columns]="columns"
+      [paginator]="paginator"
+      (rowExpanded)="rowExpanded($event)"
+      (rowCollapsed)="rowCollapsed($event)"
+    >
+      <ng-template pTemplate="expansion" let-rowObject="rowObject">
+        <div class="p-3 surface-50 border-round">
+          <p class="m-0 mb-2"><strong>Product:</strong> {{ rowObject.product }}</p>
+          <p class="m-0 mb-2"><strong>Amount:</strong> {{ rowObject.amount }}</p>
+          <p class="m-0"><strong>Available:</strong> {{ rowObject.available }}</p>
+        </div>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+
+const dataTableExpansionArgTypes = {
+  rowExpanded: { action: 'rowExpanded' },
+  rowCollapsed: { action: 'rowCollapsed' },
+}
+
+export const WithRowExpansion = {
+  argTypes: dataTableExpansionArgTypes,
+  render: RowExpansionTemplate,
+  args: {
+    ...defaultComponentArgs,
+    expandable: true,
+  },
+}
+
+export const WithFrozenExpansionColumn = {
+  argTypes: dataTableExpansionArgTypes,
+  render: RowExpansionTemplate,
+  args: {
+    ...defaultComponentArgs,
+    expandable: true,
+    frozenExpandColumn: true,
+  },
+}
+
+export const WithPreExpandedRows = {
+  argTypes: dataTableExpansionArgTypes,
+  render: RowExpansionTemplate,
+  args: {
+    ...defaultComponentArgs,
+    expandable: true,
+    expandedRows: [1],
   },
 }
 
