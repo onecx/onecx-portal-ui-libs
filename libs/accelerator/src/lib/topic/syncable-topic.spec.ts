@@ -11,38 +11,52 @@ import {
   BroadcastChannelMock
 } from "./mocks/broadcast-channel.mock"
 import { acceleratorState } from '../declarations'
+import { ensureProperty } from '../utils/ensure-property.utils'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Syncable Topic', () => {
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
+  const origAddEventListener = globalThis.addEventListener
+  const origRemoveEventListener = globalThis.removeEventListener
+  const origPostMessage = globalThis.postMessage
 
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
+  type MessageListener = (event: MessageEvent<unknown>) => void
 
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
+  let listeners: MessageListener[] = []
+  globalThis.addEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners.push(listener as unknown as MessageListener)
+    }
+  }) as unknown as typeof globalThis.addEventListener
 
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
+  globalThis.removeEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners = listeners.filter((l) => l !== (listener as unknown as MessageListener))
+    }
+  }) as unknown as typeof globalThis.removeEventListener
+
+  globalThis.postMessage = ((message: unknown) => {
+    const event = {
+      data: message,
+      stopImmediatePropagation: () => {},
+      stopPropagation: () => {},
+    } as unknown as MessageEvent<unknown>
+    listeners.forEach((l) => l(event))
+  }) as unknown as typeof globalThis.postMessage
 
   afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
+    globalThis.addEventListener = origAddEventListener
+    globalThis.removeEventListener = origRemoveEventListener
+    globalThis.postMessage = origPostMessage
   })
 
   let testSyncableTopic1: SyncableTopic<string>
   let testSyncableTopic2: SyncableTopic<string>
 
   beforeEach(() => {
-    acceleratorState['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
-    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = true
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'initDate'], Date.now() - 1000000)
+    g['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    g['@onecx/accelerator'].topic.useBroadcastChannel = true
 
     BroadcastChannelMock.asyncCalls = false
 

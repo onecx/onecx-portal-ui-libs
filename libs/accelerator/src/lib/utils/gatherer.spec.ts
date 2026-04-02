@@ -10,6 +10,8 @@ import { TopicPublisher } from '../topic/topic-publisher'
 import { Gatherer } from './gatherer'
 import * as loggerUtils from './logger.utils'
 import { acceleratorState } from '../declarations'
+import { ensureProperty } from './ensure-property.utils'
+import type { ComponentLogger } from './create-logger.utils'
 
 import { BroadcastChannelMock } from '../topic/mocks/broadcast-channel.mock'
 
@@ -17,26 +19,38 @@ Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Gatherer', () => {
   const originalLocalStorageDebug = localStorage.getItem('debug')
-  const origAddEventListener = window.addEventListener
-  const origPostMessage = window.postMessage
+  const origAddEventListener = globalThis.addEventListener
+  const origRemoveEventListener = globalThis.removeEventListener
+  const origPostMessage = globalThis.postMessage
 
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
+  type MessageListener = (event: MessageEvent<unknown>) => void
 
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
+  let listeners: MessageListener[] = []
+  globalThis.addEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners.push(listener as unknown as MessageListener)
+    }
+  }) as unknown as typeof globalThis.addEventListener
 
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
+  globalThis.removeEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners = listeners.filter((l) => l !== (listener as unknown as MessageListener))
+    }
+  }) as unknown as typeof globalThis.removeEventListener
+
+  globalThis.postMessage = ((message: unknown) => {
+    const event = {
+      data: message,
+      stopImmediatePropagation: () => {},
+      stopPropagation: () => {},
+    } as unknown as MessageEvent<unknown>
+    listeners.forEach((l) => l(event))
+  }) as unknown as typeof globalThis.postMessage
 
   afterAll(() => {
-    window.addEventListener = origAddEventListener
-    window.postMessage = origPostMessage
+    globalThis.addEventListener = origAddEventListener
+    globalThis.removeEventListener = origRemoveEventListener
+    globalThis.postMessage = origPostMessage
     if (originalLocalStorageDebug === null) {
       localStorage.removeItem('debug')
     } else {
@@ -51,14 +65,16 @@ describe('Gatherer', () => {
   const loggerWarnFn = jest.fn()
 
   beforeEach(() => {
-    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
-      debug: loggerDebugFn as any,
-      info: jest.fn() as any,
-      warn: loggerWarnFn as any,
-      error: jest.fn() as any,
-    })
+    const mockLogger: ComponentLogger = {
+      debug: loggerDebugFn as unknown as ComponentLogger['debug'],
+      info: jest.fn() as unknown as ComponentLogger['info'],
+      warn: loggerWarnFn as unknown as ComponentLogger['warn'],
+      error: jest.fn() as unknown as ComponentLogger['error'],
+    }
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue(mockLogger)
 
-    acceleratorState['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'initDate'], Date.now() - 1000000)
+    g['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
 
     listeners = []
 
@@ -89,11 +105,19 @@ describe('Gatherer', () => {
   })
 
   it('should throw an error if gatherer is not initialized', async () => {
-    delete (acceleratorState as any)['@onecx/accelerator'].gatherer.promises
+    const g = ensureProperty(
+      acceleratorState,
+      ['@onecx/accelerator', 'gatherer', 'promises'],
+      {} as Record<number, Array<Promise<unknown>>>
+    )
+    const gathererState = g['@onecx/accelerator'].gatherer as unknown as {
+      promises?: Record<number, Array<Promise<unknown>>>
+    }
+    Reflect.deleteProperty(gathererState, 'promises')
 
     await expect(gatherer1.gather('request3')).rejects.toThrow('Gatherer is not initialized')
     // Ensure that promises are reset for the next test
-    ;(acceleratorState as any)['@onecx/accelerator'].gatherer.promises = {}
+    gathererState.promises = {}
   })
 
   it('should log received and answered requests if debug is enabled', async () => {
@@ -119,10 +143,15 @@ describe('Gatherer', () => {
 
   it('should clean up promises on destroy', () => {
     gatherer1['ownIds'].add(1)
-    ;(acceleratorState as any)['@onecx/accelerator'].gatherer.promises[1] = []
+    const g = ensureProperty(
+      acceleratorState,
+      ['@onecx/accelerator', 'gatherer', 'promises'],
+      {} as Record<number, Array<Promise<unknown>>>
+    )
+    g['@onecx/accelerator'].gatherer.promises[1] = []
 
     gatherer1.destroy()
 
-    expect((acceleratorState as any)['@onecx/accelerator'].gatherer.promises[1]).toBeUndefined()
+    expect(g['@onecx/accelerator'].gatherer.promises[1]).toBeUndefined()
   })
 })
