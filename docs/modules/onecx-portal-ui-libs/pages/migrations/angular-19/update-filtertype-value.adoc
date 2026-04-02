@@ -8,7 +8,7 @@ In OneCX v6, two `FilterType` enum values were renamed.
 * `FilterType.EQUAL` → `FilterType.EQUALS`
 * `FilterType.TRUTHY` → `FilterType.IS_NOT_EMPTY`
 
-== Example
+=== Example
 
 .Before
 [source, typescript]

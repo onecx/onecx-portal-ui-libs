@@ -22,7 +22,7 @@ Guidelines::
 ** Jasmine -> `spyOn(service, 'getConfig').and.returnValue(Promise.resolve(cfg));`
 
 
-== Example
+=== Example
 
 .Before
 [source, typescript]

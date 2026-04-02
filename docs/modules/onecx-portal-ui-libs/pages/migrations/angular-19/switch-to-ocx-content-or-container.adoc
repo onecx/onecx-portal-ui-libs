@@ -15,7 +15,9 @@ In OneCX v6,
 * For grouping multiple content sections, Replace tag `<ocx-page-content>` with `<ocx-content-container>`
 * Migrate input properties as per the mapping tables below
 
-== Example (OcxContentComponent)
+=== Examples 
+
+**Example: OcxContentComponent**
 .Before
 [source, html]
 ----
@@ -37,7 +39,8 @@ In OneCX v6,
 </ocx-content>
 ----
 
-== Example (OcxContentContainerComponent)
+**Example: OcxContentContainerComponent**
+
 .Before
 [source,html]
 ----

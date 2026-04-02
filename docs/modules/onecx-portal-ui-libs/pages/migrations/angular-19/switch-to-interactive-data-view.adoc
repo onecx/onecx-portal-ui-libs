@@ -14,7 +14,7 @@ In OneCX v6, the InteractiveDataViewComponent replaces the following use cases:
 * Remove `DataViewModule` from `primeng/dataview` if not used elsewhere
 * Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below
 
-== Examples
+=== Examples
 
 **Example: p-dataView & DataViewControlsComponent to InteractiveDataViewComponent**
 .Before
