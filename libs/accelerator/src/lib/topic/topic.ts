@@ -13,7 +13,6 @@ import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
 import { TopicPublisher } from './topic-publisher'
 import { TopicResolveMessage } from './topic-resolve-message'
-import '../declarations'
 import { increaseInstanceCount, isStatsEnabled } from '../utils/logs.utils'
 import { acceleratorState } from '../declarations'
 
