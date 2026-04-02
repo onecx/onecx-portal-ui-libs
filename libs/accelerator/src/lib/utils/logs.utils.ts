@@ -1,4 +1,3 @@
-import '../declarations'
 import { acceleratorState } from '../declarations'
 import { TopicMessageType } from '../topic/topic-message-type'
 import { ensureProperty } from './ensure-property.utils'

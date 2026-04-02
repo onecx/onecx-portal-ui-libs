@@ -2,8 +2,6 @@ import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
 import { createLogger } from './logger.utils'
-
-import '../declarations'
 import { acceleratorState } from '../declarations'
 
 /**
