@@ -66,7 +66,7 @@ describe('FakeTopic', () => {
     t.publish(2)
     t.publish(3)
 
-    const forEachPromise = t.forEach(() => {})
+    const forEachPromise = t.forEach(jest.fn())
     const toPromisePromise = t.toPromise()
 
     t.destroy()

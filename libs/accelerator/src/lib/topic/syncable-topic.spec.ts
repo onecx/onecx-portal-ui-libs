@@ -38,8 +38,8 @@ describe('Syncable Topic', () => {
   globalThis.postMessage = ((message: unknown) => {
     const event = {
       data: message,
-      stopImmediatePropagation: () => {},
-      stopPropagation: () => {},
+      stopImmediatePropagation: jest.fn(),
+      stopPropagation: jest.fn(),
     } as unknown as MessageEvent<unknown>
     listeners.forEach((l) => l(event))
   }) as unknown as typeof globalThis.postMessage

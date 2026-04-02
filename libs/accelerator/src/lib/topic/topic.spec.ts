@@ -40,8 +40,8 @@ describe('Topic', () => {
   window.postMessage = ((message: unknown) => {
     const event = {
       data: message,
-      stopImmediatePropagation: () => {},
-      stopPropagation: () => {},
+      stopImmediatePropagation: jest.fn(),
+      stopPropagation: jest.fn(),
     } as unknown as MessageEvent<unknown>
     listeners.forEach((l) => l(event))
   }) as unknown as typeof window.postMessage
@@ -220,8 +220,8 @@ describe('Topic', () => {
     window.postMessage = ((message: unknown) => {
       const event = {
         data: message,
-        stopImmediatePropagation: () => {},
-        stopPropagation: () => {},
+        stopImmediatePropagation: jest.fn(),
+        stopPropagation: jest.fn(),
       } as unknown as MessageEvent<unknown>
 
       listeners.forEach((l) => {
