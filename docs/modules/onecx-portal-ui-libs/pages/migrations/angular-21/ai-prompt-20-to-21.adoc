@@ -24,7 +24,7 @@ If the repository uses PrimeNG (for example dependencies such as primeng, primei
 Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v21
 * Record any required PrimeNG migration steps or breaking changes and include them in the migration plan
 PrimeNG migration steps must be executed during the post-migration phase after the Angular upgrade.
-2. Extract Migration Steps & Create Plan File
+2. Extract Migration Steps & Create a Plan File: MIGRATION_PROGRESS.md.
 From the documentation:
 Extract pre-migration and post-migration tasks
 Then:
