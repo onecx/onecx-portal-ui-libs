@@ -1,7 +1,6 @@
 import { Subscription } from 'rxjs'
 import { Topic } from '../topic/topic'
 
-import '../declarations'
 import { acceleratorState } from '../declarations'
 
 /**

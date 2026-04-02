@@ -52,7 +52,7 @@ export class TopicPublisher<T> {
     } else {
       const postMessage = globalThis.postMessage
       if (typeof postMessage !== 'function') {
-        throw new Error('postMessage is not available in this environment')
+        throw new TypeError('postMessage is not available in this environment')
       }
       postMessage( message, '*')
     }
