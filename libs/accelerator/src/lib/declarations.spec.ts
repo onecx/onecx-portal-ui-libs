@@ -35,6 +35,7 @@ describe('declarations', () => {
 
     let acceleratorState!: AcceleratorState
     jest.isolateModules(() => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       acceleratorState = (require('./declarations') as { acceleratorState: AcceleratorState }).acceleratorState
     })
 
@@ -47,6 +48,7 @@ describe('declarations', () => {
 
     let acceleratorState!: AcceleratorState
     jest.isolateModules(() => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       acceleratorState = (require('./declarations') as { acceleratorState: AcceleratorState }).acceleratorState
     })
 
