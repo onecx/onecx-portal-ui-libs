@@ -17,7 +17,7 @@ OneCX Portal UI Libs is using [semantic-release](https://semantic-release.gitboo
 
 # Releasing libs
 
-In order to release new version of libs, use `create-release` action to run the release workflow for **desired branch**.
+In order to release new version of libs, use the `create-release` action to run the release workflow for **desired branch**.
 
 ## Release versioning
 

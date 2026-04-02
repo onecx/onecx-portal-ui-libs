@@ -12,6 +12,9 @@ import { DataTableComponent, Row } from './data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { QueryList } from '@angular/core'
+import { PrimeTemplate } from 'primeng/api'
+import { firstValueFrom } from 'rxjs'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -809,104 +812,104 @@ describe('DataTableComponent', () => {
   })
 
   describe('LiveAnnouncer announcements', () => {
-    let liveAnnouncer: LiveAnnouncer;
-    let announceSpy: jest.SpyInstance;
+    let liveAnnouncer: LiveAnnouncer
+    let announceSpy: jest.SpyInstance
 
     beforeEach(() => {
-      liveAnnouncer = TestBed.inject(LiveAnnouncer);
-      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue();
-    });
+      liveAnnouncer = TestBed.inject(LiveAnnouncer)
+      announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
     describe('should announce "results found" when data has entries', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
+        component.rows = mockData
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('5 Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+      })
+    })
 
     describe('should announce "no results found" when data is empty', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('Keine Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = [];
-        fixture.detectChanges();
+        component.rows = []
+        fixture.detectChanges()
 
-        await fixture.whenStable();
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(1);
-        expect(announceSpy).toHaveBeenCalledWith('No Results Found');
-      });
-    });
+        expect(announceSpy).toHaveBeenCalledTimes(1)
+        expect(announceSpy).toHaveBeenCalledWith('No Results Found')
+      })
+    })
 
     describe('should announce "results found" when data changes', () => {
       it('de', async () => {
-        translateService.use('de');
+        translateService.use('de')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden');
-      });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Ergebnisse gefunden')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Ergebnisse gefunden')
+      })
 
       it('en', async () => {
-        translateService.use('en');
+        translateService.use('en')
 
-        component.rows = mockData;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        component.rows = mockData.slice(0, 2);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        component.rows = mockData.slice(0, 2)
+        fixture.detectChanges()
+        await fixture.whenStable()
 
-        expect(announceSpy).toHaveBeenCalledTimes(2);
-        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found');
-        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found');
-      });
-    });
-  });
+        expect(announceSpy).toHaveBeenCalledTimes(2)
+        expect(announceSpy).toHaveBeenNthCalledWith(1, '5 Results Found')
+        expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
+      })
+    })
+  })
 
   describe('rows & filters setter (resetPage)', () => {
     it('should call resetPage when rows length decreases', () => {
@@ -928,7 +931,7 @@ describe('DataTableComponent', () => {
       const pageSpy = jest.spyOn(component.pageChanged, 'emit')
       component.page = 2
 
-      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i } as any))
+      component.rows = Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i }) as any)
 
       expect(resetSpy).not.toHaveBeenCalled()
       expect(component.page).toBe(2)
@@ -999,10 +1002,9 @@ describe('DataTableComponent', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
       component.page = 3
 
-      component.onMultiselectFilterChange(
-        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
-        { value: ['a', 'b'] }
-      )
+      component.onMultiselectFilterChange({ id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any, {
+        value: ['a', 'b'],
+      })
 
       expect(resetSpy).toHaveBeenCalled()
       expect(component.page).toBe(0)
@@ -1014,10 +1016,9 @@ describe('DataTableComponent', () => {
       const resetSpy = jest.spyOn(component, 'resetPage')
       component.page = 3
 
-      component.onMultiselectFilterChange(
-        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
-        { value: ['a', 'b'] }
-      )
+      component.onMultiselectFilterChange({ id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any, {
+        value: ['a', 'b'],
+      })
 
       expect(resetSpy).toHaveBeenCalled()
       expect(component.page).toBe(0)
@@ -1027,10 +1028,9 @@ describe('DataTableComponent', () => {
       component.clientSideFiltering = true
       const filteredSpy = jest.spyOn(component.filtered, 'emit')
 
-      component.onMultiselectFilterChange(
-        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
-        { value: ['test1', 'test2'] }
-      )
+      component.onMultiselectFilterChange({ id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any, {
+        value: ['test1', 'test2'],
+      })
 
       expect(filteredSpy).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -1044,10 +1044,9 @@ describe('DataTableComponent', () => {
       component.clientSideFiltering = true
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
-      component.onMultiselectFilterChange(
-        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
-        { value: ['test1'] }
-      )
+      component.onMultiselectFilterChange({ id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any, {
+        value: ['test1'],
+      })
 
       expect(stateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1060,12 +1059,349 @@ describe('DataTableComponent', () => {
       component.clientSideFiltering = false
       component.filters = []
 
-      component.onMultiselectFilterChange(
-        { id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any,
-        { value: ['test1'] }
-      )
+      component.onMultiselectFilterChange({ id: 'name', columnType: ColumnType.STRING, nameKey: 'NAME' } as any, {
+        value: ['test1'],
+      })
 
       expect(component.filters).toEqual([])
     })
   })
+
+  describe('Row expansion', () => {
+    const row1 = mockData[0]
+    const row2 = mockData[1]
+
+    describe('expandedRows setter', () => {
+      it('should set expandedRowIds$ and expandedRowKeys from Row objects', () => {
+        component.expandedRows = [row1, row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should set expandedRowIds$ and expandedRowKeys from string ids', () => {
+        component.expandedRows = [row1.id, row2.id]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should overwrite previously expanded rows', () => {
+        component.expandedRows = [row1]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true })
+
+        component.expandedRows = [row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row2.id]: true })
+      })
+
+      it('should clear expandedRowIds$ and expandedRowKeys when empty array is passed', () => {
+        component.expandedRows = [row1]
+        component.expandedRows = []
+
+        expect(component.expandedRowIds$.getValue()).toEqual([])
+        expect(component.expandedRowKeys).toEqual({})
+      })
+
+      it('should treat null as an empty array and clear expanded state', () => {
+        component.expandedRows = [row1]
+        component.expandedRows = null as any
+
+        expect(component.expandedRowIds$.getValue()).toEqual([])
+        expect(component.expandedRowKeys).toEqual({})
+      })
+
+      it('should treat undefined as an empty array and clear expanded state', () => {
+        component.expandedRows = [row1]
+        component.expandedRows = undefined as any
+
+        expect(component.expandedRowIds$.getValue()).toEqual([])
+        expect(component.expandedRowKeys).toEqual({})
+      })
+
+      it('should filter out null entries inside the array', () => {
+        component.expandedRows = [row1, null as any, row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+
+      it('should filter out undefined entries inside the array', () => {
+        component.expandedRows = [row1, undefined as any, row2]
+
+        expect(component.expandedRowIds$.getValue()).toEqual([row1.id, row2.id])
+        expect(component.expandedRowKeys).toEqual({ [row1.id]: true, [row2.id]: true })
+      })
+    })
+
+    describe('isRowExpanded', () => {
+      it('should return true when row is expanded', () => {
+        component.expandedRows = [row1]
+
+        expect(component.isRowExpanded(row1)).toBe(true)
+      })
+
+      it('should return false when row is not expanded', () => {
+        component.expandedRows = [row1]
+
+        expect(component.isRowExpanded(row2)).toBe(false)
+      })
+
+      it('should return false when no rows are expanded', () => {
+        component.expandedRows = []
+
+        expect(component.isRowExpanded(row1)).toBe(false)
+      })
+    })
+
+    describe('onRowExpand', () => {
+      it('should add row id to expandedRowIds$ if not already present', () => {
+        component.expandedRows = []
+        component.onRowExpand({ data: row1 })
+
+        expect(component.expandedRowIds$.getValue()).toContain(row1.id)
+      })
+
+      it('should not add duplicate row id to expandedRowIds$', () => {
+        component.expandedRows = [row1]
+        component.onRowExpand({ data: row1 })
+
+        const ids = component.expandedRowIds$.getValue()
+        const matchingIds = ids.filter((id) => id === row1.id)
+        expect(matchingIds.length).toBe(1)
+      })
+
+      it('should emit rowExpanded with the row data', () => {
+        const spy = jest.spyOn(component.rowExpanded, 'emit')
+
+        component.onRowExpand({ data: row1 })
+
+        expect(spy).toHaveBeenCalledWith(row1)
+      })
+
+      it('should emit componentStateChanged', () => {
+        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+        component.onRowExpand({ data: row1 })
+
+        expect(stateSpy).toHaveBeenCalled()
+      })
+    })
+
+    describe('onRowCollapse', () => {
+      beforeEach(() => {
+        component.expandedRows = [row1, row2]
+      })
+
+      it('should remove row id from expandedRowIds$', () => {
+        component.onRowCollapse({ data: row1 })
+
+        expect(component.expandedRowIds$.getValue()).not.toContain(row1.id)
+        expect(component.expandedRowIds$.getValue()).toContain(row2.id)
+      })
+
+      it('should emit rowCollapsed with the row data', () => {
+        const spy = jest.spyOn(component.rowCollapsed, 'emit')
+
+        component.onRowCollapse({ data: row1 })
+
+        expect(spy).toHaveBeenCalledWith(row1)
+      })
+
+      it('should emit componentStateChanged', () => {
+        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+        component.onRowCollapse({ data: row1 })
+
+        expect(stateSpy).toHaveBeenCalled()
+      })
+    })
+
+    describe('toggleRowExpansion', () => {
+      it('should expand a collapsed row', () => {
+        component.expandedRows = []
+        component.toggleRowExpansion(row1)
+
+        const expanded = component.isRowExpanded(row1)
+        const expandedRowKey = component.expandedRowKeys[row1.id]
+
+        expect(expanded).toBe(true)
+        expect(expandedRowKey).toBe(true)
+      })
+
+      it('should collapse an expanded row', () => {
+        component.expandedRows = [row1]
+        component.toggleRowExpansion(row1)
+
+        const expanded = component.isRowExpanded(row1)
+        const expandedRowKey = component.expandedRowKeys[row1.id]
+
+        expect(expanded).toBe(false)
+        expect(expandedRowKey).toBeUndefined()
+      })
+    })
+
+    describe('allTemplates$ observable', () => {
+      it('should emit empty array when all template sources are undefined', async () => {
+        component.templates$.next(undefined)
+        component.viewTemplates$.next(undefined)
+        component.parentTemplates$.next(undefined)
+
+        if (component.allTemplates$) {
+          const result = await firstValueFrom(component.allTemplates$)
+
+          expect(result).toEqual([])
+        }
+      })
+
+      it('should combine templates from content, view and parent sources', async () => {
+        const contentTemplate = { getType: () => 'stringCell' }
+        const viewTemplate = { getType: () => 'numberCell' }
+        const parentTemplate = { getType: () => 'dateCell' }
+
+        component.templates$.next(createQueryList([contentTemplate]))
+        component.viewTemplates$.next(createQueryList([viewTemplate]))
+        component.parentTemplates$.next(createQueryList([parentTemplate]))
+
+        if (component.allTemplates$) {
+          const result = await firstValueFrom(component.allTemplates$)
+          const resultTypes = result.map((t) => t.getType())
+
+          expect(result).toHaveLength(3)
+          expect(resultTypes).toContain('stringCell')
+          expect(resultTypes).toContain('numberCell')
+          expect(resultTypes).toContain('dateCell')
+        }
+      })
+
+      it('should deduplicate templates with the same type, keeping the first occurrence', async () => {
+        const firstTemplate = { getType: () => 'expansion' }
+        const secondTemplate = { getType: () => 'expansion' }
+
+        component.templates$.next(createQueryList([firstTemplate, secondTemplate]))
+        component.viewTemplates$.next(undefined)
+        component.parentTemplates$.next(null)
+        if (component.allTemplates$) {
+          const result = await firstValueFrom(component.allTemplates$)
+
+          expect(result).toHaveLength(1)
+          expect(result[0]).toBe(firstTemplate)
+        }
+      })
+
+      it('should prefer content templates over view templates when types clash', async () => {
+        const contentTemplate = { getType: () => 'expansion' }
+        const viewTemplate = { getType: () => 'expansion' }
+
+        component.templates$.next(createQueryList([contentTemplate]))
+        component.viewTemplates$.next(createQueryList([viewTemplate]))
+        component.parentTemplates$.next(null)
+
+        if (component.allTemplates$) {
+          const result = await firstValueFrom(component.allTemplates$)
+
+          expect(result).toHaveLength(1)
+          expect(result[0]).toBe(contentTemplate)
+        }
+      })
+    })
+
+    describe('expansionTemplate$ observable', () => {
+      it('should find and return the expansion template from combined templates', async () => {
+        const expansionTemplate = { getType: () => 'expansion' }
+        const otherTemplate = { getType: () => 'stringCell' }
+
+        component.templates$.next(createQueryList([expansionTemplate, otherTemplate]))
+        component.viewTemplates$.next(undefined)
+        component.parentTemplates$.next(null)
+
+        if (component.expansionTemplate$) {
+          const result = await firstValueFrom(component.expansionTemplate$)
+
+          expect(result).toBe(expansionTemplate)
+        }
+      })
+    })
+  })
+
+  describe('actionColumnVisible', () => {
+    it('should return false when no row actions are observed and no additional actions are set', () => {
+      expect(component.actionColumnVisible).toBe(false)
+    })
+
+    it('should return true when any row action is observed', () => {
+      jest.spyOn(component, 'anyRowActionObserved', 'get').mockReturnValue(true)
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return true when additionalActions is non-empty', () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ]
+      expect(component.actionColumnVisible).toBe(true)
+    })
+
+    it('should return false when additionalActions becomes empty', () => {
+      component.additionalActions = [
+        {
+          permission: 'VIEW',
+          callback: () => {
+            // empty callback for testing
+          },
+        },
+      ]
+      component.additionalActions = []
+      expect(component.actionColumnVisible).toBe(false)
+    })
+  })
+
+  describe('getRowColspan', () => {
+    it('should return columns.length when no optional columns are active', () => {
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for selection column when selectionChanged is observed', () => {
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should add 1 for expansion column when expandable is true and hasExpansionTemplate is true', () => {
+      component.expandable = true
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 1)
+    })
+
+    it('should not add expansion column when expandable is false even if hasExpansionTemplate is true', () => {
+      component.expandable = false
+      expect(component.getRowColspan(true)).toBe(mockColumns.length)
+    })
+
+    it('should not add expansion column when hasExpansionTemplate is false even if expandable is true', () => {
+      component.expandable = true
+      expect(component.getRowColspan(false)).toBe(mockColumns.length)
+    })
+
+    it('should add 1 for action column when action column is visible', () => {
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(false)).toBe(mockColumns.length + 1)
+    })
+
+    it('should count all active columns correctly when all optional columns are active', () => {
+      component.expandable = true
+      jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
+      jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
+      expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
+    })
+  })
 })
+
+function createQueryList(items: Partial<PrimeTemplate>[]): QueryList<PrimeTemplate> {
+  const list = new QueryList<PrimeTemplate>()
+  list.reset(items as PrimeTemplate[])
+  return list
+}
