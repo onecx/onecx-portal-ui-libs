@@ -21,7 +21,7 @@ https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migratio
 Additionally check for PrimeNG migration information.
 If the repository uses PrimeNG (for example dependencies such as primeng, primeicons or primeflex are present):
 * Check if a PrimeNG MCP server is available; if it is, retrieve PrimeNG migration or upgrade information for the target version
-Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v19
+Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v20
 * Record any required PrimeNG migration steps or breaking changes and include them in the migration plan
 PrimeNG migration steps must be executed during the post-migration phase after the Angular upgrade.
 2. Extract Migration Steps & Create Plan File

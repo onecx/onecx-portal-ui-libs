@@ -41,7 +41,7 @@ Replace publisher wrappers with their corresponding topic classes.
 import { EventsPublisher } from '@onecx/integration-interface'
 
 const eventsPublisher$ = new EventsPublisher()
-this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
+eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
 
 ----
 
@@ -51,6 +51,6 @@ this.eventsPublisher$.publish({ type: 'authentication#logoutButtonClicked' })
 import { EventsTopic } from '@onecx/integration-interface'
 
 const eventsTopic = new EventsTopic()
-this.eventsTopic.publish({ type: 'authentication#logoutButtonClicked' })
+eventsTopic.publish({ type: 'authentication#logoutButtonClicked' })
 
 ----

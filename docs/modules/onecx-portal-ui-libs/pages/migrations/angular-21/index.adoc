@@ -39,7 +39,7 @@ You can click the name of any change to open a detailed migration guide with ins
 [#upgrade-to-angular-21]
 == Upgrade to Angular 21
 
-After completing the pre-migration steps, you can proceed with upgrading your application to Angular 19. 
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 21. 
 
 If the project is an NX workspace, follow the instructions in xref:./update-nx-angular-version-21.adoc[Upgrade NX Application to Angular 21]. After completing the NX migration steps, also review the  official Angular update guide for any additional steps or considerations: https://angular.dev/update-guide?v=20.0-21.0&l=1[Angular Update Guide].
 

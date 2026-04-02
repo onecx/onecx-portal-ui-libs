@@ -16,12 +16,12 @@ If the following packages are used in your project, update them to ensure compat
 | Required by `@onecx/angular-accelerator`
 
 | `primeicons`
-| `^7.1.0`
-| Updated for Angular 19 compatibility
+| `^7.0.0`
+| Updated for Angular 21 compatibility
 
 | `primeflex`
 | `^4.0.0`
-| Updated for Angular 19 compatibility
+| Updated for Angular 21 compatibility
 
 | `@primeng/themes`
 | `^21.0.0`
