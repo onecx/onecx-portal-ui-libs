@@ -75,6 +75,7 @@ export interface DataTableComponentState {
   filters?: Filter[]
   sorting?: Sort
   selectedRows?: Row[]
+  expandedRows?: Row[]
   activePage?: number
   pageSize?: number
 }
@@ -317,6 +318,22 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input()
+  set expandedRows(value: Row[] | string[] | number[]) {
+    const ids = (value ?? [])
+      .filter((row): row is Row | string | number => row !== null && row !== undefined)
+      .map((row) => {
+        if (typeof row === 'object') {
+          return row.id
+        }
+        return row
+      })
+    this.expandedRowIds$.next(ids)
+    this.expandedRowKeys = Object.fromEntries(ids.map((id) => [id, true]))
+  }
+
+  @Input() expandable = false
+  @Input() frozenExpandColumn = false
 
   @Output() filtered = new EventEmitter<Filter[]>()
   @Output() sorted = new EventEmitter<Sort>()
@@ -327,6 +344,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Output() pageChanged = new EventEmitter<number>()
   @Output() pageSizeChanged = new EventEmitter<number>()
   @Output() componentStateChanged = new EventEmitter<DataTableComponentState>()
+  @Output() rowExpanded = new EventEmitter<Row>()
+  @Output() rowCollapsed = new EventEmitter<Row>()
 
   displayedRows$: Observable<unknown[]> | undefined
   selectedRows$: Observable<unknown[]> | undefined
@@ -392,12 +411,31 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
   }
 
+  get actionColumnVisible(): boolean {
+    return this.anyRowActionObserved || this.additionalActions.length > 0
+  }
+
+  getRowColspan(hasExpansionTemplate: boolean): number {
+    return (
+      this.columns.length +
+      (this.selectionChangedObserved ? 1 : 0) +
+      (this.expandable && hasExpansionTemplate ? 1 : 0) +
+      (this.actionColumnVisible ? 1 : 0)
+    )
+  }
+
   get selectionChangedObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.selectionChangedObserved || dv?.selectionChanged.observed || this.selectionChanged.observed
   }
 
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>> = {}
+
+  allTemplates$: Observable<PrimeTemplate[]> | undefined
+  expansionTemplate$: Observable<PrimeTemplate | undefined> | undefined
+
+  expandedRowIds$ = new BehaviorSubject<(string | number)[]>([])
+  expandedRowKeys: Record<string, boolean> = {}
 
   private cachedOverflowActions$: Observable<DataAction[]>
   private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
@@ -552,8 +590,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   emitComponentStateChanged(state: DataTableComponentState = {}) {
     this.displayedPageSize$
-      .pipe(withLatestFrom(this._selectionIds$, this._rows$), first())
-      .subscribe(([pageSize, selectedIds, rows]) => {
+      .pipe(withLatestFrom(this._selectionIds$, this.expandedRowIds$, this._rows$), first())
+      .subscribe(([pageSize, selectedIds, expandedIds, rows]) => {
         this.componentStateChanged.emit({
           filters: this.filters,
           sorting: {
@@ -563,6 +601,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           pageSize,
           activePage: this.page,
           selectedRows: rows.filter((row) => selectedIds.includes(row.id)),
+          expandedRows: rows.filter((row) => expandedIds.includes(row.id)),
           ...state,
         })
       })
@@ -609,6 +648,54 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           break
       }
     })
+    
+    this.allTemplates$ = combineLatest([this.templates$, this.viewTemplates$, this.parentTemplates$]).pipe(
+      map(([templates, viewTemplates, parentTemplates]) => {
+        const all =
+          templates
+            ?.toArray()
+            .concat(viewTemplates?.toArray() ?? [])
+            .concat(parentTemplates?.toArray() ?? []) ?? []
+        return all.filter((t, index, self) => self.findIndex((pt) => pt.getType() === t.getType()) === index)
+      })
+    )
+
+    this.expansionTemplate$ = this.allTemplates$.pipe(
+      map((templates) => templates.find((t) => t.getType() === 'expansion'))
+    )
+  }
+
+  onRowExpand(event: any) {
+    const expandedIds = this.expandedRowIds$.getValue()
+    if (!expandedIds.includes(event.data.id)) {
+      this.expandedRowIds$.next([...expandedIds, event.data.id])
+    }
+    this.rowExpanded.emit(event.data)
+    this.emitComponentStateChanged()
+  }
+
+  onRowCollapse(event: any) {
+    const expandedIds = this.expandedRowIds$.getValue()
+    this.expandedRowIds$.next(expandedIds.filter((id) => id !== event.data.id))
+    this.rowCollapsed.emit(event.data)
+    this.emitComponentStateChanged()
+  }
+
+  isRowExpanded(row: Row): boolean {
+    return this.expandedRowIds$.getValue().includes(row.id)
+  }
+
+  toggleRowExpansion(row: Row) {
+    const isExpanded = this.isRowExpanded(row)
+    if (isExpanded) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [row.id]: _removed, ...rest } = this.expandedRowKeys
+      this.expandedRowKeys = rest
+      this.onRowCollapse({ data: row })
+    } else {
+      this.expandedRowKeys = { ...this.expandedRowKeys, [row.id]: true }
+      this.onRowExpand({ data: row })
+    }
   }
 
   onSortColumnClick(sortColumn: string) {

@@ -1,3 +1,9 @@
+## [6.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.18.0...v6.19.0) (2026-04-02)
+
+### Features
+
+* add expandable row to ocx data table - v6 ([#1326](https://github.com/onecx/onecx-portal-ui-libs/issues/1326)) ([1761115](https://github.com/onecx/onecx-portal-ui-libs/commit/17611155a722f88b268da89a56d0261f1b80e4cf))
+
 ## [6.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.17.0...v6.18.0) (2026-03-27)
 
 ### Features
