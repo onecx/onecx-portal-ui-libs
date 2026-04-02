@@ -629,5 +629,102 @@ describe('Topic', () => {
       t1.destroy()
       t2.destroy()
     })
+
+    it('does not send TopicGet via timeout when initialized before timer fires', () => {
+      jest.useFakeTimers()
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+      g['@onecx/accelerator'].topic.initDate = Date.now()
+      g['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+      const t = new Topic<string>('timeout-no-get', 1)
+      t.subscribe(jest.fn())
+
+      const tInternal = t as unknown as { sendMessage: (message: { type?: unknown }) => void }
+      const sendSpy = jest.spyOn(tInternal, 'sendMessage')
+
+      t.publish('init-now')
+
+      jest.advanceTimersByTime(150)
+
+      const hasTopicGet = sendSpy.mock.calls.some(([message]) => message.type === TopicMessageType.TopicGet)
+      expect(hasTopicGet).toBe(false)
+
+      t.destroy()
+      jest.useRealTimers()
+    })
+
+    it('skips adding window message listener when globalThis.addEventListener is not a function', () => {
+      const originalAddEventListener = Reflect.get(globalThis, 'addEventListener')
+      try {
+        const listenerCountBefore = listeners.length
+        Reflect.set(globalThis, 'addEventListener', undefined)
+
+        const t = new Topic<string>('no-addeventlistener', 1, false)
+        expect(listeners.length).toBe(listenerCountBefore)
+        t.destroy()
+      } finally {
+        Reflect.set(globalThis, 'addEventListener', originalAddEventListener)
+      }
+    })
+
+    it('removes window message listener on destroy when globalThis.removeEventListener is a function', () => {
+      const originalRemoveEventListener = Reflect.get(globalThis, 'removeEventListener')
+      const removeSpy = jest.fn() as unknown as typeof globalThis.removeEventListener
+      try {
+        Reflect.set(globalThis, 'removeEventListener', removeSpy)
+
+        const t = new Topic<string>('destroy-removes', 1, false)
+        t.subscribe(jest.fn())
+
+        t.destroy()
+
+        expect(removeSpy).toHaveBeenCalledWith('message', expect.any(Function), true)
+      } finally {
+        Reflect.set(globalThis, 'removeEventListener', originalRemoveEventListener)
+      }
+    })
+
+    it('does not attempt to remove window message listener on destroy when globalThis.removeEventListener is not a function', () => {
+      const originalRemoveEventListener = Reflect.get(globalThis, 'removeEventListener')
+      try {
+        Reflect.set(globalThis, 'removeEventListener', undefined)
+
+        const t = new Topic<string>('destroy-no-remove', 1, false)
+        t.subscribe(jest.fn())
+
+        expect(() => t.destroy()).not.toThrow()
+      } finally {
+        Reflect.set(globalThis, 'removeEventListener', originalRemoveEventListener)
+      }
+    })
+
+    it('does not respond to TopicGet when no value is present (handleTopicGetMessage false branch)', () => {
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+      g['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+      const t = new Topic<string>('get-no-value', 1, false)
+
+      const tInternal = t as unknown as {
+        sendMessage: (message: unknown) => void
+        handleTopicGetMessage: (message: MessageEvent<unknown>) => void
+      }
+      const sendSpy = jest.spyOn(tInternal, 'sendMessage')
+      const stopImmediatePropagation = jest.fn()
+      const stopPropagation = jest.fn()
+
+      const event = {
+        data: { type: TopicMessageType.TopicGet, name: 'get-no-value', version: 1 },
+        stopImmediatePropagation,
+        stopPropagation,
+      } as unknown as MessageEvent<unknown>
+
+      tInternal.handleTopicGetMessage(event)
+
+      expect(sendSpy).not.toHaveBeenCalled()
+      expect(stopImmediatePropagation).not.toHaveBeenCalled()
+      expect(stopPropagation).not.toHaveBeenCalled()
+
+      t.destroy()
+    })
   })
 })
