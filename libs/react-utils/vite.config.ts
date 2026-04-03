@@ -27,6 +27,7 @@ export default defineConfig({
         index: 'src/lib/index.ts',
         styling: 'src/lib/styling/primeReact/index.ts',
         utils: 'src/lib/utils/index.ts',
+        guards: 'src/lib/guards/index.ts',
       },
       name: 'react-utils',
       fileName: (format, entryName) => entryName,

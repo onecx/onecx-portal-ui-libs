@@ -3,6 +3,7 @@ import { GuardsNavigationStateController } from '../services/guards-navigation-c
 import { GUARD_MODE, GuardsNavigationState } from '../model/guard-navigation.model'
 import type { CanActivateGuard, GuardExecutionContext, GuardResult } from './guard-types.utils'
 import { combineToBoolean, executeRouterSyncGuard, logGuardsDebug, resolveToPromise } from './guards-utils.utils'
+import { createLogger } from './logger.utils'
 
 /**
  * Executes canActivate guard handlers based on navigation state mode.
@@ -29,6 +30,7 @@ export class ActivateGuardsWrapper {
     guards: CanActivateGuard[],
     guardsNavigationState: GuardsNavigationState = {}
   ): Promise<GuardResult> {
+    const logger = createLogger('ActivateGuardsWrapper')
     if (guards.length === 0) {
       return true
     }
@@ -53,12 +55,12 @@ export class ActivateGuardsWrapper {
       case GUARD_MODE.NAVIGATION_REQUESTED: {
         let checkStartPromise = this.guardsNavigationStateController.getGuardCheckPromise(guardsNavigationState)
         if (!checkStartPromise) {
-          logGuardsDebug('No guard check promise found in guards navigation state, returning true.')
+          logger.warn('No guard check promise found in guards navigation state, returning true.')
           checkStartPromise = Promise.resolve(true)
         }
         const checkResult = await checkStartPromise
         if (checkResult === false) {
-          logGuardsDebug(`Cannot route to ${futureUrl} because activation is guarded.`)
+          logger.warn(`Cannot route to ${futureUrl} because activation is guarded.`)
           return false
         }
         return this.executeActivateGuards(guards, context, combineToBoolean)
@@ -71,12 +73,13 @@ export class ActivateGuardsWrapper {
     context: GuardExecutionContext,
     combineFn: (results: GuardResult[]) => T
   ): Promise<T> {
+    const logger = createLogger('ActivateGuardsWrapper')
     const results = await Promise.all(
       guards.map((guard) => {
         try {
           return resolveToPromise(guard(context))
         } catch {
-          logGuardsDebug('Guard does not implement canActivate:', guard)
+          logger.warn('Guard does not implement canActivate:', guard)
           return Promise.resolve(true)
         }
       })

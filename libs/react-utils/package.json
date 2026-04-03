@@ -22,6 +22,11 @@
       "types": "./utils.d.ts",
       "import": "./utils.mjs",
       "require": "./utils.js"
+    },
+    "./guards": {
+      "types": "./guards.d.ts",
+      "import": "./guards.mjs",
+      "require": "./guards.js"
     }
   },
   "peerDependencies": {

@@ -1,13 +1,14 @@
 import type { GuardResult, MaybePromise } from './guard-types.utils'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('guards-utils')
 
 /**
  * Log guard-related debug information.
  * @param args - values to log.
  */
 export function logGuardsDebug(...args: unknown[]): void {
-  if (typeof console !== 'undefined' && console.debug) {
-    console.debug('Guards:', ...args)
-  }
+  logger.debug('Guards:', ...args)
 }
 
 /**

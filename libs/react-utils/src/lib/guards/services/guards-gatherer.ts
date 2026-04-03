@@ -1,6 +1,7 @@
 import type { NavigateFunction } from 'react-router'
 import { Gatherer } from '@onecx/accelerator'
 import { GuardsNavigationStateController } from './guards-navigation-controller'
+import { logGuardsDebug } from '../utils/guards-utils.utils'
 
 /**
  * Request for performing guard checks.
@@ -89,6 +90,7 @@ export class GuardsGatherer {
   }
 
   private executeGuardsCallback(request: GuardResultRequest): Promise<GuardResultResponse> {
+    logGuardsDebug('Executing callback for request:', request)
     const routeUrl = this.normalizeUrl(request.url)
     const guardCheckKey = this.getNextGuardCheckKey()
 
