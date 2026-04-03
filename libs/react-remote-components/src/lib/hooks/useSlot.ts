@@ -4,6 +4,8 @@ import type { SlotServiceInterface } from '../models'
 
 /**
  * Hook to access slot services.
+ * @returns Slot service interface.
+ * @throws Error when used outside SlotProvider.
  */
 export const useSlot = (): SlotServiceInterface => {
   const context = useContext(SlotContext)

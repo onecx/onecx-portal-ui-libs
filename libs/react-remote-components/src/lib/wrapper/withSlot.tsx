@@ -3,7 +3,9 @@ import { SlotProvider } from '../contexts/slotContext'
 import { PermissionProvider } from '../contexts/permissionContext'
 
 /**
- * Wraps a component with Slot and Permission providers for remote components.
+ * Wrap a component with Slot and Permission providers for remote components.
+ * @param WrappedComponent - component to wrap with providers.
+ * @returns component wrapped with SlotProvider and PermissionProvider.
  */
 export const withSlot = <P extends object>(WrappedComponent: ComponentType<P>): FC<P> => {
   const hocComponent = (props: P) => (

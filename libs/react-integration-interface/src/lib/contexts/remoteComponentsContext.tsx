@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import { RemoteComponentsTopic } from '@onecx/integration-interface'
 
+/**
+ * Remote components context value shape.
+ */
 interface RemoteComponentsContextValue {
   remoteComponents$: RemoteComponentsTopic
 }

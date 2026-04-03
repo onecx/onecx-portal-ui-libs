@@ -2,13 +2,22 @@ import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffe
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
+/** Initial synced location value. */
 const initValue = {
   url: '',
   isFirst: true,
 }
 
+/**
+ * React context carrying the current synced location payload.
+ */
 export const SyncedLocationContext = createContext<CurrentLocationTopicPayload>(initValue)
 
+/**
+ * Internal router sync component subscribing to current location topic.
+ * @param children - nested content rendered with synced location context.
+ * @returns Provider for synced location state.
+ */
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const locationHook = useLocation()
@@ -47,6 +56,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
 
+/**
+ * Wraps children with BrowserRouter and synced location provider.
+ * @param children - content to render inside the synced router.
+ * @returns Router provider component.
+ */
 export const SyncedRouterProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <BrowserRouter>

@@ -5,6 +5,9 @@ import { useAppState } from './appStateContext'
 import { useShellCapability } from './shellCapability'
 import { ShellCapability } from '@onecx/integration-interface'
 
+/**
+ * Parameters context value shape.
+ */
 interface ParametersContextValue {
   parameters$: ParametersTopic
   get: <T extends ParameterValue>(
@@ -58,6 +61,14 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
     }
   }, [isInternalParametersTopic, parameters$])
 
+  /**
+   * Resolve a parameter value for the current MFE context.
+   * @param key - parameter key.
+   * @param defaultValue - fallback value when parameter is missing.
+   * @param productName - optional product name override.
+   * @param appId - optional app id override.
+   * @returns resolved parameter value.
+   */
   const get: ParametersContextValue['get'] = async (
     key,
     defaultValue,

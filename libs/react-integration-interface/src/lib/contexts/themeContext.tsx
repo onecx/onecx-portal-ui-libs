@@ -1,10 +1,14 @@
 import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 
+/**
+ * Theme context value shape.
+ */
 type ThemeContextValue = {
   currentTheme$: CurrentThemeTopic
 }
 
+/** Props for ThemeProvider. */
 type ThemeProviderProps = {
   children: ReactNode
   value?: Partial<ThemeContextValue>

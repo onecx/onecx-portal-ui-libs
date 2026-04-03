@@ -8,11 +8,18 @@ import {
 
 type Message = PortalMessage
 
+/**
+ * Portal message context value shape.
+ */
 interface PortalMessageContextValue {
   message$: MessageTopic
+  /** Publish a success message. */
   success: (msg: Message) => Promise<void>
+  /** Publish an info message. */
   info: (msg: Message) => Promise<void>
+  /** Publish an error message. */
   error: (msg: Message) => Promise<void>
+  /** Publish a warning message. */
   warning: (msg: Message) => Promise<void>
 }
 

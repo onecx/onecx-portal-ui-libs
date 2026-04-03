@@ -3,19 +3,32 @@ import { firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { useAppState, useConfiguration } from '@onecx/react-integration-interface'
 
+/**
+ * Combine app base href with a route base href and normalize the result.
+ * @param appBaseHref - base href configured for the app.
+ * @param baseHref - base href of the current MFE.
+ * @returns normalized href without trailing slash.
+ */
 const normalizeHref = (appBaseHref: string, baseHref: string): string => {
   const cleanedAppBaseHref = appBaseHref.replace(/\/$/, '')
   const cleanedBaseHref = baseHref.replace(/^\//, '')
   const normalizedHref = `${cleanedAppBaseHref}/${cleanedBaseHref}`
   return removeTrailingSlash(normalizedHref)
 }
+/**
+ * Remove trailing slash from a URL string.
+ * @param url - url to normalize.
+ * @returns url without trailing slash.
+ */
 const removeTrailingSlash = (url: string): string => {
   return url.replace(/\/$/, '')
 }
 
 /**
- * Needs to be used within Configuration and AppState Contexts
- * returns baseUrl, appBaseHref and href
+ * Hook to access baseUrl, appBaseHref and href.
+ * Must be used within Configuration and AppState Contexts.
+ *
+ * @returns Object with baseUrl, appBaseHref and normalized href.
  */
 export const useAppHref = () => {
   const { currentMfe$, currentWorkspace$ } = useAppState()

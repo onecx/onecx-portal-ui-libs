@@ -14,6 +14,9 @@ import { BehaviorSubject, combineLatest } from 'rxjs'
 import type { RemoteComponentInfo, SlotComponentConfiguration, RemoteComponentConfig } from '../models'
 import { useSlot } from '../hooks/useSlot'
 
+/**
+ * Props for rendering a slot of remote components.
+ */
 type SlotProps = {
   name: string
   inputs?: Record<string, unknown>
@@ -21,6 +24,9 @@ type SlotProps = {
   skeleton?: ReactNode
 }
 
+/**
+ * Parameters used to instantiate a remote component instance.
+ */
 type CreateComponentProps = {
   componentType: ComponentType<any | undefined>
   componentInfo: SlotComponentConfiguration
@@ -37,6 +43,11 @@ const _assignedComponents$ = new BehaviorSubject<(ComponentPropsWithRef<any> | H
 
 /**
  * Renders remote components registered for a slot and manages their inputs/outputs.
+ * @param name - slot name used to resolve remote components.
+ * @param inputs - input props passed to loaded components.
+ * @param outputs - output callbacks passed to loaded components.
+ * @param skeleton - placeholder rendered while components load.
+ * @returns Slot component element.
  */
 export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, skeleton }) => {
   const slotService = useSlot()
@@ -47,11 +58,20 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
   const inputs$ = useRef(new BehaviorSubject(inputs))
   const outputs$ = useRef(new BehaviorSubject(outputs))
 
+  /**
+   * Track view container elements for remote component mounting.
+   * @param element - slot container element.
+   */
   const setViewContainerRef = (element: HTMLDivElement | null) => {
     if (element) {
       viewContainers$.next([...viewContainers$.value, element])
     }
   }
+  /**
+   * Apply props to a React element or custom element instance.
+   * @param component - target component element.
+   * @param props - props to apply.
+   */
   const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
     if (!component) return
 
@@ -66,6 +86,12 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       }
     })
   }
+  /**
+   * Update component inputs/outputs.
+   * @param component - component instance to update.
+   * @param inputs - input props to apply.
+   * @param outputs - output handlers to apply.
+   */
   const updateComponentData = useCallback(
     (component: ReactElement | HTMLElement, inputs: Record<string, unknown>, outputs: Record<string, any>) => {
       setProps(component, inputs)
@@ -73,13 +99,31 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     },
     []
   )
+  /**
+   * Attach style scoping attributes to a component element.
+   * @param element - target element.
+   * @param rcInfo - remote component info for scoping.
+   */
   const addDataStyleId = (element: HTMLElement, rcInfo: RemoteComponentInfo) => {
     element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
   }
 
+  /**
+   * Attach style isolation attribute to a component element.
+   * @param element - target element.
+   */
   const addDataStyleIsolation = (element: HTMLElement) => {
     element.dataset['styleIsolation'] = ''
   }
+  /**
+   * Create and mount a remote component element.
+   * @param componentType - loaded component type (module federation).
+   * @param componentInfo - slot configuration data.
+   * @param permissions - permissions resolved for the component.
+   * @param viewContainer - host container element.
+   * @param index - index of component in slot.
+   * @returns created element or null when not created.
+   */
   const createComponent = ({
     componentType,
     componentInfo,

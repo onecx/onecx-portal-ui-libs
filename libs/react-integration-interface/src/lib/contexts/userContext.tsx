@@ -14,12 +14,25 @@ import { createLogger } from '../utils/logger.utils'
 
 const logger = createLogger('UserService')
 
+/**
+ * User context value shape.
+ */
 interface UserContextValue {
   profile$: UserProfileTopic
   lang$: BehaviorSubject<string>
   permissionsTopic$?: PermissionsTopic
+  /**
+   * Stream of permissions for current user.
+   * @returns Observable emitting permission keys.
+   */
   getPermissions: () => Observable<string[]>
+  /**
+   * Check whether user has a permission (or list of permissions).
+   * @param permissionKey - permission or list of permissions.
+   * @returns true when all permissions are granted.
+   */
   hasPermission: (permissionKey: string | string[] | undefined) => Promise<boolean>
+  /** Promise resolving when topics are initialized. */
   isInitialized: Promise<void>
 }
 
@@ -158,7 +171,9 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
 }
 
 /**
- * Determine browser language
+ * Determine browser language fallback for legacy profiles.
+ * @param profile - user profile payload.
+ * @returns resolved legacy language.
  */
 function getOldLangSetting(profile: UserProfile): string {
   return resolveLegacyLanguage(profile, DEFAULT_LANG, determineBrowserLanguage)

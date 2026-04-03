@@ -1,12 +1,19 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 import { authServiceProxy, MISSING_PROXY_ERROR } from './auth-proxy-service'
 
+/** List of URL substrings that bypass auth headers. */
 const WHITELIST = ['assets']
+
+/**
+ * Axios instance extended with token metadata.
+ */
 export interface AuthenticatedAxiosInstance extends AxiosInstance {
   tokens: { [key: string]: boolean | string }
 }
 /**
- * This is the axios instance for client-side requests only to BFF
+ * Create an axios instance for client-side requests to the BFF.
+ * @param baseURL - optional base URL for the axios instance.
+ * @returns authenticated axios instance with interceptors.
  */
 export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (baseURL) => {
   const ai = baseURL ? axios.create({ baseURL }) : axios.create()

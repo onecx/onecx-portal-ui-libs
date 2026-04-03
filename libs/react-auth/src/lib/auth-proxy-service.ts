@@ -2,6 +2,7 @@ import './declarations'
 import { ensureProperty } from '@onecx/accelerator'
 import { createLogger } from './utils/logger.utils'
 
+/** Error message when auth service proxy is not available. */
 export const MISSING_PROXY_ERROR =
   'No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.'
 
@@ -18,9 +19,16 @@ type AuthServiceProxyGlobal = typeof globalThis & {
   }
 }
 
+/**
+ * Proxy wrapper for auth service exposed on the global namespace.
+ */
 export class AuthServiceProxy {
   private readonly logger = createLogger('AuthServiceProxy')
 
+  /**
+   * Get current auth header values from the proxy.
+   * @returns map of header names to values.
+   */
   getHeaderValues(): Record<string, string> {
     const global = ensureProperty(
       globalThis,
@@ -30,6 +38,11 @@ export class AuthServiceProxy {
     return global.onecxAuth.authServiceProxy.v1.getHeaderValues()
   }
 
+  /**
+   * Ensure auth token is up to date.
+   * @returns true when token is valid or refreshed.
+   * @throws Error when proxy is missing or token refresh fails.
+   */
   async updateTokenIfNeeded(): Promise<boolean> {
     const global = ensureProperty(
       globalThis,
@@ -43,4 +56,5 @@ export class AuthServiceProxy {
   }
 }
 
+/** Singleton auth service proxy instance. */
 export const authServiceProxy = new AuthServiceProxy()

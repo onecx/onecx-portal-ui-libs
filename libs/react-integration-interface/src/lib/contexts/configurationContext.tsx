@@ -5,6 +5,9 @@ import Semaphore from 'ts-semaphore'
 import { CONFIG_KEY } from '@onecx/angular-integration-interface'
 import { createLogger } from '../utils/logger.utils'
 
+/**
+ * Default configuration values used for configuration bootstrap.
+ */
 export interface LibConfig {
   appId: string
   portalId: string
@@ -12,13 +15,36 @@ export interface LibConfig {
   remoteConfigURL: string
 }
 
+/**
+ * Configuration context value shape.
+ */
 interface ConfigurationContextProps {
   config: Config | null
   config$: ConfigurationTopic
+  /** Promise resolving when configuration initialization completes. */
   isInitialized: Promise<void>
+  /**
+   * Fetch the current configuration.
+   * @returns resolved configuration.
+   */
   getConfig: () => Promise<Config | undefined>
+  /**
+   * Get a configuration property by key.
+   * @param key - configuration key.
+   * @returns configuration value or undefined.
+   */
   getProperty: (key: CONFIG_KEY) => Promise<string | undefined>
+  /**
+   * Set a configuration property by key.
+   * @param key - configuration key.
+   * @param value - configuration value.
+   * @returns void when update completes.
+   */
   setProperty: (key: string, value: string) => Promise<void>
+  /**
+   * Initialize configuration loading.
+   * @returns true when configuration resolved successfully.
+   */
   init: () => Promise<boolean>
 }
 
