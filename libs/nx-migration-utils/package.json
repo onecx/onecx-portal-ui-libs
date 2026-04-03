@@ -15,6 +15,11 @@
     "postcss": "^8.5.0",
     "postcss-scss": "^4.0.9"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    }
+  },
   "type": "commonjs",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
