@@ -11,6 +11,8 @@ import { Topic } from './topic'
 import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
 import { BroadcastChannelMock } from './mocks/broadcast-channel.mock'
+import { ensureProperty } from '../utils/ensure-property.utils'
+import { acceleratorState } from '../declarations'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
@@ -44,12 +46,12 @@ describe('Topic', () => {
   let testTopic2: Topic<string>
 
   beforeEach(() => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.statsEnabled = true
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
-    window['@onecx/accelerator'].topic.useBroadcastChannel = true
-    window['@onecx/accelerator'].topic.debug = ['SpecificTestTopic']
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic','statsEnabled'], {} as any)
+    const d = ensureProperty(g, ['@onecx/accelerator', 'topic', 'debug'], [] as string[])
+    d['@onecx/accelerator'].topic.statsEnabled = true
+    d['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    d['@onecx/accelerator'].topic.useBroadcastChannel = true
+    d['@onecx/accelerator'].topic.debug = ['SpecificTestTopic']
 
     BroadcastChannelMock.asyncCalls = false
 
@@ -70,8 +72,9 @@ describe('Topic', () => {
     testTopic2.destroy()
     BroadcastChannelMock.listeners = {}
     BroadcastChannelMock.asyncCalls = false
-    if (window['@onecx/accelerator']?.topic?.debug) {
-      window['@onecx/accelerator'].topic.debug = undefined
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'debug'], [] as string[] | undefined)
+    if (g['@onecx/accelerator']?.topic?.debug) {
+      g['@onecx/accelerator'].topic.debug = undefined
     }
   })
 
@@ -292,10 +295,8 @@ describe('Topic', () => {
 
   it('schedules TopicGet via timeout when recently initialized', () => {
     jest.useFakeTimers()
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() // recent
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    acceleratorState['@onecx/accelerator'].topic.initDate = Date.now() // recent
+    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const spy = jest.spyOn(window, 'postMessage')
     const t = new Topic<string>('timeout-get', 1)
@@ -312,10 +313,9 @@ describe('Topic', () => {
   })
 
   it('logs window message when debug enabled and handles TopicGet on window path', () => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.debug = ['win-topic']
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'debug'], [] as string[])
+    g['@onecx/accelerator'].topic.debug = ['win-topic']
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('win-topic', 1, false)
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -341,9 +341,7 @@ describe('Topic', () => {
   })
 
   it('handles error in TopicResolve processing (catch branch)', () => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('resolve-error', 1, false)
     // inject a throwing resolver
@@ -517,22 +515,18 @@ describe('Topic', () => {
       const originalBC = (globalThis as any).BroadcastChannel
       ;(globalThis as any).BroadcastChannel = undefined
 
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = true
+      acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = true
 
       // Creating a topic triggers TopicPublisher constructor branch
       const t = new Topic<string>('no-bc', 1, false)
       t.destroy()
 
-      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
+      expect(acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
       ;(globalThis as any).BroadcastChannel = originalBC
     })
 
     it('uses window.postMessage when BroadcastChannel is disabled (sendMessage else path)', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = false
+      acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
 
       const spy = jest.spyOn(window, 'postMessage')
 
@@ -577,10 +571,8 @@ describe('Topic', () => {
 
   describe('broadcastChannelV2', () => {
     it('sends messages via BroadcastChannel V2 when enabled', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
-      window['@onecx/accelerator'].topic.tabId = 1
+      acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      acceleratorState['@onecx/accelerator'].topic.tabId = 1
 
       const postSpy = jest.spyOn(window, 'postMessage')
       const t = new Topic<string>('v2-send', 1, false)
@@ -601,9 +593,7 @@ describe('Topic', () => {
     })
 
     it('falls back from V2 when message arrives on legacy BroadcastChannel', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
 
       const t = new Topic<string>('v2-fallback', 1, false)
 
@@ -617,26 +607,24 @@ describe('Topic', () => {
 
       ;(t as any).onBroadcastChannelMessage(msg)
 
-      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(true)
+      expect(acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel).toBe(true)
       t.destroy()
     })
 
     it('isolates messages per tab in V2 channels', async () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
 
-      window['@onecx/accelerator'].topic.tabId = 1
+      acceleratorState['@onecx/accelerator'].topic.tabId = 1
       const val1: string[] = []
       const t1 = new Topic<string>('v2-tab', 1, false)
       t1.subscribe((v) => val1.push(v))
 
-      window['@onecx/accelerator'].topic.tabId = 2
+      acceleratorState['@onecx/accelerator'].topic.tabId = 2
       const val2: string[] = []
       const t2 = new Topic<string>('v2-tab', 1, false)
       t2.subscribe((v) => val2.push(v))
 
-      window['@onecx/accelerator'].topic.tabId = 1
+      acceleratorState['@onecx/accelerator'].topic.tabId = 1
       await t1.publish('only-tab-1')
 
       expect(val1).toEqual(['only-tab-1'])

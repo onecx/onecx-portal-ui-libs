@@ -1,3 +1,4 @@
+import { acceleratorState } from '../declarations'
 import { TopicDataMessage } from './topic-data-message'
 import { TopicMessage } from './topic-message'
 import { TopicMessageType } from './topic-message-type'
@@ -29,27 +30,29 @@ export class TopicPublisher<T> {
       return
     }
 
-    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel) {
       if (typeof BroadcastChannel === 'undefined') {
         console.log('BroadcastChannel not supported. Disabling BroadcastChannel for topic publisher')
-        window['@onecx/accelerator'] ??= {}
-        window['@onecx/accelerator'].topic ??= {}
-        window['@onecx/accelerator'].topic.useBroadcastChannel = false
+        acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = false
       } else {
         this.publishBroadcastChannel = new BroadcastChannel(`Topic-${this.name}|${this.version}`)
-        this.publishBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${window['@onecx/accelerator'].topic.tabId}`)
+        this.publishBroadcastChannelV2 = new BroadcastChannel(`TopicV2-${this.name}|${this.version}-${acceleratorState['@onecx/accelerator'].topic.tabId}`)
       }
     }
   }
 
   protected sendMessage(message: TopicMessage): void {
     this.createBroadcastChannel()
-    if (window['@onecx/accelerator']?.topic?.useBroadcastChannel === "V2") {
+    if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel === "V2") {
       this.publishBroadcastChannelV2?.postMessage(message)
-    } else if (window['@onecx/accelerator']?.topic?.useBroadcastChannel) {
+    } else if (acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel) {
       this.publishBroadcastChannel?.postMessage(message)
     } else {
-      window.postMessage(message, '*')
+      const postMessage = globalThis.postMessage
+      if (typeof postMessage !== 'function') {
+        throw new TypeError('postMessage is not available in this environment')
+      }
+      postMessage(message, '*')
     }
   }
 }

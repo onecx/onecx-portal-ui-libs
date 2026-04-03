@@ -1,17 +1,13 @@
-declare global {
-  interface Window {
-    onecxMessageId: number
-  }
-}
+import { ensureProperty } from "../utils/ensure-property.utils"
 
-window['onecxMessageId'] ??= 1
+const g = ensureProperty(globalThis, ['onecxMessageId'], 1)
 
 export class Message {
   timestamp: number
   id: number // id can be undefined while used via old implementation
 
   constructor(public type: string) {
-    this.timestamp = window.performance.now()
-    this.id = window['onecxMessageId']++
+    this.timestamp = g.performance.now()
+    this.id = g.onecxMessageId++
   }
 }
