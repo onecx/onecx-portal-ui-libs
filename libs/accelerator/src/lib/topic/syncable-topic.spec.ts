@@ -10,6 +10,7 @@ import { SyncableTopic } from './syncable-topic'
 import {
   BroadcastChannelMock
 } from "./mocks/broadcast-channel.mock"
+import { acceleratorState } from '../declarations'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
@@ -40,10 +41,8 @@ describe('Syncable Topic', () => {
   let testSyncableTopic2: SyncableTopic<string>
 
   beforeEach(() => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
-    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+    acceleratorState['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel = true
 
     BroadcastChannelMock.asyncCalls = false
 
