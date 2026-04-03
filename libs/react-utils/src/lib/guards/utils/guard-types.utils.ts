@@ -21,5 +21,11 @@ export interface GuardDeactivationContext extends GuardExecutionContext {
 /** Signature for canActivate guards. */
 export type CanActivateGuard = (context: GuardExecutionContext) => MaybePromise<GuardResult>
 
+/** Signature for canMatch guards. */
+export type CanMatchGuard = (context: GuardExecutionContext) => MaybePromise<GuardResult>
+
+/** Signature for canActivateChild guards. */
+export type CanActivateChildGuard = (context: GuardExecutionContext) => MaybePromise<GuardResult>
+
 /** Signature for canDeactivate guards. */
 export type CanDeactivateGuard = (context: GuardDeactivationContext) => MaybePromise<GuardResult>

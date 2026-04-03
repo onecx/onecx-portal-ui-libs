@@ -1,6 +1,13 @@
 import type { Location, UIMatch } from 'react-router'
 import { getGuardsFromMatches } from './guard-handles.utils'
-import type { CanActivateGuard, CanDeactivateGuard, GuardExecutionContext, GuardResult } from './guard-types.utils'
+import type {
+  CanActivateChildGuard,
+  CanActivateGuard,
+  CanDeactivateGuard,
+  CanMatchGuard,
+  GuardExecutionContext,
+  GuardResult,
+} from './guard-types.utils'
 import type { GuardsNavigationState } from '../model/guard-navigation.model'
 import { GuardsGatherer } from '../services/guards-gatherer'
 import { GuardsNavigationStateController } from '../services/guards-navigation-controller'
@@ -18,10 +25,14 @@ export interface WrapGuardsOptions {
 
 /** Result of wrapGuards containing executors and collected guards. */
 export interface WrappedGuards {
+  canMatch: () => Promise<GuardResult>
+  canActivateChild: () => Promise<GuardResult>
   canActivate: () => Promise<GuardResult>
   canDeactivate: (nextLocation: Location) => Promise<GuardResult>
   guards: {
+    canMatch: CanMatchGuard[]
     canActivate: CanActivateGuard[]
+    canActivateChild: CanActivateChildGuard[]
     canDeactivate: CanDeactivateGuard[]
   }
 }
@@ -40,6 +51,10 @@ export function wrapGuards(options: WrapGuardsOptions): WrappedGuards {
 
   return {
     guards,
+    canMatch: async () =>
+      activateWrapper.canActivate(buildContext(matches, location), guards.canMatch, guardsNavigationState),
+    canActivateChild: async () =>
+      activateWrapper.canActivate(buildContext(matches, location), guards.canActivateChild, guardsNavigationState),
     canActivate: async () =>
       activateWrapper.canActivate(buildContext(matches, location), guards.canActivate, guardsNavigationState),
     canDeactivate: async (nextLocation) =>

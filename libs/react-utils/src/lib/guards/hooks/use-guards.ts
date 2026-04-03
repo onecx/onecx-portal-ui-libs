@@ -77,7 +77,7 @@ export interface UseGuardCheckOptions {
 }
 
 /**
- * Run canActivate guards whenever the location changes.
+ * Run canMatch, canActivateChild, and canActivate guards whenever the location changes.
  * @param options - hook options for guard execution.
  * @returns wrapped guard helpers and last result.
  */
@@ -92,10 +92,14 @@ export function useGuardCheck(options: UseGuardCheckOptions = {}) {
       return
     }
 
-    void wrapped.canActivate().then((result) => {
-      lastResultRef.current = result
-      onGuardCheck?.(result)
-    })
+    void wrapped
+      .canMatch()
+      .then((canMatchResult) => (canMatchResult ? wrapped.canActivateChild() : false))
+      .then((canActivateChildResult) => (canActivateChildResult ? wrapped.canActivate() : false))
+      .then((result) => {
+        lastResultRef.current = result
+        onGuardCheck?.(result)
+      })
   }, [enabled, wrapped, location.key, onGuardCheck])
 
   return {
