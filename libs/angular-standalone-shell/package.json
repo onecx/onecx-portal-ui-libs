@@ -20,6 +20,14 @@
     "primeng": "^19.0.0",
     "@ngx-translate/core": "^16.0.0"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "publishConfig": {
     "access": "public"

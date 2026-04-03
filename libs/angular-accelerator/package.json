@@ -32,6 +32,14 @@
     "@onecx/nx-migration-utils": "^6.19.0",
     "@primeng/themes": "^19.0.0"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "exports": {
     ".": {
