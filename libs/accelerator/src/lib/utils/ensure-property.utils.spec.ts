@@ -21,7 +21,7 @@ describe('ensureProperty', () => {
     })
 
     it('should set property if explicitly set to undefined', () => {
-      const obj: any = { name: undefined }
+      const obj: { name?: string } = { name: undefined }
       ensureProperty(obj, ['name'], 'John')
       expect(obj).toEqual({ name: 'John' })
     })
@@ -79,7 +79,7 @@ describe('ensureProperty', () => {
     })
 
     it('should overwrite undefined with nested object', () => {
-      const obj: any = { user: undefined }
+      const obj: { user?: unknown } = { user: undefined }
       ensureProperty(obj, ['user', 'name'], 'John')
       expect(obj).toEqual({ user: { name: 'John' } })
     })
@@ -102,7 +102,8 @@ describe('ensureProperty', () => {
       const obj = { user: [1, 2, 3] }
       ensureProperty(obj, ['user', 'name'], 'John')
       expect(obj.user).toHaveLength(3)
-      expect((obj.user as any).name).toBe('John')
+      const userWithName = obj.user as unknown as { name?: string }
+      expect(userWithName.name).toBe('John')
     })
   })
 
@@ -246,7 +247,7 @@ describe('ensureProperty', () => {
 
   describe('real-world usage examples', () => {
     it('should work with globalThis pattern', () => {
-      const mockGlobal: any = {}
+      const mockGlobal: Record<string, unknown> = {}
       ensureProperty(mockGlobal, ['myApp', 'config', 'debug'], false)
       expect(mockGlobal).toEqual({ myApp: { config: { debug: false } } })
     })
@@ -256,10 +257,10 @@ describe('ensureProperty', () => {
       
       ensureProperty(globalThis, [testPropName], { test: 'value' })
       
-      expect((globalThis as any)[testPropName]).toEqual({ test: 'value' })
+      expect(Reflect.get(globalThis, testPropName)).toEqual({ test: 'value' })
       
       // Cleanup
-      delete (globalThis as any)[testPropName]
+      Reflect.deleteProperty(globalThis, testPropName)
     })
 
     it('should work with globalThis nested properties without type cast', () => {
@@ -267,14 +268,14 @@ describe('ensureProperty', () => {
       
       ensureProperty(globalThis, [testPropName, 'nested', 'deep'], 'test')
       
-      expect((globalThis as any)[testPropName]).toEqual({ nested: { deep: 'test' } })
+      expect(Reflect.get(globalThis, testPropName)).toEqual({ nested: { deep: 'test' } })
       
       // Cleanup
-      delete (globalThis as any)[testPropName]
+      Reflect.deleteProperty(globalThis, testPropName)
     })
 
     it('should initialize configuration without overwriting', () => {
-      const config: any = {}
+      const config: { database?: { host?: string; port?: number } } = {}
       ensureProperty(config, ['database', 'host'], 'localhost')
       ensureProperty(config, ['database', 'port'], 5432)
       ensureProperty(config, ['database', 'host'], 'other-host')
@@ -287,7 +288,9 @@ describe('ensureProperty', () => {
     })
 
     it('should safely initialize nested API response defaults', () => {
-      const apiResponse: any = { data: { items: [] } }
+      const apiResponse: { data?: { items: unknown[]; metadata?: { total?: number; page?: number } } } = {
+        data: { items: [] },
+      }
       ensureProperty(apiResponse, ['data', 'metadata', 'total'], 0)
       ensureProperty(apiResponse, ['data', 'metadata', 'page'], 1)
       expect(apiResponse).toEqual({
