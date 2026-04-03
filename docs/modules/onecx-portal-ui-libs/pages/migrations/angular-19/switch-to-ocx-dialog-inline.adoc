@@ -10,7 +10,7 @@ In OneCX v6, replace `ButtonDialogComponent` with `DialogInlineComponent` for in
 * Replace tag `<ocx-button-dialog>` with `<ocx-dialog-inline>`.
 * Migrate input properties and output events as per the mapping table below.
 
-== Example
+=== Example
 .Before
 [source,html]
 ----
