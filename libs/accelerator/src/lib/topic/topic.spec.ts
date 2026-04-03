@@ -12,30 +12,43 @@ import { TopicMessageType } from './topic-message-type'
 import { TopicDataMessage } from './topic-data-message'
 import { BroadcastChannelMock } from './mocks/broadcast-channel.mock'
 import * as loggerUtils from '../utils/logger.utils'
+import { acceleratorState } from '../declarations'
+import { ensureProperty } from '../utils/ensure-property.utils'
 
 Reflect.set(globalThis, 'BroadcastChannel', BroadcastChannelMock)
 
 describe('Topic', () => {
   const originalLocalStorageDebug = localStorage.getItem('debug')
   const origAddEventListener = window.addEventListener
+  const origRemoveEventListener = window.removeEventListener
   const origPostMessage = window.postMessage
 
-  let listeners: any[] = []
-  window.addEventListener = (_type: any, listener: any) => {
-    listeners.push(listener)
-  }
+  type MessageListener = (event: MessageEvent<unknown>) => void
+  let listeners: MessageListener[] = []
+  window.addEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners.push(listener as unknown as MessageListener)
+    }
+  }) as unknown as typeof window.addEventListener
 
-  window.removeEventListener = (_type: any, listener: any) => {
-    listeners = listeners.filter((l) => l !== listener)
-  }
+  window.removeEventListener = ((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (type === 'message' && typeof listener === 'function') {
+      listeners = listeners.filter((l) => l !== (listener as unknown as MessageListener))
+    }
+  }) as unknown as typeof window.removeEventListener
 
-  window.postMessage = (m: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }))
-  }
+  window.postMessage = ((message: unknown) => {
+    const event = {
+      data: message,
+      stopImmediatePropagation: jest.fn(),
+      stopPropagation: jest.fn(),
+    } as unknown as MessageEvent<unknown>
+    listeners.forEach((l) => l(event))
+  }) as unknown as typeof window.postMessage
 
   afterAll(() => {
     window.addEventListener = origAddEventListener
+    window.removeEventListener = origRemoveEventListener
     window.postMessage = origPostMessage
     if (originalLocalStorageDebug === null) {
       localStorage.removeItem('debug')
@@ -44,8 +57,8 @@ describe('Topic', () => {
     }
   })
 
-  let values1: any[]
-  let values2: any[]
+  let values1: string[]
+  let values2: string[]
 
   let testTopic1: Topic<string>
   let testTopic2: Topic<string>
@@ -55,19 +68,21 @@ describe('Topic', () => {
   const loggerWarnFn = jest.fn()
   const loggerErrorFn = jest.fn()
 
-  beforeEach(() => {
-    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
-      debug: loggerDebugFn as any,
-      info: loggerInfoFn as any,
-      warn: loggerWarnFn as any,
-      error: loggerErrorFn as any,
-    })
+  type ComponentLogger = ReturnType<typeof loggerUtils.createLogger>
 
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.statsEnabled = true
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
-    window['@onecx/accelerator'].topic.useBroadcastChannel = true
+  beforeEach(() => {
+    const mockLogger: ComponentLogger = {
+      debug: loggerDebugFn as unknown as ComponentLogger['debug'],
+      info: loggerInfoFn as unknown as ComponentLogger['info'],
+      warn: loggerWarnFn as unknown as ComponentLogger['warn'],
+      error: loggerErrorFn as unknown as ComponentLogger['error'],
+    }
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue(mockLogger)
+
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator','topic','statsEnabled'], false)
+    g['@onecx/accelerator'].topic.statsEnabled = true
+    g['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    g['@onecx/accelerator'].topic.useBroadcastChannel = true
 
     BroadcastChannelMock.asyncCalls = false
 
@@ -115,7 +130,7 @@ describe('Topic', () => {
     expect(values1).toEqual(['value1'])
     expect(values2).toEqual(['value1'])
 
-    const values3: any[] = []
+    const values3: string[] = []
     const testTopic3 = new Topic<string>('test', 1)
     testTopic3.subscribe((v) => values3.push(v))
 
@@ -136,7 +151,7 @@ describe('Topic', () => {
     expect(values1).toEqual(['value1'])
     expect(values2).toEqual(['value1'])
 
-    const values3: any[] = []
+    const values3: string[] = []
     const testTopic3 = new Topic<string>('test123', 1)
     testTopic3.subscribe((v) => values3.push(v))
 
@@ -149,7 +164,7 @@ describe('Topic', () => {
     expect(values1).toEqual(['value1'])
     expect(values2).toEqual(['value1'])
 
-    const values3: any[] = []
+    const values3: string[] = []
     const testTopic3 = new Topic<string>('test', 2)
     testTopic3.subscribe((v) => values3.push(v))
 
@@ -162,7 +177,7 @@ describe('Topic', () => {
     expect(values1).toEqual(['value1'])
     expect(values2).toEqual(['value1'])
 
-    const values3: any[] = []
+    const values3: undefined[] = []
     const testTopic3 = new Topic<undefined>('', 0)
     testTopic3.subscribe((v) => values3.push(v))
     testTopic3.publish(undefined)
@@ -202,13 +217,17 @@ describe('Topic', () => {
 
   it('should have no values if publish is not awaited', async () => {
     const original = window.postMessage
-    window.postMessage = (m: any) => {
+    window.postMessage = ((message: unknown) => {
+      const event = {
+        data: message,
+        stopImmediatePropagation: jest.fn(),
+        stopPropagation: jest.fn(),
+      } as unknown as MessageEvent<unknown>
+
       listeners.forEach((l) => {
-        // Set timeout to simulate async behavior
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setTimeout(() => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} }), 0)
+        setTimeout(() => l(event), 0)
       })
-    }
+    }) as unknown as typeof window.postMessage
     BroadcastChannelMock.asyncCalls = true
 
     const val1: number[] = []
@@ -312,10 +331,9 @@ describe('Topic', () => {
 
   it('schedules TopicGet via timeout when recently initialized', () => {
     jest.useFakeTimers()
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() // recent
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+    g['@onecx/accelerator'].topic.initDate = Date.now() // recent
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const spy = jest.spyOn(window, 'postMessage')
     const t = new Topic<string>('timeout-get', 1)
@@ -331,10 +349,106 @@ describe('Topic', () => {
     jest.useRealTimers()
   })
 
+  it('does not send TopicGet via timeout when initialized before timer fires', () => {
+    jest.useFakeTimers()
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+    g['@onecx/accelerator'].topic.initDate = Date.now()
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('timeout-no-get', 1)
+    t.subscribe(jest.fn())
+
+    const tInternal = t as unknown as { sendMessage: (message: { type?: unknown }) => void }
+    const sendSpy = jest.spyOn(tInternal, 'sendMessage')
+
+    t.publish('init-now')
+
+    jest.advanceTimersByTime(150)
+
+    const hasTopicGet = sendSpy.mock.calls.some(([message]) => message.type === TopicMessageType.TopicGet)
+    expect(hasTopicGet).toBe(false)
+
+    t.destroy()
+    jest.useRealTimers()
+  })
+
+  it('skips adding window message listener when globalThis.addEventListener is not a function', () => {
+    const originalAddEventListener = Reflect.get(globalThis, 'addEventListener')
+    try {
+      const listenerCountBefore = listeners.length
+      Reflect.set(globalThis, 'addEventListener', undefined)
+
+      const t = new Topic<string>('no-addeventlistener', 1, false)
+      expect(listeners.length).toBe(listenerCountBefore)
+      t.destroy()
+    } finally {
+      Reflect.set(globalThis, 'addEventListener', originalAddEventListener)
+    }
+  })
+
+  it('removes window message listener on destroy when globalThis.removeEventListener is a function', () => {
+    const originalRemoveEventListener = Reflect.get(globalThis, 'removeEventListener')
+    const removeSpy = jest.fn() as unknown as typeof globalThis.removeEventListener
+    try {
+      Reflect.set(globalThis, 'removeEventListener', removeSpy)
+
+      const t = new Topic<string>('destroy-removes', 1, false)
+      t.subscribe(jest.fn())
+
+      t.destroy()
+
+      expect(removeSpy).toHaveBeenCalledWith('message', expect.any(Function), true)
+    } finally {
+      Reflect.set(globalThis, 'removeEventListener', originalRemoveEventListener)
+    }
+  })
+
+  it('does not attempt to remove window message listener on destroy when globalThis.removeEventListener is not a function', () => {
+    const originalRemoveEventListener = Reflect.get(globalThis, 'removeEventListener')
+    try {
+      Reflect.set(globalThis, 'removeEventListener', undefined)
+
+      const t = new Topic<string>('destroy-no-remove', 1, false)
+      t.subscribe(jest.fn())
+
+      expect(() => t.destroy()).not.toThrow()
+    } finally {
+      Reflect.set(globalThis, 'removeEventListener', originalRemoveEventListener)
+    }
+  })
+
+  it('does not respond to TopicGet when no value is present (handleTopicGetMessage false branch)', () => {
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
+
+    const t = new Topic<string>('get-no-value', 1, false)
+
+    const tInternal = t as unknown as {
+      sendMessage: (message: unknown) => void
+      handleTopicGetMessage: (message: MessageEvent<unknown>) => void
+    }
+    const sendSpy = jest.spyOn(tInternal, 'sendMessage')
+    const stopImmediatePropagation = jest.fn()
+    const stopPropagation = jest.fn()
+
+    const event = {
+      data: { type: TopicMessageType.TopicGet, name: 'get-no-value', version: 1 },
+      stopImmediatePropagation,
+      stopPropagation,
+    } as unknown as MessageEvent<unknown>
+
+    tInternal.handleTopicGetMessage(event)
+
+    expect(sendSpy).not.toHaveBeenCalled()
+    expect(stopImmediatePropagation).not.toHaveBeenCalled()
+    expect(stopPropagation).not.toHaveBeenCalled()
+
+    t.destroy()
+  })
+
   it('logs window message when debug enabled and handles TopicGet on window path', () => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('win-topic', 1, false)
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -342,7 +456,8 @@ describe('Topic', () => {
     // initialize with a value so TopicGet will respond
     t.publish('init')
 
-    const sendSpy = jest.spyOn(t as any, 'sendMessage')
+    const tInternal = t as unknown as { sendMessage: (message: unknown) => void }
+    const sendSpy = jest.spyOn(tInternal, 'sendMessage')
 
     // Send TopicGet via window to trigger handleTopicGetMessage through onWindowMessage
     const getMsg = {
@@ -351,7 +466,7 @@ describe('Topic', () => {
       stopImmediatePropagation: () => {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopPropagation: () => {},
-    } as any
+    } as unknown as MessageEvent<unknown>
     listeners.forEach((l) => l(getMsg))
 
     expect(sendSpy).toHaveBeenCalled()
@@ -360,13 +475,13 @@ describe('Topic', () => {
   })
 
   it('handles error in TopicResolve processing (catch branch)', () => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.useBroadcastChannel = false
+    const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+    g['@onecx/accelerator'].topic.useBroadcastChannel = false
 
     const t = new Topic<string>('resolve-error', 1, false)
     // inject a throwing resolver
-    ;(t as any).publishPromiseResolver[123] = () => {
+    const tInternal = t as unknown as { publishPromiseResolver: Record<number, () => void> }
+    tInternal.publishPromiseResolver[123] = () => {
       throw new Error('boom')
     }
 
@@ -377,7 +492,7 @@ describe('Topic', () => {
       stopImmediatePropagation: () => {},
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       stopPropagation: () => {},
-    } as any
+    } as unknown as MessageEvent<unknown>
 
     listeners.forEach((l) => l(resolveMsg))
 
@@ -386,8 +501,9 @@ describe('Topic', () => {
   })
 
   describe('integration with older versions of library', () => {
-    let previousMessage: TopicDataMessage<string>
-    let incomingMessage: MessageEvent<TopicDataMessage<string>>
+    type TopicDataMessageWithOptionalId<T> = Omit<TopicDataMessage<T>, 'id'> & { id?: number }
+    let previousMessage: TopicDataMessageWithOptionalId<string>
+    let incomingMessage: MessageEvent<TopicDataMessageWithOptionalId<string>>
 
     beforeEach(() => {
       previousMessage = {
@@ -407,7 +523,7 @@ describe('Topic', () => {
           timestamp: 0,
           id: 0,
         },
-      } as any
+      } as unknown as MessageEvent<TopicDataMessageWithOptionalId<string>>
 
       // initialize topic
       testTopic1.publish('initMsg')
@@ -420,21 +536,29 @@ describe('Topic', () => {
       previousMessage.id = 0
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp with no ids provided', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+      previousMessage.id = undefined
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+      incomingMessage.data.id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
@@ -444,36 +568,48 @@ describe('Topic', () => {
       previousMessage.id = 1
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+      incomingMessage.data.id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have value if incoming timestamp is greater than previous timestamp when incoming message has id', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+      previousMessage.id = undefined
       previousMessage.timestamp = 1
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1', 'msg2'])
     })
 
     it('should have no value if incoming timestamp is equal to the previous timestamp with no ids provided', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+      previousMessage.id = undefined
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+      incomingMessage.data.id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
     })
@@ -483,10 +619,14 @@ describe('Topic', () => {
       previousMessage.id = 1
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
-      ;(<any>incomingMessage.data).id = undefined
+      incomingMessage.data.id = undefined
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(loggerWarnFn).toHaveBeenLastCalledWith(
@@ -496,13 +636,17 @@ describe('Topic', () => {
 
     it('should have no value if incoming timestamp is equal to previous timestamp when incoming message has id', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = undefined
+      previousMessage.id = undefined
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(loggerWarnFn).toHaveBeenLastCalledWith(
@@ -512,13 +656,17 @@ describe('Topic', () => {
 
     it('should have no value and no warning if incoming timestamp is equal to previous timestamp when incoming message has smaller id then current', () => {
       previousMessage.data = 'msg1'
-      ;(<any>previousMessage).id = 2
+      previousMessage.id = 2
       previousMessage.timestamp = 3
       incomingMessage.data.data = 'msg2'
       incomingMessage.data.id = 1
       incomingMessage.data.timestamp = 3
-      ;(<any>testTopic1).data.next(previousMessage)
-      ;(<any>testTopic1).onWindowMessage(incomingMessage)
+      const topicInternal = testTopic1 as unknown as {
+        data: { next: (message: TopicDataMessage<string>) => void }
+        onWindowMessage: (message: MessageEvent<TopicDataMessage<string>>) => void
+      }
+      topicInternal.data.next(previousMessage as unknown as TopicDataMessage<string>)
+      topicInternal.onWindowMessage(incomingMessage as unknown as MessageEvent<TopicDataMessage<string>>)
 
       expect(values1).toEqual(['initMsg', 'msg1'])
       expect(loggerWarnFn).toHaveBeenCalledTimes(0)
@@ -527,25 +675,23 @@ describe('Topic', () => {
 
   describe('for compatibility with older versions and browsers', () => {
     it('disables BroadcastChannel when not supported (TopicPublisher constructor branch)', () => {
-      const originalBC = (globalThis as any).BroadcastChannel
-      ;(globalThis as any).BroadcastChannel = undefined
+      const originalBC = Reflect.get(globalThis, 'BroadcastChannel')
+      Reflect.set(globalThis, 'BroadcastChannel', undefined)
 
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = true
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], true)
+      g['@onecx/accelerator'].topic.useBroadcastChannel = true
 
       // Creating a topic triggers TopicPublisher constructor branch
       const t = new Topic<string>('no-bc', 1, false)
       t.destroy()
 
-      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
-      ;(globalThis as any).BroadcastChannel = originalBC
+      expect(acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel).toBe(false)
+      Reflect.set(globalThis, 'BroadcastChannel', originalBC)
     })
 
     it('uses window.postMessage when BroadcastChannel is disabled (sendMessage else path)', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = false
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], false)
+      g['@onecx/accelerator'].topic.useBroadcastChannel = false
 
       const spy = jest.spyOn(window, 'postMessage')
 
@@ -566,12 +712,12 @@ describe('Topic', () => {
 
       // Access deprecated properties
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      ;(t as any).source
+      ;(t as unknown as { source: unknown }).source
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      ;(t as any).operator
+      ;(t as unknown as { operator: unknown }).operator
 
       // lift with identity map
-      const lifted = (t as any).lift((obs: any) => obs)
+      const lifted = (t as unknown as { lift: (operator: (source: unknown) => unknown) => unknown }).lift((s) => s)
       expect(lifted).toBeTruthy()
 
       // forEach: invoke without awaiting completion (never completes)
@@ -580,7 +726,7 @@ describe('Topic', () => {
       t.publish(7)
 
       // toPromise: invoke to cover method without awaiting resolution
-      const p2 = (t as any).toPromise?.()
+      const p2 = (t as unknown as { toPromise?: () => unknown }).toPromise?.()
       if (p2) {
         t.publish(9)
       }
@@ -589,10 +735,9 @@ describe('Topic', () => {
   })
     describe('broadcastChannelV2', () => {
     it('sends messages via BroadcastChannel V2 when enabled', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
-      window['@onecx/accelerator'].topic.tabId = 1
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'tabId'], 1)
+      g['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      g['@onecx/accelerator'].topic.tabId = 1
 
       const postSpy = jest.spyOn(window, 'postMessage')
       const t = new Topic<string>('v2-send', 1, false)
@@ -600,22 +745,21 @@ describe('Topic', () => {
       t.subscribe(() => {})
 
       const v2Channel = `TopicV2-v2-send|1-1`
-      const received: any[] = []
+      const received: Array<{ type?: unknown }> = []
       BroadcastChannelMock.listeners[v2Channel] ??= []
-      BroadcastChannelMock.listeners[v2Channel].push((m: any) => received.push(m.data))
+      BroadcastChannelMock.listeners[v2Channel].push((m: { data: { type?: unknown } }) => received.push(m.data))
 
       t.publish('hello')
 
       expect(postSpy).not.toHaveBeenCalled()
-      expect(received.some((m) => m?.type === TopicMessageType.TopicNext)).toBe(true)
+      expect(received.some((m) => m.type === TopicMessageType.TopicNext)).toBe(true)
       t.destroy()
       postSpy.mockRestore()
     })
 
     it('falls back from V2 when message arrives on legacy BroadcastChannel', () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], 'V2')
+      g['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
 
       const t = new Topic<string>('v2-fallback', 1, false)
 
@@ -625,30 +769,29 @@ describe('Topic', () => {
         stopImmediatePropagation: () => {},
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         stopPropagation: () => {},
-      } as any
+      } as unknown as MessageEvent<unknown>
 
-      ;(t as any).onBroadcastChannelMessage(msg)
+      ;(t as unknown as { onBroadcastChannelMessage: (message: MessageEvent<unknown>) => void }).onBroadcastChannelMessage(msg)
 
-      expect(window['@onecx/accelerator'].topic.useBroadcastChannel).toBe(true)
+      expect(acceleratorState['@onecx/accelerator'].topic.useBroadcastChannel).toBe(true)
       t.destroy()
     })
 
     it('isolates messages per tab in V2 channels', async () => {
-      window['@onecx/accelerator'] ??= {}
-      window['@onecx/accelerator'].topic ??= {}
-      window['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
+      const g = ensureProperty(acceleratorState, ['@onecx/accelerator', 'topic', 'tabId'], 1)
+      g['@onecx/accelerator'].topic.useBroadcastChannel = 'V2'
 
-      window['@onecx/accelerator'].topic.tabId = 1
+      g['@onecx/accelerator'].topic.tabId = 1
       const val1: string[] = []
       const t1 = new Topic<string>('v2-tab', 1, false)
       t1.subscribe((v) => val1.push(v))
 
-      window['@onecx/accelerator'].topic.tabId = 2
+      g['@onecx/accelerator'].topic.tabId = 2
       const val2: string[] = []
       const t2 = new Topic<string>('v2-tab', 1, false)
       t2.subscribe((v) => val2.push(v))
 
-      window['@onecx/accelerator'].topic.tabId = 1
+      g['@onecx/accelerator'].topic.tabId = 1
       await t1.publish('only-tab-1')
 
       expect(val1).toEqual(['only-tab-1'])

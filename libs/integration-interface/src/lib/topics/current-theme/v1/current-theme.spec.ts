@@ -2,18 +2,16 @@
  * @jest-environment jsdom
  */
 
+import { ensureProperty } from '@onecx/accelerator';
 import { CurrentThemeTopic } from './current-theme.topic';
 import { Theme } from './theme.model'
 
 describe('CurrentThemeTopic', () => {
   beforeEach(() => {
     // Seed the accelerator namespace expected at import time
-    (window as any)['@onecx/accelerator'] ??= {};
-    (window as any)['@onecx/accelerator'].gatherer ??= {};
-    (window as any)['@onecx/accelerator'].gatherer.promises ??= {};
-    (window as any)['@onecx/accelerator'].gatherer.debug ??= [];
-    (window as any)['@onecx/accelerator'].topic ??= {};
-    (window as any)['@onecx/accelerator'].topic.initDate = Date.now() - 1000000;
+    ensureProperty(globalThis as object, ['@onecx/accelerator', 'gatherer', 'promises'], {} as Record<number, Array<Promise<any>>>)
+    ensureProperty(globalThis as object, ['@onecx/accelerator', 'gatherer', 'debug'], [] as string[]);
+    ensureProperty(globalThis as object, ['@onecx/accelerator', 'topic', 'initDate'], Date.now() - 1000000)
   });
 
   it('publishes to subscribers', async () => {

@@ -1,35 +1,8 @@
-declare global {
-  interface Window {
-    '@onecx/accelerator': {
-      gatherer?: {
-        promises?: { [id: number]: Promise<unknown>[] }
-      }
-      topic?: {
-        statsEnabled?: boolean
-        stats?: {
-          messagesPublished?: {
-            [topicName: string]: {
-              TopicNext: number
-              TopicGet: number
-              TopicResolve: number
-            }
-          }
-          instancesCreated?: { [topicName: string]: number }
-        }
-        useBroadcastChannel?: boolean | "V2",
-        initDate?: number,
-        tabId?: number
-      }
-    }
-  }
-}
+import { ensureProperty } from './utils/ensure-property.utils'
 
-window['@onecx/accelerator'] ??= {}
-window['@onecx/accelerator'].gatherer ??= {}
-window['@onecx/accelerator'].gatherer.promises ??= {}
-window['@onecx/accelerator'].topic ??= {}
-window['@onecx/accelerator'].topic.useBroadcastChannel ??= "V2"
-window['@onecx/accelerator'].topic.initDate ??= Date.now()
-window['@onecx/accelerator'].topic.tabId ??= Math.ceil(globalThis.performance.now())
+const gatherPromises = ensureProperty(globalThis as object, ['@onecx/accelerator', 'gatherer', 'promises'], {} as Record<number, Array<Promise<any>>>)
+const topicUseBroadcastChannel = ensureProperty(gatherPromises, ['@onecx/accelerator', 'topic', 'useBroadcastChannel'], 'V2' as 'V2' | boolean)
+const topicInitDate = ensureProperty(topicUseBroadcastChannel, ['@onecx/accelerator', 'topic', 'initDate'], Date.now())
+const topicTabId = ensureProperty(topicInitDate, ['@onecx/accelerator', 'topic', 'tabId'], Math.ceil(globalThis.performance?.now?.() ?? 0))
 
-export default globalThis
+export { topicTabId as acceleratorState }

@@ -5,7 +5,7 @@
  * @returns {boolean} - Returns true if running in a test environment, otherwise false.
  */
 export function isTest(): boolean {
-  if(typeof (globalThis as any).jasmine !== 'undefined') {
+  if(typeof (globalThis as { jasmine?: unknown }).jasmine !== 'undefined') {
     return true;
   }
   if(typeof process !== 'undefined' && process.env?.["JEST_WORKER_ID"] !== undefined) {
