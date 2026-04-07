@@ -20,6 +20,12 @@
   "peerDependenciesMeta": {
     "keycloak-js": {
       "optional": true
+    },
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
     }
   },
   "publishConfig": {

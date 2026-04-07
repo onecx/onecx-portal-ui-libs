@@ -20,6 +20,14 @@
     "@onecx/angular-auth": "^7.4.0",
     "@onecx/nx-migration-utils": "^7.4.0"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "publishConfig": {
     "access": "public"

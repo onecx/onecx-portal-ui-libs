@@ -20,6 +20,14 @@
     "@nx/devkit": "^22.0.2",
     "@onecx/nx-migration-utils": "^7.5.0"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "public"
   },

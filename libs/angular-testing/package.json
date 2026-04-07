@@ -14,6 +14,14 @@
     "@onecx/nx-migration-utils": "^7.5.0",
     "rxjs": "^7.8.2"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "publishConfig": {
     "access": "public"
