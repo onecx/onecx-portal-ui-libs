@@ -13,6 +13,14 @@
     "@onecx/nx-migration-utils": "^8.0.0-rc.9",
     "debug": "^4.4.3"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
