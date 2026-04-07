@@ -36,7 +36,6 @@ You can click the name of any change to open a detailed migration guide with ins
 ** [ ] xref:./update-component-imports.adoc[Update Component Imports]
 ** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
 ** [ ] xref:./adjust-packages-in-webpack-config.adoc[Adjust Packages in Webpack Config]
-** [ ] xref:./adjust-standalone-mode.adoc[Adjust Standalone Mode]
 ** [ ] xref:./remove-menuservice.adoc[Remove MenuService]
 ** [ ] xref:./update-translations.adoc[Update Translations]
 
@@ -71,6 +70,7 @@ Once the previous steps are completed, **the application should be upgraded to A
 ** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
 ** [ ] xref:./remove-add-initialize-module-guard.adoc[Remove addInitializeModuleGuard()]
 ** [ ] xref:./remove-portal-core-module.adoc[Remove PortalCoreModule]
+** [ ] xref:./adjust-standalone-mode.adoc[Adjust Standalone Mode]
 ** [ ] xref:./update-base-url.adoc[Replace BASE_URL injection token]
 ** [ ] xref:./update-theme-service.adoc[Update Theme Service usage]
 ** [ ] xref:./add-required-plugin-to-primeng.adoc[Add Webpack Plugin for PrimeNG]
