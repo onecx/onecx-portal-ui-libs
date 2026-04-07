@@ -1,0 +1,41 @@
+[#move-auth-to-shell-auth]
+= Split shell and apps authentication
+
+In OneCX libs v8, auth implementation classes were moved out of `@onecx/angular-auth`.
+If your app imports auth implementation symbols directly from `@onecx/angular-auth`, your build will fail after upgrading to v8.
+
+This split separates shell-specific authentication logic from regular application token-based authentication.
+
+[IMPORTANT]
+====
+Shell usage: use `@onecx/shell-auth` (includes Keycloak-specific logic).
+Regular OneCX Angular app usage: use only `@onecx/angular-auth` (token-based authentication).
+You do not need `@onecx/shell-auth` or `keycloak-js` unless you use standalone mode.
+====
+
+== What changed
+
+The following symbols are no longer exported from `@onecx/angular-auth`:
+
+* `AuthServiceWrapper`
+* `provideAuthService`
+* `KeycloakAuthService`
+* `DisabledAuthService`
+* `AuthService`
+
+In v8 these implementation APIs are provided by `@onecx/shell-auth`.
+
+== Onecx Angular applications
+. Use `@onecx/angular-auth` for interceptor/token wiring (`AngularAuthModule` / `provideTokenInterceptor`)
+. Uninstall `keycloak-js` dependency.
++
+[source,bash]
+----
+npm uninstall keycloak-js
+----
+
+== Onecx Standalone Applications Migration 
+
+. If you use standalone-shell, replace shell auth implementation imports with `@onecx/shell-auth`.
+. Keep `AngularAuthModule` from `@onecx/angular-auth` for regular application interceptor/token wiring.
+. Add `@onecx/shell-auth` with keycloak-js dependency only for standalone-shell authentication.

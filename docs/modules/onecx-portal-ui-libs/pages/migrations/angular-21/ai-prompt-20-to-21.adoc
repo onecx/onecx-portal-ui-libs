@@ -6,7 +6,7 @@
 ----
 Role:
 You are a senior frontend engineer with expert‑level knowledge of Angular and OneCX.
-Your responsibility is to perform all OneCX‑specific migration tasks required to prepare and finalize a OneCX application for an upgrade from Angular 19 → Angular 20.
+Your responsibility is to perform all OneCX‑specific migration tasks required to prepare and finalize a OneCX application for an upgrade from Angular 20 → Angular 21.
 Important:
 You do NOT perform the Angular framework upgrade itself unless explicitly instructed.
 You only implement OneCX‑specific pre‑migration and post‑migration tasks.
@@ -15,13 +15,13 @@ Never skip steps unless explicitly instructed.
 Workflow
 Follow these steps in strict order:
 1. Retrieve Documentation
-Fetch the documentation page titled "Migrate OneCX App from Angular 19 to Angular 20" using the OneCX Documentation MCP server.
+Fetch the documentation page titled "Migrate OneCX App from Angular 20 to Angular 21" using the OneCX Documentation MCP server.
 Only if the MCP server is unavailable, fall back to the public URL:
-https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migrations/angular-20/index.html
+https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migrations/angular-21/index.html
 Additionally check for PrimeNG migration information.
 If the repository uses PrimeNG (for example dependencies such as primeng, primeicons or primeflex are present):
 * Check if a PrimeNG MCP server is available; if it is, retrieve PrimeNG migration or upgrade information for the target version
-Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v20
+Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v21
 * Record any required PrimeNG migration steps or breaking changes and include them in the migration plan
 PrimeNG migration steps must be executed during the post-migration phase after the Angular upgrade.
 2. Extract Migration Steps & Create a Plan File: MIGRATION_PROGRESS.md.
@@ -44,7 +44,7 @@ Do not try to build or test the application until all post-migration steps are c
 5. Request Developer Action
 Inform the developer
 Tell them you are waiting for their “go‑ahead”
-Remind them they must complete the Angular 19 → 20 upgrade before you proceed.
+Remind them they must complete the Angular 20 → 21 upgrade before you proceed.
 6. Execute Post‑Migration
 Once the developer explicitly instructs you:
 Complete all post‑migration tasks in order

@@ -1,0 +1,53 @@
+[#esm-bundling]
+= ESM bundling awareness (prerequisite)
+= Replace CommonJS imports with ESM imports
+
+In OneCX v8, `@onecx/accelerator` and `@onecx/integration-interface` are published as ES modules.
+
+For standard Angular application builds, this is usually non-breaking.
+This page helps you quickly detect and fix issues in custom runtime/build setups.
+
+== What changed
+
+* Packages are ESM (`"type": "module"`).
+* CommonJS-only usage patterns (for example `require()` in custom Node scripts) may need adaptation.
+
+== When to check this
+
+Check this prerequisite if your project includes custom scripts/tooling such as:
+
+* Node scripts importing OneCX packages directly
+* Custom webpack/rspack wrappers around MF runtime loading
+* Test/dev scripts running outside Angular CLI/Nx standard build flow
+
+== Typical issues you might face
+
+* `ERR_REQUIRE_ESM`
+* `require is not defined in ES module scope`
+* Module resolution/import errors in custom scripts after dependency update
+
+== Solutions
+
+=== 1) Replace `require()` with ESM imports
+
+.Before
+[source,javascript]
+----
+const { EventsTopic } = require('@onecx/integration-interface')
+----
+
+.After
+[source,typescript]
+----
+import { EventsTopic } from '@onecx/integration-interface'
+----
+
+=== 2) Ensure script/module runtime supports ESM
+
+* Use an ESM-capable Node runtime and script configuration.
+* Keep host and remotes on consistent dependency/runtime expectations.
+
+=== 3) If no custom runtime usage exists
+
+No action is needed.
+Treat this as awareness-only and continue with migration steps.

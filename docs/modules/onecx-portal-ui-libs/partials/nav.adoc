@@ -12,6 +12,7 @@
 ** Migrations
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate App to Angular 19]
 *** xref:onecx-portal-ui-libs:migrations/angular-20/index.adoc[Migrate App to Angular 20]
+*** xref:onecx-portal-ui-libs:migrations/angular-21/index.adoc[Migrate App to Angular 21]
 
 ** Services
 *** xref:onecx-portal-ui-libs:service/icon-service.adoc[IconService]
