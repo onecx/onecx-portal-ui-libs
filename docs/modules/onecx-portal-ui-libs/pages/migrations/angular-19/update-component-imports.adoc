@@ -34,13 +34,13 @@ The imports of the following components need to be changed from `@onecx/portal-i
 * `PortalViewportComponent`
 
 [NOTE] 
-===
+====
 Install `@onecx/shell-core` if these components are imported.
 [source,bash]
 ----
 npm install @onecx/shell-core
 ----
-===
+====
 
 === 4. Update import from @onecx/angular-accelerator to @onecx/angular-utils
 
