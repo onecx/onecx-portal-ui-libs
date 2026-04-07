@@ -19,6 +19,14 @@
     "jest-extended": "^6.0.0",
     "typescript": "^5.5.4"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {},
   "publishConfig": {
     "access": "public"

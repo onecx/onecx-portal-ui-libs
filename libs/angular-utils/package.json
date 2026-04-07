@@ -26,6 +26,14 @@
     "@phenomnomnominal/tsquery": "^6",
     "typescript": "^5.5.4"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "publishConfig": {
     "access": "public"
   },
