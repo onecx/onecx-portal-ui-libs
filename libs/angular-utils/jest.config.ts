@@ -5,6 +5,7 @@ export default {
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+  maxWorkers: 1,
   moduleNameMapper: {
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
   },

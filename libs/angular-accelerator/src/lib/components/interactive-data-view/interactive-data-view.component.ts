@@ -146,6 +146,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @Input() headerStyleClass: string | undefined
   @Input() contentStyleClass: string | undefined
+  @Input() expandable = false
+  @Input() frozenExpandColumn = false
+  @Input() expandedRows: Row[] | string[] | number[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   primeNgTableCell: TemplateRef<any> | undefined
   @ContentChild('dateTableCell') dateTableCell: TemplateRef<any> | undefined
@@ -216,6 +219,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
 
   @Output() pageChanged: EventEmitter<number> = new EventEmitter()
   @Output() pageSizeChanged = new EventEmitter<number>()
+
+  @Output() rowExpanded: EventEmitter<Row> = new EventEmitter()
+  @Output() rowCollapsed: EventEmitter<Row> = new EventEmitter()
 
   @Output() componentStateChanged = new EventEmitter<InteractiveDataViewComponentState>()
 

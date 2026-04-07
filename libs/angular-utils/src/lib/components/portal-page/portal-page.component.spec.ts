@@ -7,17 +7,51 @@ import { PermissionService } from '../../services/permission.service'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of } from 'rxjs'
 
+const en = {
+  OCX_PORTAL_PAGE: {
+    UNAUTHORIZED_TITLE: 'Unauthorized',
+    UNAUTHORIZED_MESSAGE: 'Sorry, you do not have the permission required to view this page.',
+    MISSING_PERMISSION: 'Missing permission key: {{permission}}'
+  }
+}
+
+const de = {
+  OCX_PORTAL_PAGE: {
+    UNAUTHORIZED_TITLE: 'Nicht autorisiert',
+    UNAUTHORIZED_MESSAGE: 'Leider verfügen Sie nicht über die erforderliche Berechtigung zum Anzeigen dieser Seite.',
+    MISSING_PERMISSION: 'Fehlender Berechtigungsschlüssel: {{permission}}'
+  }
+}
+
+const origAddEventListener = window.addEventListener
+const origPostMessage = window.postMessage
+
+let listeners: any[] = []
+window.addEventListener = (_type: any, listener: any) => {
+  listeners.push(listener)
+}
+
+window.removeEventListener = (_type: any, listener: any) => {
+  listeners = listeners.filter((l) => l !== listener)
+}
+
+window.postMessage = (m: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setTimeout(() => listeners.forEach((l) => l({ data: m, stopImmediatePropagation: () => {}, stopPropagation: () => {} })), 0)
+}
+
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
   let fixture: ComponentFixture<PortalPageComponent>
 
   beforeEach(waitForAsync(() => {
+    listeners = []
     TestBed.configureTestingModule({
       imports: [
         PortalPageComponent,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+          en,
+          de,
         }),
       ],
       providers: [
@@ -33,6 +67,16 @@ describe('PortalPageComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
   })
+
+  afterEach(() => {
+    fixture.destroy()
+    listeners = []
+  })
+
+  afterAll(() => {
+    window.addEventListener = origAddEventListener
+    window.postMessage = origPostMessage
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy()
@@ -86,8 +130,8 @@ describe('PortalPageComponent host projection', () => {
         PortalPageComponent,
         HostComponent,
         TranslateTestingModule.withTranslations({
-          en: require('./../../../../assets/i18n/en.json'),
-          de: require('./../../../../assets/i18n/de.json'),
+          en,
+          de,
         }),
       ],
       providers: [
