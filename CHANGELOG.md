@@ -1,3 +1,21 @@
+## [6.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.18.0...v6.19.0) (2026-04-02)
+
+### Features
+
+* add expandable row to ocx data table - v6 ([#1326](https://github.com/onecx/onecx-portal-ui-libs/issues/1326)) ([1761115](https://github.com/onecx/onecx-portal-ui-libs/commit/17611155a722f88b268da89a56d0261f1b80e4cf))
+
+## [6.18.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.17.0...v6.18.0) (2026-03-27)
+
+### Features
+
+* pTooltip to ocx-tooltip ([#1307](https://github.com/onecx/onecx-portal-ui-libs/issues/1307)) ([e85356e](https://github.com/onecx/onecx-portal-ui-libs/commit/e85356e54cb914899f7114f5929a14a8cbbae64a))
+* tooltip changes in data-table component for help-ui ([#1319](https://github.com/onecx/onecx-portal-ui-libs/issues/1319)) ([f7e8bd8](https://github.com/onecx/onecx-portal-ui-libs/commit/f7e8bd8ecc64bed2bb8a075497bae30660ad4f30))
+
+### Bug Fixes
+
+* fix infinite filter rendering ([#1321](https://github.com/onecx/onecx-portal-ui-libs/issues/1321)) ([a25507c](https://github.com/onecx/onecx-portal-ui-libs/commit/a25507c7d8cc8455a0a6b6d41976560d01282375))
+* update ensure-property-utils  from main to include latest fixes ([#1284](https://github.com/onecx/onecx-portal-ui-libs/issues/1284)) ([0eed3bc](https://github.com/onecx/onecx-portal-ui-libs/commit/0eed3bc2c7a50fc4663f331b6cabeed0c0fff0a8))
+
 ## [6.17.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.16.1...v6.17.0) (2026-03-20)
 
 ### Features

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/accelerator",
-  "version": "6.17.0",
+  "version": "6.19.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,8 +10,15 @@
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
     "@nx/devkit": "^20.3.0",
-    "@nx/module-federation": "20.4.0",
-    "@onecx/nx-migration-utils": "^6.17.0"
+    "@onecx/nx-migration-utils": "^6.19.0"
+  },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
   },
   "type": "commonjs",
   "main": "./src/index.js",
