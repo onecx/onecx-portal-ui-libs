@@ -6,6 +6,7 @@
  * @jest-environment jsdom
  */
 
+import { ensureProperty } from '@onecx/accelerator'
 import { CurrentPageTopic } from './current-page.topic'
 
 describe('CurrentPageTopic', () => {
@@ -51,9 +52,8 @@ describe('CurrentPageTopic', () => {
   }
 
   beforeEach(() => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    const g = ensureProperty(globalThis, ['@onecx/accelerator', 'topic','initDate'], Date.now() - 1000000)
+    g['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
 
     jest.restoreAllMocks()
     listeners = []

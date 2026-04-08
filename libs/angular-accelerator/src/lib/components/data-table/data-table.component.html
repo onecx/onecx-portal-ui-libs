@@ -1,6 +1,5 @@
 <ng-template #actionColumn let-rowObject="localRowObject">
-  @if (anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0)
-  {
+  @if (actionColumnVisible) {
   <td
     class="actions"
     pFrozenColumn
@@ -22,6 +21,8 @@
         icon="pi pi-eye"
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+        tooltipPosition="top"
       ></button>
       } @if (editTableRowObserved && (!editActionVisibleField || fieldIsTruthy(rowObject, editActionVisibleField))) {
       <button
@@ -35,6 +36,8 @@
         icon="pi pi-pencil"
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+        tooltipPosition="top"
       ></button>
       } @if (deleteTableRowObserved && (!deleteActionVisibleField || fieldIsTruthy(rowObject,
       deleteActionVisibleField))) {
@@ -49,6 +52,8 @@
         icon="pi pi-trash"
         (click)="onDeleteRow(rowObject)"
         [attr.name]="'data-table-action-button'"
+        [ocxTooltip]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
+        tooltipPosition="top"
       ></button>
       } @for (action of inlineActions$ | async; track action) { @if ((!action.actionVisibleField ||
       fieldIsTruthy(rowObject, action.actionVisibleField))) {
@@ -82,9 +87,20 @@
   }
 </ng-template>
 
+<ng-template #expansionColumnHeader>
+  @if (expandable && (expansionTemplate$ | async)) {
+  <th
+    pFrozenColumn
+    [frozen]="frozenExpandColumn"
+    alignFrozen="left"
+    [attr.name]="'expansion-column-header'"
+    style="width: 4rem"
+  ></th>
+  }
+</ng-template>
+
 <ng-template #actionColumnHeader>
-  @if (anyRowActionObserved || this.additionalActions.length > 0 || ((this.overflowActions$ | async) ?? []).length > 0)
-  {
+  @if (actionColumnVisible) {
   <th
     pFrozenColumn
     [frozen]="frozenActionColumn"
@@ -119,9 +135,13 @@
   paginatorDropdownAppendTo="body"
   [rowSelectable]="rowSelectable"
   tableStyleClass="h-full"
+  [expandedRowKeys]="expandedRowKeys"
+  (onRowExpand)="onRowExpand($event)"
+  (onRowCollapse)="onRowCollapse($event)"
 >
   <ng-template #header>
     <tr style="vertical-align: top">
+      <ng-container *ngTemplateOutlet="expansionColumnHeader"></ng-container>
       @if (selectionChangedObserved) {
       <th style="width: 4rem" scope="col">
         @if (allowSelectAll) {
@@ -139,7 +159,14 @@
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
         >
-          <span class="flex" id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
+          <span
+            class="flex"
+            id="{{column.id}}-header-name"
+            [ocxTooltip]="column.tooltipKey ? (column.tooltipKey | translate) : ''"
+            tooltipPosition="top"
+          >
+            {{ column.nameKey | translate }}
+          </span>
           <span class="flex icon-button-header-wrapper">
             @if (column.sortable) {
             <button
@@ -149,7 +176,7 @@
               [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
               [ocxTooltip]="sortIconTitle(column.id) | translate "
-              tooltipPosition="bottom"              
+              tooltipPosition="top"
               [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
             ></button>
             } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
@@ -169,6 +196,8 @@
               filterBy="toFilterBy"
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              tooltipPosition="top"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
               [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
             >
@@ -206,6 +235,8 @@
               appendTo="body"
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+              tooltipPosition="top"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
               [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
             >
@@ -232,6 +263,7 @@
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
     <tr>
+      <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
         @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
@@ -274,20 +306,49 @@
     </tr>
     }
   </ng-template>
+
+  <ng-template #expandedrow let-rowObject>
+    @if (expansionTemplate$ | async; as expansionTemplate) {
+    <tr>
+      <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
+        <ng-container
+          [ngTemplateOutlet]="expansionTemplate.template"
+          [ngTemplateOutletContext]="{
+            rowObject: rowObject
+          }"
+        >
+        </ng-container>
+      </td>
+    </tr>
+    }
+  </ng-template>
+
   <ng-template #emptymessage>
     <tr>
-      <!-- If allowSelectAll is set to true, an additional column for checkbox selection is added and
-       the colSpan needs to be increased by one so that the row is rendered the whole width of the table. -->
-      <td
-        [colSpan]="columns.length + ((anyRowActionObserved || this.additionalActions.length > 0) ? 1 : 0) +
-  (allowSelectAll ? 1 : 0)"
-      >
+      <td [colSpan]="getRowColspan(!!(expansionTemplate$ | async))">
         {{ emptyResultsMessage || ("OCX_DATA_TABLE.EMPTY_RESULT" | translate) }}
       </td>
     </tr>
   </ng-template>
 </p-table>
 } }
+
+<ng-template #expansionColumn let-rowObject="localRowObject">
+  @if (expandable && (expansionTemplate$ | async)) {
+  <td pFrozenColumn [frozen]="frozenExpandColumn" alignFrozen="left" [attr.name]="'expansion-column'">
+    <button
+      type="button"
+      pButton
+      pRipple
+      [icon]="isRowExpanded(rowObject) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+      class="p-button-rounded p-button-text"
+      (click)="toggleRowExpansion(rowObject)"
+      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
+      [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
+    ></button>
+  </td>
+  }
+</ng-template>
 
 <ng-template pTemplate="defaultStringCell" let-rowObject="rowObject" let-column="column">
   <ng-container> {{ resolveFieldData(rowObject, column.id)}} </ng-container>
