@@ -1,7 +1,7 @@
-import { SyncableTopic } from '@onecx/accelerator'
+import { Topic } from '@onecx/accelerator'
 import { Notification } from './notification.model'
 
-export class NotificationTopic extends SyncableTopic<Notification> {
+export class NotificationTopic extends Topic<Notification> {
   constructor() {
     super('notification', 1)
   }

@@ -57,3 +57,4 @@ export * from './lib/services/icon.service'
 
 export * from './lib/topics/notification/v1/notification.model'
 export * from './lib/topics/notification/v1/notification.topic'
+export * from './lib/services/notification.service'
