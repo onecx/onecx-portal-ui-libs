@@ -14,6 +14,11 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     this.content = value
     this.setOption({ tooltipLabel: value })
     this.ensureIdAndAriaDescribedBy()
+    if (value) {
+      this.renderer.setStyle(this.el.nativeElement, 'cursor', 'pointer')
+    } else {
+      this.renderer.removeStyle(this.el.nativeElement, 'cursor')
+    }
   } 
 
   private generatedId: string | undefined
