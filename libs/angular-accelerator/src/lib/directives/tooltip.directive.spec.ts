@@ -1,11 +1,11 @@
-import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component } from '@angular/core';
-import { By } from '@angular/platform-browser';
-import { OcxTooltipDirective } from './tooltip.directive';
-import { HarnessLoader } from '@onecx/angular-testing';
-import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { Component } from '@angular/core'
+import { By } from '@angular/platform-browser'
+import { OcxTooltipDirective } from './tooltip.directive'
+import { HarnessLoader } from '@onecx/angular-testing'
+import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing'
 
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
@@ -22,8 +22,8 @@ import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing';
   `
 })
 class TestHostComponent {
-	tooltipText = 'Tooltip works!';
-	tooltipOptions: any = {};
+	tooltipText = 'Tooltip works!'
+	tooltipOptions: any = {}
 }
 
 @Component({
@@ -41,8 +41,8 @@ class TestHostComponent {
   `
 })
 class TestHostComponentNoIDComponent {
-	tooltipText = 'Tooltip works!';
-	tooltipOptions: any = { id: '    ' };
+	tooltipText = 'Tooltip works!'
+	tooltipOptions: any = { id: '    ' }
 }
 
 @Component({
@@ -59,246 +59,248 @@ class TestHostComponentNoIDComponent {
   `
 })
 class TestHostComponentNullComponent {
-	tooltipText = 'Tooltip with null options';
+	tooltipText = 'Tooltip with null options'
 }
 
 describe('OcxTooltip', () => {
-	const HOST_SELECTOR_1 = '.ocx-tooltip-host1';
-	const HOST_SELECTOR_2 = '.ocx-tooltip-host2';
-	const HOST_SELECTOR_4 = '.ocx-tooltip-host4';
-	const TOOLTIP_TEXT = 'Tooltip works!';
-	const TOOLTIP_TEXT_NULL = 'Tooltip with null options';
-	const CUSTOM_ID = 'custom-tooltip-id';
+	const HOST_SELECTOR_1 = '.ocx-tooltip-host1'
+	const HOST_SELECTOR_2 = '.ocx-tooltip-host2'
+	const HOST_SELECTOR_4 = '.ocx-tooltip-host4'
+	const TOOLTIP_TEXT = 'Tooltip works!'
+	const TOOLTIP_TEXT_NULL = 'Tooltip with null options'
+	const CUSTOM_ID = 'custom-tooltip-id'
 
-	let fixture: ComponentFixture<TestHostComponent>;
-	let loader: HarnessLoader;
+	let fixture: ComponentFixture<TestHostComponent>
+	let loader: HarnessLoader
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
 			declarations: [TestHostComponent, TestHostComponentNoIDComponent, TestHostComponentNullComponent],
 			imports: [NoopAnimationsModule, OcxTooltipDirective]
-		}).compileComponents();
+		}).compileComponents()
 
-		fixture = TestBed.createComponent(TestHostComponent);
-		fixture.detectChanges();
+		fixture = TestBed.createComponent(TestHostComponent)
+		fixture.detectChanges()
 
-		loader = TestbedHarnessEnvironment.loader(fixture);
-	});
+		loader = TestbedHarnessEnvironment.loader(fixture)
+	})
 
 	const createFixture = <T>(component: any): { fixture: ComponentFixture<T>; loader: HarnessLoader } => {
-		const componentFixture = TestBed.createComponent(component) as ComponentFixture<T>;
-		componentFixture.detectChanges();
+		const componentFixture = TestBed.createComponent(component) as ComponentFixture<T>
+		componentFixture.detectChanges()
 		return {
 			fixture: componentFixture,
 			loader: TestbedHarnessEnvironment.loader(componentFixture)
-		};
-	};
+		}
+	}
 
 	describe('Tooltip display', () => {
 
 		it('should show tooltip on hover', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
 
-			await tooltip.hover();
-			tick();
-			fixture.detectChanges();
+			await tooltip.hover()
+			tick()
+			fixture.detectChanges()
 
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			expect(directive.ocxTooltip).toBe(TOOLTIP_TEXT);
-
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
-		}));
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1))
+			const hasCursorPointer = debugElement.styles['cursor'] === 'pointer'
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
+			
+			expect(hasCursorPointer).toBeTruthy()
+			expect(directive.ocxTooltip()).toBe(TOOLTIP_TEXT)
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
+		}))
 
 		it('should hide tooltip on unhover', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
 
-			await tooltip.hover();
-			tick();
-			fixture.detectChanges();
+			await tooltip.hover()
+			tick()
+			fixture.detectChanges()
 
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
 
-			await tooltip.unhover();
-			tick();
-			fixture.detectChanges();
+			await tooltip.unhover()
+			tick()
+			fixture.detectChanges()
 
-			expect(await tooltip.getTooltipText()).toBeNull();
-		}));
+			expect(await tooltip.getTooltipText()).toBeNull()
+		}))
 
 		it('should show tooltip on focus and hide on Escape', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
-			const host = await tooltip.host();
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
+			const host = await tooltip.host()
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 
 			for (const key of ['Escape', 'Esc']) {
-				await host.focus();
-				await host.dispatchEvent('focus');
-				tick(200);
-				fixture.detectChanges();
+				await host.focus()
+				await host.dispatchEvent('focus')
+				tick(200)
+				fixture.detectChanges()
 
-				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
 
-				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
-				tick(500);
-				fixture.detectChanges();
+				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+				tick(500)
+				fixture.detectChanges()
 
-				expect(await tooltip.getTooltipText()).toBeNull();
+				expect(await tooltip.getTooltipText()).toBeNull()
 
-				await host.blur();
-				tick(200);
-				fixture.detectChanges();
+				await host.blur()
+				tick(200)
+				fixture.detectChanges()
 			}
-		}));
+		}))
 
 		it('should show tooltip on focus and does not hide on enter', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
-			const host = await tooltip.host();
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
+			const host = await tooltip.host()
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 
 			for (const key of ['Enter']) {
-				await host.focus();
-				await host.dispatchEvent('focus');
-				tick(200);
-				fixture.detectChanges();
+				await host.focus()
+				await host.dispatchEvent('focus')
+				tick(200)
+				fixture.detectChanges()
 
-				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
 
-				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
-				tick(500);
-				fixture.detectChanges();
+				directive.container?.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+				tick(500)
+				fixture.detectChanges()
 
-				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
+				expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
 
-				await host.blur();
-				tick(200);
-				fixture.detectChanges();
+				await host.blur()
+				tick(200)
+				fixture.detectChanges()
 			}
-		}));
-	});
+		}))
+	})
 
 	describe('ID and aria-describedby', () => {
 		it('should add an ID in the tooltip and aria-describedby in the host element', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
 
-			await tooltip.hover();
-			const host = await tooltip.host();
-			const ariaDescribedBy = await host.getAttribute('aria-describedby');
-			const tooltipId = await tooltip.getTooltipId();
-			tick();
-			fixture.detectChanges();
+			await tooltip.hover()
+			const host = await tooltip.host()
+			const ariaDescribedBy = await host.getAttribute('aria-describedby')
+			const tooltipId = await tooltip.getTooltipId()
+			tick()
+			fixture.detectChanges()
 
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
-			expect(ariaDescribedBy).toEqual(tooltipId);
-		}));
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
+			expect(ariaDescribedBy).toEqual(tooltipId)
+		}))
 
 		it('should add an ID in the tooltip and aria-describedby when an ID is provided in tooltipOptions', fakeAsync(async () => {
-			const component = fixture.componentInstance as TestHostComponent;
-			component.tooltipOptions = { id: CUSTOM_ID };
-			fixture.detectChanges();
-			tick();
+			const component = fixture.componentInstance as TestHostComponent
+			component.tooltipOptions = { id: CUSTOM_ID }
+			fixture.detectChanges()
+			tick()
 
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
 
-			await tooltip.hover();
-			tick();
-			fixture.detectChanges();
+			await tooltip.hover()
+			tick()
+			fixture.detectChanges()
 
-			const host = await tooltip.host();
-			const ariaDescribedBy = await host.getAttribute('aria-describedby');
-			const tooltipId = await tooltip.getTooltipId();
+			const host = await tooltip.host()
+			const ariaDescribedBy = await host.getAttribute('aria-describedby')
+			const tooltipId = await tooltip.getTooltipId()
 
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
-			expect(ariaDescribedBy).toEqual(CUSTOM_ID);
-			expect(tooltipId).toEqual(CUSTOM_ID);
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
+			expect(ariaDescribedBy).toEqual(CUSTOM_ID)
+			expect(tooltipId).toEqual(CUSTOM_ID)
 
-			component.tooltipOptions = {};
-		}));
+			component.tooltipOptions = {}
+		}))
 
 		it('should add an ID in the tooltip and aria-describedby in the host element when no ID is provided', fakeAsync(async () => {
-			const { fixture: fixture2, loader: loader2 } = createFixture(TestHostComponentNoIDComponent);
+			const { fixture: fixture2, loader: loader2 } = createFixture(TestHostComponentNoIDComponent)
 
-			const tooltip = await loader2.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_2));
+			const tooltip = await loader2.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_2))
 
-			await tooltip.hover();
-			const host = await tooltip.host();
-			const ariaDescribedBy = await host.getAttribute('aria-describedby');
-			const tooltipId = await tooltip.getTooltipId();
-			tick();
-			fixture2.detectChanges();
+			await tooltip.hover()
+			const host = await tooltip.host()
+			const ariaDescribedBy = await host.getAttribute('aria-describedby')
+			const tooltipId = await tooltip.getTooltipId()
+			tick()
+			fixture2.detectChanges()
 
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT);
-			expect(ariaDescribedBy).toEqual(tooltipId);
-		}));
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
+			expect(ariaDescribedBy).toEqual(tooltipId)
+		}))
 
 		it('should generate and reuse an ID in getOrCreateGeneratedId', () => {
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 
-			const generatedId1 = directive.getOrCreateGeneratedId();
-			const generatedId2 = directive.getOrCreateGeneratedId();
+			const generatedId1 = directive.getOrCreateGeneratedId()
+			const generatedId2 = directive.getOrCreateGeneratedId()
 
-			expect(generatedId1).toMatch(/^ocx-tooltip-[a-z0-9]+-[a-z0-9]+$/);
-			expect(generatedId2).toEqual(generatedId1);
-		});
+			expect(generatedId1).toMatch(/^ocx-tooltip-[a-z0-9]+-[a-z0-9]+$/)
+			expect(generatedId2).toEqual(generatedId1)
+		})
 
 		it('should generate an ID when _tooltipOptions.id is null', fakeAsync(async () => {
-			const { fixture: fixture4, loader: loader4 } = createFixture(TestHostComponentNullComponent);
+			const { fixture: fixture4, loader: loader4 } = createFixture(TestHostComponentNullComponent)
 
-			const tooltip = await loader4.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_4));
+			const tooltip = await loader4.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_4))
 
-			await tooltip.hover();
-			tick();
-			fixture4.detectChanges();
+			await tooltip.hover()
+			tick()
+			fixture4.detectChanges()
 
-			const host = await tooltip.host();
-			const ariaDescribedBy = await host.getAttribute('aria-describedby');
-			const tooltipId = await tooltip.getTooltipId();
+			const host = await tooltip.host()
+			const ariaDescribedBy = await host.getAttribute('aria-describedby')
+			const tooltipId = await tooltip.getTooltipId()
 
-			const debugElement = fixture4.debugElement.query(By.css(HOST_SELECTOR_4));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			expect(directive._tooltipOptions).toBeDefined();
-			expect(directive._tooltipOptions?.id).toBeTruthy();
+			const debugElement = fixture4.debugElement.query(By.css(HOST_SELECTOR_4))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
+			expect(directive._tooltipOptions).toBeDefined()
+			expect(directive._tooltipOptions?.id).toBeTruthy()
 
-			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT_NULL);
-			expect(ariaDescribedBy).toEqual(tooltipId);
-		}));
-	});
+			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT_NULL)
+			expect(ariaDescribedBy).toEqual(tooltipId)
+		}))
+	})
 
 	describe('Tooltip internals', () => {
 		it('should set resolved ID to the auto-generated ID of the OCX tooltip', () => {
-			const { fixture: fixture4 } = createFixture(TestHostComponentNullComponent);
-			const debugElement = fixture4.debugElement.query(By.css(HOST_SELECTOR_4));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			directive._tooltipOptions = null;
+			const { fixture: fixture4 } = createFixture(TestHostComponentNullComponent)
+			const debugElement = fixture4.debugElement.query(By.css(HOST_SELECTOR_4))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
+			directive._tooltipOptions = null
 
-			directive.ensureIdAndAriaDescribedBy();
+			directive.ensureIdAndAriaDescribedBy()
 
-			expect(directive.resolvedId).toMatch(/^ocx-tooltip-[a-z0-9]+-[a-z0-9]+$/);
-		});
+			expect(directive.resolvedId).toMatch(/^ocx-tooltip-[a-z0-9]+-[a-z0-9]+$/)
+		})
 
 		it('should apply an ID to the container when the tooltip is created', fakeAsync(async () => {
-			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1));
+			const tooltip = await loader.getHarness(OcxTooltipHarness.withHostSelector(HOST_SELECTOR_1))
 
-			await tooltip.hover();
-			tick();
-			fixture.detectChanges();
+			await tooltip.hover()
+			tick()
+			fixture.detectChanges()
 
-			const tooltipId = await tooltip.getTooltipId();
-			expect(tooltipId).toBeTruthy();
-		}));
+			const tooltipId = await tooltip.getTooltipId()
+			expect(tooltipId).toBeTruthy()
+		}))
 		
 		it('should not set set id when tooltip is not created', () => {
-			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1));
-			const directive = debugElement.injector.get(OcxTooltipDirective) as any;
-			const spy = jest.spyOn(directive.renderer, 'setAttribute');
-			jest.spyOn(directive, 'isTooltipCreated').mockReturnValue(false);
+			const debugElement = fixture.debugElement.query(By.css(HOST_SELECTOR_1))
+			const directive = debugElement.injector.get(OcxTooltipDirective) as any
+			const spy = jest.spyOn(directive.renderer, 'setAttribute')
+			jest.spyOn(directive, 'isTooltipCreated').mockReturnValue(false)
 			
-			directive.applyIdToContainer();
+			directive.applyIdToContainer()
 
-			expect(spy).not.toHaveBeenCalledWith(directive.container, 'id', '');
-		});
-	});
-});
+			expect(spy).not.toHaveBeenCalledWith(directive.container, 'id', '')
+		})
+	})
+})
