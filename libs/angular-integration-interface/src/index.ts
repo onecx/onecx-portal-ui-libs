@@ -21,3 +21,6 @@ export * from './lib/api/injection-tokens'
 // utils
 
 export { MfeInfo, Theme } from '@onecx/integration-interface'
+
+export * from './lib/services/image-repository.service'
+export * from './lib/services/notification.service'
