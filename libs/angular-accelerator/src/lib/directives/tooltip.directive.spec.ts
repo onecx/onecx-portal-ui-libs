@@ -108,7 +108,7 @@ describe('OcxTooltip', () => {
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 			
 			expect(hasCursorPointer).toBeTruthy()
-			expect(directive.ocxTooltip()).toBe(TOOLTIP_TEXT)
+			expect(directive.ocxTooltip).toBe(TOOLTIP_TEXT)
 			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT)
 		}))
 
