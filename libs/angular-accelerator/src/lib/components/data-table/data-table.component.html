@@ -170,7 +170,7 @@
       } @if (actionColumnPosition() === 'left') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of columns(); track column) { @if (column.sortable || column.filterable) {
-      <th scope="col" [pSortableColumn]="column.sortable ? column.nameKey : null">
+      <th scope="col" [pSortableColumn]="column.sortable ? column.nameKey : undefined">
         <div
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
