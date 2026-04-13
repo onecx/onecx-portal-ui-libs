@@ -11,7 +11,7 @@ import { mergeDeep } from '@onecx/angular-utils'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING');
 
-export function provideThemeConfigService(isAdvanced: boolean) {
+export function provideThemeConfigService(isAdvanced?: boolean) {
   Theme.clearLoadedStyleNames()
   Base.clearLoadedStyleNames()
   return [
