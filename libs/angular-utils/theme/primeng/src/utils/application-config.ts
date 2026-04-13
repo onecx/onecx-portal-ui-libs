@@ -8,7 +8,8 @@ export type ThemeOverrides = (() => Promise<any> | any) | Promise<any> | any
 export const THEME_OVERRIDES = new InjectionToken<ThemeOverrides>('THEME_OVERRIDES')
 
 export interface ThemeConfigProviderOptions {
-  overrides?: ThemeOverrides
+  overrides?: ThemeOverrides,
+  isAdvancedTheming?: boolean,
 }
 
 export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
@@ -22,7 +23,7 @@ export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
   return [
     provideAnimationsAsync(),
     providePrimeNG({}),
-    provideThemeConfigService(),
+    provideThemeConfigService(options?.isAdvancedTheming ?? false),
     provideAppStylesInitializer(),
     ...dynamicProviders,
   ]
