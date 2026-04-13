@@ -126,6 +126,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   selectionEnabledField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
+  tableTitleKey = input<string | undefined>(undefined)
+  tableDescriptionKey = input<string | undefined>(undefined)
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
@@ -145,6 +147,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
   })
 
+  captionTemplate = input<TemplateRef<any> | undefined>(undefined)
   stringCellTemplate = input<TemplateRef<any> | undefined>(undefined)
   stringCellChildTemplate = contentChild<TemplateRef<any>>('stringCell')
   stringCell = computed(() => {
@@ -922,5 +925,15 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   private createMenuItemCommand(action: DataAction, row: any): () => void {
     return () => handleActionSync(this.router, action, row)
+  }
+  
+  getRowSummary(rowObject: any): string {
+    let summary = ''
+    const columns = Object.entries(rowObject)
+    columns.forEach(([key, value], index) => {
+      summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
+    });
+    
+    return summary.trim()
   }
 }
