@@ -1,3 +1,14 @@
 :host ::ng-deep .p-select {
   min-width: 12rem;
 }
+
+//custom Css for p-floatlabel and placeholder overlap issue
+:host ::ng-deep .p-floatlabel-on:has(.p-placeholder) label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: var(--p-floatlabel-active-font-size);
+    font-weight: var(--p-floatlabel-active-font-weight);
+    border-radius: var(--p-floatlabel-on-border-radius);
+    background: var(--p-floatlabel-on-active-background);
+    padding: var(--p-floatlabel-on-active-padding);
+}
