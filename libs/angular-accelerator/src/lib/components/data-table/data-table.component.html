@@ -1,14 +1,3 @@
-@if (tableTitleKey() || tableDescriptionKey()) {
-  @if (tableTitleKey()) {
-    <header class="diagram-title  w-full flex justify-content-center" [attr.id]="'dataTable_' + name() + '_title'">
-      {{ tableTitleKey() | translate }}
-    </header>
-  }
-  @if (tableDescriptionKey()) {
-    <p class="diagram-description  w-full flex justify-content-center" [attr.id]="'dataTable_' + name() + '_description'">
-      {{tableDescriptionKey() | translate }}</p>
-  }
-}
 <ng-template #actionColumn let-rowObject="localRowObject">
   @if (actionColumnVisible) {
   <td

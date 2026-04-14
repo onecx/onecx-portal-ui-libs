@@ -33,6 +33,11 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
     useValue: '/assets/i18n/storybook-translations/diagram/',
     multi: true,
   },
+  {
+    provide: TRANSLATION_PATH,
+    useValue: '/assets/i18n/storybook-translations/data-table/',
+    multi: true,
+  },
 ]
 
 @NgModule({

@@ -126,8 +126,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   selectionEnabledField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
-  tableTitleKey = input<string | undefined>(undefined)
-  tableDescriptionKey = input<string | undefined>(undefined)
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
@@ -932,7 +930,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const columns = Object.entries(rowObject)
     columns.forEach(([key, value], index) => {
       summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
-    });
+    })
     
     return summary.trim()
   }
