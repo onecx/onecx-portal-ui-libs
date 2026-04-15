@@ -1,5 +1,6 @@
-import { Component, OnInit, computed, effect, input, model, output, signal } from '@angular/core'
+import { Component, computed, inject, input, output, signal } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }
 export type ActionColumnChangedEvent = {
@@ -22,9 +23,11 @@ export interface CustomGroupColumnSelectorComponentState {
   templateUrl: './custom-group-column-selector.component.html',
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
-export class CustomGroupColumnSelectorComponent implements OnInit {
+export class CustomGroupColumnSelectorComponent {
+  private storeService = inject(InteractiveDataViewService)
+  
   readonly columns = input<DataTableColumn[]>([])
-  readonly displayedColumns = model<DataTableColumn[]>([])
+  readonly displayedColumns = this.storeService.displayedColumns
   readonly customGroupKey = input<string>('')
   readonly dialogTitle = input<string>('')
   readonly dialogTitleKey = input<string>('')
@@ -45,17 +48,13 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly inactiveColumnsLabel = input<string>('')
   readonly inactiveColumnsLabelKey = input<string>('')
 
-  readonly frozenActionColumn = input<boolean>(false)
-  readonly actionColumnPosition = input<'left' | 'right'>('right')
-
   readonly columnSelectionChanged = output<ColumnSelectionChangedEvent>()
   readonly actionColumnConfigChanged = output<ActionColumnChangedEvent>()
-  readonly componentStateChanged = output<CustomGroupColumnSelectorComponentState>()
 
   readonly hiddenColumnsModel = signal<DataTableColumn[]>([])
   readonly displayedColumnsModel = signal<DataTableColumn[]>([])
-  readonly frozenActionColumnModel = signal<boolean>(false)
-  readonly actionColumnPositionModel = signal<'left' | 'right'>('right')
+  readonly frozenActionColumnModel = this.storeService.ActionColumnConfigFrozen
+  readonly actionColumnPositionModel = this.storeService.ActionColumnConfigPosition
   readonly visible = signal<boolean>(false)
 
   readonly alignmentOptions = signal<{ label: string; value: 'left' | 'right' }[]>([
@@ -81,25 +80,9 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   ])
 
   private readonly _actionColumnState = computed(() => ({
-    frozen: this.frozenActionColumn(),
-    position: this.actionColumnPosition(),
+    frozen: this.frozenActionColumnModel(),
+    position: this.actionColumnPositionModel(),
   }))
-
-  constructor() {
-    effect(() => {
-      this.componentStateChanged.emit({
-        actionColumnConfig: this._actionColumnState(),
-        displayedColumns: this.displayedColumns(),
-      })
-    })
-  }
-
-  ngOnInit(): void {
-    this.componentStateChanged.emit({
-      actionColumnConfig: this._actionColumnState(),
-      displayedColumns: this.displayedColumns(),
-    })
-  }
 
   onOpenCustomGroupColumnSelectionDialogClick() {
     this.displayedColumnsModel.set([...this.displayedColumns()])
@@ -107,8 +90,6 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     const displayedIds = new Set(this.displayedColumnsModel().map((c) => c.id))
     this.hiddenColumnsModel.set(this.columns().filter((column) => !displayedIds.has(column.id)))
 
-    this.frozenActionColumnModel.set(this.frozenActionColumn())
-    this.actionColumnPositionModel.set(this.actionColumnPosition())
     this.visible.set(true)
   }
 
@@ -119,29 +100,18 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     const after = this.displayedColumnsModel().map((column) => column.id)
 
     if (!after.every((colId, i) => colId === before[i]) || after.length !== before.length) {
-      this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel()] })
-      this.componentStateChanged.emit({
-        displayedColumns: [...this.displayedColumnsModel()],
-      })
+      const newColumns = [...this.displayedColumnsModel()]
+      this.storeService.setDisplayedColumns(newColumns)
     }
 
     if (
-      this.frozenActionColumn() !== this.frozenActionColumnModel() ||
-      this.actionColumnPosition() !== this.actionColumnPositionModel()
+      this.storeService.ActionColumnConfigFrozen() !== this.frozenActionColumnModel() ||
+      this.storeService.ActionColumnConfigPosition() !== this.actionColumnPositionModel()
     ) {
-      this.actionColumnConfigChanged.emit({
-        frozenActionColumn: this.frozenActionColumnModel(),
-        actionColumnPosition: this.actionColumnPositionModel(),
-      })
-
-      this.componentStateChanged.emit({
-        displayedColumns: [...this.displayedColumnsModel()],
-        actionColumnConfig: {
-          frozen: this.frozenActionColumnModel(),
-          position: this.actionColumnPositionModel(),
-        },
-        activeColumnGroupKey: this.customGroupKey(),
-      })
+      this.storeService.setActionColumnConfig(
+        this.frozenActionColumnModel(),
+        this.actionColumnPositionModel()
+      )
     }
   }
 

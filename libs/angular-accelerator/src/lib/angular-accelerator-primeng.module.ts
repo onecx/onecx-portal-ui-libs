@@ -46,7 +46,6 @@ import { TimelineModule } from 'primeng/timeline'
     TooltipModule,
     TimelineModule,
     RippleModule,
-    SelectButtonModule,
     SharedModule,
   ],
   exports: [
@@ -71,7 +70,6 @@ import { TimelineModule } from 'primeng/timeline'
     TooltipModule,
     TimelineModule,
     RippleModule,
-    SelectButtonModule,
     SharedModule,
   ],
   providers: [providePrimeNG()],
