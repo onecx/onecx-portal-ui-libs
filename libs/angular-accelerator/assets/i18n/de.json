@@ -88,7 +88,9 @@
     "SELECT_ALL_TOOLTIP": "Selektiere alle",
     "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
     "FILTER_YES": "Ja",
-    "FILTER_NO": "Nein"
+    "FILTER_NO": "Nein",
+    "COLLAPSED_ROW": "Eingeklappte Zeile",
+    "EXPANDED_ROW": "Ausgeklappte Zeile"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
@@ -219,5 +221,9 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "Die Daten konnten nicht geladen werden.",
     "MESSAGE": "Dies kann folgende Gründe haben: \n -Die Daten existieren nicht oder nicht mehr.\n - Die Daten konnten aufgrund eines Fehlers im System nicht geladen werden.\n - Ihnen fehlt die nötige Berechtigung um die Daten zu laden.\n Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
+  },
+  "OCX_DATA_EXPORT": {
+    "EXCEL_TABLE_NAME": "{{fileName}}_table",
+    "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
   }
 }

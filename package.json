@@ -1,6 +1,6 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "8.0.0-rc.8",
+  "version": "8.0.0-rc.9",
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
@@ -36,6 +36,7 @@
     "@nx/devkit": "^22.3.3",
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^21.0.2",
+    "@protobi/exceljs": "^4.4.0-protobi.9",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "d3-scale-chromatic": "^3.1.0",
@@ -147,7 +148,8 @@
     "brace-expansion": "^2.0.2",
     "cross-spawn": "^7.0.6",
     "undici": "^6.23.0",
-    "semver": "^7.7.3"
+    "semver": "^7.7.3",
+    "minimatch": "^9.0.6"
   },
   "nx": {
     "includedScripts": []

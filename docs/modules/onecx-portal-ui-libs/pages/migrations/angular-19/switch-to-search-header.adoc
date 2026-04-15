@@ -9,7 +9,7 @@ In OneCX v6, Replace *SearchCriteriaComponent* with *SearchHeaderComponent*. Sea
 * Replace <ocx-search-criteria> tag with <ocx-search-header>
 * Migrate input properties and output events as per the mapping tables below.
 
-== Example
+=== Example
 .Before
 [source,html]
 ----

@@ -1,0 +1,19 @@
+[#update-public-api-imports]
+= Update imports to supported public APIs
+
+OneCX v8 contains multiple public API export updates across libraries.
+To avoid compile errors after upgrading, ensure your imports use package entry points and currently exported symbols.
+
+== Example
+
+.Before
+[source,typescript]
+----
+import { AuthServiceWrapper } from '@onecx/angular-auth/src/lib/auth-service-wrapper'
+----
+
+.After
+[source,typescript]
+----
+import { AuthServiceWrapper } from '@onecx/shell-auth'
+----

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-accelerator",
-  "version": "8.0.0-rc.8",
+  "version": "8.0.0-rc.9",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,12 +15,12 @@
     "@angular/router": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@onecx/integration-interface": "^8.0.0-rc.8",
-    "@onecx/accelerator": "^8.0.0-rc.8",
-    "@onecx/angular-integration-interface": "^8.0.0-rc.8",
-    "@onecx/angular-remote-components": "^8.0.0-rc.8",
-    "@onecx/angular-testing": "^8.0.0-rc.8",
-    "@onecx/angular-utils": "^8.0.0-rc.8",
+    "@onecx/integration-interface": "^8.0.0-rc.9",
+    "@onecx/accelerator": "^8.0.0-rc.9",
+    "@onecx/angular-integration-interface": "^8.0.0-rc.9",
+    "@onecx/angular-remote-components": "^8.0.0-rc.9",
+    "@onecx/angular-testing": "^8.0.0-rc.9",
+    "@onecx/angular-utils": "^8.0.0-rc.9",
     "chart.js": "^4.4.3",
     "d3-scale-chromatic": "^3.1.0",
     "fast-deep-equal": "^3.1.3",
@@ -28,7 +28,8 @@
     "rxjs": "~7.8.1",
     "primeng": "^21.0.0",
     "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.8"
+    "@protobi/exceljs": "^4.4.0-protobi.9",
+    "@onecx/nx-migration-utils": "^8.0.0-rc.9"
   },
   "exports": {
     ".": {
