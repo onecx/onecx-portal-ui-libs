@@ -3,7 +3,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
-
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -245,7 +244,9 @@ describe('DataViewComponent', () => {
     let dataTable: DataTableHarness | null
 
     beforeEach(async () => {
-      fixture.componentRef.setInput('layout', 'table')
+      component.layout.set('table')
+      fixture.detectChanges()
+      await fixture.whenStable()
       dataTable = await dataViewHarness?.getDataTable()
     })
 
@@ -282,6 +283,8 @@ describe('DataViewComponent', () => {
 
       fixture.componentRef.setInput('frozenActionColumn', true)
       fixture.componentRef.setInput('actionColumnPosition', 'left')
+      fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable?.getActionColumn('right')).toBe(null)
@@ -296,6 +299,7 @@ describe('DataViewComponent', () => {
   })
 
   it('should stay on the same page after layout change', async () => {
+    component.layout.set('grid')
     fixture.componentRef.setInput('data', [
       ...component.data(),
       {
@@ -329,8 +333,9 @@ describe('DataViewComponent', () => {
         modificationDate: '2023-09-12T09:34:27.184086Z',
       },
     ])
+    fixture.detectChanges()
+    await fixture.whenStable()
 
-    dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
     const dataList = await dataViewHarness.getHarness(DataListGridHarness)
     const dataListPaginator = await dataList.getPaginator()
     let dataListRaport = await dataListPaginator.getCurrentPageReportText()
@@ -339,8 +344,9 @@ describe('DataViewComponent', () => {
     dataListRaport = await dataListPaginator.getCurrentPageReportText()
     expect(dataListRaport).toEqual('11 - 11 of 11')
 
-    fixture.componentRef.setInput('layout', 'table')
+    component.layout.set('table')
     fixture.detectChanges()
+    await fixture.whenStable()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
     const dataTablePaginator = await dataTable.getPaginator()
     const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()
@@ -355,7 +361,7 @@ describe('DataViewComponent', () => {
       fixture.componentRef.setInput('viewPermission', 'VIEW')
       fixture.componentRef.setInput('editPermission', 'EDIT')
       fixture.componentRef.setInput('deletePermission', 'DELETE')
-      fixture.componentRef.setInput('layout', viewType)
+      component.layout.set(viewType)
       fixture.componentRef.setInput('columns', [
         {
           columnType: ColumnType.STRING,
@@ -394,6 +400,8 @@ describe('DataViewComponent', () => {
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('list')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
@@ -412,6 +420,8 @@ describe('DataViewComponent', () => {
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('grid')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
@@ -430,6 +440,8 @@ describe('DataViewComponent', () => {
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('table')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(1)).toBe(true)
@@ -447,6 +459,8 @@ describe('DataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('list')
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
@@ -470,6 +484,8 @@ describe('DataViewComponent', () => {
         await (await dataView?.getGridMenuButton())?.click()
 
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
@@ -487,6 +503,8 @@ describe('DataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('table')
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(2)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)

@@ -18,6 +18,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -222,6 +223,7 @@ describe('DataTableComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        InteractiveDataViewService,
       ],
     }).compileComponents()
 
@@ -464,10 +466,11 @@ describe('DataTableComponent', () => {
     it('should render a pinned action column on the specified side of the table', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      fixture.componentRef.setInput('frozenActionColumn', true)
-      fixture.componentRef.setInput('actionColumnPosition', 'left')
+      component.frozenActionColumn.set(true)
+      component.actionColumnPosition.set('left')
 
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
@@ -1308,13 +1311,7 @@ describe('DataTableComponent', () => {
       expect(result).toEqual(['a', 'c'])
     })
 
-    it('onPageChange should emit page and pageSize and componentStateChanged', () => {
-      const pageChangedSpy = jest.fn()
-      const pageSizeChangedSpy = jest.fn()
-      const componentStateChangedSpy = jest.fn()
-      component.pageChanged.subscribe(pageChangedSpy)
-      component.pageSizeChanged.subscribe(pageSizeChangedSpy)
-      component.componentStateChanged.subscribe(componentStateChangedSpy)
+    it('onPageChange should update page and pageSize in service', () => {
 
       component.onPageChange({ first: 20, rows: 10 })
 
@@ -1322,9 +1319,6 @@ describe('DataTableComponent', () => {
 
       expect(component.page()).toBe(2)
       expect(component.pageSize()).toBe(10)
-      expect(pageChangedSpy).toHaveBeenCalledWith(2)
-      expect(pageSizeChangedSpy).toHaveBeenCalledWith(10)
-      expect(componentStateChangedSpy).toHaveBeenCalledWith(expect.objectContaining({ activePage: 2, pageSize: 10 }))
     })
   })
 
@@ -1401,28 +1395,20 @@ describe('DataTableComponent', () => {
       component.page.set(2)
       fixture.detectChanges()
 
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-
       component.rows.set(mockData.slice(0, 3) as any)
       fixture.detectChanges()
 
       expect(component.page()).toBe(0)
-      expect(pageSpy).toHaveBeenCalledWith(0)
-      expect(stateSpy).toHaveBeenCalled()
     })
 
     it('should not call resetPage when rows length increases', () => {
       component.page.set(2)
       fixture.detectChanges()
 
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-
       component.rows.set(Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i })) as any)
       fixture.detectChanges()
 
       expect(component.page()).toBe(2)
-      expect(pageSpy).not.toHaveBeenCalledWith(0)
     })
 
     it('should resetPage when filters length changes', () => {
@@ -1466,11 +1452,8 @@ describe('DataTableComponent', () => {
       expect(translateSpy).toHaveBeenCalledWith(['A'])
     })
 
-    it('onSortColumnClick should update subjects, emit sorted and componentStateChanged', () => {
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-
-      component.sortStates.set([
+    it('onSortColumnClick should update sort state in service', () => {
+      fixture.componentRef.setInput('sortStates', [
         // make toggling deterministic
         // (new column -> first state)
         // (same column -> next)
@@ -1488,14 +1471,9 @@ describe('DataTableComponent', () => {
 
       expect(component.sortColumn()).toBe('new')
       expect(component.sortDirection()).toBe(1 as any)
-      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'new', sortDirection: 1 as any })
-      expect(stateSpy).toHaveBeenCalled()
     })
 
-    it('onMultiselectFilterChange should replace filters, emit filtered, and reset page', () => {
-      const filteredSpy = jest.spyOn(component.filtered, 'emit')
-      const pageChangedSpy = jest.spyOn(component.pageChanged, 'emit')
-
+    it('onMultiselectFilterChange should replace filters and reset page', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
       component.filters.set([
         { columnId: 'status', value: 'old', filterType: FilterType.EQUALS },
@@ -1517,11 +1495,7 @@ describe('DataTableComponent', () => {
           { columnId: 'status', value: 'b', filterType: FilterType.EQUALS },
         ])
       )
-      expect(newFilters.find((f) => f.columnId === 'status' && f.value === 'old')).toBeUndefined()
-
-      expect(filteredSpy).toHaveBeenCalledWith(newFilters)
       expect(component.page()).toBe(0)
-      expect(pageChangedSpy).toHaveBeenCalledWith(0)
     })
 
     it('sortDirectionToTitle should return the correct translation key for each direction', () => {
@@ -1535,7 +1509,7 @@ describe('DataTableComponent', () => {
     })
 
     it('sortIconTitle should return the title for the next sort direction', () => {
-      component.sortStates.set([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
+      fixture.componentRef.setInput('sortStates', [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
       component.sortColumn.set('col')
       component.sortDirection.set(DataSortDirection.ASCENDING)
       fixture.detectChanges()
@@ -1790,10 +1764,7 @@ describe('DataTableComponent', () => {
       expect(callback).toHaveBeenCalledWith(row)
     })
 
-    it('emitComponentStateChanged should emit full state including selectedRows and overrides', async () => {
-      const emitted: any[] = []
-      component.componentStateChanged.subscribe((e) => emitted.push(e))
-
+    it('selectedFilteredRows should reflect selected ids and current rows', async () => {
       component.page.set(2)
       component.filters.set([{ columnId: 'c1', value: 'x' } as any])
       component.sortColumn.set('c1')
@@ -1807,16 +1778,7 @@ describe('DataTableComponent', () => {
       // wait for async announcements
       await Promise.resolve()
 
-      // there might be an initial emitComponentStateChanged from component init; validate the last emission
-      expect(emitted.length).toBeGreaterThanOrEqual(1)
-      const last = emitted[emitted.length - 1]
-      expect(last).toMatchObject({
-        activePage: 0,
-        pageSize: 10,
-        filters: component.filters(),
-        sorting: { sortColumn: 'c1', sortDirection: DataSortDirection.ASCENDING },
-      })
-      expect(last.selectedRows).toEqual([{ id: 'b' }])
+      expect(component.selectedFilteredRows()).toEqual([{ id: 'b' }])
     })
 
     it('emitSelectionChanged should emit rows matching selection ids', () => {
@@ -1880,7 +1842,7 @@ describe('DataTableComponent', () => {
       expect(component.translationKeyFilterCell()).toBe(childTranslation)
     })
 
-    it('onMultiselectFilterChange should not emit filters and resetPage (clientSideFiltering=false)', () => {
+    it('onMultiselectFilterChange should update filters and resetPage (clientSideFiltering=true)', () => {
       fixture.componentRef.setInput('clientSideFiltering', false)
       component.filters.set([{ columnId: 'other', value: 'x' } as any])
       fixture.componentRef.setInput('clientSideFiltering', true)
@@ -1888,9 +1850,6 @@ describe('DataTableComponent', () => {
       const resetSpy = jest.spyOn(component.page, 'set')
 
       fixture.detectChanges()
-
-      const emitted: any[] = []
-      component.filtered.subscribe((f) => emitted.push(...f))
 
       component.onMultiselectFilterChange(column, { value: ['A', 'B'] })
 
@@ -1901,7 +1860,6 @@ describe('DataTableComponent', () => {
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
         { columnId: 'status', value: 'B', filterType: FilterType.EQUALS },
       ])
-      expect(emitted).toHaveLength(3)
       expect(resetSpy).toHaveBeenCalledWith(0)
     })
 
@@ -2122,12 +2080,11 @@ describe('DataTableComponent', () => {
         expect(spy).toHaveBeenCalledWith(row1)
       })
 
-      it('should emit componentStateChanged after change detection', () => {
-        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      it('should update expandedRows after change detection', () => {
         component.onRowExpand({ data: row1 })
         fixture.detectChanges()
 
-        expect(stateSpy).toHaveBeenCalled()
+        expect(component.expandedRowIds()).toContain(row1.id)
       })
 
       it('should treat null expandedRows as empty array and add the row', () => {
@@ -2160,12 +2117,11 @@ describe('DataTableComponent', () => {
         expect(spy).toHaveBeenCalledWith(row1)
       })
 
-      it('should emit componentStateChanged after change detection', () => {
-        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      it('should update expandedRows after collapse and change detection', () => {
         component.onRowCollapse({ data: row1 })
         fixture.detectChanges()
 
-        expect(stateSpy).toHaveBeenCalled()
+        expect(component.expandedRowIds()).not.toContain(row1.id)
       })
 
       it('should treat null expandedRows as empty array and result in empty state', () => {

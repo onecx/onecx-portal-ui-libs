@@ -268,6 +268,10 @@ export class DataViewComponent implements OnInit {
         this.selectionChanged.emit(selectedRows)
       }
     })
+
+    effect(() => {
+      this.stateService.setActionColumnConfig(this.frozenActionColumn(), this.actionColumnPosition())
+    })
   }
 
   ngOnInit(): void {

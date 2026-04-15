@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -249,6 +250,7 @@ describe('DataListGridComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        InteractiveDataViewService,
       ],
     }).compileComponents()
 
