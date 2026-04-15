@@ -125,7 +125,7 @@
             tooltipPosition="top"
           >
             @if (item.icon) {
-            <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon"></i>
+            <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon"  aria-hidden="true"></i>
             } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
