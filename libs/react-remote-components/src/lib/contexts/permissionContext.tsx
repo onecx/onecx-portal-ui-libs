@@ -1,19 +1,34 @@
-import { type FC, createContext, useContext, useState, useEffect, PropsWithChildren } from 'react'
+import { type FC, createContext, useState, useEffect, useMemo, type PropsWithChildren } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
 import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
 
+/**
+ * Permission context value shape.
+ */
 interface PermissionContextType {
   permissions: PermissionsRpc[]
   getPermissions: (appId: string, productName: string) => Promise<string[]>
 }
 
-const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
+/** Permission context for remote components. */
+export const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
 
 const permissionsTopic$ = new PermissionsRpcTopic()
 
+/**
+ * Provides permissions fetched from the portal permissions topic.
+ * @param children - nested content rendered with permission context.
+ * @returns Permission context provider component.
+ */
 export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [permissions, setPermissions] = useState<PermissionsRpc[]>([])
 
+  /**
+   * Fetch permissions for a given app/product pair.
+   * @param appId - application identifier.
+   * @param productName - product identifier.
+   * @returns list of permissions.
+   */
   const getPermissions = async (appId: string, productName: string): Promise<string[]> => {
     const permissions = firstValueFrom(
       permissionsTopic$.pipe(
@@ -38,13 +53,7 @@ export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
   }, [])
 
-  return <PermissionContext.Provider value={{ permissions, getPermissions }}>{children}</PermissionContext.Provider>
-}
+  const contextValue = useMemo(() => ({ permissions, getPermissions }), [permissions])
 
-export const usePermission = (): PermissionContextType => {
-  const context = useContext(PermissionContext)
-  if (!context) {
-    throw new Error('usePermission must be used within a PermissionProvider')
-  }
-  return context
+  return <PermissionContext.Provider value={contextValue}>{children}</PermissionContext.Provider>
 }

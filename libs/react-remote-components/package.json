@@ -1,7 +1,11 @@
 {
   "name": "@onecx/react-remote-components",
-  "version": "7.0.0-rc.10",
+  "version": "8.0.0-rc.1",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "main": "./index.js",
   "types": "./index.d.ts",
   "exports": {
@@ -11,9 +15,10 @@
     }
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "@onecx/react-integration-interface": "^7.0.0-rc.10"
+    "@onecx/accelerator": "^8.0.0-rc.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "@onecx/react-integration-interface": "^8.0.0-rc.1"
   },
   "dependencies": {},
   "publishConfig": {
