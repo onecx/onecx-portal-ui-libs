@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useMemo, type ReactNode
 import { Config, ConfigurationTopic, resolveConfigPayload } from '@onecx/integration-interface'
 import { firstValueFrom, map, Subscription } from 'rxjs'
 import Semaphore from 'ts-semaphore'
-import { CONFIG_KEY } from '@onecx/angular-integration-interface'
+import { CONFIG_KEY } from '../model/config-key.model'
 import { createLogger } from '../utils/logger.utils'
 
 /**

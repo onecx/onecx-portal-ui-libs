@@ -21,7 +21,6 @@
   "peerDependencies": {
     "@onecx/accelerator": "^8.0.0-rc.1",
     "@onecx/integration-interface": "^8.0.0-rc.1",
-    "@onecx/angular-integration-interface": "^8.0.0-rc.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
