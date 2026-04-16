@@ -11,25 +11,21 @@ import {
   effect,
   inject,
   input,
-  model,
-  output,
   signal,
   viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { Filter } from '../../model/filter.model'
-import { orderAndMergeValuesByTimestamp } from '../../utils/rxjs-utils'
 import {
   DataListGridComponent,
   DataListGridComponentState,
   ListGridData,
 } from '../data-list-grid/data-list-grid.component'
-import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
+import { DataTableComponent, DataTableComponentState, Row } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type RowListGridData = ListGridData & Row
 
@@ -44,13 +40,11 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
+  private readonly stateService = inject(InteractiveDataViewService)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
   dataTableComponent = viewChild(DataTableComponent)
-
-  dataTableComponentState$ = new ReplaySubject<DataTableComponentState>(1)
-  dataListGridComponentState$ = new ReplaySubject<DataListGridComponentState>(1)
 
   deletePermission = input<string | string[]>()
   editPermission = input<string | string[]>()
@@ -67,39 +61,39 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
-  layout = input<any>()
+  layout = this.stateService.layout
   columns = input<DataTableColumn[]>([])
   emptyResultsMessage = input<string | undefined>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
   fallbackImage = input<string>()
-  filters = model<Filter[]>([])
-  sortField = model<any>()
-  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
-  listGridPaginator = model<boolean>(true)
-  tablePaginator = model<boolean>(true)
+  filters = this.stateService.filters
+  sortField = this.stateService.sortColumn
+  sortDirection = this.stateService.sortDirection
+  listGridPaginator = this.stateService.listGridPaginator
+  tablePaginator = this.stateService.tablePaginator
   @Input()
   get paginator(): boolean {
     return this.listGridPaginator() && this.tablePaginator()
   }
   set paginator(value: boolean) {
-    this.listGridPaginator.set(value)
-    this.tablePaginator.set(value)
+    this.stateService.setListGridPaginator(value)
+    this.stateService.setTablePaginator(value)
   }
-  page = model<number>(0)
+  page = this.stateService.activePage
   totalRecordsOnServer = input<number | undefined>()
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
-  selectedRows = input<Row[]>([])
+  selectedRows = this.stateService.selectedRows
   frozenActionColumn = input<boolean>(false)
   actionColumnPosition = input<'left' | 'right'>('right')
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
-  expandedRows = model<Row[] | string[] | number[]>([])
+  expandedRows = this.stateService.expandedRows
 
   sortStates = input<DataSortDirection[]>([])
   pageSizes = input<number[]>([10, 25, 50])
-  pageSize = model<number | undefined>()
+  pageSize = this.stateService.pageSize
 
   stringTableCellTemplate = input<TemplateRef<any> | undefined>()
   stringTableCellChildTemplate = contentChild<TemplateRef<any>>('stringTableCellTemplate')
@@ -223,15 +217,10 @@ export class DataViewComponent implements OnInit {
 
   additionalActions = input<DataAction[]>([])
 
-  filtered = output<Filter[]>()
-  sorted = output<Sort>()
   @Output() deleteItem = observableOutput<RowListGridData>()
   @Output() viewItem = observableOutput<RowListGridData>()
   @Output() editItem = observableOutput<RowListGridData>()
   @Output() selectionChanged = observableOutput<Row[]>()
-  pageChanged = output<number>()
-  pageSizeChanged = output<number>()
-  componentStateChanged = output<DataViewComponentState>()
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
@@ -274,32 +263,14 @@ export class DataViewComponent implements OnInit {
     })
 
     effect(() => {
-      const filters = this.filters()
-      if (filters) {
-        this.filtered.emit(filters)
+      const selectedRows = this.selectedRows()
+      if (selectedRows && this.selectionChangedObserved) {
+        this.selectionChanged.emit(selectedRows)
       }
     })
 
     effect(() => {
-      const sortField = this.sortField()
-      const sortDirection = this.sortDirection()
-      if (sortField && sortDirection) {
-        this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection })
-      }
-    })
-
-    effect(() => {
-      const page = this.page()
-      if (page !== undefined) {
-        this.pageChanged.emit(page)
-      }
-    })
-
-    effect(() => {
-      const pageSize = this.pageSize()
-      if (pageSize !== undefined) {
-        this.pageSizeChanged.emit(pageSize)
-      }
+      this.stateService.setActionColumnConfig(this.frozenActionColumn(), this.actionColumnPosition())
     })
   }
 
@@ -308,26 +279,6 @@ export class DataViewComponent implements OnInit {
     if (columns && columns.length > 0) {
       this.firstColumnId.set(columns[0]?.id)
     }
-
-    let dataTableComponentState$: Observable<DataTableComponentState | Record<string, never>> =
-      this.dataTableComponentState$
-    let dataListGridComponentState$: Observable<DataListGridComponentState | Record<string, never>> =
-      this.dataListGridComponentState$
-    if (this.layout() === 'table') {
-      dataListGridComponentState$ = dataListGridComponentState$.pipe(startWith({}))
-    } else {
-      dataTableComponentState$ = dataTableComponentState$.pipe(startWith({}))
-    }
-
-    combineLatest([dataTableComponentState$.pipe(timestamp()), dataListGridComponentState$.pipe(timestamp())])
-      .pipe(
-        map((componentStates) => {
-          return orderAndMergeValuesByTimestamp(componentStates)
-        })
-      )
-      .subscribe((val) => {
-        this.componentStateChanged.emit(val)
-      })
   }
 
   registerEventListenerForListGrid() {
@@ -390,12 +341,12 @@ export class DataViewComponent implements OnInit {
   }
 
   filtering(event: any) {
-    this.filters.set(event)
+    this.stateService.setFilters(event.filters)
   }
 
   sorting(event: any) {
-    this.sortDirection.set(event.sortDirection)
-    this.sortField.set(event.sortColumn)
+    this.stateService.setSortDirection(event.sortDirection)
+    this.stateService.setSortColumn(event.sortColumn)
   }
 
   deletingElement(event: any) {
@@ -416,16 +367,14 @@ export class DataViewComponent implements OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-    if (this.selectionChangedObserved) {
-      this.selectionChanged.emit(event)
-    }
+    this.stateService.setSelectedRows(event)
   }
 
   onPageChange(event: number) {
-    this.page.set(event)
+    this.stateService.setActivePage(event)
   }
 
   onPageSizeChange(event: number) {
-    this.pageSize.set(event)
+    this.stateService.setPageSize(event)
   }
 }

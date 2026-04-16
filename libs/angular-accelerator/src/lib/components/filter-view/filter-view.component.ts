@@ -2,9 +2,8 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
-  model,
-  output,
   signal,
   TemplateRef,
   viewChild,
@@ -23,6 +22,7 @@ import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { Button } from 'primeng/button'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -48,8 +48,9 @@ export class FilterViewComponent {
   ColumnType = ColumnType
   FilterType = FilterType
 
-  readonly filters = model<Filter[]>([])
-  readonly columns = model<DataTableColumn[]>([])
+  private readonly stateService = inject(InteractiveDataViewService)
+  readonly filters = this.stateService.filters
+  readonly columns = this.stateService.displayedColumns
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
     limit(filters, 3, { reverse: true })
@@ -57,9 +58,6 @@ export class FilterViewComponent {
   readonly chipStyleClass = input('')
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
-
-  readonly filtered = output<Filter[]>()
-  readonly componentStateChanged = output<FilterViewComponentState>()
 
   readonly columnFilterTableColumns = signal<DataTableColumn[]>([
     {
@@ -197,12 +195,6 @@ export class FilterViewComponent {
           )
         : undefined
     })
-
-    effect(() => {
-      const filters = this.filters()
-      this.filtered.emit(filters)
-      this.componentStateChanged.emit({ filters })
-    })
   }
 
   getTemplate(
@@ -232,17 +224,17 @@ export class FilterViewComponent {
   }
 
   onResetFilersClick() {
-    this.filters.set([])
+    this.stateService.setFilters([])
   }
 
   onChipRemove(filter: Filter) {
     const filters = this.filters().filter((f) => f.value !== filter.value)
-    this.filters.set(filters)
+    this.stateService.setFilters(filters)
   }
 
   onFilterDelete(row: Row) {
     const filters = this.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
-    this.filters.set(filters)
+    this.stateService.setFilters(filters)
   }
 
   focusTrigger() {

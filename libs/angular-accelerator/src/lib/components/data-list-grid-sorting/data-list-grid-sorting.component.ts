@@ -1,8 +1,9 @@
-import { Component, computed, effect, input, model, output } from '@angular/core'
+import { Component, computed, inject, input } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { SelectChangeEvent } from 'primeng/select'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
 export interface DataListGridSortingComponentState {
@@ -16,16 +17,13 @@ export interface DataListGridSortingComponentState {
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {
+  private readonly stateService = inject(InteractiveDataViewService)
+  
   readonly columns = input<DataTableColumn[]>([])
   readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
-  readonly sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
-  readonly sortField = model<string>('')
-
-  readonly sortChange = output<string>()
-  readonly sortDirectionChange = output<DataSortDirection>()
-  readonly componentStateChanged = output<DataListGridSortingComponentState>()
-  readonly columnsChange = output<string[]>()
+  readonly sortDirection = this.stateService.sortDirection
+  readonly sortField = this.stateService.sortColumn
 
   readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
     return this.columns()
@@ -38,26 +36,13 @@ export class DataListGridSortingComponent {
     return this.dropdownOptions().find((e) => e.columnId === sortField)
   })
 
-  constructor() {
-    effect(() => {
-      this.componentStateChanged.emit({
-        sorting: {
-          sortColumn: this.sortField(),
-          sortDirection: this.sortDirection(),
-        },
-      })
-    })
-  }
-
   selectSorting(event: SelectChangeEvent): void {
-    this.sortField.set(event.value.columnId)
-    this.sortChange.emit(event.value.columnId)
+    this.stateService.setSortColumn(event.value.columnId)
   }
 
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
-    this.sortDirection.set(newSortDirection)
-    this.sortDirectionChange.emit(newSortDirection)
+    this.stateService.setSortDirection(newSortDirection)
   }
 
   nextSortDirection(): DataSortDirection {

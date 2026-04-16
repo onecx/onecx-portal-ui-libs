@@ -12,7 +12,6 @@ import {
   inject,
   input,
   model,
-  output,
   signal,
   untracked,
   viewChildren,
@@ -40,6 +39,7 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type ListGridData = {
   id: string | number
@@ -65,6 +65,8 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
+  private readonly stateService = inject(InteractiveDataViewService)
+
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
@@ -78,7 +80,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   clientSideFiltering = input<boolean>(true)
   sortStates = input<DataSortDirection[]>([])
 
-  pageSize = model<number | undefined>(undefined)
+  page = this.stateService.activePage
+  pageSize = this.stateService.pageSize
   pageSizes = input<number[]>([10, 25, 50])
 
   displayedPageSize = computed(() => {
@@ -104,7 +107,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   editMenuItemKey = input<string | undefined>(undefined)
   deleteMenuItemKey = input<string | undefined>(undefined)
   paginator = input<boolean>(true)
-  page = model<number>(0)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = input<DataTableColumn[]>([])
   filteredColumns = computed(() => {
@@ -245,9 +247,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   @Output() viewItem = observableOutput<ListGridData | undefined>()
   @Output() editItem = observableOutput<ListGridData | undefined>()
   @Output() deleteItem = observableOutput<ListGridData | undefined>()
-  pageChanged = output<number>()
-  pageSizeChanged = output<number>()
-  componentStateChanged = output<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -450,7 +449,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       untracked(() => {
         const previousData = this.previousData()
         if (previousData.length && !equal(data, previousData)) {
-          this.page.set(0)
+          this.stateService.setActivePage(0)
         }
       })
 
@@ -480,7 +479,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       untracked(() => {
         const previousFilters = this.previousFilters()
         if (previousFilters.length && !equal(this.filters(), previousFilters)) {
-          this.page.set(0)
+          this.stateService.setActivePage(0)
         }
       })
     })
@@ -488,22 +487,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     this.fallbackImagePath$ = this.appStateService.currentMfe$.pipe(
       map((currentMfe) => this.getFallbackImagePath(currentMfe))
     )
-
-    effect(() => {
-      this.emitComponentStateChanged()
-    })
-
-    effect(() => {
-      this.pageChanged.emit(this.page())
-    })
-
-    effect(() => {
-      const pageSize = this.pageSize()
-      if (pageSize === undefined) {
-        return
-      }
-      this.pageSizeChanged.emit(pageSize)
-    })
   }
 
   ngOnInit(): void {
@@ -540,17 +523,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  emitComponentStateChanged() {
-    this.componentStateChanged.emit({
-      pageSize: this.displayedPageSize(),
-      activePage: this.page(),
-    })
-  }
-
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.page.set(page)
-    this.pageSize.set(event.rows)
+    this.stateService.setActivePage(page)
+    this.stateService.setPageSize(event.rows)
   }
 
   fieldIsTruthy(object: any, key: any) {

@@ -13,7 +13,6 @@ import {
   inject,
   input,
   model,
-  output,
   signal,
   untracked,
   viewChildren,
@@ -42,6 +41,7 @@ import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -83,25 +83,26 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  stateService = inject(InteractiveDataViewService)
 
   FilterType = FilterType
   TemplateType = TemplateType
 
   rows = model<Row[]>([])
   previousRows = computedPrevious(this.rows)
-  selectedRows = model<Row[]>([])
+  selectedRows = this.stateService.selectedRows
   selectedIds = signal<Array<string | number>>([])
 
-  filters = model<Filter[]>([])
+  filters = this.stateService.filters
   previousFilters = computedPrevious(this.filters)
-  sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
-  sortColumn = model<string>('')
+  sortDirection = this.stateService.sortDirection
+  sortColumn = this.stateService.sortColumn
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columns = model<DataTableColumn[]>([])
   clientSideFiltering = input(true)
   clientSideSorting = input(true)
-  sortStates = model<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
+  sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   pageSizes = model<number[]>([10, 25, 50])
   displayedPageSize = computed(() => {
@@ -110,7 +111,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
   })
-  pageSize = model<number | undefined>(undefined)
+  pageSize = this.stateService.pageSize
 
   emptyResultsMessage = input<string | undefined>(undefined)
   name = model<string>('')
@@ -127,7 +128,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
 
-  page = model<number>(0)
+  page = this.stateService.activePage
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
   totalRecordsOnServer = input<number | undefined>(undefined)
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
@@ -218,10 +219,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   additionalActions = model<DataAction[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+  frozenActionColumn = this.stateService.ActionColumnConfigFrozen
+  actionColumnPosition = this.stateService.ActionColumnConfigPosition
 
-  expandedRows = model<Row[] | string[] | number[]>([])
+  expandedRows = this.stateService.expandedRows
   expandedRowIds = computed<(string | number)[]>(() =>
     (this.expandedRows() ?? [])
       .filter((row): row is Row | string | number => row !== null && row !== undefined)
@@ -234,15 +235,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
-  filtered = output<Filter[]>()
-  sorted = output<Sort>()
   @Output() viewTableRow = observableOutput<Row>()
   @Output() editTableRow = observableOutput<Row>()
   @Output() deleteTableRow = observableOutput<Row>()
   @Output() selectionChanged = observableOutput<Row[]>()
-  pageChanged = output<number>()
-  pageSizeChanged = output<number>()
-  componentStateChanged = output<DataTableComponentState>()
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
@@ -511,7 +507,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
           this.page.set(0)
         }
       })
-      this.filtered.emit(filters)
     })
 
     effect(() => {
@@ -539,27 +534,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.emitComponentStateChanged()
-    })
-
-    effect(() => {
-      this.sorted.emit({ sortColumn: this.sortColumn(), sortDirection: this.sortDirection() })
-    })
-
-    effect(() => {
       this.emitSelectionChanged()
-    })
-
-    effect(() => {
-      this.pageChanged.emit(this.page())
-    })
-
-    effect(() => {
-      const pageSize = this.pageSize()
-      if (pageSize === undefined) {
-        return
-      }
-      this.pageSizeChanged.emit(pageSize)
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)
@@ -573,38 +548,24 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return columnValues.length ? this.translateService.get(columnValues as string[]) : of({})
   }
 
-  emitComponentStateChanged() {
-    this.componentStateChanged.emit({
-      filters: this.filters(),
-      sorting: {
-        sortColumn: this.sortColumn(),
-        sortDirection: this.sortDirection(),
-      },
-      pageSize: this.displayedPageSize(),
-      activePage: this.page(),
-      selectedRows: this.rows().filter((row) => this.selectedIds().includes(row.id)),
-      expandedRows: this.rows().filter((row) => this.expandedRowIds().includes(row.id)),
-    })
-  }
-
   emitSelectionChanged() {
     this.selectionChanged.emit(this.rows().filter((row) => this.selectedIds().includes(row.id)))
   }
 
   onRowExpand(event: any) {
     if (!this.expandedRowIds().includes(event.data.id)) {
-      this.expandedRows.update((rows) => [...(rows ?? []), event.data] as Row[])
+      const expandedRows = this.expandedRows()
+      this.stateService.setExpandedRows([...(expandedRows ?? []), event.data] as Row[])
     }
     this.rowExpanded.emit(event.data)
   }
 
   onRowCollapse(event: any) {
-    this.expandedRows.update(
-      (rows) =>
-        (rows ?? []).filter((r) =>
-          typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id
-        ) as Row[] | string[] | number[]
-    )
+    const expandedRows = this.expandedRows()
+    const updatedExpandedRows = (expandedRows ?? []).filter((r) =>
+      typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id
+    ) as Row[] | string[] | number[]
+    this.stateService.setExpandedRows(updatedExpandedRows)
     this.rowCollapsed.emit(event.data)
   }
 
@@ -623,8 +584,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   onSortColumnClick(sortColumn: string) {
     const newSortDirection = this.columnNextSortDirection(sortColumn)
 
-    this.sortColumn.set(sortColumn)
-    this.sortDirection.set(newSortDirection)
+    this.stateService.setSortColumn(sortColumn)
+    this.stateService.setSortDirection(newSortDirection)
   }
 
   columnNextSortDirection(sortColumn: string) {
@@ -661,7 +622,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         }))
       )
     if (this.clientSideFiltering()) {
-      this.filters.set(filters)
+      this.stateService.setFilters(filters)
     }
   }
 
@@ -732,8 +693,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.page.set(page)
-    this.pageSize.set(event.rows)
+    this.stateService.setActivePage(page)
+    this.stateService.setPageSize(event.rows)
   }
 
   fieldIsTruthy(object: any, key: any) {

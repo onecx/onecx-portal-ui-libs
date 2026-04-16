@@ -3,21 +3,15 @@
     <div class="flex flex-wrap justify-content-start align-items-center gap-2">
       <ocx-data-layout-selection
         [supportedViewLayouts]="supportedViewLayouts()"
-        [layout]="layout()"
-        (dataViewLayoutChange)="onDataViewLayoutChange($event)"
-        (componentStateChanged)="dataLayoutComponentState$.next($event)"
       ></ocx-data-layout-selection>
       @if (!disableFilterView()) {
       <ocx-filter-view
-        [filters]="filters()"
-        [columns]="columns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"
         [chipStyleClass]="filterViewChipStyleClass()"
         [tableStyle]="filterViewTableStyle()"
         (filtered)="filtering($event)"
-        (componentStateChanged)="filterViewComponentState$.next($event)"
       ></ocx-filter-view>
       }
     </div>
@@ -29,13 +23,8 @@
     } @if (layout() !== 'table') {
     <div class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
-        [sortDirection]="sortDirection()"
-        [sortField]="sortField()"
         [columns]="displayedColumns()"
         [sortStates]="sortStates()"
-        (sortChange)="onSortChange($event)"
-        (sortDirectionChange)="onSortDirectionChange($event)"
-        (componentStateChanged)="dataListGridSortingComponentState$.next($event)"
       ></ocx-data-list-grid-sorting>
     </div>
     }
@@ -65,13 +54,8 @@
       } @if (layout() === 'table') {
       <ocx-custom-group-column-selector
         [columns]="columns()"
-        [displayedColumns]="displayedColumns()"
         [customGroupKey]="customGroupKey()"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
-        [frozenActionColumn]="frozenActionColumn()"
-        [actionColumnPosition]="actionColumnPosition()"
-        (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
-        (componentStateChanged)="customGroupColumnSelectorComponentState$.next($event)"
       ></ocx-custom-group-column-selector>
       }
     </div>
@@ -81,18 +65,13 @@
   <ocx-data-view
     [columns]="displayedColumns()"
     [sortStates]="sortStates()"
-    [sortField]="sortField()"
-    [filters]="filters()"
     [data]="data()"
-    [sortDirection]="sortDirection()"
     [titleLineId]="titleLineId()"
     [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="clientSideSorting()"
     [clientSideFiltering]="clientSideFiltering()"
     [pageSizes]="pageSizes()"
-    [pageSize]="pageSize()"
     [emptyResultsMessage]="emptyResultsMessage()"
-    [layout]="layout()"
     [name]="name()"
     [deletePermission]="deletePermission()"
     [editPermission]="editPermission()"
@@ -104,14 +83,6 @@
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
     [additionalActions]="additionalActions()"
-    [listGridPaginator]="listGridPaginator()"
-    [tablePaginator]="tablePaginator()"
-    [page]="page()"
-    (pageChanged)="onPageChange($event)"
-    (pageSizeChanged)="onPageSizeChange($event)"
-    [selectedRows]="selectedRows()"
-    [frozenActionColumn]="frozenActionColumn()"
-    [actionColumnPosition]="actionColumnPosition()"
     [stringTableCellTemplate]="_stringTableCell()"
     [numberTableCellTemplate]="_numberTableCell()"
     [dateTableCellTemplate]="_dateTableCell()"
@@ -134,18 +105,14 @@
     [stringTableFilterCellTemplate]="_stringTableFilterCell()"
     [relativeDateTableFilterCellTemplate]="_relativeDateTableFilterCell()"
     [translationKeyTableFilterCellTemplate]="_translationKeyTableFilterCell()"
-    (sorted)="sorting($event)"
-    (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer()"
     [currentPageShowingKey]="currentPageShowingKey()"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey()"
-    (componentStateChanged)="dataViewComponentState$.next($event)"
     [parentTemplates]="templates()"
     [tableAllowSelectAll]="tableAllowSelectAll()"
     [tableSelectionEnabledField]="tableSelectionEnabledField()"
     [expandable]="expandable()"
     [frozenExpandColumn]="frozenExpandColumn()"
-    [(expandedRows)]="expandedRows"
     (rowExpanded)="rowExpanded.emit($event)"
     (rowCollapsed)="rowCollapsed.emit($event)"
   >
@@ -155,13 +122,10 @@
 <ng-template #defaultColumnGroupSelectionComponent>
   @if (layout() === 'table') {
   <ocx-column-group-selection
-    [selectedGroupKey]="selectedGroupKey() ?? defaultGroupKey()"
     [columns]="columns()"
     [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"
     [customGroupKey]="customGroupKey()"
     [placeholderKey]="groupSelectionNoGroupSelectedKey()"
-    (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
-    (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
   ></ocx-column-group-selection>
   }
 </ng-template>
