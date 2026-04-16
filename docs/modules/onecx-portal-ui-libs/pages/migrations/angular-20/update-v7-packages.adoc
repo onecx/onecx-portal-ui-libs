@@ -7,6 +7,14 @@ If the following packages are used in your project, update them to ensure compat
 |===
 | Package | Required Version | Notes
 
+| `@onecx/*`
+| `^7.x.y`
+| Update to the latest `7.x.y` version available. 
+
+| `@ngrx/*`
+| `^20.x.y`
+| Update to the latest Angular 20 compatible version.
+
 | `@ngx-translate/core`
 | `^17.0.0`
 | Updated for Angular 20 compatibility
@@ -47,5 +55,18 @@ Run this command to update the supporting packages:
 
 [source, bash]
 ----
-npm install @ngx-translate/core@^17.0.0 @ngx-translate/http-loader@^17.0.0 @primeng@^20.3.0 @primeng/themes@^20.0.0 ngrx-store-localstorage@^20.0.0 zod@^4.0.0 @angular-architects/module-federation@^20.0.0 ngx-build-plus@^20.0.0
+
+npm install @ngx-translate/core@^17.0.0 \
+  @ngx-translate/http-loader@^17.0.0 \
+  primeng@^20.3.0 \
+  primeicons@^7.0.0 \
+  primeflex@^4.0.0 \
+  @primeng/themes@^20.0.0 \
+  ngrx-store-localstorage@^20.0.0 \
+  ngx-build-plus@^20.0.0 \
+
+npm install @ngrx/<package-name>@^20
+
+npm install @onecx/<package-name>@^7
+
 ----

@@ -7,7 +7,7 @@ In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoade
 * Remove `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, `createRemoteComponentTranslateLoader`, `translationPathFactory`, `remoteComponentTranslationPathFactory` and `TRANSLATION_PATH` imports from `@onecx/angular-accelerator`.
 * Add `provideTranslationPathFromMeta`, `createTranslateLoader` and `TRANSLATION_PATH` from `@onecx/angular-utils`.'
 * Add `provideTranslateServiceForRoot` from `@onecx/angular-remote-components`.
-* Replace `translateServiceInitializer`from `@onecx/portal-integration-angular` with `provideTranslationConnectionService` and `provideTranslationPathFromMeta` from `@onecx/angular-utils`.
+* Replace `translateServiceInitializer`from `@onecx/portal-integration-angular` with `provideTranslationPathFromMeta` from `@onecx/angular-utils`.
 * Replace `PortalMissingTranslationHandler` from `@onecx/portal-integration-angular` with `AngularAcceleratorMissingTranslationHandler` from `@onecx/angular-accelerator` for missing translation handling. 
 
 [TIP]
@@ -81,7 +81,7 @@ bootstrapRemoteComponent(RemoteComponent, 'ocx-my-remote-component', environment
 ]);
 ----
 
-**Example - Replace translateServiceInitializer with provideTranslationConnectionService & provideTranslationPathFromMeta**
+**Example - Replace translateServiceInitializer with provideTranslationPathFromMeta**
 
 .Before:
 [source, typescript]
@@ -107,12 +107,11 @@ import { UserService } from '@onecx/angular-integration-interface'
 .After:
 [source, typescript]
 ----
-imports { provideTranslationConnectionService,  provideTranslationPathFromMeta } from '@onecx/angular-utils';
+imports { provideTranslationPathFromMeta } from '@onecx/angular-utils';
 
 @NgModule({
     providers: [
         // ... other providers,
-        provideTranslationConnectionService(),
         provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     ]
 })
@@ -240,7 +239,6 @@ bootstrapRemoteComponent(
         useFactory: createTranslateLoader,
         deps: [HttpClient]        
       },
-      // Optionally, add MissingTranslationHandler for logging and fallback
       missingTranslationHandler: {
           provide: MissingTranslationHandler,
           useClass: AngularAcceleratorMissingTranslationHandler

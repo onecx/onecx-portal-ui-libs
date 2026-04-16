@@ -3,9 +3,18 @@
 
 This guide describes how to upgrade an NX-based OneCX application to Angular 21. Complete the pre-migration steps from the main migration guide before you continue.
 
+== Update @onecx/nx-plugin
+
+Update `@onecx/nx-plugin` to latest 8.x.y available. 
+
+[source, bash]
+----
+npm install @onecx/nx-plugin@^8
+----
+
 == Update NX and Angular packages
 
-Update your workspace packages by running:
+Update the Angular and NX packages in your workspace by running:
 
 [source, bash]
 ----
