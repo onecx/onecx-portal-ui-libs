@@ -36,11 +36,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       fixture.componentRef.setInput('columns', [c1, c2, c3])
       component.displayedColumns.set([c1, c3])
-      fixture.componentRef.setInput('frozenActionColumn', true)
-      fixture.componentRef.setInput('actionColumnPosition', 'left')
-      
-      component.frozenActionColumnModel.set(true)
-      component.actionColumnPositionModel.set('left')
+      stateService.ActionColumnConfigFrozen.set(true)
+      stateService.ActionColumnConfigPosition.set('left')
 
       component.onOpenCustomGroupColumnSelectionDialogClick()
 
@@ -67,11 +64,14 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(setDisplayedSpy).toHaveBeenCalledWith([c1, c2])
     })
 
-    it('should not call service action column config when models are sourced from service signals', () => {
+    it('should call setActionColumnConfig when action column config changed', () => {
       const c1 = makeColumn('c1')
       const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
-      const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
 
+      stateService.ActionColumnConfigFrozen.set(false)
+      stateService.ActionColumnConfigPosition.set('right')
+      
+      component.displayedColumns.set([c1])
       component.displayedColumnsModel.set([c1])
       component.frozenActionColumnModel.set(true)
       component.actionColumnPositionModel.set('left')
@@ -79,8 +79,25 @@ describe('CustomGroupColumnSelectorComponent', () => {
       component.onSaveClick()
 
       expect(component.visible()).toBe(false)
+      expect(setActionConfigSpy).toHaveBeenCalledWith(true, 'left')
+    })
+
+    it('should not call setActionColumnConfig when action column config did not change', () => {
+      const c1 = makeColumn('c1')
+      const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
+
+      component.displayedColumns.set([c1])
+      component.displayedColumnsModel.set([c1])
+      
+      stateService.ActionColumnConfigFrozen.set(true)
+      stateService.ActionColumnConfigPosition.set('left')
+      component.frozenActionColumnModel.set(true)
+      component.actionColumnPositionModel.set('left')
+
+      component.onSaveClick()
+
+      expect(component.visible()).toBe(false)
       expect(setActionConfigSpy).not.toHaveBeenCalled()
-      expect(setDisplayedSpy).toHaveBeenCalledWith([c1])
     })
 
     it('should not emit columnSelectionChanged when displayed columns did not change', () => {

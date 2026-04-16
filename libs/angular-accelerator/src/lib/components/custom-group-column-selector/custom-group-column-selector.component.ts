@@ -24,7 +24,7 @@ export interface CustomGroupColumnSelectorComponentState {
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent {
-  private storeService = inject(InteractiveDataViewService)
+  private readonly storeService = inject(InteractiveDataViewService)
   
   readonly columns = input<DataTableColumn[]>([])
   readonly displayedColumns = this.storeService.displayedColumns
@@ -53,8 +53,8 @@ export class CustomGroupColumnSelectorComponent {
 
   readonly hiddenColumnsModel = signal<DataTableColumn[]>([])
   readonly displayedColumnsModel = signal<DataTableColumn[]>([])
-  readonly frozenActionColumnModel = this.storeService.ActionColumnConfigFrozen
-  readonly actionColumnPositionModel = this.storeService.ActionColumnConfigPosition
+  readonly frozenActionColumnModel = signal<boolean>(false)
+  readonly actionColumnPositionModel = signal<'left' | 'right'>('right')
   readonly visible = signal<boolean>(false)
 
   readonly alignmentOptions = signal<{ label: string; value: 'left' | 'right' }[]>([
@@ -89,6 +89,9 @@ export class CustomGroupColumnSelectorComponent {
 
     const displayedIds = new Set(this.displayedColumnsModel().map((c) => c.id))
     this.hiddenColumnsModel.set(this.columns().filter((column) => !displayedIds.has(column.id)))
+
+    this.frozenActionColumnModel.set(this.storeService.ActionColumnConfigFrozen())
+    this.actionColumnPositionModel.set(this.storeService.ActionColumnConfigPosition())
 
     this.visible.set(true)
   }

@@ -36,11 +36,11 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],
-  providers: [InteractiveDataViewService, { provide: 'DataViewComponent', useExisting: DataViewComponent }],
+  providers: [{ provide: 'DataViewComponent', useExisting: DataViewComponent }],
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
-  private stateService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(InteractiveDataViewService)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 

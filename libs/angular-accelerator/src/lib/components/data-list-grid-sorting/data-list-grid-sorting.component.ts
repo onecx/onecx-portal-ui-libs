@@ -17,7 +17,7 @@ export interface DataListGridSortingComponentState {
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {
-  private stateService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(InteractiveDataViewService)
   
   readonly columns = input<DataTableColumn[]>([])
   readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])

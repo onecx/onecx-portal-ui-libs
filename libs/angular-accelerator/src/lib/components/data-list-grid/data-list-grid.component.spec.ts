@@ -41,6 +41,7 @@ describe('DataListGridComponent', () => {
   let translateService: TranslateService
   let listGrid: DataListGridHarness
   let router: Router
+  let stateService: InteractiveDataViewService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -266,6 +267,7 @@ describe('DataListGridComponent', () => {
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     router = TestBed.inject(Router)
+    stateService = TestBed.inject(InteractiveDataViewService)
   })
 
   it('should create the data list grid component', () => {
@@ -275,6 +277,27 @@ describe('DataListGridComponent', () => {
   it('loads dataListGrid', async () => {
     const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     expect(dataListGrid).toBeTruthy()
+  })
+
+  describe('filters effect', () => {
+    it('should reset active page to 0 when filters changed and previous filters exist', async () => {
+      const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
+
+      stateService.setActivePage(3)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 1' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).not.toHaveBeenCalledWith(0)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 2' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(0)
+      expect(stateService.activePage()).toBe(0)
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {

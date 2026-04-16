@@ -43,9 +43,8 @@ import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
+import { ViewLayout } from '../../model/view-layout.model'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
-
-export type ViewLayout = 'grid' | 'list' | 'table'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &

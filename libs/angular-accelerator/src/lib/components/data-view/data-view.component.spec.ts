@@ -14,9 +14,11 @@ import {
 import { TooltipStyle } from 'primeng/tooltip'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
+import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
-import { DataTableComponent } from '../data-table/data-table.component'
+import { DataTableComponent, Row } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
+import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -32,6 +34,7 @@ describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
+  let stateService: InteractiveDataViewService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -223,11 +226,13 @@ describe('DataViewComponent', () => {
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         TooltipStyle,
+        InteractiveDataViewService,
       ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataViewComponent)
     component = fixture.componentInstance
+    stateService = TestBed.inject(InteractiveDataViewService)
     fixture.componentRef.setInput('data', mockData)
     fixture.componentRef.setInput('columns', mockColumns)
     const userServiceMock = TestBed.inject(UserServiceMock)
@@ -238,6 +243,90 @@ describe('DataViewComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  describe('state service delegation', () => {
+    it('should return true from paginator getter when both paginators are enabled', () => {
+      stateService.setListGridPaginator(true)
+      stateService.setTablePaginator(true)
+
+      expect(component.paginator).toBe(true)
+    })
+
+    it('should return false from paginator getter when list grid paginator is disabled', () => {
+      stateService.setListGridPaginator(false)
+      stateService.setTablePaginator(true)
+
+      expect(component.paginator).toBe(false)
+    })
+
+    it('should return false from paginator getter when table paginator is disabled', () => {
+      stateService.setListGridPaginator(true)
+      stateService.setTablePaginator(false)
+
+      expect(component.paginator).toBe(false)
+    })
+
+    it('should return false from paginator getter when both paginators are disabled', () => {
+      stateService.setListGridPaginator(false)
+      stateService.setTablePaginator(false)
+
+      expect(component.paginator).toBe(false)
+    })
+
+    it('should delegate paginator setter to both paginator states', () => {
+      const setListGridPaginatorSpy = jest.spyOn(stateService, 'setListGridPaginator')
+      const setTablePaginatorSpy = jest.spyOn(stateService, 'setTablePaginator')
+
+      component.paginator = false
+
+      expect(setListGridPaginatorSpy).toHaveBeenCalledWith(false)
+      expect(setTablePaginatorSpy).toHaveBeenCalledWith(false)
+    })
+
+    it('should delegate filtering to state service', () => {
+      const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+      const filters = [{ field: 'name', value: 'abc', matchMode: 'contains' }]
+
+      component.filtering({ filters })
+
+      expect(setFiltersSpy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should delegate sorting to state service', () => {
+      const setSortDirectionSpy = jest.spyOn(stateService, 'setSortDirection')
+      const setSortColumnSpy = jest.spyOn(stateService, 'setSortColumn')
+
+      component.sorting({ sortDirection: DataSortDirection.ASCENDING, sortColumn: 'name' })
+
+      expect(setSortDirectionSpy).toHaveBeenCalledWith(DataSortDirection.ASCENDING)
+      expect(setSortColumnSpy).toHaveBeenCalledWith('name')
+    })
+
+    it('should delegate row selection change to state service', () => {
+      const setSelectedRowsSpy = jest.spyOn(stateService, 'setSelectedRows')
+      const selectedRows = [{ id: 'row-1' } as Row]
+
+      component.onRowSelectionChange(selectedRows)
+
+      expect(setSelectedRowsSpy).toHaveBeenCalledWith(selectedRows)
+    })
+
+    it('should delegate page change to state service', () => {
+      const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
+
+      component.onPageChange(2)
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(2)
+    })
+
+    it('should delegate page size change to state service', () => {
+      const setPageSizeSpy = jest.spyOn(stateService, 'setPageSize')
+
+      component.onPageSizeChange(25)
+
+      expect(setPageSizeSpy).toHaveBeenCalledWith(25)
+    })
   })
 
   describe('Table row selection ', () => {

@@ -48,7 +48,7 @@ export class FilterViewComponent {
   ColumnType = ColumnType
   FilterType = FilterType
 
-  private stateService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(InteractiveDataViewService)
   readonly filters = this.stateService.filters
   readonly columns = this.stateService.displayedColumns
   readonly displayMode = input<FilterViewDisplayMode>('button')

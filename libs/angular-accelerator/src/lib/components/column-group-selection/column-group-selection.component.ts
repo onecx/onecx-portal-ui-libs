@@ -15,7 +15,7 @@ export interface ColumnGroupSelectionComponentState {
   styleUrls: ['./column-group-selection.component.scss'],
 })
 export class ColumnGroupSelectionComponent {
-  private stateService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(InteractiveDataViewService)
   readonly selectedGroupKey = this.stateService.activeColumnGroupKey
 
   readonly columns = input<DataTableColumn[]>([])

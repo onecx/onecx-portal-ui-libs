@@ -65,7 +65,7 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
-  private stateService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(InteractiveDataViewService)
 
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
