@@ -1,3 +1,7 @@
 :host ::ng-deep .p-dropdown {
   min-width: 12rem;
 }
+
+:host ::ng-deep .p-float-label .p-dropdown .p-placeholder {
+  opacity: 1;
+}
