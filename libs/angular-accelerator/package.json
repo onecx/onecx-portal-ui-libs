@@ -31,6 +31,15 @@
     "@protobi/exceljs": "^4.4.0-protobi.9",
     "@onecx/nx-migration-utils": "^8.0.0-rc.9"
   },
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
+  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
