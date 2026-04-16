@@ -21,6 +21,14 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./src/index.d.ts",
+  "peerDependenciesMeta": {
+    "@nx/devkit": {
+      "optional": true
+    },
+    "@onecx/nx-migration-utils": {
+      "optional": true
+    }
+  },
   "typings": "./src/index.d.ts",
   "exports": {
     ".": {
