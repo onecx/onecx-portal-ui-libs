@@ -62,8 +62,6 @@ export function attachPrimeReactScoper({
   const writeChunk = (styleId: string, scopedCss: string) => {
     const banner = `/* ==== app:${id} | primereact:${styleId} ==== */\n`
 
-    console.log(`[writeChunk] writing scoped CSS for styleId=${styleId}`, styleTag, scopedCss)
-
     if (mode === 'replace-per-styleId') {
       const existing = chunkById.get(styleId)
       if (existing) {
