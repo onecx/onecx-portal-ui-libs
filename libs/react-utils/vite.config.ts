@@ -42,6 +42,8 @@ export default defineConfig({
         'react-router',
         '@onecx/integration-interface',
         '@onecx/react-integration-interface',
+        '@onecx/react-webcomponents',
+        '@onecx/accelerator',
       ],
     },
   },

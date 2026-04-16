@@ -45,6 +45,7 @@ export default defineConfig({
         'react/jsx-runtime',
         '@onecx/react-integration-interface',
         '@onecx/integration-interface',
+        '@onecx/accelerator',
       ],
     },
   },

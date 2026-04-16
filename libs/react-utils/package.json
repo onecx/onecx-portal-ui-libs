@@ -30,15 +30,17 @@
     }
   },
   "peerDependencies": {
+    "@onecx/accelerator": "^8.0.0-rc.8",
+    "@onecx/integration-interface": "^8.0.0-rc.1",
+    "@onecx/react-integration-interface": "^8.0.0-rc.1",
+    "@onecx/react-webcomponents": "^8.0.0-rc.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "primereact": "10.9.7",
     "react-i18next": "^16.5.4",
     "react-router": "^7.13.0"
   },
-  "dependencies": {
-    "@onecx/accelerator": "8.0.0-rc.8"
-  },
+  "dependencies": {},
   "publishConfig": {
     "access": "public"
   }
