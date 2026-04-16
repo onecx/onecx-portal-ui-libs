@@ -209,7 +209,11 @@ const constructRouteUrl = (
     return url
   }
 
-  url = joinWithSlash(url, constructEndpointUrl(route, endpointName, endpointParameters, warn))
+  const endpointPath = constructEndpointUrl(route, endpointName, endpointParameters, warn)
+  if (!endpointPath.length) {
+    return url
+  }
+  url = joinWithSlash(url, endpointPath)
   return url
 }
 

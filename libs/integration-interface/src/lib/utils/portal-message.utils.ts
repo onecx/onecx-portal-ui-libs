@@ -17,6 +17,27 @@ export type PortalMessage = {
 type TranslateFn = (key: string, params?: object) => Promise<string> | string | undefined
 
 /**
+ * Builds a portal message payload with resolved summary and detail.
+ *
+ * @param severity - Message severity.
+ * @param message - Original message payload.
+ * @param summary - Resolved summary string.
+ * @param detail - Resolved detail string.
+ * @returns Message payload ready for publish.
+ */
+const buildPortalMessagePayload = (
+  severity: string,
+  message: PortalMessage,
+  summary?: string,
+  detail?: string
+): PortalMessage & { severity: string; summary?: string; detail?: string } => ({
+  ...message,
+  severity,
+  summary,
+  detail,
+})
+
+/**
  * Resolves a translated string for the given message key.
  *
  * @param translate - Translation function to use.
@@ -58,13 +79,8 @@ const buildTranslatedMessage = async (
     resolveTranslation(translate, message.detailKey, message.detailParameters),
   ])
 
-  return {
-    ...message,
-    severity,
-    summary,
-    detail,
-  }
+  return buildPortalMessagePayload(severity, message, summary, detail)
 }
 
-export { buildTranslatedMessage, resolveTranslation }
+export { buildPortalMessagePayload, buildTranslatedMessage, resolveTranslation }
 export type { TranslateFn }

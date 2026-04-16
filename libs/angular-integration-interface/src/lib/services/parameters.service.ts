@@ -4,6 +4,7 @@ import {
   findParameterValue,
   type ParameterValue,
   ShellCapability as Capability,
+  Parameters,
 } from '@onecx/integration-interface'
 import { firstValueFrom, map } from 'rxjs'
 import { AppStateService } from './app-state.service'
@@ -50,7 +51,7 @@ export class ParametersService implements OnDestroy {
     appId: string
   ): Promise<T>
 
-  public async get<T extends Parameter>(
+  public async get<T extends Parameters>(
     key: string,
     defaultValue: T | Promise<T>,
     productName: string | undefined = undefined,

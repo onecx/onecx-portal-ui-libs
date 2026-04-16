@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
 import {
   MessageTopic,
-  buildTranslatedMessage,
+  buildPortalMessagePayload,
+  resolveTranslation,
   type PortalMessage,
   type TranslateFn,
 } from '@onecx/integration-interface'
@@ -67,7 +68,11 @@ const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children,
   }, [isInternalMessageTopic, message$])
 
   const addTranslated = async (severity: string, msg: Message) => {
-    const message = await buildTranslatedMessage(severity, msg, translate)
+    const [summary, detail] = await Promise.all([
+      resolveTranslation(translate, msg.summaryKey, msg.summaryParameters),
+      resolveTranslation(translate, msg.detailKey, msg.detailParameters),
+    ])
+    const message = buildPortalMessagePayload(severity, msg, summary, detail)
     await message$.publish(message)
   }
 
