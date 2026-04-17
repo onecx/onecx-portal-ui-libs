@@ -21,7 +21,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     )
 
     return loadTranslations(locales$, params).pipe(
-      catchError((err: unknown) => {
+      catchError((err: Error) => {
         console.log('No translation found for key: %s. %O', params.key, err)
         return of(params.key)
       })
