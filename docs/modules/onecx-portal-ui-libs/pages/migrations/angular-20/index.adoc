@@ -35,12 +35,22 @@ You can click the name of any change to open a detailed migration guide with ins
 ** [ ] xref:./remove-keycloak-js.adoc[Remove keycloak-js from your application]
 ** [ ] xref:./remove-shell-core.adoc[Remove @onecx/shell-core]
 
+After these steps are completed, it is recommended to build the application to ensure that there are no remaining issues before proceeding with the Angular 20 upgrade:
+
+[source,bash]
+----
+npm run build
+----
+
 [#upgrade-to-angular-20]
 == Upgrade to Angular 20
-Follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
 
-=== Upgrade NX application to Angular 20
-To upgrade an NX application to Angular 20, follow this guide: xref:./update-nx-angular-version-20.adoc[Upgrade NX Application to Angular 20].
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 20. 
+
+If the project is an NX workspace, follow the instructions in xref:./update-nx-angular-version-20.adoc[Upgrade NX Application to Angular 20]. After completing the NX migration steps, also review the  official Angular update guide for any additional steps or considerations: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide].
+
+If the project is not an NX workspace, follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=19.0-20.0&l=3[Angular Update Guide]. 
+
 
 [#migration-steps-after-angular-20]
 == Migration Steps after upgrading to Angular 20
@@ -48,6 +58,7 @@ To upgrade an NX application to Angular 20, follow this guide: xref:./update-nx-
 Once the previous steps are completed, **the application should be upgraded to Angular 20 and libs v7 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed.
 
 [%interactive]
+** [ ] xref:./update-v7-packages.adoc[Required Package Updates]
 ** [ ] xref:./adjust-ngrx-accelerator.adoc[Adjust ngrx-accelerator library utilities]
 ** [ ] xref:./update-primeng-package.adoc[Update package imports for PrimeNG theming]
 ** [ ] xref:./update-style-package.adoc[Update package imports for style utilities]
