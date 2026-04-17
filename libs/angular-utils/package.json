@@ -16,13 +16,9 @@
     "primeng": "^21.0.0",
     "@primeuix/styled": "^0.7.4",
     "@angular/platform-browser": "^21.0.0",
-    "@nx/devkit": "^22.0.2",
     "@onecx/accelerator": "^8.0.0-rc.9",
     "@onecx/angular-integration-interface": "^8.0.0-rc.9",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.9",
     "@onecx/integration-interface": "^8.0.0-rc.9",
-    "@phenomnomnominal/tsquery": "^6",
-    "typescript": "5.9.3",
     "@ngx-translate/http-loader": "^17.0.0"
   },
   "peerDependenciesMeta": {
@@ -35,8 +31,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }
