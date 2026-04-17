@@ -1,9 +1,11 @@
 import {
   Component,
+  Input,
   computed,
   effect,
   inject,
   input,
+  output,
   signal,
   TemplateRef,
   viewChild,
@@ -49,8 +51,23 @@ export class FilterViewComponent {
   FilterType = FilterType
 
   private readonly stateService = inject(InteractiveDataViewService)
-  readonly filters = this.stateService.filters
-  readonly columns = this.stateService.displayedColumns
+
+  @Input()
+  get filters(): Filter[] {
+    return this.stateService.filters()
+  }
+  set filters(value: Filter[]) {
+    this.stateService.setFilters(value)
+  }
+
+  @Input()
+  get columns(): DataTableColumn[] {
+    return this.stateService.displayedColumns()
+  }
+  set columns(value: DataTableColumn[]) {
+    this.stateService.setDisplayedColumns(value)
+  }
+
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
     limit(filters, 3, { reverse: true })
@@ -58,6 +75,9 @@ export class FilterViewComponent {
   readonly chipStyleClass = input('')
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
+
+  filtered = output<Filter[]>()
+  filtersChange = output<Filter[]>()
 
   readonly columnFilterTableColumns = signal<DataTableColumn[]>([
     {
@@ -89,8 +109,8 @@ export class FilterViewComponent {
   readonly templates$ = toObservable(this.templates)
 
   readonly columnFilterDataRows = computed(() => {
-    const filters = this.filters()
-    const columns = this.columns()
+    const filters = this.filters
+    const columns = this.columns
 
     const columnIds = columns.map((c: DataTableColumn) => c.id)
     return filters
@@ -175,7 +195,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const cols = this.columns()
+      const cols = this.columns
       const columnFilterTableColumns = this.columnFilterTableColumns()
 
       const chipObs = cols.map((c) =>
@@ -195,6 +215,13 @@ export class FilterViewComponent {
           )
         : undefined
     })
+
+    effect(() => {
+      const filters = this.filters
+      this.filtered.emit(filters)
+      this.filtersChange.emit(filters)
+    })
+
   }
 
   getTemplate(
@@ -224,17 +251,17 @@ export class FilterViewComponent {
   }
 
   onResetFilersClick() {
-    this.stateService.setFilters([])
+    this.filters = []
   }
 
   onChipRemove(filter: Filter) {
-    const filters = this.filters().filter((f) => f.value !== filter.value)
-    this.stateService.setFilters(filters)
+    const filters = this.filters.filter((f) => f.value !== filter.value)
+    this.filters = filters
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
-    this.stateService.setFilters(filters)
+    const filters = this.filters.filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
+    this.filters = filters
   }
 
   focusTrigger() {

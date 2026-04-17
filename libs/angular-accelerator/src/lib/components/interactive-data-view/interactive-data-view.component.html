@@ -11,7 +11,8 @@
         [selectDisplayedChips]="selectDisplayedChips()"
         [chipStyleClass]="filterViewChipStyleClass()"
         [tableStyle]="filterViewTableStyle()"
-        (filtered)="filtering($event)"
+        [panelStyle]="filterViewPanelStyle()"
+        (filtersChange)="filtering($event)"
       ></ocx-filter-view>
       }
     </div>

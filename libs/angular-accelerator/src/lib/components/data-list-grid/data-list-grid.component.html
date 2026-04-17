@@ -2,7 +2,7 @@
 <p-dataView
   [value]="(displayedItems$ | async) ?? []"
   [paginator]="paginator()"
-  [first]="page() * displayedPageSize()"
+  [first]="page * displayedPageSize()"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize()"
   [layout]="layout()"

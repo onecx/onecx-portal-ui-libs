@@ -115,7 +115,7 @@
 <p-table
   [value]="(displayedRows$ | async) ?? []"
   [paginator]="paginator()"
-  [first]="page() * displayedPageSize"
+  [first]="page * displayedPageSize"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize"
   [showCurrentPageReport]="true"

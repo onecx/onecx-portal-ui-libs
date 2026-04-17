@@ -478,6 +478,14 @@ export class InteractiveDataViewComponent implements OnInit {
       })
     })
 
+    effect(() => {
+      this.stateService.setDisplayedColumns(this.displayedColumns())
+    })
+
+    effect(() => {
+      this.stateService.setActiveColumnGroupKey(this.selectedGroupKey() ?? '')
+    })
+
   }
 
   /**

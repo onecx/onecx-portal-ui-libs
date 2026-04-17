@@ -1,10 +1,13 @@
 import { formatDate } from '@angular/common'
 import {
   Component,
+  Input,
   Injector,
   LOCALE_ID,
   OnInit,
+  Optional,
   Output,
+  SkipSelf,
   TemplateRef,
   computed,
   contentChild,
@@ -13,6 +16,7 @@ import {
   inject,
   input,
   model,
+  output,
   signal,
   untracked,
   viewChildren,
@@ -76,6 +80,13 @@ export interface DataTableComponentState {
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
+  providers: [
+    {
+      provide: InteractiveDataViewService,
+      useFactory: (parentService: InteractiveDataViewService | null) => parentService ?? new InteractiveDataViewService(),
+      deps: [[new Optional(), new SkipSelf(), InteractiveDataViewService]],
+    },
+  ]
 })
 export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly router = inject(Router)
@@ -105,13 +116,29 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   pageSizes = model<number[]>([10, 25, 50])
+
+  @Input()
+  get pageSize(): number {
+    return this.stateService.pageSize()
+  }
+  set pageSize(value: number) {
+    this.stateService.setPageSize(value)
+  }
+
+  @Input()
+  get page(): number {
+    return this.stateService.activePage()
+  }
+  set page(value: number) {
+    this.stateService.setActivePage(value)
+  }
+
   displayedPageSize = computed(() => {
-    const pageSize = this.pageSize()
+    const pageSize = this.pageSize
     const pageSizes = this.pageSizes()
 
     return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
   })
-  pageSize = this.stateService.pageSize
 
   emptyResultsMessage = input<string | undefined>(undefined)
   name = model<string>('')
@@ -128,7 +155,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
 
-  page = this.stateService.activePage
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
   totalRecordsOnServer = input<number | undefined>(undefined)
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
@@ -242,6 +268,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
+  pageChange = output<number>()
+  pageSizeChange = output<number>()
+
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+
   displayedRows$ = combineLatest([
     toObservable(this.rows),
     toObservable(this.filters),
@@ -279,7 +311,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const rows = this.rows()
     // Include page to force fresh array references on page navigation
     // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
-    this.page()
+    void this.page
     return selectionIds.map((rowId) => rows.find((r) => r.id === rowId)).filter((row): row is Row => row !== undefined)
   })
 
@@ -483,7 +515,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       untracked(() => {
         const previousRows = this.previousRows()
         if (previousRows.length && rows.length < previousRows.length) {
-          this.page.set(0)
+          this.page = 0
         }
       })
 
@@ -504,7 +536,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       untracked(() => {
         const previousFilters = this.previousFilters()
         if (previousFilters.length && !equal(filters, previousFilters)) {
-          this.page.set(0)
+          this.page = 0
         }
       })
     })
@@ -535,6 +567,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     effect(() => {
       this.emitSelectionChanged()
+    })
+
+    effect(() => {
+      const page = this.page
+      this.pageChange.emit(page)
+      this.pageChanged.emit(page)
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize
+      this.pageSizeChange.emit(pageSize)
+      this.pageSizeChanged.emit(pageSize)
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)
@@ -693,8 +737,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.stateService.setActivePage(page)
-    this.stateService.setPageSize(event.rows)
+    this.page = page
+    this.pageSize = event.rows
   }
 
   fieldIsTruthy(object: any, key: any) {
