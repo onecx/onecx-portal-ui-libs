@@ -8,11 +8,7 @@
   },
   "peerDependencies": {
     "rxjs": "^7.8.1",
-    "@nx/devkit": "^22.0.2",
-    "@onecx/accelerator": "^8.0.0-rc.9",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.9",
-    "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4"
+    "@onecx/accelerator": "^8.0.0-rc.9"
   },
   "type": "module",
   "dependencies": {
@@ -41,8 +37,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }
