@@ -20,7 +20,12 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return loadTranslations(locales$, params).pipe(catchError(() => { return of(params.key);}))
+    return loadTranslations(locales$, params).pipe(
+      catchError((err: unknown) => {
+        console.log('No translation found for key: %s. %O', params.key, err)
+        return of(params.key)
+      })
+    )
   }
 }
 /**
