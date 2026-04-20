@@ -1,10 +1,10 @@
-@if (layout() !== 'table') {
+@if (layout !== 'table') {
 <div>
   <ocx-data-list-grid
     #ocxdatalistgrid
     [name]="name()"
     [data]="data()"
-    [columns]="columns()"
+    [columns]="columns"
     [filters]="filters"
     [sortDirection]="sortDirection"
     [sortField]="sortField"
@@ -15,7 +15,7 @@
     [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="true"
     [pageSizes]="pageSizes()"
-    [layout]="layout() === 'grid' ? 'grid' : 'list'"
+    [layout]="layout === 'grid' ? 'grid' : 'list'"
     [paginator]="listGridPaginator"
     [emptyResultsMessage]="emptyResultsMessage()"
     [deletePermission]="deletePermission()"
@@ -113,12 +113,12 @@
     }</ng-template
   >
 </div>
-} @if (layout() === 'table') {
+} @if (layout === 'table') {
 <div>
   <ocx-data-table
     #ocxdatatable
     [rows]="data()"
-    [columns]="columns()"
+    [columns]="columns"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
     [clientSideSorting]="clientSideSorting()"

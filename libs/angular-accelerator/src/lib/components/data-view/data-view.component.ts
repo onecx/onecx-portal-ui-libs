@@ -73,8 +73,22 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
-  layout = input<ViewLayout>('table')
-  columns = input<DataTableColumn[]>([])
+  @Input()
+  get layout(): ViewLayout {
+    return this.stateService.layout()
+  }
+  set layout(value: ViewLayout) {
+    this.stateService.setLayout(value)
+  }
+
+  @Input()
+  get columns(): DataTableColumn[] {
+    return this.stateService.displayedColumns()
+  }
+  set columns(value: DataTableColumn[]) {
+    this.stateService.setDisplayedColumns(value)
+  }
+
   emptyResultsMessage = input<string | undefined>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
@@ -366,14 +380,14 @@ export class DataViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const columns = this.columns()
+    const columns = this.columns
     if (columns && columns.length > 0) {
       this.firstColumnId.set(columns[0]?.id)
     }
   }
 
   registerEventListenerForListGrid() {
-    if (this.layout() !== 'table') {
+    if (this.layout !== 'table') {
       if (this.deleteItem.observed()) {
         if (!this.dataListGridComponent()?.deleteItem.observed()) {
           this.dataListGridComponent()?.deleteItem.subscribe((event) => {
@@ -399,7 +413,7 @@ export class DataViewComponent implements OnInit {
   }
 
   registerEventListenerForDataTable() {
-    if (this.layout() === 'table') {
+    if (this.layout === 'table') {
       if (this.deleteItem.observed()) {
         if (!this.dataTableComponent()?.deleteTableRow.observed()) {
           this.dataTableComponent()?.deleteTableRow.subscribe((event) => {
