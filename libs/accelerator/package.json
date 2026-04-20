@@ -8,7 +8,6 @@
   },
   "peerDependencies": {
     "rxjs": "^7.8.1",
-    "@nx/module-federation": "^22.3.3",
     "debug": "^4.4.3"
   },
   "type": "module",
