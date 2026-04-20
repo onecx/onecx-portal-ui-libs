@@ -77,6 +77,7 @@ export class FilterViewComponent {
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
 
   filtersChange = output<Filter[]>()
+  columnsChange = output<DataTableColumn[]>()
 
   readonly columnFilterTableColumns = signal<DataTableColumn[]>([
     {
@@ -220,6 +221,10 @@ export class FilterViewComponent {
       this.filtersChange.emit(filters)
     })
 
+    effect(() => {
+      const columns = this.columns
+      this.columnsChange.emit(columns)
+    })
   }
 
   getTemplate(

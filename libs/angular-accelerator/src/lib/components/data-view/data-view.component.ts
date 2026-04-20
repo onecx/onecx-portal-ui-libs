@@ -22,7 +22,7 @@ import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
-import { InteractiveExpandedRows } from '../../model/view-layout.model'
+import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import {
   DataListGridComponent,
   DataListGridComponentState,
@@ -73,7 +73,7 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
-  layout = input<any>()
+  layout = input<ViewLayout>('table')
   columns = input<DataTableColumn[]>([])
   emptyResultsMessage = input<string | undefined>()
   clientSideSorting = input<boolean>(true)
@@ -306,6 +306,8 @@ export class DataViewComponent implements OnInit {
   sortDirectionChange = output<DataSortDirection>()
   pageChange = output<number>()
   pageSizeChange = output<number>()
+  selectedRowsChange = output<Row[]>()
+  expandedRowsChange = output<InteractiveExpandedRows>()
 
   firstColumnId = signal<string | undefined>(undefined)
 
@@ -350,6 +352,12 @@ export class DataViewComponent implements OnInit {
       if (selectedRows && this.selectionChangedObserved) {
         this.selectionChanged.emit(selectedRows)
       }
+      this.selectedRowsChange.emit(selectedRows)
+    })
+
+    effect(() => {
+      const expandedRows = this.expandedRows
+      this.expandedRowsChange.emit(expandedRows)
     })
 
     effect(() => {

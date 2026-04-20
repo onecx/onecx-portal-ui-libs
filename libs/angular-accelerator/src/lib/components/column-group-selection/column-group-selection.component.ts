@@ -16,10 +16,12 @@ export interface ColumnGroupSelectionComponentState {
 })
 export class ColumnGroupSelectionComponent {
   private readonly stateService = inject(InteractiveDataViewService)
-  readonly selectedGroupKey = this.stateService.activeColumnGroupKey
 
   @Input()
-  set activeColumnGroupKey(value: string) {
+  get selectedGroupKey(): string {
+    return this.stateService.activeColumnGroupKey()
+  }
+  set selectedGroupKey(value: string) {
     this.stateService.setActiveColumnGroupKey(value)
   }
 
@@ -28,12 +30,11 @@ export class ColumnGroupSelectionComponent {
   readonly defaultGroupKey = input<string>('')
   readonly customGroupKey = input<string>('')
 
-  readonly activeColumnGroupKeyChange = output<string>()
   readonly groupSelectionChanged = output<GroupSelectionChangedEvent>()
 
   readonly allGroupKeys = computed<string[]>(() => {
     const columns = this.columns()
-    const selectedGroupKey = this.selectedGroupKey()
+    const selectedGroupKey = this.selectedGroupKey
     const defaultGroupKey = this.defaultGroupKey()
 
     return columns
@@ -49,9 +50,7 @@ export class ColumnGroupSelectionComponent {
       return
     }
 
-    this.activeColumnGroupKey = event.value
-    this.activeColumnGroupKeyChange.emit(event.value)
-
+    this.selectedGroupKey = event.value
 
     const activeColumns = this.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
 

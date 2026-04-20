@@ -12,7 +12,6 @@
         [chipStyleClass]="filterViewChipStyleClass()"
         [tableStyle]="filterViewTableStyle()"
         [panelStyle]="filterViewPanelStyle()"
-        (filtersChange)="filtering($event)"
       ></ocx-filter-view>
       }
     </div>
@@ -21,7 +20,7 @@
     <div>
       <ng-container [ngTemplateOutlet]="topCenterTemplate"> </ng-container>
     </div>
-    } @if (layout() !== 'table') {
+    } @if (layout !== 'table') {
     <div class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
         [columns]="displayedColumns()"
@@ -31,17 +30,17 @@
     }
 
     <div
-      [ngStyle]="layout() !== 'table' ? {
+      [ngStyle]="layout !== 'table' ? {
       'position': 'absolute'
     } : {}"
       class="flex flex-wrap justify-content-between align-items-center gap-2"
     >
       @if (isColumnGroupSelectionComponentDefined() ?? true) {
       <ocx-slot
-        [ngStyle]="layout() !== 'table' ? {'display' : 'none'}  : {}"
+        [ngStyle]="layout !== 'table' ? {'display' : 'none'}  : {}"
         *ocxIfPermission="searchConfigPermission(); elseTemplate: defaultColumnGroupSelectionComponent"
         name="{{columnGroupSlotName}}"
-        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: columns(), selectedGroupKey: selectedGroupKey(), layout: layout(), displayedColumnsIds: displayedColumnKeys() }"
+        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: columns(), selectedGroupKey: selectedGroupKey(), layout: layout, displayedColumnsIds: displayedColumnKeys() }"
         [outputs]="{ groupSelectionChanged: slotGroupSelectionChangeListener }"
       >
         <ng-template #skeleton>
@@ -52,7 +51,7 @@
       </ocx-slot>
       } @else {
       <ng-container [ngTemplateOutlet]="defaultColumnGroupSelectionComponent"></ng-container>
-      } @if (layout() === 'table') {
+      } @if (layout === 'table') {
       <ocx-custom-group-column-selector
         [columns]="columns()"
         [customGroupKey]="customGroupKey()"
@@ -64,6 +63,7 @@
 </div>
 <div class="p-3" [ngClass]="contentStyleClass()" id="interactiveDataViewContent">
   <ocx-data-view
+    [layout]="layout"
     [columns]="displayedColumns()"
     [sortStates]="sortStates()"
     [data]="data()"
@@ -121,7 +121,7 @@
 </div>
 
 <ng-template #defaultColumnGroupSelectionComponent>
-  @if (layout() === 'table') {
+  @if (layout === 'table') {
   <ocx-column-group-selection
     [columns]="columns()"
     [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"

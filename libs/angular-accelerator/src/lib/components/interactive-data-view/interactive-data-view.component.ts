@@ -36,13 +36,13 @@ import {
 } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { DataLayoutSelectionComponentState } from '../data-layout-selection/data-layout-selection.component'
 import { DataListGridSortingComponentState } from '../data-list-grid-sorting/data-list-grid-sorting.component'
-import { Row } from '../data-table/data-table.component'
+import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
-import { ViewLayout } from '../../model/view-layout.model'
+import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
@@ -91,34 +91,88 @@ export class InteractiveDataViewComponent implements OnInit {
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
   fallbackImage = input<string>('placeholder.png')
-  filters = this.stateService.filters
-  sortDirection = this.stateService.sortDirection
-  sortField = this.stateService.sortColumn
+
+  @Input()
+  get filters(): Filter[] {
+    return this.stateService.filters()
+  }
+  set filters(value: Filter[]) {
+    this.stateService.setFilters(value)
+  }
+
+  @Input()
+  get sortDirection(): DataSortDirection {
+    return this.stateService.sortDirection()
+  }
+  set sortDirection(value: DataSortDirection) {
+    this.stateService.setSortDirection(value)
+  }
+
+  @Input()
+  get sortField(): string {
+    return this.stateService.sortColumn()
+  }
+  set sortField(value: string) {
+    this.stateService.setSortColumn(value)
+  }
+
   sortStates = input<DataSortDirection[]>([
     DataSortDirection.ASCENDING,
     DataSortDirection.DESCENDING,
     DataSortDirection.NONE,
   ])
   pageSizes = input<number[]>([10, 25, 50])
-  pageSize = this.stateService.pageSize
+  
+  @Input()
+  get pageSize(): number {
+    return this.stateService.pageSize()
+  }
+  set pageSize(value: number) {
+    this.stateService.setPageSize(value)
+  }
+
   totalRecordsOnServer = input<number | undefined>(undefined)
-  layout = this.stateService.layout
+  
+  @Input()
+  get layout(): ViewLayout {
+    return this.stateService.layout()
+  }
+  set layout(value: ViewLayout) {
+    this.stateService.setLayout(value)
+  }
+
   defaultGroupKey = input<string>('')
   customGroupKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.CUSTOM_GROUP')
   groupSelectionNoGroupSelectedKey = input<string>('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   additionalActions = input<DataAction[]>([])
-  listGridPaginator = this.stateService.listGridPaginator
-  tablePaginator = this.stateService.tablePaginator
+  
+  @Input()
+  get listGridPaginator(): boolean {
+    return this.stateService.listGridPaginator()
+  }
+  set listGridPaginator(value: boolean) {
+    this.stateService.setListGridPaginator(value)
+  }
+
+  @Input()
+  get tablePaginator(): boolean {
+    return this.stateService.tablePaginator()
+  }
+  set tablePaginator(value: boolean) {
+    this.stateService.setTablePaginator(value)
+  }
+
   @Input()
   get paginator(): boolean {
-    return this.listGridPaginator() && this.tablePaginator()
+    return this.listGridPaginator && this.tablePaginator
   }
   set paginator(value: boolean) {
-    this.listGridPaginator.set(value)
-    this.tablePaginator.set(value)
+    this.listGridPaginator = value
+    this.tablePaginator = value
   }
+
   disableFilterView = input<boolean>(true)
   filterViewDisplayMode = input<FilterViewDisplayMode>('button')
   filterViewChipStyleClass = input<string>('')
@@ -127,7 +181,14 @@ export class InteractiveDataViewComponent implements OnInit {
   selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
     limit(filters, 3, { reverse: true })
   )
-  page = this.stateService.activePage
+
+  @Input()
+  get page(): number {
+    return this.stateService.activePage()
+  }
+  set page(value: number) {
+    this.stateService.setActivePage(value)
+  }
 
   @Input()
   get selectedRows(): Row[] {
@@ -151,7 +212,14 @@ export class InteractiveDataViewComponent implements OnInit {
   contentStyleClass = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
-  expandedRows = this.stateService.expandedRows
+  
+  @Input()
+  get expandedRows(): InteractiveExpandedRows {
+    return this.stateService.expandedRows()
+  }
+  set expandedRows(value: InteractiveExpandedRows) {
+    this.stateService.setExpandedRows(value)
+  }
 
   childTableCell = contentChild<TemplateRef<any> | undefined>('tableCell')
   primeNgTableCell = computed(() => {
@@ -435,9 +503,19 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() viewItem = observableOutput<RowListGridData>()
   @Output() editItem = observableOutput<RowListGridData>()
   @Output() selectionChanged = observableOutput<Row[]>()
-
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
+
+  layoutChange = output<ViewLayout>()
+  filtersChange = output<Filter[]>()
+  sortChange = output<Sort>()
+  pageChange = output<number>()
+  pageSizeChange = output<number>()
+  selectedRowsChange = output<Row[]>()
+  paginatorChange = output<boolean>()
+  listGridPaginatorChange = output<boolean>()
+  tablePaginatorChange = output<boolean>()
+  expandedRowsChange = output<InteractiveExpandedRows>()
 
   readonly selectedGroupKey = this.stateService.activeColumnGroupKey
 
@@ -469,11 +547,11 @@ export class InteractiveDataViewComponent implements OnInit {
     })
 
     effect(() => {
-      this.layout()
+      const currentLayout = this.layout
       untracked(() => {
         const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
         const selectedGroupKey = this.selectedGroupKey()
-        if (columnGroupComponentDefined) {
+        if (columnGroupComponentDefined && currentLayout) {
           if (
             !(
               this.columns().some((c) => c.predefinedGroupKeys?.includes(selectedGroupKey)) ||
@@ -490,6 +568,56 @@ export class InteractiveDataViewComponent implements OnInit {
       this.stateService.setDisplayedColumns(this.displayedColumns())
     })
 
+    effect(() => {
+      const filters = this.filters
+      this.filtersChange.emit(filters)
+    })
+    
+    effect(() => {
+      const sortField = this.sortField
+      const sortDirection = this.sortDirection
+      this.sortChange.emit({ sortColumn: sortField, sortDirection })
+    })
+
+    effect(() => {
+      const layout = this.layout
+      this.layoutChange.emit(layout)
+    })
+
+    effect(() => {
+      const page = this.page
+      this.pageChange.emit(page)
+    })
+
+    effect(() => {
+      const pageSize = this.pageSize
+      this.pageSizeChange.emit(pageSize)
+    })
+
+    effect(() => {
+      const selectedRows = this.selectedRows
+      this.selectedRowsChange.emit(selectedRows)
+    })
+
+    effect(() => {
+      const paginator = this.paginator
+      this.paginatorChange.emit(paginator)
+    })
+
+    effect(() => {
+      const listGridPaginator = this.listGridPaginator
+      this.listGridPaginatorChange.emit(listGridPaginator)
+    })
+
+    effect(() => {
+      const tablePaginator = this.tablePaginator
+      this.tablePaginatorChange.emit(tablePaginator)
+    })
+
+    effect(() => {
+      const expandedRows = this.expandedRows
+      this.expandedRowsChange.emit(expandedRows)
+    })
   }
 
   /**
@@ -554,11 +682,11 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onSortChange($event: any) {
-    this.sortField.set($event)
+    this.stateService.sortColumn.set($event)
   }
 
   onSortDirectionChange($event: any) {
-    this.sortDirection.set($event)
+    this.stateService.sortDirection.set($event)
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
@@ -615,6 +743,6 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onPageSizeChange(event: number) {
-    this.stateService.setPageSize(event)
+    this.pageSize = event
   }
 }
