@@ -21,14 +21,6 @@
     "@onecx/integration-interface": "^8.0.0-rc.9",
     "@ngx-translate/http-loader": "^17.0.0"
   },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
-  },
   "publishConfig": {
     "access": "public"
   }

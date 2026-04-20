@@ -13,14 +13,6 @@
     "@onecx/angular-integration-interface": "^8.0.0-rc.9",
     "@onecx/accelerator": "^8.0.0-rc.9"
   },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
-  },
   "publishConfig": {
     "access": "public"
   }

@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build build-migrations",
+    "build": "nx run-many -t build",
     "build-copy": "npm run build && node copy-build.js",
     "test": "nx affected -t test",
     "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
