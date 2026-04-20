@@ -62,7 +62,7 @@ describe('DataListGridSortingComponent', () => {
       component.selectSorting({ value: { columnId: 'c', columnName: 'C' } } as any)
 
       expect(setSortColumnSpy).toHaveBeenCalledWith('c')
-      expect(component.sortField()).toBe('c')
+      expect(component.sortField).toBe('c')
     })
   })
 
@@ -76,7 +76,7 @@ describe('DataListGridSortingComponent', () => {
 
       component.sortDirectionChanged()
 
-      expect(component.sortDirection()).toBe(DataSortDirection.DESCENDING)
+      expect(component.sortDirection).toBe(DataSortDirection.DESCENDING)
       expect(setSortDirectionSpy).toHaveBeenCalledWith(DataSortDirection.DESCENDING)
     })
 

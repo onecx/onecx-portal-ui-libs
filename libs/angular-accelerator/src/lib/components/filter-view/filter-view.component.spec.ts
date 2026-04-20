@@ -58,7 +58,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should initialize columnFilterDataRows and display filters from service', () => {
-    component.columns.set([makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })])
+    component.columns = [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })]
     stateService.setFilters([
       { columnId: 'c2', value: 'v2' } as Filter,
       { columnId: 'c1', value: 'v1' } as Filter,
@@ -113,7 +113,7 @@ describe('FilterViewComponent (class logic)', () => {
     fixture.detectChanges()
 
     expect(setFiltersSpy).toHaveBeenCalledWith([])
-    expect(component.filters()).toEqual([])
+    expect(component.filters).toEqual([])
   })
 
   it('should remove a chip by value by calling service setFilters when onChipRemove is called', () => {
@@ -128,7 +128,7 @@ describe('FilterViewComponent (class logic)', () => {
     component.onChipRemove({ columnId: 'c2', value: 'remove' } as Filter)
     fixture.detectChanges()
 
-    expect(component.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
@@ -144,7 +144,7 @@ describe('FilterViewComponent (class logic)', () => {
     component.onFilterDelete({ id: 'row', valueColumnId: 'c2', value: 'remove' } as any)
     fixture.detectChanges()
 
-    expect(component.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
@@ -185,7 +185,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should compute templates in columns setter (tableTemplates$)', (done) => {
-    component.columns.set([makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
+    component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
 
     fixture.componentRef.setInput('templates', undefined)
 
@@ -208,7 +208,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should compute templates in columns setter (tableTemplates$)', (done) => {
-    component.columns.set([makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
+    component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
 
     fixture.componentRef.setInput('templates', undefined)
 

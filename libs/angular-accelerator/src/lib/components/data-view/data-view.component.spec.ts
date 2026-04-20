@@ -333,7 +333,7 @@ describe('DataViewComponent', () => {
     let dataTable: DataTableHarness | null
 
     beforeEach(async () => {
-      component.layout.set('table')
+      fixture.componentRef.setInput('layout', 'table')
       fixture.detectChanges()
       await fixture.whenStable()
       dataTable = await dataViewHarness?.getDataTable()
@@ -388,7 +388,7 @@ describe('DataViewComponent', () => {
   })
 
   it('should stay on the same page after layout change', async () => {
-    component.layout.set('grid')
+    fixture.componentRef.setInput('layout', 'grid')
     fixture.componentRef.setInput('data', [
       ...component.data(),
       {
@@ -433,7 +433,7 @@ describe('DataViewComponent', () => {
     dataListRaport = await dataListPaginator.getCurrentPageReportText()
     expect(dataListRaport).toEqual('11 - 11 of 11')
 
-    component.layout.set('table')
+    fixture.componentRef.setInput('layout', 'table')
     fixture.detectChanges()
     await fixture.whenStable()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
@@ -450,7 +450,7 @@ describe('DataViewComponent', () => {
       fixture.componentRef.setInput('viewPermission', 'VIEW')
       fixture.componentRef.setInput('editPermission', 'EDIT')
       fixture.componentRef.setInput('deletePermission', 'DELETE')
-      component.layout.set(viewType)
+      fixture.componentRef.setInput('layout', viewType)
       fixture.componentRef.setInput('columns', [
         {
           columnType: ColumnType.STRING,

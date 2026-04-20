@@ -35,8 +35,8 @@ describe('ColumnGroupSelectionComponent', () => {
 
   describe('selectedGroupKey setter', () => {
     it('should set the selectedGroupKey model value', () => {
-      component.selectedGroupKey.set('custom')
-      expect(component.selectedGroupKey()).toBe('custom')
+      component.selectedGroupKey = 'custom'
+      expect(component.selectedGroupKey).toBe('custom')
     })
   })
 
@@ -50,7 +50,7 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2', 'g3'] }),
         makeColumn({ id: 'c3', predefinedGroupKeys: undefined }),
       ])
-      component.selectedGroupKey.set('g3')
+      component.selectedGroupKey = 'g3'
 
       fixture.detectChanges()
 
@@ -64,7 +64,7 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.componentRef.setInput('columns', [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] }),
       ])
-      component.selectedGroupKey.set('custom')
+      component.selectedGroupKey = 'custom'
 
       fixture.detectChanges()
 
@@ -82,7 +82,7 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c4', predefinedGroupKeys: undefined }),
       ]
       fixture.componentRef.setInput('columns', testColumns)
-      component.selectedGroupKey.set('g2')
+      component.selectedGroupKey = 'g2'
 
       fixture.detectChanges()
 
@@ -93,7 +93,7 @@ describe('ColumnGroupSelectionComponent', () => {
     it('should return early and update allGroupKeys when selectedGroupKey is nullish', () => {
       fixture.componentRef.setInput('defaultGroupKey', 'def')
       fixture.componentRef.setInput('customGroupKey', 'custom')
-      component.selectedGroupKey.set(undefined as any)
+      component.selectedGroupKey = undefined as any
 
       fixture.componentRef.setInput('columns', [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['def'] }),
@@ -167,10 +167,10 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
       fixture.detectChanges()
 
-      component.selectedGroupKey.set('custom')
+      component.selectedGroupKey = 'custom'
       fixture.detectChanges()
 
-      expect(component.selectedGroupKey()).toBe('custom')
+      expect(component.selectedGroupKey).toBe('custom')
     })
 
     it('should update selectedGroupKey from service when set', () => {
@@ -178,10 +178,10 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.detectChanges()
 
       const newValue = 'other'
-      component.selectedGroupKey.set(newValue)
+      component.selectedGroupKey = newValue
       fixture.detectChanges()
 
-      expect(component.selectedGroupKey()).toBe(newValue)
+      expect(component.selectedGroupKey).toBe(newValue)
     })
   })
 })

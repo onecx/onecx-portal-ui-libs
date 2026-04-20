@@ -37,34 +37,34 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should update layout in service when layout signal is changed', () => {
       const { component } = createComponent(false)
 
-      component.layout.set('grid')
+      component.layout = 'grid'
 
-      expect(component.layout()).toBe('grid')
+      expect(component.layout).toBe('grid')
     })
 
     it('should update filters in service when filters signal is changed', () => {
       const { component } = createComponent(true)
 
       const testFilters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
-      component.filters.set(testFilters)
+      component.filters = testFilters
 
-      expect(component.filters()).toEqual(testFilters)
+      expect(component.filters).toEqual(testFilters)
     })
 
     it('should update pageSize in service when pageSize signal is changed', () => {
       const { component } = createComponent(true)
 
-      component.pageSize.set(25)
+      component.pageSize = 25
 
-      expect(component.pageSize()).toBe(25)
+      expect(component.pageSize).toBe(25)
     })
 
     it('should update page in service when page signal is changed', () => {
       const { component } = createComponent(true)
 
-      component.page.set(2)
+      component.page = 2
 
-      expect(component.page()).toBe(2)
+      expect(component.page).toBe(2)
     })
   })
 
@@ -114,11 +114,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should not clear selectedGroupKey on layout change when selectedGroupKey matches a column nameKey', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: ['some-group'] } as any])
       component.selectedGroupKey.set('some-group')
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('some-group')
@@ -131,7 +131,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'custom')
       component.selectedGroupKey.set('custom')
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('custom')
@@ -164,10 +164,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.selectedGroupKey.set('not-present')
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBeUndefined()
+      expect(component.selectedGroupKey()).toBe('')
     })
 
     it('should initialize displayedColumnKeys when defaultGroupKey equals customGroupKey', () => {
@@ -194,7 +194,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
 
       expect(component.displayedColumnKeys()).toEqual([])
-      expect(component.selectedGroupKey()).toBeUndefined()
+      expect(component.selectedGroupKey()).toBe('')
     })
 
     it('should set displayedColumnKeys from predefinedGroupKeys when defaultGroupKey is set and not customGroupKey', () => {
@@ -237,8 +237,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       // Set columns so the layout effect doesn't clear selectedGroupKey
       setInputSignal(component, 'columns', [
-        { id: 'a', nameKey: 'g1',predefinedGroupKeys: [] } as any,
-        { id: 'b', nameKey: 'g2', predefinedGroupKeys: [] } as any,
+        { id: 'a', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any,
       ])
       setInputSignal(component, 'customGroupKey', 'custom')
 
@@ -319,9 +319,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       const rows = [{ id: 'r1' } as any]
-      setInputSignal(component, 'selectedRows', rows)
+      component.selectedRows = rows
 
-      expect(component.selectedRows()).toBe(rows as any)
+      expect(component.selectedRows).toBe(rows as any)
     })
 
     it('should cover Input defaults (selectDisplayedChips, sortStates, pageSizes, fallbackImage)', () => {
@@ -359,13 +359,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should set listGridPaginator and tablePaginator via paginator setter', () => {
       const { component } = createComponent(true)
 
-      component.listGridPaginator.set(false)
-      component.tablePaginator.set(false)
+      component.listGridPaginator = false
+      component.tablePaginator = false
 
       component.paginator = true
 
-      expect(component.listGridPaginator()).toBe(true)
-      expect(component.tablePaginator()).toBe(true)
+      expect(component.listGridPaginator).toBe(true)
+      expect(component.tablePaginator).toBe(true)
       expect(component.paginator).toBe(true)
     })
 
@@ -413,23 +413,23 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   describe('public handlers', () => {
     it('should update sort fields in service when onSortChange is called', () => {
       const { component } = createComponent(true)
-      component.sortDirection.set('ASCENDING' as any)
-      component.sortField.set('old')
+      component.sortDirection = 'ASCENDING' as any
+      component.sortField = 'old'
 
       component.onSortChange('new')
       TestBed.tick()
-      expect(component.sortField()).toBe('new')
+      expect(component.sortField).toBe('new')
 
       component.onSortDirectionChange('DESCENDING' as any)
       TestBed.tick()
-      expect(component.sortDirection()).toBe('DESCENDING')
+      expect(component.sortDirection).toBe('DESCENDING')
     })
 
     it('should update layout in service when onDataViewLayoutChange is called', () => {
       const { component } = createComponent(true)
       component.onDataViewLayoutChange('list')
       TestBed.tick()
-      expect(component.layout()).toBe('list')
+      expect(component.layout).toBe('list')
     })
 
     it('should update paging state in service when onPageChange is called', () => {
@@ -437,11 +437,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       component.onPageChange(2)
       TestBed.tick()
-      expect(component.page()).toBe(2)
+      expect(component.page).toBe(2)
 
       component.onPageSizeChange(25)
       TestBed.tick()
-      expect(component.pageSize()).toBe(25)
+      expect(component.pageSize).toBe(25)
     })
 
     it('should update filters in service when filtering is called', () => {
@@ -451,7 +451,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.filtering(filters)
       TestBed.tick()
 
-      expect(component.filters()).toBe(filters)
+      expect(component.filters).toBe(filters)
     })
 
     it('should update sorting fields in service when sorting is called', () => {
@@ -461,8 +461,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.sorting(event)
       TestBed.tick()
 
-      expect(component.sortField()).toBe('c1')
-      expect(component.sortDirection()).toBe('DESCENDING')
+      expect(component.sortField).toBe('c1')
+      expect(component.sortDirection).toBe('DESCENDING')
     })
   })
 
@@ -752,58 +752,58 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'test' } as any]
 
-      component.filters.set(filters)
+      component.filters = filters
       TestBed.tick()
 
-      expect(component.filters()).toEqual(filters)
+      expect(component.filters).toEqual(filters)
     })
 
     it('should call service setSortColumn and setSortDirection when sortField changes via effect', () => {
       const { component } = createComponent(true)
-      component.sortField.set('name')
+      component.sortField = 'name'
       TestBed.tick()
 
-      expect(component.sortField()).toBe('name')
+      expect(component.sortField).toBe('name')
     })
 
     it('should call service setSortDirection when sortDirection changes via effect', () => {
       const { component } = createComponent(true)
-      component.sortDirection.set('DESCENDING' as any)
+      component.sortDirection = 'DESCENDING' as any
       TestBed.tick()
 
-      expect(component.sortDirection()).toBe('DESCENDING')
+      expect(component.sortDirection).toBe('DESCENDING')
     })
 
     it('should call service setLayout when layout changes via effect', () => {
       const { component } = createComponent(true)
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.layout()).toBe('grid')
+      expect(component.layout).toBe('grid')
     })
 
     it('should call service setActivePage when page changes via effect', () => {
       const { component } = createComponent(true)
-      component.page.set(3)
+      component.page = 3
       TestBed.tick()
 
-      expect(component.page()).toBe(3)
+      expect(component.page).toBe(3)
     })
 
     it('should call service setPageSize when pageSize changes via effect', () => {
       const { component } = createComponent(true)
-      component.pageSize.set(50)
+      component.pageSize = 50
       TestBed.tick()
 
-      expect(component.pageSize()).toBe(50)
+      expect(component.pageSize).toBe(50)
     })
 
     it('should not call setPageSize when pageSize is undefined', () => {
       const { component } = createComponent(true)
-      component.pageSize.set(undefined as any)
+      component.pageSize = undefined as any
       TestBed.tick()
 
-      expect(component.pageSize()).toBeUndefined()
+      expect(component.pageSize).toBeUndefined()
     })
 
     it('should clear selectedGroupKey via layout effect when invalid group is selected', () => {
@@ -813,20 +813,20 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'custom')
       component.selectedGroupKey.set('invalidGroup')
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBeUndefined()
+      expect(component.selectedGroupKey()).toBe('')
     })
 
     it('should not clear selectedGroupKey via layout effect when valid group is selected', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any])
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: ['validGroup'] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
       component.selectedGroupKey.set('validGroup')
 
-      component.layout.set('table')
+      component.layout = 'table'
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('validGroup')
@@ -839,7 +839,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'myCustom')
       component.selectedGroupKey.set('myCustom')
 
-      component.layout.set('list')
+      component.layout = 'list'
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('myCustom')
@@ -1005,14 +1005,14 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       TestBed.tick()
-      component.layout.set('list')
+      component.layout = 'list'
       TestBed.tick()
-      component.layout.set('table')
+      component.layout = 'table'
       TestBed.tick()
 
-      expect(component.layout()).toBe('table')
+      expect(component.layout).toBe('table')
     })
 
     it('should handle empty columns array gracefully', () => {
@@ -1061,7 +1061,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       ])
       setInputSignal(component, 'defaultGroupKey', 'g1')
       setInputSignal(component, 'customGroupKey', 'custom')
-      component.layout.set('grid')
+      component.layout = 'grid'
 
       component.ngOnInit()
       TestBed.tick()

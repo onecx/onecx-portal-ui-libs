@@ -35,7 +35,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c3 = makeColumn('c3')
 
       fixture.componentRef.setInput('columns', [c1, c2, c3])
-      component.displayedColumns.set([c1, c3])
+      component.displayedColumns = [c1, c3]
       stateService.ActionColumnConfigFrozen.set(true)
       stateService.ActionColumnConfigPosition.set('left')
 
@@ -55,7 +55,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c2 = makeColumn('c2')
       const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
 
-      component.displayedColumns.set([c1])
+      component.displayedColumns = [c1]
       component.displayedColumnsModel.set([c1, c2])
 
       component.onSaveClick()
@@ -71,7 +71,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       stateService.ActionColumnConfigFrozen.set(false)
       stateService.ActionColumnConfigPosition.set('right')
       
-      component.displayedColumns.set([c1])
+      component.displayedColumns = [c1]
       component.displayedColumnsModel.set([c1])
       component.frozenActionColumnModel.set(true)
       component.actionColumnPositionModel.set('left')
@@ -86,7 +86,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c1 = makeColumn('c1')
       const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
 
-      component.displayedColumns.set([c1])
+      component.displayedColumns = [c1]
       component.displayedColumnsModel.set([c1])
       
       stateService.ActionColumnConfigFrozen.set(true)
@@ -102,7 +102,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     it('should not emit columnSelectionChanged when displayed columns did not change', () => {
       const c1 = makeColumn('c1')
-      component.displayedColumns.set([c1])
+      component.displayedColumns = [c1]
       component.displayedColumnsModel.set([c1])
 
       const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
@@ -127,8 +127,9 @@ describe('CustomGroupColumnSelectorComponent', () => {
     it('should not update service until onSaveClick is called', () => {
       const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
 
-      component.displayedColumns.set([makeColumn('c1')])
-      expect(setDisplayedSpy).not.toHaveBeenCalled()
+      component.displayedColumns = [makeColumn('c1')]
+      expect(setDisplayedSpy).toHaveBeenCalledTimes(1)
+      setDisplayedSpy.mockClear()
 
       component.displayedColumnsModel.set([makeColumn('c1')])
       component.onSaveClick()
