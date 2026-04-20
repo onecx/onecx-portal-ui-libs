@@ -15,7 +15,6 @@ import {
   input,
   model,
   output,
-  signal,
   untracked,
   viewChild,
 } from '@angular/core'
@@ -129,7 +128,15 @@ export class InteractiveDataViewComponent implements OnInit {
     limit(filters, 3, { reverse: true })
   )
   page = this.stateService.activePage
-  selectedRows = input<Row[]>([])
+
+  @Input()
+  get selectedRows(): Row[] {
+    return this.stateService.selectedRows()
+  }
+  set selectedRows(value: Row[]) {
+    this.stateService.setSelectedRows(value)
+  }
+
   displayedColumnKeys = model<string[]>([])
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
@@ -432,7 +439,7 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
-  selectedGroupKey = signal<string | undefined>(undefined)
+  readonly selectedGroupKey = this.stateService.activeColumnGroupKey
 
   data = input<RowListGridData[]>([])
 
@@ -465,14 +472,15 @@ export class InteractiveDataViewComponent implements OnInit {
       this.layout()
       untracked(() => {
         const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
+        const selectedGroupKey = this.selectedGroupKey()
         if (columnGroupComponentDefined) {
           if (
             !(
-              this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||
-              this.selectedGroupKey() === this.customGroupKey()
+              this.columns().some((c) => c.predefinedGroupKeys?.includes(selectedGroupKey)) ||
+              selectedGroupKey === this.customGroupKey()
             )
           ) {
-            this.selectedGroupKey.set(undefined)
+            this.selectedGroupKey.set('')
           }
         }
       })
@@ -480,10 +488,6 @@ export class InteractiveDataViewComponent implements OnInit {
 
     effect(() => {
       this.stateService.setDisplayedColumns(this.displayedColumns())
-    })
-
-    effect(() => {
-      this.stateService.setActiveColumnGroupKey(this.selectedGroupKey() ?? '')
     })
 
   }
@@ -498,7 +502,7 @@ export class InteractiveDataViewComponent implements OnInit {
   triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
     event ??= {
       activeColumns: this.displayedColumns(),
-      groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
+      groupKey: this.selectedGroupKey() || this.defaultGroupKey(),
     }
     const displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.displayedColumnKeys.set(displayedColumnKeys)

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Input, input, output } from '@angular/core'
+import { Component, computed, inject, Input, input, output } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -40,8 +40,6 @@ export class DataListGridSortingComponent {
 
   readonly sortFieldChange = output<string>()
   readonly sortDirectionChange = output<DataSortDirection>()
-  readonly sortChange = output<string>()
-  readonly columnsChange = output<string[]>()
 
   readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
     return this.columns()
@@ -53,18 +51,10 @@ export class DataListGridSortingComponent {
     const sortField = this.sortField
     return this.dropdownOptions().find((e) => e.columnId === sortField)
   })
-  
-  constructor() {
-    effect(() => {
-      const columns = this.columns()
-      this.columnsChange.emit(columns.map((c) => c.id))
-    })
-  }
 
   selectSorting(event: SelectChangeEvent): void {
     this.sortField = event.value.columnId
     this.sortFieldChange.emit(event.value.columnId)
-    this.sortChange.emit(event.value.columnId)
   }
 
   sortDirectionChanged(): void {

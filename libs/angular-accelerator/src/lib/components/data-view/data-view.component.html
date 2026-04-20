@@ -1,4 +1,4 @@
-@if (layout !== 'table') {
+@if (layout() !== 'table') {
 <div>
   <ocx-data-list-grid
     #ocxdatalistgrid
@@ -15,7 +15,7 @@
     [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="true"
     [pageSizes]="pageSizes()"
-    [layout]="layout === 'grid' ? 'grid' : 'list'"
+    [layout]="layout() === 'grid' ? 'grid' : 'list'"
     [paginator]="listGridPaginator"
     [emptyResultsMessage]="emptyResultsMessage()"
     [deletePermission]="deletePermission()"
@@ -113,7 +113,7 @@
     }</ng-template
   >
 </div>
-} @if (layout === 'table') {
+} @if (layout() === 'table') {
 <div>
   <ocx-data-table
     #ocxdatatable

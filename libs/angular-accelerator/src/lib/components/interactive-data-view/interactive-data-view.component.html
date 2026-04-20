@@ -127,6 +127,7 @@
     [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"
     [customGroupKey]="customGroupKey()"
     [placeholderKey]="groupSelectionNoGroupSelectedKey()"
+    (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
   ></ocx-column-group-selection>
   }
 </ng-template>

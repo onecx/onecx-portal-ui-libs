@@ -22,7 +22,7 @@ import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
-import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
+import { InteractiveExpandedRows } from '../../model/view-layout.model'
 import {
   DataListGridComponent,
   DataListGridComponentState,
@@ -73,19 +73,12 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
+  layout = input<any>()
   columns = input<DataTableColumn[]>([])
   emptyResultsMessage = input<string | undefined>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
   fallbackImage = input<string>()
-  
-  @Input()
-  get layout(): ViewLayout {
-    return this.stateService.layout()
-  }
-  set layout(value: ViewLayout) {
-    this.stateService.setLayout(value)
-  }
 
   @Input()
   get filters(): Filter[] {
@@ -308,7 +301,6 @@ export class DataViewComponent implements OnInit {
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
-  layoutChange = output<ViewLayout>()
   filtersChange = output<Filter[]>()
   sortFieldChange = output<string>()
   sortDirectionChange = output<DataSortDirection>()
@@ -373,7 +365,7 @@ export class DataViewComponent implements OnInit {
   }
 
   registerEventListenerForListGrid() {
-    if (this.layout !== 'table') {
+    if (this.layout() !== 'table') {
       if (this.deleteItem.observed()) {
         if (!this.dataListGridComponent()?.deleteItem.observed()) {
           this.dataListGridComponent()?.deleteItem.subscribe((event) => {
@@ -399,7 +391,7 @@ export class DataViewComponent implements OnInit {
   }
 
   registerEventListenerForDataTable() {
-    if (this.layout === 'table') {
+    if (this.layout() === 'table') {
       if (this.deleteItem.observed()) {
         if (!this.dataTableComponent()?.deleteTableRow.observed()) {
           this.dataTableComponent()?.deleteTableRow.subscribe((event) => {

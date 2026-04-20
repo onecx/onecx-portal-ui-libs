@@ -271,9 +271,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   pageChange = output<number>()
   pageSizeChange = output<number>()
 
-  pageChanged = output<number>()
-  pageSizeChanged = output<number>()
-
   displayedRows$ = combineLatest([
     toObservable(this.rows),
     toObservable(this.filters),
@@ -572,13 +569,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     effect(() => {
       const page = this.page
       this.pageChange.emit(page)
-      this.pageChanged.emit(page)
     })
 
     effect(() => {
       const pageSize = this.pageSize
       this.pageSizeChange.emit(pageSize)
-      this.pageSizeChanged.emit(pageSize)
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)

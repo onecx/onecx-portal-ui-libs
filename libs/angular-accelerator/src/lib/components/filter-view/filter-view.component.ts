@@ -76,7 +76,6 @@ export class FilterViewComponent {
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
 
-  filtered = output<Filter[]>()
   filtersChange = output<Filter[]>()
 
   readonly columnFilterTableColumns = signal<DataTableColumn[]>([
@@ -218,7 +217,6 @@ export class FilterViewComponent {
 
     effect(() => {
       const filters = this.filters
-      this.filtered.emit(filters)
       this.filtersChange.emit(filters)
     })
 

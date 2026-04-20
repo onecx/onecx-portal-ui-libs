@@ -275,8 +275,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   pageChange = output<number>()
   pageSizeChange = output<number>()
-  pageChanged = output<number>()
-  pageSizeChanged = output<number>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -521,13 +519,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     effect(() => {
       const page = this.page
       this.pageChange.emit(page)
-      this.pageChanged.emit(page)
     })
 
     effect(() => {
       const pageSize = this.pageSize
       this.pageSizeChange.emit(pageSize)
-      this.pageSizeChanged.emit(pageSize)
     })
   }
 

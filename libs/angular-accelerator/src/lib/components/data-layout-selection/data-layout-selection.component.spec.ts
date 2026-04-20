@@ -30,11 +30,11 @@ describe('DataLayoutSelectionComponent', () => {
     it('should update selectedViewLayout when layout input changes', () => {
       fixture.detectChanges()
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('grid')
 
-      component.layout.set('list')
+      component.layout = 'list'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('list')
     })
@@ -46,7 +46,7 @@ describe('DataLayoutSelectionComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.layout()).toBe('list')
+      expect(component.layout).toBe('list')
       expect(component.selectedViewLayout()?.layout).toBe('list')
     })
 
@@ -76,7 +76,7 @@ describe('DataLayoutSelectionComponent', () => {
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })
 
       expect(setLayoutSpy).toHaveBeenCalledWith('grid')
-      expect(component.layout()).toBe('grid')
+      expect(component.layout).toBe('grid')
     })
   })
 })

@@ -60,7 +60,6 @@ export class DataLayoutSelectionComponent {
   }
 
   layoutChange = output<ViewLayout>()
-  dataViewLayoutChange = output<ViewLayout>()
 
   viewingLayouts = computed(() => ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts().includes(vl.layout)))
 
@@ -69,6 +68,5 @@ export class DataLayoutSelectionComponent {
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: ViewLayout }): void {
     this.layout = event.layout
     this.layoutChange.emit(event.layout)
-    this.dataViewLayoutChange.emit(event.layout)
   }
 }
