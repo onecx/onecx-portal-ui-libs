@@ -11,7 +11,6 @@ npm install @onecx/angular-standalone-shell
 
 ## Additional Commands
 - `npx nx run angular-standalone-shell:build` - Builds the library and outputs the result to the `dist` folder.
-- `npx nx run angular-standalone-shell:build-migrations` - Builds the migration files for the library.
 - `npx nx run angular-standalone-shell:test` - Runs the unit tests for the library.
 - `npx nx run angular-standalone-shell:lint` - Lints the library's codebase.
 - `npx nx run angular-standalone-shell:release` - Releases a new version of the library to npm, following semantic versioning guidelines.

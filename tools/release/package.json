@@ -2,7 +2,6 @@
   "name": "@onecx/release",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "19.8.0",
     "tslib": "^2.3.0"
   },
   "type": "commonjs",

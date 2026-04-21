@@ -65,3 +65,12 @@ nx migrate --run-migrations
 ----
 
 After this step, proceed with the remaining post-migration steps.
+
+== Cleanup Migration Dependencies
+
+After completing all migration steps, remove migration-only dependencies that are no longer required:
+
+[source, bash]
+----
+npm uninstall @onecx/nx-migration-utils @nx/devkit
+----

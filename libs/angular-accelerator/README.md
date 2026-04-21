@@ -11,7 +11,6 @@ npm install @onecx/angular-accelerator
 
 ## Additional Commands
 - `npx nx run angular-accelerator:build` - Builds the library and outputs the result to the `dist` folder.
-- `npx nx run angular-accelerator:build-migrations` - Builds the migration files for the library.
 - `npx nx run angular-accelerator:test` - Runs the unit tests for the library.
 - `npx nx run angular-accelerator:lint` - Lints the library's codebase.
 - `npx nx run angular-accelerator:release` - Releases a new version of the library to npm, following semantic versioning guidelines.

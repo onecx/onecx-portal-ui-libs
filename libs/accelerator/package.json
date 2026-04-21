@@ -8,17 +8,7 @@
   },
   "peerDependencies": {
     "rxjs": "^7.8.1",
-    "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.9",
     "debug": "^4.4.3"
-  },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -36,8 +26,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }

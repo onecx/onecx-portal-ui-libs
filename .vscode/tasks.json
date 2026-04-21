@@ -1042,66 +1042,6 @@
       }
     },
     {
-      "label": "nx build nx-migration-utils",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "build", "nx-migration-utils"],
-      "detail": "Builds the library \"nx-migration-utils\" using Nx.",
-      "group": "build",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx lint nx-migration-utils",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "lint", "nx-migration-utils"],
-      "detail": "Runs lint for the library \"nx-migration-utils\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
-      "label": "nx test nx-migration-utils",
-      "type": "process",
-      "command": "npx",
-      "args": ["nx", "test", "nx-migration-utils", "--no-interactive"],
-      "detail": "Runs the tests for the library \"nx-migration-utils\" using Nx.",
-      "group": "test",
-      "isBackground": false,
-      "problemMatcher": [],
-      "presentation": {
-        "showReuseMessage": false,
-        "close": false,
-        "panel": "dedicated"
-      },
-      "options": {
-        "env": {
-          "CI": "true"
-        }
-      }
-    },
-    {
       "label": "nx build release",
       "type": "process",
       "command": "npx",
