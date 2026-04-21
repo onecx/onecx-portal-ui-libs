@@ -66,7 +66,9 @@
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
+    "EXPAND_COLLAPSE_COLUMN": "Spalte erweitern/zusammenklappen",
     "COLUMN_FILTER_ARIA_LABEL": "Spaltenfilter",
+    "COLUMN_FILTER_PLACEHOLDER": "Zum Filtern eingeben",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Bearbeitet",
@@ -86,11 +88,13 @@
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
     "SELECT_ALL_TOOLTIP": "Selektiere alle",
-    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
+    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}, Zeilenzusammenfassung: {{rowSummary}}",
     "FILTER_YES": "Ja",
     "FILTER_NO": "Nein",
-    "COLLAPSED_ROW": "Eingeklappte Zeile",
-    "EXPANDED_ROW": "Ausgeklappte Zeile"
+    "COLLAPSED_ROW": "Zeilendetails umschalten. Aktueller Status: Eingeklappt",
+    "EXPANDED_ROW": "Zeilendetails umschalten. Aktueller Status: Ausgeklappt",
+    "SELECTION_COLUMN": "Auswahlspalte",
+    "TABLE_ARIA_LABEL": "Datentabelle"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",

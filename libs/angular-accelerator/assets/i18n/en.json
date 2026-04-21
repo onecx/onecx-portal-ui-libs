@@ -66,7 +66,9 @@
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
+    "EXPAND_COLLAPSE_COLUMN": "Expand/Collapse column",
     "COLUMN_FILTER_ARIA_LABEL": "Column filter",
+    "COLUMN_FILTER_PLACEHOLDER": "Type to filter",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
@@ -86,11 +88,13 @@
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
     "SELECT_ALL_TOOLTIP": "Select all",
-    "SELECT_ARIA_LABEL": "Select table row with id {{key}}",
+    "SELECT_ARIA_LABEL": "Select table row with id {{key}}, row summary: {{rowSummary}}",
     "FILTER_YES": "Yes",
     "FILTER_NO": "No",
-    "COLLAPSED_ROW": "Collapsed row",
-    "EXPANDED_ROW": "Expanded row"
+    "COLLAPSED_ROW": "Toggle row details. Current state: Collapsed",
+    "EXPANDED_ROW": "Toggle row details. Current state: Expanded",
+    "SELECTION_COLUMN": "Selection column",
+    "TABLE_ARIA_LABEL": "Data table"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
