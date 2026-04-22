@@ -1,3 +1,20 @@
+## [6.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.19.0...v6.20.0) (2026-04-22)
+
+### Features
+
+* add notification topic ([#1337](https://github.com/onecx/onecx-portal-ui-libs/issues/1337)) ([fa2323a](https://github.com/onecx/onecx-portal-ui-libs/commit/fa2323a9b5063ac8fd967c99ba1cdc0f1e0731d3))
+
+### Bug Fixes
+
+* changed window to globalThis in accelerator for node compatibility ([#1312](https://github.com/onecx/onecx-portal-ui-libs/issues/1312)) ([c9f5af2](https://github.com/onecx/onecx-portal-ui-libs/commit/c9f5af2359f79d8bc6dd1686a91017569e9b0e68))
+* Few graphics do not have alternative text- v6 ([#1339](https://github.com/onecx/onecx-portal-ui-libs/issues/1339)) ([d300e10](https://github.com/onecx/onecx-portal-ui-libs/commit/d300e1049ad240468d8139d9c1f0794a926fa1a3))
+* set primeng translation on lang change ([#1315](https://github.com/onecx/onecx-portal-ui-libs/issues/1315)) ([4531800](https://github.com/onecx/onecx-portal-ui-libs/commit/4531800dbea02410e62cbe2f700a531ba198d62a))
+* update CI Node.js version from 22 to 24 ([ef532f5](https://github.com/onecx/onecx-portal-ui-libs/commit/ef532f547fd85fdb6971230bce8423dc4c963290))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) ([b7a07c3](https://github.com/onecx/onecx-portal-ui-libs/commit/b7a07c348a67cb75348aa668457d8b4e1b31af2c))
+
 ## [6.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.18.0...v6.19.0) (2026-04-02)
 
 ### Features
