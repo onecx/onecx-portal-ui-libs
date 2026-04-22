@@ -663,4 +663,35 @@ export const WithPreExpandedRows = {
   },
 }
 
+const CaptionTemplateStory: StoryFn<DataTableComponent> = (args) => ({
+  props: {
+    ...args,
+  },
+  template: `
+    <ng-template #captionTpl>
+      <div class="flex justify-content-between align-items-center w-full">
+        <div>
+          <p class="text-xl font-bold">{{ 'OCX_DATA_TABLE_CAPTION.TITLE' | translate }}</p>
+          <p class="text-md">{{ 'OCX_DATA_TABLE_CAPTION.DESCRIPTION' | translate }}</p>
+        </div>
+      </div>
+    </ng-template>
+    <ocx-data-table
+      [captionTemplate]="captionTpl"
+      [columns]="columns"
+      [rows]="rows"
+      [paginator]="paginator"
+      [emptyResultsMessage]="emptyResultsMessage"
+    >
+    </ocx-data-table>
+  `,
+})
+
+export const WithCaptionTemplate = {
+  render: CaptionTemplateStory,
+  args: {
+    ...defaultComponentArgs,
+  },
+}
+
 export default DataTableComponentSBConfig

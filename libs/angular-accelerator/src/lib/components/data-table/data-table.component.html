@@ -93,7 +93,10 @@
     alignFrozen="left"
     [attr.name]="'expansion-column-header'"
     style="width: 4rem"
-  ></th>
+    scope="col"
+  >
+    <span class="sr-only">{{ 'OCX_DATA_TABLE.EXPAND_COLLAPSE_COLUMN' | translate }}</span>
+</th>
   }
 </ng-template>
 
@@ -105,6 +108,7 @@
     [alignFrozen]="actionColumnPosition"
     [ngClass]="(frozenActionColumn && actionColumnPosition === 'left') ? 'border-right-1' : (frozenActionColumn && actionColumnPosition === 'right') ? 'border-left-1' : ''"
     [attr.name]="actionColumnPosition === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
+    scope="col"
   >
     {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}
   </th>
@@ -150,11 +154,12 @@
           [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
         ></p-tableHeaderCheckbox>
         }
+        <span class="sr-only">{{ 'OCX_DATA_TABLE.SELECTION_COLUMN' | translate }}</span>
       </th>
       } @if (actionColumnPosition === 'left') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of columns(); track column) { @if (column.sortable || column.filterable) {
-      <th scope="col">
+      <th scope="col" [pSortableColumn]="column.sortable ? column.nameKey : undefined">
         <div
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
@@ -196,6 +201,7 @@
               (onFocus)="onFilterChosen(column)"
               [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
               [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+              [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
               [ariaFilterLabel]="
                         'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
                       "
@@ -263,9 +269,17 @@
     </tr>
   </ng-template>
 
+  <ng-template pTemplate="caption">
+    @if (captionTemplate()) {
+    <ng-container>
+      <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
+    </ng-container>
+    }
+  </ng-template>
+
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
-    <tr>
+    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -274,13 +288,13 @@
           [value]="true"
           [binary]="true"
           [disabled]="true"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id }"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
         ></p-checkbox>
         } @else {
         <p-tableCheckbox
           [value]="rowObject"
           [disabled]="isRowSelectionDisabled(rowObject)"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id }"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
         ></p-tableCheckbox>
         }
       </td>
@@ -345,8 +359,10 @@
       [icon]="isRowExpanded(rowObject) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
       class="p-button-rounded p-button-text"
       (click)="toggleRowExpansion(rowObject)"
-      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
-      [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate) : ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)"
+      [attr.aria-expanded]="isRowExpanded(rowObject)"
+      [attr.aria-controls]="'ocx-expanded-row-' + rowObject.id"
+      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
+      [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
     ></button>
   </td>
   }

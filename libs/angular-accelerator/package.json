@@ -27,10 +27,9 @@
     "ngxtension": "^7.1.0",
     "rxjs": "~7.8.1",
     "primeng": "^21.0.0",
-    "@nx/devkit": "^22.0.2",
-    "@protobi/exceljs": "^4.4.0-protobi.9",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.9"
+    "@protobi/exceljs": "^4.4.0-protobi.9"
   },
+  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
@@ -39,8 +38,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }
