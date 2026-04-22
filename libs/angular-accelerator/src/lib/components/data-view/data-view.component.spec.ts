@@ -327,6 +327,15 @@ describe('DataViewComponent', () => {
 
       expect(setPageSizeSpy).toHaveBeenCalledWith(25)
     })
+
+    it('should delegate expandedRows setter to state service', () => {
+      const setExpandedRowsSpy = jest.spyOn(stateService, 'setExpandedRows')
+      const expandedRows = ['row-1', 'row-2']
+
+      component.expandedRows = expandedRows
+
+      expect(setExpandedRowsSpy).toHaveBeenCalledWith(expandedRows)
+    })
   })
 
   describe('Table row selection ', () => {

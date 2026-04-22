@@ -66,6 +66,15 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(component.page).toBe(2)
     })
+
+    it('should update expandedRows in service when expandedRows signal is changed', () => {
+      const { component } = createComponent(true)
+
+      const expandedRows = ['row-1', 'row-2']
+      component.expandedRows = expandedRows
+
+      expect(component.expandedRows).toEqual(expandedRows)
+    })
   })
 
   describe('group selection + layout interactions', () => {

@@ -46,6 +46,7 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { InteractiveExpandedRows } from '../../model/view-layout.model'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -147,10 +148,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   @Input()
-  get expandedRows(): Row[] | string[] | number[] {
+  get expandedRows(): InteractiveExpandedRows {
     return this.stateService.expandedRows()
   }
-  set expandedRows(value: Row[] | string[] | number[]) {
+  set expandedRows(value: InteractiveExpandedRows) {
     this.stateService.setExpandedRows(value)
   }
 
@@ -325,7 +326,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   sortFieldChange = output<string>()
   sortDirectionChange = output<DataSortDirection>()
   selectedRowsChange = output<Row[]>()
-  expandedRowsChange = output<Row[] | string[] | number[]>()
+  expandedRowsChange = output<InteractiveExpandedRows>()
   frozenActionColumnChange = output<boolean>()
   actionColumnPositionChange = output<'left' | 'right'>()
   pageChange = output<number>()
@@ -368,7 +369,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const rows = this.rows()
     // Include page to force fresh array references on page navigation
     // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
-    void this.page
+    Number(this.page)
     return selectionIds.map((rowId) => rows.find((r) => r.id === rowId)).filter((row): row is Row => row !== undefined)
   })
 
@@ -698,8 +699,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   onRowCollapse(event: any) {
     const expandedRows = this.expandedRows
     const updatedExpandedRows = (expandedRows ?? []).filter((r) =>
-      typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id
-    ) as Row[] | string[] | number[]
+      typeof r === 'object' ? r.id !== event.data.id : r !== event.data.id
+    ) as InteractiveExpandedRows
     this.stateService.setExpandedRows(updatedExpandedRows)
     this.rowCollapsed.emit(event.data)
   }

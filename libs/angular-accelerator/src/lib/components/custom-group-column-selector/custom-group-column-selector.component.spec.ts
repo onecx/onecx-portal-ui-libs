@@ -136,4 +136,26 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(setDisplayedSpy).not.toHaveBeenCalled()
     })
   })
+
+  describe('frozenActionColumn setter', () => {
+    it('should call setActionColumnConfig with new frozen value and current actionColumnPosition', () => {
+      const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
+      stateService.ActionColumnConfigPosition.set('left')
+
+      component.frozenActionColumn = true
+
+      expect(setActionConfigSpy).toHaveBeenCalledWith(true, 'left')
+    })
+  })
+
+  describe('actionColumnPosition setter', () => {
+    it('should call setActionColumnConfig with new position value and current frozenActionColumn', () => {
+      const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
+      stateService.ActionColumnConfigFrozen.set(true)
+
+      component.actionColumnPosition = 'left'
+
+      expect(setActionConfigSpy).toHaveBeenCalledWith(true, 'left')
+    })
+  })
 })
