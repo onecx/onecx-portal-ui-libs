@@ -279,6 +279,39 @@ describe('DataListGridComponent', () => {
     expect(dataListGrid).toBeTruthy()
   })
 
+  describe('InteractiveDataViewService provider factory', () => {
+    it('should reuse parent InteractiveDataViewService when it exists (in main beforeEach)', () => {
+      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataListGridComponent],
+        imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+          provideUserServiceMock(),
+          provideAppStateServiceMock(),
+          TooltipStyle,
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataListGridComponent)
+      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      localFixture.componentInstance.page = 2
+      localFixture.componentInstance.pageSize = 25
+
+      expect(localService.activePage()).toBe(2)
+      expect(localService.pageSize()).toBe(25)
+    })
+  })
+
   describe('filters effect', () => {
     it('should reset active page to 0 when filters changed and previous filters exist', async () => {
       const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')

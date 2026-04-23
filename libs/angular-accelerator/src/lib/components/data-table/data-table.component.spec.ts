@@ -245,6 +245,40 @@ describe('DataTableComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  describe('InteractiveDataViewService provider factory', () => {
+    it('should reuse parent InteractiveDataViewService when it exists', () => {
+      const stateService = TestBed.inject(InteractiveDataViewService)
+      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+
+      await TestBed.configureTestingModule({
+        declarations: [DataTableComponent],
+        imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          {
+            provide: HAS_PERMISSION_CHECKER,
+            useExisting: UserService,
+          },
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataTableComponent)
+      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      expect(localService).toBeTruthy()
+      localFixture.componentInstance.page = 2
+      expect(localService.activePage()).toBe(2)
+    })
+  })
+
   it('loads dataTableHarness', async () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     expect(dataTable).toBeTruthy()

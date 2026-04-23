@@ -245,6 +245,41 @@ describe('DataViewComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  describe('InteractiveDataViewService provider factory', () => {
+    it('should reuse parent InteractiveDataViewService when it exists', () => {
+      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
+        imports: [DataViewModule, AngularAcceleratorModule, RouterModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClientTesting(),
+          provideAppStateServiceMock(),
+          TooltipStyle,
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataViewComponent)
+      const localComponent = localFixture.componentInstance
+      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      localComponent.page = 2
+      localComponent.pageSize = 25
+
+      expect(localService.activePage()).toBe(2)
+      expect(localService.pageSize()).toBe(25)
+    })
+  })
+
   describe('state service delegation', () => {
     it('should return true from paginator getter when both paginators are enabled', () => {
       stateService.setListGridPaginator(true)

@@ -4,8 +4,10 @@ import {
   EventEmitter,
   Input,
   OnInit,
+  Optional,
   Output,
   Signal,
+  SkipSelf,
   TemplateRef,
   computed,
   contentChild,
@@ -61,7 +63,14 @@ export interface ColumnGroupData {
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
-  providers: [InteractiveDataViewService, { provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }],
+  providers: [
+    {
+      provide: InteractiveDataViewService,
+      useFactory: (parentService: InteractiveDataViewService | null) => parentService ?? new InteractiveDataViewService(),
+      deps: [[new Optional(), new SkipSelf(), InteractiveDataViewService]],
+    },
+    { provide: 'InteractiveDataViewComponent', useExisting: InteractiveDataViewComponent }
+  ]
 })
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)

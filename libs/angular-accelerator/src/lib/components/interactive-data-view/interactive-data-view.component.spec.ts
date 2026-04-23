@@ -33,6 +33,44 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     return { component, slotService }
   }
 
+  describe('InteractiveDataViewService provider factory', () => {
+    const createSlotServiceMock = () => ({
+      isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
+    } as unknown as SlotService)
+
+    it('should reuse parent InteractiveDataViewService when it exists', () => {
+      TestBed.resetTestingModule()
+
+      TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent],
+        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }, InteractiveDataViewService],
+      })
+
+      const stateService = TestBed.inject(InteractiveDataViewService)
+      const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+
+      await TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent],
+        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(InteractiveDataViewComponent)
+      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+
+      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      expect(localService).toBeTruthy()
+      localFixture.componentInstance.page = 2
+      expect(localService.activePage()).toBe(2)
+    })
+  })
+
   describe('service state management', () => {
     it('should update layout in service when layout signal is changed', () => {
       const { component } = createComponent(false)
@@ -171,6 +209,45 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
       component.selectedGroupKey.set('not-present')
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = 'grid'
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('')
+    })
+
+    it('should not clear selectedGroupKey when columnGroupComponentDefined is false', () => {
+      const { component } = createComponent(false)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey.set('not-present')
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = 'grid'
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('not-present')
+    })
+
+    it('should not clear selectedGroupKey when currentLayout is undefined', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey.set('not-present')
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = '' as any
+      TestBed.tick()
+
+      expect(component.selectedGroupKey()).toBe('not-present')
+    })
+
+    it('should not clear selectedGroupKey when currentLayout is set but columnGroupComponentDefined becomes false', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey.set('invalid-key')
       setInputSignal(component, 'customGroupKey', 'custom')
 
       component.layout = 'grid'
