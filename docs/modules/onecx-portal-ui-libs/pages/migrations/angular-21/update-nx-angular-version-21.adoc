@@ -1,0 +1,78 @@
+[#upgrade-nx-to-angular-21]
+= Upgrade NX Application to Angular 21
+
+This guide describes how to upgrade an NX-based OneCX application to Angular 21. Complete the pre-migration steps from the main migration guide before you continue.
+
+== Update @onecx/nx-plugin
+
+Update `@onecx/nx-plugin` to latest 8.x.y available. 
+
+[source, bash]
+----
+npm install @onecx/nx-plugin@^8
+----
+
+== Update NX and Angular packages
+
+Update the Angular and NX packages in your workspace by running:
+
+[source, bash]
+----
+nx migrate latest --interactive
+----
+
+Apply all proposed updates up to Angular 21.
+
+For details on NX / Angular compatibility, refer to the xref:https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
+
+For details on `nx migrate`, refer to the official documentation: xref:https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
+
+== Update package versions in `package.json`
+
+1. Update all used `@onecx/*` packages to version `^8.0.0`.
++
+.Example:
+[source, json]
+----
+npm install @onecx/<package-name>@^8
+----
+
+2. Update the packages listed here to the specified versions: xref:./update-v8-packages.adoc[Required Package Updates].
+3. After updating `package.json`, run `npm install` to install the new versions. If you see peer dependency errors, update the affected packages to compatible versions.
+
+
+[NOTE]
+==== 
+If you still see dependency conflicts that reference old versions, reinstall dependencies from scratch:
+
+[source, bash]
+----
+rm -rf node_modules package-lock.json .angular dist ~/.angular/cache && npm cache clean --force && npm install
+----
+====
+
+[IMPORTANT]
+====
+Make sure to migrate the updated packages and resolve any breaking changes. Refer to the official documentation of each package for migration guides and instructions.
+====
+
+
+== Run NX migration
+
+After updating package versions, run:
+
+[source, bash]
+----
+nx migrate --run-migrations
+----
+
+After this step, proceed with the remaining post-migration steps.
+
+== Cleanup Migration Dependencies
+
+After completing all migration steps, remove migration-only dependencies that are no longer required:
+
+[source, bash]
+----
+npm uninstall @onecx/nx-migration-utils @nx/devkit
+----

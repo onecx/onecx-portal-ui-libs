@@ -26,17 +26,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
-import {
-  Observable,
-  combineLatest,
-  debounceTime,
-  filter,
-  firstValueFrom,
-  map,
-  mergeMap,
-  of,
-  switchMap,
-} from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -76,6 +66,7 @@ export interface DataTableComponentState {
   filters?: Filter[]
   sorting?: Sort
   selectedRows?: Row[]
+  expandedRows?: Row[]
   activePage?: number
   pageSize?: number
 }
@@ -154,6 +145,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
   })
 
+  captionTemplate = input<TemplateRef<any> | undefined>(undefined)
   stringCellTemplate = input<TemplateRef<any> | undefined>(undefined)
   stringCellChildTemplate = contentChild<TemplateRef<any>>('stringCell')
   stringCell = computed(() => {
@@ -230,6 +222,19 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   frozenActionColumn = input<boolean>(false)
   actionColumnPosition = input<'left' | 'right'>('right')
 
+  expandedRows = model<Row[] | string[] | number[]>([])
+  expandedRowIds = computed<(string | number)[]>(() =>
+    (this.expandedRows() ?? [])
+      .filter((row): row is Row | string | number => row !== null && row !== undefined)
+      .map((row): string | number => (typeof row === 'object' ? row.id : row))
+  )
+  expandedRowKeys = computed<Record<string, boolean>>(() =>
+    Object.fromEntries(this.expandedRowIds().map((id) => [id, true]))
+  )
+
+  expandable = input<boolean>(false)
+  frozenExpandColumn = input<boolean>(false)
+
   filtered = output<Filter[]>()
   sorted = output<Sort>()
   @Output() viewTableRow = observableOutput<Row>()
@@ -239,6 +244,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataTableComponentState>()
+  @Output() rowExpanded = observableOutput<Row>()
+  @Output() rowCollapsed = observableOutput<Row>()
 
   displayedRows$ = combineLatest([
     toObservable(this.rows),
@@ -426,6 +433,14 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   parentTemplates = model<PrimeTemplate[] | null | undefined>(undefined)
   parentTemplates$ = toObservable(this.parentTemplates)
 
+  expansionTemplate = computed<PrimeTemplate | undefined>(() => {
+    const all = [...this.templates(), ...this.viewTemplates(), ...(this.parentTemplates() ?? [])].filter(
+      (t, index, self) => self.findIndex((pt) => pt.getType() === t.getType()) === index
+    )
+
+    return all.find((t) => t.getType() === 'expansion')
+  })
+
   get viewTableRowObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
     return dv?.viewItemObserved || dv?.viewItem.observed() || this.viewTableRow.observed()
@@ -440,6 +455,19 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
   get anyRowActionObserved(): boolean {
     return this.viewTableRowObserved || this.editTableRowObserved || this.deleteTableRowObserved
+  }
+
+  get actionColumnVisible(): boolean {
+    return this.anyRowActionObserved || this.additionalActions().length > 0
+  }
+
+  getRowColspan(hasExpansionTemplate: boolean): number {
+    return (
+      this.columns().length +
+      (this.selectionChangedObserved ? 1 : 0) +
+      (this.expandable() && hasExpansionTemplate ? 1 : 0) +
+      (this.actionColumnVisible ? 1 : 0)
+    )
   }
 
   get selectionChangedObserved(): boolean {
@@ -556,11 +584,41 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       pageSize: this.displayedPageSize(),
       activePage: this.page(),
       selectedRows: this.rows().filter((row) => this.selectedIds().includes(row.id)),
+      expandedRows: this.rows().filter((row) => this.expandedRowIds().includes(row.id)),
     })
   }
 
   emitSelectionChanged() {
     this.selectionChanged.emit(this.rows().filter((row) => this.selectedIds().includes(row.id)))
+  }
+
+  onRowExpand(event: any) {
+    if (!this.expandedRowIds().includes(event.data.id)) {
+      this.expandedRows.update((rows) => [...(rows ?? []), event.data] as Row[])
+    }
+    this.rowExpanded.emit(event.data)
+  }
+
+  onRowCollapse(event: any) {
+    this.expandedRows.update(
+      (rows) =>
+        (rows ?? []).filter((r) =>
+          typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id
+        ) as Row[] | string[] | number[]
+    )
+    this.rowCollapsed.emit(event.data)
+  }
+
+  isRowExpanded(row: Row): boolean {
+    return this.expandedRowIds().includes(row.id)
+  }
+
+  toggleRowExpansion(row: Row) {
+    if (this.isRowExpanded(row)) {
+      this.onRowCollapse({ data: row })
+    } else {
+      this.onRowExpand({ data: row })
+    }
   }
 
   onSortColumnClick(sortColumn: string) {
@@ -862,8 +920,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   async onActionClick(action: DataAction, rowObject: any): Promise<void> {
     await handleAction(this.router, action, rowObject)
   }
-  
+
   private createMenuItemCommand(action: DataAction, row: any): () => void {
     return () => handleActionSync(this.router, action, row)
+  }
+  
+  getRowSummary(rowObject: any): string {
+    let summary = ''
+    const columns = Object.entries(rowObject)
+    columns.forEach(([key, value], index) => {
+      summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
+    })
+    
+    return summary.trim()
   }
 }

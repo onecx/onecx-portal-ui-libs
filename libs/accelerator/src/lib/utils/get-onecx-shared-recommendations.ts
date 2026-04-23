@@ -1,12 +1,13 @@
-import { SharedLibraryConfig } from '@nx/module-federation'
+export interface SharedLibraryConfig {
+  singleton?: boolean
+  strictVersion?: boolean
+  eager?: boolean
+  requiredVersion?: string | false
+  version?: string
+  includeSecondaries?: boolean
+}
 
-const sharedLibraryPatterns: RegExp[] = [
-  /^@angular.*$/,
-  /^@onecx.*$/,
-  /^rxjs.*$/,
-  /^primeng.*$/,
-  /^@ngx-translate.*$/
-]
+const sharedLibraryPatterns: RegExp[] = [/^@angular.*$/, /^@onecx.*$/, /^rxjs.*$/, /^primeng.*$/, /^@ngx-translate.*$/]
 
 export function getOneCXSharedRecommendations(
   libraryName: string,

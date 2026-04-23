@@ -58,7 +58,7 @@
       "DESCENDING_TOOLTIP": "Absteigend sortieren",
       "DEFAULT_TOOLTIP": "Standardsortierung"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "{{direction}} sortieren"
+    "SORTING_BUTTON_ARIA_LABEL": "Aktuelle Sortierrichtung: {{currentDirection}}. Sortierrichtung auf {{nextDirection}} ändern"
   },
   "OCX_DATA_TABLE": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
@@ -66,7 +66,9 @@
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
+    "EXPAND_COLLAPSE_COLUMN": "Spalte erweitern/zusammenklappen",
     "COLUMN_FILTER_ARIA_LABEL": "Spaltenfilter",
+    "COLUMN_FILTER_PLACEHOLDER": "Zum Filtern eingeben",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Bearbeitet",
@@ -86,9 +88,13 @@
     },
     "SELECT_ALL_ARIA_LABEL": "Selektiere alle Zeilen der Tabelle",
     "SELECT_ALL_TOOLTIP": "Selektiere alle",
-    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}",
+    "SELECT_ARIA_LABEL": "Selektiere die Tabellenspalte mit der ID {{key}}, Zeilenzusammenfassung: {{rowSummary}}",
     "FILTER_YES": "Ja",
-    "FILTER_NO": "Nein"
+    "FILTER_NO": "Nein",
+    "COLLAPSED_ROW": "Zeilendetails umschalten. Aktueller Status: Eingeklappt",
+    "EXPANDED_ROW": "Zeilendetails umschalten. Aktueller Status: Ausgeklappt",
+    "SELECTION_COLUMN": "Auswahlspalte",
+    "TABLE_ARIA_LABEL": "Datentabelle"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Ergebnisse gefunden",
@@ -103,6 +109,9 @@
     "MORE_ACTIONS_TOOLTIP": "Weitere Aktionen anzeigen"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Layout auswählen"
+    },
     "LAYOUT": {
       "LIST": "Liste",
       "GRID": "Raster",
@@ -125,7 +134,9 @@
     "MANAGE_FILTERS_BUTTON": {
       "LABEL": "Filter",
       "ARIA_LABEL": "Aktive Filter verwalten",
-      "DETAIL": "Aktive Filter verwalten"
+      "DETAIL": "Aktive Filter verwalten",
+      "DISABLED_DETAIL": "Keine aktiven Filter zum Verwalten"
+
     },
     "TABLE": {
       "COLUMN_NAME": "Spaltenname",
@@ -164,6 +175,11 @@
     "EXPORT": "Alle Ereignisse exportieren",
     "CONTROLS": {
       "ARIA_LABEL": "Suchsteuerungen"
+    },
+    "ANNOUNCEMENTS": {
+      "SEARCHING": "Suche läuft...",
+      "NO_RESULTS": "Keine Ergebnisse gefunden",
+      "RESULTS_FOUND": "{{count}} Ergebnisse gefunden"
     }
   },
   "OCX_PAGE_HEADER": {
@@ -171,13 +187,22 @@
     "SUBHEADER": "Seiteninhalt",
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
-    "HOME_ARIA_LABEL": "Zu {{page}} navigieren"
+    "HOME_ARIA_LABEL": "Zu {{page}} navigieren",
+    "BREADCRUMB_ARIA_LABEL": "Zu {{breadcrumb}} navigieren" 
   },
   "OCX_DIAGRAM": {
-    "ARIA_LABEL": "Diagramm: Gesamtanzahl: {{total}}. {{valueString}}.",
+    "ARIA_LABEL": "Diagramm Zusammenfassung: Gesamtanzahl: {{total}}. {{valueString}}.",
     "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Diagrammtyp auswählen"
+    },
+    "TABLE": {
+      "COLOR": "Farbe",
+      "LABEL": "Bezeichnung",
+      "COUNT": "Anzahl"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Zu Tortendiagramm wechseln",
       "HORIZONTAL_BAR": "Zu horizontalem Balkendiagramm wechseln",
@@ -200,5 +225,9 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "Die Daten konnten nicht geladen werden.",
     "MESSAGE": "Dies kann folgende Gründe haben: \n -Die Daten existieren nicht oder nicht mehr.\n - Die Daten konnten aufgrund eines Fehlers im System nicht geladen werden.\n - Ihnen fehlt die nötige Berechtigung um die Daten zu laden.\n Bitte kontaktieren Sie den Support, wenn Sie glauben, dass es sich hierbei um einen Fehler des Systems handelt."
+  },
+  "OCX_DATA_EXPORT": {
+    "EXCEL_TABLE_NAME": "{{fileName}}_table",
+    "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
   }
 }

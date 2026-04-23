@@ -1,17 +1,22 @@
 [#interactive-data-view-component]
 = Replace DataViewControlsComponent
 
-In OneCX v6, Replace **p-dataView** and **DataViewControlsComponent** template with **InteractiveDataViewComponent**.
+In OneCX v6, the InteractiveDataViewComponent replaces the following use cases:
+
+* Replace **p-dataView** and **DataViewControlsComponent** template with **InteractiveDataViewComponent**
+* Replace **p-table** and **DataViewControlsComponent** template with **InteractiveDataViewComponent**.
 
 == Code Changes
 
 * Remove `<ocx-data-view-controls>` and `DataViewControlsComponent` from `@onecx/portal-integration-angular`
 * Add `InteractiveDataViewComponent` from `@onecx/angular-accelerator`.
-* Replace the entire `<p-dataView>` with `<ocx-interactive-data-view>`
+* Replace the entire `<p-dataView>` or `<p-table>` with `<ocx-interactive-data-view>`
 * Remove `DataViewModule` from `primeng/dataview` if not used elsewhere
 * Add `<ocx-interactive-data-view>` and update input properties and output events as per tables below
 
-== Example
+=== Examples
+
+**Example: p-dataView & DataViewControlsComponent to InteractiveDataViewComponent**
 .Before
 [source, html]
 ----
@@ -55,6 +60,62 @@ In OneCX v6, Replace **p-dataView** and **DataViewControlsComponent** template w
     <div class="card">
       <div>{{ item.name }}</div>
     </div>
+  </ng-template>
+</ocx-interactive-data-view>
+----
+
+**Example: p-table & DataViewControlsComponent to InteractiveDataViewComponent**
+
+.Before 
+[source, html]
+----
+<p-table [value]="items" [paginator]="true" [rows]="20">
+  <ng-template pTemplate="header">
+    <ocx-data-view-controls
+      [supportedViews]="['table']"
+      [initialViewMode]="'table'"
+      [filterValue]="filterValue"
+      [enableFiltering]="true"
+      (filterChange)="onFilterChange($event, table)"
+      [enableSorting]="true"
+    ></ocx-data-view-controls>
+  </ng-template>
+  <ng-template pTemplate="body" let-item>
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.value }}</td>
+    </tr>
+  </ng-template>
+  <ng-template #emptymessage>
+    <tr>
+        <td colspan="5">{{'ACTIONS.SEARCH.NO_DATA' | translate}}</td>
+    </tr>
+  </ng-template>
+</p-table>
+----
+
+.After 
+[source, html]
+----
+<ocx-interactive-data-view
+  [data]="items"
+  [supportedViewLayouts]="['table']"
+  [layout]="'table'"
+  [columns]="columns"
+  [filters]="filters"
+  [filter]="filterValue"
+  [clientSideFiltering]="true"
+  [clientSideSorting]="true"
+  [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+  (filtered)="onFilterChange($event)"
+  (sorted)="onSortChange($event)"
+  (dataViewLayoutChange)="onDataViewChange($event)"
+>
+  <ng-template pTemplate="item" let-item>
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.value }}</td>
+    </tr>
   </ng-template>
 </ocx-interactive-data-view>
 ----
@@ -181,6 +242,38 @@ h| Notes
 |===
 ====
 
+.Input Properties (p-table)
+[%collapsible]
+====
+[.stripes-even,cols="1,1,2"]
+|===
+h| p-table
+h| InteractiveDataViewComponent
+h| Notes
+
+| value
+| data
+| Data source for the table. `[data]="items"`
+
+| columns
+| columns
+| Column definitions. Use `id` and `nameKey` for each column.
+
+| paginator
+| tablePaginator
+| Enable table pagination. `[tablePaginator]="true"` (enabled by default)
+
+| rows
+| pageSize
+| Number of items per page. `[pageSize]="20"`
+
+| rowsPerPageOptions
+| pageSizes
+| Array of page size options. `[pageSizes]="[20, 60, 100]"`
+
+|===
+====
+
 .Output Events
 [%collapsible]
 ====
@@ -212,7 +305,7 @@ h| Notes
 
 === Template Transformation
 
-[%collapsible]
+[%collapsible, title="For p-dataView"]
 ====
 
 [.stripes-even,cols="1,1,2"]
@@ -253,4 +346,42 @@ h| Notes
 </ng-template>
 ====
 
+
+[%collapsible, title="For p-table"]
+====
+[.stripes-even,cols="1,1,2"]
+|===
+h| p-table
+h| InteractiveDataViewComponent
+h| Notes
+
+| `pTemplate="header"`
+| `pTemplate="topCenter"`
+| Keep header template for custom content. Remove only `ocx-data-view-controls` from inside it.
+
+| `pTemplate="body"`
+| `pTemplate="item"`
+| Use `let-item` for row context in table layout
+|===
+
+.Before:
+
+[source, html]
+<ng-template pTemplate="body" let-item>
+  <tr>
+    <td>{{ item.name }}</td>
+    <td>{{ item.value }}</td>
+  </tr>
+</ng-template>
+
+.After:
+
+[source, html]
+<ng-template pTemplate="item" let-item>
+  <tr>
+    <td>{{ item.name }}</td>
+    <td>{{ item.value }}</td>
+  </tr>
+</ng-template>
+====
 

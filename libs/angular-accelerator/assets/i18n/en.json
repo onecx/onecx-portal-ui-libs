@@ -58,7 +58,7 @@
       "DESCENDING_TOOLTIP": "Sort Descending",
       "DEFAULT_TOOLTIP": "Default Sort"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "Toggle sorting direction to {{direction}}"
+    "SORTING_BUTTON_ARIA_LABEL": "Current Sorting direction: {{currentDirection}}. Toggle sorting direction to {{nextDirection}}"
   },
   "OCX_DATA_TABLE": {
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
@@ -66,7 +66,9 @@
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
+    "EXPAND_COLLAPSE_COLUMN": "Expand/Collapse column",
     "COLUMN_FILTER_ARIA_LABEL": "Column filter",
+    "COLUMN_FILTER_PLACEHOLDER": "Type to filter",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
     "EDITED": "Edited",
@@ -86,9 +88,13 @@
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
     "SELECT_ALL_TOOLTIP": "Select all",
-    "SELECT_ARIA_LABEL": "Select table row with id {{key}}",
+    "SELECT_ARIA_LABEL": "Select table row with id {{key}}, row summary: {{rowSummary}}",
     "FILTER_YES": "Yes",
-    "FILTER_NO": "No"
+    "FILTER_NO": "No",
+    "COLLAPSED_ROW": "Toggle row details. Current state: Collapsed",
+    "EXPANDED_ROW": "Toggle row details. Current state: Expanded",
+    "SELECTION_COLUMN": "Selection column",
+    "TABLE_ARIA_LABEL": "Data table"
   },
   "OCX_DATA_LIST_GRID": {
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
@@ -103,6 +109,9 @@
     "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
   "OCX_DATA_LAYOUT_SELECTION": {
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Select layout"
+    },
     "LAYOUT": {
       "LIST": "List",
       "GRID": "Grid",
@@ -125,7 +134,8 @@
     "MANAGE_FILTERS_BUTTON": {
       "LABEL": "Filters",
       "ARIA_LABEL": "Manage active filters",
-      "DETAIL": "Manage active filters"
+      "DETAIL": "Manage active filters",
+      "DISABLED_DETAIL": "No active filters to manage"
     },
     "TABLE": {
       "COLUMN_NAME": "Column name",
@@ -164,6 +174,11 @@
     "EXPORT": "Export all events",
     "CONTROLS": {
       "ARIA_LABEL": "Search controls"
+    },
+    "ANNOUNCEMENTS": {
+      "SEARCHING": "Searching...",
+      "NO_RESULTS": "No results found",
+      "RESULTS_FOUND": "{{count}} results found" 
     }
   },
   "OCX_PAGE_HEADER": {
@@ -171,13 +186,22 @@
     "SUBHEADER": "Page Content",
     "MORE_ACTIONS": "More actions",
     "HOME_DEFAULT_ARIA_LABEL": "Go to home page",
-    "HOME_ARIA_LABEL": "Go to {{page}} home page"
+    "HOME_ARIA_LABEL": "Go to home page",
+    "BREADCRUMB_ARIA_LABEL": "Go to {{breadcrumb}} page"
   },
   "OCX_DIAGRAM": {
-    "ARIA_LABEL": "Chart: Total amount: {{total}}. {{valueString}}.",
+    "ARIA_LABEL": "Chart Summary: Total amount: {{total}}. {{valueString}}.",
     "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
+    "SELECT_BUTTON": {
+      "ARIA_LABEL": "Select chart type"
+    },
+    "TABLE": {
+      "COLOR": "Color",
+      "LABEL": "Label",
+      "COUNT": "Count"
+    },
     "SWITCH_DIAGRAM_TYPE": {
       "PIE": "Switch to pie chart",
       "HORIZONTAL_BAR": "Switch to horizontal bar chart",
@@ -200,5 +224,9 @@
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "The data could not be loaded.",
     "MESSAGE": "This may have the following reasons:\n The data does not exist or no longer exists.\n The data could not be loaded due to an error in the system.\n You do not have the necessary permission to load the data.\n Please contact the support if you think this happened due to a system error."
+  },
+  "OCX_DATA_EXPORT": {
+    "EXCEL_TABLE_NAME": "{{fileName}}_table",
+    "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@onecx/shell-auth",
-  "version": "8.0.0-rc.6",
+  "version": "8.0.0-rc.9",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -8,11 +8,11 @@
   },
   "peerDependencies": {
     "@angular/core": "^21.0.0",
-    "@onecx/accelerator": "^8.0.0-rc.6",
-    "@onecx/angular-integration-interface": "^8.0.0-rc.6",
-    "@onecx/integration-interface": "^8.0.0-rc.6",
-    "@onecx/angular-remote-components": "^8.0.0-rc.6",
     "@module-federation/enhanced": "^2.0.1",
+    "@onecx/accelerator": "^8.0.0-rc.9",
+    "@onecx/angular-integration-interface": "^8.0.0-rc.9",
+    "@onecx/integration-interface": "^8.0.0-rc.9",
+    "@onecx/angular-remote-components": "^8.0.0-rc.9",
     "keycloak-js": "^26.2.3",
     "rxjs": "~7.8.0"
   },
@@ -23,8 +23,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }

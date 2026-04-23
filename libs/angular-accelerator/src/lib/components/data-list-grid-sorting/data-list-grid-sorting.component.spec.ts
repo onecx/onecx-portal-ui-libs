@@ -7,6 +7,7 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent
@@ -22,7 +23,7 @@ describe('DataListGridSortingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridSortingComponent],
-      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 

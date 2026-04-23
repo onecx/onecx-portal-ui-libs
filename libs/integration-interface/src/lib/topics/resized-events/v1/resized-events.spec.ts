@@ -6,6 +6,7 @@
  * @jest-environment jsdom
  */
 
+import { ensureProperty } from '@onecx/accelerator'
 import { ResizedEventType } from './resized-event-type'
 import { ResizedEventsTopic } from './resized-events.topic'
 import { RequestedEventsChangedEvent } from './resized-update-requested-type'
@@ -51,9 +52,7 @@ describe('ResizedEventsTopic', () => {
   let resizedEventsTopic: ResizedEventsTopic
 
   beforeEach(() => {
-    window['@onecx/accelerator'] ??= {}
-    window['@onecx/accelerator'].topic ??= {}
-    window['@onecx/accelerator'].topic.initDate = Date.now() - 1000000
+    ensureProperty(globalThis as object, ['@onecx/accelerator', 'topic', 'initDate'], Date.now() - 1000000)
 
     jest.restoreAllMocks()
     listeners = []

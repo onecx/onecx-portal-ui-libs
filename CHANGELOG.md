@@ -1,3 +1,39 @@
+## [8.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.8...v8.0.0-rc.9) (2026-03-20)
+
+### Features
+
+* add shared recommendations function ([#1291](https://github.com/onecx/onecx-portal-ui-libs/issues/1291)) ([be3eda4](https://github.com/onecx/onecx-portal-ui-libs/commit/be3eda42432c0491a58c0abf3841de6b8e0f7da0))
+
+## [8.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.7...v8.0.0-rc.8) (2026-03-20)
+
+### Features
+
+* pTooltip to ocxTootip ([#1255](https://github.com/onecx/onecx-portal-ui-libs/issues/1255)) ([f803ab6](https://github.com/onecx/onecx-portal-ui-libs/commit/f803ab603132d5d3221c2e11260b80f870dd8b3d))
+
+### Bug Fixes
+
+* [data-layout-selection]  a11y - view layout button ([#1268](https://github.com/onecx/onecx-portal-ui-libs/issues/1268)) ([5b55d21](https://github.com/onecx/onecx-portal-ui-libs/commit/5b55d21476a2d96bd5f75f02c6407c17c478d7a8))
+* [data-list-grid] a11y - adjust role to make list sr readable ([#1278](https://github.com/onecx/onecx-portal-ui-libs/issues/1278)) ([a0803b3](https://github.com/onecx/onecx-portal-ui-libs/commit/a0803b3c559b541615a16db91663864c603cab9a))
+* [filter-view] a11y - filter button ([#1271](https://github.com/onecx/onecx-portal-ui-libs/issues/1271)) ([24d600a](https://github.com/onecx/onecx-portal-ui-libs/commit/24d600a5078282ab26fe4424e1e21a8b2e62b2e2))
+* [page-header]  a11y - adjust breadcrumb aria-label ([#1270](https://github.com/onecx/onecx-portal-ui-libs/issues/1270)) ([785f371](https://github.com/onecx/onecx-portal-ui-libs/commit/785f371d1d88916cd8edf57bf187b72666ec9f63))
+* [search-header] a11y - announce no result for sr ([#1276](https://github.com/onecx/onecx-portal-ui-libs/issues/1276)) ([bdc8e96](https://github.com/onecx/onecx-portal-ui-libs/commit/bdc8e962a5809c2a56ac6c5f750009f619916b25))
+* adjust aria label for sort dropdown ([#1277](https://github.com/onecx/onecx-portal-ui-libs/issues/1277)) ([a3e659e](https://github.com/onecx/onecx-portal-ui-libs/commit/a3e659e30c9f4b8221e6b517fa1bf706fc33bc0f))
+* build libraries differently after lib type change to module ([#1303](https://github.com/onecx/onecx-portal-ui-libs/issues/1303)) ([92eac54](https://github.com/onecx/onecx-portal-ui-libs/commit/92eac54d83d321bbaa774780becac54133fc69a3))
+* external nx links not working in migration guides ([#1299](https://github.com/onecx/onecx-portal-ui-libs/issues/1299)) ([aa9918c](https://github.com/onecx/onecx-portal-ui-libs/commit/aa9918c9c43ad719aac39a05ef3f018dfa138836))
+* loading-indicator-directive & loading-indicator-component ([#1287](https://github.com/onecx/onecx-portal-ui-libs/issues/1287)) ([#1292](https://github.com/onecx/onecx-portal-ui-libs/issues/1292)) ([aa7bca1](https://github.com/onecx/onecx-portal-ui-libs/commit/aa7bca120121027930f854a58da86975661ae295))
+* missing translation handler returns key instead of throwing errors ([#1289](https://github.com/onecx/onecx-portal-ui-libs/issues/1289)) ([0bc8243](https://github.com/onecx/onecx-portal-ui-libs/commit/0bc8243ae3b93320f84ab62e4d41f1458336f87b))
+* primng translation in search header ([#1290](https://github.com/onecx/onecx-portal-ui-libs/issues/1290)) ([f7ae940](https://github.com/onecx/onecx-portal-ui-libs/commit/f7ae9402a2f483edaf249a16f8ce3f67c9092123))
+
+## [8.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.6...v8.0.0-rc.7) (2026-03-13)
+
+### Features
+
+* main-add visible keyboard focus for interactive elements ([#1175](https://github.com/onecx/onecx-portal-ui-libs/issues/1175)) ([8fa3c2b](https://github.com/onecx/onecx-portal-ui-libs/commit/8fa3c2b18f8368869dde4dd91c9a814027c79afc))
+
+### Chores
+
+* switch to accelarator and integration-interface from commonjs to module ([#1286](https://github.com/onecx/onecx-portal-ui-libs/issues/1286)) ([703ffe7](https://github.com/onecx/onecx-portal-ui-libs/commit/703ffe735ce3f8854d533c00ec0138f4a64b7346))
+
 ## [8.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.5...v8.0.0-rc.6) (2026-03-06)
 
 ### Bug Fixes

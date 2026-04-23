@@ -1,10 +1,10 @@
 {
   "name": "@onecx/onecx-portal-ui-libs",
-  "version": "8.0.0-rc.6",
+  "version": "8.0.0-rc.9",
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build build-migrations",
+    "build": "nx run-many -t build",
     "build-copy": "npm run build && node copy-build.js",
     "test": "nx affected -t test",
     "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
@@ -34,9 +34,9 @@
     "@types/debug": "^4.1.12",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@nx/devkit": "^22.3.3",
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^21.0.2",
+    "@protobi/exceljs": "^4.4.0-protobi.9",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "d3-scale-chromatic": "^3.1.0",
@@ -148,7 +148,8 @@
     "brace-expansion": "^2.0.2",
     "cross-spawn": "^7.0.6",
     "undici": "^6.23.0",
-    "semver": "^7.7.3"
+    "semver": "^7.7.3",
+    "minimatch": "^9.0.6"
   },
   "nx": {
     "includedScripts": []

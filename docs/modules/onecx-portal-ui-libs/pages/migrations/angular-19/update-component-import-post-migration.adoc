@@ -14,3 +14,11 @@ The imports of the following components, services and directives need to be chan
 * `OcxContentContainerDirective`, `OcxContentDirective`
 * `ExportDataService`, `PortalDialogService`, `ImageLogoUrlUtils`
 * `DialogContentHarness`, `DialogFooterHarness`, `DialogInlineHarness`, `DialogMessageContentHarness`
+* `BreadcrumbService`, `DataTableColumn`, `ColumnType`, `ObjectDetailItem`, `RowListGridData`, `Action`, `DataAction`, `ButtonDialogButtonDetails`
+* `DialogState`,`DialogButtonClicked` ,`DialogCustomButtonsDisabled` ,`DialogPrimaryButtonDisabled` ,`DialogSecondaryButtonDisabled` ,`DialogResult` ,`DialogState` ,`enumToDropdownOptions`
+
+
+
+The imports of the following services need to be changed from `@onecx/portal-integration-angular` to `@onecx/angular-integration-interface`:
+
+* `UserService`, `PortalMessageService`

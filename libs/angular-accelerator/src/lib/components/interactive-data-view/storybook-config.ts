@@ -43,6 +43,7 @@ import { TooltipStyle } from 'primeng/tooltip'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { action } from 'storybook/actions'
 import { UserService } from '@onecx/angular-integration-interface'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -96,7 +97,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         DataListGridComponent,
         DataListGridSortingComponent,
         FilterViewComponent,
-        TooltipOnOverflowDirective,
+        TooltipOnOverflowDirective
       ],
       imports: [
         TableModule,
@@ -118,6 +119,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ChipModule,
         SkeletonModule,
         TooltipModule,
+        OcxTooltipDirective
       ],
     }),
   ],
