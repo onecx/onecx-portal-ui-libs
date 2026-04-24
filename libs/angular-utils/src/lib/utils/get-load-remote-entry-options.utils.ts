@@ -1,5 +1,3 @@
-import { Location } from '@angular/common'
-import { getShareScope } from './get-share-scope.utils'
 import { Remote } from '@module-federation/runtime-core/types'
 import { RemoteComponent } from '@onecx/integration-interface'
 
@@ -23,13 +21,7 @@ type BffGeneratedRoute = {
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
 
 export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> {
-  let shareScope = 'default'
-  if (r.shareScope) {
-    shareScope = r.shareScope
-  } else {
-    const manifestUrl = Location.joinWithSlash(r.baseUrl, 'mf-manifest.json')
-    shareScope = await getShareScope(manifestUrl)
-  }
+  let shareScope = r.shareScope ?? 'default'
   // TODO: Check if this works for script type (Angular 12 or below)
   return {
     type: getRemoteType(r),
