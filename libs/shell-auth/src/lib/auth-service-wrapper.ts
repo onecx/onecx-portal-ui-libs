@@ -7,7 +7,7 @@ import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import './declarations'
 import { DisabledAuthService } from './auth_services/disabled-auth.service'
-import { getShareScope } from '@onecx/angular-remote-components'
+import { getShareScope } from '@onecx/angular-utils'
 
 const CUSTOM_AUTH_REMOTE_ALIAS = 'custom-auth-service'
 
