@@ -1495,7 +1495,7 @@ describe('DataTableComponent', () => {
         2 as any,
       ])
 
-      component.sortField = 'old'
+      component.sortColumn = 'old'
       component.sortDirection = 2 as any
       fixture.detectChanges()
 
@@ -1503,7 +1503,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.sortColumn()).toBe('new')
+      expect(component.sortColumn).toBe('new')
       expect(component.sortDirection).toBe(1 as any)
     })
 
@@ -1544,7 +1544,7 @@ describe('DataTableComponent', () => {
 
     it('sortIconTitle should return the title for the next sort direction', () => {
       fixture.componentRef.setInput('sortStates', [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
-      component.sortField = 'col'
+      component.sortColumn = 'col'
       component.sortDirection = DataSortDirection.ASCENDING
       fixture.detectChanges()
       expect(component.sortIconTitle('col')).toBe('OCX_DATA_TABLE.TOGGLE_BUTTON.DESCENDING_TITLE')
@@ -1801,7 +1801,7 @@ describe('DataTableComponent', () => {
     it('selectedFilteredRows should reflect selected ids and current rows', async () => {
       component.page = 2
       component.filters = [{ columnId: 'c1', value: 'x' } as any]
-      component.sortField = 'c1'
+      component.sortColumn = 'c1'
       component.sortDirection = DataSortDirection.ASCENDING
       component.pageSizes.set([10])
       component.pageSize = 10

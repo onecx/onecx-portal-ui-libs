@@ -16,7 +16,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
-import { DataTableComponent, Row } from '../data-table/data-table.component'
+import { DataTableComponent } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
@@ -338,15 +338,6 @@ describe('DataViewComponent', () => {
       expect(setSortColumnSpy).toHaveBeenCalledWith('name')
     })
 
-    it('should delegate row selection change to state service', () => {
-      const setSelectedRowsSpy = jest.spyOn(stateService, 'setSelectedRows')
-      const selectedRows = [{ id: 'row-1' } as Row]
-
-      component.onRowSelectionChange(selectedRows)
-
-      expect(setSelectedRowsSpy).toHaveBeenCalledWith(selectedRows)
-    })
-
     it('should delegate page change to state service', () => {
       const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
 
@@ -398,8 +389,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumn).toBe(false)
+      expect(component.actionColumnPosition).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 

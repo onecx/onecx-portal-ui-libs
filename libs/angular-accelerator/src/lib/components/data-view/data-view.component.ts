@@ -178,8 +178,23 @@ export class DataViewComponent implements OnInit {
   totalRecordsOnServer = input<number | undefined>()
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+  
+  @Input()
+  get frozenActionColumn(): boolean {
+    return this.stateService.ActionColumnConfigFrozen()
+  }
+  set frozenActionColumn(value: boolean) {
+    this.stateService.setActionColumnConfig(value, this.actionColumnPosition)
+  }
+  
+  @Input()
+  get actionColumnPosition(): 'left' | 'right' {
+    return this.stateService.ActionColumnConfigPosition()
+  }
+  set actionColumnPosition(value: 'left' | 'right') {
+    this.stateService.setActionColumnConfig(this.frozenActionColumn, value)
+  }
+  
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
@@ -491,7 +506,7 @@ export class DataViewComponent implements OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-     if (this.selectionChangedObserved) {
+    if (this.selectionChangedObserved) {
       this.selectionChanged.emit(event)
     }
   }

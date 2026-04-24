@@ -617,7 +617,7 @@ export class InteractiveDataViewComponent implements OnInit {
       this.stateService.layout()
       untracked(() => {
         const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
-        if (columnGroupComponentDefined) {
+        if (columnGroupComponentDefined && this.layout) {
           if (
             !(
               this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||

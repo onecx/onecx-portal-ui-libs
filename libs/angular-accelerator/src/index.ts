@@ -42,6 +42,7 @@ export * from './lib/components/error-component/global-error.component'
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
+export * from './lib/services/interactive-data-view.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'

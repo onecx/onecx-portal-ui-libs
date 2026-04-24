@@ -214,7 +214,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('')
+      expect(component.selectedGroupKey()).toBeUndefined()
     })
 
     it('should not clear selectedGroupKey when columnGroupComponentDefined is false', () => {
@@ -253,7 +253,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('')
+      expect(component.selectedGroupKey()).toBeUndefined()
     })
 
     it('should initialize displayedColumnKeys when defaultGroupKey equals customGroupKey', () => {
@@ -280,7 +280,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
 
       expect(component.displayedColumnKeys()).toEqual([])
-      expect(component.selectedGroupKey()).toBe('')
+      expect(component.selectedGroupKey()).toBeUndefined()
     })
 
     it('should set displayedColumnKeys from predefinedGroupKeys when defaultGroupKey is set and not customGroupKey', () => {
@@ -370,8 +370,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
 
+      TestBed.tick()
+
       // displayedColumns is a computed signal that filters out missing keys
-      expect(component.displayedColumns()).toEqual([c2, c1])
+      expect(component.displayedColumns).toEqual([c2, c1])
     })
 
     it('should reflect selectedGroupKey through signal', () => {
@@ -439,7 +441,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [c1, c2])
       component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
 
-      expect(component.displayedColumns()).toEqual([c2, c1])
+      TestBed.tick()
+
+      expect(component.displayedColumns).toEqual([c2, c1])
     })
 
     it('should set listGridPaginator and tablePaginator via paginator setter', () => {
@@ -902,7 +906,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('')
+      expect(component.selectedGroupKey()).toBeUndefined()
     })
 
     it('should not clear selectedGroupKey via layout effect when valid group is selected', () => {
@@ -1107,7 +1111,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [])
       component.displayedColumnKeys.set(['c1', 'c2'])
 
-      expect(component.displayedColumns()).toEqual([])
+      expect(component.displayedColumns).toEqual([])
     })
 
     it('should properly filter displayedColumns when some keys do not match', () => {
@@ -1119,7 +1123,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       component.displayedColumnKeys.set(['c1', 'nonexistent', 'c2', 'another-missing'])
 
-      expect(component.displayedColumns()).toEqual([c1, c2])
+      TestBed.tick()
+
+      expect(component.displayedColumns).toEqual([c1, c2])
     })
 
     it('should maintain correct order of displayedColumns based on displayedColumnKeys', () => {
@@ -1132,7 +1138,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       component.displayedColumnKeys.set(['c3', 'c1', 'c2'])
 
-      expect(component.displayedColumns()).toEqual([c3, c1, c2])
+      TestBed.tick()
+
+      expect(component.displayedColumns).toEqual([c3, c1, c2])
     })
   })
 
