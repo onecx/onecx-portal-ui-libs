@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input, output } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, OnInit, output } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
@@ -14,14 +14,14 @@ export interface ColumnGroupSelectionComponentState {
   selector: 'ocx-column-group-selection',
   styleUrls: ['./column-group-selection.component.scss'],
 })
-export class ColumnGroupSelectionComponent {
+export class ColumnGroupSelectionComponent implements OnInit {
   private readonly stateService = inject(InteractiveDataViewService)
 
   @Input()
-  get selectedGroupKey(): string {
+  get selectedGroupKey(): string | undefined {
     return this.stateService.activeColumnGroupKey()
   }
-  set selectedGroupKey(value: string) {
+  set selectedGroupKey(value: string | undefined) {
     this.stateService.setActiveColumnGroupKey(value)
   }
 
@@ -31,6 +31,7 @@ export class ColumnGroupSelectionComponent {
   readonly customGroupKey = input<string>('')
 
   readonly groupSelectionChanged = output<GroupSelectionChangedEvent>()
+  readonly componentStateChanged = output<ColumnGroupSelectionComponentState>()
 
   readonly allGroupKeys = computed<string[]>(() => {
     const columns = this.columns()
@@ -40,10 +41,41 @@ export class ColumnGroupSelectionComponent {
     return columns
       .flatMap((c) => c.predefinedGroupKeys || [])
       .concat([defaultGroupKey])
-      .concat([selectedGroupKey])
+      .concat(selectedGroupKey ? [selectedGroupKey] : [])
       .filter((value) => !!value)
       .filter((value, index, self) => self.indexOf(value) === index && value != null)
   })
+
+  constructor() {
+    effect(() => {
+      const selected = this.selectedGroupKey
+      const custom = this.customGroupKey()
+
+      if (selected === custom) {
+        this.componentStateChanged.emit({
+          activeColumnGroupKey: selected,
+        })
+      }
+    })
+  }
+
+  ngOnInit() {
+    const selected = this.selectedGroupKey
+
+    if (selected === this.customGroupKey()) {
+      this.componentStateChanged.emit({
+        activeColumnGroupKey: selected,
+      })
+      return
+    }
+
+    const activeColumns = this.columns().filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
+    
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: selected,
+      displayedColumns: activeColumns,
+    })
+  }
 
   changeGroupSelection(event: { value: string }) {
     if (event.value === this.customGroupKey()) {
@@ -55,6 +87,10 @@ export class ColumnGroupSelectionComponent {
     const activeColumns = this.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
 
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
+    this.componentStateChanged.emit({
+      activeColumnGroupKey: event.value,
+      displayedColumns: activeColumns,
+    })
 
     this.stateService.setDisplayedColumns(activeColumns)
   }

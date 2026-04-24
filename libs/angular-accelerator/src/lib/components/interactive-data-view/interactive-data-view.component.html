@@ -23,7 +23,7 @@
     } @if (layout !== 'table') {
     <div class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
-        [columns]="displayedColumns()"
+        [columns]="resolvedDisplayedColumns()"
         [sortStates]="sortStates()"
       ></ocx-data-list-grid-sorting>
     </div>
@@ -64,7 +64,7 @@
 <div class="p-3" [ngClass]="contentStyleClass()" id="interactiveDataViewContent">
   <ocx-data-view
     [layout]="layout"
-    [columns]="displayedColumns()"
+    [columns]="resolvedDisplayedColumns()"
     [sortStates]="sortStates()"
     [data]="data()"
     [titleLineId]="titleLineId()"

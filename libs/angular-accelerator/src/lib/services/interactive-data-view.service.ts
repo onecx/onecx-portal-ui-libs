@@ -23,7 +23,7 @@ export interface InteractiveDataView {
 @Injectable()
 export class InteractiveDataViewService {
   layout = signal<ViewLayout>('table')
-  activeColumnGroupKey = signal<string>('')
+  activeColumnGroupKey = signal<string | undefined>(undefined)
   displayedColumns = signal<DataTableColumn[]>([])
   ActionColumnConfigFrozen = signal<boolean>(false)
   ActionColumnConfigPosition = signal<'left' | 'right'>('right')
@@ -37,19 +37,11 @@ export class InteractiveDataViewService {
   listGridPaginator = signal<boolean>(true)
   tablePaginator = signal<boolean>(true)
 
-  setFilters(filters: Filter[]) {
-    this.filters.set(filters)
+   setLayout(layout: ViewLayout) {
+    this.layout.set(layout)
   }
 
-  setPageSize(size: number) {
-    this.pageSize.set(size)
-  }
-
-  setActivePage(page: number) {
-    this.activePage.set(page)
-  }
-
-  setActiveColumnGroupKey(columnGroupKey: string) {
+  setActiveColumnGroupKey(columnGroupKey: string | undefined) {
     this.activeColumnGroupKey.set(columnGroupKey)
   }
 
@@ -62,24 +54,16 @@ export class InteractiveDataViewService {
     this.ActionColumnConfigPosition.set(position)
   }
 
-  setLayout(layout: ViewLayout) {
-    this.layout.set(layout)
+  setSortColumn(sortColumn: string) {
+    this.sortColumn.set(sortColumn)
   }
 
   setSortDirection(sortDirection: DataSortDirection) {
     this.sortDirection.set(sortDirection)
   }
 
-  setSortColumn(sortColumn: string) {
-    this.sortColumn.set(sortColumn)
-  }
-
-  setListGridPaginator(enabled: boolean): void {
-    this.listGridPaginator.set(enabled)
-  }
-
-  setTablePaginator(enabled: boolean): void {
-    this.tablePaginator.set(enabled)
+  setFilters(filters: Filter[]) {
+    this.filters.set(filters)
   }
 
   setSelectedRows(rows: Row[]): void {
@@ -88,5 +72,21 @@ export class InteractiveDataViewService {
 
   setExpandedRows(rows: InteractiveExpandedRows): void {
     this.expandedRows.set(rows)
+  }
+  
+  setActivePage(page: number) {
+    this.activePage.set(page)
+  }
+
+  setPageSize(size: number) {
+    this.pageSize.set(size)
+  }
+
+  setListGridPaginator(enabled: boolean): void {
+    this.listGridPaginator.set(enabled)
+  }
+
+  setTablePaginator(enabled: boolean): void {
+    this.tablePaginator.set(enabled)
   }
 }

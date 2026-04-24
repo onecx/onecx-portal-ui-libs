@@ -169,9 +169,9 @@
             @if (column.sortable) {
             <button
               class="pi sortButton pl-0"
-              [class.pi-sort-alt]="(column?.id === sortColumn() && sortDirection === 'NONE') || column?.id !== sortColumn()"
-              [class.pi-sort-amount-up]="column?.id === sortColumn() && sortDirection === 'ASCENDING'"
-              [class.pi-sort-amount-down]="column?.id === sortColumn() && sortDirection === 'DESCENDING'"
+              [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
+              [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
+              [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
               (click)="onSortColumnClick(column.id)"
               [ocxTooltip]="sortIconTitle(column.id) | translate"
               tooltipPosition="bottom"

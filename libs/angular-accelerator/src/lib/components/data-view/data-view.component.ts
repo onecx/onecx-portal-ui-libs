@@ -28,7 +28,7 @@ import {
   DataListGridComponentState,
   ListGridData,
 } from '../data-list-grid/data-list-grid.component'
-import { DataTableComponent, DataTableComponentState, Row } from '../data-table/data-table.component'
+import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
 
@@ -168,7 +168,7 @@ export class DataViewComponent implements OnInit {
   }
 
   @Input()
-  get pageSize(): number {
+  get pageSize(): number | undefined {
     return this.stateService.pageSize()
   }
   set pageSize(value: number) {
@@ -308,20 +308,17 @@ export class DataViewComponent implements OnInit {
 
   additionalActions = input<DataAction[]>([])
 
+  filtered = output<Filter[]>()
+  sorted = output<Sort>()
   @Output() deleteItem = observableOutput<RowListGridData>()
   @Output() viewItem = observableOutput<RowListGridData>()
   @Output() editItem = observableOutput<RowListGridData>()
   @Output() selectionChanged = observableOutput<Row[]>()
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+  componentStateChanged = output<DataViewComponentState>()
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
-
-  filtersChange = output<Filter[]>()
-  sortFieldChange = output<string>()
-  sortDirectionChange = output<DataSortDirection>()
-  pageChange = output<number>()
-  pageSizeChange = output<number>()
-  selectedRowsChange = output<Row[]>()
-  expandedRowsChange = output<InteractiveExpandedRows>()
 
   firstColumnId = signal<string | undefined>(undefined)
 
@@ -362,20 +359,42 @@ export class DataViewComponent implements OnInit {
     })
 
     effect(() => {
-      const selectedRows = this.selectedRows
-      if (selectedRows && this.selectionChangedObserved) {
-        this.selectionChanged.emit(selectedRows)
+      if (this.filters) {
+        this.filtered.emit(this.filters)
       }
-      this.selectedRowsChange.emit(selectedRows)
     })
 
     effect(() => {
-      const expandedRows = this.expandedRows
-      this.expandedRowsChange.emit(expandedRows)
+      const sortField = this.sortField
+      const sortDirection = this.sortDirection
+      if (sortField && sortDirection) {
+        this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection })
+      }
     })
 
     effect(() => {
-      this.stateService.setActionColumnConfig(this.frozenActionColumn(), this.actionColumnPosition())
+      if (this.page !== undefined) {
+        this.pageChanged.emit(this.page)
+      }
+    })
+
+    effect(() => {
+      if (this.pageSize !== undefined) {
+        this.pageSizeChanged.emit(this.pageSize)
+      }
+    })
+
+    effect(() => {
+      this.componentStateChanged.emit({
+        filters: this.filters,
+        sorting: {
+          sortColumn: this.sortField,
+          sortDirection: this.sortDirection,
+        },
+        selectedRows: this.selectedRows,
+        activePage: this.page,
+        pageSize: this.pageSize,
+      })
     })
   }
 
@@ -447,14 +466,11 @@ export class DataViewComponent implements OnInit {
 
   filtering(event: any) {
     this.filters = event.filters
-    this.filtersChange.emit(this.filters)
   }
 
   sorting(event: any) {
     this.sortDirection = event.sortDirection
     this.sortField = event.sortColumn
-    this.sortDirectionChange.emit(this.sortDirection)
-    this.sortFieldChange.emit(this.sortField)
   }
 
   deletingElement(event: any) {
@@ -475,16 +491,16 @@ export class DataViewComponent implements OnInit {
   }
 
   onRowSelectionChange(event: Row[]) {
-    this.selectedRows = event
+     if (this.selectionChangedObserved) {
+      this.selectionChanged.emit(event)
+    }
   }
 
   onPageChange(event: number) {
     this.page = event
-    this.pageChange.emit(this.page)
   }
 
   onPageSizeChange(event: number) {
     this.pageSize = event
-    this.pageSizeChange.emit(this.pageSize)
   }
 }

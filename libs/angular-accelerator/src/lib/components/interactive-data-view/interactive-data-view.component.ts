@@ -33,6 +33,7 @@ import {
   GroupSelectionChangedEvent,
 } from '../column-group-selection/column-group-selection.component'
 import {
+  ActionColumnChangedEvent,
   ColumnSelectionChangedEvent,
   CustomGroupColumnSelectorComponentState,
 } from '../custom-group-column-selector/custom-group-column-selector.component'
@@ -207,8 +208,17 @@ export class InteractiveDataViewComponent implements OnInit {
     this.stateService.setSelectedRows(value)
   }
 
+  @Input()
+  get displayedColumns(): DataTableColumn[] {
+    return this.stateService.displayedColumns()
+  }
+  set displayedColumns(value: DataTableColumn[]) {
+    this.stateService.setDisplayedColumns(value)
+    this.displayedColumnKeys.set(value.map((column) => column.id))
+  }
+
   displayedColumnKeys = model<string[]>([])
-  displayedColumns = computed(() => {
+  resolvedDisplayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return (
       (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]) ??
@@ -508,23 +518,23 @@ export class InteractiveDataViewComponent implements OnInit {
 
   templates = contentChildren<PrimeTemplate>(PrimeTemplate)
 
+  filtered = output<Filter[]>()
+  sorted = output<Sort>()
   @Output() deleteItem = observableOutput<RowListGridData>()
   @Output() viewItem = observableOutput<RowListGridData>()
   @Output() editItem = observableOutput<RowListGridData>()
   @Output() selectionChanged = observableOutput<Row[]>()
+  dataViewLayoutChange = output<'grid' | 'list' | 'table'>()
+  displayedColumnKeysChange = output<string[]>()
+
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
-  layoutChange = output<ViewLayout>()
-  filtersChange = output<Filter[]>()
-  sortChange = output<Sort>()
-  pageChange = output<number>()
-  pageSizeChange = output<number>()
-  selectedRowsChange = output<Row[]>()
-  paginatorChange = output<boolean>()
-  listGridPaginatorChange = output<boolean>()
-  tablePaginatorChange = output<boolean>()
-  expandedRowsChange = output<InteractiveExpandedRows>()
+  componentStateChanged = output<InteractiveDataViewComponentState>()
+  displayedColumnsChange = output<DataTableColumn[]>()
 
   readonly selectedGroupKey = this.stateService.activeColumnGroupKey
 
@@ -556,76 +566,68 @@ export class InteractiveDataViewComponent implements OnInit {
     })
 
     effect(() => {
-      const currentLayout = this.layout
-      untracked(() => {
-        const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
-        const selectedGroupKey = this.selectedGroupKey()
-        if (columnGroupComponentDefined && currentLayout) {
-          if (
-            !(
-              this.columns().some((c) => c.predefinedGroupKeys?.includes(selectedGroupKey)) ||
-              selectedGroupKey === this.customGroupKey()
-            )
-          ) {
-            this.selectedGroupKey.set('')
-          }
-        }
+      this.filtered.emit(this.filters)
+    })
+
+    effect(() => {
+      this.sorted.emit({ sortColumn: this.sortField, sortDirection: this.sortDirection })
+    })
+
+    effect(() => {
+      this.dataViewLayoutChange.emit(this.layout)
+    })
+
+    effect(() => {
+      this.pageChanged.emit(this.page)
+    })
+
+    effect(() => {
+      this.pageSizeChanged.emit(this.pageSize)
+    })
+
+    effect(() => {
+      this.displayedColumnKeysChange.emit(this.displayedColumnKeys())
+
+      const displayedColumns = this.resolvedDisplayedColumns()
+      this.stateService.setDisplayedColumns(displayedColumns)
+      this.displayedColumnsChange.emit(displayedColumns)
+    })
+
+    effect(() => {
+      this.componentStateChanged.emit({
+        activeColumnGroupKey: this.selectedGroupKey(),
+        displayedColumns: this.resolvedDisplayedColumns(),
+        actionColumnConfig: {
+          frozen: this.frozenActionColumn(),
+          position: this.actionColumnPosition(),
+        },
+        layout: this.layout,
+        sorting: {
+          sortColumn: this.sortField,
+          sortDirection: this.sortDirection,
+        },
+        filters: this.filters,
+        activePage: this.page,
+        pageSize: this.pageSize,
+        selectedRows: this.selectedRows,
       })
     })
 
     effect(() => {
-      this.stateService.setDisplayedColumns(this.displayedColumns())
-    })
-
-    effect(() => {
-      const filters = this.filters
-      this.filtersChange.emit(filters)
-    })
-    
-    effect(() => {
-      const sortField = this.sortField
-      const sortDirection = this.sortDirection
-      this.sortChange.emit({ sortColumn: sortField, sortDirection })
-    })
-
-    effect(() => {
-      const layout = this.layout
-      this.layoutChange.emit(layout)
-    })
-
-    effect(() => {
-      const page = this.page
-      this.pageChange.emit(page)
-    })
-
-    effect(() => {
-      const pageSize = this.pageSize
-      this.pageSizeChange.emit(pageSize)
-    })
-
-    effect(() => {
-      const selectedRows = this.selectedRows
-      this.selectedRowsChange.emit(selectedRows)
-    })
-
-    effect(() => {
-      const paginator = this.paginator
-      this.paginatorChange.emit(paginator)
-    })
-
-    effect(() => {
-      const listGridPaginator = this.listGridPaginator
-      this.listGridPaginatorChange.emit(listGridPaginator)
-    })
-
-    effect(() => {
-      const tablePaginator = this.tablePaginator
-      this.tablePaginatorChange.emit(tablePaginator)
-    })
-
-    effect(() => {
-      const expandedRows = this.expandedRows
-      this.expandedRowsChange.emit(expandedRows)
+      this.stateService.layout()
+      untracked(() => {
+        const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
+        if (columnGroupComponentDefined) {
+          if (
+            !(
+              this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||
+              this.selectedGroupKey() === this.customGroupKey()
+            )
+          ) {
+            this.selectedGroupKey.set(undefined)
+          }
+        }
+      })
     })
   }
 
@@ -638,8 +640,8 @@ export class InteractiveDataViewComponent implements OnInit {
    */
   triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
     event ??= {
-      activeColumns: this.displayedColumns(),
-      groupKey: this.selectedGroupKey() || this.defaultGroupKey(),
+      activeColumns: this.resolvedDisplayedColumns(),
+      groupKey: this.selectedGroupKey() ?? this.defaultGroupKey(),
     }
     const displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.displayedColumnKeys.set(displayedColumnKeys)
@@ -691,11 +693,11 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onSortChange($event: any) {
-    this.stateService.sortColumn.set($event)
+    this.stateService.setSortColumn($event)
   }
 
   onSortDirectionChange($event: any) {
-    this.stateService.sortDirection.set($event)
+    this.stateService.setSortDirection($event)
   }
 
   onColumnGroupSelectionChange(event: GroupSelectionChangedEvent) {
@@ -739,6 +741,11 @@ export class InteractiveDataViewComponent implements OnInit {
     const displayedColumnKeys = event.activeColumns.map((col) => col.id)
     this.displayedColumnKeys.set(displayedColumnKeys)
     this.selectedGroupKey.set(this.customGroupKey())
+  }
+
+  onActionColumnConfigChange(event: ActionColumnChangedEvent) {
+    this.frozenActionColumn.set(event.frozenActionColumn)
+    this.actionColumnPosition.set(event.actionColumnPosition)
   }
 
   onRowSelectionChange(event: Row[]) {

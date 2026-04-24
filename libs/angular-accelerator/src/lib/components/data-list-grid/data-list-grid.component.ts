@@ -273,8 +273,9 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   @Output() editItem = observableOutput<ListGridData | undefined>()
   @Output() deleteItem = observableOutput<ListGridData | undefined>()
 
-  pageChange = output<number>()
-  pageSizeChange = output<number>()
+  pageChanged = output<number>()
+  pageSizeChanged = output<number>()
+  componentStateChanged = output<DataListGridComponentState>()
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -517,13 +518,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     )
 
     effect(() => {
-      const page = this.page
-      this.pageChange.emit(page)
+      this.emitComponentStateChanged()
+    })
+
+    effect(() => {
+      this.pageChanged.emit(this.page)
     })
 
     effect(() => {
       const pageSize = this.pageSize
-      this.pageSizeChange.emit(pageSize)
+      if (pageSize === undefined) {
+        return
+      }
+      this.pageSizeChanged.emit(pageSize)
     })
   }
 
@@ -559,6 +566,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   resolveFieldData(object: any, key: any) {
     return ObjectUtils.resolveFieldData(object, key)
+  }
+
+  emitComponentStateChanged() {
+    this.componentStateChanged.emit({
+      pageSize: this.displayedPageSize(),
+      activePage: this.page,
+    })
   }
 
   onPageChange(event: any) {

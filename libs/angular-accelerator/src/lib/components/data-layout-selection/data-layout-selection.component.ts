@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input, output } from '@angular/core'
+import { Component, computed, inject, Input, input, OnInit, output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
@@ -47,7 +47,7 @@ export interface DataLayoutSelectionComponentState {
   templateUrl: './data-layout-selection.component.html',
   styleUrls: ['./data-layout-selection.component.scss'],
 })
-export class DataLayoutSelectionComponent {
+export class DataLayoutSelectionComponent implements OnInit {
   private readonly storeService = inject(InteractiveDataViewService)
   supportedViewLayouts = input<Array<string>>([])
 
@@ -59,14 +59,22 @@ export class DataLayoutSelectionComponent {
     this.storeService.setLayout(value)
   }
 
-  layoutChange = output<ViewLayout>()
+  readonly dataViewLayoutChange = output<ViewLayout>()
+  readonly componentStateChanged = output<DataLayoutSelectionComponentState>()
 
   viewingLayouts = computed(() => ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts().includes(vl.layout)))
 
   readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.layout))
 
+  ngOnInit(): void {
+    this.componentStateChanged.emit({
+      layout: this.layout,
+    })
+  }
+
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: ViewLayout }): void {
     this.layout = event.layout
-    this.layoutChange.emit(event.layout)
+    this.dataViewLayoutChange.emit(event.layout)
+    this.componentStateChanged.emit({ layout: event.layout })
   }
 }
