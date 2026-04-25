@@ -2,3 +2,5 @@
 .docusaurus/
 **/CHANGELOG.md
 .angular
+
+.nx/self-healing
