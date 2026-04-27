@@ -17,6 +17,7 @@ import {
   input,
   model,
   output,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core'
@@ -536,7 +537,7 @@ export class InteractiveDataViewComponent implements OnInit {
   componentStateChanged = output<InteractiveDataViewComponentState>()
   displayedColumnsChange = output<DataTableColumn[]>()
 
-  readonly selectedGroupKey = this.stateService.activeColumnGroupKey
+  selectedGroupKey = signal<string | undefined>(undefined)
 
   data = input<RowListGridData[]>([])
 

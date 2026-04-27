@@ -143,7 +143,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   columns = model<DataTableColumn[]>([])
   clientSideFiltering = input(true)
   clientSideSorting = input(true)
-  sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
+  sortStates = model<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   pageSizes = model<number[]>([10, 25, 50])
   displayedPageSize = computed(() => {
@@ -671,8 +671,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   onRowExpand(event: any) {
     if (!this.expandedRowIds().includes(event.data.id)) {
-      const expandedRows = this.expandedRows
-      this.stateService.setExpandedRows([...(expandedRows ?? []), event.data] as Row[])
+      this.stateService.setExpandedRows([...(this.expandedRows ?? []), event.data] as Row[])
     }
     this.rowExpanded.emit(event.data)
   }

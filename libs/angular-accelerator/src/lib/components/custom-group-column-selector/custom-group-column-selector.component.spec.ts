@@ -55,7 +55,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c2 = makeColumn('c2')
       const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
 
-      component.displayedColumns = [c1]
+      stateService.setDisplayedColumns([c1])
       component.displayedColumnsModel.set([c1, c2])
 
       component.onSaveClick()

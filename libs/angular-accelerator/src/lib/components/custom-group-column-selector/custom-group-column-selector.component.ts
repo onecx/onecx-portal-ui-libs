@@ -71,7 +71,6 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly inactiveColumnsLabel = input<string>('')
   readonly inactiveColumnsLabelKey = input<string>('')
 
-  readonly displayedColumnsChange = output<DataTableColumn[]>()
   readonly columnSelectionChanged = output<ColumnSelectionChangedEvent>()
   readonly actionColumnConfigChanged = output<ActionColumnChangedEvent>()
   readonly componentStateChanged = output<CustomGroupColumnSelectorComponentState>()
@@ -148,10 +147,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       this.componentStateChanged.emit({
         displayedColumns: [...this.displayedColumnsModel()],
       })
-
-      const newColumns = [...this.displayedColumnsModel()]
-      this.displayedColumns = newColumns
-      this.displayedColumnsChange.emit(newColumns)
+      this.storeService.setDisplayedColumns([...this.displayedColumnsModel()])
     }
 
     if (
