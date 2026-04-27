@@ -1,59 +1,61 @@
-import axios, {
-  AxiosError,
-  AxiosHeaders,
-  AxiosInstance,
-  type InternalAxiosRequestConfig,
-} from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
+import { authServiceProxy, MISSING_PROXY_ERROR } from './auth-proxy-service'
 
-const WHITELIST = ['assets'];
+/** List of URL path segments that bypass auth headers. */
+const WHITELIST = ['/assets/']
+
+/**
+ * Axios instance extended with token metadata.
+ */
 export interface AuthenticatedAxiosInstance extends AxiosInstance {
-  tokens: { [key: string]: boolean | string };
+  tokens: { [key: string]: boolean | string }
 }
 /**
- * This is the axios instance for client-side requests only to BFF
+ * Create an axios instance for client-side requests to the BFF.
+ * @param baseURL - optional base URL for the axios instance.
+ * @returns authenticated axios instance with interceptors.
  */
-export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (
-  baseURL
-) => {
-  let ai = baseURL
-    ? axios.create({ baseURL })
-    : axios.create();
+export const axiosFactory: (baseURL?: string) => AuthenticatedAxiosInstance = (baseURL) => {
+  const ai = baseURL ? axios.create({ baseURL }) : axios.create()
 
   const aai: AuthenticatedAxiosInstance = Object.assign(ai, {
     tokens: { sessionExpired: false },
-  });
+  })
 
   aai.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
       if (WHITELIST.some((str) => config.url?.includes(str))) {
-        return config;
+        return config
       }
 
-      if (window.onecxAngularAuth?.authServiceProxy?.v1?.updateTokenIfNeeded) {
-        await window.onecxAngularAuth.authServiceProxy.v1.updateTokenIfNeeded();
+      try {
+        await authServiceProxy.updateTokenIfNeeded()
+      } catch (error) {
+        if ((error as Error).message !== MISSING_PROXY_ERROR) {
+          throw error
+        }
       }
 
-      const headerValues =
-        window.onecxAngularAuth?.authServiceProxy?.v1?.getHeaderValues();
+      const headerValues = authServiceProxy.getHeaderValues()
 
       if (headerValues) {
         if (!config.headers) {
-          config.headers = new AxiosHeaders();
+          config.headers = new AxiosHeaders()
         }
 
         Object.entries(headerValues).forEach(([key, value]) => {
           if (value) {
-            config.headers.set(key, value);
+            config.headers.set(key, value)
           }
-        });
+        })
       }
 
-      return config;
+      return config
     },
     (error: AxiosError) => {
-      return Promise.reject(error);
+      return Promise.reject(error)
     }
-  );
+  )
 
-  return aai;
-};
+  return aai
+}
