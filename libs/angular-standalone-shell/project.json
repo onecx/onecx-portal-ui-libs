@@ -6,16 +6,11 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "build-migrations": {
-      "dependsOn": ["build"],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["tsc -p libs/angular-standalone-shell/migrations/tsconfig.migrations.json"]
-      }
-    },
     "build": {
       "executor": "@nx/angular:package",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/dist/{projectRoot}"
+      ],
       "options": {
         "project": "libs/angular-standalone-shell/ng-package.json"
       },
@@ -31,7 +26,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "libs/angular-standalone-shell/jest.config.ts",
         "passWithNoTests": true
@@ -45,7 +42,9 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
         "lintFilePatterns": [
           "libs/angular-standalone-shell/**/*.ts",
@@ -57,7 +56,7 @@
     "release": {
       "executor": "@onecx/release:update-build-publish",
       "options": {
-        "buildTarget": "build-migrations"
+        "buildTarget": "build"
       }
     }
   }

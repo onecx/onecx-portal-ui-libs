@@ -4,17 +4,6 @@
   "sourceRoot": "libs/accelerator/src",
   "projectType": "library",
   "targets": {
-    "build-migrations": {
-      "dependsOn": [
-        "build"
-      ],
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "tsc -p libs/accelerator/migrations/tsconfig.migrations.json"
-        ]
-      }
-    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": [
@@ -25,12 +14,7 @@
         "main": "libs/accelerator/src/index.ts",
         "tsConfig": "libs/accelerator/tsconfig.lib.json",
         "assets": [
-          "libs/accelerator/*.md",
-          {
-            "input": "./libs/accelerator",
-            "glob": "migrations.json",
-            "output": "."
-          }
+          "libs/accelerator/*.md"
         ]
       }
     },
@@ -65,7 +49,7 @@
     "release": {
       "executor": "@onecx/release:update-build-publish",
       "options": {
-        "buildTarget": "build-migrations"
+        "buildTarget": "build"
       }
     }
   },
