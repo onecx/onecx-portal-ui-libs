@@ -362,6 +362,72 @@ describe('DataViewComponent', () => {
 
       expect(setExpandedRowsSpy).toHaveBeenCalledWith(expandedRows)
     })
+
+    it('should delegate selectedRows setter to state service', () => {
+      const setSelectedRowsSpy = jest.spyOn(stateService, 'setSelectedRows')
+      const selectedRows = [{ id: 'row-1' } as any, { id: 'row-2' } as any]
+
+      component.selectedRows = selectedRows
+
+      expect(setSelectedRowsSpy).toHaveBeenCalledWith(selectedRows)
+    })
+
+    it('should return expandedRows from state service getter', () => {
+      const expandedRows = ['row-1', 'row-2']
+      stateService.setExpandedRows(expandedRows)
+
+      expect(component.expandedRows).toEqual(expandedRows)
+    })
+  })
+
+  describe('effects emitting outputs', () => {
+    it('should emit filtered output when filters change', (done) => {
+      const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
+
+      component.filtered.subscribe((emittedFilters) => {
+        expect(emittedFilters).toEqual(testFilters)
+        done()
+      })
+
+      component.filters = testFilters
+      fixture.detectChanges()
+    })
+
+    it('should emit sorted output when both sortField and sortDirection are set', (done) => {
+      let emitCount = 0
+      component.sorted.subscribe((emittedSort) => {
+        emitCount++
+        if (emitCount === 1) {
+          expect(emittedSort).toEqual({
+            sortColumn: 'name',
+            sortDirection: DataSortDirection.ASCENDING,
+          })
+          done()
+        }
+      })
+
+      component.sortField = 'name'
+      component.sortDirection = DataSortDirection.ASCENDING
+      fixture.detectChanges()
+    })
+
+    it('should not emit pageChanged output when page is undefined', () => {
+      const emitSpy = jest.spyOn(component.pageChanged, 'emit')
+
+      component.page = undefined as any
+      fixture.detectChanges()
+
+      expect(emitSpy).not.toHaveBeenCalled()
+    })
+
+    it('should not emit pageSizeChanged output when pageSize is undefined', () => {
+      const emitSpy = jest.spyOn(component.pageSizeChanged, 'emit')
+
+      component.pageSize = undefined as any
+      fixture.detectChanges()
+
+      expect(emitSpy).not.toHaveBeenCalled()
+    })
   })
 
   describe('Table row selection ', () => {

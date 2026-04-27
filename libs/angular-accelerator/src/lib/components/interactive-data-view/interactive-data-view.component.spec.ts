@@ -459,6 +459,21 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.paginator).toBe(true)
     })
 
+    it('should update displayedColumns setter and sync displayedColumnKeys', () => {
+      const { component } = createComponent(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      const columns = [c1, c2]
+
+      const setDisplayedColumnsSpy = jest.spyOn(component['stateService'], 'setDisplayedColumns')
+
+      component.displayedColumns = columns
+
+      expect(setDisplayedColumnsSpy).toHaveBeenCalledWith(columns)
+      expect(component.displayedColumnKeys()).toEqual(['c1', 'c2'])
+    })
+
     it('should have correct default value for groupSelectionNoGroupSelectedKey', () => {
       const { component } = createComponent(true)
 
