@@ -393,6 +393,26 @@ describe('DataViewComponent', () => {
       fixture.detectChanges()
     })
 
+    it('should emit filtered output when filters has items (filters.length > 0)', () => {
+      const emitSpy = jest.spyOn(component.filtered, 'emit')
+      const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
+
+      component.filters = testFilters
+      fixture.detectChanges()
+
+      expect(emitSpy).toHaveBeenCalledWith(testFilters)
+    })
+
+    it('should not emit filtered output when filters is empty array (filters.length === 0)', () => {
+      const emitSpy = jest.spyOn(component.filtered, 'emit')
+      emitSpy.mockClear()
+
+      component.filters = []
+      fixture.detectChanges()
+
+      expect(emitSpy).not.toHaveBeenCalled()
+    })
+
     it('should emit sorted output when both sortField and sortDirection are set', (done) => {
       let emitCount = 0
       component.sorted.subscribe((emittedSort) => {

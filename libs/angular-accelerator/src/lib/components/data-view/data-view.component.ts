@@ -374,7 +374,7 @@ export class DataViewComponent implements OnInit {
     })
 
     effect(() => {
-      if (this.filters) {
+      if (this.filters && this.filters.length > 0) {
         this.filtered.emit(this.filters)
       }
     })
