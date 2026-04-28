@@ -11,7 +11,6 @@ npm install @onecx/shell-auth
 
 ## Additional Commands
 - `npx nx run shell-auth:build` - Builds the library and outputs the result to the `dist` folder.
-- `npx nx run shell-auth:build-migrations` - Builds the migration files for the library.
 - `npx nx run shell-auth:test` - Runs the unit tests for the library.
 - `npx nx run shell-auth:lint` - Lints the library's codebase.
 - `npx nx run shell-auth:release` - Releases a new version of the library to npm, following semantic versioning guidelines.
