@@ -110,11 +110,14 @@ export class AuthServiceWrapper {
     const exposedModule =
       (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth'
     const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
+
+    const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
     registerRemotes([
       {
         type: 'module',
         entry: remoteEntry,
         name: CUSTOM_AUTH_REMOTE_ALIAS,
+        shareScope: customAuthShareScope,
       },
     ])
     const module = await loadRemote<{ default: AuthServiceFactory }>(
