@@ -1,3 +1,20 @@
+## [5.55.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.54.0...v5.55.0) (2026-04-28)
+
+### Features
+
+* add i18n to workspace topic ([#1369](https://github.com/onecx/onecx-portal-ui-libs/issues/1369)) ([d37841d](https://github.com/onecx/onecx-portal-ui-libs/commit/d37841d4764238e7d023fc9b22237d02c7f488d3))
+* bump node version in ci v5 ([#1382](https://github.com/onecx/onecx-portal-ui-libs/issues/1382)) ([7e6c913](https://github.com/onecx/onecx-portal-ui-libs/commit/7e6c9134bdac3c6ee2bee49005ffc8de1708b107))
+
+### Bug Fixes
+
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([39e0b03](https://github.com/onecx/onecx-portal-ui-libs/commit/39e0b03a812e89103854e42a8d886e3e467fa718))
+* floatlabel and placeholder issue fixed ([#1354](https://github.com/onecx/onecx-portal-ui-libs/issues/1354)) ([fd37aaa](https://github.com/onecx/onecx-portal-ui-libs/commit/fd37aaaf6668f669a6a4508baa28a6c2f76f7513))
+* replace window to globalThis in accelerator for node compatibility ([#1313](https://github.com/onecx/onecx-portal-ui-libs/issues/1313)) ([9e25d90](https://github.com/onecx/onecx-portal-ui-libs/commit/9e25d9017eb846fa9151c45ef741429b5dde3c02))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) v5 ([#1349](https://github.com/onecx/onecx-portal-ui-libs/issues/1349)) ([e5d7ec9](https://github.com/onecx/onecx-portal-ui-libs/commit/e5d7ec9f14c656a0fa102b03000cf5b131174108))
+
 ## [5.54.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.53.1...v5.54.0) (2026-04-02)
 
 ### Features
