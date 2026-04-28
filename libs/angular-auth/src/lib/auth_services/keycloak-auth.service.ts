@@ -42,9 +42,7 @@ export class KeycloakAuthService implements AuthService {
     const enableSilentSSOCheck =
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
-    const timeSkewStr = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_TIME_SKEW)
-    const parsedtimeSkew = timeSkewStr === undefined ? Number.NaN : Number.parseInt(timeSkewStr, 10)
-    const timeSkew = Number.isNaN(parsedtimeSkew) ? undefined : parsedtimeSkew
+    const timeSkew = this.getNumberOrUndefined(await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_TIME_SKEW))
 
     try {
       await import('keycloak-js').then(({ default: Keycloak }) => {
@@ -212,9 +210,7 @@ export class KeycloakAuthService implements AuthService {
         return this.keycloak?.login(this.config).then(() => false) ?? Promise.reject('Keycloak not initialized!')
       }
       
-      const minValidityStr = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY)
-      const parsedMinValidity = minValidityStr === undefined ? Number.NaN : Number.parseInt(minValidityStr, 10)
-      const minValidity = Number.isNaN(parsedMinValidity) ? undefined : parsedMinValidity
+      const minValidity = this.getNumberOrUndefined(await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY))
 
       return this.keycloak.updateToken(minValidity)
     })
@@ -234,5 +230,13 @@ export class KeycloakAuthService implements AuthService {
 
   getHeaderValues(): Record<string, string> {
     return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer ${this.getAccessToken()}` }
+  }
+
+  getNumberOrUndefined(value: string | undefined) {
+    if (value === undefined) return undefined
+
+    const parsed = Number.parseInt(value, 10)
+    if (Number.isNaN(parsed)) return undefined
+    return parsed
   }
 }
