@@ -1,12 +1,5 @@
 import { Remote } from '@module-federation/runtime-core/types'
-import { RemoteComponent } from '@onecx/integration-interface'
-
-enum Technologies {
-  Angular = 'Angular',
-  WebComponent = 'WebComponent',
-  WebComponentScript = 'WebComponentScript',
-  WebComponentModule = 'WebComponentModule',
-}
+import { RemoteComponent, Technologies } from '@onecx/integration-interface'
 
 // This type is a subset of the actual BffGeneratedRoute used in onecx-shell-ui, containing only the properties relevant for registering a remote entry.
 type BffGeneratedRoute = {
@@ -22,7 +15,6 @@ type RemoteEntry = BffGeneratedRoute | RemoteComponent
 
 export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> {
   let shareScope = r.shareScope ?? 'default'
-  // TODO: Check if this works for script type (Angular 12 or below)
   return {
     type: getRemoteType(r),
     entry: r.remoteEntryUrl,

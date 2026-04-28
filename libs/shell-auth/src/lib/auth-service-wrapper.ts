@@ -7,7 +7,6 @@ import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import './declarations'
 import { DisabledAuthService } from './auth_services/disabled-auth.service'
-import { getShareScope } from '@onecx/angular-utils'
 
 const CUSTOM_AUTH_REMOTE_ALIAS = 'custom-auth-service'
 
@@ -111,14 +110,11 @@ export class AuthServiceWrapper {
     const exposedModule =
       (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth'
     const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
-    // TODO: Verify that this correctly loads the manifest for shell
-    const shareScope = await getShareScope('mf-manifest.json')
     registerRemotes([
       {
         type: 'module',
         entry: remoteEntry,
         name: CUSTOM_AUTH_REMOTE_ALIAS,
-        shareScope,
       },
     ])
     const module = await loadRemote<{ default: AuthServiceFactory }>(
