@@ -1,3 +1,14 @@
+## [6.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.20.0...v6.21.0) (2026-04-28)
+
+### Features
+
+* add i18n to workspace topic ([#1372](https://github.com/onecx/onecx-portal-ui-libs/issues/1372)) ([7db009c](https://github.com/onecx/onecx-portal-ui-libs/commit/7db009cf9a67781ba16d3f3949bb4f4274f638f3))
+* bump node version in ci v6 ([#1383](https://github.com/onecx/onecx-portal-ui-libs/issues/1383)) ([3ef4358](https://github.com/onecx/onecx-portal-ui-libs/commit/3ef4358c726d71747028c181aeae458e0d903c7f))
+
+### Bug Fixes
+
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([#1373](https://github.com/onecx/onecx-portal-ui-libs/issues/1373)) ([8c32d55](https://github.com/onecx/onecx-portal-ui-libs/commit/8c32d55618a98d4cc1f247cadf8a637ce12fbc8a))
+
 ## [6.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.19.0...v6.20.0) (2026-04-22)
 
 ### Features
