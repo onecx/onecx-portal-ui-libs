@@ -1,0 +1,16 @@
+# @onecx/react-utils
+
+`@onecx/react-utils` includes utility services and helper functions for React applications in the OneCX ecosystem.
+More information about OneCX libraries can be found in the [OneCX documentation](https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/index.html).
+
+## Installation
+
+```bash
+npm install @onecx/react-utils
+```
+
+## Additional Commands
+- `npx nx run react-utils:build` - Builds the library and outputs the result to the `dist` folder.
+- `npx nx run react-utils:test` - Runs the unit tests for the library.
+- `npx nx run react-utils:lint` - Lints the library's codebase.
+- `npx nx run react-utils:release` - Releases a new version of the library to npm, following semantic versioning guidelines.
