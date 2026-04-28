@@ -1,3 +1,22 @@
+## [7.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.5.0...v7.6.0) (2026-04-28)
+
+### Features
+
+* add i18n to workspace topic ([#1371](https://github.com/onecx/onecx-portal-ui-libs/issues/1371)) ([4ab5761](https://github.com/onecx/onecx-portal-ui-libs/commit/4ab5761a5b7e5820716dde7db802eac098c7d09e))
+* added advanced variables theming for v7 ([#1346](https://github.com/onecx/onecx-portal-ui-libs/issues/1346)) ([7de13b8](https://github.com/onecx/onecx-portal-ui-libs/commit/7de13b8086c766024a4f279d9d15dc4fccc49828))
+* bump node version in ci v7 ([#1381](https://github.com/onecx/onecx-portal-ui-libs/issues/1381)) ([b04dce1](https://github.com/onecx/onecx-portal-ui-libs/commit/b04dce1c8198005ffee67ca192811d139caceee0))
+
+### Bug Fixes
+
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([#1374](https://github.com/onecx/onecx-portal-ui-libs/issues/1374)) ([1b746db](https://github.com/onecx/onecx-portal-ui-libs/commit/1b746db301a26a67d6213506a65ef4b17907815d))
+* Few graphics do not have alternative text - v6 ([#1340](https://github.com/onecx/onecx-portal-ui-libs/issues/1340)) ([70fc54d](https://github.com/onecx/onecx-portal-ui-libs/commit/70fc54d763d784875f8ee5cf00c68f04082b2b55))
+* floatlabel and placeholder issue fixed ([#1350](https://github.com/onecx/onecx-portal-ui-libs/issues/1350)) ([bbb6357](https://github.com/onecx/onecx-portal-ui-libs/commit/bbb63575aeb82cbd6aaa0bb63582bf63c4a68ac1))
+* globalThis instead of window in accelerator to be node compatible ([#1310](https://github.com/onecx/onecx-portal-ui-libs/issues/1310)) ([06f6b6e](https://github.com/onecx/onecx-portal-ui-libs/commit/06f6b6e51f9a5bd5f9df820d52a128de1981f953))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) ([#1347](https://github.com/onecx/onecx-portal-ui-libs/issues/1347)) ([9743fd1](https://github.com/onecx/onecx-portal-ui-libs/commit/9743fd14f2331d9224c01ab2205683609c2f233b))
+
 ## [7.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.4.0...v7.5.0) (2026-04-01)
 
 ### Features
