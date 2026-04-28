@@ -59,7 +59,6 @@ const appInitializer = (
       workspaceName: 'Standalone',
       baseUrl: '/',
       portalName: 'Standalone',
-      i18n: {},
       microfrontendRegistrations: [],
       ...(providerConfig?.workspace ?? {}),
     })
