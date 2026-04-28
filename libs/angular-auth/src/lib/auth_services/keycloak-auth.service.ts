@@ -12,7 +12,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 export class KeycloakAuthService implements AuthService {
   private configService = inject(ConfigurationService)
   private keycloak: KeycloakInstance | undefined
-  private updateTokenSemaphore = new Semaphore(1)
+  private readonly updateTokenSemaphore = new Semaphore(1)
 
   config?: Record<string, unknown>
 
@@ -43,7 +43,8 @@ export class KeycloakAuthService implements AuthService {
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
     const timeSkewStr = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_TIME_SKEW)
-    const timeSkew = timeSkewStr != null ? parseInt(timeSkewStr, 10) : undefined
+    const parsedtimeSkew = timeSkewStr === undefined ? Number.NaN : Number.parseInt(timeSkewStr, 10)
+    const timeSkew = Number.isNaN(parsedtimeSkew) ? undefined : parsedtimeSkew
 
     try {
       await import('keycloak-js').then(({ default: Keycloak }) => {
@@ -212,7 +213,8 @@ export class KeycloakAuthService implements AuthService {
       }
       
       const minValidityStr = await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY)
-      const minValidity = minValidityStr != null ? parseInt(minValidityStr, 10) : undefined
+      const parsedMinValidity = minValidityStr === undefined ? Number.NaN : Number.parseInt(minValidityStr, 10)
+      const minValidity = Number.isNaN(parsedMinValidity) ? undefined : parsedMinValidity
 
       return this.keycloak.updateToken(minValidity)
     })
