@@ -14,7 +14,7 @@ type BffGeneratedRoute = {
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
 
 export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> {
-  let shareScope = r.shareScope ?? 'default'
+  const shareScope = r.shareScope ?? 'default'
   return {
     type: getRemoteType(r),
     entry: r.remoteEntryUrl,
