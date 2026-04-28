@@ -48,13 +48,18 @@ export class IconService {
 
   async requestIconAsync(
     name: string,
-    classType: IconClassType = DEFAULT_CLASS_TYPE
+    classType: IconClassType = DEFAULT_CLASS_TYPE,
+    fallbackClass?: string
   ): Promise<string | null> {
     const className = this.requestIcon(name, classType)
 
     const cached = globalThis.onecxIcons?.[name]
-    if (cached === null) return null
-    if (cached) return className
+    if (cached === null) {
+      return fallbackClass ?? null
+    }
+    if (cached) {
+      return className
+    }
 
     await firstValueFrom(
       this.iconTopic.pipe(
@@ -63,8 +68,8 @@ export class IconService {
         filter(v => v !== undefined),
       )
     )
-      
-    return globalThis.onecxIcons?.[name] ? className : null
+
+    return globalThis.onecxIcons?.[name] ? className : fallbackClass ?? null
   }
 
   destroy(): void {
