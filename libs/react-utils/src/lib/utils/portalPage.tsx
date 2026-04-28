@@ -108,7 +108,6 @@ export const PortalPage = ({
   const containerClassName = ['portal-page', className].filter(Boolean).join(' ')
   const unauthorizedTitle = t('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
   const unauthorizedMessage = t('OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE')
-  const missingPermissionMessage = t('OCX_PORTAL_PAGE.MISSING_PERMISSION', { permission })
 
   return (
     <div className={containerClassName} style={containerStyle}>
@@ -118,9 +117,7 @@ export const PortalPage = ({
         ) : (
           <>
             <h3>{unauthorizedTitle}</h3>
-            <p>
-              {unauthorizedMessage} <span>{missingPermissionMessage}</span>
-            </p>
+            <p>{unauthorizedMessage}</p>
           </>
         )}
       </div>
