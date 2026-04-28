@@ -63,4 +63,9 @@ export interface Workspace {
   logoSmallImageUrl?: string,
 
   routes?: Array<Route>
+  i18n?: {
+    [key: string]: {
+      [key: string]: string
+    }
+  }
 }
