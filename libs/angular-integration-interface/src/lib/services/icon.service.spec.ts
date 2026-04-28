@@ -101,6 +101,15 @@ describe('IconService', () => {
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
     })
 
+    it('should return the default class immediately when cached icon exists and type is omitted', async () => {
+      const name = 'mdi:car'
+
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
+      const res = await iconService.requestIconAsync(name)
+
+      expect(res).toBe('onecx-theme-icon-background-before-mdi-car')
+    })
+
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const topic = iconServiceInterface.iconTopic
       const name = 'mdi:star'

@@ -48,10 +48,10 @@ export class IconService {
 
   async requestIconAsync(
     name: string,
-    classType: IconClassType = DEFAULT_CLASS_TYPE,
+    classType?: IconClassType,
     fallbackClass?: string
   ): Promise<string | null> {
-    const className = this.requestIcon(name, classType)
+    const className = this.requestIcon(name, classType = classType ?? DEFAULT_CLASS_TYPE)
 
     const cached = globalThis.onecxIcons?.[name]
     if (cached === null) {
