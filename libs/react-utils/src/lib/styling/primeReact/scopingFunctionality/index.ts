@@ -126,8 +126,6 @@ export function attachPrimeReactScoper({
   }
 
   const observer = new MutationObserver((records) => {
-    console.log('MutationObserver records:', records)
-
     for (const record of records) {
       if (record.type === 'childList') {
         record.addedNodes.forEach((node) => {

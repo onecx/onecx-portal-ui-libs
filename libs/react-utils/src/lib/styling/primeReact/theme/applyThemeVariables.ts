@@ -34,13 +34,11 @@ function mapThemeToCSSVariables(themeProperties: Record<string, any>): Record<st
  * Applies theme variables to the scoped style element for a given style id.
  */
 export default function applyThemeVariables(theme: any, styleId: string) {
-  console.log('Theme varaibles', theme, styleId)
   if (!theme?.properties) {
     return
   }
 
   const cssVariables = mapThemeToCSSVariables(theme.properties)
-  console.log('cssVariables', cssVariables)
 
   const baseStyleId = styleId.replace(/\|([^|]+)-ui$/, '|$1')
   const candidateStyleIds = styleId === baseStyleId ? [styleId] : [styleId, baseStyleId]
@@ -65,11 +63,6 @@ export default function applyThemeVariables(theme: any, styleId: string) {
     `@layer tokens {\n:scope {\n${appendedVariables}\n}\n}\n@layer base {}\n${content}`
 
   for (const scopedElement of scopedElements) {
-    console.log(
-      'applyThemeVariables: matched style tag',
-      scopedElement.dataset.appStyles || scopedElement.dataset.appPrimereactStyle
-    )
-
     let currentContent = scopedElement.textContent || ''
 
     const tokensStart = currentContent.indexOf('@layer tokens')

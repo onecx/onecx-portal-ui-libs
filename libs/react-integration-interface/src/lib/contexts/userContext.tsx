@@ -2,17 +2,12 @@ import { createContext, useContext, useMemo, useEffect, useState, type ReactNode
 import { BehaviorSubject, firstValueFrom, map, Observable, Subscription } from 'rxjs'
 import {
   PermissionsTopic,
-  type UserProfile,
   UserProfileTopic,
   determineBrowserLanguage,
-  resolveLegacyLanguage,
   resolveProfileLanguage,
 } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
-import { createLogger } from '../utils/logger.utils'
-
-const logger = createLogger('UserService')
 
 /**
  * User context value shape.
@@ -123,9 +118,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
         permissionsTopic$.pipe(
           map((permissions) => {
             const result = permissions.includes(permissionKey)
-            if (!result) {
-              logger.debug(`No permission for: ${permissionKey}`)
-            }
             return !!result
           })
         )
@@ -168,15 +160,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
   )
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
-}
-
-/**
- * Determine browser language fallback for legacy profiles.
- * @param profile - user profile payload.
- * @returns resolved legacy language.
- */
-function getOldLangSetting(profile: UserProfile): string {
-  return resolveLegacyLanguage(profile, DEFAULT_LANG, determineBrowserLanguage)
 }
 
 export { UserProvider, useUserService, UserContext }
