@@ -4,7 +4,7 @@ import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/int
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 import { createLogger } from '../utils/logger.utils'
-import { toLoadRemoteEntryOptions } from '../utils/get-load-remote-entry-options.utils'
+import { toLoadRemoteEntryOptions } from '@onecx/angular-utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
@@ -90,11 +90,8 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
       const remoteEntryOptions = await toLoadRemoteEntryOptions(component)
       registerRemotes([remoteEntryOptions])
       const m = await loadRemote<any>(remoteEntryOptions.name + '/' + exposedModule)
-      if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
-        if (component.technology === Technologies.Angular) {
-          return m[exposedModule]
-        }
-        return undefined
+      if (component.technology === Technologies.Angular) {
+        return m[exposedModule]
       }
       return undefined
     } catch (e) {
