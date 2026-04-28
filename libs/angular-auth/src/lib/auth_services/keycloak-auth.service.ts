@@ -142,8 +142,11 @@ export class KeycloakAuthService implements AuthService {
       this.keycloak.onTokenExpired = () => {
         this.updateLocalStorage()
         if (onTokenExpiredEnabled) {
-          console.log('Token expired - proactively refreshing')
-          this.keycloak?.updateToken()
+          // A semaphore is used to prevent executing multiple updateToken calls in parallel.
+          this.updateTokenSemaphore.use(async () => {
+            console.log('Token expired - proactively refreshing')
+            this.keycloak?.updateToken()
+          })
         }
       }
       this.keycloak.onActionUpdate = () => {
@@ -201,6 +204,8 @@ export class KeycloakAuthService implements AuthService {
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
+    // A semaphore is used to prevent executing multiple updateToken calls in parallel.
+    // Allows one request at a time once execution is completed, additional calls will be dismmied by keycloak
     return this.updateTokenSemaphore.use(async () => {
       if (!this.keycloak?.authenticated) {
         return this.keycloak?.login(this.config).then(() => false) ?? Promise.reject('Keycloak not initialized!')
