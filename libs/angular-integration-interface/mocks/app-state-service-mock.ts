@@ -32,7 +32,6 @@ export class AppStateServiceMock {
     microfrontendRegistrations: [],
     portalName: 'Test workspace',
     workspaceName: 'Test workspace',
-    i18n: {},
   })
   currentLocation$ = new FakeTopic<CurrentLocationTopicPayload>({
     url: '/',
