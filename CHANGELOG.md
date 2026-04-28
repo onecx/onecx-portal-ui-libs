@@ -1,3 +1,9 @@
+## [7.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.0...v7.6.1) (2026-04-28)
+
+### Bug Fixes
+
+* improve-keycloak ([#1377](https://github.com/onecx/onecx-portal-ui-libs/issues/1377)) ([d423336](https://github.com/onecx/onecx-portal-ui-libs/commit/d42333674009cbbb9c80320a6b4a7a0eb7673f17))
+
 ## [7.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.5.0...v7.6.0) (2026-04-28)
 
 ### Features
