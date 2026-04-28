@@ -72,6 +72,9 @@ const appInitializer = (
       baseUrl: '/',
       portalName: 'Standalone',
       microfrontendRegistrations: [],
+      i18n: {
+        displayName: { en: 'Standalone', de: 'Standalone' },
+      },
       ...(providerConfig?.workspace ?? {}),
     })
     await apply(themeService, {
