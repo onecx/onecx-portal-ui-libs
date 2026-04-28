@@ -51,7 +51,7 @@ export class IconService {
     classType?: IconClassType,
     fallbackClass?: string
   ): Promise<string | null> {
-    const className = this.requestIcon(name, classType = classType ?? DEFAULT_CLASS_TYPE)
+    const className = this.requestIcon(name, classType)
 
     const cached = globalThis.onecxIcons?.[name]
     if (cached === null) {
