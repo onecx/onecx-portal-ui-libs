@@ -2,6 +2,10 @@
 
 The https://github.com/onecx/onecx-ai-refactoring-agents[OneCX AI Refactoring Agents] repository provides a dedicated migration agent to automate the OneCX Angular migration process.
 
+=== Before You Start
+
+Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the https://onecx.github.io/docs/documentation/current/onecx-docs-dev/ai/mcp_server_setup.html[MCP Server Setup Guide].
+
 === Setup
 
 1. Clone or pull the latest version of the repository:
