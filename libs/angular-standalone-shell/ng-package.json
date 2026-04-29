@@ -4,5 +4,8 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "assets": ["CHANGELOG.md", "./assets/**", "./migrations.json"]
+  "assets": [
+    "CHANGELOG.md",
+    "./assets/**"
+  ]
 }

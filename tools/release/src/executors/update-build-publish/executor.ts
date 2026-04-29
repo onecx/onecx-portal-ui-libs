@@ -1,8 +1,12 @@
-import { exec } from 'child_process'
-import { promisify } from 'util'
+import { exec } from 'node:child_process'
+import { promisify } from 'node:util'
 import npmPublish from '../npm-publish/executor'
-import { ExecutorContext } from '@nx/devkit'
 import { UpdateBuildPublishExecutorOptions } from './schema'
+
+interface ExecutorContextLike {
+  projectName: string
+  projectsConfigurations: { projects: Record<string, { root: string }> }
+}
 
 /**
  * A custom executor that replicates the behavior of `nx-release:build-update-publish` and adds the ability to specify a custom execution target other than `build`.
@@ -13,7 +17,7 @@ import { UpdateBuildPublishExecutorOptions } from './schema'
  */
 export default async function updateBuildPublishExecutor(
   options: UpdateBuildPublishExecutorOptions,
-  context: ExecutorContext
+  context: ExecutorContextLike
 ): Promise<{ success: boolean }> {
   const buildCommand = `nx ${options.buildTarget} --project ${context.projectName}`
 
