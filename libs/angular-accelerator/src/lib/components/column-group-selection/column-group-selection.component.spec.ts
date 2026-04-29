@@ -108,6 +108,29 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
       ])
     })
+
+    it('should filter displayedColumns by input selectedGroupKey when specified', () => {
+      const componentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      
+      fixture.componentRef.setInput('defaultGroupKey', 'def')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+
+      const testColumns = [
+        makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] }),
+        makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
+        makeColumn({ id: 'c3', predefinedGroupKeys: ['g1', 'g2'] }),
+        makeColumn({ id: 'c4', predefinedGroupKeys: undefined }),
+      ]
+      fixture.componentRef.setInput('columns', testColumns)
+      fixture.componentRef.setInput('selectedGroupKey', 'g1')
+      
+      fixture.detectChanges()
+
+      expect(componentStateChangedSpy).toHaveBeenCalledWith({
+        activeColumnGroupKey: 'g1',
+        displayedColumns: [testColumns[0], testColumns[2]],
+      })
+    })
   })
 
   describe('changeGroupSelection', () => {

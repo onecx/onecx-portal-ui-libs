@@ -1980,6 +1980,37 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('Filters', () => {
+    it('should forward filters to DataViewStateService via setter', () => {
+      const filters = [
+        { columnId: 'a', value: '1' },
+        { columnId: 'b', value: '2' },
+      ] as any
+
+      const spy = jest.spyOn(component.stateService, 'setFilters')
+
+      component.filters = filters
+
+      expect(spy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should return filters from DataViewStateService via getter', () => {
+      const filters = [{ columnId: 'x', value: 'y' }] as any
+
+      component.stateService.setFilters(filters)
+
+      expect(component.filters).toBe(filters)
+    })
+  })
+
+  describe('PageSize', () => {
+    it('should return pageSize from DataViewStateService', () => {
+      component.stateService.setPageSize(25)
+
+      expect(component.pageSize).toBe(25)
+    })
+  })
+
   describe('Row expansion', () => {
     const row1 = mockData[0]
     const row2 = mockData[1]

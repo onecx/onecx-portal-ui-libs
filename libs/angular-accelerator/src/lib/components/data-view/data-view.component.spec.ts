@@ -384,6 +384,40 @@ describe('DataViewComponent', () => {
       expect(stateService.expandedRows()).toEqual(expandedRows)
     })
   })
+  
+  describe('Filters', () => {
+    it('should delegate filters setter to DataViewStateService', () => {
+      const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+
+      const filters = [
+        { columnId: 'name', value: 'abc', filterType: 'stringContains' },
+      ] as any
+
+      component.filters = filters
+
+      expect(setFiltersSpy).toHaveBeenCalledWith(filters)
+    })
+  })
+
+  describe('ListGridPaginator', () => {
+    it('should delegate listGridPaginator setter to DataViewStateService', () => {
+      const setListGridPaginatorSpy = jest.spyOn(stateService, 'setListGridPaginator')
+
+      component.listGridPaginator = false
+
+      expect(setListGridPaginatorSpy).toHaveBeenCalledWith(false)
+    })
+  })
+
+  describe('TablePaginator', () => {
+    it('should delegate tablePaginator setter to DataViewStateService', () => {
+      const setTablePaginatorSpy = jest.spyOn(stateService, 'setTablePaginator')
+
+      component.tablePaginator = true
+
+      expect(setTablePaginatorSpy).toHaveBeenCalledWith(true)
+    })
+  })
 
   describe('effects emitting outputs', () => {
     it('should emit filtered output when filters change', (done) => {
