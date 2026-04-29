@@ -1,3 +1,9 @@
+## [6.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.0...v6.21.1) (2026-04-29)
+
+### Bug Fixes
+
+* tooltip position ([#1390](https://github.com/onecx/onecx-portal-ui-libs/issues/1390)) ([7939d71](https://github.com/onecx/onecx-portal-ui-libs/commit/7939d71b71760d517f10abb80b4b246c6e6fbc0b))
+
 ## [6.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.20.0...v6.21.0) (2026-04-28)
 
 ### Features
