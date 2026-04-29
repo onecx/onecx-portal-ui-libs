@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -40,6 +41,7 @@ describe('DataListGridComponent', () => {
   let translateService: TranslateService
   let listGrid: DataListGridHarness
   let router: Router
+  let stateService: DataViewStateService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -249,6 +251,7 @@ describe('DataListGridComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        DataViewStateService,
       ],
     }).compileComponents()
 
@@ -264,6 +267,7 @@ describe('DataListGridComponent', () => {
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     router = TestBed.inject(Router)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create the data list grid component', () => {
@@ -273,6 +277,60 @@ describe('DataListGridComponent', () => {
   it('loads dataListGrid', async () => {
     const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     expect(dataListGrid).toBeTruthy()
+  })
+
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists (in main beforeEach)', () => {
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataListGridComponent],
+        imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+          provideUserServiceMock(),
+          provideAppStateServiceMock(),
+          TooltipStyle,
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataListGridComponent)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
+
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      localFixture.componentInstance.stateService.setActivePage(2)
+      localFixture.componentInstance.stateService.setPageSize(25)
+
+      expect(localService.activePage()).toBe(2)
+      expect(localService.pageSize()).toBe(25)
+    })
+  })
+
+  describe('filters effect', () => {
+    it('should reset active page to 0 when filters changed and previous filters exist', async () => {
+      const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
+
+      stateService.setActivePage(3)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 1' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).not.toHaveBeenCalledWith(0)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 2' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(0)
+      expect(stateService.activePage()).toBe(0)
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {

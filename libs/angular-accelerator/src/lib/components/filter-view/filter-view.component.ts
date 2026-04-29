@@ -2,8 +2,8 @@ import {
   Component,
   computed,
   effect,
+  inject,
   input,
-  model,
   output,
   signal,
   TemplateRef,
@@ -23,6 +23,7 @@ import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { Button } from 'primeng/button'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -48,8 +49,11 @@ export class FilterViewComponent {
   ColumnType = ColumnType
   FilterType = FilterType
 
-  readonly filters = model<Filter[]>([])
-  readonly columns = model<DataTableColumn[]>([])
+  readonly stateService = inject(DataViewStateService)
+
+  filters = input<Filter[]>([])
+  columns = input<DataTableColumn[]>([])
+
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
     limit(filters, 3, { reverse: true })
@@ -157,7 +161,15 @@ export class FilterViewComponent {
   }
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor() {
+  constructor() {    
+    effect(() => {
+      this.stateService.setFilters(this.filters())
+    })
+
+    effect(() => {
+      this.stateService.setDisplayedColumns(this.columns())
+    })
+
     effect(() => {
       const t = this.templates()
 
@@ -177,7 +189,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const cols = this.columns()
+      const cols = this.stateService.displayedColumns()
       const columnFilterTableColumns = this.columnFilterTableColumns()
 
       const chipObs = cols.map((c) =>
@@ -199,7 +211,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const filters = this.filters()
+      const filters = this.stateService.filters()
       this.filtered.emit(filters)
       this.componentStateChanged.emit({ filters })
     })
@@ -232,17 +244,17 @@ export class FilterViewComponent {
   }
 
   onResetFilersClick() {
-    this.filters.set([])
+    this.stateService.setFilters([])
   }
 
   onChipRemove(filter: Filter) {
-    const filters = this.filters().filter((f) => f.value !== filter.value)
-    this.filters.set(filters)
+    const filters = this.stateService.filters().filter((f) => f.value !== filter.value)
+    this.stateService.setFilters(filters)
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
-    this.filters.set(filters)
+    const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
+    this.stateService.setFilters(filters)
   }
 
   focusTrigger() {

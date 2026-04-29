@@ -28,6 +28,6 @@
     (keydown.space)="sortDirectionChanged()"
     [ocxTooltip]="(sortIconTitle() | translate)"
     tooltipPosition="top"
-    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{currentDirection: sortDirection(), nextDirection: (sortDirectionToTitle(nextSortDirection())) | translate})"
+    [ariaLabel]="('OCX_LIST_GRID_SORT.SORTING_BUTTON_ARIA_LABEL' | translate:{currentDirection: sortDirection, nextDirection: (sortDirectionToTitle(nextSortDirection())) | translate})"
   ></p-button>
 </div>
