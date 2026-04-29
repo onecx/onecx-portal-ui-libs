@@ -2325,4 +2325,10 @@ describe('DataTableComponent', () => {
       expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
     })
   })
+
+  it('should return row summary for object entries when getRowSummary is called', () => {
+      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
+
+      expect(summary).toBe('id: 1,name: Alice,active: true')
+  })
 })
