@@ -1,4 +1,4 @@
-@if (columns; as columns) { @if (filters; as filters) {
+@if (columns(); as columns) { @if (filters(); as filters) {
 <div class="flex flex-wrap align-items-center gap-2">
   @if (displayMode() === 'chips') {
   <ng-container *ocxIfBreakpoint="'desktop'; elseTemplate: noChipsContent">

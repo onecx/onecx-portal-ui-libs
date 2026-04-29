@@ -1,6 +1,6 @@
-import { Component, computed, effect, inject, Input, input, OnInit, output } from '@angular/core'
+import { Component, computed, effect, inject, input, OnInit, output } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type GroupSelectionChangedEvent = { activeColumns: DataTableColumn[]; groupKey: string }
 export interface ColumnGroupSelectionComponentState {
@@ -15,16 +15,9 @@ export interface ColumnGroupSelectionComponentState {
   styleUrls: ['./column-group-selection.component.scss'],
 })
 export class ColumnGroupSelectionComponent implements OnInit {
-  private readonly stateService = inject(InteractiveDataViewService)
+  readonly stateService = inject(DataViewStateService)
 
-  @Input()
-  get selectedGroupKey(): string | undefined {
-    return this.stateService.activeColumnGroupKey()
-  }
-  set selectedGroupKey(value: string | undefined) {
-    this.stateService.setActiveColumnGroupKey(value)
-  }
-
+  readonly selectedGroupKey = input<string|undefined>(undefined)
   readonly columns = input<DataTableColumn[]>([])
   readonly placeholderKey = input<string>('')
   readonly defaultGroupKey = input<string>('')
@@ -35,7 +28,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
 
   readonly allGroupKeys = computed<string[]>(() => {
     const columns = this.columns()
-    const selectedGroupKey = this.selectedGroupKey
+    const selectedGroupKey = this.stateService.activeColumnGroupKey()
     const defaultGroupKey = this.defaultGroupKey()
 
     return columns
@@ -48,7 +41,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const selected = this.selectedGroupKey
+      const selected = this.selectedGroupKey()
       const custom = this.customGroupKey()
 
       if (selected === custom) {
@@ -60,7 +53,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    const selected = this.selectedGroupKey
+    const selected = this.selectedGroupKey()
 
     if (selected === this.customGroupKey()) {
       this.componentStateChanged.emit({
@@ -82,7 +75,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
       return
     }
 
-    this.selectedGroupKey = event.value
+    this.stateService.setActiveColumnGroupKey(event.value)
 
     const activeColumns = this.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
 

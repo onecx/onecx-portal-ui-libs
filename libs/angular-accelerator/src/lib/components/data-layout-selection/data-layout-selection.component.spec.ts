@@ -1,24 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
   let fixture: ComponentFixture<DataLayoutSelectionComponent>
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
       imports: [TranslateModule.forRoot()],
-      providers: [InteractiveDataViewService],
+      providers: [DataViewStateService],
       schemas: [],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create', () => {

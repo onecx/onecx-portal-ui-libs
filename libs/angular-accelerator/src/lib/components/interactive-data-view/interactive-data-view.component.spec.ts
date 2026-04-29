@@ -4,7 +4,7 @@ import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -26,34 +26,49 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     } as unknown as SlotService
 
     TestBed.configureTestingModule({
-      providers: [{ provide: SlotService, useValue: slotService }, InteractiveDataViewService],
+      providers: [{ provide: SlotService, useValue: slotService }, DataViewStateService],
     })
 
     const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())
     return { component, slotService }
   }
 
-  describe('InteractiveDataViewService provider factory', () => {
+  const createComponentWithFixture = (slotDefined = true) => {
+    const slotService = {
+      isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(slotDefined).asObservable()),
+    } as unknown as SlotService
+
+    TestBed.configureTestingModule({
+      declarations: [InteractiveDataViewComponent],
+      providers: [{ provide: SlotService, useValue: slotService }, DataViewStateService],
+    })
+
+    const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    fixture.detectChanges()
+    return { fixture, component: fixture.componentInstance, slotService }
+  }
+
+  describe('DataViewStateService provider factory', () => {
     const createSlotServiceMock = () => ({
       isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
     } as unknown as SlotService)
 
-    it('should reuse parent InteractiveDataViewService when it exists', () => {
+    it('should reuse parent DataViewStateService when it exists', () => {
       TestBed.resetTestingModule()
 
       TestBed.configureTestingModule({
         declarations: [InteractiveDataViewComponent],
-        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }, InteractiveDataViewService],
+        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }, DataViewStateService],
       })
 
-      const stateService = TestBed.inject(InteractiveDataViewService)
+      const stateService = TestBed.inject(DataViewStateService)
       const fixture = TestBed.createComponent(InteractiveDataViewComponent)
-      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
 
       expect(componentService).toBe(stateService)
     })
 
-    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
       TestBed.resetTestingModule()
 
       await TestBed.configureTestingModule({
@@ -62,11 +77,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       }).compileComponents()
 
       const localFixture = TestBed.createComponent(InteractiveDataViewComponent)
-      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
 
-      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
       expect(localService).toBeTruthy()
-      localFixture.componentInstance.page = 2
+      localFixture.componentInstance.stateService.setActivePage(2)
       expect(localService.activePage()).toBe(2)
     })
   })
@@ -84,25 +99,25 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       const testFilters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
-      component.filters = testFilters
+      component.stateService.setFilters(testFilters)
 
-      expect(component.filters).toEqual(testFilters)
+      expect(component.stateService.filters()).toEqual(testFilters)
     })
 
     it('should update pageSize in service when pageSize signal is changed', () => {
       const { component } = createComponent(true)
 
-      component.pageSize = 25
+      component.stateService.setPageSize(25)
 
-      expect(component.pageSize).toBe(25)
+      expect(component.stateService.pageSize()).toBe(25)
     })
 
     it('should update page in service when page signal is changed', () => {
       const { component } = createComponent(true)
 
-      component.page = 2
+      component.stateService.setActivePage(2)
 
-      expect(component.page).toBe(2)
+      expect(component.stateService.activePage()).toBe(2)
     })
 
     it('should update expandedRows in service when expandedRows signal is changed', () => {
@@ -284,32 +299,29 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should set displayedColumnKeys from predefinedGroupKeys when defaultGroupKey is set and not customGroupKey', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      setInputSignal(component, 'columns', [
-        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
-        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
-        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g1', 'g2'] } as any,
-      ])
-      setInputSignal(component, 'defaultGroupKey', 'g2')
-      setInputSignal(component, 'customGroupKey', 'custom')
-
+      fixture.componentRef.setInput('columns', [
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] },
+        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g2'] },
+      ] as any)
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
       component.ngOnInit()
-      TestBed.tick()
+      fixture.detectChanges()
 
       expect(component.displayedColumnKeys()).toEqual(['b', 'c'])
     })
 
     it('should initialize displayedColumnKeys from defaultGroupKey', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       // Set up columns where nameKey matches the defaultGroupKey to avoid the layout effect clearing it
-      setInputSignal(component, 'columns', [
+      fixture.componentRef.setInput('columns', [
         { id: 'a', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
         { id: 'b', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'defaultGroupKey', 'g1')
-      setInputSignal(component, 'customGroupKey', 'custom')
+      fixture.componentRef.setInput('defaultGroupKey', 'g1')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
 
       component.ngOnInit()
       TestBed.tick()
@@ -319,15 +331,14 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should update displayedColumnKeys and selectedGroupKey on column group selection change', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       // Set columns so the layout effect doesn't clear selectedGroupKey
-      setInputSignal(component, 'columns', [
+      fixture.componentRef.setInput('columns', [
         { id: 'a', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
         { id: 'b', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'customGroupKey', 'custom')
-
+      fixture.componentRef.setInput('customGroupKey', 'custom')
       component.onColumnGroupSelectionChange({
         groupKey: 'g1',
         activeColumns: [{ id: 'a' } as any, { id: 'b' } as any],
@@ -339,8 +350,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should update displayedColumnKeys and set selectedGroupKey to customGroupKey on column selection change', () => {
-      const { component } = createComponent(true)
-      setInputSignal(component, 'customGroupKey', 'custom')
+      const { fixture, component } = createComponentWithFixture(true)
+      fixture.componentRef.setInput('customGroupKey', 'custom')
 
       component.onColumnSelectionChange({ activeColumns: [{ id: 'x' } as any] } as any)
       TestBed.tick()
@@ -352,20 +363,19 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
   describe('reactive streams (signals)', () => {
     it('should update displayedColumnKeys when displayedColumnKeys model is set', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      component.displayedColumnKeys.set(['a', 'b'])
+      fixture.componentRef.setInput('displayedColumnKeys', ['a', 'b'])
 
       expect(component.displayedColumnKeys()).toEqual(['a', 'b'])
     })
 
     it('should initialize displayedColumns and map keys to columns', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      setInputSignal(component, 'columns', [c1, c2])
-
+      fixture.componentRef.setInput('columns', [c1, c2])
       component.ngOnInit()
 
       component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
@@ -373,7 +383,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
 
       // displayedColumns is a computed signal that filters out missing keys
-      expect(component.displayedColumns).toEqual([c2, c1])
+      expect(component.stateService.displayedColumns()).toEqual([c2, c1])
     })
 
     it('should reflect selectedGroupKey through signal', () => {
@@ -434,16 +444,16 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should map displayedColumnKeys to existing columns via displayedColumns computed signal', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      setInputSignal(component, 'columns', [c1, c2])
-      component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
+      fixture.componentRef.setInput('columns', [c1, c2])
+      fixture.componentRef.setInput('displayedColumnKeys', ['c2', 'missing', 'c1'])
 
       TestBed.tick()
 
-      expect(component.displayedColumns).toEqual([c2, c1])
+      expect(component.stateService.displayedColumns()).toEqual([c2, c1])
     })
 
     it('should set listGridPaginator and tablePaginator via paginator setter', () => {
@@ -460,17 +470,18 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should update displayedColumns setter and sync displayedColumnKeys', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      const columns = [c1, c2]
+      fixture.componentRef.setInput('columns', [c1, c2])
 
       const setDisplayedColumnsSpy = jest.spyOn(component['stateService'], 'setDisplayedColumns')
 
-      component.displayedColumns = columns
+      fixture.componentRef.setInput('displayedColumnKeys', ['c1', 'c2'])
+      fixture.detectChanges()
 
-      expect(setDisplayedColumnsSpy).toHaveBeenCalledWith(columns)
+      expect(setDisplayedColumnsSpy).toHaveBeenCalledWith([c1, c2])
       expect(component.displayedColumnKeys()).toEqual(['c1', 'c2'])
     })
 
@@ -517,17 +528,17 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
   describe('public handlers', () => {
     it('should update sort fields in service when onSortChange is called', () => {
-      const { component } = createComponent(true)
-      component.sortDirection = 'ASCENDING' as any
-      component.sortField = 'old'
+      const { fixture, component } = createComponentWithFixture(true)
+      fixture.componentRef.setInput('sortStates', 'ASCENDING' as any)
+      fixture.componentRef.setInput('sortColumn', 'old')
 
       component.onSortChange('new')
       TestBed.tick()
-      expect(component.sortField).toBe('new')
+      expect(component.stateService.sortColumn()).toBe('new')
 
       component.onSortDirectionChange('DESCENDING' as any)
       TestBed.tick()
-      expect(component.sortDirection).toBe('DESCENDING')
+      expect(component.stateService.sortDirection()).toBe('DESCENDING')
     })
 
     it('should update layout in service when onDataViewLayoutChange is called', () => {
@@ -541,12 +552,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       component.onPageChange(2)
-      TestBed.tick()
-      expect(component.page).toBe(2)
+      expect(component.stateService.activePage()).toBe(2)
 
       component.onPageSizeChange(25)
-      TestBed.tick()
-      expect(component.pageSize).toBe(25)
+      expect(component.stateService.pageSize()).toBe(25)
     })
 
     it('should update filters in service when filtering is called', () => {
@@ -554,9 +563,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
 
       component.filtering(filters)
-      TestBed.tick()
 
-      expect(component.filters).toBe(filters)
+      expect(component.stateService.filters()).toEqual(filters)
     })
 
     it('should update sorting fields in service when sorting is called', () => {
@@ -564,10 +572,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const event = { sortColumn: 'c1', sortDirection: 'DESCENDING' } as any
 
       component.sorting(event)
-      TestBed.tick()
 
-      expect(component.sortField).toBe('c1')
-      expect(component.sortDirection).toBe('DESCENDING')
+      expect(component.stateService.sortColumn()).toBe('c1')
+      expect(component.stateService.sortDirection()).toBe('DESCENDING')
     })
   })
 
@@ -857,31 +864,33 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'test' } as any]
 
-      component.filters = filters
+      setInputSignal(component, 'filters', filters)
       TestBed.tick()
 
-      expect(component.filters).toEqual(filters)
+      expect(component.stateService.filters()).toEqual(filters)
     })
 
     it('should call service setSortColumn and setSortDirection when sortField changes via effect', () => {
       const { component } = createComponent(true)
-      component.sortField = 'name'
+      component.stateService.setSortColumn('name')
+      setInputSignal(component, 'sortField', 'name')
       TestBed.tick()
 
-      expect(component.sortField).toBe('name')
+      expect(component.stateService.sortColumn()).toBe('name')
     })
 
     it('should call service setSortDirection when sortDirection changes via effect', () => {
       const { component } = createComponent(true)
-      component.sortDirection = 'DESCENDING' as any
+      setInputSignal(component, 'sortDirection', 'DESCENDING' as any)
       TestBed.tick()
 
-      expect(component.sortDirection).toBe('DESCENDING')
+      expect(component.stateService.sortDirection()).toBe('DESCENDING')
     })
 
     it('should call service setLayout when layout changes via effect', () => {
-      const { component } = createComponent(true)
-      component.layout = 'grid'
+      const { fixture, component } = createComponentWithFixture(true)
+      component.stateService.setLayout('grid')
+      fixture.componentRef.setInput('layout', 'grid')
       TestBed.tick()
 
       expect(component.layout).toBe('grid')
@@ -889,26 +898,26 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
     it('should call service setActivePage when page changes via effect', () => {
       const { component } = createComponent(true)
-      component.page = 3
+      setInputSignal(component, 'page', 3)
       TestBed.tick()
 
-      expect(component.page).toBe(3)
+      expect(component.stateService.activePage()).toBe(3)
     })
 
     it('should call service setPageSize when pageSize changes via effect', () => {
       const { component } = createComponent(true)
-      component.pageSize = 50
+      setInputSignal(component, 'pageSize', 50)
       TestBed.tick()
 
-      expect(component.pageSize).toBe(50)
+      expect(component.stateService.pageSize()).toBe(50)
     })
 
     it('should not call setPageSize when pageSize is undefined', () => {
       const { component } = createComponent(true)
-      component.pageSize = undefined as any
+      setInputSignal(component, 'pageSize', undefined as any)
       TestBed.tick()
 
-      expect(component.pageSize).toBeUndefined()
+      expect(component.stateService.pageSize()).toBeUndefined()
     })
 
     it('should clear selectedGroupKey via layout effect when invalid group is selected', () => {
@@ -918,7 +927,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'custom')
       component.selectedGroupKey.set('invalidGroup')
 
-      component.layout = 'grid'
+      component.stateService.setLayout('grid')
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBeUndefined()
@@ -931,7 +940,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'custom')
       component.selectedGroupKey.set('validGroup')
 
-      component.layout = 'table'
+      component.stateService.setLayout('table')
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('validGroup')
@@ -944,7 +953,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'customGroupKey', 'myCustom')
       component.selectedGroupKey.set('myCustom')
 
-      component.layout = 'list'
+      component.stateService.setLayout('list')
       TestBed.tick()
 
       expect(component.selectedGroupKey()).toBe('myCustom')
@@ -1110,11 +1119,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.layout = 'grid'
+      component.stateService.setLayout('grid')
       TestBed.tick()
-      component.layout = 'list'
+      component.stateService.setLayout('list')
       TestBed.tick()
-      component.layout = 'table'
+      component.stateService.setLayout('table')
       TestBed.tick()
 
       expect(component.layout).toBe('table')
@@ -1126,7 +1135,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [])
       component.displayedColumnKeys.set(['c1', 'c2'])
 
-      expect(component.displayedColumns).toEqual([])
+      expect(component.stateService.displayedColumns()).toEqual([])
     })
 
     it('should properly filter displayedColumns when some keys do not match', () => {
@@ -1135,12 +1144,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
       setInputSignal(component, 'columns', [c1, c2])
+      TestBed.tick()
 
       component.displayedColumnKeys.set(['c1', 'nonexistent', 'c2', 'another-missing'])
 
       TestBed.tick()
 
-      expect(component.displayedColumns).toEqual([c1, c2])
+      expect(component.stateService.displayedColumns()).toEqual([c1, c2])
     })
 
     it('should maintain correct order of displayedColumns based on displayedColumnKeys', () => {
@@ -1150,27 +1160,27 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const c2 = { id: 'c2', nameKey: 'C2' } as any
       const c3 = { id: 'c3', nameKey: 'C3' } as any
       setInputSignal(component, 'columns', [c1, c2, c3])
+      TestBed.tick()
 
       component.displayedColumnKeys.set(['c3', 'c1', 'c2'])
 
       TestBed.tick()
 
-      expect(component.displayedColumns).toEqual([c3, c1, c2])
+      expect(component.stateService.displayedColumns()).toEqual([c3, c1, c2])
     })
   })
 
   describe('state synchronization', () => {
     it('should synchronize state when multiple inputs change in ngOnInit', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      // Set columns where one nameKey matches the defaultGroupKey to avoid layout effect clearing it
-      setInputSignal(component, 'columns', [
+      fixture.componentRef.setInput('columns', [
         { id: 'c1', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
         { id: 'c2', nameKey: 'G2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'defaultGroupKey', 'g1')
-      setInputSignal(component, 'customGroupKey', 'custom')
-      component.layout = 'grid'
+      fixture.componentRef.setInput('defaultGroupKey', 'g1')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+      fixture.componentRef.setInput('layout', 'grid')
 
       component.ngOnInit()
       TestBed.tick()
@@ -1181,7 +1191,6 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
     it('should sync all component states to service signals through handlers', () => {
       const { component } = createComponent(true)
-      const stateService = TestBed.inject(InteractiveDataViewService)
 
       component.onDataViewLayoutChange('table')
       component.sorting({ sortField: 'name', sortColumn: 'name', sortDirection: 'ASCENDING' } as any)
@@ -1190,12 +1199,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.onPageSizeChange(25)
 
       // Verify that service has the updated state
-      expect(stateService.layout()).toBe('table')
-      expect(stateService.activePage()).toBe(1)
-      expect(stateService.pageSize()).toBe(25)
-      expect(stateService.sortColumn()).toBe('name')
-      expect(stateService.sortDirection()).toBe('ASCENDING' as any)
-      expect(stateService.filters()).toEqual([{ columnId: 'c1', value: 'x' }])
+      expect(component.stateService.layout()).toBe('table')
+      expect(component.stateService.activePage()).toBe(1)
+      expect(component.stateService.pageSize()).toBe(25)
+      expect(component.stateService.sortColumn()).toBe('name')
+      expect(component.stateService.sortDirection()).toBe('ASCENDING' as any)
+      expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'x' }])
     })
   })
 })

@@ -18,7 +18,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -223,7 +223,7 @@ describe('DataTableComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
-        InteractiveDataViewService,
+        DataViewStateService,
       ],
     }).compileComponents()
 
@@ -245,15 +245,15 @@ describe('DataTableComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  describe('InteractiveDataViewService provider factory', () => {
-    it('should reuse parent InteractiveDataViewService when it exists', () => {
-      const stateService = TestBed.inject(InteractiveDataViewService)
-      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists', () => {
+      const stateService = TestBed.inject(DataViewStateService)
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
 
       expect(componentService).toBe(stateService)
     })
 
-    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
       TestBed.resetTestingModule()
 
       await TestBed.configureTestingModule({
@@ -270,11 +270,11 @@ describe('DataTableComponent', () => {
       }).compileComponents()
 
       const localFixture = TestBed.createComponent(DataTableComponent)
-      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
 
-      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
       expect(localService).toBeTruthy()
-      localFixture.componentInstance.page = 2
+      localFixture.componentInstance.stateService.setActivePage(2)
       expect(localService.activePage()).toBe(2)
     })
   })
@@ -345,7 +345,7 @@ describe('DataTableComponent', () => {
 
       expect(spy).toHaveBeenCalled()
 
-      expect(component.filters.length).toBeGreaterThan(0)
+      expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
   })
 
@@ -422,7 +422,7 @@ describe('DataTableComponent', () => {
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
-      component.selectedRows = mockData.slice(0, 2) as any
+      component.stateService.setSelectedRows(mockData.slice(0, 2) as any)
       fixture.detectChanges()
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
@@ -1292,8 +1292,7 @@ describe('DataTableComponent', () => {
       fixture.detectChanges()
 
       const page2Rows = mockData.slice(2, 4)
-      component.selectedRows = page2Rows
-
+      component.stateService.setSelectedRows(page2Rows)
       let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
       let checked = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unchecked.length).toBe(2)
@@ -1319,7 +1318,7 @@ describe('DataTableComponent', () => {
         { id: 'c', enabled: true },
       ]
       component.rows.set(rows as any)
-      component.selectedRows = [rows[1]]
+      component.stateService.setSelectedRows([rows[1]])
       fixture.detectChanges()
 
       const selectionChangedSpy = jest.fn()
@@ -1351,8 +1350,8 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.page).toBe(2)
-      expect(component.pageSize).toBe(10)
+      expect(component.stateService.activePage()).toBe(2)
+      expect(component.stateService.pageSize()).toBe(10)
     })
   })
 
@@ -1426,50 +1425,50 @@ describe('DataTableComponent', () => {
     it('should call resetPage when rows length decreases', () => {
       component.rows.set(mockData as any)
       fixture.detectChanges()
-      component.page = 2
+      component.stateService.setActivePage(2)
       fixture.detectChanges()
 
       component.rows.set(mockData.slice(0, 3) as any)
       fixture.detectChanges()
 
-      expect(component.page).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('should not call resetPage when rows length increases', () => {
-      component.page = 2
+      component.stateService.setActivePage(2)
       fixture.detectChanges()
 
       component.rows.set(Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i })) as any)
       fixture.detectChanges()
 
-      expect(component.page).toBe(2)
+      expect(component.stateService.activePage()).toBe(2)
     })
 
     it('should resetPage when filters length changes', () => {
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
-      ] as any
+      ] as any)
       fixture.detectChanges()
-      component.page = 2
-      fixture.detectChanges()
-
-      component.filters = [{ columnId: 'a', value: 1 }] as any
+      component.stateService.setActivePage(2)
       fixture.detectChanges()
 
-      expect(component.page).toBe(0)
-
-      component.page = 2
+      component.stateService.setFilters([{ columnId: 'a', value: 1 }] as any)
       fixture.detectChanges()
 
-      component.filters = [
+      expect(component.stateService.activePage()).toBe(0)
+
+      component.stateService.setActivePage(2)
+      fixture.detectChanges()
+
+      component.stateService.setFilters([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
         { columnId: 'c', value: 3 },
-      ] as any
+      ] as any)
       fixture.detectChanges()
 
-      expect(component.page).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
   })
 
@@ -1509,11 +1508,11 @@ describe('DataTableComponent', () => {
 
     it('onMultiselectFilterChange should replace filters and reset page', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'status', value: 'old', filterType: FilterType.EQUALS },
         { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
-      ] as any
-      component.page = 5
+      ] as any)
+      component.stateService.setActivePage(5)
       fixture.detectChanges()
 
       const column: any = { id: 'status', filterType: FilterType.EQUALS }
@@ -1521,7 +1520,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      const newFilters = component.filters
+      const newFilters = component.stateService.filters()
       expect(newFilters).toEqual(
         expect.arrayContaining([
           { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
@@ -1529,7 +1528,7 @@ describe('DataTableComponent', () => {
           { columnId: 'status', value: 'b', filterType: FilterType.EQUALS },
         ])
       )
-      expect(component.page).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('sortDirectionToTitle should return the correct translation key for each direction', () => {
@@ -1563,7 +1562,7 @@ describe('DataTableComponent', () => {
 
     it('currentEqualFilterOptions$ should return empty options when no current filter column', async () => {
       component.currentFilterColumn.set(null)
-      component.filters = []
+      component.stateService.setFilters([])
       component.rows.set([{ id: 1, status: 'A' } as any])
 
       const result = await firstValueFrom(component.currentEqualFilterOptions$!)
@@ -1572,7 +1571,7 @@ describe('DataTableComponent', () => {
 
     it('currentEqualFilterOptions$ should format DATE options using dateFormat', async () => {
       component.currentFilterColumn.set({ id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any)
-      component.filters = []
+      component.stateService.setFilters([])
       component.rows.set([{ id: 1, date: '2023-01-02' } as any])
 
       fixture.detectChanges()
@@ -1595,7 +1594,7 @@ describe('DataTableComponent', () => {
       jest.spyOn(translateService, 'get').mockReturnValue(of({ k1: 'T1' } as any))
 
       component.currentFilterColumn.set({ id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any)
-      component.filters = []
+      component.stateService.setFilters([])
       component.rows.set([{ id: 1, tr: 'k1' } as any])
 
       fixture.detectChanges()
@@ -1613,22 +1612,21 @@ describe('DataTableComponent', () => {
 
     it('currentTruthySelectedFilters$ should include values for IS_NOT_EMPTY filters', async () => {
       component.currentFilterColumn.set({ id: 'status', filterType: FilterType.IS_NOT_EMPTY } as any)
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
-      ]
+      ])
 
       await expect(component.currentTruthySelectedFilters()).toEqual([true, 'A'])
     })
 
     it('currentEqualSelectedFilters$ should include values for EQUALS filters and when filterType is not set', async () => {
       component.currentFilterColumn.set({ id: 'status' } as any)
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
         { columnId: 'status', value: 'B' } as any,
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
-      ]
-
+      ])
       await expect(component.currentEqualSelectedFilters()).toEqual(['A', 'B', true])
     })
   })
@@ -1736,7 +1734,7 @@ describe('DataTableComponent', () => {
         { id: '4', status: null } as any,
         { id: '5', status: 'B' } as any,
       ])
-      component.filters = [{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any]
+      component.stateService.setFilters([{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any])
       component.onFilterChosen({ id: 'status', columnType: ColumnType.STRING, filterType: FilterType.EQUALS } as any)
       fixture.detectChanges()
 
@@ -1799,12 +1797,12 @@ describe('DataTableComponent', () => {
     })
 
     it('selectedFilteredRows should reflect selected ids and current rows', async () => {
-      component.page = 2
-      component.filters = [{ columnId: 'c1', value: 'x' } as any]
+      component.stateService.setActivePage(2)
+      component.stateService.setFilters([{ columnId: 'c1', value: 'x' } as any])
       component.sortColumn = 'c1'
       component.sortDirection = DataSortDirection.ASCENDING
       component.pageSizes.set([10])
-      component.pageSize = 10
+      component.stateService.setPageSize(10)
       component.rows.set([{ id: 'a' } as any, { id: 'b' } as any])
       component.selectedIds.set(['b'])
 
@@ -1878,9 +1876,9 @@ describe('DataTableComponent', () => {
 
     it('onMultiselectFilterChange should update filters and resetPage (clientSideFiltering=true)', () => {
       fixture.componentRef.setInput('clientSideFiltering', false)
-      component.filters = [{ columnId: 'other', value: 'x' } as any]
+      component.stateService.setFilters([{ columnId: 'other', value: 'x' } as any])
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.page = 2
+      component.stateService.setActivePage(2)
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       fixture.detectChanges()
@@ -1889,24 +1887,24 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.filters).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' } as any,
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
         { columnId: 'status', value: 'B', filterType: FilterType.EQUALS },
       ])
-      expect(component.page).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('onMultiselectFilterChange should also update component.filters when clientSideFiltering=true', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters = [{ columnId: 'other', value: 'x' } as any]
+      component.stateService.setFilters([{ columnId: 'other', value: 'x' } as any])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       component.onMultiselectFilterChange(column, { value: ['A'] })
 
       fixture.detectChanges()
 
-      expect(component.filters).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
       ])
@@ -1914,17 +1912,17 @@ describe('DataTableComponent', () => {
 
     it('onMultiselectFilterChange should drop existing filters for the same column id', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
-      ]
+      ])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       component.onMultiselectFilterChange(column, { value: ['NEW'] })
 
       fixture.detectChanges()
 
-      expect(component.filters).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])
@@ -1933,10 +1931,10 @@ describe('DataTableComponent', () => {
     it('onMultiselectFilterChange should execute filter/concat/map when rebuilding filters', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
 
-      component.filters = [
+      component.stateService.setFilters([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
-      ]
+      ])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       const eventValue = ['NEW']
@@ -1944,7 +1942,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.filters).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])

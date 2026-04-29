@@ -30,7 +30,7 @@ import {
 } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type RowListGridData = ListGridData & Row
 
@@ -44,15 +44,15 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   providers: [
     { provide: 'DataViewComponent', useExisting: DataViewComponent }, 
     {
-      provide: InteractiveDataViewService,
-      useFactory: (parentService: InteractiveDataViewService | null) => parentService ?? new InteractiveDataViewService(),
-      deps: [[new Optional(), new SkipSelf(), InteractiveDataViewService]],
+      provide: DataViewStateService,
+      useFactory: (parentService: DataViewStateService | null) => parentService ?? new DataViewStateService(),
+      deps: [[new Optional(), new SkipSelf(), DataViewStateService]],
     }
   ],
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
-  private readonly stateService = inject(InteractiveDataViewService)
+  readonly stateService = inject(DataViewStateService)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -73,6 +73,15 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
+  paginator = input<boolean | undefined>(undefined)
+  page = input<number>(0)
+  pageSize = input<number>(10)
+  selectedRows = input<Row[]>([])
+  expandedRows = input<InteractiveExpandedRows>([])
+  frozenActionColumn = input<boolean>(false)
+  actionColumnPosition = input<'left' | 'right'>('right')
+  sortField = input<string>('')
+  sortDirection = input<DataSortDirection>(DataSortDirection.NONE)
   @Input()
   get layout(): ViewLayout {
     return this.stateService.layout()
@@ -103,22 +112,6 @@ export class DataViewComponent implements OnInit {
   }
 
   @Input()
-  get sortField(): string {
-    return this.stateService.sortColumn()
-  }
-  set sortField(value: string) {
-    this.stateService.setSortColumn(value)
-  }
-
-  @Input()
-  get sortDirection(): DataSortDirection {
-    return this.stateService.sortDirection()
-  }
-  set sortDirection(value: DataSortDirection) {
-    this.stateService.setSortDirection(value)
-  }
-
-  @Input()
   get listGridPaginator(): boolean {
     return this.stateService.listGridPaginator()
   }
@@ -134,66 +127,9 @@ export class DataViewComponent implements OnInit {
     this.stateService.setTablePaginator(value)
   }
 
-  @Input()
-  get paginator(): boolean {
-    return this.listGridPaginator && this.tablePaginator
-  }
-  set paginator(value: boolean) {
-    this.listGridPaginator = value
-    this.tablePaginator = value
-  }
-
-  @Input()
-  get page(): number {
-    return this.stateService.activePage()
-  }
-  set page(value: number) {
-    this.stateService.setActivePage(value)
-  }
-
-  @Input()
-  get selectedRows(): Row[] {
-    return this.stateService.selectedRows()
-  }
-  set selectedRows(value: Row[]) {
-    this.stateService.setSelectedRows(value)
-  }
-
-  @Input()
-  get expandedRows(): InteractiveExpandedRows {
-    return this.stateService.expandedRows()
-  }
-  set expandedRows(value: InteractiveExpandedRows) {
-    this.stateService.setExpandedRows(value)
-  }
-
-  @Input()
-  get pageSize(): number | undefined {
-    return this.stateService.pageSize()
-  }
-  set pageSize(value: number) {
-    this.stateService.setPageSize(value)
-  }
-
   totalRecordsOnServer = input<number | undefined>()
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
-  
-  @Input()
-  get frozenActionColumn(): boolean {
-    return this.stateService.ActionColumnConfigFrozen()
-  }
-  set frozenActionColumn(value: boolean) {
-    this.stateService.setActionColumnConfig(value, this.actionColumnPosition)
-  }
-  
-  @Input()
-  get actionColumnPosition(): 'left' | 'right' {
-    return this.stateService.ActionColumnConfigPosition()
-  }
-  set actionColumnPosition(value: 'left' | 'right') {
-    this.stateService.setActionColumnConfig(this.frozenActionColumn, value)
-  }
   
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
@@ -366,6 +302,51 @@ export class DataViewComponent implements OnInit {
 
   constructor() {
     effect(() => {
+      const paginator = this.paginator()
+      if (paginator === undefined) {
+        return
+      }
+      this.stateService.setListGridPaginator(paginator)
+      this.stateService.setTablePaginator(paginator)
+    })
+
+    effect(() => {
+      this.stateService.setActivePage(this.page())
+    })
+
+    effect(() => {
+      this.stateService.setPageSize(this.pageSize())
+    })
+
+    effect(() => {
+      this.stateService.setSelectedRows(this.selectedRows())
+    })
+
+    effect(() => {
+      this.stateService.setExpandedRows(this.expandedRows())
+    })
+
+    effect(() => {
+      this.stateService.setActionColumnConfig(this.frozenActionColumn(), this.actionColumnPosition())
+    })
+
+    effect(() => {
+      this.stateService.setSortColumn(this.sortField())
+    })
+
+    effect(() => {
+      this.stateService.setSortDirection(this.sortDirection())
+    })
+
+    effect(() => {
+      this.stateService.setData(this.data())
+    })
+
+    effect(() => {
+      this.stateService.setAdditionalActions(this.additionalActions())
+    })
+
+    effect(() => {
       this.registerEventListenerForListGrid()
     })
 
@@ -374,41 +355,43 @@ export class DataViewComponent implements OnInit {
     })
 
     effect(() => {
-      if (this.filters && this.filters.length > 0) {
-        this.filtered.emit(this.filters)
+      if (this.stateService.filters() && this.stateService.filters().length > 0) {
+        this.filtered.emit(this.stateService.filters())
       }
     })
 
     effect(() => {
-      const sortField = this.sortField
-      const sortDirection = this.sortDirection
+      const sortField = this.stateService.sortColumn()
+      const sortDirection = this.stateService.sortDirection()
       if (sortField && sortDirection) {
         this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection })
       }
     })
 
     effect(() => {
-      if (this.page !== undefined) {
-        this.pageChanged.emit(this.page)
+      const page = this.stateService.activePage()
+      if (page !== undefined) {
+        this.pageChanged.emit(page)
       }
     })
 
     effect(() => {
-      if (this.pageSize !== undefined) {
-        this.pageSizeChanged.emit(this.pageSize)
+      const pageSize = this.stateService.pageSize()
+      if (pageSize !== undefined) {
+        this.pageSizeChanged.emit(pageSize)
       }
     })
 
     effect(() => {
       this.componentStateChanged.emit({
-        filters: this.filters,
+        filters: this.stateService.filters(),
         sorting: {
-          sortColumn: this.sortField,
-          sortDirection: this.sortDirection,
+          sortColumn: this.stateService.sortColumn(),
+          sortDirection: this.stateService.sortDirection(),
         },
-        selectedRows: this.selectedRows,
-        activePage: this.page,
-        pageSize: this.pageSize,
+        selectedRows: this.stateService.selectedRows(),
+        activePage: this.stateService.activePage(),
+        pageSize: this.stateService.pageSize(),
       })
     })
   }
@@ -480,12 +463,12 @@ export class DataViewComponent implements OnInit {
   }
 
   filtering(event: any) {
-    this.filters = event.filters
+    this.stateService.setFilters(event.filters)
   }
 
   sorting(event: any) {
-    this.sortDirection = event.sortDirection
-    this.sortField = event.sortColumn
+    this.stateService.setSortDirection(event.sortDirection)
+    this.stateService.setSortColumn(event.sortColumn)
   }
 
   deletingElement(event: any) {
@@ -512,10 +495,10 @@ export class DataViewComponent implements OnInit {
   }
 
   onPageChange(event: number) {
-    this.page = event
+    this.stateService.setActivePage(event)
   }
 
   onPageSizeChange(event: number) {
-    this.pageSize = event
+    this.stateService.setPageSize(event)
   }
 }

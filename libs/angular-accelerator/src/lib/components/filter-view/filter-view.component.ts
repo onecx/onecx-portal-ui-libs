@@ -1,6 +1,5 @@
 import {
   Component,
-  Input,
   computed,
   effect,
   inject,
@@ -24,7 +23,7 @@ import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { Button } from 'primeng/button'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -50,23 +49,10 @@ export class FilterViewComponent {
   ColumnType = ColumnType
   FilterType = FilterType
 
-  private readonly stateService = inject(InteractiveDataViewService)
+  readonly stateService = inject(DataViewStateService)
 
-  @Input()
-  get filters(): Filter[] {
-    return this.stateService.filters()
-  }
-  set filters(value: Filter[]) {
-    this.stateService.setFilters(value)
-  }
-
-  @Input()
-  get columns(): DataTableColumn[] {
-    return this.stateService.displayedColumns()
-  }
-  set columns(value: DataTableColumn[]) {
-    this.stateService.setDisplayedColumns(value)
-  }
+  filters = input<Filter[]>([])
+  columns = input<DataTableColumn[]>([])
 
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
@@ -109,8 +95,8 @@ export class FilterViewComponent {
   readonly templates$ = toObservable(this.templates)
 
   readonly columnFilterDataRows = computed(() => {
-    const filters = this.filters
-    const columns = this.columns
+    const filters = this.filters()
+    const columns = this.columns()
 
     const columnIds = columns.map((c: DataTableColumn) => c.id)
     return filters
@@ -175,7 +161,15 @@ export class FilterViewComponent {
   }
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor() {
+  constructor() {    
+    effect(() => {
+      this.stateService.setFilters(this.filters())
+    })
+
+    effect(() => {
+      this.stateService.setDisplayedColumns(this.columns())
+    })
+
     effect(() => {
       const t = this.templates()
 
@@ -195,7 +189,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const cols = this.columns
+      const cols = this.stateService.displayedColumns()
       const columnFilterTableColumns = this.columnFilterTableColumns()
 
       const chipObs = cols.map((c) =>
@@ -217,7 +211,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const filters = this.filters
+      const filters = this.stateService.filters()
       this.filtered.emit(filters)
       this.componentStateChanged.emit({ filters })
     })
@@ -250,17 +244,17 @@ export class FilterViewComponent {
   }
 
   onResetFilersClick() {
-    this.filters = []
+    this.stateService.setFilters([])
   }
 
   onChipRemove(filter: Filter) {
-    const filters = this.filters.filter((f) => f.value !== filter.value)
-    this.filters = filters
+    const filters = this.stateService.filters().filter((f) => f.value !== filter.value)
+    this.stateService.setFilters(filters)
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.filters.filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
-    this.filters = filters
+    const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
+    this.stateService.setFilters(filters)
   }
 
   focusTrigger() {

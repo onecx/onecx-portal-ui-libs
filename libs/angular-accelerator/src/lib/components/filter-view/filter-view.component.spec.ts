@@ -6,7 +6,7 @@ import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { ColumnType } from '../../model/column-type.model'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import type { Filter } from '../../model/filter.model'
 import { take } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
@@ -24,7 +24,7 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
 describe('FilterViewComponent (class logic)', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let component: FilterViewComponent
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
   const panelMock = {
     toggle: jest.fn(),
   } as any
@@ -33,7 +33,7 @@ describe('FilterViewComponent (class logic)', () => {
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
       imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
-      providers: [provideTranslateTestingService({}), InteractiveDataViewService],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(FilterViewComponent)
@@ -54,12 +54,12 @@ describe('FilterViewComponent (class logic)', () => {
     ;(component as any).panel = () => {
       return panelMock
     }
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should initialize columnFilterDataRows and display filters from service', () => {
-    component.columns = [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })]
-    stateService.setFilters([
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })])
+    fixture.componentRef.setInput('filters', [
       { columnId: 'c2', value: 'v2' } as Filter,
       { columnId: 'c1', value: 'v1' } as Filter,
       { columnId: 'missing', value: 'ignored' } as Filter,
@@ -113,13 +113,13 @@ describe('FilterViewComponent (class logic)', () => {
     fixture.detectChanges()
 
     expect(setFiltersSpy).toHaveBeenCalledWith([])
-    expect(component.filters).toEqual([])
+    expect(component.stateService.filters()).toEqual([])
   })
 
   it('should remove a chip by value by calling service setFilters when onChipRemove is called', () => {
     const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
 
-    stateService.setFilters([
+    fixture.componentRef.setInput('filters', [
       { columnId: 'c1', value: 'keep' } as Filter,
       { columnId: 'c2', value: 'remove' } as Filter,
     ])
@@ -128,14 +128,14 @@ describe('FilterViewComponent (class logic)', () => {
     component.onChipRemove({ columnId: 'c2', value: 'remove' } as Filter)
     fixture.detectChanges()
 
-    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
   it('should delete filter by row valueColumnId/value by calling service setFilters when onFilterDelete is called', () => {
     const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
 
-    stateService.setFilters([
+    fixture.componentRef.setInput('filters', [
       { columnId: 'c1', value: 'keep' } as Filter,
       { columnId: 'c2', value: 'remove' } as Filter,
     ])
@@ -144,7 +144,7 @@ describe('FilterViewComponent (class logic)', () => {
     component.onFilterDelete({ id: 'row', valueColumnId: 'c2', value: 'remove' } as any)
     fixture.detectChanges()
 
-    expect(component.filters).toEqual([{ columnId: 'c1', value: 'keep' }])
+    expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
@@ -185,8 +185,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should compute templates in columns setter (tableTemplates$)', (done) => {
-    component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
-
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
     fixture.componentRef.setInput('templates', undefined)
 
     fixture.detectChanges()
@@ -207,9 +206,8 @@ describe('FilterViewComponent (class logic)', () => {
     })
   })
 
-  it('should compute templates in columns setter (tableTemplates$)', (done) => {
-    component.columns = [makeColumn({ id: 'c1', columnType: ColumnType.STRING })]
-
+  it('should compute templates in columns setter (chipTemplates$)', (done) => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', columnType: ColumnType.STRING })])
     fixture.componentRef.setInput('templates', undefined)
 
     fixture.detectChanges()

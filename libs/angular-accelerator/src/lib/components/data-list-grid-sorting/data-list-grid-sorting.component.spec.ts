@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -8,12 +7,12 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataListGridSortingComponent', () => {
   let component: DataListGridSortingComponent
   let fixture: ComponentFixture<DataListGridSortingComponent>
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
 
   const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
     ({
@@ -26,12 +25,12 @@ describe('DataListGridSortingComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridSortingComponent],
       imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
-      providers: [provideTranslateTestingService({}), InteractiveDataViewService],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataListGridSortingComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create', () => {

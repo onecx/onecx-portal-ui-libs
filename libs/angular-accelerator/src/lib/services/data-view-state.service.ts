@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core'
 import { Filter } from '../model/filter.model'
+import { DataAction } from '../model/data-action'
 import { DataTableColumn } from '../model/data-table-column.model'
 import { Row } from '../components/data-table/data-table.component'
 import { DataSortDirection } from '../model/data-sort-direction'
@@ -10,6 +11,8 @@ export interface InteractiveDataView {
   activeColumnGroupKey?: string
   displayedColumns?: DataTableColumn[]
   actionColumnConfig?: { frozen: boolean; position: 'left'|'right' }
+  data?: Row[]
+  additionalActions?: DataAction[]
   sorting?: { sortColumn: string, sortDirection: DataSortDirection }
   filters?: Filter[]
   selectedRows?: Row[]
@@ -21,12 +24,14 @@ export interface InteractiveDataView {
 }
 
 @Injectable()
-export class InteractiveDataViewService {
+export class DataViewStateService {
   layout = signal<ViewLayout>('table')
   activeColumnGroupKey = signal<string | undefined>(undefined)
   displayedColumns = signal<DataTableColumn[]>([])
   ActionColumnConfigFrozen = signal<boolean>(false)
   ActionColumnConfigPosition = signal<'left' | 'right'>('right')
+  data = signal<Row[]>([])
+  additionalActions = signal<DataAction[]>([])
   sortColumn = signal<string>('')
   sortDirection = signal<DataSortDirection>(DataSortDirection.NONE)
   filters = signal<Filter[]>([])
@@ -37,7 +42,7 @@ export class InteractiveDataViewService {
   listGridPaginator = signal<boolean>(true)
   tablePaginator = signal<boolean>(true)
 
-   setLayout(layout: ViewLayout) {
+  setLayout(layout: ViewLayout) {
     this.layout.set(layout)
   }
 
@@ -52,6 +57,14 @@ export class InteractiveDataViewService {
   setActionColumnConfig(frozen: boolean, position: 'left' | 'right') {
     this.ActionColumnConfigFrozen.set(frozen)
     this.ActionColumnConfigPosition.set(position)
+  }
+
+  setData(data: Row[]) {
+    this.data.set(data)
+  }
+
+  setAdditionalActions(actions: DataAction[]) {
+    this.additionalActions.set(actions)
   }
 
   setSortColumn(sortColumn: string) {

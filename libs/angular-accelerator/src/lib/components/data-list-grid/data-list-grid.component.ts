@@ -1,7 +1,7 @@
 import {
   Component,
-  Input,
   Injector,
+  Input,
   LOCALE_ID,
   OnInit,
   Optional,
@@ -43,7 +43,7 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type ListGridData = {
   id: string | number
@@ -69,14 +69,14 @@ export interface DataListGridComponentState {
   styleUrls: ['./data-list-grid.component.scss'],
   providers: [
     {
-      provide: InteractiveDataViewService,
-      useFactory: (parentService: InteractiveDataViewService | null) => parentService ?? new InteractiveDataViewService(),
-      deps: [[new Optional(), new SkipSelf(), InteractiveDataViewService]],
+      provide: DataViewStateService,
+      useFactory: (parentService: DataViewStateService | null) => parentService ?? new DataViewStateService(),
+      deps: [[new Optional(), new SkipSelf(), DataViewStateService]],
     },
   ],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
-  private readonly stateService = inject(InteractiveDataViewService)
+  readonly stateService = inject(DataViewStateService)
 
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
@@ -473,12 +473,20 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
+      this.stateService.setData(this.data())
+    })
+
+    effect(() => {
+      this.stateService.setAdditionalActions(this.additionalActions())
+    })
+
+    effect(() => {
       const data = this.data()
       // Not track previousData change to avoid the trigger
       untracked(() => {
         const previousData = this.previousData()
         if (previousData.length && !equal(data, previousData)) {
-          this.page = 0
+          this.stateService.setActivePage(0)
         }
       })
 
@@ -508,7 +516,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       untracked(() => {
         const previousFilters = this.previousFilters()
         if (previousFilters.length && !equal(this.filters(), previousFilters)) {
-          this.page = 0
+          this.stateService.setActivePage(0)
         }
       })
     })

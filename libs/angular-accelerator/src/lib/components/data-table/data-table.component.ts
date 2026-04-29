@@ -45,7 +45,7 @@ import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 
 export type Primitive = number | string | boolean | bigint | Date
@@ -83,9 +83,9 @@ export interface DataTableComponentState {
   styleUrls: ['./data-table.component.scss'],
   providers: [
     {
-      provide: InteractiveDataViewService,
-      useFactory: (parentService: InteractiveDataViewService | null) => parentService ?? new InteractiveDataViewService(),
-      deps: [[new Optional(), new SkipSelf(), InteractiveDataViewService]],
+      provide: DataViewStateService,
+      useFactory: (parentService: DataViewStateService | null) => parentService ?? new DataViewStateService(),
+      deps: [[new Optional(), new SkipSelf(), DataViewStateService]],
     },
   ]
 })
@@ -95,7 +95,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
-  stateService = inject(InteractiveDataViewService)
+  stateService = inject(DataViewStateService)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -103,13 +103,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   rows = model<Row[]>([])
   previousRows = computedPrevious(this.rows)
   
-  @Input()
-  get selectedRows(): Row[] {
-    return this.stateService.selectedRows()
-  }
-  set selectedRows(value: Row[]) {
-    this.stateService.setSelectedRows(value)
-  }
+  selectedRows = input<Row[]>([])
   
   selectedIds = signal<Array<string | number>>([])
 
@@ -120,7 +114,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   set filters(value: Filter[]) {
     this.stateService.setFilters(value)
   }
-  previousFilters = computedPrevious(() => this.filters)
+  previousFilters = computedPrevious(() => this.stateService.filters())
 
   @Input()
   get sortDirection(): DataSortDirection {
@@ -147,7 +141,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   pageSizes = model<number[]>([10, 25, 50])
   displayedPageSize = computed(() => {
-    const pageSize = this.pageSize
+    const pageSize = this.stateService.pageSize()
     const pageSizes = this.pageSizes()
 
     return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
@@ -436,7 +430,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   )
 
   currentEqualSelectedFilters = computed(() => {
-    const filters = this.filters
+    const filters = this.stateService.filters()
     const currentFilterColumn = this.currentFilterColumn()
     return filters
       .filter(
@@ -448,7 +442,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   currentTruthySelectedFilters = computed(() => {
-    const filters = this.filters
+    const filters = this.stateService.filters()
     const currentFilterColumn = this.currentFilterColumn()
     return filters
       .filter(
@@ -459,7 +453,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   filterAmounts = computed<Record<string, number>>(() => {
-    const filters = this.filters
+    const filters = this.stateService.filters()
     return filters
       .map((filter) => filter.columnId)
       .map((columnId) => ({ [columnId]: filters.filter((filter) => filter.columnId === columnId).length }))
@@ -559,13 +553,25 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
+      this.stateService.setData(this.rows())
+    })
+
+    effect(() => {
+      this.stateService.setAdditionalActions(this.additionalActions())
+    })
+
+    effect(() => {
+      this.stateService.setSelectedRows(this.selectedRows())
+    })
+
+    effect(() => {
       const rows = this.rows()
 
       // Not track previousRows change to avoid the trigger
       untracked(() => {
         const previousRows = this.previousRows()
         if (previousRows.length && rows.length < previousRows.length) {
-          this.page = 0
+          this.stateService.setActivePage(0)
         }
       })
 
@@ -581,12 +587,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      const filters = this.filters
+      const filters = this.stateService.filters()
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
         if (previousFilters.length && !equal(filters, previousFilters)) {
-          this.page = 0
+          this.stateService.setActivePage(0)
         }
       })
       this.filtered.emit(filters)
@@ -606,7 +612,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      const selectedRows = this.selectedRows
+      const selectedRows = this.stateService.selectedRows()
       const selectedIds = selectedRows.map((row) => {
         if (typeof row === 'object') {
           return row.id
@@ -629,11 +635,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.pageChanged.emit(this.page)
+      this.pageChanged.emit(this.stateService.activePage())
     })
 
     effect(() => {
-      const pageSize = this.pageSize
+      const pageSize = this.stateService.pageSize()
       if (pageSize === undefined) {
         return
       }
@@ -653,13 +659,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   emitComponentStateChanged() {
     this.componentStateChanged.emit({
-      filters: this.filters,
+      filters: this.stateService.filters(),
       sorting: {
         sortColumn: this.sortColumn,
         sortDirection: this.sortDirection,
       },
       pageSize: this.displayedPageSize(),
-      activePage: this.page,
+      activePage: this.stateService.activePage(),
       selectedRows: this.rows().filter((row) => this.selectedIds().includes(row.id)),
       expandedRows: this.rows().filter((row) => this.expandedRowIds().includes(row.id)),
     })
@@ -728,7 +734,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   onMultiselectFilterChange(column: DataTableColumn, event: any) {
-    const filters = this.filters
+    const filters = this.stateService.filters()
       .filter((filter) => filter.columnId !== column.id)
       .concat(
         event.value.map((value: Primitive) => ({

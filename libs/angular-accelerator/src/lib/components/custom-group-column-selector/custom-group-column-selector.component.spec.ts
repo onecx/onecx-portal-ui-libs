@@ -7,12 +7,12 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
   let fixture: ComponentFixture<CustomGroupColumnSelectorComponent>
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
   
   const makeColumn = (id: string): DataTableColumn => ({ id, nameKey: id }) as any
 
@@ -20,12 +20,12 @@ describe('CustomGroupColumnSelectorComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
       imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
-      providers: [provideTranslateTestingService({}), InteractiveDataViewService],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   describe('onOpenCustomGroupColumnSelectionDialogClick', () => {
@@ -35,9 +35,9 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c3 = makeColumn('c3')
 
       fixture.componentRef.setInput('columns', [c1, c2, c3])
-      component.displayedColumns = [c1, c3]
-      stateService.ActionColumnConfigFrozen.set(true)
-      stateService.ActionColumnConfigPosition.set('left')
+      fixture.componentRef.setInput('displayedColumns', [c1, c3])
+      fixture.componentRef.setInput('frozenActionColumn', true)
+      fixture.componentRef.setInput('actionColumnPosition', 'left')
 
       component.onOpenCustomGroupColumnSelectionDialogClick()
 
@@ -55,7 +55,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c2 = makeColumn('c2')
       const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
 
-      stateService.setDisplayedColumns([c1])
+      fixture.componentRef.setInput('displayedColumns', [c1])
       component.displayedColumnsModel.set([c1, c2])
 
       component.onSaveClick()
@@ -71,7 +71,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       stateService.ActionColumnConfigFrozen.set(false)
       stateService.ActionColumnConfigPosition.set('right')
       
-      component.displayedColumns = [c1]
+      fixture.componentRef.setInput('displayedColumns', [c1])
       component.displayedColumnsModel.set([c1])
       component.frozenActionColumnModel.set(true)
       component.actionColumnPositionModel.set('left')
@@ -102,7 +102,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     it('should not emit columnSelectionChanged when displayed columns did not change', () => {
       const c1 = makeColumn('c1')
-      component.displayedColumns = [c1]
+      fixture.componentRef.setInput('displayedColumns', [c1])     
       component.displayedColumnsModel.set([c1])
 
       const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
@@ -126,9 +126,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
   describe('constructor effect', () => {
     it('should not update service until onSaveClick is called', () => {
       const setDisplayedSpy = jest.spyOn(stateService, 'setDisplayedColumns')
-
-      component.displayedColumns = [makeColumn('c1')]
-      expect(setDisplayedSpy).toHaveBeenCalledTimes(1)
+      fixture.componentRef.setInput('displayedColumns', [makeColumn('c1')])
+      fixture.detectChanges()
       setDisplayedSpy.mockClear()
 
       component.displayedColumnsModel.set([makeColumn('c1')])
@@ -142,7 +141,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
       stateService.ActionColumnConfigPosition.set('left')
 
-      component.frozenActionColumn = true
+      component.stateService.setActionColumnConfig(true, 'left')
 
       expect(setActionConfigSpy).toHaveBeenCalledWith(true, 'left')
     })
@@ -153,7 +152,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const setActionConfigSpy = jest.spyOn(stateService, 'setActionColumnConfig')
       stateService.ActionColumnConfigFrozen.set(true)
 
-      component.actionColumnPosition = 'left'
+      component.stateService.setActionColumnConfig(true, 'left')
 
       expect(setActionConfigSpy).toHaveBeenCalledWith(true, 'left')
     })

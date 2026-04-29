@@ -7,12 +7,12 @@ import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('ColumnGroupSelectionComponent', () => {
   let fixture: ComponentFixture<ColumnGroupSelectionComponent>
   let component: ColumnGroupSelectionComponent
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
 
   const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
     ({
@@ -25,18 +25,18 @@ describe('ColumnGroupSelectionComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ColumnGroupSelectionComponent],
       imports: [CommonModule, FormsModule, SelectModule, FloatLabelModule, TranslateModule.forRoot()],
-      providers: [provideTranslateTestingService({}), InteractiveDataViewService],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(ColumnGroupSelectionComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   describe('selectedGroupKey setter', () => {
     it('should set the selectedGroupKey model value', () => {
-      component.selectedGroupKey = 'custom'
-      expect(component.selectedGroupKey).toBe('custom')
+      fixture.componentRef.setInput('selectedGroupKey', 'custom')
+      expect(component.selectedGroupKey()).toBe('custom')
     })
   })
 
@@ -50,7 +50,7 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2', 'g3'] }),
         makeColumn({ id: 'c3', predefinedGroupKeys: undefined }),
       ])
-      component.selectedGroupKey = 'g3'
+      component.stateService.setActiveColumnGroupKey('g3')
 
       fixture.detectChanges()
 
@@ -64,7 +64,7 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.componentRef.setInput('columns', [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] }),
       ])
-      component.selectedGroupKey = 'custom'
+      component.stateService.setActiveColumnGroupKey('custom')
 
       fixture.detectChanges()
 
@@ -82,7 +82,7 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c4', predefinedGroupKeys: undefined }),
       ]
       fixture.componentRef.setInput('columns', testColumns)
-      component.selectedGroupKey = 'g2'
+      component.stateService.setActiveColumnGroupKey('g2')
 
       fixture.detectChanges()
 
@@ -93,7 +93,7 @@ describe('ColumnGroupSelectionComponent', () => {
     it('should return early and update allGroupKeys when selectedGroupKey is nullish', () => {
       fixture.componentRef.setInput('defaultGroupKey', 'def')
       fixture.componentRef.setInput('customGroupKey', 'custom')
-      component.selectedGroupKey = undefined as any
+      component.stateService.setActiveColumnGroupKey(undefined)
 
       fixture.componentRef.setInput('columns', [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['def'] }),
@@ -167,10 +167,10 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
       fixture.detectChanges()
 
-      component.selectedGroupKey = 'custom'
+      fixture.componentRef.setInput('selectedGroupKey', 'custom')
       fixture.detectChanges()
 
-      expect(component.selectedGroupKey).toBe('custom')
+      expect(component.selectedGroupKey()).toBe('custom')
     })
 
     it('should update selectedGroupKey from service when set', () => {
@@ -178,10 +178,10 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.detectChanges()
 
       const newValue = 'other'
-      component.selectedGroupKey = newValue
+      fixture.componentRef.setInput('selectedGroupKey', newValue)
       fixture.detectChanges()
 
-      expect(component.selectedGroupKey).toBe(newValue)
+      expect(component.selectedGroupKey()).toBe(newValue)
     })
   })
 })

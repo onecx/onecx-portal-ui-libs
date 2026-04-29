@@ -4,7 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -41,7 +41,7 @@ describe('DataListGridComponent', () => {
   let translateService: TranslateService
   let listGrid: DataListGridHarness
   let router: Router
-  let stateService: InteractiveDataViewService
+  let stateService: DataViewStateService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -251,7 +251,7 @@ describe('DataListGridComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
-        InteractiveDataViewService,
+        DataViewStateService,
       ],
     }).compileComponents()
 
@@ -267,7 +267,7 @@ describe('DataListGridComponent', () => {
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     router = TestBed.inject(Router)
-    stateService = TestBed.inject(InteractiveDataViewService)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create the data list grid component', () => {
@@ -279,13 +279,13 @@ describe('DataListGridComponent', () => {
     expect(dataListGrid).toBeTruthy()
   })
 
-  describe('InteractiveDataViewService provider factory', () => {
-    it('should reuse parent InteractiveDataViewService when it exists (in main beforeEach)', () => {
-      const componentService = fixture.debugElement.injector.get(InteractiveDataViewService)
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists (in main beforeEach)', () => {
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
       expect(componentService).toBe(stateService)
     })
 
-    it('should create a local InteractiveDataViewService when parent service does not exist', async () => {
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
       TestBed.resetTestingModule()
       await TestBed.configureTestingModule({
         declarations: [DataListGridComponent],
@@ -301,11 +301,11 @@ describe('DataListGridComponent', () => {
       }).compileComponents()
 
       const localFixture = TestBed.createComponent(DataListGridComponent)
-      const localService = localFixture.debugElement.injector.get(InteractiveDataViewService)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
 
-      expect(TestBed.inject(InteractiveDataViewService, null)).toBeNull()
-      localFixture.componentInstance.page = 2
-      localFixture.componentInstance.pageSize = 25
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      localFixture.componentInstance.stateService.setActivePage(2)
+      localFixture.componentInstance.stateService.setPageSize(25)
 
       expect(localService.activePage()).toBe(2)
       expect(localService.pageSize()).toBe(25)

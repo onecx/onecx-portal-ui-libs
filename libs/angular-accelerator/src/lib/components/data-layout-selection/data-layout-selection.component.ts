@@ -1,7 +1,7 @@
 import { Component, computed, inject, Input, input, OnInit, output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
-import { InteractiveDataViewService } from '../../services/interactive-data-view.service'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import { ViewLayout } from '../../model/view-layout.model'
 
 interface ViewingLayouts {
@@ -48,15 +48,15 @@ export interface DataLayoutSelectionComponentState {
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {
-  private readonly storeService = inject(InteractiveDataViewService)
+  private readonly stateService = inject(DataViewStateService)
   supportedViewLayouts = input<Array<string>>([])
 
   @Input()
   get layout(): ViewLayout {
-    return this.storeService.layout()
+    return this.stateService.layout()
   }
   set layout(value: ViewLayout) {
-    this.storeService.setLayout(value)
+    this.stateService.setLayout(value)
   }
 
   readonly dataViewLayoutChange = output<ViewLayout>()
