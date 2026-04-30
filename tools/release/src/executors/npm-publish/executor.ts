@@ -1,9 +1,13 @@
-import { execSync } from 'child_process'
+import { execSync } from 'node:child_process'
 
-import { ExecutorContext } from '@nx/devkit'
 import { NpmPublishExecutorSchema } from './schema'
 
-export default async function npmPublish(options: NpmPublishExecutorSchema, context: ExecutorContext) {
+interface ExecutorContextLike {
+  projectName: string
+  projectsConfigurations: { projects: Record<string, { root: string }> }
+}
+
+export default async function npmPublish(options: NpmPublishExecutorSchema, context: ExecutorContextLike) {
   const projectRoot = context.projectsConfigurations.projects[context.projectName].root;
   const sourceRoot = `./dist/${projectRoot}`
   

@@ -13,26 +13,15 @@
     "rxjs": "~7.8.0",
     "@onecx/angular-integration-interface": "^7.6.1",
     "@onecx/integration-interface": "^7.6.1",
-    "keycloak-js": "^25.0.1",
     "ts-semaphore": "^1.0.0",
-    "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^7.6.1"
+    "keycloak-js": "^25.0.1"
   },
   "peerDependenciesMeta": {
     "keycloak-js": {
-      "optional": true
-    },
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
       "optional": true
     }
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }
