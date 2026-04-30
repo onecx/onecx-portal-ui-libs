@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "mkdir -p .nx",
-    "build": "nx run-many -t build build-migrations",
+    "build": "nx run-many -t build",
     "build-copy": "npm run build && node copy-build.js",
     "test": "nx affected -t test",
     "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
@@ -33,7 +33,6 @@
     "@types/debug": "^4.1.12",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@nx/devkit": "^22.3.3",
     "@phenomnomnominal/tsquery": "^6",
     "@primeng/themes": "^21.0.2",
     "@protobi/exceljs": "^4.4.0-protobi.9",

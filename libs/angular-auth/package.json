@@ -11,22 +11,9 @@
     "@angular/core": "^21.0.0",
     "rxjs": "~7.8.0",
     "@onecx/angular-integration-interface": "^8.0.0-rc.9",
-    "@nx/devkit": "^22.0.2",
-    "@onecx/nx-migration-utils": "^8.0.0-rc.9",
     "@onecx/accelerator": "^8.0.0-rc.9"
-  },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }
