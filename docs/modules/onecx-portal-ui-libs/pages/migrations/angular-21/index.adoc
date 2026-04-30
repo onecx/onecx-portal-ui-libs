@@ -8,7 +8,7 @@
 
 [IMPORTANT]
 ====
-This guide is a work in progress. Angular 21 support and OneCX UI libraries v8 are not final yet and Angular 21 support will be provided with OneCX Shell v3.
+ This guide is a work in progress. Angular 21 support and OneCX UI libraries v8 are not final yet. Angular 21 support will be provided with OneCX Shell v3.
 ====
 
 This guide provides step-by-step instructions for migrating OneCX applications from Angular 20 to Angular 21.

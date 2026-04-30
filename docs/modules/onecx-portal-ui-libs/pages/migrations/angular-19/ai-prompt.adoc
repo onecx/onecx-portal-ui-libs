@@ -4,13 +4,13 @@ The https://github.com/onecx/onecx-ai-refactoring-agents[OneCX AI Refactoring Ag
 
 === Before You Start
 
-Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the https://onecx.github.io/docs/documentation/current/onecx-docs-dev/ai/mcp_server_setup.html[MCP Server Setup Guide].
+Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the xref:documentation:onecx-docs-dev:ai/mcp_server_setup.adoc[MCP Server Setup Guide].
 
 === Setup
 
 1. Clone or pull the latest version of the repository:
 +
-[source,bash]
+[source, bash]
 ----
 git clone https://github.com/onecx/onecx-ai-refactoring-agents.git
 # or if already cloned:
