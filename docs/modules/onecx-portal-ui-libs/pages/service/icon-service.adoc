@@ -71,6 +71,24 @@ async ngOnInit() {
 }
 ----
 
+  * *Asynchronous with fallback class*: Await icon loading but always receive a class string when the fallback is provided. +
+  Ideal when:
+  - The UI must always render an icon class
+  - Missing icons should degrade gracefully to a default icon
++
+[source,typescript]
+----
+accountIcon: string = '';
+
+async ngOnInit() {
+  this.accountIcon = await this.iconService.requestIconAsync(
+    'mdi:account',
+    'svg',
+    'pi pi-question-circle'
+  )
+}
+----
+
 . Apply the icon classes in the template.
 +
 [source,html]
@@ -89,7 +107,8 @@ async ngOnInit() {
 | Name | Signature | Description
 
 | `requestIcon` | `(name: string, type?: IconClassType): string` | Requests an icon and returns a CSS class name to apply. Triggers loading if the icon is not cached.
-| `requestIconAsync` | `(name: string, type?: IconClassType): Promise<string \| null>` | Requests an icon and resolves when the icon becomes available. Returns `null` if the icon cannot be found.
+| `requestIconAsync` | `(name: string, type?: IconClassType): Promise<string \| null>` | Requests an icon and resolves when the icon becomes available. Returns `null` if the icon cannot be found and no fallback is provided.
+| `requestIconAsync` | `(name: string, type: IconClassType, fallbackClass: string): Promise<string>` | Requests an icon and resolves when the icon becomes available. Returns `fallbackClass` if the icon cannot be found.
 |===
 
 .Icon Class Types (Rendering styles)
@@ -104,7 +123,7 @@ async ngOnInit() {
 
 [TIP]
 ====
-Use `requestIcon` for immediate class assignment and progressive rendering. Use `requestIconAsync` when you must guarantee icon availability before showing UI.
+Use `requestIcon` for immediate class assignment and progressive rendering. Use `requestIconAsync` when you must guarantee icon availability before showing UI, and provide `fallbackClass` when you need a guaranteed class string.
 ====
 
 [#flow]
