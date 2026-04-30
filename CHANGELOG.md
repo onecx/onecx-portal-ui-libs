@@ -1,3 +1,54 @@
+## [6.22.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.22.0...v6.22.1) (2026-04-30)
+
+### Bug Fixes
+
+* empty commit to trigger release ([0fe8072](https://github.com/onecx/onecx-portal-ui-libs/commit/0fe8072e792c16a96962bc1909c269c8dbe885fd))
+
+## [6.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.1...v6.22.0) (2026-04-30)
+
+### Features
+
+* add i18n to workspace test v6 ([#1384](https://github.com/onecx/onecx-portal-ui-libs/issues/1384)) ([a210592](https://github.com/onecx/onecx-portal-ui-libs/commit/a2105925fd76d19021fe14aab4ef6f6333df42fe))
+* add tests ([#1393](https://github.com/onecx/onecx-portal-ui-libs/issues/1393)) ([162af8c](https://github.com/onecx/onecx-portal-ui-libs/commit/162af8c3f5ad9a6b11082f4e3cd41b636cc429ff))
+
+### Bug Fixes
+
+* revert platform id fix v6 ([beadb0f](https://github.com/onecx/onecx-portal-ui-libs/commit/beadb0fb33d1b946d3c06276c84976e0a16d9bf3))
+
+## [6.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.0...v6.21.1) (2026-04-29)
+
+### Bug Fixes
+
+* tooltip position ([#1390](https://github.com/onecx/onecx-portal-ui-libs/issues/1390)) ([7939d71](https://github.com/onecx/onecx-portal-ui-libs/commit/7939d71b71760d517f10abb80b4b246c6e6fbc0b))
+
+## [6.21.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.20.0...v6.21.0) (2026-04-28)
+
+### Features
+
+* add i18n to workspace topic ([#1372](https://github.com/onecx/onecx-portal-ui-libs/issues/1372)) ([7db009c](https://github.com/onecx/onecx-portal-ui-libs/commit/7db009cf9a67781ba16d3f3949bb4f4274f638f3))
+* bump node version in ci v6 ([#1383](https://github.com/onecx/onecx-portal-ui-libs/issues/1383)) ([3ef4358](https://github.com/onecx/onecx-portal-ui-libs/commit/3ef4358c726d71747028c181aeae458e0d903c7f))
+
+### Bug Fixes
+
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([#1373](https://github.com/onecx/onecx-portal-ui-libs/issues/1373)) ([8c32d55](https://github.com/onecx/onecx-portal-ui-libs/commit/8c32d55618a98d4cc1f247cadf8a637ce12fbc8a))
+
+## [6.20.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.19.0...v6.20.0) (2026-04-22)
+
+### Features
+
+* add notification topic ([#1337](https://github.com/onecx/onecx-portal-ui-libs/issues/1337)) ([fa2323a](https://github.com/onecx/onecx-portal-ui-libs/commit/fa2323a9b5063ac8fd967c99ba1cdc0f1e0731d3))
+
+### Bug Fixes
+
+* changed window to globalThis in accelerator for node compatibility ([#1312](https://github.com/onecx/onecx-portal-ui-libs/issues/1312)) ([c9f5af2](https://github.com/onecx/onecx-portal-ui-libs/commit/c9f5af2359f79d8bc6dd1686a91017569e9b0e68))
+* Few graphics do not have alternative text- v6 ([#1339](https://github.com/onecx/onecx-portal-ui-libs/issues/1339)) ([d300e10](https://github.com/onecx/onecx-portal-ui-libs/commit/d300e1049ad240468d8139d9c1f0794a926fa1a3))
+* set primeng translation on lang change ([#1315](https://github.com/onecx/onecx-portal-ui-libs/issues/1315)) ([4531800](https://github.com/onecx/onecx-portal-ui-libs/commit/4531800dbea02410e62cbe2f700a531ba198d62a))
+* update CI Node.js version from 22 to 24 ([ef532f5](https://github.com/onecx/onecx-portal-ui-libs/commit/ef532f547fd85fdb6971230bce8423dc4c963290))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) ([b7a07c3](https://github.com/onecx/onecx-portal-ui-libs/commit/b7a07c348a67cb75348aa668457d8b4e1b31af2c))
+
 ## [6.19.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.18.0...v6.19.0) (2026-04-02)
 
 ### Features
