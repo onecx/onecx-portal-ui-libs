@@ -1,3 +1,9 @@
+## [6.22.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.22.0...v6.22.1) (2026-04-30)
+
+### Bug Fixes
+
+* empty commit to trigger release ([0fe8072](https://github.com/onecx/onecx-portal-ui-libs/commit/0fe8072e792c16a96962bc1909c269c8dbe885fd))
+
 ## [6.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.1...v6.22.0) (2026-04-30)
 
 ### Features
