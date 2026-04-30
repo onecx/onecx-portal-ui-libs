@@ -6,7 +6,6 @@ import {
   Injector,
   NgModuleRef,
   NgZone,
-  PLATFORM_ID,
   PlatformRef,
   Provider,
   Type,
@@ -19,7 +18,6 @@ import { Router } from '@angular/router'
 import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
 import { WebcomponentConnector } from './webcomponent-connector.utils'
 import { DynamicAppId } from './dynamic-app-id.utils'
-import { DynamicPlatformId } from './dynamic-platform-id.utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -37,7 +35,6 @@ export interface AppOptions {
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   replaceOrAddAppId((module as any)['ɵinj'].providers)
-  replaceOrAddPlatformId((module as any)['ɵinj'].providers)
 
   return cachePlatform(production)
     .bootstrapModule(module, {
@@ -59,7 +56,6 @@ export async function bootstrapRemoteComponent(
   options?: AppOptions
 ): Promise<void> {
   replaceOrAddAppId(providers)
-  replaceOrAddPlatformId(providers)
 
   const app = await createApplication({
     providers: [
@@ -125,48 +121,6 @@ function findAndReplaceAppId(providers: Array<any>): any {
   return null
 }
 
-/**
- * Adds or replaces PLATFORM_ID provider with DynamicPlatformId. DynamicPlatformId is a wrapper around the PLATFORM_ID that adds application context.
- *
- * Since PLATFORM_ID is often provided by Angular itself and likely not provided by the application, this might cause potential issues with Angular's internal logic.
- */
-function replaceOrAddPlatformId(providers: Array<any>) {
-  const existingProvider = findAndReplacePlatformId(providers)
-  if (existingProvider === null) {
-    providers.push({
-      provide: PLATFORM_ID,
-      useValue: new DynamicPlatformId(),
-    })
-  }
-}
-
-/**
- * Recursively searches for a provider for PLATFORM_ID and replaces it with a DynamicPlatformId. If no provider is found, returns null.
- */
-function findAndReplacePlatformId(providers: Array<any>): any {
-  if (providers.length === 0) return null
-  for (const provider of providers) {
-    if (provider.provide === PLATFORM_ID) {
-      let id = 'unknown'
-      if (typeof provider.useValue === 'string' || typeof provider.useValue === 'object') {
-        id = provider.useValue
-      } else {
-        console.warn(
-          "PLATFORM_ID provider in the application was not done via useValue. Will fallback to 'unknown' as the PLATFORM_ID"
-        )
-      }
-      provider.useValue = new DynamicPlatformId(id)
-      return provider
-    }
-    const subProviderResult = findAndReplacePlatformId(provider.ɵproviders ?? [])
-    if (subProviderResult !== null) {
-      return subProviderResult
-    }
-  }
-
-  return null
-}
-
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
@@ -178,19 +132,6 @@ function createEntrypoint(
   // Save element name in DynamicAppId for later use in SharedStylesHost
   const appId = injector.get(APP_ID) as any as DynamicAppId
   appId.appElementName = elementName
-
-  /**
-   * PLATFORM_ID is most likely provided by Angular itself and defined in the root injector.
-   * In case we injected additional PLATFORM_ID provider in the application providers, we need to make sure to keep it up to date.
-   */
-  const environmentPlatformId = injector.get(PLATFORM_ID, undefined, { skipSelf: true })
-  const dynamicPlatformId = injector.get(PLATFORM_ID) as any as DynamicPlatformId
-  if (environmentPlatformId) {
-    dynamicPlatformId.setValue(environmentPlatformId)
-  } else {
-    console.debug('No environment PLATFORM_ID found, using default "unknown" value')
-  }
-  dynamicPlatformId.appElementName = elementName
 
   const originalNgInit = component.prototype.ngOnInit
 
