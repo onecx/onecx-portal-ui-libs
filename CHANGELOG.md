@@ -1,3 +1,50 @@
+## [7.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.0...v7.7.1) (2026-04-30)
+
+### Bug Fixes
+
+* empty commit to trigger release ([b078ecf](https://github.com/onecx/onecx-portal-ui-libs/commit/b078ecf1e0daeaf259dae657fb9a2e5ab051e9fd))
+
+## [7.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.1...v7.7.0) (2026-04-30)
+
+### Features
+
+* add i18n to workspace test v7 ([#1385](https://github.com/onecx/onecx-portal-ui-libs/issues/1385)) ([5f45994](https://github.com/onecx/onecx-portal-ui-libs/commit/5f459941174f7ad485dd92745e81c5a132fedaed))
+* add notification topic ([#1341](https://github.com/onecx/onecx-portal-ui-libs/issues/1341)) ([1b6bfbd](https://github.com/onecx/onecx-portal-ui-libs/commit/1b6bfbddf6f1e64b630a69bc132921a384ca287e))
+
+### Bug Fixes
+
+* revert platform id fix v7 ([7bb699f](https://github.com/onecx/onecx-portal-ui-libs/commit/7bb699f03465560175ac4c122dfeb466095b515e))
+* tooltip position ([#1391](https://github.com/onecx/onecx-portal-ui-libs/issues/1391)) ([b3b56b7](https://github.com/onecx/onecx-portal-ui-libs/commit/b3b56b77978002a4d5568bf192aea862b755363b))
+
+### Chores
+
+* remove nx migration and related files, dirs and dependencies ([#1368](https://github.com/onecx/onecx-portal-ui-libs/issues/1368)) ([86c3313](https://github.com/onecx/onecx-portal-ui-libs/commit/86c331368c623e6be87430077c04ad1875597c44))
+
+## [7.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.0...v7.6.1) (2026-04-28)
+
+### Bug Fixes
+
+* improve-keycloak ([#1377](https://github.com/onecx/onecx-portal-ui-libs/issues/1377)) ([d423336](https://github.com/onecx/onecx-portal-ui-libs/commit/d42333674009cbbb9c80320a6b4a7a0eb7673f17))
+
+## [7.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.5.0...v7.6.0) (2026-04-28)
+
+### Features
+
+* add i18n to workspace topic ([#1371](https://github.com/onecx/onecx-portal-ui-libs/issues/1371)) ([4ab5761](https://github.com/onecx/onecx-portal-ui-libs/commit/4ab5761a5b7e5820716dde7db802eac098c7d09e))
+* added advanced variables theming for v7 ([#1346](https://github.com/onecx/onecx-portal-ui-libs/issues/1346)) ([7de13b8](https://github.com/onecx/onecx-portal-ui-libs/commit/7de13b8086c766024a4f279d9d15dc4fccc49828))
+* bump node version in ci v7 ([#1381](https://github.com/onecx/onecx-portal-ui-libs/issues/1381)) ([b04dce1](https://github.com/onecx/onecx-portal-ui-libs/commit/b04dce1c8198005ffee67ca192811d139caceee0))
+
+### Bug Fixes
+
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([#1374](https://github.com/onecx/onecx-portal-ui-libs/issues/1374)) ([1b746db](https://github.com/onecx/onecx-portal-ui-libs/commit/1b746db301a26a67d6213506a65ef4b17907815d))
+* Few graphics do not have alternative text - v6 ([#1340](https://github.com/onecx/onecx-portal-ui-libs/issues/1340)) ([70fc54d](https://github.com/onecx/onecx-portal-ui-libs/commit/70fc54d763d784875f8ee5cf00c68f04082b2b55))
+* floatlabel and placeholder issue fixed ([#1350](https://github.com/onecx/onecx-portal-ui-libs/issues/1350)) ([bbb6357](https://github.com/onecx/onecx-portal-ui-libs/commit/bbb63575aeb82cbd6aaa0bb63582bf63c4a68ac1))
+* globalThis instead of window in accelerator to be node compatible ([#1310](https://github.com/onecx/onecx-portal-ui-libs/issues/1310)) ([06f6b6e](https://github.com/onecx/onecx-portal-ui-libs/commit/06f6b6e51f9a5bd5f9df820d52a128de1981f953))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) ([#1347](https://github.com/onecx/onecx-portal-ui-libs/issues/1347)) ([9743fd1](https://github.com/onecx/onecx-portal-ui-libs/commit/9743fd14f2331d9224c01ab2205683609c2f233b))
+
 ## [7.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.4.0...v7.5.0) (2026-04-01)
 
 ### Features
