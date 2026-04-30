@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-standalone-shell",
-  "version": "7.6.1",
+  "version": "7.7.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,29 +10,16 @@
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@nx/devkit": "^22.0.2",
     "primeng": "^20.3.0",
     "@ngx-translate/core": "^17.0.0",
-    "@onecx/angular-integration-interface": "^7.6.1",
-    "@onecx/angular-webcomponents": "^7.6.1",
-    "@onecx/angular-utils": "^7.6.1",
-    "@onecx/integration-interface": "^7.6.1",
-    "@onecx/angular-auth": "^7.6.1",
-    "@onecx/nx-migration-utils": "^7.6.1"
-  },
-  "peerDependenciesMeta": {
-    "@nx/devkit": {
-      "optional": true
-    },
-    "@onecx/nx-migration-utils": {
-      "optional": true
-    }
+    "@onecx/angular-integration-interface": "^7.7.0",
+    "@onecx/angular-webcomponents": "^7.7.0",
+    "@onecx/angular-utils": "^7.7.0",
+    "@onecx/integration-interface": "^7.7.0",
+    "@onecx/angular-auth": "^7.7.0"
   },
   "dependencies": {},
   "publishConfig": {
     "access": "public"
-  },
-  "nx-migrations": {
-    "migrations": "./migrations.json"
   }
 }

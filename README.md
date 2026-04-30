@@ -63,18 +63,6 @@ curl -sL https://raw.githubusercontent.com/onecx/onecx-portal-ui-libs/refs/heads
 
 2. run `npm run build` to check if it builds successfully after the migrations
 
-# Local migration testing
-
-To test migration locally use verdaccio and the migration guide.
-
-The [v6 migration file](./libs/nx-migration-utils/src/lib/common-migrations/common-migrate-onecx-to-v6.utils.ts) has to be updated with appropriate OneCX packages version.
-
-```
-onecxDependencies.forEach((dep) => {
-      json.dependencies[dep] = '^6.0.0-rc.X'
-    })
-```
-
 # Update from v3 to v4 guide
 
 [Update guide](update-guide.md)

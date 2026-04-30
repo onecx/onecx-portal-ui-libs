@@ -1,3 +1,19 @@
+## [7.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.1...v7.7.0) (2026-04-30)
+
+### Features
+
+* add i18n to workspace test v7 ([#1385](https://github.com/onecx/onecx-portal-ui-libs/issues/1385)) ([5f45994](https://github.com/onecx/onecx-portal-ui-libs/commit/5f459941174f7ad485dd92745e81c5a132fedaed))
+* add notification topic ([#1341](https://github.com/onecx/onecx-portal-ui-libs/issues/1341)) ([1b6bfbd](https://github.com/onecx/onecx-portal-ui-libs/commit/1b6bfbddf6f1e64b630a69bc132921a384ca287e))
+
+### Bug Fixes
+
+* revert platform id fix v7 ([7bb699f](https://github.com/onecx/onecx-portal-ui-libs/commit/7bb699f03465560175ac4c122dfeb466095b515e))
+* tooltip position ([#1391](https://github.com/onecx/onecx-portal-ui-libs/issues/1391)) ([b3b56b7](https://github.com/onecx/onecx-portal-ui-libs/commit/b3b56b77978002a4d5568bf192aea862b755363b))
+
+### Chores
+
+* remove nx migration and related files, dirs and dependencies ([#1368](https://github.com/onecx/onecx-portal-ui-libs/issues/1368)) ([86c3313](https://github.com/onecx/onecx-portal-ui-libs/commit/86c331368c623e6be87430077c04ad1875597c44))
+
 ## [7.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.0...v7.6.1) (2026-04-28)
 
 ### Bug Fixes
