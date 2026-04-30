@@ -1,3 +1,14 @@
+## [6.22.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.1...v6.22.0) (2026-04-30)
+
+### Features
+
+* add i18n to workspace test v6 ([#1384](https://github.com/onecx/onecx-portal-ui-libs/issues/1384)) ([a210592](https://github.com/onecx/onecx-portal-ui-libs/commit/a2105925fd76d19021fe14aab4ef6f6333df42fe))
+* add tests ([#1393](https://github.com/onecx/onecx-portal-ui-libs/issues/1393)) ([162af8c](https://github.com/onecx/onecx-portal-ui-libs/commit/162af8c3f5ad9a6b11082f4e3cd41b636cc429ff))
+
+### Bug Fixes
+
+* revert platform id fix v6 ([beadb0f](https://github.com/onecx/onecx-portal-ui-libs/commit/beadb0fb33d1b946d3c06276c84976e0a16d9bf3))
+
 ## [6.21.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.21.0...v6.21.1) (2026-04-29)
 
 ### Bug Fixes
