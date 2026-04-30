@@ -5,12 +5,13 @@ import {
   MissingTranslationHandlerParams,
   TranslateParser,
 } from '@ngx-translate/core'
-import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { ComponentLogger, getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { DynamicTranslationService, UserService } from '@onecx/angular-integration-interface'
 import { Observable, of } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 import { MULTI_LANGUAGE_IDENTIFIER, MultiLanguageIdentifier } from '../injection-tokens/multi-language-identifier'
 import { mergeDeep } from './deep-merge.utils'
+import { createLogger } from './logger.utils'
 
 type DynamicAppId = { appElementName?: string }
 
@@ -20,6 +21,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   private readonly parser = inject(TranslateParser)
   private readonly dynamicTranslationService = inject(DynamicTranslationService)
   private readonly multiLanguageIdentifiers = this.createMultiLanguageIdentifiers()
+  protected readonly translationHandlerLogger: ComponentLogger = createLogger('MultiLanguageMissingTranslationHandler')
 
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
@@ -33,7 +35,12 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return this.loadTranslations(locales$, params).pipe(catchError(() => { return of(params.key);}))
+    return this.loadTranslations(locales$, params).pipe(
+      catchError((err: Error) => {
+        this.translationHandlerLogger.error('No translation found for key: %s. %O', params.key, err)
+        return of(params.key)
+      })
+    )
   }
 
   /**
