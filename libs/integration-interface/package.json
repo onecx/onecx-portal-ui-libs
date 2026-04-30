@@ -1,6 +1,6 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "7.6.1",
+  "version": "7.7.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@onecx/accelerator": "^7.6.1"
+    "@onecx/accelerator": "^7.7.0"
   },
   "type": "commonjs",
   "main": "./src/index.js",
