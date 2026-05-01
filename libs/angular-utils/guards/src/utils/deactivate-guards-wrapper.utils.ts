@@ -40,7 +40,7 @@ export class DeactivateGuardsWrapper {
     guards: Array<CanDeactivateFn<any> | Type<CanDeactivate<any>>>
   ): MaybeAsync<GuardResult> {
     const logger = createLogger('DeactivateGuardsWrapper')
-    const guardsNavigationState = (this.router.getCurrentNavigation()?.extras.state ?? {}) as GuardsNavigationState
+    const guardsNavigationState = (this.router.currentNavigation()?.extras.state ?? {}) as GuardsNavigationState
     const futureUrl = nextState.url
 
     switch (this.guardsNavigationStateController.getMode(guardsNavigationState)) {
