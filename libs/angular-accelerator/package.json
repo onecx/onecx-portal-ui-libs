@@ -29,7 +29,6 @@
     "primeng": "^21.0.0",
     "@protobi/exceljs": "^4.4.0-protobi.9"
   },
-  "dependencies": {},
   "exports": {
     ".": {
       "style": "./assets/styles.scss"
