@@ -76,3 +76,7 @@ export * from './lib/utils/user-language.utils'
 export * from './lib/utils/parameters.utils'
 export * from './lib/utils/configuration.utils'
 export * from './lib/utils/portal-message.utils'
+
+export * from './lib/topics/notification/v1/notification.model'
+export * from './lib/topics/notification/v1/notification.topic'
+export * from './lib/services/notification.service'
