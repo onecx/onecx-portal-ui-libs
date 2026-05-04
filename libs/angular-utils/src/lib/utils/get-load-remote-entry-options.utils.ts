@@ -1,5 +1,13 @@
 import { Remote } from '@module-federation/runtime-core/types'
-import { RemoteComponent, Technologies } from '@onecx/integration-interface'
+import { RemoteComponent } from '@onecx/integration-interface'
+
+// This type is a copy of the actual Technologies used in onecx-shell-ui.
+export enum Technologies {
+  Angular = 'Angular',
+  WebComponent = 'WebComponent',
+  WebComponentScript = 'WebComponentScript',
+  WebComponentModule = 'WebComponentModule',
+}
 
 // This type is a subset of the actual BffGeneratedRoute used in onecx-shell-ui, containing only the properties relevant for registering a remote entry.
 type BffGeneratedRoute = {
