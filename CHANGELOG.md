@@ -1,3 +1,9 @@
+## [7.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.0...v7.7.1) (2026-04-30)
+
+### Bug Fixes
+
+* empty commit to trigger release ([b078ecf](https://github.com/onecx/onecx-portal-ui-libs/commit/b078ecf1e0daeaf259dae657fb9a2e5ab051e9fd))
+
 ## [7.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.6.1...v7.7.0) (2026-04-30)
 
 ### Features
