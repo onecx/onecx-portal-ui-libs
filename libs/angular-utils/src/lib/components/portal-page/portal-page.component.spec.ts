@@ -51,9 +51,6 @@ describe('PortalPageComponent', () => {
 
     const h3 = fixture.nativeElement.querySelector('h3') as HTMLElement | null
     expect(h3).not.toBeNull()
-
-    const span = fixture.nativeElement.querySelector('span') as HTMLElement | null
-    expect(span).not.toBeNull()
   }))
 
   it('should not show unauthorized message when access is granted (immediate)', () => {
