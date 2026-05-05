@@ -11,8 +11,9 @@ export interface PButtonHarnessFilters extends BaseHarnessFilters {
 export class PButtonHarness extends ComponentHarness {
   static hostSelector = 'p-button'
 
-  getLabelSpan = this.locatorForOptional(SpanHarness.without({ classes: ['p-badge', 'p-button-icon'] }))
+  getLabelSpan = this.locatorForOptional(SpanHarness.with({ class: 'p-button-label' }))
   getIconSpan = this.locatorForOptional(SpanHarness.with({ class: 'p-button-icon' }))
+  getBadge = this.locatorForOptional('p-badge')
 
   static with(options: PButtonHarnessFilters): HarnessPredicate<PButtonHarness> {
     return new HarnessPredicate(PButtonHarness, options)
@@ -34,15 +35,21 @@ export class PButtonHarness extends ComponentHarness {
   }
 
   async getIcon(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-icon')
+    const iconAttribute = await (await this.host()).getAttribute('icon')
+    const classAttr = await (await (await this.getIconSpan())?.host())?.getAttribute('class')
+
+    return iconAttribute ?? classAttr?.split(" ").slice(-2).join(' ') ?? null
   }
 
   async click() {
     await (await this.locatorFor('button')()).click()
   }
 
-  async getBadgeValue() {
-    return await (await this.host()).getAttribute('ng-reflect-badge')
+  async getBadgeValue(): Promise<string | null> {
+    const badgeAttribute = await (await this.host()).getAttribute('badge')
+    const badgeText = await (await this.getBadge())?.text()
+
+    return badgeAttribute ?? badgeText?.trim() ?? null
   }
 
   async getLoadingIcon() {
