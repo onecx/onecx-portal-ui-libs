@@ -1,8 +1,10 @@
 # Required changes for theming poc
-- [ ] Create a new theme model in `libs/integration-interface/src/lib/topics/current-theme/v2/theme.model.ts`
+- [x] Create a new theme model in `libs/integration-interface/src/lib/topics/current-theme/v2/theme.model.ts`
     - This model should contain a v1Theme property of type `Theme` and should otherwise conform to the created ZOD schema for the new schema. Additionally, it should have a receivedVersions property that is an array of numbers representing the versions of the theme that have been received from the BFF. This is needed to determine whether we have received a v1 theme, a v2 theme or both.
 
-- [ ] Create a new theme topic in `libs/integration-interface/src/lib/topics/current-theme/v2/current-theme-topic.ts` and add the following code to it:
+- [ ] Create a shared schema.json file and build a ZOD schema for it in client side code. This file can be shared between BFF, SVC and UI.
+
+- [x] Create a new theme topic in `libs/integration-interface/src/lib/topics/current-theme/v2/current-theme-topic.ts` and add the following code to it:
 
 ```
 import { Topic } from '@onecx/accelerator'
