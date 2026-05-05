@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable, OnDestroy, inject } from '@angular/core'
 import { firstValueFrom, map } from 'rxjs'
-import { Config, ConfigurationTopic } from '@onecx/integration-interface'
+import { Config, ConfigurationTopic, resolveConfigPayload } from '@onecx/integration-interface'
 import { APP_CONFIG } from '../api/injection-tokens'
 import { CONFIG_KEY } from '../model/config-key.model'
 import Semaphore from 'ts-semaphore'
@@ -31,28 +31,25 @@ export class ConfigurationService implements OnDestroy {
 
   public init(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const skipRemoteConfigLoad = this.defaultConfig && this.defaultConfig['skipRemoteConfigLoad']
-      let loadConfigPromise: Promise<Config>
+      const skipRemoteConfigLoad = this.defaultConfig?.['skipRemoteConfigLoad']
+      const remoteConfigURL = this.defaultConfig?.['remoteConfigURL'] ?? undefined
 
-      const inlinedConfig = (window as typeof window & { APP_CONFIG: Config })['APP_CONFIG']
-      if (inlinedConfig) {
-        this.logger.info('ENV resolved from injected config')
-        loadConfigPromise = Promise.resolve(inlinedConfig)
-      } else {
-        if (skipRemoteConfigLoad) {
-          this.logger.info(
-            '📢 TKA001: Remote config load is disabled. To enable it, remove the "skipRemoteConfigLoad" key in your environment.json'
-          )
-          loadConfigPromise = Promise.resolve(this.defaultConfig || {})
-        } else {
-          loadConfigPromise = firstValueFrom(
-            this.http.get<Config>((this.defaultConfig && this.defaultConfig['remoteConfigURL']) || 'assets/env.json')
-          )
-        }
-      }
+      resolveConfigPayload({
+        defaultConfig: this.defaultConfig ?? {},
+        skipRemoteConfigLoad: !!skipRemoteConfigLoad,
+        remoteConfigURL,
+        loadRemoteConfig: (url) => firstValueFrom(this.http.get<Config>(url)),
+      })
+        .then(async ({ config, source }) => {
+          if (source === 'inlined') {
+            this.logger.info('ENV resolved from injected config')
+          }
+          if (source === 'default' && skipRemoteConfigLoad) {
+            this.logger.info(
+              '📢 TKA001: Remote config load is disabled. To enable it, remove the "skipRemoteConfigLoad" key in your environment.json'
+            )
+          }
 
-      loadConfigPromise
-        .then(async (config) => {
           await this.config$.publish({ ...this.defaultConfig, ...(config ?? {}) }).then(() => {
             resolve(true)
           })
