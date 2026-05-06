@@ -71,6 +71,11 @@ export * from './lib/services/dynamic-translation.service'
 
 export * from './lib/models/shell-capability.model'
 export * from './lib/utils/shell-capability.utils'
+export * from './lib/utils/workspace.utils'
+export * from './lib/utils/user-language.utils'
+export * from './lib/utils/parameters.utils'
+export * from './lib/utils/configuration.utils'
+export * from './lib/utils/portal-message.utils'
 
 export * from './lib/topics/notification/v1/notification.model'
 export * from './lib/topics/notification/v1/notification.topic'
