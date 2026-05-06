@@ -21,7 +21,7 @@ Before starting this migration:
 [#ai-driven-migration-assistance]
 == AI Driven Migration Assistance
 
-To assist with the migration process, you can utilize the AI-driven migration assistant. Below you can find the migration prompt, which you can copy and use in your preferred AI tool. This prompt has been tested with github copilot GPT-5.2 in agent mode.
+To simplify the migration process, you can use the AI-driven migration assistant. The https://github.com/onecx/onecx-ai-refactoring-agents[OneCX AI Refactoring Agents] repository provides a dedicated migration agent to automate the OneCX Angular migration process. Below is the migration agent setup, which you can copy and use with your preferred AI tool. These agents have been tested with GitHub Copilot (Claude Sonnet 4.6) in agent mode.
 
 include::ai-prompt.adoc[]
 
