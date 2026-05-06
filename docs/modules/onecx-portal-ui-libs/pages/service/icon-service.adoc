@@ -4,7 +4,7 @@
 :idseparator: -
 :imagesdir: ../images
 
-:icon_topic_url: xref:./integration-interface.adoc#icon-topic 
+:icon_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#icon-topic
 :icon_service_url: xref:onecx-portal-ui-libs:service/icon-service.adoc
 
 
