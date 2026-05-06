@@ -103,6 +103,27 @@ describe('ActionRouterUtils', () => {
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
     })
 
+    it('should navigate when Action has routerLink but no actionCallback', async () => {
+      const action: Action = {
+        id: 'test',
+        routerLink: '/test-route'
+      }
+
+      await handleAction(mockRouter, action)
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
+    })
+
+    it('should do nothing when Action has neither routerLink nor actionCallback', async () => {
+      const action: Action = {
+        id: 'test'
+      }
+
+      await handleAction(mockRouter, action)
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
     it('should call actionCallback when Action has no routerLink', async () => {
       const actionCallbackFn = jest.fn()
       const action: Action = {
@@ -158,6 +179,18 @@ describe('ActionRouterUtils', () => {
       expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
 
+    it('should navigate when Action has routerLink', async () => {
+      const action: Action = {
+        id: 'test',
+        routerLink: '/test-route'
+      }
+
+      handleActionSync(mockRouter, action)
+      await Promise.resolve()
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
+    })
+
     it('should call actionCallback when Action has no routerLink', () => {
       const actionCallbackFn = jest.fn()
       const action: Action = {
@@ -168,6 +201,16 @@ describe('ActionRouterUtils', () => {
       handleActionSync(mockRouter, action)
 
       expect(actionCallbackFn).toHaveBeenCalled()
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when Action has neither routerLink nor actionCallback', () => {
+      const action: Action = {
+        id: 'test'
+      }
+
+      handleActionSync(mockRouter, action)
+
       expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
   })
