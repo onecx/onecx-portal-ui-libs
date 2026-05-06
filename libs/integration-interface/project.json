@@ -20,7 +20,14 @@
         "generatePackageJson": false
       }
     },
-    "build": {
+    "generate-theme-json-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx -y tsx libs/integration-interface/scripts/generate-json-schema.ts",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build-lib": {
       "dependsOn": [
         "build-types",
         "^build"
@@ -57,6 +64,12 @@
           }
         ]
       }
+    },
+    "build": {
+      "dependsOn": [
+        "build-lib",
+        "generate-theme-json-schema"
+      ]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
