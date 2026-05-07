@@ -150,7 +150,7 @@ API::
 [#icon-service]
 === Icon Service
 Usage::
-Request icons by name and receive a CSS class to apply in templates. Offers a Promise-based API to await icon availability.
+Request icons by name and receive a CSS class to apply in templates. Offers a Promise-based API to await icon availability, with optional fallback class support.
 
 Topics used::
 
@@ -168,7 +168,8 @@ API::
 |Method signature |Return type | Description
 
 |`requestIcon(name: string, type?: 'svg' \| 'background' \| 'background-before')` | `string` | Requests an icon and returns the CSS class immediately; triggers loading if needed.
-|`requestIconAsync(name: string, type?: 'svg' \| 'background' \| 'background-before')` | `Promise<string \| null>` | Resolves with the CSS class when available, or `null` when the icon cannot be found.
+|`requestIconAsync(name: string, type?: 'svg' \| 'background' \| 'background-before')` | `Promise<string \| null>` | Resolves with the CSS class when available, or `null` when the icon cannot be found and no fallback is provided.
+|`requestIconAsync(name: string, type: 'svg' \| 'background' \| 'background-before', fallbackClass: string)` | `Promise<string>` | Resolves with the CSS class when available, or `fallbackClass` when the icon cannot be found.
 |===
 +
 [TIP]

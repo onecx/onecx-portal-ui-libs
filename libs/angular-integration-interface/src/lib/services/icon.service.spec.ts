@@ -8,8 +8,8 @@
 import { TestBed } from '@angular/core/testing';
 import { FakeTopic, ensureProperty } from '@onecx/accelerator';
 import { IconService } from './icon.service';
-import { Icon, IconService as IconServiceInterface} from '@onecx/integration-interface';
-import {IconCache} from "@onecx/integration-interface";
+import { Icon, IconService as IconServiceInterface } from '@onecx/integration-interface';
+import { IconCache } from "@onecx/integration-interface";
 
 
 describe('IconService', () => {
@@ -73,7 +73,17 @@ describe('IconService', () => {
   })
 
   describe('requestIconAsync', () => {
-    it('should return null immediately when cached null', async () => {
+    it('should return fallback class immediately when cached null and fallbackClass is provided', async () => {
+      const name = 'mdi:ghost'
+      const fallbackClass = 'pi pi-question-circle'
+      ensureProperty(globalThis, ['onecxIcons', name], null)
+
+      const res = await iconService.requestIconAsync(name, 'background-before', fallbackClass)
+
+      expect(res).toBe(fallbackClass)
+    })
+
+    it('should return null immediately when cached null and fallbackClass is not provided', async () => {
       const name = 'mdi:ghost'
       ensureProperty(globalThis, ['onecxIcons', name], null)
 
@@ -91,6 +101,15 @@ describe('IconService', () => {
       expect(res).toBe('onecx-theme-icon-svg-mdi-car')
     })
 
+    it('should return the default class immediately when cached icon exists and type is omitted', async () => {
+      const name = 'mdi:car'
+
+      ensureProperty(globalThis, ['onecxIcons', name], { name, type: 'svg', body: '' } as IconCache)
+      const res = await iconService.requestIconAsync(name)
+
+      expect(res).toBe('onecx-theme-icon-background-before-mdi-car')
+    })
+
     it('should resolve with class after IconsReceived when icon becomes available', async () => {
       const topic = iconServiceInterface.iconTopic
       const name = 'mdi:star'
@@ -104,7 +123,7 @@ describe('IconService', () => {
       expect(res).toBe('onecx-theme-icon-background-before-mdi-star')
     })
 
-    it('should resolve null after IconsReceived when icon resolved to null', async () => {
+    it('should resolve null after IconsReceived when icon resolved to null and fallbackClass is not provided', async () => {
       const topic = iconServiceInterface.iconTopic
       const name = 'mdi:unknown'
 
@@ -116,6 +135,22 @@ describe('IconService', () => {
 
       expect(res).toBeNull()
     })
+
+    it('should resolve with fallbackClass after IconsReceived when icon resolved to null and fallbackClass is provided', async () => {
+      const topic = iconServiceInterface.iconTopic
+      const name = 'mdi:unknown'
+      const fallbackClass = 'pi pi-question-circle'
+
+      const promise = iconService.requestIconAsync(name, 'svg', fallbackClass)
+      ensureProperty(globalThis, ['onecxIcons', name], null)
+
+      await topic.publish({ type: 'IconsReceived' })
+      const res = await promise
+
+      expect(res).toBe(fallbackClass)
+    })
+
+
   })
 
   describe('ngOnDestroy', () => {
