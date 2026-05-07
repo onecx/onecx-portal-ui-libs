@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-integration-interface",
-  "version": "8.0.0-rc.9",
+  "version": "8.0.0-rc.10",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -19,8 +19,8 @@
     }
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^8.0.0-rc.9",
-    "@onecx/integration-interface": "^8.0.0-rc.9",
+    "@onecx/accelerator": "^8.0.0-rc.10",
+    "@onecx/integration-interface": "^8.0.0-rc.10",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
