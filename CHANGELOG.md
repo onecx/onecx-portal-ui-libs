@@ -1,3 +1,35 @@
+## [8.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.9...v8.0.0-rc.10) (2026-05-07)
+
+### Features
+
+* add expandable row to ocx data table - main ([#1329](https://github.com/onecx/onecx-portal-ui-libs/issues/1329)) ([c3de3a4](https://github.com/onecx/onecx-portal-ui-libs/commit/c3de3a48874c63df69e77b07ecd136edc579ebc3))
+* add notification topic ([#1342](https://github.com/onecx/onecx-portal-ui-libs/issues/1342)) ([4890827](https://github.com/onecx/onecx-portal-ui-libs/commit/4890827da713d38fadf832187d23a14e53c911c0))
+* bump node version in ci ([#1380](https://github.com/onecx/onecx-portal-ui-libs/issues/1380)) ([4972fd8](https://github.com/onecx/onecx-portal-ui-libs/commit/4972fd804d69d75a3dc8abe164b137f941d5e966))
+* data to excel export ([#1245](https://github.com/onecx/onecx-portal-ui-libs/issues/1245)) ([353b7a3](https://github.com/onecx/onecx-portal-ui-libs/commit/353b7a30d82ea4990bc611667676110877e2ef6c))
+* react integration ([#1226](https://github.com/onecx/onecx-portal-ui-libs/issues/1226)) ([1aa9869](https://github.com/onecx/onecx-portal-ui-libs/commit/1aa9869c5d7cf2f501b529ce784085be0bfd78d2))
+
+### Bug Fixes
+
+* a11y for table ([#1345](https://github.com/onecx/onecx-portal-ui-libs/issues/1345)) ([c51a160](https://github.com/onecx/onecx-portal-ui-libs/commit/c51a160126aea2287c02ca1a3a82355418de185d))
+* add aria hidden for decorative icons and add cursor for tooltip host ([#1338](https://github.com/onecx/onecx-portal-ui-libs/issues/1338)) ([c69afe0](https://github.com/onecx/onecx-portal-ui-libs/commit/c69afe01e98a1acd74ee2e24e91598866d123e5d))
+* angular material cdk container ([#1370](https://github.com/onecx/onecx-portal-ui-libs/issues/1370)) ([#1375](https://github.com/onecx/onecx-portal-ui-libs/issues/1375)) ([f22e22a](https://github.com/onecx/onecx-portal-ui-libs/commit/f22e22a1210c1c7235429c22e29c5234fcc0fa5d))
+* changed window to globalThis in accelerator to be compatible with node ([#1311](https://github.com/onecx/onecx-portal-ui-libs/issues/1311)) ([2804437](https://github.com/onecx/onecx-portal-ui-libs/commit/28044370465803b1b44e5b89bee50e229c9986d8))
+* floatlabel and placeholder issue fixed ([#1352](https://github.com/onecx/onecx-portal-ui-libs/issues/1352)) ([7181187](https://github.com/onecx/onecx-portal-ui-libs/commit/7181187c9df0269b8c8bb16e1933526f39fa6df2))
+* improve-keycloak ([#1389](https://github.com/onecx/onecx-portal-ui-libs/issues/1389)) ([bbd5642](https://github.com/onecx/onecx-portal-ui-libs/commit/bbd564297a47af379ecb643355b6aa296bce1030))
+* restrict migration in renovate branches to avoid renovate branch push loop ([#1402](https://github.com/onecx/onecx-portal-ui-libs/issues/1402)) ([9c2b425](https://github.com/onecx/onecx-portal-ui-libs/commit/9c2b4253fc5fbf132c2e39770f28d1dfb2dc1595))
+* revert platform id fix v8 ([b35de11](https://github.com/onecx/onecx-portal-ui-libs/commit/b35de11e629f188f13ba52266b836f1bd97973f8))
+
+### Chores
+
+* add empty lib placeholder ([16c641d](https://github.com/onecx/onecx-portal-ui-libs/commit/16c641dd19765049905a839a6f2e63dc189ea152))
+* remove nx migration and related files, dirs and dependencies ([#1359](https://github.com/onecx/onecx-portal-ui-libs/issues/1359)) ([6e7200e](https://github.com/onecx/onecx-portal-ui-libs/commit/6e7200e29364a02ff01941d8ffa5b72c4a93d207))
+
+### Refactoring
+
+* made nx dependencies optional ([#1335](https://github.com/onecx/onecx-portal-ui-libs/issues/1335)) v8 ([#1348](https://github.com/onecx/onecx-portal-ui-libs/issues/1348)) ([2b790d4](https://github.com/onecx/onecx-portal-ui-libs/commit/2b790d414d9dd085c50a1bf45471be504cc5f03e))
+* refactor copilot-instructions ([#1274](https://github.com/onecx/onecx-portal-ui-libs/issues/1274)) ([f190b0c](https://github.com/onecx/onecx-portal-ui-libs/commit/f190b0cc2bb6cd9b4c5b03f2e4c90b61771dffdf))
+* rename tooltip file ([#1314](https://github.com/onecx/onecx-portal-ui-libs/issues/1314)) ([7bbd301](https://github.com/onecx/onecx-portal-ui-libs/commit/7bbd301be78842d0c8e288c9199aa0d6640dfb2d))
+
 ## [8.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.8...v8.0.0-rc.9) (2026-03-20)
 
 ### Features
