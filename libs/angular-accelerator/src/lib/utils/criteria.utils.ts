@@ -9,7 +9,7 @@ export interface BuildSearchCriteriaParameters {
   removeNullValues: boolean
 }
 
-function _hasShowTime(datePickers:readonly DatePicker[], formKey: string): boolean {
+function _hasShowTime(datePickers:DatePicker[], formKey: string): boolean {
   return (
     datePickers.find((d) => {
       return d.name() === formKey
@@ -26,7 +26,7 @@ function _hasShowTime(datePickers:readonly DatePicker[], formKey: string): boole
  */
 export function buildSearchCriteria<T>(
   formRawValue: any,
-  datePickers: readonly DatePicker[],
+  datePickers: DatePicker[],
   { removeNullValues = false }: BuildSearchCriteriaParameters
 ) {
   return Object.entries(formRawValue).reduce((acc: Partial<T>, [key, value]) => {
