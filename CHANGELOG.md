@@ -1,3 +1,9 @@
+## [7.7.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.1...v7.7.2) (2026-05-08)
+
+### Bug Fixes
+
+* changes related singal conversion in generator ([#1398](https://github.com/onecx/onecx-portal-ui-libs/issues/1398)) ([9bcbffb](https://github.com/onecx/onecx-portal-ui-libs/commit/9bcbffbd541686f04e9ac8d5e8f3ade2a5201aae))
+
 ## [7.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.0...v7.7.1) (2026-04-30)
 
 ### Bug Fixes

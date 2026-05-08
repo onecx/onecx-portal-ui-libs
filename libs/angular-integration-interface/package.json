@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-integration-interface",
-  "version": "7.7.1",
+  "version": "7.7.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -8,8 +8,8 @@
   },
   "peerDependencies": {
     "@angular/core": "^20.0.0",
-    "@onecx/accelerator": "^7.7.1",
-    "@onecx/integration-interface": "^7.7.1",
+    "@onecx/accelerator": "^7.7.2",
+    "@onecx/integration-interface": "^7.7.2",
     "rxjs": "~7.8.1",
     "ts-semaphore": "^1.0.0",
     "typescript": "^5.9.3"
