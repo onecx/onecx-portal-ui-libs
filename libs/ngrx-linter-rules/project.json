@@ -29,6 +29,12 @@
         "codeCoverage": true,
         "passWithNoTests": true
       }
+    },
+    "release": {
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build"
+      }
     }
   }
 }
