@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo "$1"
 echo "$2"
 export VERSION=$1
