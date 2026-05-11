@@ -16,7 +16,6 @@ export function getOneCXSharedRecommendations(
   if (!sharedLibraryPatterns.some((pattern) => pattern.test(libraryName))) {
     return false
   }
-
   sharedConfig.singleton = false
   sharedConfig.strictVersion = false
   sharedConfig.eager = false
