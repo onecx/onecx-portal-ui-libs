@@ -1,4 +1,3 @@
-import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { Injectable, InjectionToken, OnDestroy, Type, inject } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
@@ -88,8 +87,17 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
       : component.exposedModule
     try {
       const remoteEntryOptions = await toLoadRemoteEntryOptions(component)
-      registerRemotes([remoteEntryOptions])
-      const m = await loadRemote<any>(remoteEntryOptions.name + '/' + exposedModule)
+      const shellMfInstance = this.getShellMfInstance()
+      if (!shellMfInstance) {
+        this.logger.error(
+          'Failed to find shell module federation instance',
+          component.exposedModule,
+          component.remoteEntryUrl
+        )
+        return undefined
+      }
+      shellMfInstance.registerRemotes([remoteEntryOptions])
+      const m = await shellMfInstance.loadRemote<any>(remoteEntryOptions.name + '/' + exposedModule)
       if (component.technology === Technologies.Angular) {
         return m[exposedModule]
       }
@@ -98,5 +106,11 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
       this.logger.error('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)
       return undefined
     }
+  }
+
+  // Temporary solution until its released
+  // https://github.com/module-federation/core/blob/6c9d2ee15757be80f0721e1db443b8b526107015/packages/runtime/src/index.ts#L119
+  private getShellMfInstance() {
+    return globalThis.__FEDERATION__.__INSTANCES__.find((instance) => instance.name === 'onecx_shell_ui')
   }
 }
