@@ -6,13 +6,17 @@
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.d.ts",
+  "typings": "./src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
     },
     "./styling": {
       "types": "./styling.d.ts",
@@ -28,7 +32,8 @@
       "types": "./guards.d.ts",
       "import": "./guards.mjs",
       "require": "./guards.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "@onecx/accelerator": "^9.0.0-rc.1",
