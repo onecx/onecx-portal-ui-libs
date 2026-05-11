@@ -14,7 +14,7 @@ module.exports = {
     {
       name: 'v7',
       range: '7.x.x',
-      channel: 'latest',
+      channel: 'v7-lts',
     },
   ],
   preset: 'conventionalcommits',
