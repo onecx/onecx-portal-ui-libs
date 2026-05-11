@@ -1,3 +1,13 @@
+## [7.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.8.0...v7.9.0) (2026-05-11)
+
+### Features
+
+* trigger release ([#1424](https://github.com/onecx/onecx-portal-ui-libs/issues/1424)) ([3a59c11](https://github.com/onecx/onecx-portal-ui-libs/commit/3a59c11eda02ffd63f32e037eef391a53166769b))
+
+### Chores
+
+* adjust channels for v7 ([#1421](https://github.com/onecx/onecx-portal-ui-libs/issues/1421)) ([98ed03d](https://github.com/onecx/onecx-portal-ui-libs/commit/98ed03d9a7d15d8e332feb4673c0fdaf8af06801))
+
 ## [7.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.2...v7.8.0) (2026-05-11)
 
 ### Features
