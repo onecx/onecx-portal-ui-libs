@@ -1,0 +1,28 @@
+{
+  "name": "@onecx/react-auth",
+  "version": "8.0.0-rc.10",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "peerDependencies": {
+    "@onecx/accelerator": "^8.0.0-rc.10",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "axios": "^1.13.2",
+    "keycloak-js": "^26.2.2"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

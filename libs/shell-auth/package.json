@@ -1,6 +1,6 @@
 {
   "name": "@onecx/shell-auth",
-  "version": "8.0.0-rc.9",
+  "version": "8.0.0-rc.10",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,10 +9,11 @@
   "peerDependencies": {
     "@angular/core": "^21.0.0",
     "@module-federation/enhanced": "^2.0.1",
-    "@onecx/accelerator": "^8.0.0-rc.9",
-    "@onecx/angular-integration-interface": "^8.0.0-rc.9",
-    "@onecx/integration-interface": "^8.0.0-rc.9",
+    "@onecx/accelerator": "^8.0.0-rc.10",
+    "@onecx/angular-integration-interface": "^8.0.0-rc.10",
+    "@onecx/integration-interface": "^8.0.0-rc.10",
     "keycloak-js": "^26.2.3",
+    "ts-semaphore": "^1.0.0",
     "rxjs": "~7.8.0"
   },
   "peerDependenciesMeta": {
