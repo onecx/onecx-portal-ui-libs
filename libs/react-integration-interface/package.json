@@ -10,10 +10,12 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
       "require": "./index.js"
     },
     "./mocks": {
+      "types": "./mocks/index.d.ts",
       "import": "./mocks/index.mjs",
       "require": "./mocks/index.js"
     }
