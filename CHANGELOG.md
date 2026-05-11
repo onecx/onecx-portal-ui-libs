@@ -1,3 +1,17 @@
+## [8.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0...v8.1.0) (2026-05-11)
+
+### Features
+
+* trigger release ([#1423](https://github.com/onecx/onecx-portal-ui-libs/issues/1423)) ([808312b](https://github.com/onecx/onecx-portal-ui-libs/commit/808312b685426066df5b8aa3e17c49351e5deda6))
+
+### Bug Fixes
+
+* fix release config ([0c3a81b](https://github.com/onecx/onecx-portal-ui-libs/commit/0c3a81b108c6372523d91f6391dc67d126be6748))
+
+### Chores
+
+* configure v8 to publish to latest ([#1420](https://github.com/onecx/onecx-portal-ui-libs/issues/1420)) ([808e4b1](https://github.com/onecx/onecx-portal-ui-libs/commit/808e4b172c3d3e2560818995f1161f9b56a05f66))
+
 ## [8.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.999.0...v8.0.0) (2026-05-11)
 
 ### ⚠ BREAKING CHANGES
