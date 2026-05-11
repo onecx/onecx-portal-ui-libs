@@ -1,3 +1,13 @@
+## [9.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0...v9.0.0-rc.1) (2026-05-11)
+
+### ⚠ BREAKING CHANGES
+
+* release v9 rc (#1418)
+
+### Chores
+
+* release v9 rc ([#1418](https://github.com/onecx/onecx-portal-ui-libs/issues/1418)) ([97bc7b9](https://github.com/onecx/onecx-portal-ui-libs/commit/97bc7b937c32c8e53f74a01c3241c31733600999))
+
 ## [8.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.999.0...v8.0.0) (2026-05-11)
 
 ### ⚠ BREAKING CHANGES
