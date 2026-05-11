@@ -69,7 +69,7 @@ export class IconService {
       )
     )
 
-    return globalThis.onecxIcons?.[name] ? className : fallbackClass ?? null
+    return globalThis.onecxIcons?.[name] ? className : (fallbackClass ?? null)
   }
 
   destroy(): void {
