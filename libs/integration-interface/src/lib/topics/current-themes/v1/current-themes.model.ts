@@ -1,7 +1,7 @@
 import { ThemeOverride } from '../../current-theme/v1/theme-override.model'
-import { Themes } from './current-themes.schema'
+import { ThemeProperties } from './current-themes.schema'
 
-export interface CurrentThemes {
+export interface ThemeCommonData {
     id?: string
     assetsUpdateDate?: string
     assetsUrl?: string
@@ -11,7 +11,10 @@ export interface CurrentThemes {
     description?: string
     name?: string
     previewImageUrl?: string
-    properties: Themes
     overrides?: Array<ThemeOverride>
+}
+
+export interface CurrentThemes extends ThemeCommonData {
+    properties: ThemeProperties
     versions: Array<1|2>
 }

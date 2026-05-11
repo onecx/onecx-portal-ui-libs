@@ -1,6 +1,6 @@
 import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import { CurrentThemes, OverrideType, Theme as OneCXTheme, ThemeOverride } from '@onecx/integration-interface'
+import { OverrideType, Theme as OneCXTheme, ThemeOverride, ThemePropertiesV2, ThemeCommonData, CurrentThemes } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
 import ThemeConfig from '../utils/theme-config'
@@ -31,7 +31,9 @@ export function provideThemeConfigService(isAdvanced?: boolean) {
   ]
 }
 
-type ThemeV2 = CurrentThemes & { properties: CurrentThemes['properties']['v2'] }
+interface ThemeV2 extends ThemeCommonData {
+  properties: ThemePropertiesV2
+}
 @Injectable({
   providedIn: 'root',
 })

@@ -1,6 +1,4 @@
 import * as z from "zod";
-import { deepPartialSchema } from "./deepPartial";
-
 // !IMPORTANT: All objects that contain a default property on the top level, must contain either state or variant on the top level, never both of them
 // !IMPORTANT: All subobjects of variant and state must have the same structure as the default object on the same level
 
@@ -382,12 +380,22 @@ const usages = z
   })
   .meta({ id: "usages" });
 
-const regionOverride = z
+type PrimitivesInput = z.input<typeof primitives>
+type UsagesInput = z.input<typeof usages>
+
+type RegionOverrideInput = {
+  primitives?: PrimitivesInput
+  usages?: UsagesInput
+}
+
+// Explicit type annotation breaks the inference chain to avoid TS2589
+// (regionOverrides repeats this schema 7 times, causing depth explosion)
+const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
   .object({
-    primitives: deepPartialSchema(primitives).optional() as z.ZodOptional<ReturnType<typeof deepPartialSchema<typeof primitives>>>,
-    usages: deepPartialSchema(usages).optional() as z.ZodOptional<ReturnType<typeof deepPartialSchema<typeof usages>>>,
+    primitives: primitives.optional(),
+    usages: usages.optional(),
   }).optional()
-  .meta({ id: "regionOverride" });
+  .meta({ id: "regionOverride" }) as any;
 
 const regionOverrides = z
   .object({
@@ -401,15 +409,38 @@ const regionOverrides = z
   }).optional()
   .meta({ id: "regionOverrides" });
 
+export const themePropertiesV2 = z
+  .object({
+    primitives: primitives as typeof primitives,
+    usages: usages.optional(),
+    regionOverrides: regionOverrides as typeof regionOverrides,
+  })
+  .meta({ id: 'themePropertiesV2' })
+
 export const theme = z
   .object({
-    v2: z.object({
-      primitives: primitives as typeof primitives,
-      usages: usages.optional(),
-      regionOverrides: regionOverrides as typeof regionOverrides,
-    }).optional(),
-    v1: z.any().optional(),
+    v2: themePropertiesV2.optional(),
+    v1: z.record(z.string(), z.record(z.string(), z.string())).optional(),
   })
-  .meta({ id: "theme" });
+  .meta({ id: 'theme' })
 
-export type Themes = z.input<typeof theme>;
+type RegionOverridesInput = {
+  header?: RegionOverrideInput
+  subHeader?: RegionOverrideInput
+  bodyStart?: RegionOverrideInput
+  bodyHeader?: RegionOverrideInput
+  bodyFooter?: RegionOverrideInput
+  bodyEnd?: RegionOverrideInput
+  footer?: RegionOverrideInput
+}
+
+export type ThemePropertiesV2 = {
+  primitives?: PrimitivesInput
+  usages?: UsagesInput
+  regionOverrides?: RegionOverridesInput
+}
+
+export type ThemeProperties = {
+  v2?: ThemePropertiesV2
+  v1?: Record<string, Record<string, string>>
+}

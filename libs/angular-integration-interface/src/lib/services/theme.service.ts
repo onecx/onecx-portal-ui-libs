@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core'
-import { CurrentThemeTopic, CurrentThemesTopic, ShellCapability } from '@onecx/integration-interface'
+import { CurrentThemeTopic, CurrentThemesTopic, ShellCapability, Theme as OneCXTheme } from '@onecx/integration-interface'
 import { ShellCapabilityService } from './shell-capability.service'
 import { createLogger } from '../utils/logger.utils'
 import { map } from 'rxjs'
@@ -27,14 +27,14 @@ export class ThemeService implements OnDestroy {
   get currentThemes$() {
     if (!this.shellCapabilityService.hasCapability(ShellCapability.CURRENT_THEMES_TOPIC)) {
       this.logger.error('CurrentThemesTopic is not supported by this version of the shell. Falling back to CurrentThemeTopic.')
-      return this.currentTheme$.pipe(map(theme => (
+      return this.currentTheme$.pipe(map((theme: OneCXTheme) => (
         {
           ...theme,
           properties: {
             v1: theme.properties ?? {},
           },
           versions: [1],
-        } as CurrentThemes
+        } as unknown as CurrentThemes
       )))
     }
     this._currentThemes$ ??= new CurrentThemesTopic()
