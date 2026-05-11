@@ -1,6 +1,5 @@
 module.exports = {
   branches: [
-    'dummy',
     'main',
     {
       name: 'v5',
