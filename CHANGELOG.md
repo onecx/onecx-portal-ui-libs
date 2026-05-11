@@ -1,3 +1,9 @@
+## [6.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.22.1...v6.23.0) (2026-05-11)
+
+### Features
+
+* add ngrx to onecx shared recommendation ([#1412](https://github.com/onecx/onecx-portal-ui-libs/issues/1412)) ([d7a70a0](https://github.com/onecx/onecx-portal-ui-libs/commit/d7a70a0a4dc9b245dbb0ec6cd96cb74b987f775d))
+
 ## [6.22.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.22.0...v6.22.1) (2026-04-30)
 
 ### Bug Fixes
