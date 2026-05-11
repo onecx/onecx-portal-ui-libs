@@ -1,3 +1,10 @@
+## [8.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.11...v8.0.0-rc.12) (2026-05-11)
+
+### Bug Fixes
+
+* add missing release jobs + skip existing packages ([#1415](https://github.com/onecx/onecx-portal-ui-libs/issues/1415)) ([6c55638](https://github.com/onecx/onecx-portal-ui-libs/commit/6c55638430445496fa6d303a952d1f901d7473de))
+* package configs ([#1416](https://github.com/onecx/onecx-portal-ui-libs/issues/1416)) ([75ec7db](https://github.com/onecx/onecx-portal-ui-libs/commit/75ec7db63efb05c9d53cd3fa9f9f3e7be961e11a))
+
 ## [8.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.10...v8.0.0-rc.11) (2026-05-11)
 
 ### Features
