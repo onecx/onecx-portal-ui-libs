@@ -7,7 +7,14 @@ export interface SharedLibraryConfig {
   includeSecondaries?: boolean
 }
 
-const sharedLibraryPatterns: RegExp[] = [/^@angular.*$/, /^@onecx.*$/, /^rxjs.*$/, /^primeng.*$/, /^@ngx-translate.*$/]
+const sharedLibraryPatterns: RegExp[] = [
+  /^@angular.*$/,
+  /^@onecx.*$/,
+  /^rxjs.*$/,
+  /^primeng.*$/,
+  /^@ngx-translate.*$/,
+  /^@ngrx.*$/,
+]
 
 export function getOneCXSharedRecommendations(
   libraryName: string,
