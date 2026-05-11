@@ -23,7 +23,7 @@ describe('getOneCXSharedRecommendations', () => {
     expect(shared).toEqual({ singleton: true, strictVersion: true, eager: true })
   })
 
-  it.each(['@angular/core', '@onecx/whatever', 'rxjs', 'primeng/api', '@ngx-translate/core'])(
+  it.each(['@angular/core', '@onecx/whatever', 'rxjs', 'primeng/api', '@ngx-translate/core', '@ngrx/store'])(
     'forces recommendations for %s',
     (libraryName) => {
       const shared: SharedLibraryConfig = {
