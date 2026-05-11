@@ -1,3 +1,9 @@
+## [9.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.1...v9.0.0-rc.2) (2026-05-11)
+
+### Features
+
+* trigger release ([#1422](https://github.com/onecx/onecx-portal-ui-libs/issues/1422)) ([75596b3](https://github.com/onecx/onecx-portal-ui-libs/commit/75596b319f6fd321c3917c5fb79d8903bd5c3a63))
+
 ## [9.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0...v9.0.0-rc.1) (2026-05-11)
 
 ### ⚠ BREAKING CHANGES
