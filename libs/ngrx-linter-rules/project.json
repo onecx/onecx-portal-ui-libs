@@ -28,6 +28,12 @@
         "jestConfig": "libs/ngrx-linter-rules/jest.config.ts",
         "codeCoverage": true,
         "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     },
     "release": {
