@@ -1,4 +1,4 @@
-import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
+import { ModuleFederation } from '@module-federation/enhanced/runtime'
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
@@ -112,7 +112,11 @@ export class AuthServiceWrapper {
     const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
 
     const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
-    registerRemotes([
+    const shellMfInstance = this.getShellMfInstance()
+    if (!shellMfInstance) {
+      throw new Error('Shell module federation instance not found')
+    }
+    shellMfInstance.registerRemotes([
       {
         type: 'module',
         entry: remoteEntry,
@@ -120,7 +124,7 @@ export class AuthServiceWrapper {
         shareScope: customAuthShareScope,
       },
     ])
-    const module = await loadRemote<{ default: AuthServiceFactory }>(
+    const module = await shellMfInstance.loadRemote<{ default: AuthServiceFactory }>(
       CUSTOM_AUTH_REMOTE_ALIAS + '/' + sanitizedExposedModule
     )
 
@@ -129,5 +133,11 @@ export class AuthServiceWrapper {
     }
 
     return module.default as AuthServiceFactory
+  }
+
+  // Temporary solution until its released
+  // https://github.com/module-federation/core/blob/6c9d2ee15757be80f0721e1db443b8b526107015/packages/runtime/src/index.ts#L119
+  getShellMfInstance(): ModuleFederation | undefined {
+    return globalThis.__FEDERATION__.__INSTANCES__.find((instance) => instance.name === 'onecx-shell-ui')
   }
 }
