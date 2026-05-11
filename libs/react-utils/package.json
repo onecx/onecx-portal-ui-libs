@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-utils",
-  "version": "8.0.0",
+  "version": "9.0.0-rc.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -30,10 +30,10 @@
     }
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^8.0.0",
-    "@onecx/integration-interface": "^8.0.0",
-    "@onecx/react-integration-interface": "^8.0.0",
-    "@onecx/react-webcomponents": "^8.0.0",
+    "@onecx/accelerator": "^9.0.0-rc.1",
+    "@onecx/integration-interface": "^9.0.0-rc.1",
+    "@onecx/react-integration-interface": "^9.0.0-rc.1",
+    "@onecx/react-webcomponents": "^9.0.0-rc.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "primereact": "10.9.7",
