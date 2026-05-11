@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-utils",
-  "version": "7.7.2",
+  "version": "7.8.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -16,9 +16,9 @@
     "primeng": "^20.3.0",
     "@primeuix/styled": "^0.7.4",
     "@angular/platform-browser": "^20.0.0",
-    "@onecx/accelerator": "^7.7.2",
-    "@onecx/angular-integration-interface": "^7.7.2",
-    "@onecx/integration-interface": "^7.7.2",
+    "@onecx/accelerator": "^7.8.0",
+    "@onecx/angular-integration-interface": "^7.8.0",
+    "@onecx/integration-interface": "^7.8.0",
     "@ngx-translate/http-loader": "^17.0.0"
   },
   "publishConfig": {

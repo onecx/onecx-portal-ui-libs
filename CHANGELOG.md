@@ -1,3 +1,9 @@
+## [7.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.2...v7.8.0) (2026-05-11)
+
+### Features
+
+* add ngrx to onecx shared recommendation ([#1411](https://github.com/onecx/onecx-portal-ui-libs/issues/1411)) ([5fcf7ed](https://github.com/onecx/onecx-portal-ui-libs/commit/5fcf7ed471706c10057c79724698cd8e699467a8))
+
 ## [7.7.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.1...v7.7.2) (2026-05-08)
 
 ### Bug Fixes
