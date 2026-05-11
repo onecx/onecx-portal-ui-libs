@@ -1,3 +1,10 @@
+## [8.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.10...v8.0.0-rc.11) (2026-05-11)
+
+### Features
+
+* add ngrx to onecx shared recommendation ([#1410](https://github.com/onecx/onecx-portal-ui-libs/issues/1410)) ([c72b7cf](https://github.com/onecx/onecx-portal-ui-libs/commit/c72b7cf760fbd4568da0761eb2bbe1012036ab80))
+* new module federation ([#1279](https://github.com/onecx/onecx-portal-ui-libs/issues/1279)) ([a28c7e6](https://github.com/onecx/onecx-portal-ui-libs/commit/a28c7e69b4024397136d28a50ce9c859959ba20a))
+
 ## [8.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0-rc.9...v8.0.0-rc.10) (2026-05-07)
 
 ### Features
