@@ -14,6 +14,9 @@ describe('CurrentWorkspaceStoreConnectorService', () => {
     workspaceName: 'Workspace 1',
     portalName: 'Portal',
     microfrontendRegistrations: [],
+    i18n: {
+      displayName: { en: 'Workspace 1', de: 'Arbeitsbereich 1' },
+    },
   }
 
   beforeEach(() => {
