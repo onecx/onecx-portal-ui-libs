@@ -532,6 +532,47 @@ describe('PageHeaderComponent', () => {
     expect(callbackSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('should navigate via routerLink when no actionCallback is provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+    fixture.componentRef.setInput('actions', [
+      {
+        label: 'Action with routerLink only',
+        show: 'always',
+        routerLink: '/routerlink-only',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ])
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with routerLink only')
+    await inlineButton?.click()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/routerlink-only'])
+  })
+
+  it('should navigate via routerLink in overflow menu when no actionCallback is provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+    fixture.componentRef.setInput('actions', [
+      {
+        label: 'Overflow with routerLink only',
+        show: 'asOverflow',
+        routerLink: '/overflow-routerlink-only',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ])
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    await menuOverflowButton?.click()
+
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    await menuItems[0]?.selectItem()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/overflow-routerlink-only'])
+  })
+
   it('should render objectDetails as object info in the page header', async () => {
     const objectDetailsWithoutIcons = [
       {
