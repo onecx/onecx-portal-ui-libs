@@ -1,3 +1,9 @@
+## [8.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.1.1...v8.2.0) (2026-05-12)
+
+### Features
+
+* add i18n to workspace topic ([#1428](https://github.com/onecx/onecx-portal-ui-libs/issues/1428)) ([0013595](https://github.com/onecx/onecx-portal-ui-libs/commit/0013595d11c6786590cafa3187a5e7f642ecc760))
+
 ## [8.1.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.1.0...v8.1.1) (2026-05-11)
 
 ### Bug Fixes
