@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-accelerator",
-  "version": "8.0.0-rc.9",
+  "version": "9.0.0-rc.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "@ngrx/store": "^21.0.0",
     "rxjs": "^7.8.1",
     "zod": "^4.0.0",
-    "@onecx/accelerator": "^8.0.0-rc.9"
+    "@onecx/accelerator": "^9.0.0-rc.2"
   },
   "publishConfig": {
     "access": "public"

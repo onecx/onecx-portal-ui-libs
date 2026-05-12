@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo "$1"
 echo "$2"
 export VERSION=$1
@@ -32,8 +33,12 @@ for folder in "${folder_names[@]}"; do
     if [[ $libPackageVersion != $1 ]]
     then
         npx -p replace-json-property rjp libs/$folder/package.json version $1
-        npx nx run $folder:release
-    fi  
+        if npm view "$libPackageName@$1" version > /dev/null 2>&1; then
+            echo "WARNING: $libPackageName@$1 already exists on npm. Skipping."
+        else
+            npx nx run $folder:release
+        fi
+    fi
 done
 
 
