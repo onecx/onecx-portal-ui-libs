@@ -14,8 +14,18 @@ export class DataLayoutSelectionHarness extends ContentContainerComponentHarness
     PToggleButtonHarness.with({ onLabel: 'ocx-data-layout-selection-table' })
   )
 
-  async getCurrentLayout() {
-    return await (await this.host()).getAttribute('ng-reflect-layout')
+  async getCurrentLayout(): Promise<'list' | 'grid' | 'table' | null> {
+    if (await (await this.getListLayoutSelectionToggleButton()).isChecked()) {
+      return 'list';
+    }
+    if (await (await this.getGridLayoutSelectionToggleButton()).isChecked()) {
+      return 'grid';
+    }
+    if (await (await this.getTableLayoutSelectionToggleButton()).isChecked()) {
+      return 'table';
+    }
+
+    return null;
   }
 
   async selectListLayout() {
