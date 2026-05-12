@@ -173,4 +173,4 @@ function appInitializer(userService: UserService) {
     ConsentComponent,
   ],
 })
-export class AngularAcceleratorModule {}
+export class AngularAcceleratorModule {
