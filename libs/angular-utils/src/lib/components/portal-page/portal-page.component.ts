@@ -44,6 +44,6 @@ export class PortalPageComponent implements OnInit {
       permission: this.permission(),
       pageName: this.pageName(),
       applicationId: this.applicationId(),
-    })
+    }
   }
 }
