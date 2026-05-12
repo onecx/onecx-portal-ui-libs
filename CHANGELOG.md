@@ -1,3 +1,13 @@
+## [9.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.2...v9.0.0-rc.3) (2026-05-12)
+
+### Features
+
+* add i18n to workspace topic ([#1427](https://github.com/onecx/onecx-portal-ui-libs/issues/1427)) ([61038bd](https://github.com/onecx/onecx-portal-ui-libs/commit/61038bd6b26d4e332506dec211568bfb5b995bfc))
+
+### Bug Fixes
+
+* router link in page header ([#1405](https://github.com/onecx/onecx-portal-ui-libs/issues/1405)) ([b5cd64a](https://github.com/onecx/onecx-portal-ui-libs/commit/b5cd64a75a11fa0b29d862899e164953a34057c8))
+
 ## [9.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.1...v9.0.0-rc.2) (2026-05-11)
 
 ### Features
