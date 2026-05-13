@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo "$1"
 echo "$2"
 export VERSION=$1
@@ -18,14 +19,18 @@ done < <(find "$directory" -mindepth 1 -maxdepth 1 -type d | awk -F "/" '{print 
 
 for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
+    libPackageName=$(echo "$packageJsonDataLib" | jq -r '.name')
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1^'$1'"/')
     echo $packageJsonDataLib > libs/$folder/package.json
     if [[ $libPackageVersion != $1 ]]
     then
         npx -p replace-json-property rjp libs/$folder/package.json version $1
-        npx nx run $folder:release
-    fi  
+        if npm view "$libPackageName@$1" version > /dev/null 2>&1; then
+            echo "WARNING: $libPackageName@$1 already exists on npm. Skipping."
+        else
+            npx nx run $folder:release
+        fi
+    fi
 done
-
 
