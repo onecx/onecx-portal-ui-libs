@@ -1,21 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
   let fixture: ComponentFixture<DataLayoutSelectionComponent>
+  let stateService: DataViewStateService
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
       imports: [TranslateModule.forRoot()],
+      providers: [DataViewStateService],
       schemas: [],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
     component = fixture.componentInstance
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create', () => {
@@ -27,32 +30,30 @@ describe('DataLayoutSelectionComponent', () => {
     it('should update selectedViewLayout when layout input changes', () => {
       fixture.detectChanges()
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('grid')
 
-      component.layout.set('list')
+      component.layout = 'list'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('list')
     })
   })
 
   describe('ngOnInit', () => {
-    it('should emit initial componentStateChanged with current layout', () => {
-      const componentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
+    it('should initialize with current layout from service', () => {
+      stateService.setLayout('list')
 
-      fixture.componentRef.setInput('layout', 'list')
       fixture.detectChanges()
 
-      expect(componentStateChangedSpy).toHaveBeenCalledWith({ layout: 'list' })
+      expect(component.layout).toBe('list')
+      expect(component.selectedViewLayout()?.layout).toBe('list')
     })
 
-    it('should fallback to table when selectedViewLayout is undefined', () => {
-      const componentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
-
+    it('should initialize with table layout as default', () => {
       fixture.detectChanges()
 
-      expect(componentStateChangedSpy).toHaveBeenCalledWith({ layout: 'table' })
+      expect(component.selectedViewLayout()?.layout ?? 'table').toBe('table')
     })
   })
 
@@ -67,17 +68,15 @@ describe('DataLayoutSelectionComponent', () => {
   })
 
   describe('onDataViewLayoutChange', () => {
-    it('should emit dataViewLayoutChange and componentStateChanged with the new layout', () => {
-      const dataViewLayoutChangeSpy = jest.spyOn(component.dataViewLayoutChange, 'emit')
-      const componentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
+    it('should call service setLayout and update layout signal', () => {
+      const setLayoutSpy = jest.spyOn(stateService, 'setLayout')
 
       fixture.detectChanges()
-      jest.clearAllMocks()
 
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })
 
-      expect(dataViewLayoutChangeSpy).toHaveBeenCalledWith('grid')
-      expect(componentStateChangedSpy).toHaveBeenCalledWith({ layout: 'grid' })
+      expect(setLayoutSpy).toHaveBeenCalledWith('grid')
+      expect(component.layout).toBe('grid')
     })
   })
 })

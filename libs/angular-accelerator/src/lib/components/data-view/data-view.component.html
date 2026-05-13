@@ -1,28 +1,20 @@
-@if (layout() !== 'table') {
+@if (layout !== 'table') {
 <div>
   <ocx-data-list-grid
     #ocxdatalistgrid
     [name]="name()"
     [data]="data()"
-    [columns]="columns()"
-    [filters]="filters()"
-    [sortDirection]="sortDirection()"
-    [sortField]="sortField()"
+    [columns]="columns"
+    [filters]="filters"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
     [clientSideSorting]="clientSideSorting()"
     [titleLineId]="titleLineId()"
     [subtitleLineIds]="subtitleLineIds()"
-    [clientSideSorting]="true"
     [pageSizes]="pageSizes()"
-    [pageSize]="pageSize()"
-    [paginator]="listGridPaginator()"
-    [page]="page()"
-    (pageChanged)="onPageChange($event)"
-    (pageSizeChanged)="onPageSizeChange($event)"
-    (componentStateChanged)="dataListGridComponentState$.next($event)"
+    [layout]="layout === 'grid' ? 'grid' : 'list'"
+    [paginator]="listGridPaginator"
     [emptyResultsMessage]="emptyResultsMessage()"
-    [layout]="layout()"
     [deletePermission]="deletePermission()"
     [editPermission]="editPermission()"
     [viewPermission]="viewPermission()"
@@ -118,28 +110,17 @@
     }</ng-template
   >
 </div>
-} @if (layout() === 'table') {
+} @if (layout === 'table') {
 <div>
   <ocx-data-table
     #ocxdatatable
     [rows]="data()"
-    [columns]="columns()"
-    [filters]="filters()"
-    [sortDirection]="sortDirection()"
-    [sortColumn]="sortField()"
+    [columns]="columns"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
     [clientSideSorting]="clientSideSorting()"
     [pageSizes]="pageSizes()"
-    [pageSize]="pageSize()"
-    [paginator]="tablePaginator()"
-    [page]="page()"
-    (pageChanged)="onPageChange($event)"
-    (pageSizeChanged)="onPageSizeChange($event)"
-    (componentStateChanged)="dataTableComponentState$.next($event)"
-    [selectedRows]="selectedRows()"
-    [frozenActionColumn]="frozenActionColumn()"
-    [actionColumnPosition]="actionColumnPosition()"
+    [paginator]="tablePaginator"
     [emptyResultsMessage]="emptyResultsMessage()"
     [name]="name()"
     [deletePermission]="deletePermission()"
@@ -164,8 +145,6 @@
     [stringFilterCellTemplate]="stringTableFilterCell"
     [relativeDateFilterCellTemplate]="relativeDateTableFilterCell"
     [translationKeyFilterCellTemplate]="translationKeyTableFilterCell"
-    (sorted)="sorting($event)"
-    (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer()"
     [currentPageShowingKey]="currentPageShowingKey()"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey()"
@@ -174,7 +153,6 @@
     [selectionEnabledField]="tableSelectionEnabledField()"
     [expandable]="expandable()"
     [frozenExpandColumn]="frozenExpandColumn()"
-    [(expandedRows)]="expandedRows"
     (rowExpanded)="rowExpanded.emit($event)"
     (rowCollapsed)="rowCollapsed.emit($event)"
   >
