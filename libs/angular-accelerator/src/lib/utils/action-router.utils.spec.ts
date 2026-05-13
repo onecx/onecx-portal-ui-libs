@@ -44,8 +44,7 @@ describe('ActionRouterUtils', () => {
       const action: DataAction = {
         id: 'test',
         permission: 'TEST',
-        routerLink: '/test-route',
-        callback: jest.fn()
+        routerLink: '/test-route'
       }
 
       await handleAction(mockRouter, action, 'testData')
@@ -94,8 +93,7 @@ describe('ActionRouterUtils', () => {
     it('should navigate when Action has routerLink', async () => {
       const action: Action = {
         id: 'test',
-        routerLink: '/test-route',
-        actionCallback: jest.fn()
+        routerLink: '/test-route'
       }
 
       await handleAction(mockRouter, action)
