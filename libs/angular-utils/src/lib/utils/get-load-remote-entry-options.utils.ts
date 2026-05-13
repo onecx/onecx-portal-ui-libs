@@ -17,7 +17,7 @@ type BffGeneratedRoute = {
   technology?: Technologies
   baseUrl: string
   shareScope?: string
-  remoteName: string
+  remoteName?: string
 }
 
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
@@ -41,9 +41,10 @@ function getRemoteType(r: RemoteEntry): 'module' | 'script' {
 }
 
 function getRemoteName(r: RemoteEntry): string {
-  if (r.technology === Technologies.Angular || r.technology === Technologies.WebComponentModule) {
-    return r.productName + '|' + r.appId
+  if (r.technology === Technologies.WebComponentScript && r.remoteName) {
+    // For WebComponentScript, we have to use the remoteName equal to the name defined in the module federation configuration of the remote application, since it doesn't follow the module format and we need to access the exposed component via the global variable defined in the remote entry.
+    return r.remoteName
   }
-  // For WebComponentScript, we have to use the remoteName equal to the name defined in the module federation configuration of the remote application, since it doesn't follow the module format and we need to access the exposed component via the global variable defined in the remote entry.
-  return r.remoteName
+
+  return r.productName + '|' + r.appId
 }
