@@ -117,6 +117,9 @@ const defaultComponentArgs = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
+  deletePermission: 'TEST_MGMT#TEST_DELETE',
+  editPermission: 'TEST_MGMT#TEST_EDIT',
+  viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
 
 const dataTableSelectionArgs = {
@@ -144,18 +147,19 @@ const dataTableActionsArgs = {
 
 // Using render instead of template to pass output handlers with action logger
 export const WithMockData = {
-  args: {
-    ...defaultComponentArgs,
-  },
   render: (args: any) => ({
     props: {
       ...args,
+      ...dataTableActionsArgs
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)}>
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
+  args: {
+    ...defaultComponentArgs,
+  },
 }
 
 export const NoData = {
@@ -168,7 +172,7 @@ export const NoData = {
       ...args,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)}>
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -184,7 +188,7 @@ export const WithRowSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)" (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -197,7 +201,7 @@ export const WithRowSelectionAndDefaultSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)" (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -218,7 +222,7 @@ export const WithRowSelectionAndDisabledDefaultSelection = {
       ...dataTableSelectionArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)" (selectionChanged)="selectionChanged.emit($event)" (componentStateChanged)="componentStateChanged($event)">
       </ocx-data-table>
     `,
   }),
@@ -311,6 +315,9 @@ const extendedComponentArgs = {
   ],
   emptyResultsMessage: 'No results',
   selectedRows: [],
+  deletePermission: 'TEST_MGMT#TEST_DELETE',
+  editPermission: 'TEST_MGMT#TEST_EDIT',
+  viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
 
 export const ResponsiveWithScroll = {
@@ -319,7 +326,7 @@ export const ResponsiveWithScroll = {
       ...args,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)}>
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -333,15 +340,12 @@ export const ResponsiveWithScrollAndFrozenActionsColumn = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
   args: {
     ...extendedComponentArgs,
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
     frozenActionColumn: true,
     actionColumnPosition: 'left',
   },
@@ -354,7 +358,7 @@ export const WithConditionallyDisabledActionButtons = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -362,9 +366,6 @@ export const WithConditionallyDisabledActionButtons = {
     ...defaultComponentArgs,
     deleteActionEnabledField: 'available',
     editActionEnabledField: 'available',
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
   },
 }
 
@@ -375,7 +376,7 @@ export const WithConditionallyHiddenActionButtons = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -383,9 +384,6 @@ export const WithConditionallyHiddenActionButtons = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
   },
 }
 
@@ -396,7 +394,7 @@ export const WithAdditionalActions = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -404,9 +402,6 @@ export const WithAdditionalActions = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
     additionalActions: [
       {
         id: '1',
@@ -428,7 +423,7 @@ export const WithConditionallyEnabledAdditionalActions = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -436,9 +431,6 @@ export const WithConditionallyEnabledAdditionalActions = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
     additionalActions: [
       {
         id: '1',
@@ -461,7 +453,7 @@ export const WithConditionallyVisibleAdditionalActions = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
@@ -469,9 +461,6 @@ export const WithConditionallyVisibleAdditionalActions = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
     additionalActions: [
       {
         id: '1',
@@ -494,15 +483,12 @@ export const WithAdditionalOverflowActions = {
       ...dataTableActionsArgs,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)} (editActionClicked)="editActionClicked($event)" (deleteActionClicked)="deleteActionClicked($event)" (viewActionClicked)="viewActionClicked($event)">
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
   args: {
     ...defaultComponentArgs,
-    deletePermission: 'TEST_MGMT#TEST_DELETE',
-    editPermission: 'TEST_MGMT#TEST_EDIT',
-    viewPermission: 'TEST_MGMT#TEST_VIEW',
     additionalActions: [
       {
         id: '1',
@@ -595,7 +581,7 @@ export const WithPageSizes = {
       ...args,
     },
     template: `
-      <ocx-data-table ${argsToTemplate(args)}>
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
       </ocx-data-table>
     `,
   }),
