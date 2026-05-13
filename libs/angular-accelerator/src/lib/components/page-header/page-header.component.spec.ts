@@ -333,9 +333,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Inline action with routerLink',
         show: 'always',
-        actionCallback: () => {
-          console.log('My routing Action')
-        },
         routerLink: '/inline',
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
@@ -359,9 +356,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Overflow action with routerLink',
         show: 'asOverflow',
-        actionCallback: () => {
-          console.log('My routing Action')
-        },
         routerLink: '/overflow',
         permission: 'TEST#TEST_PERMISSION',
         icon: PrimeIcons.MAP,
@@ -388,7 +382,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with function routerLink',
         show: 'always',
-        actionCallback: jest.fn(),
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -409,7 +402,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with promise function routerLink',
         show: 'always',
-        actionCallback: jest.fn(),
         routerLink: routerLinkPromiseFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -429,7 +421,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Action with promise routerLink',
         show: 'always',
-        actionCallback: jest.fn(),
         routerLink: Promise.resolve('/promise-link'),
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -449,7 +440,6 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Overflow function routerLink',
         show: 'asOverflow',
-        actionCallback: jest.fn(),
         routerLink: routerLinkFunction,
         permission: 'TEST#TEST_PERMISSION',
       },
@@ -530,6 +520,47 @@ describe('PageHeaderComponent', () => {
 
     expect(spy).not.toHaveBeenCalled()
     expect(callbackSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('should navigate via routerLink when no actionCallback is provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+    fixture.componentRef.setInput('actions', [
+      {
+        label: 'Action with routerLink only',
+        show: 'always',
+        routerLink: '/routerlink-only',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ])
+
+    const inlineButton = await pageHeaderHarness.getInlineActionButtonByLabel('Action with routerLink only')
+    await inlineButton?.click()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/routerlink-only'])
+  })
+
+  it('should navigate via routerLink in overflow menu when no actionCallback is provided', async () => {
+    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+    fixture.componentRef.setInput('actions', [
+      {
+        label: 'Overflow with routerLink only',
+        show: 'asOverflow',
+        routerLink: '/overflow-routerlink-only',
+        permission: 'TEST#TEST_PERMISSION',
+      },
+    ])
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    await menuOverflowButton?.click()
+
+    const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
+    await menuItems[0]?.selectItem()
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(['/overflow-routerlink-only'])
   })
 
   it('should render objectDetails as object info in the page header', async () => {
