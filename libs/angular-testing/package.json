@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-testing",
-  "version": "8.2.0",
+  "version": "8.2.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "peerDependencies": {
     "@angular/cdk": "^21.0.0",
     "primeng": "^21.0.2",
-    "@onecx/accelerator": "^8.2.0",
+    "@onecx/accelerator": "^8.2.1",
     "@ngx-translate/core": "^17.0.0",
     "rxjs": "^7.8.2"
   },

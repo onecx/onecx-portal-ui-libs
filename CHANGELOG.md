@@ -1,3 +1,15 @@
+## [8.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.0...v8.2.1) (2026-05-13)
+
+### Bug Fixes
+
+* data-table stories ([#1432](https://github.com/onecx/onecx-portal-ui-libs/issues/1432)) ([4450e55](https://github.com/onecx/onecx-portal-ui-libs/commit/4450e55a7e14f45453dc5b9aedd5e11069d3654d))
+* filter view custom no selection template story ([#1433](https://github.com/onecx/onecx-portal-ui-libs/issues/1433)) ([b2d9746](https://github.com/onecx/onecx-portal-ui-libs/commit/b2d97463d53e721012159b77429b62105f2f678e))
+* load webcomponent script apps correctly ([#1436](https://github.com/onecx/onecx-portal-ui-libs/issues/1436)) ([bda6ec0](https://github.com/onecx/onecx-portal-ui-libs/commit/bda6ec0a779e8dcc7414e55438df01870619305e))
+
+### Chores
+
+* migrate react libraries to ESM with dual CJS/ESM support ([#1430](https://github.com/onecx/onecx-portal-ui-libs/issues/1430)) ([5a8535e](https://github.com/onecx/onecx-portal-ui-libs/commit/5a8535e0ffe3ac87ac0c0199f8408a49a8d522ad))
+
 ## [8.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.1.1...v8.2.0) (2026-05-12)
 
 ### Features
