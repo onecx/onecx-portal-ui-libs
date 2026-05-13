@@ -202,7 +202,7 @@ const CustomFilterViewNoFiltersInteractiveDataView: StoryFn<InteractiveDataViewC
   },
   template: `
     <ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" [filterViewDisplayMode]="filterViewDisplayMode" [disableFilterView]="disableFilterView" [columns]="columns" [data]="data">
-      <ng-template pTemplate="fitlerViewNoSelection">
+      <ng-template pTemplate="filterViewNoSelection">
         <span>Filter data to display chips</span>
       </ng-template>
     </ocx-interactive-data-view>`,
