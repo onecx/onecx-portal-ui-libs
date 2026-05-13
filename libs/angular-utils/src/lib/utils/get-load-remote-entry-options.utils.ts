@@ -17,6 +17,7 @@ type BffGeneratedRoute = {
   technology?: Technologies
   baseUrl: string
   shareScope?: string
+  remoteName?: string
 }
 
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
@@ -26,7 +27,7 @@ export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> 
   return {
     type: getRemoteType(r),
     entry: r.remoteEntryUrl,
-    name: r.productName + '|' + r.appId,
+    name: getRemoteName(r),
     shareScope,
   }
 }
@@ -35,5 +36,15 @@ function getRemoteType(r: RemoteEntry): 'module' | 'script' {
   if (r.technology === Technologies.Angular || r.technology === Technologies.WebComponentModule) {
     return 'module'
   }
+  // For WebComponentScript, we need to load the remote entry as a script, since it doesn't follow the module format.
   return 'script'
+}
+
+function getRemoteName(r: RemoteEntry): string {
+  if (r.technology === Technologies.WebComponentScript && r.remoteName) {
+    // For WebComponentScript, we have to use the remoteName equal to the name defined in the module federation configuration of the remote application, since it doesn't follow the module format and we need to access the exposed component via the global variable defined in the remote entry.
+    return r.remoteName
+  }
+
+  return r.productName + '|' + r.appId
 }
