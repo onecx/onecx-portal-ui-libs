@@ -34,7 +34,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     return defer((): Observable<string> => {
       const storedTranslations = this.getStoredTranslations(params.translateService, lang)
       const translatedFromStore = this.tryGetTranslation(storedTranslations, params)
-      if (typeof translatedFromStore !== 'undefined') {
+      if (translatedFromStore !== undefined) {
         return of(translatedFromStore)
       }
 
@@ -49,8 +49,8 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
         return (getTranslation as (l: string) => Observable<Record<string, unknown>>)(lang).pipe(
           map((rawTranslations: Record<string, unknown>) => {
             const translatedFromLoader = this.tryGetTranslation(rawTranslations, params)
-            if (typeof translatedFromLoader === 'undefined') {
-              throw new Error(`No translation found for key: ${params.key} in language: ${lang}`)
+            if (translatedFromLoader === undefined) {
+              throw new TypeError(`No translation found for key: ${params.key} in language: ${lang}`)
             }
             return translatedFromLoader
           })
@@ -74,7 +74,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     }
 
     // Fallback for tests/edge cases: support both flat keys ('a.b') and dotted access
-    if (Object.prototype.hasOwnProperty.call(translations, params.key)) {
+    if (Object.hasOwn(translations, params.key)) {
       return translations[params.key]
     }
 
