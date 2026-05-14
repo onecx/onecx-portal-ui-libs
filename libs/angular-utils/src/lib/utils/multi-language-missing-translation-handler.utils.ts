@@ -1,13 +1,15 @@
 import { inject, Injectable } from '@angular/core'
-import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core'
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateParser } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { Observable, of } from 'rxjs'
+import { defer, Observable, of, throwError } from 'rxjs'
 import { catchError, map, mergeMap, shareReplay, take } from 'rxjs/operators'
 
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
+  private readonly parser = inject(TranslateParser)
+
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
       map((p) => {
@@ -20,57 +22,89 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    return loadTranslations(locales$, params)
+    return this.loadTranslations(locales$, params).pipe(
+      catchError((err: Error) => {
+        console.log('No translation found for key: %s. %O', params.key, err)
+        return of(params.key)
+      })
+    )
   }
-}
 
-/**
- * Tries to find a translation for the given language.
- * If no translation is found, an error is thrown.
- *
- * Uses the translateService to reload the language and get the translation for the given key. Then parses the translation with provided parameters.
- * @param lang - language to find the translation for
- * @param params - parameters containing the key and translateService
- * @returns Observable that emits the translation or throws an error if not found
- */
-function findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
-  return params.translateService.reloadLang(lang).pipe(
-    map((interpolatableTranslationObject: Record<string, any>) => {
-      const parser = params.translateService.parser
-      const translatedValue = parser.interpolate(
-        parser.getValue(interpolatableTranslationObject, params.key),
-        params.interpolateParams
-      )
-      if (!translatedValue) {
-        throw new Error(`No translation found for key: ${params.key} in language: ${lang}`)
+  findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
+    return defer<string>(() => {
+      const storedTranslations = this.getStoredTranslations(params.translateService, lang)
+      const translatedFromStore = this.tryGetTranslation(storedTranslations, params)
+      if (typeof translatedFromStore !== 'undefined') {
+        return of(translatedFromStore)
       }
-      return translatedValue
-    })
-  )
-}
 
-function loadTranslations(
-  langConfig: Observable<string[]>,
-  params: MissingTranslationHandlerParams
-): Observable<string> {
-  return langConfig.pipe(
-    mergeMap((l) => {
-      const langs = [...l]
-      const chain = (o: Observable<string[]>): Observable<any> => {
-        return o.pipe(
-          mergeMap((lang) => {
-            return findTranslationForLang(lang[0], params)
-          }),
-          catchError(() => {
-            langs.shift()
-            if (langs.length === 0) {
-              throw new Error(`No translation found for key: ${params.key}`)
+      const shouldTryLoader = !storedTranslations || Object.keys(storedTranslations).length === 0
+      if (shouldTryLoader) {
+        const loader = (params.translateService as any).currentLoader
+        if (!loader?.getTranslation) {
+          return throwError(() => new Error('No translation loader configured'))
+        }
+
+        return loader.getTranslation(lang).pipe(
+          map((rawTranslations: Record<string, unknown>) => {
+            const translatedFromLoader = this.tryGetTranslation(rawTranslations, params)
+            if (typeof translatedFromLoader === 'undefined') {
+              throw new Error(`No translation found for key: ${params.key} in language: ${lang}`)
             }
-            return chain(of(langs))
+            return translatedFromLoader
           })
         )
       }
-      return chain(of(langs))
+
+      return throwError(() => new Error(`No translation found for key: ${params.key} in language: ${lang}`))
     })
-  )
+  }
+
+  private getStoredTranslations(translateService: MissingTranslationHandlerParams['translateService'], lang: string) {
+    const store = (translateService as unknown as { store?: { getTranslations?: (l: string) => Record<string, unknown> } }).store
+    return store?.getTranslations?.(lang)
+  }
+
+  private getRawValue(translations: Record<string, unknown>, params: MissingTranslationHandlerParams): unknown {
+    const tsParser = (params.translateService as any)?.parser
+    if (tsParser?.getValue) {
+      return tsParser.getValue(translations, params.key)
+    }
+
+    // Fallback for tests/edge cases: support both flat keys ('a.b') and dotted access
+    if (Object.prototype.hasOwnProperty.call(translations, params.key)) {
+      return (translations as any)[params.key]
+    }
+
+    return params.key.split('.').reduce<any>((acc, part) => (acc == null ? acc : acc[part]), translations as any)
+  }
+
+  private tryGetTranslation(
+    translations: Record<string, unknown> | undefined,
+    params: MissingTranslationHandlerParams
+  ): string | undefined {
+    if (!translations) return undefined
+    const rawValue = this.getRawValue(translations, params)
+    if (rawValue === undefined || rawValue === null) return undefined
+    return this.parser.interpolate(rawValue as any, params.interpolateParams) as any
+  }
+
+  loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<string> {
+    return langConfig.pipe(
+      mergeMap((locales) => {
+        const langs = [...locales]
+
+        const tryNext = (): Observable<string> => {
+          const nextLang = langs.shift()
+          if (!nextLang) {
+            return throwError(() => new Error(`No translation found for key: ${params.key}`))
+          }
+
+          return this.findTranslationForLang(nextLang, params).pipe(catchError(() => tryNext()))
+        }
+
+        return tryNext()
+      })
+    )
+  }
 }
