@@ -1,39 +1,45 @@
 {
   "name": "@onecx/react-utils",
-  "version": "8.0.0-rc.10",
+  "version": "9.0.0-rc.3",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
-  "main": "./index.js",
+  "type": "module",
+  "main": "./index.cjs",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
+  "typings": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.js"
+      "require": "./index.cjs",
+      "default": "./index.mjs"
     },
     "./styling": {
       "types": "./styling.d.ts",
       "import": "./styling.mjs",
-      "require": "./styling.js"
+      "require": "./styling.cjs"
     },
     "./utils": {
       "types": "./utils.d.ts",
       "import": "./utils.mjs",
-      "require": "./utils.js"
+      "require": "./utils.cjs"
     },
     "./guards": {
       "types": "./guards.d.ts",
       "import": "./guards.mjs",
-      "require": "./guards.js"
-    }
+      "require": "./guards.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^8.0.0-rc.10",
-    "@onecx/integration-interface": "^8.0.0-rc.10",
-    "@onecx/react-integration-interface": "^8.0.0-rc.10",
-    "@onecx/react-webcomponents": "^8.0.0-rc.10",
+    "@onecx/accelerator": "^9.0.0-rc.3",
+    "@onecx/integration-interface": "^9.0.0-rc.3",
+    "@onecx/react-integration-interface": "^9.0.0-rc.3",
+    "@onecx/react-webcomponents": "^9.0.0-rc.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "primereact": "10.9.7",

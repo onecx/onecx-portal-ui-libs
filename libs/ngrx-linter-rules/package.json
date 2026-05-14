@@ -1,9 +1,13 @@
 {
   "name": "@onecx/ngrx-linter-rules",
-  "version": "8.0.0-rc.10",
+  "version": "9.0.0-rc.3",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onecx/onecx-portal-ui-libs"
+  },
   "publishConfig": {
     "access": "public"
   },

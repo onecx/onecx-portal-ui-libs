@@ -47,7 +47,7 @@ export interface Action {
   ariaLabel?: string
   ariaLabelKey?: string
   btnClass?: string
-  actionCallback(): void
+  actionCallback?(): void
   routerLink?: RouterLink
   loading?: boolean
   disabled?: boolean
