@@ -94,7 +94,18 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     const rawValue = this.getRawValue(translations, params)
     if (rawValue === undefined || rawValue === null) return undefined
     type InterpolateExpr = Parameters<TranslateParser['interpolate']>[0]
-    const interpolateValue: InterpolateExpr = typeof rawValue === 'function' ? (rawValue as InterpolateExpr) : rawValue.toString()
+
+    let interpolateValue: InterpolateExpr
+    if (typeof rawValue === 'function') {
+      interpolateValue = rawValue as InterpolateExpr
+    } else if (typeof rawValue === 'string') {
+      interpolateValue = rawValue
+    } else if (typeof rawValue === 'number' || typeof rawValue === 'boolean' || typeof rawValue === 'bigint') {
+      interpolateValue = `${rawValue}`
+    } else {
+      return undefined
+    }
+
     return this.parser.interpolate(interpolateValue, params.interpolateParams)
   }
 
