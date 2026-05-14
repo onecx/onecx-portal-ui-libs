@@ -31,7 +31,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 
   findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
-    return defer<string>(() => {
+    return defer((): Observable<string> => {
       const storedTranslations = this.getStoredTranslations(params.translateService, lang)
       const translatedFromStore = this.tryGetTranslation(storedTranslations, params)
       if (typeof translatedFromStore !== 'undefined') {
@@ -40,12 +40,13 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
 
       const shouldTryLoader = !storedTranslations || Object.keys(storedTranslations).length === 0
       if (shouldTryLoader) {
-        const loader = (params.translateService as any).currentLoader
-        if (!loader?.getTranslation) {
+        const currentLoader = (params.translateService as unknown as { currentLoader?: unknown }).currentLoader
+        const getTranslation = (currentLoader as { getTranslation?: unknown } | undefined)?.getTranslation
+        if (typeof getTranslation !== 'function') {
           return throwError(() => new Error('No translation loader configured'))
         }
 
-        return loader.getTranslation(lang).pipe(
+        return (getTranslation as (l: string) => Observable<Record<string, unknown>>)(lang).pipe(
           map((rawTranslations: Record<string, unknown>) => {
             const translatedFromLoader = this.tryGetTranslation(rawTranslations, params)
             if (typeof translatedFromLoader === 'undefined') {
@@ -66,17 +67,23 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   }
 
   private getRawValue(translations: Record<string, unknown>, params: MissingTranslationHandlerParams): unknown {
-    const tsParser = (params.translateService as any)?.parser
-    if (tsParser?.getValue) {
-      return tsParser.getValue(translations, params.key)
+    const parser = (params.translateService as unknown as { parser?: unknown }).parser
+    const getValue = (parser as { getValue?: unknown } | undefined)?.getValue
+    if (typeof getValue === 'function') {
+      return (getValue as (t: Record<string, unknown>, k: string) => unknown)(translations, params.key)
     }
 
     // Fallback for tests/edge cases: support both flat keys ('a.b') and dotted access
     if (Object.prototype.hasOwnProperty.call(translations, params.key)) {
-      return (translations as any)[params.key]
+      return translations[params.key]
     }
 
-    return params.key.split('.').reduce<any>((acc, part) => (acc == null ? acc : acc[part]), translations as any)
+    let current: unknown = translations
+    for (const part of params.key.split('.')) {
+      if (typeof current !== 'object' || current === null) return undefined
+      current = (current as Record<string, unknown>)[part]
+    }
+    return current
   }
 
   private tryGetTranslation(
@@ -86,7 +93,8 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     if (!translations) return undefined
     const rawValue = this.getRawValue(translations, params)
     if (rawValue === undefined || rawValue === null) return undefined
-    return this.parser.interpolate(rawValue as any, params.interpolateParams) as any
+    const interpolateValue = typeof rawValue === 'function' ? (rawValue as Function) : String(rawValue)
+    return this.parser.interpolate(interpolateValue, params.interpolateParams)
   }
 
   loadTranslations(langConfig: Observable<string[]>, params: MissingTranslationHandlerParams): Observable<string> {

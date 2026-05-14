@@ -19,7 +19,7 @@ jest.mock('@ngx-translate/core', () => {
   const actual = jest.requireActual('@ngx-translate/core')
   return {
     ...actual,
-    getValue: jest.fn((obj, key) => obj[key]),
+    getValue: jest.fn((obj: Record<string, unknown>, key: string) => obj[key]),
   }
 })
 
@@ -47,11 +47,11 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     mockedGetNormalizedBrowserLocales = getNormalizedBrowserLocales as jest.Mock
   })
 
-  function createTranslateServiceMock(translationsByLang: Record<string, Record<string, any>> = {}) {
+  function createTranslateServiceMock(translationsByLang: Record<string, Record<string, unknown>> = {}) {
     const getTranslations = jest.fn((lang: string) => translationsByLang[lang] ?? {})
     const getTranslation = jest.fn((lang: string) => of(translationsByLang[lang] ?? {}))
 
-    return {
+    const translateService = {
       store: {
         getTranslations,
       },
@@ -59,7 +59,9 @@ describe('MultiLanguageMissingTranslationHandler', () => {
         getTranslation,
       },
       setTranslation: jest.fn(),
-    } as any
+    } as unknown as MissingTranslationHandlerParams['translateService']
+
+    return { translateService, getTranslations, getTranslation }
   }
 
   it('should use locales from user profile if available', (done) => {
@@ -76,7 +78,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       translateService: createTranslateServiceMock({
         fr: { 'test.key': 'Test French' },
         en: {},
-      }),
+      }).translateService,
     }
 
     handler.handle(params).subscribe((result) => {
@@ -99,7 +101,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       key: 'test.key',
       translateService: createTranslateServiceMock({
         de: { 'test.key': 'Test German' },
-      }),
+      }).translateService,
     }
 
     handler.handle(params).subscribe((result) => {
@@ -115,18 +117,20 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       },
     } as UserProfile)
 
+    const { translateService, getTranslations } = createTranslateServiceMock({
+      fr: {},
+      en: {},
+      pl: { 'test.key': 'Test Polish' },
+    })
+
     const params: MissingTranslationHandlerParams = {
       key: 'test.key',
-      translateService: createTranslateServiceMock({
-        fr: {},
-        en: {},
-        pl: { 'test.key': 'Test Polish' },
-      }),
+      translateService,
     }
 
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('Test Polish')
-      expect((params.translateService as any).store.getTranslations).toHaveBeenCalledTimes(3)
+      expect(getTranslations).toHaveBeenCalledTimes(3)
       done()
     })
   })
@@ -138,18 +142,20 @@ describe('MultiLanguageMissingTranslationHandler', () => {
       },
     } as UserProfile)
 
+    const { translateService, getTranslations } = createTranslateServiceMock({
+      fr: {},
+      en: {},
+      pl: {},
+    })
+
     const params: MissingTranslationHandlerParams = {
       key: 'missing.key',
-      translateService: createTranslateServiceMock({
-        fr: {},
-        en: {},
-        pl: {},
-      }),
+      translateService,
     }
 
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('missing.key')
-      expect((params.translateService as any).store.getTranslations).toHaveBeenCalledTimes(3)
+      expect(getTranslations).toHaveBeenCalledTimes(3)
       done()
     })
   })
