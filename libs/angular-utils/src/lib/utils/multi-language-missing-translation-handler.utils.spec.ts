@@ -110,6 +110,24 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
   })
 
+  it('should use browser locales if user profile settings are missing', (done) => {
+    mockedGetNormalizedBrowserLocales.mockReturnValue(['de'])
+
+    userServiceMock.profile$.publish({} as UserProfile)
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService: createTranslateServiceMock({
+        de: { 'test.key': 'Test German' },
+      }).translateService,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('Test German')
+      done()
+    })
+  })
+
   it('should try to load for every available language', (done) => {
     userServiceMock.profile$.publish({
       settings: {
@@ -260,6 +278,57 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('OK')
       expect(getTranslation).toHaveBeenCalledTimes(2)
+      done()
+    })
+  })
+
+  it('should handle missing stored translations (undefined) and still resolve via loader', (done) => {
+    userServiceMock.profile$.publish({
+      settings: {
+        locales: ['en'],
+      },
+    } as UserProfile)
+
+    const getTranslation = jest.fn(() => of({ 'test.key': 'From loader' }))
+    const translateService = {
+      store: {},
+      currentLoader: { getTranslation },
+      setTranslation: jest.fn(),
+    } as unknown as MissingTranslationHandlerParams['translateService']
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('From loader')
+      expect(getTranslation).toHaveBeenCalledTimes(1)
+      done()
+    })
+  })
+
+  it('should handle missing store in translateService and still resolve via loader', (done) => {
+    userServiceMock.profile$.publish({
+      settings: {
+        locales: ['en'],
+      },
+    } as UserProfile)
+
+    const getTranslation = jest.fn(() => of({ 'test.key': 'From loader' }))
+    const translateService = {
+      currentLoader: { getTranslation },
+      setTranslation: jest.fn(),
+    } as unknown as MissingTranslationHandlerParams['translateService']
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'test.key',
+      translateService,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('From loader')
+      expect(getTranslation).toHaveBeenCalledTimes(1)
       done()
     })
   })
