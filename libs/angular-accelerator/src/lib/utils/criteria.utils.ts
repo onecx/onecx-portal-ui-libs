@@ -20,7 +20,7 @@ function _hasShowTime(datePickers:DatePicker[], formKey: string): boolean {
 /**
  * Safely builds the search criteria based on form values
  * @param formRawValue the raw value of the form to use
- * @param datePickers a list of primeng datePickers of the form (use `ViewChildren` to get list of datePickers)
+ * @param datePickers a list of primeng datePickers of the form (use `viewChildren` to get list of datePickers)
  * @param parameters {@link BuildSearchCriteriaParameters}  to use when building the search criteria
  * @returns the search criteria as a partial of T (T = type of the search criteria)
  */
