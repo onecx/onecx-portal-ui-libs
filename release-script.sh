@@ -1,6 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-
 echo "$1"
 echo "$2"
 export VERSION=$1
@@ -18,9 +17,6 @@ while IFS= read -r folder; do
     folder_names+=("$folder")
 done < <(find "$directory" -mindepth 1 -maxdepth 1 -type d | awk -F "/" '{print $NF}' | sort | uniq)
 
-failed_libs=()
-declare -A failed_libs_errors
-
 for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
     libPackageName=$(echo "$packageJsonDataLib" | jq -r '.name')
@@ -37,31 +33,12 @@ for folder in "${folder_names[@]}"; do
     if [[ $libPackageVersion != $1 ]]
     then
         npx -p replace-json-property rjp libs/$folder/package.json version $1
-        
-        if ! release_output=$(npx nx run $folder:release 2>&1); then
-            failed_libs+=("$folder")
-            failed_libs_errors["$folder"]="$release_output"
+        if npm view "$libPackageName@$1" version > /dev/null 2>&1; then
+            echo "WARNING: $libPackageName@$1 already exists on npm. Skipping."
+        else
+            npx nx run $folder:release
         fi
-    fi  
+    fi
 done
-
-if [[ ${#failed_libs[@]} -gt 0 ]]; then
-    echo ""
-    echo "❌ Release failed for the following libraries:"
-    printf '  - %s\n' "${failed_libs[@]}"
-    echo ""
-    echo "📋 Error Details:"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    
-    for lib in "${failed_libs[@]}"; do
-        echo ""
-        echo "❌ $lib:"
-        echo "───────────────────────────────────────────────────────────"
-        echo "${failed_libs_errors[$lib]}" | tail -30
-        echo "───────────────────────────────────────────────────────────"
-    done
-    
-    exit 1
-fi
 
 
