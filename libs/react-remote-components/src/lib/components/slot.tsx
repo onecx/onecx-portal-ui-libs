@@ -219,7 +219,7 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
 
   const handleViewContainersAndComponents = useCallback(
     (viewContainers: HTMLDivElement[], components: SlotComponentConfiguration[]) => {
-      if (viewContainers && viewContainers.length === components.length) {
+      if (viewContainers?.length === components.length) {
         components.forEach((componentInfo, index) => {
           handleComponentCreation(componentInfo, viewContainers[index], index)
         })
