@@ -2,6 +2,7 @@ import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
+import { createRemoteConfig } from '@onecx/angular-utils'
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
@@ -112,14 +113,13 @@ export class AuthServiceWrapper {
     const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
 
     const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
-    registerRemotes([
-      {
-        type: 'module',
-        entry: remoteEntry,
-        name: CUSTOM_AUTH_REMOTE_ALIAS,
-        shareScope: customAuthShareScope,
-      },
-    ])
+    const remoteConfig = createRemoteConfig(
+      remoteEntry,
+      CUSTOM_AUTH_REMOTE_ALIAS,
+      'module',
+      customAuthShareScope
+    )
+    registerRemotes([remoteConfig])
     const module = await loadRemote<{ default: AuthServiceFactory }>(
       CUSTOM_AUTH_REMOTE_ALIAS + '/' + sanitizedExposedModule
     )
