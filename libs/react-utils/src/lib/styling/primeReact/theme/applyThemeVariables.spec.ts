@@ -60,6 +60,18 @@ describe('applyThemeVariables', () => {
     expect(styleEl.textContent).not.toContain('--appkey: old')
   })
 
+  it('should rebuild tokens layer when existing tokens block has no :scope block', () => {
+    const styleEl = document.createElement('style')
+    styleEl.setAttribute('data-app-styles', 'test-id')
+    styleEl.textContent = '@layer tokens {\n  /* no scope block here */\n}\n@layer base {}\nsome content'
+    document.head.appendChild(styleEl)
+
+    applyThemeVariables({ properties: { category: { key: 'rebuilt' } } }, 'test-id')
+
+    expect(styleEl.textContent).toContain('--appkey: rebuilt')
+    expect(styleEl.textContent).toContain('@layer tokens')
+  })
+
   it('should trim whitespace from values', () => {
     const styleEl = document.createElement('style')
     styleEl.setAttribute('data-app-styles', 'test-id')
