@@ -18,4 +18,14 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   ...createReportsConfig('react-utils'),
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/src/lib/**/*.spec.tsx'],
+  collectCoverageFrom: [
+    '<rootDir>/src/lib/**/*.{ts,tsx,js,jsx}',
+    '!<rootDir>/src/lib/**/index.ts',
+    '!<rootDir>/src/lib/**/logger.utils.ts',
+    '!<rootDir>/src/lib/**/*.spec.ts',
+    '!<rootDir>/src/lib/**/*.spec.tsx',
+    '!**/node_modules/**',
+  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '\\.spec\\.(ts|tsx)$', 'index\\.ts$', 'logger\\.utils\\.ts$'],
 }

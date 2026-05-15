@@ -23,7 +23,7 @@ describe('PortalPage', () => {
   })
 
   it('should render children when no permission is required', () => {
-    const { container } = render(createElement(PortalPage, null, 'Page Content'))
+    const { container } = render(createElement(PortalPage, { children: 'Page Content' }))
     expect(container.textContent).toContain('Page Content')
   })
 
@@ -32,7 +32,7 @@ describe('PortalPage', () => {
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.resolve(false)) })
 
     const { container, findByText } = render(
-      createElement(PortalPage, { permission: 'admin' }, 'Secret Content')
+      createElement(PortalPage, { permission: 'admin', children: 'Secret Content' })
     )
     const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
@@ -44,9 +44,7 @@ describe('PortalPage', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.reject(new Error('fail'))) })
 
-    const { findByText } = render(
-      createElement(PortalPage, { permission: 'admin' }, 'Secret Content')
-    )
+    const { findByText } = render(createElement(PortalPage, { permission: 'admin', children: 'Secret Content' }))
     const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
     expect(consoleSpy).toHaveBeenCalled()
@@ -59,11 +57,13 @@ describe('PortalPage', () => {
     useAppState.mockReturnValue({ currentPage$: { publish: mockPublish } })
 
     render(
-      createElement(
-        PortalPage,
-        { helpArticleId: 'help-123', pageName: 'Test Page', applicationId: 'app-1', permission: 'read' },
-        'Content'
-      )
+      createElement(PortalPage, {
+        helpArticleId: 'help-123',
+        pageName: 'Test Page',
+        applicationId: 'app-1',
+        permission: 'read',
+        children: 'Content',
+      })
     )
 
     expect(mockPublish).toHaveBeenCalledWith(
@@ -81,18 +81,14 @@ describe('PortalPage', () => {
     const mockPublish = jest.fn()
     useAppState.mockReturnValue({ currentPage$: { publish: mockPublish } })
 
-    render(
-      createElement(PortalPage, { permission: ['read', 'write'] }, 'Content')
-    )
+    render(createElement(PortalPage, { permission: ['read', 'write'], children: 'Content' }))
 
-    expect(mockPublish).toHaveBeenCalledWith(
-      expect.objectContaining({ permission: 'read,write' })
-    )
+    expect(mockPublish).toHaveBeenCalledWith(expect.objectContaining({ permission: 'read,write' }))
   })
 
   it('should apply custom className and style', () => {
     const { container } = render(
-      createElement(PortalPage, { className: 'custom-class', style: { color: 'red' } }, 'Content')
+      createElement(PortalPage, { className: 'custom-class', style: { color: 'red' }, children: 'Content' })
     )
     const wrapper = container.firstChild as HTMLElement
     expect(wrapper.className).toContain('custom-class')
@@ -101,7 +97,7 @@ describe('PortalPage', () => {
 
   it('should warn when helpArticleId is not set', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
-    render(createElement(PortalPage, null, 'Content'))
+    render(createElement(PortalPage, { children: 'Content' }))
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('helpArticleId'))
     consoleSpy.mockRestore()
   })

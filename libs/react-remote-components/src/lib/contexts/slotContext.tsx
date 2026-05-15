@@ -36,7 +36,6 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         (remoteComponentsInfo.slots?.find((slotMapping) => slotMapping.name === slotName)?.components ?? [])
           .map((remoteComponentName) => remoteComponentsInfo.components.find((rc) => rc.name === remoteComponentName))
           .filter((remoteComponent): remoteComponent is RemoteComponent => !!remoteComponent)
-          .map((remoteComponent) => remoteComponent)
       ),
       map((infos) =>
         infos.map((remoteComponent) => {
