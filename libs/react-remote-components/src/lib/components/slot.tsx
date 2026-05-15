@@ -255,5 +255,3 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     </div>
   )
 }
-
-export default SlotComponent
