@@ -1,10 +1,10 @@
 import { type FC, createContext, useMemo, type PropsWithChildren } from 'react'
-import { map, shareReplay } from 'rxjs'
+import { map, of, shareReplay } from 'rxjs'
 import { type RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { usePermission } from '../hooks/usePermission'
-import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { createLogger } from '../utils/logger.utils'
 import type { SlotServiceInterface } from '../models/slot-types'
+import { getShellMfInstance } from '../utils/getShellMfInstance'
 
 /** Slot context for remote component services. */
 export const SlotContext = createContext<SlotServiceInterface | undefined>(undefined)
@@ -18,6 +18,7 @@ const logger = createLogger('SlotProvider')
  */
 export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const permissionsService = usePermission()
+  const shellMfInstance = getShellMfInstance()
 
   /**
    * Resolve remote components for a given slot.
@@ -25,6 +26,11 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
    * @returns observable of resolved components.
    */
   const getComponentsForSlot: SlotServiceInterface['getComponentsForSlot'] = (slotName) => {
+    if (!shellMfInstance) {
+      logger.error('Failed to find shell module federation instance')
+      return of([])
+    }
+
     return remoteComponents$.pipe(
       map((remoteComponentsInfo) =>
         (remoteComponentsInfo.slots?.find((slotMapping) => slotMapping.name === slotName)?.components ?? [])
@@ -38,7 +44,7 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
             throw new Error(`Remote component "${remoteComponent.name}" cannot be loaded in React.`)
           }
 
-          registerRemotes(
+          shellMfInstance.registerRemotes(
             [
               {
                 name: remoteComponent.appId,
@@ -86,9 +92,7 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         ? component.exposedModule.slice(2)
         : component.exposedModule
 
-      const m = await loadRemote(`${component.appId}/${exposedModule}`, {
-        from: 'runtime',
-      })
+      const m = await shellMfInstance!.loadRemote(`${component.appId}/${exposedModule}`)
 
       return m
     } catch (e) {
