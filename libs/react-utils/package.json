@@ -7,34 +7,36 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "type": "module",
-  "main": "./index.cjs",
-  "module": "./index.mjs",
-  "types": "./index.d.ts",
-  "typings": "./index.d.ts",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "typings": "./lib/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "require": "./index.cjs",
-      "default": "./index.mjs"
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.mjs"
     },
     "./styling": {
-      "types": "./styling.d.ts",
-      "import": "./styling.mjs",
-      "require": "./styling.cjs",
-      "default": "./styling.mjs"
+      "types": "./lib/styling/primeReact/index.d.ts",
+      "import": "./lib/styling.mjs",
+      "require": "./lib/styling.cjs"
     },
     "./utils": {
-      "types": "./utils.d.ts",
-      "import": "./utils.mjs",
-      "require": "./utils.cjs",
-      "default": "./utils.mjs"
+      "types": "./lib/utils/index.d.ts",
+      "import": "./lib/utils.mjs",
+      "require": "./lib/utils.cjs"
     },
     "./guards": {
-      "types": "./guards.d.ts",
-      "import": "./guards.mjs",
-      "require": "./guards.cjs",
-      "default": "./guards.mjs"
+      "types": "./lib/guards/index.d.ts",
+      "import": "./lib/guards.mjs",
+      "require": "./lib/guards.cjs"
+    },
+    "./styles": {
+      "types": "./lib/styling/primeReact/styles.d.ts",
+      "import": "./lib/styles.mjs",
+      "require": "./lib/styles.cjs"
     },
     "./package.json": "./package.json"
   },

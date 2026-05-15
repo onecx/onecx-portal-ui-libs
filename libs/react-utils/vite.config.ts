@@ -28,12 +28,25 @@ export default defineConfig({
         styling: 'src/lib/styling/primeReact/index.ts',
         utils: 'src/lib/utils/index.ts',
         guards: 'src/lib/guards/index.ts',
+        styles: 'src/lib/styling/primeReact/styles.ts',
       },
       name: 'react-utils',
-      fileName: (format, entryName) => entryName,
+      fileName: (format, entryName) => `lib/${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      output: [
+        {
+          format: 'es',
+          entryFileNames: 'lib/[name].mjs',
+          chunkFileNames: 'lib/[name].mjs',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: 'lib/[name].cjs',
+          chunkFileNames: 'lib/[name].cjs',
+        },
+      ],
       external: [
         'react',
         'react-dom',
