@@ -1,4 +1,4 @@
-import { createElement, useContext, type FC } from 'react'
+import { FC, useContext } from 'react'
 import { render } from '@testing-library/react'
 import { firstValueFrom } from 'rxjs'
 import { getShellMfInstance as getShellMfInstanceOriginal } from '../utils/getShellMfInstance'
@@ -70,7 +70,11 @@ describe('SlotProvider', () => {
       return null
     }
 
-    render(createElement(SlotProvider, null, createElement(TestComponent)))
+    render(
+      <SlotProvider>
+        <TestComponent />
+      </SlotProvider>
+    )
     expect(captured).toBeDefined()
     expect(typeof captured.getComponentsForSlot).toBe('function')
     expect(typeof captured.isSomeComponentDefinedForSlot).toBe('function')
@@ -87,7 +91,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
       const result = await firstValueFrom(captured.getComponentsForSlot('test-slot'))
       expect(result).toEqual([])
     })
@@ -105,7 +113,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
       const result = await firstValueFrom(captured.getComponentsForSlot('test-slot'))
       expect(Array.isArray(result)).toBe(true)
     })
@@ -125,7 +137,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
       const result = await firstValueFrom(captured.isSomeComponentDefinedForSlot('test-slot'))
       expect(typeof result).toBe('boolean')
     })
@@ -147,7 +163,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
 
       const component = {
         appId: 'test-app',
@@ -179,7 +199,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
 
       const component = {
         appId: 'test-app',
@@ -210,7 +234,11 @@ describe('SlotProvider', () => {
         return null
       }
 
-      render(createElement(SlotProvider, null, createElement(TestComponent)))
+      render(
+        <SlotProvider>
+          <TestComponent />
+        </SlotProvider>
+      )
 
       const component = {
         appId: 'test-app',

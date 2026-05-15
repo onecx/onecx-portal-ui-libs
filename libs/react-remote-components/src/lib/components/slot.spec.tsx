@@ -1,4 +1,3 @@
-import { createElement } from 'react'
 import { render, act } from '@testing-library/react'
 import { BehaviorSubject, of } from 'rxjs'
 import { useSlot as useSlotOriginal } from '../hooks/useSlot'
@@ -21,7 +20,7 @@ function setupSlotService(overrides: Record<string, any> = {}) {
 }
 
 function renderSlot(props: Record<string, any> = {}) {
-  return render(createElement(SlotComponent, { name: 'test-slot', ...props }))
+  return render(<SlotComponent name="test-slot" {...props} />)
 }
 
 describe('SlotComponent', () => {
