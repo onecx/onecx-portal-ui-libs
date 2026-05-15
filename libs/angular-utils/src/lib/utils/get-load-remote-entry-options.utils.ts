@@ -21,19 +21,25 @@ type BffGeneratedRoute = {
 
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
 
+export function createRemoteConfig(
+  entry: string,
+  name: string,
+  type: 'module' | 'script' = 'module',
+  shareScope: string = 'default'
+): Remote {
+  return { type, entry, name, shareScope }
+}
+
 export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> {
   const shareScope = r.shareScope ?? 'default'
+  const type = r.technology === Technologies.Angular || r.technology === Technologies.WebComponentModule
+    ? 'module'
+    : 'script'
+  
   return {
-    type: getRemoteType(r),
+    type,
     entry: r.remoteEntryUrl,
     name: r.productName + '|' + r.appId,
     shareScope,
   }
-}
-
-function getRemoteType(r: RemoteEntry): 'module' | 'script' {
-  if (r.technology === Technologies.Angular || r.technology === Technologies.WebComponentModule) {
-    return 'module'
-  }
-  return 'script'
 }

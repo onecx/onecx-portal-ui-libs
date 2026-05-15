@@ -11,6 +11,7 @@
     "@module-federation/enhanced": "^2.0.1",
     "@onecx/accelerator": "^9.0.0-rc.3",
     "@onecx/angular-integration-interface": "^9.0.0-rc.3",
+    "@onecx/angular-utils": "^9.0.0-rc.3",
     "@onecx/integration-interface": "^9.0.0-rc.3",
     "keycloak-js": "^26.2.3",
     "ts-semaphore": "^1.0.0",
