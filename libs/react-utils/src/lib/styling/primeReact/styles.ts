@@ -1,0 +1,1 @@
+import './primeBaseTheme.scss'
