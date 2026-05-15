@@ -28,7 +28,7 @@ type SlotProps = {
  * Parameters used to instantiate a remote component instance.
  */
 type CreateComponentProps = {
-  componentType: ComponentType<any | undefined>
+  componentType: ComponentType<any>
   componentInfo: SlotComponentConfiguration
   permissions: string[]
   viewContainer: HTMLDivElement | null
@@ -180,6 +180,54 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
       }
     }
   }, [])
+
+  const handleAssignedComponentsUpdate = useCallback(
+    (
+      components: (ComponentPropsWithRef<any> | HTMLElement)[],
+      inputs: Record<string, unknown>,
+      outputs: Record<string, any>
+    ) => {
+      components.forEach((component) => {
+        updateComponentData(component as HTMLElement, inputs, outputs)
+      })
+    },
+    [updateComponentData]
+  )
+
+  const handleComponentCreation = useCallback(
+    (componentInfo: SlotComponentConfiguration, viewContainer: HTMLDivElement, index: number) => {
+      if (!componentInfo.componentType) return
+
+      Promise.all([Promise.resolve(componentInfo.componentType), Promise.resolve(componentInfo.permissions)]).then(
+        ([componentType, permissions]) => {
+          const component = createComponent({
+            componentType: componentType as ComponentType<any>,
+            componentInfo,
+            permissions,
+            viewContainer,
+            index,
+          })
+
+          if (component && !_assignedComponents$.getValue().includes(component)) {
+            _assignedComponents$.next([..._assignedComponents$.getValue(), component])
+          }
+        }
+      )
+    },
+    [createComponent]
+  )
+
+  const handleViewContainersAndComponents = useCallback(
+    (viewContainers: HTMLDivElement[], components: SlotComponentConfiguration[]) => {
+      if (viewContainers && viewContainers.length === components.length) {
+        components.forEach((componentInfo, index) => {
+          handleComponentCreation(componentInfo, viewContainers[index], index)
+        })
+      }
+    },
+    [handleComponentCreation]
+  )
+
   useEffect(() => {
     if (!slotService) {
       console.error(`SLOT_SERVICE token was not provided. ${name} slot will not be filled with data.`)
@@ -191,42 +239,19 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
 
     const assignedCompsSub = combineLatest([_assignedComponents$, inputs$.current, outputs$.current]).subscribe(
       ([components, inputs, outputs]) => {
-        components.forEach((component) => {
-          updateComponentData(component as HTMLElement, inputs, outputs)
-        })
+        handleAssignedComponentsUpdate(components, inputs, outputs)
       }
     )
 
     const subscription = combineLatest([viewContainers$, components$]).subscribe(([viewContainers, components]) => {
-      if (viewContainers && viewContainers.length === components.length) {
-        components.forEach((componentInfo, index) => {
-          if (componentInfo.componentType) {
-            Promise.all([
-              Promise.resolve(componentInfo.componentType),
-              Promise.resolve(componentInfo.permissions),
-            ]).then(([componentType, permissions]) => {
-              const component = createComponent({
-                componentType: componentType as ComponentType<any>,
-                componentInfo,
-                permissions,
-                viewContainer: viewContainers[index],
-                index,
-              })
-
-              if (component && !_assignedComponents$.getValue().includes(component)) {
-                _assignedComponents$.next([..._assignedComponents$.getValue(), component])
-              }
-            })
-          }
-        })
-      }
+      handleViewContainersAndComponents(viewContainers, components)
     })
 
     return () => {
       subscription.unsubscribe()
       assignedCompsSub.unsubscribe()
     }
-  }, [components$, name, slotService])
+  }, [components$, name, slotService, handleAssignedComponentsUpdate, handleViewContainersAndComponents])
 
   useEffect(() => {
     if (!components$) {
