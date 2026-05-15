@@ -25,7 +25,7 @@ export function createRemoteConfig(
   entry: string,
   name: string,
   type: 'module' | 'script' = 'module',
-  shareScope: string = 'default'
+  shareScope = 'default'
 ): Remote {
   return { type, entry, name, shareScope }
 }

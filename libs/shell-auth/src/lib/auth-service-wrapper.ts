@@ -2,7 +2,7 @@ import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
-import { toLoadRemoteEntryOptions, createRemoteConfig } from '@onecx/angular-utils'
+import { createRemoteConfig } from '@onecx/angular-utils'
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
