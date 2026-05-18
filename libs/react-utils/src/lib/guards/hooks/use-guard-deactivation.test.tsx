@@ -16,6 +16,16 @@ jest.mock('./use-wrapped-guards', () => ({
 
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
 
+function makeWrappedGuards(canDeactivate: jest.Mock): WrappedGuards {
+  return {
+    canMatch: jest.fn(async () => true),
+    canActivateChild: jest.fn(async () => true),
+    canActivate: jest.fn(async () => true),
+    canDeactivate,
+    guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
+  }
+}
+
 function TestComponent({
   onGuardCheck,
   enabled,
@@ -28,21 +38,21 @@ function TestComponent({
 }
 
 describe('useGuardDeactivation', () => {
+  let container: HTMLDivElement
+  let root: ReturnType<typeof createRoot>
+
+  beforeEach(() => {
+    container = document.createElement('div')
+    root = createRoot(container)
+  })
+
+  afterEach(() => {
+    root.unmount()
+  })
+
   it('runs canDeactivate for next location', async () => {
     const canDeactivate = jest.fn(async () => true)
-
-    const wrapped: WrappedGuards = {
-      canMatch: jest.fn(async () => true),
-      canActivateChild: jest.fn(async () => true),
-      canActivate: jest.fn(async () => true),
-      canDeactivate,
-      guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
-    }
-
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
-
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
 
     await act(async () => {
       root.render(<TestComponent />)
@@ -50,25 +60,13 @@ describe('useGuardDeactivation', () => {
     })
 
     expect(canDeactivate).toHaveBeenCalled()
-
-    root.unmount()
     jest.restoreAllMocks()
   })
 
   it('calls onGuardCheck with deactivation result', async () => {
     const canDeactivate = jest.fn(async () => false)
-    const wrapped: WrappedGuards = {
-      canMatch: jest.fn(async () => true),
-      canActivateChild: jest.fn(async () => true),
-      canActivate: jest.fn(async () => true),
-      canDeactivate,
-      guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
-    }
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
+    ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
     const onGuardCheck = jest.fn()
-
-    const container = document.createElement('div')
-    const root = createRoot(container)
 
     await act(async () => {
       root.render(<TestComponent onGuardCheck={onGuardCheck} />)
@@ -76,22 +74,11 @@ describe('useGuardDeactivation', () => {
     })
 
     expect(onGuardCheck).toHaveBeenCalledWith(false)
-    root.unmount()
   })
 
   it('does not run canDeactivate when disabled', async () => {
     const canDeactivate = jest.fn(async () => true)
-    const wrapped: WrappedGuards = {
-      canMatch: jest.fn(async () => true),
-      canActivateChild: jest.fn(async () => true),
-      canActivate: jest.fn(async () => true),
-      canDeactivate,
-      guards: { canMatch: [], canActivateChild: [], canActivate: [], canDeactivate: [] },
-    }
-    ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
-
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
 
     await act(async () => {
       root.render(<TestComponent enabled={false} />)
@@ -99,6 +86,5 @@ describe('useGuardDeactivation', () => {
     })
 
     expect(canDeactivate).not.toHaveBeenCalled()
-    root.unmount()
   })
 })
