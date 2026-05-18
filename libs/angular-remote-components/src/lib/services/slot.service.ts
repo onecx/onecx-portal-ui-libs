@@ -1,10 +1,9 @@
-import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { Injectable, InjectionToken, OnDestroy, Type, inject } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 import { createLogger } from '../utils/logger.utils'
-import { getFederationInstance, registerAndLoadRemote, toLoadRemoteEntryOptions } from '@onecx/angular-utils'
+import { registerAndLoadRemote, toLoadRemoteEntryOptions } from '@onecx/angular-utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
