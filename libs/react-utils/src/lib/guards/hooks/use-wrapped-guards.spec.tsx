@@ -21,6 +21,20 @@ jest.mock('../utils/wrap-guards.utils', () => ({
   })),
 }))
 
+function TestComponent({
+  guardsNavigationState,
+  guardsGatherer,
+  onResult,
+}: {
+  guardsNavigationState?: any
+  guardsGatherer?: any
+  onResult?: (r: any) => void
+} = {}) {
+  const result = useWrappedGuards({ guardsNavigationState, guardsGatherer })
+  onResult?.(result)
+  return null
+}
+
 describe('useWrappedGuards', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -35,16 +49,17 @@ describe('useWrappedGuards', () => {
 
   it('returns a WrappedGuards object with all required methods', async () => {
     let result: any
-    function TestComponent() {
-      result = useWrappedGuards()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(
+        <TestComponent
+          onResult={(r) => {
+            result = r
+          }}
+        />
+      )
     })
 
     expect(result).toBeDefined()
@@ -56,11 +71,6 @@ describe('useWrappedGuards', () => {
   })
 
   it('calls wrapGuards with current matches and location', async () => {
-    function TestComponent() {
-      useWrappedGuards()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
@@ -81,21 +91,14 @@ describe('useWrappedGuards', () => {
     const guardsNavigationState = { guardCheck: true }
     const guardsGatherer = {} as any
 
-    function TestComponent() {
-      useWrappedGuards({ guardsNavigationState, guardsGatherer })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent guardsNavigationState={guardsNavigationState} guardsGatherer={guardsGatherer} />)
     })
 
-    expect(wrapGuards).toHaveBeenCalledWith(
-      expect.objectContaining({ guardsNavigationState, guardsGatherer })
-    )
+    expect(wrapGuards).toHaveBeenCalledWith(expect.objectContaining({ guardsNavigationState, guardsGatherer }))
     root.unmount()
   })
 })
