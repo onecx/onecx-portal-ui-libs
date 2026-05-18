@@ -91,6 +91,14 @@ function makeLoadTestComponent(overrides: Record<string, any> = {}) {
   }
 }
 
+function setupLoadRemote() {
+  const mockModule = { default: () => null }
+  const mockLoadRemote = jest.fn().mockResolvedValue(mockModule)
+  mockShellInstance({ loadRemote: mockLoadRemote })
+  const { getContext } = renderAndCaptureContext()
+  return { getContext, mockLoadRemote, mockModule }
+}
+
 describe('SlotContext', () => {
   it('should be defined', () => {
     expect(SlotContext).toBeDefined()
@@ -309,27 +317,15 @@ describe('SlotProvider', () => {
 
   describe('loadComponent', () => {
     it('should load a remote component module', async () => {
-      const mockModule = { default: () => null }
-      const mockLoadRemote = jest.fn().mockResolvedValue(mockModule)
-      mockShellInstance({ loadRemote: mockLoadRemote })
-      const { getContext } = renderAndCaptureContext()
-
-      const component = makeLoadTestComponent()
-
-      const result = await getContext().loadComponent(component)
+      const { getContext, mockLoadRemote, mockModule } = setupLoadRemote()
+      const result = await getContext().loadComponent(makeLoadTestComponent())
       expect(result).toBe(mockModule)
       expect(mockLoadRemote).toHaveBeenCalledWith('test-app/TestComponent')
     })
 
     it('should strip ./ prefix from exposedModule', async () => {
-      const mockModule = { default: () => null }
-      const mockLoadRemote = jest.fn().mockResolvedValue(mockModule)
-      mockShellInstance({ loadRemote: mockLoadRemote })
-      const { getContext } = renderAndCaptureContext()
-
-      const component = makeLoadTestComponent({ exposedModule: 'TestComponent' })
-
-      const result = await getContext().loadComponent(component)
+      const { getContext, mockLoadRemote, mockModule } = setupLoadRemote()
+      const result = await getContext().loadComponent(makeLoadTestComponent({ exposedModule: 'TestComponent' }))
       expect(result).toBe(mockModule)
       expect(mockLoadRemote).toHaveBeenCalledWith('test-app/TestComponent')
     })
