@@ -1,4 +1,10 @@
-import { toLoadRemoteEntryOptions, createRemoteConfig, Technologies, registerAndLoadRemote } from './get-load-remote-entry-options.utils'
+import {
+  toLoadRemoteEntryOptions,
+  createRemoteConfig,
+  Technologies,
+  registerAndLoadRemote,
+  getFederationInstance,
+} from './get-load-remote-entry-options.utils'
 import { RemoteComponent, Technologies as IntegrationTechnologies } from '@onecx/integration-interface'
 import { registerRemotes, loadRemote } from '@module-federation/enhanced/runtime'
 
@@ -165,44 +171,126 @@ describe('get-load-remote-entry-options', () => {
     })
   })
 
+  describe('getFederationInstance', () => {
+    let originalGlobalThis: any
+
+    beforeEach(() => {
+      originalGlobalThis = (globalThis as any).onecxFederationInstance
+    })
+
+    afterEach(() => {
+      if (originalGlobalThis !== undefined) {
+        ;(globalThis as any).onecxFederationInstance = originalGlobalThis
+      } else {
+        delete (globalThis as any).onecxFederationInstance
+      }
+    })
+
+    it('should return the federation instance when it exists', () => {
+      const mockInstance = { registerRemotes: jest.fn(), loadRemote: jest.fn() }
+      ;(globalThis as any).onecxFederationInstance = mockInstance
+
+      const result = getFederationInstance()
+
+      expect(result).toBe(mockInstance)
+    })
+
+    it('should return undefined when federation instance does not exist', () => {
+      delete (globalThis as any).onecxFederationInstance
+
+      const result = getFederationInstance()
+
+      expect(result).toBeUndefined()
+    })
+  })
+
   describe('registerAndLoadRemote', () => {
     const mockRegisterRemotes = registerRemotes as jest.Mock
     const mockLoadRemote = loadRemote as jest.Mock
+    let originalGlobalThis: any
 
     beforeEach(() => {
       jest.clearAllMocks()
+      originalGlobalThis = (globalThis as any).onecxFederationInstance
+      delete (globalThis as any).onecxFederationInstance
     })
 
-    it('should register remotes and load the exposed module', async () => {
-      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
-      const mockModule = { MyComponent: 'component' }
-      mockLoadRemote.mockResolvedValue(mockModule)
-
-      const result = await registerAndLoadRemote(remoteConfig, 'MyComponent')
-
-      expect(mockRegisterRemotes).toHaveBeenCalledWith([remoteConfig])
-      expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/MyComponent')
-      expect(result).toBe(mockModule)
+    afterEach(() => {
+      if (originalGlobalThis !== undefined) {
+        ;(globalThis as any).onecxFederationInstance = originalGlobalThis
+      } else {
+        delete (globalThis as any).onecxFederationInstance
+      }
     })
 
-    it('should sanitize exposed module path by removing leading ./', async () => {
-      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'product1|app1')
-      const mockModule = { default: jest.fn() }
-      mockLoadRemote.mockResolvedValue(mockModule)
+    describe('without federation instance', () => {
+      it('should register remotes and load the exposed module using runtime functions', async () => {
+        const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
+        const mockModule = { MyComponent: 'component' }
+        mockLoadRemote.mockResolvedValue(mockModule)
 
-      await registerAndLoadRemote(remoteConfig, './MyModule')
+        const result = await registerAndLoadRemote(remoteConfig, 'MyComponent')
 
-      expect(mockLoadRemote).toHaveBeenCalledWith('product1|app1/MyModule')
+        expect(mockRegisterRemotes).toHaveBeenCalledWith([remoteConfig])
+        expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/MyComponent')
+        expect(result).toBe(mockModule)
+      })
+
+      it('should sanitize exposed module path by removing leading ./', async () => {
+        const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'product1|app1')
+        const mockModule = { default: jest.fn() }
+        mockLoadRemote.mockResolvedValue(mockModule)
+
+        await registerAndLoadRemote(remoteConfig, './MyModule')
+
+        expect(mockLoadRemote).toHaveBeenCalledWith('product1|app1/MyModule')
+      })
+
+      it('should not modify path without leading ./', async () => {
+        const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
+        const mockModule = { Component: 'test' }
+        mockLoadRemote.mockResolvedValue(mockModule)
+
+        await registerAndLoadRemote(remoteConfig, 'Component')
+
+        expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/Component')
+      })
     })
 
-    it('should not modify path without leading ./', async () => {
-      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
-      const mockModule = { Component: 'test' }
-      mockLoadRemote.mockResolvedValue(mockModule)
+    describe('with federation instance', () => {
+      let mockInstance: any
 
-      await registerAndLoadRemote(remoteConfig, 'Component')
+      beforeEach(() => {
+        mockInstance = {
+          registerRemotes: jest.fn(),
+          loadRemote: jest.fn(),
+        }
+        ;(globalThis as any).onecxFederationInstance = mockInstance
+      })
 
-      expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/Component')
+      it('should use federation instance to register and load module', async () => {
+        const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
+        const mockModule = { MyComponent: 'component' }
+        mockInstance.loadRemote.mockResolvedValue(mockModule)
+
+        const result = await registerAndLoadRemote(remoteConfig, 'MyComponent')
+
+        expect(mockInstance.registerRemotes).toHaveBeenCalledWith([remoteConfig])
+        expect(mockInstance.loadRemote).toHaveBeenCalledWith('my-remote/MyComponent')
+        expect(mockRegisterRemotes).not.toHaveBeenCalled()
+        expect(mockLoadRemote).not.toHaveBeenCalled()
+        expect(result).toBe(mockModule)
+      })
+
+      it('should sanitize module path when using federation instance', async () => {
+        const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'product1|app1')
+        const mockModule = { default: jest.fn() }
+        mockInstance.loadRemote.mockResolvedValue(mockModule)
+
+        await registerAndLoadRemote(remoteConfig, './MyModule')
+
+        expect(mockInstance.loadRemote).toHaveBeenCalledWith('product1|app1/MyModule')
+      })
     })
   })
 })
