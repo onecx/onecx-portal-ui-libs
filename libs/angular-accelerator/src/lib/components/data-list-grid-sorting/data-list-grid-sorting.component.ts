@@ -19,23 +19,21 @@ export interface DataListGridSortingComponentState {
 export class DataListGridSortingComponent {
   private readonly stateService = inject(DataViewStateService)
   
-  readonly columns = input<DataTableColumn[]>([])
+  @Input()
+  set columns(value: DataTableColumn[]) {
+    this.stateService.columns.set(value)
+  }
+  
   readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   @Input()
-  get sortDirection(): DataSortDirection {
-    return this.stateService.sortDirection()
-  }
   set sortDirection(value: DataSortDirection) {
-    this.stateService.setSortDirection(value)
+    this.stateService.sortDirection.set(value)
   }
 
   @Input()
-  get sortField(): string {
-    return this.stateService.sortColumn()
-  }
   set sortField(value: string) {
-    this.stateService.setSortColumn(value)
+    this.stateService.sortColumn.set(value)
   }
 
   readonly sortChange = output<string>()
@@ -44,7 +42,7 @@ export class DataListGridSortingComponent {
   readonly columnsChange = output<string[]>()
 
   readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
-    return this.columns()
+    return this.stateService.columns()
       .filter((c) => !!c.sortable)
       .map((c) => ({ columnId: c.id, columnName: c.nameKey }))
   })
@@ -58,8 +56,8 @@ export class DataListGridSortingComponent {
     effect(() => {
       this.componentStateChanged.emit({
         sorting: {
-          sortColumn: this.sortField,
-          sortDirection: this.sortDirection,
+          sortColumn: this.stateService.sortColumn(),
+          sortDirection: this.stateService.sortDirection(),
         },
       })
     })
@@ -78,11 +76,11 @@ export class DataListGridSortingComponent {
 
   nextSortDirection(): DataSortDirection {
     const states = this.sortStates()
-    return states[(states.indexOf(this.sortDirection) + 1) % states.length]
+    return states[(states.indexOf(this.stateService.sortDirection()) + 1) % states.length]
   }
 
   sortIcon(): string {
-    switch (this.sortDirection) {
+    switch (this.stateService.sortDirection()) {
       case DataSortDirection.ASCENDING:
         return 'pi-sort-amount-up'
       case DataSortDirection.DESCENDING:

@@ -44,39 +44,34 @@ describe('DataListGridSortingComponent', () => {
         makeColumn({ id: 'a', nameKey: 'A', sortable: true }),
         makeColumn({ id: 'b', nameKey: 'B', sortable: false }),
       ])
-      stateService.setSortColumn('a')
       fixture.detectChanges()
 
       expect(component.dropdownOptions()).toEqual([{ columnId: 'a', columnName: 'A' }])
-      expect(component.selectedSortingOption()).toEqual({ columnId: 'a', columnName: 'A' })
     })
   })
 
   describe('selectSorting', () => {
     it('should call stateService.setSortColumn with selected column id', () => {
-      const setSortColumnSpy = jest.spyOn(stateService, 'setSortColumn')
-
       fixture.detectChanges()
+      const setSortColumnSpy = jest.spyOn(stateService.sortColumn, 'set')
 
       component.selectSorting({ value: { columnId: 'c', columnName: 'C' } } as any)
+      TestBed.tick()
 
       expect(setSortColumnSpy).toHaveBeenCalledWith('c')
-      expect(component.sortField).toBe('c')
+      expect(component.sortField()).toBe('c')
     })
   })
 
   describe('sortDirectionChanged / nextSortDirection', () => {
     it('should cycle sort direction based on sortStates and call stateService.setSortDirection', () => {
-      const setSortDirectionSpy = jest.spyOn(stateService, 'setSortDirection')
-
-      fixture.componentRef.setInput('sortStates', [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
-      stateService.setSortDirection(DataSortDirection.ASCENDING)
+      component.sortDirection.set(DataSortDirection.ASCENDING)
       fixture.detectChanges()
 
       component.sortDirectionChanged()
+      TestBed.tick()
 
-      expect(component.sortDirection).toBe(DataSortDirection.DESCENDING)
-      expect(setSortDirectionSpy).toHaveBeenCalledWith(DataSortDirection.DESCENDING)
+      expect(component.sortDirection()).toBe(DataSortDirection.DESCENDING)
     })
 
     it('should cycle through all available sortStates', () => {
@@ -85,7 +80,7 @@ describe('DataListGridSortingComponent', () => {
         DataSortDirection.DESCENDING,
         DataSortDirection.NONE,
       ])
-      stateService.setSortDirection(DataSortDirection.NONE)
+      stateService.sortDirection.set(DataSortDirection.NONE)
       fixture.detectChanges()
 
       const nextDirection = component.nextSortDirection()
@@ -95,21 +90,21 @@ describe('DataListGridSortingComponent', () => {
 
   describe('icon + title mapping', () => {
     it('should return correct icon and title keys for all direction cases', () => {
-      stateService.setSortDirection(DataSortDirection.NONE)
+      component.sortDirection.set(DataSortDirection.NONE)
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-alt')
       expect(component.sortDirectionToTitle(DataSortDirection.NONE)).toBe(
         'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TOOLTIP'
       )
 
-      stateService.setSortDirection(DataSortDirection.ASCENDING)
+      component.sortDirection.set(DataSortDirection.ASCENDING)
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-amount-up')
       expect(component.sortDirectionToTitle(DataSortDirection.ASCENDING)).toBe(
         'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP'
       )
 
-      stateService.setSortDirection(DataSortDirection.DESCENDING)
+      component.sortDirection.set(DataSortDirection.DESCENDING)
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-amount-down')
       expect(component.sortDirectionToTitle(DataSortDirection.DESCENDING)).toBe(

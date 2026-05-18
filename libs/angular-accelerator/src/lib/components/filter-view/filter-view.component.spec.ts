@@ -104,9 +104,9 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should reset filters by calling service setFilters when onResetFilersClick is called', () => {
-    const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+    const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 
-    stateService.setFilters([{ columnId: 'c1', value: 'v1' } as Filter])
+    stateService.filters.set([{ columnId: 'c1', value: 'v1' } as Filter])
     fixture.detectChanges()
 
     component.onResetFilersClick()
@@ -117,7 +117,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should remove a chip by value by calling service setFilters when onChipRemove is called', () => {
-    const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+    const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 
     fixture.componentRef.setInput('filters', [
       { columnId: 'c1', value: 'keep' } as Filter,
@@ -133,7 +133,7 @@ describe('FilterViewComponent (class logic)', () => {
   })
 
   it('should delete filter by row valueColumnId/value by calling service setFilters when onFilterDelete is called', () => {
-    const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+    const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 
     fixture.componentRef.setInput('filters', [
       { columnId: 'c1', value: 'keep' } as Filter,

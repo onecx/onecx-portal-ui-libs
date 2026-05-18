@@ -3,7 +3,7 @@
   <ocx-data-list-grid
     #ocxdatalistgrid
     [name]="name()"
-    [data]="data()"
+    [data]="data"
     [columns]="columns"
     [filters]="filters"
     [sortStates]="sortStates()"
@@ -24,7 +24,7 @@
     [editActionVisibleField]="editActionVisibleField()"
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
-    [additionalActions]="additionalActions()"
+    [additionalActions]="additionalActions"
     [gridItemSubtitleLinesTemplate]="gridItemSubtitleLines"
     [listItemSubtitleLinesTemplate]="listItemSubtitleLines"
     [listItemTemplate]="listItem"
@@ -114,7 +114,7 @@
 <div>
   <ocx-data-table
     #ocxdatatable
-    [rows]="data()"
+    [rows]="data"
     [columns]="columns"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
@@ -132,7 +132,7 @@
     [editActionVisibleField]="editActionVisibleField()"
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
-    [additionalActions]="additionalActions()"
+    [additionalActions]="additionalActions"
     [stringCellTemplate]="stringTableCell"
     [numberCellTemplate]="numberTableCell"
     [dateCellTemplate]="dateTableCell"

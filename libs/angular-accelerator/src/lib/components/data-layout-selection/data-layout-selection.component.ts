@@ -52,11 +52,8 @@ export class DataLayoutSelectionComponent implements OnInit {
   supportedViewLayouts = input<Array<string>>([])
 
   @Input()
-  get layout(): ViewLayout {
-    return this.stateService.layout()
-  }
   set layout(value: ViewLayout) {
-    this.stateService.setLayout(value)
+    this.stateService.layout.set(value)
   }
 
   readonly dataViewLayoutChange = output<ViewLayout>()
@@ -64,11 +61,11 @@ export class DataLayoutSelectionComponent implements OnInit {
 
   viewingLayouts = computed(() => ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts().includes(vl.layout)))
 
-  readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.layout))
-
+  readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.stateService.layout()))
+  
   ngOnInit(): void {
     this.componentStateChanged.emit({
-      layout: this.layout,
+      layout: this.stateService.layout(),
     })
   }
 

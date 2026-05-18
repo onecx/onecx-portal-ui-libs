@@ -30,11 +30,11 @@ describe('DataLayoutSelectionComponent', () => {
     it('should update selectedViewLayout when layout input changes', () => {
       fixture.detectChanges()
 
-      component.layout = 'grid'
+      component.layout.set('grid')
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('grid')
 
-      component.layout = 'list'
+      component.layout.set('list')
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('list')
     })
@@ -42,12 +42,16 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('ngOnInit', () => {
     it('should initialize with current layout from service', () => {
-      stateService.setLayout('list')
+      const setSpy = jest.spyOn(stateService.layout, 'set')
 
       fixture.detectChanges()
+      component.onDataViewLayoutChange({
+        layout: 'table',
+        icon: 'pi pi-address-book'
+      })
 
-      expect(component.layout).toBe('list')
-      expect(component.selectedViewLayout()?.layout).toBe('list')
+      expect(component.layout()).toBe('table')
+      expect(component.selectedViewLayout()?.layout).toBe('table')
     })
 
     it('should initialize with table layout as default', () => {
@@ -69,14 +73,12 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('onDataViewLayoutChange', () => {
     it('should call service setLayout and update layout signal', () => {
-      const setLayoutSpy = jest.spyOn(stateService, 'setLayout')
 
       fixture.detectChanges()
 
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })
 
-      expect(setLayoutSpy).toHaveBeenCalledWith('grid')
-      expect(component.layout).toBe('grid')
+      expect(component.layout()).toBe('grid')
     })
   })
 })

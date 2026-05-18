@@ -44,14 +44,13 @@ import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { RowListGridData } from '../../model/row-list-grid-data.model'
 
 export type ListGridData = {
   id: string | number
   imagePath: string | number
   [columnId: string]: unknown
 }
-
-type RowListGridData = ListGridData & Row
 
 export interface ListGridDataMenuItem extends MenuItem {
   permission: string
@@ -92,25 +91,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   sortStates = input<DataSortDirection[]>([])
 
   @Input()
-  get page(): number {
-    return this.stateService.activePage()
-  }
   set page(value: number) {
-    this.stateService.setActivePage(value)
+    this.stateService.activePage.set(value)
   }
 
   @Input()
-  get pageSize(): number {
-    return this.stateService.pageSize()
-  }
   set pageSize(value: number) {
-    this.stateService.setPageSize(value)
+    this.stateService.pageSize.set(value)
   }
-
   pageSizes = input<number[]>([10, 25, 50])
 
   displayedPageSize = computed(() => {
-    const pageSize = this.pageSize
+    const pageSize = this.stateService.pageSize()
     const pageSizes = this.pageSizes()
 
     return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
@@ -118,7 +110,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   emptyResultsMessage = input<string | undefined>(undefined)
   fallbackImage = input<string>('placeholder.png')
-  layout = input<'grid' | 'list'>('grid')
+  
+  @Input()
+  set layout(value: 'grid' | 'list') {
+    this.stateService.layout.set(value)
+  }
+  
   viewPermission = input<PermissionInput>(undefined)
   editPermission = input<PermissionInput>(undefined)
   deletePermission = input<PermissionInput>(undefined)
@@ -133,7 +130,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   deleteMenuItemKey = input<string | undefined>(undefined)
   paginator = input<boolean>(true)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  columns = input<DataTableColumn[]>([])
+
+  @Input()
+  set columns(value: DataTableColumn[]) {
+    this.stateService.columns.set(value)
+  }
+
   filteredColumns = computed(() => {
     const subtitleLineIds = this.subtitleLineIds() ?? []
     const ids: string[] = [...subtitleLineIds]
@@ -141,7 +143,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     if (titleLineId) {
       ids.unshift(titleLineId)
     }
-    return this.columns().filter((c) => !ids.includes(c.id))
+    return this.stateService.columns().filter((c) => !ids.includes(c.id))
   })
 
   name = model<string | undefined>(undefined)
@@ -161,14 +163,27 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     }
   })
 
-  data = input<RowListGridData[]>([])
-  previousData = computedPrevious(this.data)
+  @Input()
+  set data(value: RowListGridData[]) {
+    this.stateService.data.set(value)
+  }
+  previousData = computedPrevious(this.stateService.data)
 
-  filters = input<Filter[]>([])
-  previousFilters = computedPrevious(this.filters)
+  @Input()
+  set filters(value: Filter[]) {
+    this.stateService.filters.set(value)
+  }
+  previousFilters = computedPrevious(this.stateService.filters)
 
-  sortDirection = input<DataSortDirection>(DataSortDirection.NONE)
-  sortField = input<string>('')
+  @Input()
+  set sortDirection(value: DataSortDirection) {
+    this.stateService.sortDirection.set(value)
+  }
+
+  @Input()
+  set sortField(value: string) {
+    this.stateService.sortColumn.set(value)
+  }
 
   private readonly permissions$ = this.getPermissions()
 
@@ -232,12 +247,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     return this.dateListValueTemplate() || this.dateListValueChildTemplate()
   }
 
-  additionalActions = input<DataAction[]>([])
+  @Input()
+  set additionalActions(value: DataAction[]) {
+    this.stateService.additionalActions.set(value)
+  }
+
   inlineListActions = computed(() => {
-    return this.additionalActions().filter((action) => !action.showAsOverflow)
+    return this.stateService.additionalActions().filter((action) => !action.showAsOverflow)
   })
   overflowListActions = computed(() => {
-    return this.additionalActions().filter((action) => action.showAsOverflow)
+    return this.stateService.additionalActions().filter((action) => action.showAsOverflow)
   })
   overflowListActions$ = toObservable(this.overflowListActions)
   currentMenuRow = signal<Row | null>(null)
@@ -295,14 +314,14 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   })
 
   get sortDirectionNumber(): number {
-    if (this.sortDirection() === DataSortDirection.ASCENDING) return 1
-    if (this.sortDirection() === DataSortDirection.DESCENDING) return -1
+    if (this.stateService.sortDirection() === DataSortDirection.ASCENDING) return 1
+    if (this.stateService.sortDirection() === DataSortDirection.DESCENDING) return -1
     return 0
   }
 
   selectedItem = signal<ListGridData | undefined>(undefined)
 
-  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.additionalActions)]).pipe(
+  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.stateService.additionalActions)]).pipe(
     map(([permissions, additionalActions]) => {
       return this.filterActionsBasedOnPermissions(additionalActions, permissions)
     })
@@ -310,7 +329,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   gridMenuState$ = combineLatest([
     // Trigger the whole chain to recalculate when data changes, to update the enabled/visible state of menu items based on the selected row
-    toObservable(this.data),
+    toObservable(this.stateService.data),
     this.permissions$,
     this.permittedAdditionalActions$,
     toObservable(this.selectedItem),
@@ -410,11 +429,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   )
 
   displayedItems$ = combineLatest([
-    toObservable(this.data),
-    toObservable(this.filters),
-    toObservable(this.sortField),
-    toObservable(this.sortDirection),
-    toObservable(this.columns),
+    toObservable(this.stateService.data),
+    toObservable(this.stateService.filters),
+    toObservable(this.stateService.sortColumn),
+    toObservable(this.stateService.sortDirection),
+    toObservable(this.stateService.columns),
     toObservable(this.clientSideFiltering),
     toObservable(this.clientSideSorting),
   ]).pipe(
@@ -473,20 +492,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
-      this.stateService.setData(this.data())
-    })
-
-    effect(() => {
-      this.stateService.setAdditionalActions(this.additionalActions())
-    })
-
-    effect(() => {
-      const data = this.data()
+      const data = this.stateService.data()
       // Not track previousData change to avoid the trigger
       untracked(() => {
         const previousData = this.previousData()
         if (previousData.length && !equal(data, previousData)) {
-          this.stateService.setActivePage(0)
+          this.stateService.activePage.set(0)
         }
       })
 
@@ -502,7 +513,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      const columns = this.columns()
+      const columns = this.stateService.columns()
       const obs = columns.map((c) => this.getTemplate(c))
       this.columnTemplates$ = combineLatest(obs).pipe(
         map((values) => Object.fromEntries(columns.map((c, i) => [c.id, values[i]]))),
@@ -511,12 +522,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.filters()
+      this.stateService.filters()
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
-        if (previousFilters.length && !equal(this.filters(), previousFilters)) {
-          this.stateService.setActivePage(0)
+        if (previousFilters.length && !equal(this.stateService.filters(), previousFilters)) {
+          this.stateService.activePage.set(0)
         }
       })
     })

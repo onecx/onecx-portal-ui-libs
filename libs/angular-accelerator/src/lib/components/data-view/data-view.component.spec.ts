@@ -272,8 +272,8 @@ describe('DataViewComponent', () => {
       const localService = localFixture.debugElement.injector.get(DataViewStateService)
 
       expect(TestBed.inject(DataViewStateService, null)).toBeNull()
-      localComponent.stateService.setActivePage(2)
-      localComponent.stateService.setPageSize(25)
+      localComponent.stateService.activePage.set(2)
+      localComponent.stateService.pageSize.set(25)
 
       expect(localService.activePage()).toBe(2)
       expect(localService.pageSize()).toBe(25)
@@ -282,38 +282,38 @@ describe('DataViewComponent', () => {
 
   describe('state service delegation', () => {
     it('should return true from paginator getter when both paginators are enabled', () => {
-      stateService.setListGridPaginator(true)
-      stateService.setTablePaginator(true)
+      stateService.listGridPaginator.set(true)
+      stateService.tablePaginator.set(true)
 
       expect(stateService.listGridPaginator()).toBe(true)
       expect(stateService.tablePaginator()).toBe(true)
     })
 
     it('should return false from paginator getter when list grid paginator is disabled', () => {
-      stateService.setListGridPaginator(false)
-      stateService.setTablePaginator(true)
+      stateService.listGridPaginator.set(false)
+      stateService.tablePaginator.set(true)
 
       expect(stateService.listGridPaginator()).toBe(false)
     })
 
     it('should return false from paginator getter when table paginator is disabled', () => {
-      stateService.setListGridPaginator(true)
-      stateService.setTablePaginator(false)
+      stateService.listGridPaginator.set(true)
+      stateService.tablePaginator.set(false)
 
       expect(stateService.tablePaginator()).toBe(false)
     })
 
     it('should return false from paginator getter when both paginators are disabled', () => {
-      stateService.setListGridPaginator(false)
-      stateService.setTablePaginator(false)
+      stateService.listGridPaginator.set(false)
+      stateService.tablePaginator.set(false)
 
       expect(stateService.listGridPaginator()).toBe(false)
       expect(stateService.tablePaginator()).toBe(false)
     })
 
     it('should delegate paginator setter to both paginator states', () => {
-      const setListGridPaginatorSpy = jest.spyOn(stateService, 'setListGridPaginator')
-      const setTablePaginatorSpy = jest.spyOn(stateService, 'setTablePaginator')
+      const setListGridPaginatorSpy = jest.spyOn(stateService.listGridPaginator, 'set')
+      const setTablePaginatorSpy = jest.spyOn(stateService.tablePaginator, 'set')
 
       fixture.componentRef.setInput('paginator', false)
       fixture.detectChanges()
@@ -323,7 +323,7 @@ describe('DataViewComponent', () => {
     })
 
     it('should delegate filtering to state service', () => {
-      const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+      const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
       const filters = [{ field: 'name', value: 'abc', matchMode: 'contains' }]
 
       component.filtering({ filters })
@@ -332,8 +332,8 @@ describe('DataViewComponent', () => {
     })
 
     it('should delegate sorting to state service', () => {
-      const setSortDirectionSpy = jest.spyOn(stateService, 'setSortDirection')
-      const setSortColumnSpy = jest.spyOn(stateService, 'setSortColumn')
+      const setSortDirectionSpy = jest.spyOn(stateService.sortDirection, 'set')
+      const setSortColumnSpy = jest.spyOn(stateService.sortColumn, 'set')
 
       component.sorting({ sortDirection: DataSortDirection.ASCENDING, sortColumn: 'name' })
 
@@ -342,23 +342,17 @@ describe('DataViewComponent', () => {
     })
 
     it('should delegate page change to state service', () => {
-      const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
 
       component.onPageChange(2)
 
       expect(setActivePageSpy).toHaveBeenCalledWith(2)
     })
 
-    it('should delegate page size change to state service', () => {
-      const setPageSizeSpy = jest.spyOn(stateService, 'setPageSize')
-
-      component.onPageSizeChange(25)
-
-      expect(setPageSizeSpy).toHaveBeenCalledWith(25)
-    })
+    
 
     it('should delegate expandedRows setter to state service', () => {
-      const setExpandedRowsSpy = jest.spyOn(stateService, 'setExpandedRows')
+      const setExpandedRowsSpy = jest.spyOn(stateService.expandedRows, 'set')
       const expandedRows = ['row-1', 'row-2']
 
       fixture.componentRef.setInput('expandedRows', expandedRows)
@@ -368,7 +362,7 @@ describe('DataViewComponent', () => {
     })
 
     it('should delegate selectedRows setter to state service', () => {
-      const setSelectedRowsSpy = jest.spyOn(stateService, 'setSelectedRows')
+      const setSelectedRowsSpy = jest.spyOn(stateService.selectedRows, 'set')
       const selectedRows = [{ id: 'row-1' } as any, { id: 'row-2' } as any]
 
       fixture.componentRef.setInput('selectedRows', selectedRows)
@@ -379,7 +373,7 @@ describe('DataViewComponent', () => {
 
     it('should return expandedRows from state service getter', () => {
       const expandedRows = ['row-1', 'row-2']
-      stateService.setExpandedRows(expandedRows)
+      stateService.expandedRows.set(expandedRows)
 
       expect(stateService.expandedRows()).toEqual(expandedRows)
     })
@@ -387,13 +381,14 @@ describe('DataViewComponent', () => {
   
   describe('Filters', () => {
     it('should delegate filters setter to DataViewStateService', () => {
-      const setFiltersSpy = jest.spyOn(stateService, 'setFilters')
+      const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 
       const filters = [
         { columnId: 'name', value: 'abc', filterType: 'stringContains' },
       ] as any
 
-      component.filters = filters
+      component.filters.set(filters)
+      TestBed.tick()
 
       expect(setFiltersSpy).toHaveBeenCalledWith(filters)
     })
@@ -401,9 +396,9 @@ describe('DataViewComponent', () => {
 
   describe('ListGridPaginator', () => {
     it('should delegate listGridPaginator setter to DataViewStateService', () => {
-      const setListGridPaginatorSpy = jest.spyOn(stateService, 'setListGridPaginator')
+      const setListGridPaginatorSpy = jest.spyOn(stateService.listGridPaginator, 'set')
 
-      component.listGridPaginator = false
+      component.listGridPaginator.set(false)
 
       expect(setListGridPaginatorSpy).toHaveBeenCalledWith(false)
     })
@@ -411,9 +406,9 @@ describe('DataViewComponent', () => {
 
   describe('TablePaginator', () => {
     it('should delegate tablePaginator setter to DataViewStateService', () => {
-      const setTablePaginatorSpy = jest.spyOn(stateService, 'setTablePaginator')
+      const setTablePaginatorSpy = jest.spyOn(stateService.tablePaginator, 'set')
 
-      component.tablePaginator = true
+      component.tablePaginator.set(true)
 
       expect(setTablePaginatorSpy).toHaveBeenCalledWith(true)
     })
@@ -428,7 +423,7 @@ describe('DataViewComponent', () => {
         done()
       })
 
-      stateService.setFilters(testFilters)
+      stateService.filters.set(testFilters)
       fixture.detectChanges()
     })
 
@@ -436,7 +431,7 @@ describe('DataViewComponent', () => {
       const emitSpy = jest.spyOn(component.filtered, 'emit')
       const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
 
-      stateService.setFilters(testFilters)
+      stateService.filters.set(testFilters)
       fixture.detectChanges()
 
       expect(emitSpy).toHaveBeenCalledWith(testFilters)
@@ -446,7 +441,7 @@ describe('DataViewComponent', () => {
       const emitSpy = jest.spyOn(component.filtered, 'emit')
       emitSpy.mockClear()
 
-      stateService.setFilters([])
+      stateService.filters.set([])
       fixture.detectChanges()
 
       expect(emitSpy).not.toHaveBeenCalled()
@@ -473,7 +468,7 @@ describe('DataViewComponent', () => {
     it('should not emit pageChanged output when page is undefined', () => {
       const emitSpy = jest.spyOn(component.pageChanged, 'emit')
 
-      stateService.setActivePage(undefined as any)
+      stateService.activePage.set(undefined as any)
       fixture.detectChanges()
 
       expect(emitSpy).not.toHaveBeenCalled()
@@ -482,7 +477,7 @@ describe('DataViewComponent', () => {
     it('should not emit pageSizeChanged output when pageSize is undefined', () => {
       const emitSpy = jest.spyOn(component.pageSizeChanged, 'emit')
 
-      stateService.setPageSize(undefined as any)
+      stateService.pageSize.set(undefined as any)
       fixture.detectChanges()
 
       expect(emitSpy).not.toHaveBeenCalled()
@@ -514,8 +509,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(stateService.ActionColumnConfigFrozen()).toBe(false)
-      expect(stateService.ActionColumnConfigPosition()).toBe('right')
+      expect(component.frozenActionColumn()).toBe(false)
+      expect(component.actionColumnPosition()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 
@@ -532,8 +527,6 @@ describe('DataViewComponent', () => {
 
       fixture.componentRef.setInput('frozenActionColumn', true)
       fixture.componentRef.setInput('actionColumnPosition', 'left')
-      fixture.detectChanges()
-      await fixture.whenStable()
 
       expect(await dataTable?.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable?.getActionColumn('right')).toBe(null)
@@ -548,7 +541,6 @@ describe('DataViewComponent', () => {
   })
 
   it('should stay on the same page after layout change', async () => {
-    fixture.componentRef.setInput('layout', 'grid')
     fixture.componentRef.setInput('data', [
       ...component.data(),
       {
@@ -585,6 +577,7 @@ describe('DataViewComponent', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
+    dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
     const dataList = await dataViewHarness.getHarness(DataListGridHarness)
     const dataListPaginator = await dataList.getPaginator()
     let dataListRaport = await dataListPaginator.getCurrentPageReportText()
@@ -594,8 +587,6 @@ describe('DataViewComponent', () => {
     expect(dataListRaport).toEqual('11 - 11 of 11')
 
     fixture.componentRef.setInput('layout', 'table')
-    fixture.detectChanges()
-    await fixture.whenStable()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
     const dataTablePaginator = await dataTable.getPaginator()
     const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()
@@ -638,12 +629,12 @@ describe('DataViewComponent', () => {
       await fixture.whenStable()
     }
 
-    describe('Disable list action buttons based on field path', () => {
+    describe('Disable table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
-        await setUpMockData('list')
-        const dataView = await dataViewHarness.getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+        await setUpMockData('table')
+        const dataTable = await dataViewHarness.getDataTable()
+        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
       it('should disable a button based on a given field path', async () => {

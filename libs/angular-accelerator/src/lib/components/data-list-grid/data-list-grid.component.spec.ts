@@ -304,8 +304,8 @@ describe('DataListGridComponent', () => {
       const localService = localFixture.debugElement.injector.get(DataViewStateService)
 
       expect(TestBed.inject(DataViewStateService, null)).toBeNull()
-      localFixture.componentInstance.stateService.setActivePage(2)
-      localFixture.componentInstance.stateService.setPageSize(25)
+      localFixture.componentInstance.stateService.activePage.set(2)
+      localFixture.componentInstance.stateService.pageSize.set(25)
 
       expect(localService.activePage()).toBe(2)
       expect(localService.pageSize()).toBe(25)
@@ -314,9 +314,9 @@ describe('DataListGridComponent', () => {
 
   describe('filters effect', () => {
     it('should reset active page to 0 when filters changed and previous filters exist', async () => {
-      const setActivePageSpy = jest.spyOn(stateService, 'setActivePage')
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
 
-      stateService.setActivePage(3)
+      stateService.activePage.set(3)
 
       fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 1' }])
       fixture.detectChanges()
