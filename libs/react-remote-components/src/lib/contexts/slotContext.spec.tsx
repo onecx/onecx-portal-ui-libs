@@ -67,6 +67,30 @@ function renderAndCaptureContext() {
   return { getContext: () => captured }
 }
 
+function setupSlotEmission(slotName: string, components: any[]) {
+  const registerRemotes = jest.fn()
+  mockShellInstance({ registerRemotes })
+  const { getContext } = renderAndCaptureContext()
+  getRemoteComponentsSubject().next({
+    slots: [{ name: slotName, components: components.map((c) => c.name) }],
+    components,
+  })
+  return { getContext, registerRemotes }
+}
+
+function makeLoadTestComponent(overrides: Record<string, any> = {}) {
+  return {
+    appId: 'test-app',
+    productName: 'test-product',
+    exposedModule: './TestComponent',
+    remoteEntryUrl: 'http://localhost/test.js',
+    technology: 'REACT',
+    name: 'TestComponent',
+    baseUrl: 'http://localhost',
+    ...overrides,
+  }
+}
+
 describe('SlotContext', () => {
   it('should be defined', () => {
     expect(SlotContext).toBeDefined()
@@ -110,25 +134,18 @@ describe('SlotProvider', () => {
     })
 
     it('should map matching slot components to SlotComponentConfiguration', async () => {
-      const registerRemotes = jest.fn()
-      mockShellInstance({ registerRemotes })
-      const { getContext } = renderAndCaptureContext()
-
-      getRemoteComponentsSubject().next({
-        slots: [{ name: 'my-slot', components: ['comp-a'] }],
-        components: [
-          {
-            name: 'comp-a',
-            appId: 'app-a',
-            productName: 'prod-a',
-            remoteEntryUrl: 'http://localhost/remoteEntry.js',
-            technology: 'REACT',
-            baseUrl: 'http://localhost',
-            exposedModule: './CompA',
-            elementName: 'comp-a-element',
-          },
-        ],
-      })
+      const { getContext } = setupSlotEmission('my-slot', [
+        {
+          name: 'comp-a',
+          appId: 'app-a',
+          productName: 'prod-a',
+          remoteEntryUrl: 'http://localhost/remoteEntry.js',
+          technology: 'REACT',
+          baseUrl: 'http://localhost',
+          exposedModule: './CompA',
+          elementName: 'comp-a-element',
+        },
+      ])
 
       const result = (await firstValueFrom(getContext().getComponentsForSlot('my-slot'))) as any[]
       expect(result).toHaveLength(1)
@@ -137,25 +154,18 @@ describe('SlotProvider', () => {
     })
 
     it('should call registerRemotes when mapping components', async () => {
-      const registerRemotes = jest.fn()
-      mockShellInstance({ registerRemotes })
-      const { getContext } = renderAndCaptureContext()
-
-      getRemoteComponentsSubject().next({
-        slots: [{ name: 'my-slot', components: ['comp-b'] }],
-        components: [
-          {
-            name: 'comp-b',
-            appId: 'app-b',
-            productName: 'prod-b',
-            remoteEntryUrl: 'http://localhost/remoteEntry.js',
-            technology: 'REACT',
-            baseUrl: 'http://localhost',
-            exposedModule: './CompB',
-            elementName: 'comp-b-element',
-          },
-        ],
-      })
+      const { getContext, registerRemotes } = setupSlotEmission('my-slot', [
+        {
+          name: 'comp-b',
+          appId: 'app-b',
+          productName: 'prod-b',
+          remoteEntryUrl: 'http://localhost/remoteEntry.js',
+          technology: 'REACT',
+          baseUrl: 'http://localhost',
+          exposedModule: './CompB',
+          elementName: 'comp-b-element',
+        },
+      ])
 
       await firstValueFrom(getContext().getComponentsForSlot('my-slot'))
       expect(registerRemotes).toHaveBeenCalledWith(
@@ -189,24 +199,17 @@ describe('SlotProvider', () => {
     })
 
     it('should register remote as module type when technology is WebComponentModule', async () => {
-      const registerRemotes = jest.fn()
-      mockShellInstance({ registerRemotes })
-      const { getContext } = renderAndCaptureContext()
-
-      getRemoteComponentsSubject().next({
-        slots: [{ name: 'wc-slot', components: ['wc-comp'] }],
-        components: [
-          {
-            name: 'wc-comp',
-            appId: 'wc-app',
-            productName: 'wc-prod',
-            remoteEntryUrl: 'http://localhost/remoteEntry.js',
-            technology: 'WEB_COMPONENT_MODULE',
-            baseUrl: 'http://localhost',
-            exposedModule: './WcComp',
-          },
-        ],
-      })
+      const { getContext, registerRemotes } = setupSlotEmission('wc-slot', [
+        {
+          name: 'wc-comp',
+          appId: 'wc-app',
+          productName: 'wc-prod',
+          remoteEntryUrl: 'http://localhost/remoteEntry.js',
+          technology: 'WEB_COMPONENT_MODULE',
+          baseUrl: 'http://localhost',
+          exposedModule: './WcComp',
+        },
+      ])
 
       await firstValueFrom(getContext().getComponentsForSlot('wc-slot'))
       expect(registerRemotes).toHaveBeenCalledWith(
@@ -216,24 +219,17 @@ describe('SlotProvider', () => {
     })
 
     it('should register remote as script type when technology is React', async () => {
-      const registerRemotes = jest.fn()
-      mockShellInstance({ registerRemotes })
-      const { getContext } = renderAndCaptureContext()
-
-      getRemoteComponentsSubject().next({
-        slots: [{ name: 'react-slot', components: ['react-comp'] }],
-        components: [
-          {
-            name: 'react-comp',
-            appId: 'react-app',
-            productName: 'react-prod',
-            remoteEntryUrl: 'http://localhost/remoteEntry.js',
-            technology: 'REACT',
-            baseUrl: 'http://localhost',
-            exposedModule: './ReactComp',
-          },
-        ],
-      })
+      const { getContext, registerRemotes } = setupSlotEmission('react-slot', [
+        {
+          name: 'react-comp',
+          appId: 'react-app',
+          productName: 'react-prod',
+          remoteEntryUrl: 'http://localhost/remoteEntry.js',
+          technology: 'REACT',
+          baseUrl: 'http://localhost',
+          exposedModule: './ReactComp',
+        },
+      ])
 
       await firstValueFrom(getContext().getComponentsForSlot('react-slot'))
       expect(registerRemotes).toHaveBeenCalledWith(
@@ -318,15 +314,7 @@ describe('SlotProvider', () => {
       mockShellInstance({ loadRemote: mockLoadRemote })
       const { getContext } = renderAndCaptureContext()
 
-      const component = {
-        appId: 'test-app',
-        productName: 'test-product',
-        exposedModule: './TestComponent',
-        remoteEntryUrl: 'http://localhost/test.js',
-        technology: 'REACT',
-        name: 'TestComponent',
-        baseUrl: 'http://localhost',
-      }
+      const component = makeLoadTestComponent()
 
       const result = await getContext().loadComponent(component)
       expect(result).toBe(mockModule)
@@ -339,15 +327,7 @@ describe('SlotProvider', () => {
       mockShellInstance({ loadRemote: mockLoadRemote })
       const { getContext } = renderAndCaptureContext()
 
-      const component = {
-        appId: 'test-app',
-        productName: 'test-product',
-        exposedModule: 'TestComponent',
-        remoteEntryUrl: 'http://localhost/test.js',
-        technology: 'REACT',
-        name: 'TestComponent',
-        baseUrl: 'http://localhost',
-      }
+      const component = makeLoadTestComponent({ exposedModule: 'TestComponent' })
 
       const result = await getContext().loadComponent(component)
       expect(result).toBe(mockModule)
@@ -359,15 +339,7 @@ describe('SlotProvider', () => {
       mockShellInstance({ loadRemote: mockLoadRemote })
       const { getContext } = renderAndCaptureContext()
 
-      const component = {
-        appId: 'test-app',
-        productName: 'test-product',
-        exposedModule: './TestComponent',
-        remoteEntryUrl: 'http://localhost/test.js',
-        technology: 'REACT',
-        name: 'TestComponent',
-        baseUrl: 'http://localhost',
-      }
+      const component = makeLoadTestComponent()
 
       const result = await getContext().loadComponent(component)
       expect(result).toBeUndefined()

@@ -16,6 +16,20 @@ jest.mock('./use-wrapped-guards', () => ({
 
 const flushPromises = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
+function TestComponent({
+  onGuardCheck,
+  enabled,
+  onResult,
+}: {
+  onGuardCheck?: jest.Mock
+  enabled?: boolean
+  onResult?: (r: any) => void
+} = {}) {
+  const result = useGuardCheck({ onGuardCheck, enabled })
+  onResult?.(result)
+  return null
+}
+
 const makeWrapped = (overrides: Partial<WrappedGuards> = {}): WrappedGuards => ({
   canMatch: jest.fn(async () => true),
   canActivateChild: jest.fn(async () => true),
@@ -35,16 +49,11 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    function TestComponent() {
-      useGuardCheck({ onGuardCheck })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
       await flushPromises()
     })
 
@@ -60,16 +69,11 @@ describe('useGuardCheck', () => {
     const wrapped = makeWrapped()
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
 
-    function TestComponent() {
-      useGuardCheck({ enabled: false })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent enabled={false} />)
       await flushPromises()
     })
 
@@ -82,16 +86,11 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    function TestComponent() {
-      useGuardCheck({ onGuardCheck })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
       await flushPromises()
     })
 
@@ -107,16 +106,11 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    function TestComponent() {
-      useGuardCheck({ onGuardCheck })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
       await flushPromises()
     })
 
@@ -132,16 +126,17 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
 
     let hookResult: any
-    function TestComponent() {
-      hookResult = useGuardCheck()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(
+        <TestComponent
+          onResult={(r) => {
+            hookResult = r
+          }}
+        />
+      )
     })
 
     expect(hookResult.wrapped).toBe(wrapped)

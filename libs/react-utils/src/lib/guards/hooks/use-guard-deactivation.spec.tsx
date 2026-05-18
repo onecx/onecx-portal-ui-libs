@@ -16,6 +16,17 @@ jest.mock('./use-wrapped-guards', () => ({
 
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
 
+function TestComponent({
+  onGuardCheck,
+  enabled,
+}: {
+  onGuardCheck?: jest.Mock
+  enabled?: boolean
+} = {}) {
+  GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any, { onGuardCheck, enabled })
+  return null
+}
+
 describe('useGuardDeactivation', () => {
   it('runs canDeactivate for next location', async () => {
     const canDeactivate = jest.fn(async () => true)
@@ -29,11 +40,6 @@ describe('useGuardDeactivation', () => {
     }
 
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
-
-    function TestComponent() {
-      GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any)
-      return null
-    }
 
     const container = document.createElement('div')
     const root = createRoot(container)
@@ -61,16 +67,11 @@ describe('useGuardDeactivation', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    function TestComponent() {
-      GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any, { onGuardCheck })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
       await flushPromises()
     })
 
@@ -89,16 +90,11 @@ describe('useGuardDeactivation', () => {
     }
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
 
-    function TestComponent() {
-      GuardsHooks.useGuardDeactivation({ pathname: '/next' } as any, { enabled: false })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent enabled={false} />)
       await flushPromises()
     })
 

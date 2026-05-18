@@ -18,6 +18,18 @@ jest.mock('../services/guards-gatherer', () => ({
 
 const flushPromises = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
+function TestComponent({
+  activate,
+  onResult,
+}: {
+  activate?: boolean
+  onResult?: (r: any) => void
+} = {}) {
+  const result = useGuardsGatherer(activate === undefined ? undefined : { activate })
+  onResult?.(result)
+  return null
+}
+
 describe('useGuardsGatherer', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -25,16 +37,17 @@ describe('useGuardsGatherer', () => {
 
   it('returns a GuardsGatherer instance', async () => {
     let result: any
-    function TestComponent() {
-      result = useGuardsGatherer()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(
+        <TestComponent
+          onResult={(r) => {
+            result = r
+          }}
+        />
+      )
       await flushPromises()
     })
 
@@ -44,11 +57,6 @@ describe('useGuardsGatherer', () => {
   })
 
   it('calls activate on mount when activate option is true (default)', async () => {
-    function TestComponent() {
-      useGuardsGatherer()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
@@ -62,11 +70,6 @@ describe('useGuardsGatherer', () => {
   })
 
   it('calls deactivate on unmount', async () => {
-    function TestComponent() {
-      useGuardsGatherer()
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
@@ -83,16 +86,11 @@ describe('useGuardsGatherer', () => {
   })
 
   it('does not call activate when activate option is false', async () => {
-    function TestComponent() {
-      useGuardsGatherer({ activate: false })
-      return null
-    }
-
     const container = document.createElement('div')
     const root = createRoot(container)
 
     await act(async () => {
-      root.render(<TestComponent />)
+      root.render(<TestComponent activate={false} />)
       await flushPromises()
     })
 

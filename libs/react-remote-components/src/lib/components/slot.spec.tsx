@@ -19,6 +19,32 @@ function setupSlotService(overrides: Record<string, any> = {}) {
   }
 }
 
+const actFlush = () =>
+  act(async () => {
+    await flushPromises()
+    await flushPromises()
+  })
+
+function makeSlotEntry(
+  elementName: string,
+  {
+    remoteOverrides = {},
+    ...rest
+  }: { remoteOverrides?: Record<string, any>; componentType?: any; permissions?: any } = {}
+) {
+  return {
+    componentType: 'componentType' in rest ? rest.componentType : Promise.resolve({}),
+    remoteComponent: { appId: 'a', productName: 'p', baseUrl: '/', elementName, ...remoteOverrides },
+    permissions: 'permissions' in rest ? rest.permissions : Promise.resolve([]),
+  }
+}
+
+function setupComponentSlot(entries: any[]) {
+  const components$ = new BehaviorSubject(entries)
+  useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+  return components$
+}
+
 function renderSlot(props: Record<string, any> = {}) {
   return render(<SlotComponent name="test-slot" {...props} />)
 }
@@ -39,25 +65,22 @@ describe('SlotComponent', () => {
   })
 
   it('should render skeleton text when components are present', () => {
-    const components$ = new BehaviorSubject([{ componentType: undefined, remoteComponent: {}, permissions: [] }])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([{ componentType: undefined, remoteComponent: {}, permissions: [] }])
     const { container } = renderSlot({ skeleton: 'Loading...' })
     expect(container.textContent).toContain('Loading...')
   })
 
   it('should render placeholder div for each component', () => {
-    const components$ = new BehaviorSubject([
+    setupComponentSlot([
       { componentType: undefined, remoteComponent: {}, permissions: [] },
       { componentType: undefined, remoteComponent: {}, permissions: [] },
     ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
     const { container } = renderSlot()
     expect(container.querySelectorAll('div[id^="slot-"]').length).toBe(2)
   })
 
   it('should update DOM when observable emits new components', async () => {
-    const components$ = new BehaviorSubject<any[]>([])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    const components$ = setupComponentSlot([])
     const { container } = renderSlot()
     expect(container.querySelectorAll('div[id^="slot-"]').length).toBe(0)
 
@@ -83,8 +106,7 @@ describe('SlotComponent', () => {
   })
 
   it('should clean up view containers on unmount', async () => {
-    const components$ = new BehaviorSubject([{ componentType: undefined, remoteComponent: {}, permissions: [] }])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([{ componentType: undefined, remoteComponent: {}, permissions: [] }])
     const { container, unmount } = renderSlot()
     expect(container.querySelectorAll('div[id^="slot-"]').length).toBe(1)
 
@@ -97,34 +119,16 @@ describe('SlotComponent', () => {
 
   it('should not create element when componentType is falsy', async () => {
     const createSpy = jest.spyOn(document, 'createElement')
-    const components$ = new BehaviorSubject([
-      {
-        componentType: undefined,
-        remoteComponent: { appId: 'a', productName: 'p', baseUrl: '/', elementName: 'test-el' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([makeSlotEntry('test-el', { componentType: undefined })])
     renderSlot()
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
     expect(createSpy).not.toHaveBeenCalledWith('test-el')
     createSpy.mockRestore()
   })
 
   it('should create custom element when componentType resolves to truthy value', async () => {
     const createSpy = jest.spyOn(document, 'createElement')
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve({}),
-        remoteComponent: { appId: 'app1', productName: 'prod1', baseUrl: '/', elementName: 'my-element' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([makeSlotEntry('my-element', { remoteOverrides: { appId: 'app1', productName: 'prod1' } })])
     await act(async () => {
       renderSlot()
       await flushPromises()
@@ -135,20 +139,9 @@ describe('SlotComponent', () => {
   })
 
   it('should set data-style-id and data-style-isolation on created element', async () => {
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve({}),
-        remoteComponent: { appId: 'my-app', productName: 'my-prod', baseUrl: '/', elementName: 'styled-el' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([makeSlotEntry('styled-el', { remoteOverrides: { appId: 'my-app', productName: 'my-prod' } })])
     const { container } = renderSlot()
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
 
     const el = container.querySelector('styled-el') as HTMLElement | null
     expect(el).not.toBeNull()
@@ -157,20 +150,14 @@ describe('SlotComponent', () => {
   })
 
   it('should set ocxRemoteComponentConfig on created element', async () => {
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve({}),
-        remoteComponent: { appId: 'cfg-app', productName: 'cfg-prod', baseUrl: '/base', elementName: 'cfg-el' },
+    setupComponentSlot([
+      makeSlotEntry('cfg-el', {
+        remoteOverrides: { appId: 'cfg-app', productName: 'cfg-prod', baseUrl: '/base' },
         permissions: Promise.resolve(['read', 'write']),
-      },
+      }),
     ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
     const { container } = renderSlot()
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
 
     const el = container.querySelector('cfg-el') as any
     expect(el).not.toBeNull()
@@ -183,20 +170,9 @@ describe('SlotComponent', () => {
   })
 
   it('should apply inputs to created HTML element via setProps', async () => {
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve({}),
-        remoteComponent: { appId: 'a', productName: 'p', baseUrl: '/', elementName: 'input-el' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([makeSlotEntry('input-el')])
     const { container } = renderSlot({ inputs: { myInput: 'hello' } })
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
 
     const el = container.querySelector('input-el') as any
     expect(el).not.toBeNull()
@@ -205,40 +181,18 @@ describe('SlotComponent', () => {
 
   it('should not create element when componentType Promise resolves to falsy', async () => {
     const createSpy = jest.spyOn(document, 'createElement')
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve(undefined),
-        remoteComponent: { appId: 'a', productName: 'p', baseUrl: '/', elementName: 'null-resolved-el' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    setupComponentSlot([makeSlotEntry('null-resolved-el', { componentType: Promise.resolve(undefined) })])
     renderSlot()
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
     expect(createSpy).not.toHaveBeenCalledWith('null-resolved-el')
     createSpy.mockRestore()
   })
 
   it('should reuse existing element when already present in view container', async () => {
     const createSpy = jest.spyOn(document, 'createElement')
-    const components$ = new BehaviorSubject([
-      {
-        componentType: Promise.resolve({}),
-        remoteComponent: { appId: 'a', productName: 'p', baseUrl: '/', elementName: 'reuse-el' },
-        permissions: Promise.resolve([]),
-      },
-    ])
-    useSlot.mockReturnValue(setupSlotService({ getComponentsForSlot: () => components$ }))
+    const components$ = setupComponentSlot([makeSlotEntry('reuse-el')])
     renderSlot()
-
-    await act(async () => {
-      await flushPromises()
-      await flushPromises()
-    })
+    await actFlush()
 
     const firstCount = createSpy.mock.calls.filter((args) => args[0] === 'reuse-el').length
 
