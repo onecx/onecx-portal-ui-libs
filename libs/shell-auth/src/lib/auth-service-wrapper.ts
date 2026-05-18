@@ -123,6 +123,6 @@ export class AuthServiceWrapper {
       throw new Error('Failed to load custom auth service module')
     }
 
-    return module.default as AuthServiceFactory
+    return module.default
   }
 }
