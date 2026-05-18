@@ -1,3 +1,4 @@
+import { registerRemotes, loadRemote } from '@module-federation/enhanced/runtime'
 import { Remote } from '@module-federation/runtime-core/types'
 import { RemoteComponent } from '@onecx/integration-interface'
 
@@ -42,4 +43,19 @@ export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> 
     name: r.productName + '|' + r.appId,
     shareScope,
   }
+}
+
+export function getFederationInstance() {
+  return (globalThis as any)['onecxFederationInstance'] ?? undefined
+}
+
+export async function registerAndLoadRemote<T>(remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
+  const sanitizedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
+  const instance = getFederationInstance()
+  if(instance) {
+    instance.registerRemotes([remoteConfig])
+    return instance.loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined
+  }
+  registerRemotes([remoteConfig])
+  return loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined
 }

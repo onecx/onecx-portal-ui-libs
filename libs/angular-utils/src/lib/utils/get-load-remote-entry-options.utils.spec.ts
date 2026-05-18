@@ -1,5 +1,11 @@
-import { toLoadRemoteEntryOptions, createRemoteConfig, Technologies } from './get-load-remote-entry-options.utils'
+import { toLoadRemoteEntryOptions, createRemoteConfig, Technologies, registerAndLoadRemote } from './get-load-remote-entry-options.utils'
 import { RemoteComponent, Technologies as IntegrationTechnologies } from '@onecx/integration-interface'
+import { registerRemotes, loadRemote } from '@module-federation/enhanced/runtime'
+
+jest.mock('@module-federation/enhanced/runtime', () => ({
+  registerRemotes: jest.fn(),
+  loadRemote: jest.fn(),
+}))
 
 describe('get-load-remote-entry-options', () => {
   describe('createRemoteConfig', () => {
@@ -156,6 +162,47 @@ describe('get-load-remote-entry-options', () => {
       const result = await toLoadRemoteEntryOptions(route)
 
       expect(result.type).toBe('script')
+    })
+  })
+
+  describe('registerAndLoadRemote', () => {
+    const mockRegisterRemotes = registerRemotes as jest.Mock
+    const mockLoadRemote = loadRemote as jest.Mock
+
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    it('should register remotes and load the exposed module', async () => {
+      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
+      const mockModule = { MyComponent: 'component' }
+      mockLoadRemote.mockResolvedValue(mockModule)
+
+      const result = await registerAndLoadRemote(remoteConfig, 'MyComponent')
+
+      expect(mockRegisterRemotes).toHaveBeenCalledWith([remoteConfig])
+      expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/MyComponent')
+      expect(result).toBe(mockModule)
+    })
+
+    it('should sanitize exposed module path by removing leading ./', async () => {
+      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'product1|app1')
+      const mockModule = { default: jest.fn() }
+      mockLoadRemote.mockResolvedValue(mockModule)
+
+      await registerAndLoadRemote(remoteConfig, './MyModule')
+
+      expect(mockLoadRemote).toHaveBeenCalledWith('product1|app1/MyModule')
+    })
+
+    it('should not modify path without leading ./', async () => {
+      const remoteConfig = createRemoteConfig('http://example.com/remoteEntry.js', 'my-remote')
+      const mockModule = { Component: 'test' }
+      mockLoadRemote.mockResolvedValue(mockModule)
+
+      await registerAndLoadRemote(remoteConfig, 'Component')
+
+      expect(mockLoadRemote).toHaveBeenCalledWith('my-remote/Component')
     })
   })
 })
