@@ -969,9 +969,6 @@ describe('DataListGridComponent', () => {
           fixture.componentRef.setInput('additionalActions', [
             {
               id: 'routerLinkAction',
-              callback: () => {
-                console.log('My routing Action')
-              },
               routerLink: '/inline',
               permission: 'CUSTOM#ACTION',
             },
@@ -998,9 +995,6 @@ describe('DataListGridComponent', () => {
           fixture.componentRef.setInput('additionalActions', [
             {
               id: 'routerLinkAction',
-              callback: () => {
-                console.log('My overflow routing Action')
-              },
               routerLink: '/overflow',
               permission: 'CUSTOM#ACTION',
               showAsOverflow: true,
@@ -1024,7 +1018,7 @@ describe('DataListGridComponent', () => {
           expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
         })
 
-        describe('callback actions', () => {
+        describe('routerLink format and priority', () => {
           it('should handle routerLink as function returning string', async () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
             const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
@@ -1033,7 +1027,6 @@ describe('DataListGridComponent', () => {
             fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'functionRouterLink',
-                callback: jest.fn(),
                 routerLink: routerLinkFunction,
                 permission: 'CUSTOM#ACTION',
               },
@@ -1057,7 +1050,6 @@ describe('DataListGridComponent', () => {
             fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'promiseFunctionRouterLink',
-                callback: jest.fn(),
                 routerLink: routerLinkPromiseFunction,
                 permission: 'CUSTOM#ACTION',
               },
@@ -1080,7 +1072,6 @@ describe('DataListGridComponent', () => {
             fixture.componentRef.setInput('additionalActions', [
               {
                 id: 'promiseRouterLink',
-                callback: jest.fn(),
                 routerLink: Promise.resolve('/promise-link'),
                 permission: 'CUSTOM#ACTION',
               },
@@ -1287,7 +1278,6 @@ describe('DataListGridComponent', () => {
             routerLink: '/test-route',
             id: 'customAction',
             labelKey: 'CUSTOM_ACTION_KEY',
-            callback: jest.fn()
           },
         ])
         

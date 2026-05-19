@@ -61,7 +61,6 @@ export * from './lib/topics/image-repository/image-repository.model'
 export * from './lib/topics/image-repository/image-repository.topic'
 export * from './lib/services/image-repository.service'
 
-
 export * from './lib/topics/icons/v1/icon.model'
 export * from './lib/topics/icons/v1/icon.topic'
 export * from './lib/services/icon.service'
@@ -72,3 +71,12 @@ export * from './lib/services/dynamic-translation.service'
 
 export * from './lib/models/shell-capability.model'
 export * from './lib/utils/shell-capability.utils'
+export * from './lib/utils/workspace.utils'
+export * from './lib/utils/user-language.utils'
+export * from './lib/utils/parameters.utils'
+export * from './lib/utils/configuration.utils'
+export * from './lib/utils/portal-message.utils'
+
+export * from './lib/topics/notification/v1/notification.model'
+export * from './lib/topics/notification/v1/notification.topic'
+export * from './lib/services/notification.service'

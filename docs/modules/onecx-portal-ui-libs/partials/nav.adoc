@@ -2,6 +2,7 @@
 ** Libraries
 *** xref:onecx-portal-ui-libs:libraries/angular-integration-interface.adoc[angular-integration-interface]
 *** xref:onecx-portal-ui-libs:libraries/angular-linter-rules.adoc[angular-linter-rules]
+*** xref:onecx-portal-ui-libs:libraries/react-libraries.adoc[react-libraries]
 *** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
 *** xref:onecx-portal-ui-libs:libraries/ngrx-linter-rules.adoc[ngrx-linter-rules]
 

@@ -1,0 +1,31 @@
+@mixin onecx-variables {
+  --app-body-bg-color: var(--ocx-theme-definitions-body-bg-color, var(--body-bg-color, #f7f7f7));
+  --app-button-hover-bg: var(--ocx-theme-definitions-button-hover-bg, var(--button-hover-bg, #ad1457));
+  --app-content-bg-color: var(--ocx-theme-definitions-content-bg-color, var(--content-bg-color, #ffffff));
+  --app-danger-button-bg: var(--ocx-theme-definitions-danger-button-bg, var(--danger-button-bg, #d32f2f));
+  --app-divider-color: var(--ocx-theme-definitions-divider-color, var(--divider-color, #e4e4e4));
+  --app-error-message-bg: var(--ocx-theme-definitions-error-message-bg, var(--error-message-bg, #ffcdd2));
+  --app-hover-bg-color: var(--ocx-theme-definitions-hover-bg-color, var(--hover-bg-color, #ad1457));
+  --app-info-message-bg: var(--ocx-theme-definitions-info-message-bg, var(--info-message-bg, #b3e5fc));
+  --app-logo-color: var(--ocx-theme-definitions-logo-color, var(--logo-color, #ffffff));
+  --app-menu-active-item-bg-color: var(--ocx-theme-definitions-menu-active-item-bg-color, var(--menu-active-item-bg-color, rgba(0, 0, 0, 0.04)));
+  --app-menu-active-item-text-color: var(--ocx-theme-definitions-menu-active-item-text-color, var(--menu-active-item-text-color, #515c66));
+  --app-menu-bg-color: var(--ocx-theme-definitions-menu-bg-color, var(--menu-bg-color, #fdfeff));
+  --app-menu-item-hover-bg-color: var(--ocx-theme-definitions-menu-item-hover-bg-color, var(--menu-item-hover-bg-color, #e4e4e4));
+  --app-menu-item-text-color: var(--ocx-theme-definitions-menu-item-text-color, var(--menu-item-text-color, #515c66));
+  --app-menu-text-color: var(--ocx-theme-definitions-menu-text-color, var(--menu-text-color, #274b5f));
+  --app-overlay-content-bg-color: var(--ocx-theme-definitions-overlay-content-bg-color, var(--overlay-content-bg-color, #ffffff));
+  --app-primary-color: var(--ocx-theme-definitions-primary-color, var(--primary-color, #550e0e33));
+  --app-secondary-color: var(--ocx-theme-definitions-secondary-color, var(--secondary-color, #1c4257));
+  --app-solid-surface-text-color: var(--ocx-theme-definitions-solid-surface-text-color, var(--solid-surface-text-color, #ffffff));
+  --app-success-message-bg: var(--ocx-theme-definitions-success-message-bg, var(--success-message-bg, #c8e6c9));
+  --app-text-color: var(--ocx-theme-definitions-text-color, var(--text-color, rgba(0, 0, 0, 0.87)));
+  --app-text-secondary-color: var(--ocx-theme-definitions-text-secondary-color, var(--text-secondary-color, #262626));
+  --app-topbar-bg-color: var(--ocx-theme-definitions-topbar-bg-color, var(--topbar-bg-color, #0d3650));
+  --app-topbar-item-text-color: var(--ocx-theme-definitions-topbar-item-text-color, var(--topbar-item-text-color, #ffffff));
+  --app-topbar-item-text-hover-bg-color: var(--ocx-theme-definitions-topbar-item-text-hover-bg-color, var(--topbar-item-text-hover-bg-color, #262626));
+  --app-topbar-left-bg-color: var(--ocx-theme-definitions-topbar-left-bg-color, var(--topbar-left-bg-color, #124a6e));
+  --app-topbar-menu-button-bg-color: var(--ocx-theme-definitions-topbar-menu-button-bg-color, var(--topbar-menu-button-bg-color, rgb(255 0 68)));
+  --app-topbar-text-color: var(--ocx-theme-definitions-topbar-text-color, var(--topbar-text-color, #ffffff));
+  --app-warning-message-bg: var(--ocx-theme-definitions-warning-message-bg, var(--warning-message-bg, #ffecb3));
+}
