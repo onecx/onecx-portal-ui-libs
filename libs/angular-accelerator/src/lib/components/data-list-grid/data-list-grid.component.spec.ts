@@ -21,6 +21,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { DataSortDirection } from '../../model/data-sort-direction'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -1427,6 +1428,39 @@ describe('DataListGridComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('sortDirectionNumber', () => {
+    it('should return 1 when sortDirection is ASCENDING', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.ASCENDING)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(1)
+    })
+
+    it('should return -1 when sortDirection is DESCENDING', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.DESCENDING)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(-1)
+    })
+
+    it('should return 0 when sortDirection is NONE', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.NONE)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(0)
+    })
+  })
+
+  describe('filteredColumns', () => {
+    it('should return all columns when subtitleLineIds is an empty array', () => {
+      fixture.componentRef.setInput('subtitleLineIds', [])
+      fixture.componentRef.setInput('titleLineId', undefined)
+      fixture.detectChanges()
+
+      expect(component.filteredColumns().length).toBe(mockColumns.length)
     })
   })
 })

@@ -191,8 +191,7 @@ export class InteractiveDataViewComponent implements OnInit {
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return (
-      (columnKeys.map((key) => this.stateService.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]) ??
-      []
+      columnKeys.map((key) => this.stateService.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]
     )
   })
 

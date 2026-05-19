@@ -129,6 +129,35 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect((component as any).stateService.expandedRows()).toEqual(expandedRows)
     })
+
+    it('should set additionalActions via input setter', () => {
+      const { component } = createComponent(true)
+
+      const actions = [{ id: 'a1' } as any]
+      component.additionalActions = actions
+
+      expect(component.stateService.additionalActions()).toEqual(actions)
+    })
+
+    it('should set frozenActionColumn via input setter', () => {
+      const { component } = createComponent(true)
+
+      component.frozenActionColumn = true
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
+
+      component.frozenActionColumn = false
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(false)
+    })
+
+    it('should set actionColumnPosition via input setter', () => {
+      const { component } = createComponent(true)
+
+      component.actionColumnPosition = 'left'
+      expect(component.stateService.actionColumnConfigPosition()).toBe('left')
+
+      component.actionColumnPosition = 'right'
+      expect(component.stateService.actionColumnConfigPosition()).toBe('right')
+    })
   })
 
   describe('group selection + layout interactions', () => {
@@ -1170,6 +1199,22 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.stateService.sortColumn()).toBe('name')
       expect(component.stateService.sortDirection()).toBe('ASCENDING' as any)
       expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'x' }])
+    })
+  })
+
+  describe('public handlers', () => {
+    it('should update action column config in service onActionColumnConfigChange', () => {
+      const { component } = createComponent(true)
+
+      const event = {
+        frozenActionColumn: true,
+        actionColumnPosition: 'left',
+      } as any
+
+      component.onActionColumnConfigChange(event)
+
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
+      expect(component.stateService.actionColumnConfigPosition()).toBe('left')
     })
   })
 })

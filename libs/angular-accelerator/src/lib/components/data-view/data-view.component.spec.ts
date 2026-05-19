@@ -338,8 +338,6 @@ describe('DataViewComponent', () => {
       expect(setActivePageSpy).toHaveBeenCalledWith(2)
     })
 
-    
-
     it('should delegate expandedRows setter to state service', () => {
       const setExpandedRowsSpy = jest.spyOn(stateService.expandedRows, 'set')
       const expandedRows = ['row-1', 'row-2']
@@ -365,6 +363,38 @@ describe('DataViewComponent', () => {
       stateService.expandedRows.set(expandedRows)
 
       expect(stateService.expandedRows()).toEqual(expandedRows)
+    })
+
+    it('should delegate page input setter to state service', () => {
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
+
+      fixture.componentRef.setInput('page', 3)
+      fixture.detectChanges()
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(3)
+    })
+
+    it('should delegate pageSize input setter to state service', () => {
+      const setPageSizeSpy = jest.spyOn(stateService.pageSize, 'set')
+
+      fixture.componentRef.setInput('pageSize', 25)
+      fixture.detectChanges()
+
+      expect(setPageSizeSpy).toHaveBeenCalledWith(25)
+    })
+
+    it('should delegate additionalActions input setter to state service', () => {
+      const setAdditionalActionsSpy = jest.spyOn(stateService.additionalActions, 'set')
+
+      const actions = [
+        { id: 'a1', label: 'Action 1' },
+        { id: 'a2', label: 'Action 2' }
+      ] as any
+
+      fixture.componentRef.setInput('additionalActions', actions)
+      fixture.detectChanges()
+
+      expect(setAdditionalActionsSpy).toHaveBeenCalledWith(actions)
     })
   })
   

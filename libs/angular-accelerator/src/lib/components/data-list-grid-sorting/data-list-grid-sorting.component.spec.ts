@@ -112,4 +112,15 @@ describe('DataListGridSortingComponent', () => {
       )
     })
   })
+
+  describe('sortField input setter', () => {
+    it('should delegate sortField input setter to stateService.sortColumn', () => {
+      const setSortColumnSpy = jest.spyOn(stateService.sortColumn, 'set')
+
+      fixture.componentRef.setInput('sortField', 'name')
+      fixture.detectChanges()
+
+      expect(setSortColumnSpy).toHaveBeenCalledWith('name')
+    })
+  })
 })
