@@ -48,7 +48,7 @@ export interface DataLayoutSelectionComponentState {
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {
-  private readonly stateService = inject(DataViewStateService)
+  readonly stateService = inject(DataViewStateService)
   supportedViewLayouts = input<Array<string>>([])
 
   @Input()

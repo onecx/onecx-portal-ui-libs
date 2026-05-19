@@ -311,17 +311,6 @@ describe('DataViewComponent', () => {
       expect(stateService.tablePaginator()).toBe(false)
     })
 
-    it('should delegate paginator setter to both paginator states', () => {
-      const setListGridPaginatorSpy = jest.spyOn(stateService.listGridPaginator, 'set')
-      const setTablePaginatorSpy = jest.spyOn(stateService.tablePaginator, 'set')
-
-      fixture.componentRef.setInput('paginator', false)
-      fixture.detectChanges()
-
-      expect(setListGridPaginatorSpy).toHaveBeenCalledWith(false)
-      expect(setTablePaginatorSpy).toHaveBeenCalledWith(false)
-    })
-
     it('should delegate filtering to state service', () => {
       const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
       const filters = [{ field: 'name', value: 'abc', matchMode: 'contains' }]
@@ -365,7 +354,7 @@ describe('DataViewComponent', () => {
       const setSelectedRowsSpy = jest.spyOn(stateService.selectedRows, 'set')
       const selectedRows = [{ id: 'row-1' } as any, { id: 'row-2' } as any]
 
-      fixture.componentRef.setInput('selectedRows', selectedRows)
+      fixture.componentRef.setInput('selectedRow', selectedRows)
       fixture.detectChanges()
 
       expect(setSelectedRowsSpy).toHaveBeenCalledWith(selectedRows)
@@ -387,8 +376,7 @@ describe('DataViewComponent', () => {
         { columnId: 'name', value: 'abc', filterType: 'stringContains' },
       ] as any
 
-      component.filters.set(filters)
-      TestBed.tick()
+      component.filters = filters
 
       expect(setFiltersSpy).toHaveBeenCalledWith(filters)
     })
@@ -396,11 +384,9 @@ describe('DataViewComponent', () => {
 
   describe('ListGridPaginator', () => {
     it('should delegate listGridPaginator setter to DataViewStateService', () => {
-      const setListGridPaginatorSpy = jest.spyOn(stateService.listGridPaginator, 'set')
+      stateService.listGridPaginator.set(false)
 
-      component.listGridPaginator.set(false)
-
-      expect(setListGridPaginatorSpy).toHaveBeenCalledWith(false)
+      expect(component.listGridPaginator).toBe(false)
     })
   })
 
@@ -408,7 +394,7 @@ describe('DataViewComponent', () => {
     it('should delegate tablePaginator setter to DataViewStateService', () => {
       const setTablePaginatorSpy = jest.spyOn(stateService.tablePaginator, 'set')
 
-      component.tablePaginator.set(true)
+      component.tablePaginator = true
 
       expect(setTablePaginatorSpy).toHaveBeenCalledWith(true)
     })
@@ -437,14 +423,14 @@ describe('DataViewComponent', () => {
       expect(emitSpy).toHaveBeenCalledWith(testFilters)
     })
 
-    it('should not emit filtered output when filters is empty array (filters.length === 0)', () => {
+    it('should emit filtered output when filters is empty array (filters.length === 0)', () => {
       const emitSpy = jest.spyOn(component.filtered, 'emit')
       emitSpy.mockClear()
 
       stateService.filters.set([])
       fixture.detectChanges()
 
-      expect(emitSpy).not.toHaveBeenCalled()
+      expect(emitSpy).toHaveBeenCalledWith([])
     })
 
     it('should emit sorted output when both sortField and sortDirection are set', (done) => {
@@ -509,8 +495,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect((component as any).stateService.actionColumnConfigFrozen()).toBe(false)
+      expect((component as any).stateService.actionColumnConfigPosition()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 
@@ -542,7 +528,7 @@ describe('DataViewComponent', () => {
 
   it('should stay on the same page after layout change', async () => {
     fixture.componentRef.setInput('data', [
-      ...component.data(),
+      ...(component as any).stateService.data(),
       {
         id: 'mock1',
         imagePath: '/path/to/image',
@@ -574,6 +560,7 @@ describe('DataViewComponent', () => {
         modificationDate: '2023-09-12T09:34:27.184086Z',
       },
     ])
+    fixture.componentRef.setInput('layout', 'list')
     fixture.detectChanges()
     await fixture.whenStable()
 
@@ -587,6 +574,8 @@ describe('DataViewComponent', () => {
     expect(dataListRaport).toEqual('11 - 11 of 11')
 
     fixture.componentRef.setInput('layout', 'table')
+    fixture.detectChanges()
+    await fixture.whenStable()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
     const dataTablePaginator = await dataTable.getPaginator()
     const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()

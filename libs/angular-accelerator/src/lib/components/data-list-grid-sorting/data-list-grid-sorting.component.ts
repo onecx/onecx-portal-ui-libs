@@ -17,7 +17,7 @@ export interface DataListGridSortingComponentState {
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {
-  private readonly stateService = inject(DataViewStateService)
+  readonly stateService = inject(DataViewStateService)
   
   @Input()
   set columns(value: DataTableColumn[]) {
@@ -48,7 +48,7 @@ export class DataListGridSortingComponent {
   })
 
   readonly selectedSortingOption = computed<DataColumnNameId | undefined>(() => {
-    const sortField = this.sortField
+    const sortField = this.stateService.sortColumn()
     return this.dropdownOptions().find((e) => e.columnId === sortField)
   })
 

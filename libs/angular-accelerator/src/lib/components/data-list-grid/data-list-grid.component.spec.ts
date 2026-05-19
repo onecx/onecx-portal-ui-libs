@@ -469,7 +469,7 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -527,7 +527,7 @@ describe('DataListGridComponent', () => {
         expect(icon === 'pi pi-eye').toBe(false)
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -707,7 +707,7 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -771,7 +771,7 @@ describe('DataListGridComponent', () => {
         expect(text === 'OCX_DATA_LIST_GRID.MENU.VIEW').toBe(false)
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 

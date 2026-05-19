@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Input, input, OnInit, output, signal } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
@@ -31,7 +31,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     this.stateService.columns.set(value)
   }
 
-  readonly displayedColumns = input<DataTableColumn[]>([])
+  readonly displayedColumns = model<DataTableColumn[]>([])
   readonly customGroupKey = input<string>('')
   readonly dialogTitle = input<string>('')
   readonly dialogTitleKey = input<string>('')

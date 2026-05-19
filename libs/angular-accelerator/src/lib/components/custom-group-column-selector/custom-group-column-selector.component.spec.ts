@@ -28,6 +28,26 @@ describe('CustomGroupColumnSelectorComponent', () => {
     stateService = TestBed.inject(DataViewStateService)
   })
 
+  describe('ngOnInit', () => {
+    it('should emit initial componentStateChanged with actionColumnConfig and displayedColumns', () => {
+      fixture.componentRef.setInput('frozenActionColumn', true)
+      fixture.componentRef.setInput('actionColumnPosition', 'left')
+      component.displayedColumns.set([makeColumn('c1')])
+
+      const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      component.ngOnInit()
+
+      expect(emitSpy).toHaveBeenCalledWith({
+        actionColumnConfig: {
+          frozen: true,
+          position: 'left',
+        },
+        displayedColumns: [makeColumn('c1')],
+      })
+    })
+  })
+
   describe('onOpenCustomGroupColumnSelectionDialogClick', () => {
     it('should initialize dialog models and set visible=true', () => {
       const c1 = makeColumn('c1')
@@ -50,43 +70,56 @@ describe('CustomGroupColumnSelectorComponent', () => {
   })
 
   describe('onSaveClick', () => {
-    it('should update service and close dialog when columns order/content changed', () => {
+    it('should emit columnSelectionChanged + componentStateChanged when columns order/content changed', () => {
       const c1 = makeColumn('c1')
       const c2 = makeColumn('c2')
-      const setDisplayedSpy = jest.spyOn(stateService.displayedColumns, 'set')
 
-      fixture.componentRef.setInput('displayedColumns', [c1])
+      component.displayedColumns.set([c1])
       component.displayedColumnsModel.set([c1, c2])
+
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
       component.onSaveClick()
 
       expect(component.visible()).toBe(false)
-      expect(setDisplayedSpy).toHaveBeenCalledWith([c1, c2])
+      expect(columnChangedSpy).toHaveBeenCalledWith({ activeColumns: [c1, c2] })
+      expect(stateSpy).toHaveBeenCalledWith({ displayedColumns: [c1, c2] })
     })
 
-    it('should call setActionColumnConfig when action column config changed', () => {
+    it('should emit actionColumnConfigChanged + componentStateChanged when action column config changed', () => {
       const c1 = makeColumn('c1')
-      const frozenSpy = jest.spyOn(stateService.actionColumnConfigFrozen, 'set')
-      const positionSpy = jest.spyOn(stateService.actionColumnConfigPosition, 'set')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+      fixture.componentRef.setInput('frozenActionColumn', false)
+      fixture.componentRef.setInput('actionColumnPosition', 'right')
 
-      stateService.actionColumnConfigFrozen.set(false)
-      stateService.actionColumnConfigPosition.set('right')
-      
-      fixture.componentRef.setInput('displayedColumns', [c1])
       component.displayedColumnsModel.set([c1])
       component.frozenActionColumnModel.set(true)
       component.actionColumnPositionModel.set('left')
 
+      const actionCfgSpy = jest.spyOn(component.actionColumnConfigChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
       component.onSaveClick()
 
       expect(component.visible()).toBe(false)
-      expect(frozenSpy).toHaveBeenCalledWith(true)
-      expect(positionSpy).toHaveBeenCalledWith('left')
+      expect(actionCfgSpy).toHaveBeenCalledWith({
+        frozenActionColumn: true,
+        actionColumnPosition: 'left',
+      })
+      expect(stateSpy).toHaveBeenCalledWith({
+        displayedColumns: [c1],
+        actionColumnConfig: {
+          frozen: true,
+          position: 'left',
+        },
+        activeColumnGroupKey: 'custom',
+      })
     })
 
     it('should not emit columnSelectionChanged when displayed columns did not change', () => {
       const c1 = makeColumn('c1')
-      fixture.componentRef.setInput('displayedColumns', [c1])     
+      component.displayedColumns.set([c1])
       component.displayedColumnsModel.set([c1])
 
       const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
@@ -108,15 +141,26 @@ describe('CustomGroupColumnSelectorComponent', () => {
   })
 
   describe('constructor effect', () => {
-    it('should not update service until onSaveClick is called', () => {
-      const setDisplayedSpy = jest.spyOn(stateService.displayedColumns, 'set')
-      fixture.componentRef.setInput('displayedColumns', [makeColumn('c1')])
-      fixture.detectChanges()
-      setDisplayedSpy.mockClear()
+    it('should emit componentStateChanged when displayedColumns changes (effect)', () => {
+      fixture.componentRef.setInput('frozenActionColumn', true)
+      fixture.componentRef.setInput('actionColumnPosition', 'left')
 
-      component.displayedColumnsModel.set([makeColumn('c1')])
-      component.onSaveClick()
-      expect(setDisplayedSpy).not.toHaveBeenCalled()
+      const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      // first detectChanges triggers the constructor effect
+      fixture.detectChanges()
+      emitSpy.mockClear()
+
+      component.displayedColumns.set([makeColumn('c1')])
+      fixture.detectChanges()
+
+      expect(emitSpy).toHaveBeenCalledWith({
+        actionColumnConfig: {
+          frozen: true,
+          position: 'left',
+        },
+        displayedColumns: [makeColumn('c1')],
+      })
     })
   })
 

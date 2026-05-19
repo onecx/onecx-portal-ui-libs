@@ -59,19 +59,19 @@ describe('DataListGridSortingComponent', () => {
       TestBed.tick()
 
       expect(setSortColumnSpy).toHaveBeenCalledWith('c')
-      expect(component.sortField()).toBe('c')
+      expect(component.stateService.sortColumn()).toBe('c')
     })
   })
 
   describe('sortDirectionChanged / nextSortDirection', () => {
     it('should cycle sort direction based on sortStates and call stateService.setSortDirection', () => {
-      component.sortDirection.set(DataSortDirection.ASCENDING)
+      component.sortDirection = DataSortDirection.ASCENDING
       fixture.detectChanges()
 
       component.sortDirectionChanged()
       TestBed.tick()
 
-      expect(component.sortDirection()).toBe(DataSortDirection.DESCENDING)
+      expect(component.stateService.sortDirection()).toBe(DataSortDirection.DESCENDING)
     })
 
     it('should cycle through all available sortStates', () => {
@@ -90,21 +90,21 @@ describe('DataListGridSortingComponent', () => {
 
   describe('icon + title mapping', () => {
     it('should return correct icon and title keys for all direction cases', () => {
-      component.sortDirection.set(DataSortDirection.NONE)
+      component.sortDirection = DataSortDirection.NONE
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-alt')
       expect(component.sortDirectionToTitle(DataSortDirection.NONE)).toBe(
         'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TOOLTIP'
       )
 
-      component.sortDirection.set(DataSortDirection.ASCENDING)
+      component.sortDirection = DataSortDirection.ASCENDING
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-amount-up')
       expect(component.sortDirectionToTitle(DataSortDirection.ASCENDING)).toBe(
         'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP'
       )
 
-      component.sortDirection.set(DataSortDirection.DESCENDING)
+      component.sortDirection = DataSortDirection.DESCENDING
       fixture.detectChanges()
       expect(component.sortIcon()).toBe('pi-sort-amount-down')
       expect(component.sortDirectionToTitle(DataSortDirection.DESCENDING)).toBe(

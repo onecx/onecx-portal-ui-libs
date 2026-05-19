@@ -30,11 +30,11 @@ describe('DataLayoutSelectionComponent', () => {
     it('should update selectedViewLayout when layout input changes', () => {
       fixture.detectChanges()
 
-      component.layout.set('grid')
+      component.layout = 'grid'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('grid')
 
-      component.layout.set('list')
+      component.layout = 'list'
       fixture.detectChanges()
       expect(component.selectedViewLayout()?.layout).toBe('list')
     })
@@ -50,7 +50,7 @@ describe('DataLayoutSelectionComponent', () => {
         icon: 'pi pi-address-book'
       })
 
-      expect(component.layout()).toBe('table')
+      expect(stateService.layout()).toBe('table')
       expect(component.selectedViewLayout()?.layout).toBe('table')
     })
 
@@ -78,7 +78,7 @@ describe('DataLayoutSelectionComponent', () => {
 
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })
 
-      expect(component.layout()).toBe('grid')
+      expect(stateService.layout()).toBe('grid')
     })
   })
 })
