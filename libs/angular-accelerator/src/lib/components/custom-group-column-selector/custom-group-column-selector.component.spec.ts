@@ -12,7 +12,6 @@ import { DataViewStateService } from '../../services/data-view-state.service'
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
   let fixture: ComponentFixture<CustomGroupColumnSelectorComponent>
-  let stateService: DataViewStateService
   
   const makeColumn = (id: string): DataTableColumn => ({ id, nameKey: id }) as any
 
@@ -25,7 +24,6 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(DataViewStateService)
   })
 
   describe('ngOnInit', () => {
@@ -166,8 +164,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
   describe('actionColumnPosition and frozenActionColumn setter', () => {
     it('should call setActionColumnConfig with new position value and current frozenActionColumn', () => {
-      const frozenSpy = jest.spyOn(stateService.actionColumnConfigFrozen, 'set')
-      const positionSpy = jest.spyOn(stateService.actionColumnConfigPosition, 'set')
+      const frozenSpy = jest.spyOn(component.stateService.actionColumnConfigFrozen, 'set')
+      const positionSpy = jest.spyOn(component.stateService.actionColumnConfigPosition, 'set')
 
       component.stateService.actionColumnConfigFrozen.set(true)
       component.stateService.actionColumnConfigPosition.set('left')

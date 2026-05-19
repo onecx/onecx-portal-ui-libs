@@ -42,8 +42,6 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('ngOnInit', () => {
     it('should initialize with current layout from service', () => {
-      const setSpy = jest.spyOn(stateService.layout, 'set')
-
       fixture.detectChanges()
       component.onDataViewLayoutChange({
         layout: 'table',

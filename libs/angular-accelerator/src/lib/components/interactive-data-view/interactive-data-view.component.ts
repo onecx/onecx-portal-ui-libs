@@ -504,7 +504,7 @@ export class InteractiveDataViewComponent implements OnInit {
   displayedColumnKeysChange = output<string[]>()
 
   pageChanged = output<number>()
-  pageSizeChanged = output<number | undefined>()
+  pageSizeChanged = output<number>()
 
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
