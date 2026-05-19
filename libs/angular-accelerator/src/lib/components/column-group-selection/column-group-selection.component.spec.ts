@@ -12,7 +12,6 @@ import { DataViewStateService } from '../../services/data-view-state.service'
 describe('ColumnGroupSelectionComponent', () => {
   let fixture: ComponentFixture<ColumnGroupSelectionComponent>
   let component: ColumnGroupSelectionComponent
-  let stateService: DataViewStateService
 
   const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
     ({
@@ -30,7 +29,6 @@ describe('ColumnGroupSelectionComponent', () => {
 
     fixture = TestBed.createComponent(ColumnGroupSelectionComponent)
     component = fixture.componentInstance
-    stateService = TestBed.inject(DataViewStateService)
   })
 
   describe('selectedGroupKey setter', () => {
