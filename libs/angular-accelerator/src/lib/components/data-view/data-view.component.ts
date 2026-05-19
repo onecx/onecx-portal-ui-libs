@@ -139,8 +139,8 @@ export class DataViewComponent implements OnInit {
   }
 
   @Input()
-  get listGridPaginator(): boolean {
-    return this.stateService.listGridPaginator()
+  set listGridPaginator(value: boolean) {
+    this.stateService.listGridPaginator.set(value)
   }
 
   @Input()

@@ -70,7 +70,7 @@ export class DataLayoutSelectionComponent implements OnInit {
   }
 
   onDataViewLayoutChange(event: { icon: PrimeIcon; layout: ViewLayout }): void {
-    this.layout = event.layout
+    this.stateService.layout.set(event.layout)
     this.dataViewLayoutChange.emit(event.layout)
     this.componentStateChanged.emit({ layout: event.layout })
   }

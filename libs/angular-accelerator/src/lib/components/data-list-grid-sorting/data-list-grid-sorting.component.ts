@@ -64,13 +64,13 @@ export class DataListGridSortingComponent {
   }
 
   selectSorting(event: SelectChangeEvent): void {
-    this.sortField = event.value.columnId
+    this.stateService.sortColumn.set(event.value.columnId) 
     this.sortChange.emit(event.value.columnId)
   }
 
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
-    this.sortDirection = newSortDirection
+    this.stateService.sortDirection.set(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
   }
 

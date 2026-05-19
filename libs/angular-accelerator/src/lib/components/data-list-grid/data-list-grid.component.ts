@@ -541,11 +541,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.pageChanged.emit(this.page)
+      this.pageChanged.emit(this.stateService.activePage())
     })
 
     effect(() => {
-      const pageSize = this.pageSize
+      const pageSize = this.stateService.pageSize()
       if (pageSize === undefined) {
         return
       }
@@ -590,7 +590,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   emitComponentStateChanged() {
     this.componentStateChanged.emit({
       pageSize: this.displayedPageSize(),
-      activePage: this.page,
+      activePage: this.stateService.activePage(),
     })
   }
 

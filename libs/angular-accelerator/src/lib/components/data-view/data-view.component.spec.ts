@@ -377,16 +377,17 @@ describe('DataViewComponent', () => {
       ] as any
 
       component.filters = filters
+      TestBed.tick()
 
       expect(setFiltersSpy).toHaveBeenCalledWith(filters)
     })
   })
 
   describe('ListGridPaginator', () => {
-    it('should delegate listGridPaginator setter to DataViewStateService', () => {
-      stateService.listGridPaginator.set(false)
+    it('should delegate listGridPaginator setter to DataViewStateService', () => {    
+      component.listGridPaginator = false
 
-      expect(component.listGridPaginator).toBe(false)
+      expect(stateService.listGridPaginator()).toBe(false)
     })
   })
 

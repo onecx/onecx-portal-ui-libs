@@ -5,7 +5,7 @@
   [first]="stateService.activePage() * displayedPageSize()"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize()"
-  [layout]="stateService.layout()"
+  [layout]="stateService.layout() === 'grid' ? 'grid' : 'list'"
   [showCurrentPageReport]="true"
   [currentPageReportTemplate]="(totalRecordsOnServer() !== undefined ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey()) | translate:params()"
   [rowsPerPageOptions]="pageSizes() ?? []"
