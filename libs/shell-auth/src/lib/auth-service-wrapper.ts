@@ -1,4 +1,4 @@
-import { loadRemoteModule } from '@angular-architects/module-federation'
+import { loadRemote, registerRemotes } from '@module-federation/enhanced/runtime'
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
@@ -7,6 +7,8 @@ import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import './declarations'
 import { DisabledAuthService } from './auth_services/disabled-auth.service'
+
+const CUSTOM_AUTH_REMOTE_ALIAS = 'custom-auth-service'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -101,15 +103,31 @@ export class AuthServiceWrapper {
   }
 
   async getAuthServiceFactory(): Promise<AuthServiceFactory> {
-    if (await !this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+    if (!(await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL))) {
       throw new Error('URL of the custom auth service is not defined')
     }
-    const module = await loadRemoteModule({
-      type: 'module',
-      remoteEntry: (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? '',
-      exposedModule:
-        (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth',
-    })
+    const remoteEntry = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? ''
+    const exposedModule =
+      (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth'
+    const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
+
+    const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
+    registerRemotes([
+      {
+        type: 'module',
+        entry: remoteEntry,
+        name: CUSTOM_AUTH_REMOTE_ALIAS,
+        shareScope: customAuthShareScope,
+      },
+    ])
+    const module = await loadRemote<{ default: AuthServiceFactory }>(
+      CUSTOM_AUTH_REMOTE_ALIAS + '/' + sanitizedExposedModule
+    )
+
+    if (!module) {
+      throw new Error('Failed to load custom auth service module')
+    }
+
     return module.default as AuthServiceFactory
   }
 }
