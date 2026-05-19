@@ -1,5 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import { APP_INITIALIZER, inject, LOCALE_ID, NgModule, provideAppInitializer } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -55,22 +55,9 @@ import { OcxTooltipDirective } from './directives/tooltip.directive'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
-async function registerLocaleDataForLang(lang: string): Promise<void> {
-  if (!lang || lang.startsWith('en')) {
-    return
-  }
-  try {
-    const localeModule = await import(`@angular/common/locales/${lang}`)
-    registerLocaleData(localeModule.default ?? localeModule)
-  } catch {
-    console.warn(`[@onecx/angular-accelerator] Could not load locale data for '${lang}'. Date/number pipes may not format correctly.`)
-  }
-}
-
 function appInitializer(userService: UserService) {
   return async () => {
-    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)))
-    await registerLocaleDataForLang(lang)
+    await firstValueFrom(userService.lang$.pipe(skip(1)))
   }
 }
 
@@ -142,6 +129,12 @@ function appInitializer(userService: UserService) {
     },
     AppConfigService,
     provideTranslationConnectionService(),
+    provideAppInitializer(async () => {
+      const userService = inject(UserService);
+      const locales = await firstValueFrom(userService.profile$).then(profile => profile.settings?.locales ?? [])
+      await Promise.all(locales.map(locale => import(`@angular/common/locales/${locale}`).then(data => registerLocaleData(data))
+      .catch(() => console.warn(`Could not load locale data for '${locale}'. Angular pipes may not format correctly.`))))
+    })
   ],
   exports: [
     AngularRemoteComponentsModule,
