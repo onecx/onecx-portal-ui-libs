@@ -2,10 +2,10 @@
 <p-dataView
   [value]="(displayedItems$ | async) ?? []"
   [paginator]="paginator()"
-  [first]="page * displayedPageSize()"
+  [first]="stateService.activePage() * displayedPageSize()"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize()"
-  [layout]="layout"
+  [layout]="stateService.layout()"
   [showCurrentPageReport]="true"
   [currentPageReportTemplate]="(totalRecordsOnServer() !== undefined ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey()) | translate:params()"
   [rowsPerPageOptions]="pageSizes() ?? []"

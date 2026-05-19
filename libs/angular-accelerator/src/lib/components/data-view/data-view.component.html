@@ -1,19 +1,19 @@
-@if (layout !== 'table') {
+@if (stateService.layout() !== 'table') {
 <div>
   <ocx-data-list-grid
     #ocxdatalistgrid
     [name]="name()"
-    [data]="data"
-    [columns]="columns"
-    [filters]="filters"
+    [data]="stateService.data()"
+    [columns]="stateService.columns()"
+    [filters]="stateService.filters()"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
     [clientSideSorting]="clientSideSorting()"
     [titleLineId]="titleLineId()"
     [subtitleLineIds]="subtitleLineIds()"
     [pageSizes]="pageSizes()"
-    [layout]="layout === 'grid' ? 'grid' : 'list'"
-    [paginator]="listGridPaginator"
+    [layout]="stateService.layout() === 'grid' ? 'grid' : 'list'"
+    [paginator]="stateService.listGridPaginator()"
     [emptyResultsMessage]="emptyResultsMessage()"
     [deletePermission]="deletePermission()"
     [editPermission]="editPermission()"
@@ -24,7 +24,7 @@
     [editActionVisibleField]="editActionVisibleField()"
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
-    [additionalActions]="additionalActions"
+    [additionalActions]="stateService.additionalActions()"
     [gridItemSubtitleLinesTemplate]="gridItemSubtitleLines"
     [listItemSubtitleLinesTemplate]="listItemSubtitleLines"
     [listItemTemplate]="listItem"
@@ -110,17 +110,17 @@
     }</ng-template
   >
 </div>
-} @if (layout === 'table') {
+} @if (stateService.layout() === 'table') {
 <div>
   <ocx-data-table
     #ocxdatatable
-    [rows]="data"
-    [columns]="columns"
+    [rows]="stateService.data()"
+    [columns]="stateService.columns()"
     [sortStates]="sortStates()"
     [clientSideFiltering]="clientSideFiltering()"
     [clientSideSorting]="clientSideSorting()"
     [pageSizes]="pageSizes()"
-    [paginator]="tablePaginator"
+    [paginator]="stateService.tablePaginator()"
     [emptyResultsMessage]="emptyResultsMessage()"
     [name]="name()"
     [deletePermission]="deletePermission()"
@@ -132,7 +132,7 @@
     [editActionVisibleField]="editActionVisibleField()"
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
-    [additionalActions]="additionalActions"
+    [additionalActions]="stateService.additionalActions()"
     [stringCellTemplate]="stringTableCell"
     [numberCellTemplate]="numberTableCell"
     [dateCellTemplate]="dateTableCell"
