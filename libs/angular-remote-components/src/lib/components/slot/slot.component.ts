@@ -44,7 +44,7 @@ export type RemoteComponentOutput = OutputEmitterRef<any> | EventEmitter<any>
   selector: 'ocx-slot',
   template: ``,
   host: {
-    '[attr.name]': 'name',
+    '[attr.name]': 'name()',
   },
 })
 export class SlotComponent implements OnInit, OnDestroy {

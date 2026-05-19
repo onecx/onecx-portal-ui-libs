@@ -10,9 +10,16 @@ permissions:
 
 jobs:
   run-migrations:
+    # IMPORTANT: Do not push commits back to Renovate branches.
+    # Renovate will treat external commits as branch drift and recreate its branch,
+    # which can cause an infinite loop of "Renovate updates" <-> "CI force-pushes".
     if: |
-      (github.event.action == 'labeled' && (contains(github.event.label.name, 'nx-migration-required') || contains(github.event.label.name, 'onecx-migration-required'))) ||
-      (github.event.action == 'synchronize' && github.event.pull_request.user.login == 'renovate[bot]' && (contains(github.event.pull_request.labels.*.name, 'nx-migration-required') || contains(github.event.pull_request.labels.*.name, 'onecx-migration-required')))
+      !startsWith(github.event.pull_request.head.ref, 'renovate/') &&
+      github.event.pull_request.user.login != 'renovate[bot]' &&
+      (
+        (github.event.action == 'labeled' && (contains(github.event.label.name, 'nx-migration-required') || contains(github.event.label.name, 'onecx-migration-required'))) ||
+        (github.event.action == 'synchronize' && (contains(github.event.pull_request.labels.*.name, 'nx-migration-required') || contains(github.event.pull_request.labels.*.name, 'onecx-migration-required')))
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
@@ -25,8 +32,13 @@ jobs:
       - name: Check if migration already completed
         id: check-migration
         run: |
-          # Check if the last commit was from migration workflow
-          last_commit_message=$(gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[-1].messageHeadline')
+          # Check the last commit on the checked-out PR branch.
+          # Using git avoids GitHub API timing/race issues that can cause repeated reruns.
+          last_commit_message=$(git log -1 --pretty=%s)
+
+          echo "Github actor: ${{ github.actor }}"
+          echo "Github event action: ${{ github.event.action }}"
+          echo "Github event pull request user login: ${{ github.event.pull_request.user.login }}"
 
           if [[ "$last_commit_message" == *"refactor: run package migrations per directory"* ]]; then
             echo "skip_migration=true" >> $GITHUB_OUTPUT
@@ -35,8 +47,6 @@ jobs:
             echo "skip_migration=false" >> $GITHUB_OUTPUT
             echo "✅ No recent migration commit, proceeding with migration"
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.CI_PAT }}
 
       - name: Setup Node.js
         if: steps.check-migration.outputs.skip_migration == 'false'
@@ -164,6 +174,9 @@ jobs:
                   echo "🔧 Found migrations.json in $dir - executing migration scripts..."
                   npx nx migrate --run-migrations || echo "❌ No migrations to run in $dir"
                   echo "✅ Migration scripts completed in $dir"
+
+                  # remove migrations after execution to prevent stale migration files triggering future runs
+                  rm -f migrations.json
                 else
                   echo "ℹ️ No migrations.json found in $dir"
                 fi

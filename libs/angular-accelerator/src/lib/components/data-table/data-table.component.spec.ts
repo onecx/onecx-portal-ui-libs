@@ -911,9 +911,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'routerLinkAction',
-            callback: () => {
-              console.log('My routing Action')
-            },
             routerLink: '/inline',
             permission: 'VIEW',
           },
@@ -938,9 +935,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'routerLinkAction',
-            callback: () => {
-              console.log('My overflow routing Action')
-            },
             routerLink: '/overflow',
             permission: 'VIEW',
             showAsOverflow: true,
@@ -968,7 +962,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'functionRouterLink',
-            callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
           },
@@ -988,7 +981,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'promiseFunctionRouterLink',
-            callback: jest.fn(),
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
           },
@@ -1007,7 +999,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'promiseRouterLink',
-            callback: jest.fn(),
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
           },
@@ -1026,7 +1017,6 @@ describe('DataTableComponent', () => {
         component.additionalActions.set([
           {
             id: 'overflowFunctionRouterLink',
-            callback: jest.fn(),
             routerLink: routerLinkFunction,
             permission: 'VIEW',
             showAsOverflow: true,

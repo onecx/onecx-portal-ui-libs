@@ -4,9 +4,7 @@
 :idseparator: -
 :imagesdir: ../images
 
-:icon_topic_url: xref:./integration-interface.adoc#icon-topic 
-:icon_service_url: xref:onecx-portal-ui-libs:service/icon-service.adoc
-
+:icon_topic_url: xref:onecx-portal-ui-libs:libraries/integration-interface.adoc#icon-topic
 
 This service provides a convenient way to request icons by name and get a CSS class to apply in templates. It is available via `@onecx/angular-integration-interface` and coordinates icon loading through the integration topic system.
 
