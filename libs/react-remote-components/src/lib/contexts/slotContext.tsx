@@ -86,12 +86,17 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
    * @returns loaded module or undefined when load fails.
    */
   const loadComponent: SlotServiceInterface['loadComponent'] = async (component) => {
+    if (!shellMfInstance) {
+      logger.error('Failed to find shell module federation instance')
+      return undefined
+    }
+
     try {
       const exposedModule = component.exposedModule.startsWith('./')
         ? component.exposedModule.slice(2)
         : component.exposedModule
 
-      const m = await shellMfInstance!.loadRemote(`${component.appId}/${exposedModule}`)
+      const m = await shellMfInstance.loadRemote(`${component.appId}/${exposedModule}`)
 
       return m
     } catch (e) {

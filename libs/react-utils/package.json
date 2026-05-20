@@ -21,22 +21,26 @@
     "./styling": {
       "types": "./lib/styling/primeReact/index.d.ts",
       "import": "./lib/styling.mjs",
-      "require": "./lib/styling.cjs"
+      "require": "./lib/styling.cjs",
+      "default": "./lib/styling.mjs"
     },
     "./utils": {
       "types": "./lib/utils/index.d.ts",
       "import": "./lib/utils.mjs",
-      "require": "./lib/utils.cjs"
+      "require": "./lib/utils.cjs",
+      "default": "./lib/utils.mjs"
     },
     "./guards": {
       "types": "./lib/guards/index.d.ts",
       "import": "./lib/guards.mjs",
-      "require": "./lib/guards.cjs"
+      "require": "./lib/guards.cjs",
+      "default": "./lib/guards.mjs"
     },
-    "./styles": {
+    "./prime-base-theme": {
       "types": "./lib/styling/primeReact/styles.d.ts",
-      "import": "./lib/styles.mjs",
-      "require": "./lib/styles.cjs"
+      "import": "./lib/prime-base-theme.mjs",
+      "require": "./lib/prime-base-theme.cjs",
+      "default": "./lib/prime-base-theme.mjs"
     },
     "./package.json": "./package.json"
   },
