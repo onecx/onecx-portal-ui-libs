@@ -1,3 +1,4 @@
+import { inject, InjectionToken, Provider } from '@angular/core'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import { CustomUseStyle } from './custom-use-style.service'
 import { DOCUMENT } from '@angular/common'
@@ -45,6 +46,7 @@ describe('CustomUseStyleService', () => {
   let service: CustomUseStyle
   let styleList: Array<ElementMock> = []
   let mockOverrides = {}
+  const overrideFactoryToken = new InjectionToken<string>('override-factory-token')
 
   const documentMock: Partial<Document> = {
     querySelector(selectors: string) {
@@ -121,6 +123,30 @@ describe('CustomUseStyleService', () => {
           provide: THEME_OVERRIDES,
           useValue: mockOverrides,
         },
+      ],
+    })
+    service = TestBed.inject(CustomUseStyle)
+    const appStateService = TestBed.inject(AppStateService)
+    appStateService.currentMfe$.publish({
+      appId: 'test-ui',
+      productName: 'test',
+    } as MfeInfo)
+    return { styleId: 'test|test-ui', prefix: 'test-test-ui' }
+  }
+
+  const configureMfeWithOverrides = (overrides: unknown, additionalProviders: Provider[] = []) => {
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: DOCUMENT,
+          useValue: documentMock,
+        },
+        provideAppStateServiceMock(),
+        {
+          provide: THEME_OVERRIDES,
+          useValue: overrides,
+        },
+        ...additionalProviders,
       ],
     })
     service = TestBed.inject(CustomUseStyle)
@@ -393,25 +419,7 @@ describe('CustomUseStyleService', () => {
           primaryColor: 'red',
         },
       })
-      TestBed.configureTestingModule({
-        providers: [
-          {
-            provide: DOCUMENT,
-            useValue: documentMock,
-          },
-          provideAppStateServiceMock(),
-          {
-            provide: THEME_OVERRIDES,
-            useValue: overrides,
-          },
-        ],
-      })
-      service = TestBed.inject(CustomUseStyle)
-      const appStateService = TestBed.inject(AppStateService)
-      appStateService.currentMfe$.publish({
-        appId: 'test-ui',
-        productName: 'test',
-      } as MfeInfo)
+      configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
       const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
@@ -435,25 +443,7 @@ describe('CustomUseStyleService', () => {
           },
         }
       }
-      TestBed.configureTestingModule({
-        providers: [
-          {
-            provide: DOCUMENT,
-            useValue: documentMock,
-          },
-          provideAppStateServiceMock(),
-          {
-            provide: THEME_OVERRIDES,
-            useValue: overrides,
-          },
-        ],
-      })
-      service = TestBed.inject(CustomUseStyle)
-      const appStateService = TestBed.inject(AppStateService)
-      appStateService.currentMfe$.publish({
-        appId: 'test-ui',
-        productName: 'test',
-      } as MfeInfo)
+      configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
       const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
@@ -476,25 +466,7 @@ describe('CustomUseStyleService', () => {
             primaryColor: 'red',
           },
         })
-      TestBed.configureTestingModule({
-        providers: [
-          {
-            provide: DOCUMENT,
-            useValue: documentMock,
-          },
-          provideAppStateServiceMock(),
-          {
-            provide: THEME_OVERRIDES,
-            useValue: overrides,
-          },
-        ],
-      })
-      service = TestBed.inject(CustomUseStyle)
-      const appStateService = TestBed.inject(AppStateService)
-      appStateService.currentMfe$.publish({
-        appId: 'test-ui',
-        productName: 'test',
-      } as MfeInfo)
+      configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
       const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
@@ -504,6 +476,53 @@ describe('CustomUseStyleService', () => {
       })
 
       tick(100)
+      expect(styleList.length).toBe(2)
+      expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
+        removeSpacesAndNewlines(expectedOverrideCss)
+      )
+    }))
+
+    it('should execute factory overrides lazily when styles are used', fakeAsync(() => {
+      const overrides = jest.fn(() => ({
+        semantic: {
+          primaryColor: 'red',
+        },
+      }))
+      configureMfeWithOverrides(overrides)
+
+      expect(overrides).not.toHaveBeenCalled()
+
+      service.use(":root{--p-primary-color: '#ababab';}", {
+        name: 'semantic-variables',
+      })
+
+      tick(100)
+
+      expect(overrides).toHaveBeenCalledTimes(1)
+      expect(styleList.length).toBe(2)
+    }))
+
+    it('should execute factory overrides in an injection context', fakeAsync(() => {
+      const overrides = () => ({
+        semantic: {
+          primaryColor: inject(overrideFactoryToken),
+        },
+      })
+      const { prefix } = configureMfeWithOverrides(overrides, [
+        {
+          provide: overrideFactoryToken,
+          useValue: 'purple',
+        },
+      ])
+      const regularCss = ":root{--p-primary-color: '#ababab';}"
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:purple;}}`
+
+      service.use(regularCss, {
+        name: 'semantic-variables',
+      })
+
+      tick(100)
+
       expect(styleList.length).toBe(2)
       expect(removeSpacesAndNewlines(styleList.at(1)?.textContent)).toEqual(
         removeSpacesAndNewlines(expectedOverrideCss)

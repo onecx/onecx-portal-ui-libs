@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, Injector, runInInjectionContext } from '@angular/core'
 import { UseStyle } from 'primeng/usestyle'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES, ThemeOverrides } from '../utils/application-config'
@@ -24,6 +24,7 @@ export class CustomUseStyle extends UseStyle {
   private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
   private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private readonly themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
+  private readonly injector = inject(Injector)
 
   constructor() {
     super()
@@ -50,7 +51,7 @@ export class CustomUseStyle extends UseStyle {
     if (!this.themeOverrides) return Promise.resolve()
 
     const overrides = Promise.resolve(
-      typeof this.themeOverrides === 'function' ? this.themeOverrides() : this.themeOverrides
+      typeof this.themeOverrides === 'function' ? runInInjectionContext(this.injector,() => this.themeOverrides()) : this.themeOverrides
     )
     return overrides.then((resolvedOverrides) => {
       const variablesData = toVariables(resolvedOverrides)
