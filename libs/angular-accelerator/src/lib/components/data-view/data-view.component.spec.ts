@@ -396,6 +396,17 @@ describe('DataViewComponent', () => {
 
       expect(setAdditionalActionsSpy).toHaveBeenCalledWith(actions)
     })
+
+    it('should delegate paginator input to both paginators via Angular input binding', () => {
+      const listGridSpy = jest.spyOn(stateService.listGridPaginator, 'set')
+      const tableSpy = jest.spyOn(stateService.tablePaginator, 'set')
+
+      fixture.componentRef.setInput('paginator', true)
+      fixture.detectChanges()
+
+      expect(listGridSpy).toHaveBeenCalledWith(true)
+      expect(tableSpy).toHaveBeenCalledWith(true)
+    })
   })
   
   describe('Filters', () => {

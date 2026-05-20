@@ -76,7 +76,6 @@ export class DataViewComponent implements OnInit {
   name = input<string>('')
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
-  paginator = input<boolean | undefined>(undefined)
   
   @Input()
   set page(value: number ) {
@@ -136,6 +135,12 @@ export class DataViewComponent implements OnInit {
   @Input()
   set sortDirection(value: DataSortDirection) {
     this.stateService.sortDirection.set(value)
+  }
+
+  @Input()
+  set paginator(value: boolean) {
+    this.stateService.listGridPaginator.set(value)
+    this.stateService.tablePaginator.set(value)
   }
 
   @Input()
