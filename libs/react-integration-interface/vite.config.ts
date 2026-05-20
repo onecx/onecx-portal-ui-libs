@@ -23,12 +23,27 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
     lib: {
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        mocks: 'src/lib/mocks/index.ts',
+      },
       name: 'react-integration-interface',
-      fileName: 'index',
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      output: [
+        {
+          format: 'es',
+          entryFileNames: '[name].mjs',
+          chunkFileNames: '[name].mjs',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: '[name].cjs',
+          chunkFileNames: '[name].cjs',
+        },
+      ],
       external: ['react', 'react-dom', 'react/jsx-runtime', '@onecx/integration-interface', '@onecx/accelerator'],
     },
   },
