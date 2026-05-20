@@ -64,4 +64,28 @@ describe('GuardsGatherer', () => {
 
     expect(destroyMock).toHaveBeenCalled()
   })
+
+  it('destroy() calls destroyMock on the internal gatherer', () => {
+    const gatherer = new GuardsGatherer(navigate)
+    gatherer.activate()
+    gatherer.destroy()
+
+    expect(destroyMock).toHaveBeenCalled()
+  })
+
+  it('throws when resolveRoute called before activation', () => {
+    const gatherer = new GuardsGatherer(navigate)
+    expect(() => gatherer.resolveRoute('/test', true)).toThrow('Guards gatherer is not active')
+  })
+
+  it('resolveRoute with unknown URL does not throw (no resolver registered)', () => {
+    const gatherer = new GuardsGatherer(navigate)
+    gatherer.activate()
+    expect(() => gatherer.resolveRoute('/unknown', true)).not.toThrow()
+  })
+
+  it('does not throw when deactivating before activating', () => {
+    const gatherer = new GuardsGatherer(navigate)
+    expect(() => gatherer.deactivate()).not.toThrow()
+  })
 })
