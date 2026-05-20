@@ -86,4 +86,9 @@ export interface Workspace {
    * @deprecated will be removed
    */
   logoSmallImageUrl?: string
+  i18n?: {
+    [key: string]: {
+      [key: string]: string
+    }
+  }
 }

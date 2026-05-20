@@ -22,6 +22,7 @@ import {
   PortalDialogService,
 } from './portal-dialog.service'
 import { StorybookThemeModule } from '../storybook-theme.module'
+import { OcxTooltipDirective } from '../directives/tooltip.directive'
 
 @Component({
   standalone: false,
@@ -107,7 +108,7 @@ export default {
         DialogContentComponent,
         WithDisabledButtonsComponent,
       ],
-      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule],
+      imports: [StorybookTranslateModule, ButtonModule, TooltipModule, FormsModule, OcxTooltipDirective],
     }),
     componentWrapperDecorator((story) => `<div style="margin: 3em">${story}</div>`),
   ],
