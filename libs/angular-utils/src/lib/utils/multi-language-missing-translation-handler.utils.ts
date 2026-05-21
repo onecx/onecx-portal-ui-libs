@@ -11,11 +11,6 @@ type TranslationTable = Record<string, unknown>
 /** Matches the value shapes accepted by `TranslateParser.interpolate`. */
 type InterpolatableValue = Parameters<TranslateParser['interpolate']>[0]
 
-/** Extends the ngx-translate store type with the legacy `getTranslations` helper used in tests. */
-type TranslateStoreWithGetTranslations = MissingTranslationHandlerParams['translateService']['store'] & {
-  getTranslations?: (lang: string) => TranslationTable | undefined
-}
-
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
@@ -70,17 +65,14 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
   /**
    * Reads the cached translation table for a language from the ngx-translate store.
    *
-    * ngx-translate keeps loaded language tables in `TranslateService.store.translations`.
-    * Some tests still expose `getTranslations(lang)`, while runtime code also has direct
-    * access to `store.translations`, so both access patterns are supported.
-    *
-    * @param params The ngx-translate missing-translation context containing the active service.
-    * @param lang The language code whose cached translation table should be read.
-    * @returns The cached translation table for the language, or `undefined` when nothing is cached.
+   * ngx-translate keeps loaded language tables in `TranslateService.store.translations`.
+   *
+   * @param params The ngx-translate missing-translation context containing the active service.
+   * @param lang The language code whose cached translation table should be read.
+   * @returns The cached translation table for the language, or `undefined` when nothing is cached.
    */
   private getStoredTranslations(params: MissingTranslationHandlerParams, lang: string): TranslationTable | undefined {
-    const store = params.translateService.store as TranslateStoreWithGetTranslations | undefined
-    return store?.translations?.[lang] ?? store?.getTranslations?.(lang)
+    return params.translateService.store?.translations?.[lang]
   }
 
   /**
