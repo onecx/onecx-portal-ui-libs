@@ -1,4 +1,3 @@
-import { registerRemotes, loadRemote } from '@module-federation/enhanced/runtime'
 import { Remote } from '@module-federation/runtime-core/types'
 import { RemoteComponent } from '@onecx/integration-interface'
 
@@ -18,6 +17,7 @@ type BffGeneratedRoute = {
   technology?: Technologies
   baseUrl: string
   shareScope?: string
+  remoteName?: string
 }
 
 type RemoteEntry = BffGeneratedRoute | RemoteComponent
@@ -40,22 +40,26 @@ export async function toLoadRemoteEntryOptions(r: RemoteEntry): Promise<Remote> 
   return {
     type,
     entry: r.remoteEntryUrl,
-    name: r.productName + '|' + r.appId,
+    name: getRemoteName(r),
     shareScope,
   }
 }
 
-export function getFederationInstance() {
-  return (globalThis as any)['onecxFederationInstance'] ?? undefined
+function getRemoteName(r: RemoteEntry): string {
+  if (r.technology === Technologies.WebComponentScript && r.remoteName) {
+    // For WebComponentScript, we have to use the remoteName equal to the name defined in the module federation configuration of the remote application, since it doesn't follow the module format and we need to access the exposed component via the global variable defined in the remote entry.
+    return r.remoteName
+  }
+
+  return r.productName + '|' + r.appId
 }
 
-export async function registerAndLoadRemote<T>(remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
+export function getShellMfInstance() {
+  return (globalThis as any)['onecxFederationInstance'] ?? globalThis.__FEDERATION__.__INSTANCES__.find((instance) => instance.name === 'onecx_shell_ui')
+}
+
+export async function registerAndLoadRemote<T>(instance:any, remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
   const sanitizedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
-  const instance = getFederationInstance()
-  if(instance) {
-    instance.registerRemotes([remoteConfig])
-    return instance.loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined
-  }
-  registerRemotes([remoteConfig])
-  return loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined
+  instance.registerRemotes([remoteConfig])
+  return instance.loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined
 }

@@ -3,7 +3,7 @@ import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/int
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 import { createLogger } from '../utils/logger.utils'
-import { registerAndLoadRemote, toLoadRemoteEntryOptions } from '@onecx/angular-utils'
+import { getShellMfInstance, registerAndLoadRemote, toLoadRemoteEntryOptions } from '@onecx/angular-utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
@@ -84,7 +84,16 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
   private async loadComponent(component: RemoteComponent): Promise<Type<unknown> | undefined> {
     try {
       const remoteEntryOptions = await toLoadRemoteEntryOptions(component)
-      const m = await registerAndLoadRemote<any>(remoteEntryOptions, component.exposedModule)
+      const shellMfInstance = getShellMfInstance()
+      if (!shellMfInstance) {
+        this.logger.error(
+          'Failed to find shell module federation instance',
+          component.exposedModule,
+          component.remoteEntryUrl
+        )
+        return undefined
+      }
+      const m = await registerAndLoadRemote<any>(shellMfInstance, remoteEntryOptions, component.exposedModule)
       if (component.technology === Technologies.Angular) {
         // For Angular, the exposed module name (without './' prefix) is used as the property key
         const moduleName = component.exposedModule.startsWith('./')

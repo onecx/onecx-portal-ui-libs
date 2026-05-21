@@ -20,7 +20,6 @@
     "@onecx/angular-integration-interface": "^9.0.0-rc.3",
     "@onecx/integration-interface": "^9.0.0-rc.3",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@module-federation/enhanced": "^2.0.1",
     "@module-federation/runtime-core": "^2.0.1"
   },
   "publishConfig": {
