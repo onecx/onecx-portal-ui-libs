@@ -35,7 +35,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    * This keeps all structural assumptions and casts away from the fallback logic itself.
    */
   private getTranslateServiceView(params: MissingTranslationHandlerParams): TranslateServiceView {
-    return params.translateService as unknown as TranslateServiceView
+    return params.translateService
   }
 
   handle(params: MissingTranslationHandlerParams): Observable<string> {
