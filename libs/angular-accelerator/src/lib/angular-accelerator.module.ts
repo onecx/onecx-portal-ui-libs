@@ -29,13 +29,13 @@ import {
   provideTranslationConnectionService,
   provideTranslationPathFromMeta,
   MultiLanguageMissingTranslationHandler,
+  DynamicLocaleId,
   localeLoaders
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { DynamicLocaleId } from '@onecx/angular-utils'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
 import { TemplateDirective } from './directives/template.directive'
 import { OcxContentComponent } from './components/content/content.component'
