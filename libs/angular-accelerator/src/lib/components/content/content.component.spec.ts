@@ -64,7 +64,7 @@ describe('OcxContentComponent', () => {
     })
     it('should apply classes specified via input', async () => {
       component.styleClass = 'py-4 mt-2'
-      const expectedStyleClasses = ['card', 'py-4', 'mt-2']
+      const expectedStyleClasses = ['ocxCard', 'py-4', 'mt-2']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
     })
   })
