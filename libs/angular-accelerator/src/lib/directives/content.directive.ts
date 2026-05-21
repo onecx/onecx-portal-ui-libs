@@ -33,7 +33,7 @@ export class OcxContentDirective implements OnInit, OnChanges {
 
   private addContentStyles() {
     const addClasses = (classes: string[]) => this.el.nativeElement.classList.add(...classes)
-    addClasses(['ocxCard'])
+    addClasses(['ocx-card'])
   }
 
   private prependTitle() {
