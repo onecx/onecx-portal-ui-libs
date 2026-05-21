@@ -1,5 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
-import { APP_INITIALIZER, inject, LOCALE_ID, NgModule, provideAppInitializer } from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule} from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'

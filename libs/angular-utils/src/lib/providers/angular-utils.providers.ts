@@ -3,7 +3,6 @@ import { providePermissionService } from './permission-service.providers'
 import { provideTranslationPaths } from './translation-path.providers'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DynamicLocaleId } from '../utils/dynamic-locale-id.utils'
-import { firstValueFrom } from 'rxjs'
 import { localeLoaders } from '../utils/angular-locales'
 import { registerLocaleData } from '@angular/common'
 
