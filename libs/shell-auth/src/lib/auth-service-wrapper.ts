@@ -1,6 +1,6 @@
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
-import { Config, EventsTopic, EventType, getShellCapabilities } from '@onecx/integration-interface'
+import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
 import { createRemoteConfig, getShellMfInstance, registerAndLoadRemote } from '@onecx/angular-utils'
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'

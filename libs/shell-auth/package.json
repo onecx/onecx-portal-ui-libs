@@ -8,7 +8,6 @@
   },
   "peerDependencies": {
     "@angular/core": "^21.0.0",
-    "@module-federation/enhanced": "^2.0.1",
     "@onecx/accelerator": "^9.0.0-rc.4",
     "@onecx/angular-integration-interface": "^9.0.0-rc.4",
     "@onecx/angular-utils": "^9.0.0-rc.4",
