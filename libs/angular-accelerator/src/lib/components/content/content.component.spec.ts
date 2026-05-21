@@ -44,13 +44,13 @@ describe('OcxContentComponent', () => {
     })
 
     it('should render a ocxContent card with no title by default', async () => {
-      const expectedClasses = ['card']
+      const expectedClasses = ['ocx-card']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
     })
 
     it('should render a ocxContent card with a title, when given a title via input', async () => {
-      const expectedClasses = ['card']
+      const expectedClasses = ['ocx-card']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
 
@@ -64,7 +64,7 @@ describe('OcxContentComponent', () => {
     })
     it('should apply classes specified via input', async () => {
       component.styleClass = 'py-4 mt-2'
-      const expectedStyleClasses = ['card', 'py-4', 'mt-2']
+      const expectedStyleClasses = ['ocx-card', 'py-4', 'mt-2']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedStyleClasses)
     })
   })
