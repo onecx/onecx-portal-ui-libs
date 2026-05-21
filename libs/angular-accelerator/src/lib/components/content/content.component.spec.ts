@@ -44,13 +44,13 @@ describe('OcxContentComponent', () => {
     })
 
     it('should render a ocxContent card with no title by default', async () => {
-      const expectedClasses = ['card']
+      const expectedClasses = ['ocxCard']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
     })
 
     it('should render a ocxContent card with a title, when given a title via input', async () => {
-      const expectedClasses = ['card']
+      const expectedClasses = ['ocxCard']
       expect(await ocxContentHarness.getContentClasses()).toEqual(expectedClasses)
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(false)
 
