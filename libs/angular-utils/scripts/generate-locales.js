@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-
 // This script generates a TypeScript file that exports a mapping of locale identifiers to dynamic import functions for Angular locale data.
+// It reads the available locale files from the @angular/common/locales directory and creates an export that can be used to dynamically load locale data in an Angular application.
+// Added as a prebuild step to ensure the list of locales is always up-to-date with the installed version of @angular/common.
 
 const fs = require('fs');
 const path = require('path');
@@ -19,6 +20,11 @@ function generateLocales() {
     const localeSet = new Set();
 
     allFiles.forEach(file => {
+      // Skip non-locale files that may appear in the directory - `index.d.ts` and `README.md` are not actual locale modules.
+      // Prefer runtime `.js` locale files when available (they contain the actual locale data). Some installs or package distributions 
+      // only include `.d.ts` type declaration files (or the `.js` might be compiled/located differently). 
+      // To be robust we also accept `.d.ts` files as a fallback — extracting the locale name and adding it only if 
+      // it hasn't already been added from a `.js` file. We also explicitly ignore source map files (`*.js.map`).
       if (file === 'index.d.ts' || file === 'README.md') return;
       if (file.endsWith('.js') && !file.endsWith('.js.map')) {
         localeSet.add(file.slice(0, -3));
