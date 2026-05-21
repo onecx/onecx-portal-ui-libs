@@ -1,33 +1,15 @@
-.card {
+.ocx-card {
 	background-color: var(--content-bg-color, #ffffff);
 	padding: 1rem;
 	margin-bottom: 2rem;
 	box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
 	border-radius: var(--border-radius, 6px);
 
-	&:last-child {
+	p:first-child {
+		margin-top: 0;
+	}
+
+	p:last-child {
 		margin-bottom: 0;
-	}
-
-	.card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 1rem;
-
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6 {
-			margin: 0;
-		}
-	}
-
-	.card-subtitle {
-		color: var(--text-secondary-color, rgba(0, 0, 0, 0.6));
-		font-weight: 600;
-		margin: -1rem 0 1rem 0;
-	}
+	} 
 }
