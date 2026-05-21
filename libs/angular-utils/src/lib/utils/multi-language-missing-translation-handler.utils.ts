@@ -11,9 +11,32 @@ type TranslationTable = Record<string, unknown>
 /** Matches the value shapes accepted by `TranslateParser.interpolate`. */
 type InterpolatableValue = Parameters<TranslateParser['interpolate']>[0]
 
+/** Minimal parser surface this handler relies on from ngx-translate. */
+type TranslateParserView = Pick<TranslateParser, 'getValue' | 'interpolate'>
+
+/** Minimal translate service surface this handler relies on from ngx-translate. */
+interface TranslateServiceView {
+  store?: {
+    translations?: Record<string, TranslationTable | undefined>
+  }
+  currentLoader?: {
+    getTranslation: (lang: string) => Observable<TranslationTable>
+  }
+  parser: TranslateParserView
+}
+
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
+
+  /**
+   * Centralizes the local compatibility view of `TranslateService` in one place.
+   *
+   * This keeps all structural assumptions and casts away from the fallback logic itself.
+   */
+  private getTranslateServiceView(params: MissingTranslationHandlerParams): TranslateServiceView {
+    return params.translateService as unknown as TranslateServiceView
+  }
 
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
@@ -41,6 +64,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    * @returns An observable that emits the resolved translation string for the language.
    */
   findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
+    const translateService = this.getTranslateServiceView(params)
     const storedTranslations = this.getStoredTranslations(params, lang)
     const translatedFromStore = storedTranslations && this.tryGetTranslation(storedTranslations, params)
 
@@ -52,7 +76,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     // one language table without changing the active language or resetting cached tables.
     // Intentionally used directly instead of `reloadLang()`, because `reloadLang()` resets
     // the whole language table and emits lang-change events.
-    const loader = params.translateService.currentLoader
+    const loader = translateService.currentLoader
     if (!loader) {
       return throwError(() => new Error('No translation loader configured'))
     }
@@ -72,7 +96,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    * @returns The cached translation table for the language, or `undefined` when nothing is cached.
    */
   private getStoredTranslations(params: MissingTranslationHandlerParams, lang: string): TranslationTable | undefined {
-    return params.translateService.store?.translations?.[lang]
+    return this.getTranslateServiceView(params).store?.translations?.[lang]
   }
 
   /**
@@ -108,12 +132,11 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
    * @returns The resolved translation string, or `undefined` when the value cannot be used.
    */
   private tryGetTranslation(translations: TranslationTable, params: MissingTranslationHandlerParams): string | undefined {
+    const translateService = this.getTranslateServiceView(params)
     const rawValue = this.getTranslationValue(translations, params)
     const interpolateValue = this.toInterpolatableValue(rawValue)
 
-    return interpolateValue === undefined
-      ? undefined
-      : params.translateService.parser.interpolate(interpolateValue, params.interpolateParams)
+    return interpolateValue === undefined ? undefined : translateService.parser.interpolate(interpolateValue, params.interpolateParams)
   }
 
   /**
@@ -131,13 +154,14 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     * @returns The raw translation value before interpolation.
    */
   private getTranslationValue(translations: TranslationTable, params: MissingTranslationHandlerParams): unknown {
+    const translateService = this.getTranslateServiceView(params)
     const key = params.key
 
     if (Object.hasOwn(translations, key)) {
       return translations[key]
     }
 
-    return params.translateService.parser.getValue(translations, key)
+    return translateService.parser.getValue(translations, key)
   }
 
   /**
