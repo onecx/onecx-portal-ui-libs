@@ -1,3 +1,9 @@
+## [8.2.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.1...v8.2.2) (2026-05-21)
+
+### Bug Fixes
+
+* update build configuration and module exports for react libraries ([#1442](https://github.com/onecx/onecx-portal-ui-libs/issues/1442)) ([8751f30](https://github.com/onecx/onecx-portal-ui-libs/commit/8751f303c847349de0cb0cb979c0d032a03ac8e4))
+
 ## [8.2.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.0...v8.2.1) (2026-05-13)
 
 ### Bug Fixes
