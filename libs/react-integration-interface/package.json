@@ -19,9 +19,10 @@
       "default": "./index.mjs"
     },
     "./mocks": {
-      "types": "./mocks/index.d.ts",
-      "import": "./mocks/index.mjs",
-      "require": "./mocks/index.cjs"
+      "types": "./lib/mocks/index.d.ts",
+      "import": "./mocks.mjs",
+      "require": "./mocks.cjs",
+      "default": "./mocks.mjs"
     },
     "./package.json": "./package.json"
   },
