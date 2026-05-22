@@ -1,25 +1,31 @@
 {
   "name": "@onecx/react-webcomponents",
-  "version": "9.0.0-rc.1",
+  "version": "9.0.0-rc.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
-  "main": "./index.js",
+  "type": "module",
+  "main": "./index.cjs",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
+  "typings": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.js"
-    }
+      "require": "./index.cjs",
+      "default": "./index.mjs"
+    },
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "@r2wc/react-to-web-component": "^2.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "@onecx/react-integration-interface": "^9.0.0-rc.1",
-    "@onecx/integration-interface": "^9.0.0-rc.1",
+    "@onecx/react-integration-interface": "^9.0.0-rc.4",
+    "@onecx/integration-interface": "^9.0.0-rc.4",
     "react-router": "^7.13.0"
   },
   "dependencies": {},

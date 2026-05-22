@@ -5,17 +5,16 @@ import { useWrappedGuards } from './use-wrapped-guards'
 import { act } from 'react'
 
 jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useLocation: jest.fn(() => ({ key: 'loc' })),
+  useLocation: jest.fn(() => ({ key: 'loc', pathname: '/', search: '', hash: '', state: null })),
   useMatches: jest.fn(() => []),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }))
 
 jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
 
-const flushPromises = () => new Promise((resolve) => setImmediate(resolve))
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
 
 describe('useGuardCheck', () => {
   it('runs canMatch -> canActivateChild -> canActivate sequence', async () => {

@@ -1,3 +1,31 @@
+## [9.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.3...v9.0.0-rc.4) (2026-05-21)
+
+### Bug Fixes
+
+* data-table stories ([#1432](https://github.com/onecx/onecx-portal-ui-libs/issues/1432)) ([#1434](https://github.com/onecx/onecx-portal-ui-libs/issues/1434)) ([f6ef12e](https://github.com/onecx/onecx-portal-ui-libs/commit/f6ef12e82ea1667cc7eef67db9b03c9634c6931f))
+* filter view custom no selection template story ([#1433](https://github.com/onecx/onecx-portal-ui-libs/issues/1433)) ([#1435](https://github.com/onecx/onecx-portal-ui-libs/issues/1435)) ([8e218e3](https://github.com/onecx/onecx-portal-ui-libs/commit/8e218e37420a0700760fdc98df5b52c38b4c2c7e))
+* generator related conversions ([#1378](https://github.com/onecx/onecx-portal-ui-libs/issues/1378)) ([a2cbe83](https://github.com/onecx/onecx-portal-ui-libs/commit/a2cbe83f338710f46d561e043c32c0dda6b1d2a4))
+* inject in factory for theme overrides fixed ([#1454](https://github.com/onecx/onecx-portal-ui-libs/issues/1454)) ([3fad66a](https://github.com/onecx/onecx-portal-ui-libs/commit/3fad66a37c1a6cee4513f3f7ce9cf71bd4499ff0))
+* React libs typescript ([#1425](https://github.com/onecx/onecx-portal-ui-libs/issues/1425)) ([80ed8b4](https://github.com/onecx/onecx-portal-ui-libs/commit/80ed8b43eeb0ec04b132d169cfb2fcdf9799c2d5))
+* router link in additional actions ([#1431](https://github.com/onecx/onecx-portal-ui-libs/issues/1431)) ([c828823](https://github.com/onecx/onecx-portal-ui-libs/commit/c828823bffd90dc7deb79a901ad6ce45205738e2))
+* update build configuration and module exports for react libraries ([#1443](https://github.com/onecx/onecx-portal-ui-libs/issues/1443)) ([2fae388](https://github.com/onecx/onecx-portal-ui-libs/commit/2fae38881aca0ec137d2aea359edaf81a429e24e))
+
+## [9.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.2...v9.0.0-rc.3) (2026-05-12)
+
+### Features
+
+* add i18n to workspace topic ([#1427](https://github.com/onecx/onecx-portal-ui-libs/issues/1427)) ([61038bd](https://github.com/onecx/onecx-portal-ui-libs/commit/61038bd6b26d4e332506dec211568bfb5b995bfc))
+
+### Bug Fixes
+
+* router link in page header ([#1405](https://github.com/onecx/onecx-portal-ui-libs/issues/1405)) ([b5cd64a](https://github.com/onecx/onecx-portal-ui-libs/commit/b5cd64a75a11fa0b29d862899e164953a34057c8))
+
+## [9.0.0-rc.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.1...v9.0.0-rc.2) (2026-05-11)
+
+### Features
+
+* trigger release ([#1422](https://github.com/onecx/onecx-portal-ui-libs/issues/1422)) ([75596b3](https://github.com/onecx/onecx-portal-ui-libs/commit/75596b319f6fd321c3917c5fb79d8903bd5c3a63))
+
 ## [9.0.0-rc.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.0.0...v9.0.0-rc.1) (2026-05-11)
 
 ### ⚠ BREAKING CHANGES

@@ -1,26 +1,34 @@
 {
   "name": "@onecx/react-integration-interface",
-  "version": "9.0.0-rc.1",
+  "version": "9.0.0-rc.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
-  "main": "./index.js",
+  "type": "module",
+  "main": "./index.cjs",
+  "module": "./index.mjs",
   "types": "./index.d.ts",
+  "typings": "./index.d.ts",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
-      "require": "./index.js"
+      "require": "./index.cjs",
+      "default": "./index.mjs"
     },
     "./mocks": {
-      "import": "./mocks/index.mjs",
-      "require": "./mocks/index.js"
-    }
+      "types": "./lib/mocks/index.d.ts",
+      "import": "./mocks.mjs",
+      "require": "./mocks.cjs",
+      "default": "./mocks.mjs"
+    },
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^9.0.0-rc.1",
-    "@onecx/integration-interface": "^9.0.0-rc.1",
+    "@onecx/accelerator": "^9.0.0-rc.4",
+    "@onecx/integration-interface": "^9.0.0-rc.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
