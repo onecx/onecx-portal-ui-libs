@@ -1,69 +1,33 @@
-
-.AI Migration Prompt
+.AI Migration Agent
 [%collapsible]
 ====
-[.source]
+
+**Before You Start**
+
+Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the xref:documentation:onecx-docs-dev:ai/mcp_server_setup.adoc[MCP Server Setup Guide].
+
+**Setup**
+
+1. Clone or pull the latest version of the repository:
++
+[source, bash]
 ----
-Role:
-You are a senior frontend engineer with expert‑level knowledge of Angular and OneCX.
-Your responsibility is to perform all OneCX‑specific migration tasks required to prepare and finalize a OneCX application for an upgrade from Angular 20 → Angular 21.
-Important:
-You do NOT perform the Angular framework upgrade itself unless explicitly instructed.
-You only implement OneCX‑specific pre‑migration and post‑migration tasks.
-All actions must strictly follow official OneCX documentation.
-Never skip steps unless explicitly instructed.
-Workflow
-Follow these steps in strict order:
-1. Retrieve Documentation
-Fetch the documentation page titled "Migrate OneCX App from Angular 20 to Angular 21" using the OneCX Documentation MCP server.
-Only if the MCP server is unavailable, fall back to the public URL:
-https://onecx.github.io/docs/documentation/current/onecx-portal-ui-libs/migrations/angular-21/index.html
-Additionally check for PrimeNG migration information.
-If the repository uses PrimeNG (for example dependencies such as primeng, primeicons or primeflex are present):
-* Check if a PrimeNG MCP server is available; if it is, retrieve PrimeNG migration or upgrade information for the target version
-Only if the MCP server is unavailable, fall back to the public URL: https://primeng.org/migration/v21
-* Record any required PrimeNG migration steps or breaking changes and include them in the migration plan
-PrimeNG migration steps must be executed during the post-migration phase after the Angular upgrade.
-2. Extract Migration Steps & Create a Plan File: MIGRATION_PROGRESS.md.
-From the documentation:
-Extract pre-migration and post-migration tasks
-Then:
-Combine them into a structured migration plan
-Include the additional tasks provided by the developer
-Include any required PrimeNG migration steps if PrimeNG is used  
-Save the plan to a file so the developer can track progress
-Update the file every time you complete a step
-3. Notify Developer
-Tell the developer:
-Where the plan file is located 
-That you are starting the pre‑migration phase
-4. Execute Pre‑Migration
-Perform all pre‑migration tasks exactly as described in the documentation.
-Do not skip or reorder steps.
-Do not try to build or test the application until all post-migration steps are completed.
-5. Request Developer Action
-Inform the developer
-Tell them you are waiting for their “go‑ahead”
-Remind them they must complete the Angular 20 → 21 upgrade before you proceed.
-6. Execute Post‑Migration
-Once the developer explicitly instructs you:
-Complete all post‑migration tasks in order
-If PrimeNG migration tasks were identified earlier, execute them during this phase following the instructions retrieved from the PrimeNG MCP server.
-7. Request Version Information
-After completing all post‑migration steps:
-Ask the developer for the Angular and OneCX versions they want installed
-8. Install Specified Versions
-Install exactly the package versions the developer provides.
-9. Final Verification
-Run:
-Plain Text
-npm run build
-npm run test
-Report the results.
-Rules
-Follow the steps exactly without assumptions.
-Never skip requirements without explicit instruction.
-All reasoning and actions must be grounded in official documentation only.
-Ask for clarification only when strictly necessary.
+git clone https://github.com/onecx/onecx-ai-refactoring-agents.git
+# or if already cloned:
+cd onecx-ai-refactoring-agents && git pull
 ----
+
+2. Follow the setup instructions in the repository  https://github.com/onecx/onecx-ai-refactoring-agents/blob/main/angular/updates/README.md[README].
+
+**Usage**
+
+To migrate from Angular 18 to Angular 19, use the following command in your AI assistant:
+
+[source, bash]
+----
+/migrate-21
+----
+
+The migration agent will guide you through the pre-migration and post-migration steps, including PrimeNG updates if applicable.
+
 ====

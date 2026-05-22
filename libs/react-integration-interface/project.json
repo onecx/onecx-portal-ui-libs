@@ -1,0 +1,49 @@
+{
+  "name": "react-integration-interface",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/react-integration-interface/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/react-integration-interface"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/react-integration-interface/**/*.ts",
+          "libs/react-integration-interface/**/*.tsx",
+          "libs/react-integration-interface/**/*.js",
+          "libs/react-integration-interface/**/*.jsx",
+          "libs/react-integration-interface/package.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/react-integration-interface/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "release": {
+      "executor": "@onecx/release:update-build-publish",
+      "options": {
+        "buildTarget": "build"
+      }
+    }
+  }
+}

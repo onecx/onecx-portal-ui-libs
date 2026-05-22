@@ -1,16 +1,14 @@
-import { Injectable } from '@angular/core';
-import { ShellCapability } from '@onecx/integration-interface';
+import { Injectable } from '@angular/core'
+import { ShellCapability, hasShellCapability, setShellCapabilities } from '@onecx/integration-interface'
 
 @Injectable({ providedIn: 'root' })
 export class ShellCapabilityService {
   static setCapabilities(capabilities: ShellCapability[]): void {
-    window['onecx-shell-capabilities'] = capabilities;
+    setShellCapabilities(capabilities)
   }
 
   hasCapability(capability: ShellCapability): boolean {
-    return window['onecx-shell-capabilities']?.includes(capability) ?? false;
+    return hasShellCapability(capability)
   }
 }
-
-export { ShellCapability as Capability } from '@onecx/integration-interface';
-
+export { ShellCapability as Capability } from '@onecx/integration-interface'

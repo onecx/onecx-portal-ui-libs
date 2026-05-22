@@ -1,9 +1,9 @@
-import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Injectable, InjectionToken, OnDestroy, Type, inject } from '@angular/core'
 import { RemoteComponent, RemoteComponentsTopic, Technologies } from '@onecx/integration-interface'
 import { Observable, map, shareReplay } from 'rxjs'
 import { PermissionService } from './permission.service'
 import { createLogger } from '../utils/logger.utils'
+import { getShellMfInstance, registerAndLoadRemote, toLoadRemoteEntryOptions } from '@onecx/angular-utils'
 
 export const SLOT_SERVICE: InjectionToken<SlotService> = new InjectionToken('SLOT_SERVICE')
 
@@ -13,6 +13,7 @@ export type RemoteComponentInfo = {
   baseUrl: string
   technology: Technologies
   elementName?: string
+  shareScope?: string
 }
 
 export type SlotComponentConfiguration = {
@@ -80,34 +81,26 @@ export class SlotService implements SlotServiceInterface, OnDestroy {
     )
   }
 
-  private async loadComponent(component: {
-    remoteEntryUrl: string
-    exposedModule: string
-    productName: string
-    remoteName: string
-    technology: string
-  }): Promise<Type<unknown> | undefined> {
+  private async loadComponent(component: RemoteComponent): Promise<Type<unknown> | undefined> {
     try {
-      const exposedModule = component.exposedModule.startsWith('./')
-        ? component.exposedModule.slice(2)
-        : component.exposedModule
-      if (component.technology === Technologies.Angular || component.technology === Technologies.WebComponentModule) {
-        const m = await loadRemoteModule({
-          type: 'module',
-          remoteEntry: component.remoteEntryUrl,
-          exposedModule: './' + exposedModule,
-        })
-        if (component.technology === Technologies.Angular) {
-          return m[exposedModule]
-        }
+      const remoteEntryOptions = await toLoadRemoteEntryOptions(component)
+      const shellMfInstance = getShellMfInstance()
+      if (!shellMfInstance) {
+        this.logger.error(
+          'Failed to find shell module federation instance',
+          component.exposedModule,
+          component.remoteEntryUrl
+        )
         return undefined
       }
-      await loadRemoteModule({
-        type: 'script',
-        remoteName: component.remoteName,
-        remoteEntry: component.remoteEntryUrl,
-        exposedModule: './' + exposedModule,
-      })
+      const m = await registerAndLoadRemote<any>(shellMfInstance, remoteEntryOptions, component.exposedModule)
+      if (component.technology === Technologies.Angular) {
+        // For Angular, the exposed module name (without './' prefix) is used as the property key
+        const moduleName = component.exposedModule.startsWith('./')
+          ? component.exposedModule.slice(2)
+          : component.exposedModule
+        return m[moduleName]
+      }
       return undefined
     } catch (e) {
       this.logger.error('Failed to load remote module ', component.exposedModule, component.remoteEntryUrl, e)

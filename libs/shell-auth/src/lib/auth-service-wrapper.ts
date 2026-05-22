@@ -1,12 +1,14 @@
-import { loadRemoteModule } from '@angular-architects/module-federation'
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
+import { createRemoteConfig, getShellMfInstance, registerAndLoadRemote } from '@onecx/angular-utils'
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
 import './declarations'
 import { DisabledAuthService } from './auth_services/disabled-auth.service'
+
+const CUSTOM_AUTH_REMOTE_ALIAS = 'custom-auth-service'
 
 @Injectable()
 export class AuthServiceWrapper {
@@ -101,15 +103,31 @@ export class AuthServiceWrapper {
   }
 
   async getAuthServiceFactory(): Promise<AuthServiceFactory> {
-    if (await !this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) {
+    if (!(await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL))) {
       throw new Error('URL of the custom auth service is not defined')
     }
-    const module = await loadRemoteModule({
-      type: 'module',
-      remoteEntry: (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? '',
-      exposedModule:
-        (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth',
-    })
-    return module.default as AuthServiceFactory
+    const remoteEntry = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? ''
+    const exposedModule =
+      (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth'
+
+    const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
+    const remoteConfig = createRemoteConfig(
+      remoteEntry,
+      CUSTOM_AUTH_REMOTE_ALIAS,
+      'module',
+      customAuthShareScope
+    )
+    const instance = getShellMfInstance()
+    if(!instance) {
+      throw new Error('Shell module federation instance not found')
+    }
+    
+    const module = await registerAndLoadRemote<{default: AuthServiceFactory}>(instance, remoteConfig, exposedModule)
+
+    if (!module) {
+      throw new Error('Failed to load custom auth service module')
+    }
+
+    return module.default
   }
 }
