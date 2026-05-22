@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-integration-interface",
-  "version": "8.2.1",
+  "version": "8.2.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -19,16 +19,16 @@
       "default": "./index.mjs"
     },
     "./mocks": {
-      "types": "./mocks/index.d.ts",
-      "import": "./mocks/index.mjs",
-      "require": "./mocks/index.cjs",
-      "default": "./mocks/index.mjs"
+      "types": "./lib/mocks/index.d.ts",
+      "import": "./mocks.mjs",
+      "require": "./mocks.cjs",
+      "default": "./mocks.mjs"
     },
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^8.2.1",
-    "@onecx/integration-interface": "^8.2.1",
+    "@onecx/accelerator": "^8.2.2",
+    "@onecx/integration-interface": "^8.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
