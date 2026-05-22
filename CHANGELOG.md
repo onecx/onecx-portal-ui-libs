@@ -1,3 +1,9 @@
+## [7.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.1...v7.9.2) (2026-05-22)
+
+### Bug Fixes
+
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1463](https://github.com/onecx/onecx-portal-ui-libs/issues/1463)) ([67d35b3](https://github.com/onecx/onecx-portal-ui-libs/commit/67d35b32a64e48b86886321e10f02791a1bdf01b))
+
 ## [7.9.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.0...v7.9.1) (2026-05-21)
 
 ### Bug Fixes
