@@ -38,7 +38,7 @@ export class ThemeService implements OnDestroy {
       )))
     }
     this._currentThemes$ ??= new CurrentThemesTopic()
-    return this._currentThemes$.asObservable()
+    return this._currentThemes$
   }
   ngOnDestroy(): void {
     this._currentTheme$?.destroy()
