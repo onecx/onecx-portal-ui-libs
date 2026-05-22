@@ -1,7 +1,7 @@
-import { ModuleFederation } from '@module-federation/enhanced/runtime'
 import { Injectable, Injector, inject } from '@angular/core'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Config, EventsTopic, EventType } from '@onecx/integration-interface'
+import { createRemoteConfig, getShellMfInstance, registerAndLoadRemote } from '@onecx/angular-utils'
 import { filter } from 'rxjs/internal/operators/filter'
 import { AuthService, AuthServiceFactory, Injectables } from './auth.service'
 import { KeycloakAuthService } from './auth_services/keycloak-auth.service'
@@ -109,35 +109,25 @@ export class AuthServiceWrapper {
     const remoteEntry = (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL)) ?? ''
     const exposedModule =
       (await this.configService.getProperty(CONFIG_KEY.AUTH_SERVICE_CUSTOM_MODULE_NAME)) ?? './CustomAuth'
-    const sanitizedExposedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
 
     const customAuthShareScope = await this.configService.getProperty(CONFIG_KEY.CUSTOM_AUTH_SHARE_SCOPE)
-    const shellMfInstance = this.getShellMfInstance()
-    if (!shellMfInstance) {
+    const remoteConfig = createRemoteConfig(
+      remoteEntry,
+      CUSTOM_AUTH_REMOTE_ALIAS,
+      'module',
+      customAuthShareScope
+    )
+    const instance = getShellMfInstance()
+    if(!instance) {
       throw new Error('Shell module federation instance not found')
     }
-    shellMfInstance.registerRemotes([
-      {
-        type: 'module',
-        entry: remoteEntry,
-        name: CUSTOM_AUTH_REMOTE_ALIAS,
-        shareScope: customAuthShareScope,
-      },
-    ])
-    const module = await shellMfInstance.loadRemote<{ default: AuthServiceFactory }>(
-      CUSTOM_AUTH_REMOTE_ALIAS + '/' + sanitizedExposedModule
-    )
+    
+    const module = await registerAndLoadRemote<{default: AuthServiceFactory}>(instance, remoteConfig, exposedModule)
 
     if (!module) {
       throw new Error('Failed to load custom auth service module')
     }
 
-    return module.default as AuthServiceFactory
-  }
-
-  // Temporary solution until its released
-  // https://github.com/module-federation/core/blob/6c9d2ee15757be80f0721e1db443b8b526107015/packages/runtime/src/index.ts#L119
-  getShellMfInstance(): ModuleFederation | undefined {
-    return globalThis.__FEDERATION__.__INSTANCES__.find((instance) => instance.name === 'onecx-shell-ui')
+    return module.default
   }
 }

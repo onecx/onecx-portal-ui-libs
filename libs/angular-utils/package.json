@@ -20,7 +20,8 @@
     "@onecx/angular-integration-interface": "^8.2.2",
     "@onecx/integration-interface": "^8.2.2",
     "@ngx-translate/http-loader": "^17.0.0",
-    "@module-federation/runtime-core": "^2.0.1"
+    "@module-federation/enhanced": "^2.5.0",
+    "@module-federation/runtime-core": "^2.5.0"
   },
   "publishConfig": {
     "access": "public"
