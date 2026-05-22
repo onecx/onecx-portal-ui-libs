@@ -1,5 +1,8 @@
-import { Remote } from '@module-federation/runtime-core/types'
+import { getInstance } from '@module-federation/enhanced/runtime'
+import type { ModuleFederation, types } from '@module-federation/runtime-core'
 import { RemoteComponent } from '@onecx/integration-interface'
+
+type Remote = types.Remote
 
 // This type is a copy of the actual Technologies used in onecx-shell-ui.
 export enum Technologies {
@@ -54,11 +57,11 @@ function getRemoteName(r: RemoteEntry): string {
   return r.productName + '|' + r.appId
 }
 
-export function getShellMfInstance() {
-  return (globalThis as any)['onecxFederationInstance'] ?? globalThis.__FEDERATION__.__INSTANCES__.find((instance) => instance.name === 'onecx_shell_ui')
+export function getShellMfInstance(): ModuleFederation | null {
+  return (globalThis as any)['onecxFederationInstance'] ?? getInstance((instance: ModuleFederation) => instance.name === 'onecx-shell-ui')
 }
 
-export async function registerAndLoadRemote<T>(instance:any, remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
+export async function registerAndLoadRemote<T>(instance: ModuleFederation, remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
   const sanitizedModule = exposedModule.startsWith('./') ? exposedModule.slice(2) : exposedModule
   instance.registerRemotes([remoteConfig])
   return instance.loadRemote(remoteConfig.name + '/' + sanitizedModule) as Promise<T> | undefined

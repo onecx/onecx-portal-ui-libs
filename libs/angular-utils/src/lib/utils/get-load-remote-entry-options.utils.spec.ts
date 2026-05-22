@@ -6,6 +6,11 @@ import {
   getShellMfInstance,
 } from './get-load-remote-entry-options.utils'
 import { RemoteComponent, Technologies as IntegrationTechnologies } from '@onecx/integration-interface'
+import { getInstance } from '@module-federation/enhanced/runtime'
+
+jest.mock('@module-federation/enhanced/runtime', () => ({
+  getInstance: jest.fn(),
+}))
 
 describe('get-load-remote-entry-options', () => {
   describe('createRemoteConfig', () => {
@@ -166,12 +171,12 @@ describe('get-load-remote-entry-options', () => {
   })
 
   describe('getShellMfInstance', () => {
+    const mockGetInstance = getInstance as jest.Mock
     let originalGlobalThis: any
-    let originalFederation: any
 
     beforeEach(() => {
+      jest.clearAllMocks()
       originalGlobalThis = (globalThis as any).onecxFederationInstance
-      originalFederation = (globalThis as any).__FEDERATION__
     })
 
     afterEach(() => {
@@ -180,44 +185,37 @@ describe('get-load-remote-entry-options', () => {
       } else {
         delete (globalThis as any).onecxFederationInstance
       }
-      if (originalFederation !== undefined) {
-        ;(globalThis as any).__FEDERATION__ = originalFederation
-      } else {
-        delete (globalThis as any).__FEDERATION__
-      }
     })
 
     it('should return the onecxFederationInstance when it exists', () => {
-      const mockInstance = { registerRemotes: jest.fn(), loadRemote: jest.fn() }
+      const mockInstance = { name: 'onecx-shell-ui', registerRemotes: jest.fn(), loadRemote: jest.fn() }
       ;(globalThis as any).onecxFederationInstance = mockInstance
 
       const result = getShellMfInstance()
 
       expect(result).toBe(mockInstance)
+      expect(mockGetInstance).not.toHaveBeenCalled()
     })
 
-    it('should return the shell instance from __FEDERATION__ when onecxFederationInstance does not exist', () => {
+    it('should use getInstance to find the shell instance when onecxFederationInstance does not exist', () => {
       delete (globalThis as any).onecxFederationInstance
-      const mockShellInstance = { name: 'onecx_shell_ui', registerRemotes: jest.fn(), loadRemote: jest.fn() }
-      const mockOtherInstance = { name: 'other_app', registerRemotes: jest.fn(), loadRemote: jest.fn() }
-      ;(globalThis as any).__FEDERATION__ = {
-        __INSTANCES__: [mockOtherInstance, mockShellInstance]
-      }
+      const mockShellInstance = { name: 'onecx-shell-ui', registerRemotes: jest.fn(), loadRemote: jest.fn() }
+      mockGetInstance.mockReturnValue(mockShellInstance)
 
       const result = getShellMfInstance()
 
+      expect(mockGetInstance).toHaveBeenCalledWith(expect.any(Function))
       expect(result).toBe(mockShellInstance)
     })
 
-    it('should return undefined when neither onecxFederationInstance nor shell instance exist', () => {
+    it('should return null when getInstance cannot find any instance', () => {
       delete (globalThis as any).onecxFederationInstance
-      ;(globalThis as any).__FEDERATION__ = {
-        __INSTANCES__: []
-      }
+      mockGetInstance.mockReturnValue(null)
 
       const result = getShellMfInstance()
 
-      expect(result).toBeUndefined()
+      expect(mockGetInstance).toHaveBeenCalledWith(expect.any(Function))
+      expect(result).toBeNull()
     })
   })
 
