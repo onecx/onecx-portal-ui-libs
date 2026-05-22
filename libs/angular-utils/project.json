@@ -6,6 +6,13 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "generate-locales": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node libs/angular-utils/scripts/generate-locales.js",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "build-migrations": {
       "dependsOn": ["build"],
       "executor": "nx:run-commands",
@@ -14,6 +21,10 @@
       }
     },
     "build": {
+      "dependsOn": [
+        "generate-locales",
+        "^build"
+      ],
       "executor": "@nx/angular:package",
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "options": {
