@@ -18,12 +18,18 @@ jest.mock('react-i18next', () => ({
 
 describe('PortalPage', () => {
   let mockPublish: jest.Mock
+  let consoleWarnSpy: jest.SpyInstance
 
   beforeEach(() => {
     jest.clearAllMocks()
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
     const { useAppState } = require('@onecx/react-integration-interface')
     mockPublish = jest.fn()
     useAppState.mockReturnValue({ currentPage$: { publish: mockPublish } })
+  })
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore()
   })
 
   it('should render children when no permission is required', () => {
@@ -43,14 +49,16 @@ describe('PortalPage', () => {
 
   it('should deny access when permission check throws', async () => {
     const { useUserService } = require('@onecx/react-integration-interface')
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.reject(new Error('fail'))) })
 
-    const { findByText } = render(<PortalPage permission="admin">Secret Content</PortalPage>)
+    const { findByText } = render(
+      <PortalPage permission="admin" helpArticleId="help-123">
+        Secret Content
+      </PortalPage>
+    )
     const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
-    expect(consoleSpy).toHaveBeenCalled()
-    consoleSpy.mockRestore()
+    expect(consoleWarnSpy).toHaveBeenCalledWith('Failed to resolve permission for PortalPage', expect.any(Error))
   })
 
   it('should publish current page info', () => {
@@ -88,9 +96,7 @@ describe('PortalPage', () => {
   })
 
   it('should warn when helpArticleId is not set', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
     render(<PortalPage>Content</PortalPage>)
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('helpArticleId'))
-    consoleSpy.mockRestore()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('helpArticleId'))
   })
 })

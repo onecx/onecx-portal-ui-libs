@@ -1,7 +1,9 @@
 import { render, act } from '@testing-library/react'
+import type { ReactNode } from 'react'
+import applyThemeVariables from './applyThemeVariables'
 
 const mockUnsubscribe = jest.fn()
-const mockSubscribe = jest.fn((cb: (theme: any) => void) => {
+const mockSubscribe = jest.fn((cb) => {
   cb({ properties: { cat: { key: 'val' } } })
   return { unsubscribe: mockUnsubscribe }
 })
@@ -11,7 +13,7 @@ jest.mock('@onecx/integration-interface', () => ({
 }))
 
 jest.mock('primereact/api', () => ({
-  PrimeReactProvider: ({ children }: { children: React.ReactNode }) => (
+  PrimeReactProvider: ({ children }: { children?: ReactNode }) => (
     <div data-testid="primereact-provider">{children}</div>
   ),
 }))
@@ -28,7 +30,7 @@ jest.mock('./applyThemeVariables', () => ({
 describe('StyleRegistry', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockSubscribe.mockImplementation((cb: (theme: any) => void) => {
+    mockSubscribe.mockImplementation((cb) => {
       cb({ properties: { cat: { key: 'val' } } })
       return { unsubscribe: mockUnsubscribe }
     })
@@ -43,19 +45,29 @@ describe('StyleRegistry', () => {
     )
     expect(getByTestId('primereact-provider')).toBeDefined()
     expect(getByText('child content')).toBeDefined()
+    expect(applyThemeVariables).toHaveBeenCalledWith(
+      expect.objectContaining({ properties: expect.any(Object) }),
+      'test-app|test-app'
+    )
   })
 
   it('renders null before theme is applied', async () => {
     mockSubscribe.mockImplementation(() => ({ unsubscribe: mockUnsubscribe }))
     const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { container } = render(<StyleRegistry><span>hidden</span></StyleRegistry>)
+    const { container } = render(
+      <StyleRegistry>
+        <span>hidden</span>
+      </StyleRegistry>
+    )
     expect(container.textContent).not.toContain('hidden')
   })
 
   it('unsubscribes on unmount', async () => {
     const { default: StyleRegistry } = await import('./StyleRegistry')
     const { unmount } = render(<StyleRegistry />)
-    act(() => { unmount() })
+    act(() => {
+      unmount()
+    })
     expect(mockUnsubscribe).toHaveBeenCalled()
   })
 })
