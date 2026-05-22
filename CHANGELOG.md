@@ -1,3 +1,9 @@
+## [6.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.1...v6.23.2) (2026-05-22)
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([107fc1e](https://github.com/onecx/onecx-portal-ui-libs/commit/107fc1e7f67b0d73bac55894d1abcc49783a8827))
+
 ## [6.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.0...v6.23.1) (2026-05-22)
 
 ### Bug Fixes
