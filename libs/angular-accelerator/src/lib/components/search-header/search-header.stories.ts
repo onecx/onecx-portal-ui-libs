@@ -321,5 +321,3 @@ export const WithSearchNoResults = {
     header: 'Product Search',
   },
 }
-
-// export const
