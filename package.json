@@ -161,7 +161,7 @@
     "test-exclude": "^7.0.1",
     "brace-expansion": "^2.0.2",
     "cross-spawn": "^7.0.6",
-    "undici": "^6.23.0",
+    "undici": "^6.24.0",
     "semver": "^7.7.3",
     "minimatch": "^9.0.6"
   },
