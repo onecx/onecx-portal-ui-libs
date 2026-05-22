@@ -1,5 +1,4 @@
-import { createRoot } from 'react-dom/client'
-import { act } from 'react'
+import { render, waitFor } from '@testing-library/react'
 import { useGuardCheck } from './use-guard-check'
 import { useWrappedGuards } from './use-wrapped-guards'
 import type { WrappedGuards } from '../utils/wrap-guards.utils'
@@ -13,8 +12,6 @@ jest.mock('react-router', () => ({
 jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
-
-const flushPromises = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
 function TestComponent({
   onGuardCheck,
@@ -49,36 +46,26 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent onGuardCheck={onGuardCheck} />)
 
-    await act(async () => {
-      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledWith(true)
     })
 
     expect(wrapped.canMatch).toHaveBeenCalled()
     expect(wrapped.canActivateChild).toHaveBeenCalled()
     expect(wrapped.canActivate).toHaveBeenCalled()
-    expect(onGuardCheck).toHaveBeenCalledWith(true)
-
-    root.unmount()
   })
 
   it('skips guard execution when enabled is false', async () => {
     const wrapped = makeWrapped()
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent enabled={false} />)
 
-    await act(async () => {
-      root.render(<TestComponent enabled={false} />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(wrapped.canMatch).not.toHaveBeenCalled()
     })
-
-    expect(wrapped.canMatch).not.toHaveBeenCalled()
-    root.unmount()
   })
 
   it('stops sequence and returns false when canMatch returns false', async () => {
@@ -86,19 +73,14 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent onGuardCheck={onGuardCheck} />)
 
-    await act(async () => {
-      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledWith(false)
     })
 
     expect(wrapped.canMatch).toHaveBeenCalled()
     expect(wrapped.canActivateChild).not.toHaveBeenCalled()
-    expect(onGuardCheck).toHaveBeenCalledWith(false)
-
-    root.unmount()
   })
 
   it('stops sequence and returns false when canActivateChild returns false', async () => {
@@ -106,19 +88,14 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
     const onGuardCheck = jest.fn()
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent onGuardCheck={onGuardCheck} />)
 
-    await act(async () => {
-      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledWith(false)
     })
 
     expect(wrapped.canActivateChild).toHaveBeenCalled()
     expect(wrapped.canActivate).not.toHaveBeenCalled()
-    expect(onGuardCheck).toHaveBeenCalledWith(false)
-
-    root.unmount()
   })
 
   it('returns wrapped guards and lastResult from the hook', async () => {
@@ -126,22 +103,19 @@ describe('useGuardCheck', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(wrapped)
 
     let hookResult: any
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(
+      <TestComponent
+        onResult={(r) => {
+          hookResult = r
+        }}
+      />
+    )
 
-    await act(async () => {
-      root.render(
-        <TestComponent
-          onResult={(r) => {
-            hookResult = r
-          }}
-        />
-      )
+    await waitFor(() => {
+      expect(hookResult).toBeDefined()
+      expect(hookResult.lastResult).not.toBeNull()
     })
 
     expect(hookResult.wrapped).toBe(wrapped)
-    expect(hookResult.lastResult).not.toBeUndefined()
-
-    root.unmount()
   })
 })

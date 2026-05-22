@@ -8,16 +8,10 @@ type Props = Readonly<{
   children?: ReactNode
 }>
 
-/**
- * Registers theme variables and provides PrimeReact configuration for the subtree.
- *
- * @param children - React subtree rendered after theme initialization.
- * @returns PrimeReact provider wrapping themed children.
- */
 export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
-  const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
+  const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
 
   useEffect(() => {
     const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {
@@ -31,7 +25,7 @@ export default function StyleRegistry({ children }: Props) {
   }, [themeStyleId])
 
   if (!isThemed) {
-    return null
+    return null // Can be spinner or skeleton here
   }
 
   return (
