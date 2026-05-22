@@ -12,6 +12,51 @@ export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
   const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
+  const appPrimeStyleSuffix = themeStyleId
+
+  useEffect(() => {
+    const tagPrimeStyle = (styleElement: HTMLStyleElement) => {
+      const styleId = styleElement.dataset.primereactStyleId
+      if (!styleId) return
+      if (styleId.includes('|')) return
+
+      styleElement.dataset.primereactStyleId = `${styleId}-${appPrimeStyleSuffix}`
+    }
+
+    const processAddedNode = (node: Node) => {
+      if (node instanceof HTMLStyleElement) {
+        tagPrimeStyle(node)
+        return
+      }
+      if (!(node instanceof Element)) return
+
+      node
+        .querySelectorAll('style[data-primereact-style-id]')
+        .forEach((element) => tagPrimeStyle(element as HTMLStyleElement))
+    }
+
+    const observeMutations: MutationCallback = (records) => {
+      for (const record of records) {
+        if (record.type !== 'childList') continue
+        record.addedNodes.forEach(processAddedNode)
+      }
+    }
+
+    document.head
+      .querySelectorAll('style[data-primereact-style-id]')
+      .forEach((element) => tagPrimeStyle(element as HTMLStyleElement))
+
+    const observer = new MutationObserver(observeMutations)
+
+    observer.observe(document.head, {
+      childList: true,
+      subtree: true,
+    })
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [appPrimeStyleSuffix])
 
   useEffect(() => {
     const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {

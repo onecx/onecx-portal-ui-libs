@@ -2,6 +2,11 @@ import { render, act } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import applyThemeVariables from './applyThemeVariables'
 
+const flushMutations = async () => {
+  await Promise.resolve()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+}
+
 const mockUnsubscribe = jest.fn()
 const mockSubscribe = jest.fn((cb) => {
   cb({ properties: { cat: { key: 'val' } } })
@@ -29,6 +34,8 @@ jest.mock('./applyThemeVariables', () => ({
 
 describe('StyleRegistry', () => {
   beforeEach(() => {
+    document.head.innerHTML = ''
+    document.body.innerHTML = ''
     jest.clearAllMocks()
     mockSubscribe.mockImplementation((cb) => {
       cb({ properties: { cat: { key: 'val' } } })
@@ -69,5 +76,55 @@ describe('StyleRegistry', () => {
       unmount()
     })
     expect(mockUnsubscribe).toHaveBeenCalled()
+  })
+
+  it('tags existing PrimeReact style ids in head during bootstrap', async () => {
+    const style = document.createElement('style')
+    style.dataset.primereactStyleId = 'base'
+    document.head.appendChild(style)
+
+    const { default: StyleRegistry } = await import('./StyleRegistry')
+    render(<StyleRegistry />)
+
+    expect(style.dataset.primereactStyleId).toBe('base-test-app|test-app')
+  })
+
+  it('does not retag PrimeReact style ids that already include app suffix', async () => {
+    const style = document.createElement('style')
+    style.dataset.primereactStyleId = 'base|other-app'
+    document.head.appendChild(style)
+
+    const { default: StyleRegistry } = await import('./StyleRegistry')
+    render(<StyleRegistry />)
+
+    expect(style.dataset.primereactStyleId).toBe('base|other-app')
+  })
+
+  it('tags PrimeReact style appended to head after mount', async () => {
+    const { default: StyleRegistry } = await import('./StyleRegistry')
+    render(<StyleRegistry />)
+
+    const style = document.createElement('style')
+    style.dataset.primereactStyleId = 'dynamic'
+    document.head.appendChild(style)
+
+    await flushMutations()
+
+    expect(style.dataset.primereactStyleId).toBe('dynamic-test-app|test-app')
+  })
+
+  it('tags nested PrimeReact styles inside appended node', async () => {
+    const { default: StyleRegistry } = await import('./StyleRegistry')
+    render(<StyleRegistry />)
+
+    const wrapper = document.createElement('div')
+    const nestedStyle = document.createElement('style')
+    nestedStyle.dataset.primereactStyleId = 'nested'
+    wrapper.appendChild(nestedStyle)
+    document.head.appendChild(wrapper)
+
+    await flushMutations()
+
+    expect(nestedStyle.dataset.primereactStyleId).toBe('nested-test-app|test-app')
   })
 })
