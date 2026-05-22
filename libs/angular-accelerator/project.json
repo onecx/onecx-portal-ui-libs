@@ -88,7 +88,8 @@
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
-          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss"
+          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",
+          "libs/angular-accelerator/src/lib/directives/content.directive.scss"
         ]
       },
       "configurations": {
@@ -111,7 +112,8 @@
           "node_modules/primeicons/primeicons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
-          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss"
+          "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",
+          "libs/angular-accelerator/src/lib/directives/content.directive.scss"
         ]
       },
       "configurations": {
