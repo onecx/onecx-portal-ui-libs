@@ -1,130 +1,90 @@
-import { render, act } from '@testing-library/react'
 import type { ReactNode } from 'react'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import StyleRegistry from './StyleRegistry'
 import applyThemeVariables from './applyThemeVariables'
+import { setupPrimeStyleDeduplication, setupPrimeStyleIdTagging } from './primeStyleRegistry'
 
-const flushMutations = async () => {
-  await Promise.resolve()
-  await new Promise((resolve) => setTimeout(resolve, 0))
-}
-
-const mockUnsubscribe = jest.fn()
-const mockSubscribe = jest.fn((cb) => {
-  cb({ properties: { cat: { key: 'val' } } })
-  return { unsubscribe: mockUnsubscribe }
-})
-
-jest.mock('@onecx/integration-interface', () => ({
-  CurrentThemeTopic: jest.fn(() => ({ subscribe: mockSubscribe })),
-}))
+let emitTheme: ((theme: unknown) => void) | undefined
+const unsubscribeSpy = jest.fn()
+const cleanupDedupSpy = jest.fn()
+const cleanupTagSpy = jest.fn()
 
 jest.mock('primereact/api', () => ({
-  PrimeReactProvider: ({ children }: { children?: ReactNode }) => (
-    <div data-testid="primereact-provider">{children}</div>
-  ),
+  PrimeReactProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }))
 
-jest.mock('../../../utils/withAppGlobals', () => ({
-  useAppGlobals: jest.fn(() => ({ PRODUCT_NAME: 'test-app' })),
+jest.mock('@onecx/integration-interface', () => ({
+  CurrentThemeTopic: class {
+    subscribe(callback: (theme: unknown) => void) {
+      emitTheme = callback
+      return {
+        unsubscribe: unsubscribeSpy,
+      }
+    }
+  },
 }))
 
 jest.mock('./applyThemeVariables', () => ({
-  __esModule: true,
   default: jest.fn(),
+}))
+
+jest.mock('./primeStyleRegistry', () => ({
+  setupPrimeStyleDeduplication: jest.fn(() => cleanupDedupSpy),
+  setupPrimeStyleIdTagging: jest.fn(() => cleanupTagSpy),
+}))
+
+jest.mock('@onecx/react-utils/utils', () => ({
+  useAppGlobals: () => ({
+    PRODUCT_NAME: 'demo-app',
+  }),
 }))
 
 describe('StyleRegistry', () => {
   beforeEach(() => {
-    document.head.innerHTML = ''
-    document.body.innerHTML = ''
-    jest.clearAllMocks()
-    mockSubscribe.mockImplementation((cb) => {
-      cb({ properties: { cat: { key: 'val' } } })
-      return { unsubscribe: mockUnsubscribe }
-    })
+    emitTheme = undefined
+    unsubscribeSpy.mockReset()
+    cleanupDedupSpy.mockReset()
+    cleanupTagSpy.mockReset()
+    jest.mocked(applyThemeVariables).mockReset()
+    jest.mocked(setupPrimeStyleDeduplication).mockClear()
+    jest.mocked(setupPrimeStyleIdTagging).mockClear()
   })
 
-  it('renders children inside PrimeReactProvider after theme is applied', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { getByTestId, getByText } = render(
+  it('subscribes to theme, applies variables, and renders children once themed', async () => {
+    const theme = { properties: { colors: { primary: '#111' } } }
+
+    render(
       <StyleRegistry>
-        <span>child content</span>
+        <div>content</div>
       </StyleRegistry>
     )
-    expect(getByTestId('primereact-provider')).toBeDefined()
-    expect(getByText('child content')).toBeDefined()
-    expect(applyThemeVariables).toHaveBeenCalledWith(
-      expect.objectContaining({ properties: expect.any(Object) }),
-      'test-app|test-app'
-    )
-  })
 
-  it('renders null before theme is applied', async () => {
-    mockSubscribe.mockImplementation(() => ({ unsubscribe: mockUnsubscribe }))
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { container } = render(
-      <StyleRegistry>
-        <span>hidden</span>
-      </StyleRegistry>
-    )
-    expect(container.textContent).not.toContain('hidden')
-  })
+    expect(screen.queryByText('content')).toBeNull()
+    expect(setupPrimeStyleDeduplication).toHaveBeenCalledTimes(1)
+    expect(setupPrimeStyleIdTagging).toHaveBeenCalledWith('demo-app|demo-app')
 
-  it('unsubscribes on unmount', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { unmount } = render(<StyleRegistry />)
     act(() => {
-      unmount()
+      emitTheme?.(theme)
     })
-    expect(mockUnsubscribe).toHaveBeenCalled()
+
+    await waitFor(() => {
+      expect(screen.queryByText('content')).not.toBeNull()
+    })
+
+    expect(applyThemeVariables).toHaveBeenCalledWith(theme, 'demo-app|demo-app')
   })
 
-  it('tags existing PrimeReact style ids in head during bootstrap', async () => {
-    const style = document.createElement('style')
-    style.dataset.primereactStyleId = 'base'
-    document.head.appendChild(style)
+  it('cleans up style observers and theme subscription on unmount', () => {
+    const { unmount } = render(
+      <StyleRegistry>
+        <div>content</div>
+      </StyleRegistry>
+    )
 
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    render(<StyleRegistry />)
+    unmount()
 
-    expect(style.dataset.primereactStyleId).toBe('base-test-app|test-app')
-  })
-
-  it('does not retag PrimeReact style ids that already include app suffix', async () => {
-    const style = document.createElement('style')
-    style.dataset.primereactStyleId = 'base|other-app'
-    document.head.appendChild(style)
-
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    render(<StyleRegistry />)
-
-    expect(style.dataset.primereactStyleId).toBe('base|other-app')
-  })
-
-  it('tags PrimeReact style appended to head after mount', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    render(<StyleRegistry />)
-
-    const style = document.createElement('style')
-    style.dataset.primereactStyleId = 'dynamic'
-    document.head.appendChild(style)
-
-    await flushMutations()
-
-    expect(style.dataset.primereactStyleId).toBe('dynamic-test-app|test-app')
-  })
-
-  it('tags nested PrimeReact styles inside appended node', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    render(<StyleRegistry />)
-
-    const wrapper = document.createElement('div')
-    const nestedStyle = document.createElement('style')
-    nestedStyle.dataset.primereactStyleId = 'nested'
-    wrapper.appendChild(nestedStyle)
-    document.head.appendChild(wrapper)
-
-    await flushMutations()
-
-    expect(nestedStyle.dataset.primereactStyleId).toBe('nested-test-app|test-app')
+    expect(cleanupTagSpy).toHaveBeenCalledTimes(1)
+    expect(cleanupDedupSpy).toHaveBeenCalledTimes(1)
+    expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
   })
 })
