@@ -5,12 +5,11 @@ const PRIME_REACT_STYLE_ATTR = 'data-primereact-style-id'
 const MISSING_APP_ID_WARNING =
   '[primereact-style-reuse] Missing appId. PrimeReact style patching is disabled to avoid cross-app style collisions.'
 
-// Use character classes instead of dot-star patterns to avoid costly backtracking on malformed inputs.
-const DOUBLE_QUOTED_LOOKUP_PATTERN =
-  /querySelector\("style\[data-primereact-style-id=[^)]*\.concat\(([^,\r\n]+),[^)]*\)\)/g
-const SINGLE_QUOTED_LOOKUP_PATTERN =
-  /querySelector\('style\[data-primereact-style-id=[^)]*\.concat\(([^,\r\n]+),[^)]*\)\)/g
-const SET_STYLE_ID_PATTERN = /setAttribute\('data-primereact-style-id',\s*([^)\r\n]+)\)/g
+const DOUBLE_QUOTED_LOOKUP_PREFIX = String.raw`querySelector("style[data-primereact-style-id=\"".concat(`
+const DOUBLE_QUOTED_LOOKUP_SUFFIX = String.raw`, "\"]"))`
+const SINGLE_QUOTED_LOOKUP_PREFIX = `querySelector('style[data-primereact-style-id="'.concat(`
+const SINGLE_QUOTED_LOOKUP_SUFFIX = `, '"]'))`
+const SET_STYLE_ID_PREFIX = `setAttribute('data-primereact-style-id',`
 
 type WarnFn = (message: string) => void
 
@@ -33,22 +32,98 @@ export type PrimeReactStyleReusePluginOptions = Readonly<{
  * @returns Patched source code.
  */
 function patchPrimeReactStyleLookup(code: string, appId: string): string {
-  const withDoubleQuotedSelectors = code.replace(
-    DOUBLE_QUOTED_LOOKUP_PATTERN,
-    (_, styleName: string) =>
-      String.raw`querySelector("style[data-primereact-style-id=\"".concat(${styleName}, "-${appId}\"]"))`
+  const patchLookupSelector = (
+    input: string,
+    prefix: string,
+    suffix: string,
+    format: (styleName: string) => string
+  ): string => {
+    let output = ''
+    let cursor = 0
+
+    while (cursor < input.length) {
+      const start = input.indexOf(prefix, cursor)
+
+      if (start === -1) {
+        output += input.slice(cursor)
+        break
+      }
+
+      output += input.slice(cursor, start)
+
+      const argStart = start + prefix.length
+      const commaIndex = input.indexOf(',', argStart)
+
+      if (commaIndex === -1) {
+        output += input.slice(start)
+        break
+      }
+
+      const end = input.indexOf(suffix, commaIndex)
+
+      if (end === -1) {
+        output += input.slice(start)
+        break
+      }
+
+      const styleName = input.slice(argStart, commaIndex).trim()
+
+      output += styleName ? format(styleName) : input.slice(start, end + suffix.length)
+      cursor = end + suffix.length
+    }
+
+    return output
+  }
+
+  const patchSetStyleAttribute = (input: string): string => {
+    let output = ''
+    let cursor = 0
+
+    while (cursor < input.length) {
+      const start = input.indexOf(SET_STYLE_ID_PREFIX, cursor)
+
+      if (start === -1) {
+        output += input.slice(cursor)
+        break
+      }
+
+      output += input.slice(cursor, start)
+
+      const argStart = start + SET_STYLE_ID_PREFIX.length
+      const end = input.indexOf(')', argStart)
+
+      if (end === -1) {
+        output += input.slice(start)
+        break
+      }
+
+      const styleName = input.slice(argStart, end).trim()
+
+      output += styleName
+        ? `setAttribute('data-primereact-style-id', "".concat(${styleName}, "-${appId}"))`
+        : input.slice(start, end + 1)
+
+      cursor = end + 1
+    }
+
+    return output
+  }
+
+  const withDoubleQuotedSelectors = patchLookupSelector(
+    code,
+    DOUBLE_QUOTED_LOOKUP_PREFIX,
+    DOUBLE_QUOTED_LOOKUP_SUFFIX,
+    (styleName) => String.raw`querySelector("style[data-primereact-style-id=\"".concat(${styleName}, "-${appId}\"]"))`
   )
 
-  const withSingleQuotedSelectors = withDoubleQuotedSelectors.replace(
-    SINGLE_QUOTED_LOOKUP_PATTERN,
-    (_, styleName: string) =>
-      String.raw`querySelector('style[data-primereact-style-id="'.concat(${styleName},'-${appId}"]'))`
+  const withSingleQuotedSelectors = patchLookupSelector(
+    withDoubleQuotedSelectors,
+    SINGLE_QUOTED_LOOKUP_PREFIX,
+    SINGLE_QUOTED_LOOKUP_SUFFIX,
+    (styleName) => String.raw`querySelector('style[data-primereact-style-id="'.concat(${styleName},'-${appId}"]'))`
   )
 
-  return withSingleQuotedSelectors.replace(
-    SET_STYLE_ID_PATTERN,
-    (_, styleName: string) => `setAttribute('data-primereact-style-id', "".concat(${styleName}, "-${appId}"))`
-  )
+  return patchSetStyleAttribute(withSingleQuotedSelectors)
 }
 
 /**
