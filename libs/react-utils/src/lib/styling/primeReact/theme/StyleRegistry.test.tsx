@@ -33,7 +33,7 @@ jest.mock('./primeStyleRegistry', () => ({
   setupPrimeStyleIdTagging: jest.fn(() => cleanupTagSpy),
 }))
 
-jest.mock('@onecx/react-utils/utils', () => ({
+jest.mock('../../../utils/withAppGlobals', () => ({
   useAppGlobals: () => ({
     PRODUCT_NAME: 'demo-app',
   }),

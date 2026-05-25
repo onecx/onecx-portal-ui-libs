@@ -3,7 +3,7 @@ import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
 import { setupPrimeStyleDeduplication, setupPrimeStyleIdTagging } from './primeStyleRegistry'
-import { useAppGlobals } from '@onecx/react-utils/utils'
+import { useAppGlobals } from '../../../utils/withAppGlobals'
 
 type Props = Readonly<{
   children?: ReactNode
