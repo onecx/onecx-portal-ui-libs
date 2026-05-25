@@ -190,7 +190,7 @@ export function getSharedEntries(dependencies: Record<string, string>, moduleFed
   const allDependencies = Object.keys(dependencies).flatMap((dependency) => {
     return generatePackages(dependencies, dependency, moduleFederationEnhanced);
   });
-  const sharedEntries: Record<string, SharedLibraryConfig> = allDependencies.reduce((acc, packageEntry, currentIndex , array ) => {
+  const sharedEntries: Record<string, SharedLibraryConfig> = allDependencies.reduce((acc, packageEntry) => {
     const sharedLibConfig: SharedLibraryConfig = {}
     if (moduleFederationEnhanced) {
       sharedLibConfig['shareScope'] = 'angular_21'
