@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core'
-import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateParser } from '@ngx-translate/core'
+import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateFakeLoader, TranslateParser } from '@ngx-translate/core'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { EMPTY, Observable, from, of, throwError } from 'rxjs'
+import { EMPTY, Observable, from, of } from 'rxjs'
 import { catchError, concatMap, map, shareReplay, take, throwIfEmpty } from 'rxjs/operators'
 
 /** Represents one language table loaded from ngx-translate. */
@@ -11,32 +11,9 @@ type TranslationTable = Record<string, unknown>
 /** Matches the value shapes accepted by `TranslateParser.interpolate`. */
 type InterpolatableValue = Parameters<TranslateParser['interpolate']>[0]
 
-/** Minimal parser surface this handler relies on from ngx-translate. */
-type TranslateParserView = Pick<TranslateParser, 'getValue' | 'interpolate'>
-
-/** Minimal translate service surface this handler relies on from ngx-translate. */
-interface TranslateServiceView {
-  store?: {
-    translations?: Record<string, TranslationTable | undefined>
-  }
-  currentLoader?: {
-    getTranslation: (lang: string) => Observable<TranslationTable>
-  }
-  parser: TranslateParserView
-}
-
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {
   private readonly userService = inject(UserService)
-
-  /**
-   * Centralizes the local compatibility view of `TranslateService` in one place.
-   *
-   * This keeps all structural assumptions and casts away from the fallback logic itself.
-   */
-  private getTranslateServiceView(params: MissingTranslationHandlerParams): TranslateServiceView {
-    return params.translateService
-  }
 
   handle(params: MissingTranslationHandlerParams): Observable<string> {
     const locales$ = this.userService.profile$.pipe(
@@ -47,56 +24,42 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
+    console.warn('[MultiLanguageMissingTranslationHandler] No translation found for key: ', params.key, 'in language: ', params.translateService.currentLang, '. Trying to resolve with fallback languages...')
     return locales$.pipe(
       concatMap((locales) => this.loadTranslations(locales, params)),
       catchError((err: Error) => {
-        console.log('No translation found for key: %s. %O', params.key, err)
+        console.warn('[MultiLanguageMissingTranslationHandler] No translation found for key: %s. %O', params.key, err)
         return of(params.key)
       })
     )
   }
 
   /**
-   * Tries to resolve the requested key for one language from cache first and then from the loader.
+   * Tries to resolve the requested key for one language using the ngx-translate loader.
    *
    * @param lang The language code that should be checked.
    * @param params The ngx-translate missing-translation context containing the key and service.
    * @returns An observable that emits the resolved translation string for the language.
    */
   findTranslationForLang(lang: string, params: MissingTranslationHandlerParams): Observable<string> {
-    const translateService = this.getTranslateServiceView(params)
-    const storedTranslations = this.getStoredTranslations(params, lang)
-    const translatedFromStore = storedTranslations && this.tryGetTranslation(storedTranslations, params)
-
-    if (translatedFromStore !== undefined) {
-      return of(translatedFromStore)
-    }
-
     // `currentLoader.getTranslation(lang)` is the low-level ngx-translate API that fetches
     // one language table without changing the active language or resetting cached tables.
     // Intentionally used directly instead of `reloadLang()`, because `reloadLang()` resets
     // the whole language table and emits lang-change events.
-    const loader = translateService.currentLoader
-    if (!loader) {
-      return throwError(() => new Error('No translation loader configured'))
+    const loader = params.translateService.currentLoader
+
+    // if the loader was not configured, we can't do anything about missing translations, so just log a warning and return the key as fallback
+    // loader cannot be null or undefined because ngx-translate falls back to `TranslateFakeLoader` when no loader is configured
+    if (loader instanceof TranslateFakeLoader) {
+      console.warn('[MultiLanguageMissingTranslationHandler] No translation loader configured')
     }
 
     return loader.getTranslation(lang).pipe(
-      map((translations: TranslationTable) => this.requireTranslation(translations, params, lang))
+      concatMap((translations: TranslationTable) => {
+        const translatedValue = this.requireTranslation(translations, params, lang)
+        return translatedValue === undefined ? EMPTY : of(translatedValue)
+      })
     )
-  }
-
-  /**
-   * Reads the cached translation table for a language from the ngx-translate store.
-   *
-   * ngx-translate keeps loaded language tables in `TranslateService.store.translations`.
-   *
-   * @param params The ngx-translate missing-translation context containing the active service.
-   * @param lang The language code whose cached translation table should be read.
-   * @returns The cached translation table for the language, or `undefined` when nothing is cached.
-   */
-  private getStoredTranslations(params: MissingTranslationHandlerParams, lang: string): TranslationTable | undefined {
-    return this.getTranslateServiceView(params).store?.translations?.[lang]
   }
 
   /**
@@ -111,57 +74,20 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
     translations: TranslationTable,
     params: MissingTranslationHandlerParams,
     lang: string
-  ): string {
-    const translatedValue = this.tryGetTranslation(translations, params)
+  ): string | undefined {
+    const rawValue = params.translateService.parser.getValue(translations, params.key)
+    const interpolateValue = this.toInterpolatableValue(rawValue)
+    const translatedValue =
+      interpolateValue === undefined
+        ? undefined
+        : params.translateService.parser.interpolate(interpolateValue, params.interpolateParams)
+
     if (translatedValue !== undefined) {
       return translatedValue
     }
 
-    throw new TypeError(`No translation found for key: ${params.key} in language: ${lang}`)
-  }
-
-  /**
-   * Resolves and interpolates a translation value from a concrete translation table.
-   *
-   * This mirrors the two parser steps ngx-translate uses internally:
-   * 1. `parser.getValue(...)` resolves a raw value by key from the language table.
-   * 2. `parser.interpolate(...)` applies `{{param}}` replacements to a string or function result.
-   *
-   * @param translations The translation table that should be queried.
-   * @param params The ngx-translate missing-translation context containing the key and interpolation params.
-   * @returns The resolved translation string, or `undefined` when the value cannot be used.
-   */
-  private tryGetTranslation(translations: TranslationTable, params: MissingTranslationHandlerParams): string | undefined {
-    const translateService = this.getTranslateServiceView(params)
-    const rawValue = this.getTranslationValue(translations, params)
-    const interpolateValue = this.toInterpolatableValue(rawValue)
-
-    return interpolateValue === undefined ? undefined : translateService.parser.interpolate(interpolateValue, params.interpolateParams)
-  }
-
-  /**
-   * Resolves a key from the translation table.
-   *
-    * The ngx-translate parser from `TranslateService` is used so fallback lookup
-    * follows the same parser configuration as the active translation service.
-    * `parser.getValue(target, key)` is ngx-translate's composed-key resolver:
-    * it walks nested structures like `a.b.c` and also supports flat dotted keys.
-    * Some tables
-   * also store flat dotted keys such as `a.b`, so the direct lookup stays first.
-    *
-    * @param translations The translation table to read from.
-    * @param params The ngx-translate missing-translation context containing the key and parser.
-    * @returns The raw translation value before interpolation.
-   */
-  private getTranslationValue(translations: TranslationTable, params: MissingTranslationHandlerParams): unknown {
-    const translateService = this.getTranslateServiceView(params)
-    const key = params.key
-
-    if (Object.hasOwn(translations, key)) {
-      return translations[key]
-    }
-
-    return translateService.parser.getValue(translations, key)
+    console.warn(`[MultiLanguageMissingTranslationHandler] No translation found for key: ${params.key} in language: ${lang}`)
+    return undefined
   }
 
   /**

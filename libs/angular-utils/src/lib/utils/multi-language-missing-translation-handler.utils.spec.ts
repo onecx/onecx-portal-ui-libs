@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing'
 import { MultiLanguageMissingTranslationHandler } from './multi-language-missing-translation-handler.utils'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { MissingTranslationHandlerParams } from '@ngx-translate/core'
-import { of } from 'rxjs'
+import { MissingTranslationHandlerParams, TranslateFakeLoader } from '@ngx-translate/core'
+import { of, throwError } from 'rxjs'
 import { UserProfile } from '@onecx/integration-interface'
 
 jest.mock('@onecx/accelerator', () => {
@@ -23,6 +23,10 @@ describe('MultiLanguageMissingTranslationHandler', () => {
   const parserMock = {
     interpolate: jest.fn((value) => value),
     getValue: jest.fn((obj: Record<string, unknown>, key: string) => {
+      if (key in obj) {
+        return obj[key]
+      }
+
       return key.split('.').reduce<unknown>((current, part) => {
         if (typeof current !== 'object' || current === null) {
           return undefined
@@ -47,9 +51,6 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     const getTranslation = jest.fn((lang: string) => of(translationsByLang[lang] ?? {}))
 
     const translateService = {
-      store: {
-        translations: translationsByLang,
-      },
       currentLoader: {
         getTranslation,
       },
@@ -124,7 +125,50 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
   })
 
+  it('should warn when ngx-translate uses TranslateFakeLoader', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    userServiceMock.profile$.publish({
+      settings: {
+        locales: ['en'],
+      },
+    } as UserProfile)
+
+    const translateService = {
+      currentLoader: new TranslateFakeLoader(),
+      parser: parserMock,
+      setTranslation: jest.fn(),
+    } as unknown as MissingTranslationHandlerParams['translateService']
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'missing.key',
+      translateService,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('missing.key')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'missing.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation loader configured')
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: missing.key in language: en')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: %s. %O',
+        'missing.key',
+        expect.any(Error)
+      )
+      warnSpy.mockRestore()
+      done()
+    })
+  })
+
   it('should try to load for every available language', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
     userServiceMock.profile$.publish({
       settings: {
         locales: ['fr', 'en', 'pl'],
@@ -144,12 +188,24 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('Test Polish')
-      expect(getTranslation).toHaveBeenCalledTimes(2)
+      expect(getTranslation).toHaveBeenCalledTimes(3)
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'test.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: test.key in language: fr')
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: test.key in language: en')
+      warnSpy.mockRestore()
       done()
     })
   })
 
   it('should return the key if no translation is found', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
     userServiceMock.profile$.publish({
       settings: {
         locales: ['fr', 'en', 'pl'],
@@ -170,6 +226,22 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('missing.key')
       expect(getTranslation).toHaveBeenCalledTimes(3)
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'missing.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: missing.key in language: fr')
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: missing.key in language: en')
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: missing.key in language: pl')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: %s. %O',
+        'missing.key',
+        expect.any(Error)
+      )
+      warnSpy.mockRestore()
       done()
     })
   })
@@ -236,16 +308,22 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
   })
 
-  it('should return key when loader is missing', (done) => {
+  it('should return key when loader warns and returns ngx-translate fallback payload', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
     userServiceMock.profile$.publish({
       settings: {
         locales: ['en'],
       },
     } as UserProfile)
 
+    const getTranslation = jest.fn(() => {
+      console.warn('[MultiLanguageMissingTranslationHandler] Using ngx-translate fallback loader response')
+      return of({})
+    })
+
     const translateService = {
-      store: { translations: { en: {} } },
-      currentLoader: undefined,
+      currentLoader: { getTranslation },
       parser: parserMock,
       setTranslation: jest.fn(),
     } as unknown as MissingTranslationHandlerParams['translateService']
@@ -257,11 +335,29 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('missing.key')
+      expect(getTranslation).toHaveBeenCalledWith('en')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'missing.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] Using ngx-translate fallback loader response')
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: missing.key in language: en')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: %s. %O',
+        'missing.key',
+        expect.any(Error)
+      )
+      warnSpy.mockRestore()
       done()
     })
   })
 
   it('should try next language when loader translation is missing for a language', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
     userServiceMock.profile$.publish({
       settings: {
         locales: ['en', 'fr'],
@@ -284,11 +380,61 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('OK')
       expect(getTranslation).toHaveBeenCalledTimes(2)
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'test.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: test.key in language: en')
+      warnSpy.mockRestore()
       done()
     })
   })
 
-  it('should handle missing stored translations (undefined) and still resolve via loader', (done) => {
+  it('should log generic final fallback error when loader throws', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const loaderError = new Error('Loader failed')
+
+    userServiceMock.profile$.publish({
+      settings: {
+        locales: ['en'],
+      },
+    } as UserProfile)
+
+    const translateService = {
+      currentLoader: { getTranslation: jest.fn(() => throwError(() => loaderError)) },
+      parser: parserMock,
+      setTranslation: jest.fn(),
+    } as unknown as MissingTranslationHandlerParams['translateService']
+
+    const params: MissingTranslationHandlerParams = {
+      key: 'broken.key',
+      translateService,
+    }
+
+    handler.handle(params).subscribe((result) => {
+      expect(result).toBe('broken.key')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'broken.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: %s. %O',
+        'broken.key',
+        expect.any(Error)
+      )
+      expect(loaderError.stack).toBeDefined()
+      warnSpy.mockRestore()
+      done()
+    })
+  })
+
+  it('should ignore stored translations and always resolve via loader', (done) => {
     userServiceMock.profile$.publish({
       settings: {
         locales: ['en'],
@@ -297,62 +443,11 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
     const getTranslation = jest.fn(() => of({ 'test.key': 'From loader' }))
     const translateService = {
-      store: {},
+      store: { translations: { en: { 'test.key': 'From store' } } },
       currentLoader: { getTranslation },
       parser: parserMock,
       setTranslation: jest.fn(),
     } as unknown as MissingTranslationHandlerParams['translateService']
-
-    const params: MissingTranslationHandlerParams = {
-      key: 'test.key',
-      translateService,
-    }
-
-    handler.handle(params).subscribe((result) => {
-      expect(result).toBe('From loader')
-      expect(getTranslation).toHaveBeenCalledTimes(1)
-      done()
-    })
-  })
-
-  it('should handle missing store in translateService and still resolve via loader', (done) => {
-    userServiceMock.profile$.publish({
-      settings: {
-        locales: ['en'],
-      },
-    } as UserProfile)
-
-    const getTranslation = jest.fn(() => of({ 'test.key': 'From loader' }))
-    const translateService = {
-      currentLoader: { getTranslation },
-      parser: parserMock,
-      setTranslation: jest.fn(),
-    } as unknown as MissingTranslationHandlerParams['translateService']
-
-    const params: MissingTranslationHandlerParams = {
-      key: 'test.key',
-      translateService,
-    }
-
-    handler.handle(params).subscribe((result) => {
-      expect(result).toBe('From loader')
-      expect(getTranslation).toHaveBeenCalledTimes(1)
-      done()
-    })
-  })
-
-  it('should use loader when cached translations exist but requested key is missing', (done) => {
-    userServiceMock.profile$.publish({
-      settings: {
-        locales: ['en'],
-      },
-    } as UserProfile)
-
-    const { translateService, getTranslation } = createTranslateServiceMock({
-      en: { other: 'Cached value' },
-    })
-
-    getTranslation.mockReturnValueOnce(of({ 'test.key': 'From loader' }))
 
     const params: MissingTranslationHandlerParams = {
       key: 'test.key',
@@ -367,6 +462,8 @@ describe('MultiLanguageMissingTranslationHandler', () => {
   })
 
   it('should treat object-valued translations as missing and continue lookup', (done) => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
     userServiceMock.profile$.publish({
       settings: {
         locales: ['en'],
@@ -382,6 +479,15 @@ describe('MultiLanguageMissingTranslationHandler', () => {
 
     handler.handle(params).subscribe((result) => {
       expect(result).toBe('test.key')
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[MultiLanguageMissingTranslationHandler] No translation found for key: ',
+        'test.key',
+        'in language: ',
+        undefined,
+        '. Trying to resolve with fallback languages...'
+      )
+      expect(warnSpy).toHaveBeenCalledWith('[MultiLanguageMissingTranslationHandler] No translation found for key: test.key in language: en')
+      warnSpy.mockRestore()
       done()
     })
   })
