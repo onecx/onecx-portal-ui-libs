@@ -5,9 +5,12 @@ const PRIME_REACT_STYLE_ATTR = 'data-primereact-style-id'
 const MISSING_APP_ID_WARNING =
   '[primereact-style-reuse] Missing appId. PrimeReact style patching is disabled to avoid cross-app style collisions.'
 
-const DOUBLE_QUOTED_LOOKUP_PATTERN = /querySelector\("style\[data-primereact-style-id=.*?\.concat\(([^,]+),\s*.*?\)\)/g
-const SINGLE_QUOTED_LOOKUP_PATTERN = /querySelector\('style\[data-primereact-style-id=.*?\.concat\(([^,]+),\s*.*?\)\)/g
-const SET_STYLE_ID_PATTERN = /setAttribute\('data-primereact-style-id',\s*([^)]+)\)/g
+// Use character classes instead of dot-star patterns to avoid costly backtracking on malformed inputs.
+const DOUBLE_QUOTED_LOOKUP_PATTERN =
+  /querySelector\("style\[data-primereact-style-id=[^)]*\.concat\(([^,\r\n]+),[^)]*\)\)/g
+const SINGLE_QUOTED_LOOKUP_PATTERN =
+  /querySelector\('style\[data-primereact-style-id=[^)]*\.concat\(([^,\r\n]+),[^)]*\)\)/g
+const SET_STYLE_ID_PATTERN = /setAttribute\('data-primereact-style-id',\s*([^)\r\n]+)\)/g
 
 type WarnFn = (message: string) => void
 
