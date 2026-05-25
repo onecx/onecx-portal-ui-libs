@@ -2,61 +2,33 @@ import { type ReactNode, useState, useEffect } from 'react'
 import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
-import { useAppGlobals } from '../../../utils/withAppGlobals'
+import { setupPrimeStyleDeduplication, setupPrimeStyleIdTagging } from './primeStyleRegistry'
+import { useAppGlobals } from '@onecx/react-utils/utils'
 
 type Props = Readonly<{
   children?: ReactNode
 }>
 
+/**
+ * Subscribes to theme updates and renders children after runtime theme initialization.
+ *
+ * @param children - Component subtree rendered once theme variables are applied.
+ * @returns PrimeReact provider tree after theme initialization, otherwise null.
+ */
 export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
   const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
-  const appPrimeStyleSuffix = themeStyleId
 
   useEffect(() => {
-    const tagPrimeStyle = (styleElement: HTMLStyleElement) => {
-      const styleId = styleElement.dataset.primereactStyleId
-      if (!styleId) return
-      if (styleId.includes('|')) return
-
-      styleElement.dataset.primereactStyleId = `${styleId}-${appPrimeStyleSuffix}`
-    }
-
-    const processAddedNode = (node: Node) => {
-      if (node instanceof HTMLStyleElement) {
-        tagPrimeStyle(node)
-        return
-      }
-      if (!(node instanceof Element)) return
-
-      node
-        .querySelectorAll('style[data-primereact-style-id]')
-        .forEach((element) => tagPrimeStyle(element as HTMLStyleElement))
-    }
-
-    const observeMutations: MutationCallback = (records) => {
-      for (const record of records) {
-        if (record.type !== 'childList') continue
-        record.addedNodes.forEach(processAddedNode)
-      }
-    }
-
-    document.head
-      .querySelectorAll('style[data-primereact-style-id]')
-      .forEach((element) => tagPrimeStyle(element as HTMLStyleElement))
-
-    const observer = new MutationObserver(observeMutations)
-
-    observer.observe(document.head, {
-      childList: true,
-      subtree: true,
-    })
+    const cleanupDeduplication = setupPrimeStyleDeduplication()
+    const cleanupTagging = setupPrimeStyleIdTagging(themeStyleId)
 
     return () => {
-      observer.disconnect()
+      cleanupTagging()
+      cleanupDeduplication()
     }
-  }, [appPrimeStyleSuffix])
+  }, [themeStyleId])
 
   useEffect(() => {
     const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {
@@ -70,7 +42,7 @@ export default function StyleRegistry({ children }: Props) {
   }, [themeStyleId])
 
   if (!isThemed) {
-    return null // Can be spinner or skeleton here
+    return null
   }
 
   return (

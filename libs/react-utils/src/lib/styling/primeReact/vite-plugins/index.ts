@@ -1,1 +1,1 @@
-export * from './scopeAppCssChunk'
+export * from './primeReactStyleReusePlugin'
