@@ -144,3 +144,4 @@ libs/angular-accelerator/tmp/
 .copy-build-to
 
 reports
+.claude/worktrees
