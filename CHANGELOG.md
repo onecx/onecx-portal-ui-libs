@@ -1,3 +1,9 @@
+## [8.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.0...v8.3.1) (2026-05-26)
+
+### Bug Fixes
+
+* search header viewMode efffect and storybook ([#1453](https://github.com/onecx/onecx-portal-ui-libs/issues/1453)) ([3eda3ac](https://github.com/onecx/onecx-portal-ui-libs/commit/3eda3ac05a103f79a35207672d75b1418b244b89))
+
 ## [8.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.2...v8.3.0) (2026-05-22)
 
 ### Features
