@@ -1,60 +1,22 @@
-/**
- * Per-product singleton Proxy over document.head for PrimeReact style injection —
- * full runtime equivalent of Angular's CustomUseStyle.use() scoping logic:
- *
- *   Angular:  options.name = (options.name ?? '') + '-' + scopeId   (before inject)
- *   React:    1. Proxy intercepts querySelector so dedup looks for the suffixed ID.
- *             2. WeakMap registers each new <style> element with its owner productId
- *                when it passes through Proxy.appendChild.
- *             3. A one-time HTMLStyleElement.prototype.setAttribute patch intercepts
- *                the `data-primereact-style-id` write that PrimeReact makes AFTER
- *                appendChild (on the raw element reference, not via the Proxy).
- *
- * Why we need step 3:
- *   PrimeReact's useStyle hook does:
- *     styleContainer.appendChild(el);           ← Proxy sees this, registers el
- *     el.setAttribute('data-primereact-style-id', name); ← bypasses Proxy entirely
- *   Without intercepting setAttribute the ID is always written unsuffixed.
- *
- * Why a WeakMap instead of a flag on the element:
- *   The WeakMap holds a strong key/weak value relationship per element instance,
- *   letting GC reclaim unmounted elements automatically with no manual cleanup.
- *
- * Why the prototype patch is safe:
- *   - Installed exactly once (guarded by a marker property on the patched fn).
- *   - Only transforms `data-primereact-style-id` values on elements that are
- *     registered in the WeakMap — all other setAttribute calls are untouched.
- */
-
 // One Proxy per product ID — wraps document.head with per-product ID translation.
 const proxies = new Map<string, HTMLElement>()
 
-// Tracks which productId "owns" a freshly created PrimeReact style element.
 // Populated in Proxy.appendChild; consumed in the patched setAttribute.
 const elementProductId = new WeakMap<HTMLStyleElement, string>()
 
 /**
- * Extracts the bare PrimeReact component name from a style ID that may
- * already carry an app suffix baked in by a build-time plugin or a previous
- * runtime rename.
+ * Extracts the bare PrimeReact component name from a style ID that may already carry
+ * an app suffix baked in by a build-time plugin or a previous runtime rename.
  *
- * Examples:
- *   "button"                                       → "button"
- *   "button-AppA|AppA"                             → "button"
- *   "undefined-button"                             → "button"
- *   "undefined-button-AppA|AppA"                   → "button"
- *   "datatable-onecx-module|onecx-module"          → "datatable"
- *
- * The "|" character is used as an anchor because:
- *   1. PrimeReact component style names never contain "|".
- *   2. Our productId convention is "ProductName|ProductName".
+ * @example
+ * extractComponentName('button-AppA|AppA') // → 'button'
+ * extractComponentName('undefined-button') // → 'button'
  */
-// Exported for unit testing. Not part of the public integration API.
 export function extractComponentName(id: string): string {
   const cleaned = id.startsWith('undefined-') ? id.slice('undefined-'.length) : id
 
   const pipeIdx = cleaned.indexOf('|')
-  if (pipeIdx === -1) return cleaned // no MF-style suffix present
+  if (pipeIdx === -1) return cleaned
 
   // The part after "|" repeats verbatim before "|" preceded by "-".
   // e.g. "button-AppA|AppA" → rightHalf="AppA", suffixPattern="-AppA|AppA"
@@ -68,11 +30,6 @@ export function extractComponentName(id: string): string {
 
 const PRIME_ATTR_RE = /\[data-primereact-style-id="([^"]+)"\]/g
 
-/**
- * Rewrites a CSS attribute selector so it targets this app's scoped ID.
- * Called for every querySelector/querySelectorAll on the Proxy, ensuring
- * PrimeReact's dedup check looks for the correctly suffixed element.
- */
 function transformSelector(selector: string, productId: string): string {
   return selector.replace(
     PRIME_ATTR_RE,
@@ -80,13 +37,6 @@ function transformSelector(selector: string, productId: string): string {
   )
 }
 
-/**
- * Patches HTMLStyleElement.prototype.setAttribute once so that when PrimeReact
- * writes `data-primereact-style-id` on a raw element reference (after appendChild,
- * bypassing the Proxy), we intercept and apply the correct per-app suffix.
- *
- * The patch is a no-op for all elements not registered in `elementProductId`.
- */
 function installSetAttributePatch(): void {
   if ((HTMLStyleElement.prototype.setAttribute as { __primeScoped?: true }).__primeScoped) return
 
@@ -119,9 +69,8 @@ function createScopedProxy(productId: string): HTMLElement {
       }
       if (prop === 'appendChild') {
         return <T extends Node>(child: T): T => {
-          // Register the element before it lands in the DOM so the patched
-          // setAttribute (called synchronously right after appendChild by
-          // PrimeReact) can look up its owner productId.
+          // Register the element before it lands in the DOM so the patched setAttribute
+          // (called synchronously right after appendChild by PrimeReact) can look up its owner productId.
           if (child instanceof HTMLStyleElement) {
             elementProductId.set(child, productId)
           }
