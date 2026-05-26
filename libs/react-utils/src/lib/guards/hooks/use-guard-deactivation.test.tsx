@@ -1,8 +1,7 @@
-import { createRoot } from 'react-dom/client'
+import { render, waitFor } from '@testing-library/react'
 import type { WrappedGuards } from '../utils/wrap-guards.utils'
 import * as GuardsHooks from './use-guard-deactivation'
 import { useWrappedGuards } from './use-wrapped-guards'
-import { act } from 'react'
 
 jest.mock('react-router', () => ({
   useLocation: jest.fn(() => ({ key: 'loc', pathname: '/', search: '', hash: '', state: null })),
@@ -13,8 +12,6 @@ jest.mock('react-router', () => ({
 jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
-
-const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
 
 function makeWrappedGuards(canDeactivate: jest.Mock): WrappedGuards {
   return {
@@ -38,28 +35,16 @@ function TestComponent({
 }
 
 describe('useGuardDeactivation', () => {
-  let container: HTMLDivElement
-  let root: ReturnType<typeof createRoot>
-
-  beforeEach(() => {
-    container = document.createElement('div')
-    root = createRoot(container)
-  })
-
-  afterEach(() => {
-    root.unmount()
-  })
-
   it('runs canDeactivate for next location', async () => {
     const canDeactivate = jest.fn(async () => true)
     ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
 
-    await act(async () => {
-      root.render(<TestComponent />)
-      await flushPromises()
+    render(<TestComponent />)
+
+    await waitFor(() => {
+      expect(canDeactivate).toHaveBeenCalled()
     })
 
-    expect(canDeactivate).toHaveBeenCalled()
     jest.restoreAllMocks()
   })
 
@@ -68,23 +53,21 @@ describe('useGuardDeactivation', () => {
     ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
     const onGuardCheck = jest.fn()
 
-    await act(async () => {
-      root.render(<TestComponent onGuardCheck={onGuardCheck} />)
-      await flushPromises()
-    })
+    render(<TestComponent onGuardCheck={onGuardCheck} />)
 
-    expect(onGuardCheck).toHaveBeenCalledWith(false)
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledWith(false)
+    })
   })
 
   it('does not run canDeactivate when disabled', async () => {
     const canDeactivate = jest.fn(async () => true)
     ;(useWrappedGuards as jest.Mock).mockReturnValue(makeWrappedGuards(canDeactivate))
 
-    await act(async () => {
-      root.render(<TestComponent enabled={false} />)
-      await flushPromises()
-    })
+    render(<TestComponent enabled={false} />)
 
-    expect(canDeactivate).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(canDeactivate).not.toHaveBeenCalled()
+    })
   })
 })

@@ -19,7 +19,7 @@ export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderPro
   const [isScoped, setIsScoped] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
 
-  const remoteId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
+  const remoteId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
 
   useEffect(() => {
     const detach = attachPrimeReactScoper({
