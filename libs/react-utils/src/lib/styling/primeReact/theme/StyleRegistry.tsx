@@ -1,7 +1,8 @@
-import { type ReactNode, useState, useEffect } from 'react'
+import { type ReactNode, useState, useEffect, useMemo } from 'react'
 import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
+import { getOrCreateScopedStyleContainer } from './scopedStyleContainer'
 import { useAppGlobals } from '../../../utils/withAppGlobals'
 
 type Props = Readonly<{
@@ -9,15 +10,21 @@ type Props = Readonly<{
 }>
 
 /**
- * Registers theme variables and provides PrimeReact configuration for the subtree.
+ * Subscribes to theme updates and renders children after runtime theme initialization.
  *
- * @param children - React subtree rendered after theme initialization.
- * @returns PrimeReact provider wrapping themed children.
+ * @param children - Component subtree rendered once theme variables are applied.
+ * @returns PrimeReact provider tree after theme initialization, otherwise null.
  */
+
 export default function StyleRegistry({ children }: Props) {
   const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
-  const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
+  const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
+
+  // Per-app Proxy container: intercepts PrimeReact's querySelector/appendChild
+  // at runtime to scope style IDs to this product. Works correctly even when
+  // PrimeReact is a shared MF singleton loaded by a different app.
+  const styleContainer = useMemo(() => getOrCreateScopedStyleContainer(themeStyleId), [themeStyleId])
 
   useEffect(() => {
     const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {
@@ -30,18 +37,9 @@ export default function StyleRegistry({ children }: Props) {
     }
   }, [themeStyleId])
 
-  if (!isThemed) {
-    return null
-  }
+  if (!isThemed) return null
 
   return (
-    <PrimeReactProvider
-      value={{
-        unstyled: false,
-        appendTo: 'self',
-      }}
-    >
-      {children}
-    </PrimeReactProvider>
+    <PrimeReactProvider value={{ unstyled: false, appendTo: 'self', styleContainer }}>{children}</PrimeReactProvider>
   )
 }
