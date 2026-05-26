@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-auth",
-  "version": "9.0.0-rc.3",
+  "version": "9.0.0-rc.4",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -10,8 +10,8 @@
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
     "rxjs": "~7.8.0",
-    "@onecx/angular-integration-interface": "^9.0.0-rc.3",
-    "@onecx/accelerator": "^9.0.0-rc.3"
+    "@onecx/angular-integration-interface": "^9.0.0-rc.4",
+    "@onecx/accelerator": "^9.0.0-rc.4"
   },
   "publishConfig": {
     "access": "public"
