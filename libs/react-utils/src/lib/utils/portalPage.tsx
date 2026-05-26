@@ -59,21 +59,23 @@ export const PortalPage = ({
   useEffect(() => {
     let isMounted = true
 
-    const checkPermission = async () => {
+    const resolveAccess = async (): Promise<boolean> => {
       if (!permission) {
-        setHasAccess(true)
-        return
+        return true
       }
+
       try {
-        const result = await hasPermission(permission)
-        if (isMounted) {
-          setHasAccess(result)
-        }
+        return await hasPermission(permission)
       } catch (error) {
         console.warn('Failed to resolve permission for PortalPage', error)
-        if (isMounted) {
-          setHasAccess(false)
-        }
+        return false
+      }
+    }
+
+    const checkPermission = async () => {
+      const nextHasAccess = await resolveAccess()
+      if (isMounted) {
+        setHasAccess(nextHasAccess)
       }
     }
 
@@ -91,7 +93,7 @@ export const PortalPage = ({
       )
     }
 
-    const path = typeof document !== 'undefined' ? document.location.pathname : ''
+    const path = typeof document === 'undefined' ? '' : document.location.pathname
 
     const permissionValue = Array.isArray(permission) ? permission.join(',') : (permission ?? '')
 
