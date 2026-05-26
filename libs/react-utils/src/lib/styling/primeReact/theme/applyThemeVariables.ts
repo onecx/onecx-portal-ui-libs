@@ -4,12 +4,6 @@
 const THEME_BLOCK_START = '/* app-theme-runtime:start */'
 const THEME_BLOCK_END = '/* app-theme-runtime:end */'
 
-/**
- * Normalizes a theme value into a string accepted by CSS custom properties.
- *
- * @param value - Raw theme value.
- * @returns Trimmed string representation, or undefined for unsupported values.
- */
 function normalizeThemeValue(value: unknown): string | undefined {
   if (typeof value === 'string') return value.trim()
 
@@ -20,12 +14,6 @@ function normalizeThemeValue(value: unknown): string | undefined {
   return undefined
 }
 
-/**
- * Converts camelCase or snake_case text into kebab-case.
- *
- * @param value - Source key to normalize.
- * @returns Kebab-cased key.
- */
 function toKebabCase(value: string): string {
   return value
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
@@ -33,12 +21,6 @@ function toKebabCase(value: string): string {
     .toLowerCase()
 }
 
-/**
- * Flattens nested theme groups into a single dictionary of normalized values.
- *
- * @param properties - Theme properties grouped by category.
- * @returns Flat key-value map of theme variables.
- */
 function flattenThemeProperties(properties: Record<string, Record<string, unknown>>): Record<string, string> {
   const flattened: Record<string, string> = {}
   for (const category of Object.keys(properties)) {
@@ -70,18 +52,15 @@ function mapThemeToCSSVariables(themeProperties: Record<string, Record<string, u
   return cssVariables
 }
 
-/**
- * Applies CSS variables directly to scoped host elements.
- *
- * @param variables - CSS variables to apply.
- * @param candidateStyleIds - Candidate style ids used to locate scope roots.
- * @returns Nothing.
- */
-function applyVariablesToScopeRoots(variables: Record<string, string>, candidateStyleIds: string[]): void {
+function applyVariablesToScopeRoots(
+  variables: Record<string, string>,
+  candidateStyleIds: string[],
+  queryRoot: ParentNode
+): void {
   const roots: HTMLElement[] = []
 
   for (const candidateId of candidateStyleIds) {
-    document
+    queryRoot
       .querySelectorAll(`[data-style-id="${candidateId}"], [data-intermediate-style-id="${candidateId}"]`)
       .forEach((el) => roots.push(el as HTMLElement))
   }
@@ -93,51 +72,27 @@ function applyVariablesToScopeRoots(variables: Record<string, string>, candidate
   })
 }
 
-/**
- * Creates root-level aliases for app-prefixed CSS variables.
- *
- * @param cssVariables - Variables prefixed with --app- keys.
- * @returns Variables with both app-prefixed and root aliases.
- */
 function toRootVariables(cssVariables: Record<string, string>): Record<string, string> {
   const rootVariables: Record<string, string> = { ...cssVariables }
 
   Object.entries(cssVariables).forEach(([name, value]) => {
-    if (!name.startsWith('--app-')) {
-      return
-    }
-
     const withoutAppPrefix = `--${name.slice('--app-'.length)}`
-    if (!rootVariables[withoutAppPrefix]) {
-      rootVariables[withoutAppPrefix] = value
-    }
+    rootVariables[withoutAppPrefix] = value
   })
 
   return rootVariables
 }
 
-/**
- * Computes style id candidates for scoped style lookup.
- *
- * @param styleId - Requested style id.
- * @returns Candidate ids including full and base variants.
- */
 function getCandidateStyleIds(styleId: string): string[] {
   const baseId = styleId.includes('|') ? styleId.split('|')[0] : styleId
   return styleId === baseId ? [styleId] : [styleId, baseId]
 }
 
-/**
- * Finds scoped style elements matching candidate app style ids.
- *
- * @param candidateStyleIds - Candidate style ids for querying style tags.
- * @returns Matching scoped style elements.
- */
-function queryScopedStyleElements(candidateStyleIds: string[]): HTMLElement[] {
+function queryScopedStyleElements(candidateStyleIds: string[], queryRoot: ParentNode): HTMLElement[] {
   const scopedElements: HTMLElement[] = []
 
   for (const candidateId of candidateStyleIds) {
-    document
+    queryRoot
       .querySelectorAll(`style[data-app-styles="${candidateId}"], style[data-app-primereact-style="${candidateId}"]`)
       .forEach((el) => scopedElements.push(el as HTMLElement))
   }
@@ -145,12 +100,6 @@ function queryScopedStyleElements(candidateStyleIds: string[]): HTMLElement[] {
   return scopedElements
 }
 
-/**
- * Finds insertion point just after the first top-level scope body opening brace.
- *
- * @param content - Existing scoped CSS content.
- * @returns Zero-based insertion index, or -1 when no scope body is found.
- */
 function findScopeBodyStart(content: string): number {
   let parenDepth = 0
 
@@ -169,12 +118,6 @@ function findScopeBodyStart(content: string): number {
   return -1
 }
 
-/**
- * Removes the previously injected runtime layer block from CSS content.
- *
- * @param content - Existing scoped CSS content.
- * @returns CSS content without stale runtime layers.
- */
 function removeStaleGlobalLayers(content: string): string {
   const start = content.indexOf(THEME_BLOCK_START)
   const end = content.indexOf(THEME_BLOCK_END)
@@ -186,12 +129,6 @@ function removeStaleGlobalLayers(content: string): string {
   return (content.slice(0, start) + content.slice(end + THEME_BLOCK_END.length)).trimStart()
 }
 
-/**
- * Builds a deterministic runtime layer block from CSS variables.
- *
- * @param rootVariables - Variables to inject into the scope block.
- * @returns Runtime CSS layer block.
- */
 function buildLayersBlock(rootVariables: Record<string, string>): string {
   const appendedVariables = Object.entries(rootVariables)
     .map(([varName, varValue]) => `  ${varName}: ${varValue};`)
@@ -200,13 +137,6 @@ function buildLayersBlock(rootVariables: Record<string, string>): string {
   return `${THEME_BLOCK_START}\n@layer tokens {\n:scope {\n${appendedVariables}\n}\n}\n@layer base {}\n${THEME_BLOCK_END}`
 }
 
-/**
- * Injects runtime layers into scoped CSS content.
- *
- * @param content - Existing scoped CSS content.
- * @param rootVariables - Variables to inject.
- * @returns Updated scoped CSS content.
- */
 function insertLayersIntoScope(content: string, rootVariables: Record<string, string>): string {
   const layersBlock = buildLayersBlock(rootVariables)
   const cleaned = removeStaleGlobalLayers(content)
@@ -226,14 +156,7 @@ type ThemePayload = {
   properties?: Record<string, Record<string, unknown>>
 }
 
-/**
- * Applies runtime theme variables to matching scoped style tags and scope roots.
- *
- * @param theme - Theme payload containing nested properties.
- * @param styleId - Target style id used for scoped lookup.
- * @returns Nothing.
- */
-export default function applyThemeVariables(theme: ThemePayload, styleId: string) {
+export default function applyThemeVariables(theme: ThemePayload, styleId: string, queryRoot: ParentNode = document) {
   if (!theme?.properties) {
     return
   }
@@ -244,9 +167,9 @@ export default function applyThemeVariables(theme: ThemePayload, styleId: string
 
   // First-render safety: define vars directly on scope roots.
   // This avoids race conditions where style tags are created after theme event.
-  applyVariablesToScopeRoots(rootVariables, candidateStyleIds)
+  applyVariablesToScopeRoots(rootVariables, candidateStyleIds, queryRoot)
 
-  const scopedElements = queryScopedStyleElements(candidateStyleIds)
+  const scopedElements = queryScopedStyleElements(candidateStyleIds, queryRoot)
 
   if (!scopedElements.length) {
     console.warn(`Style element with data-app-styles="${styleId}" not found; theme vars were applied on scope root.`)
