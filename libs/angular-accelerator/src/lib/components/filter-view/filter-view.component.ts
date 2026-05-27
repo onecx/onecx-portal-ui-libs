@@ -305,7 +305,7 @@ export class FilterViewComponent {
       return
     }
 
-    const filtersInString = this.filters()?.map(filter => `${filter.columnId}: ${filter.value}`).join(', ') ?? ''
+    const filtersInString = this.filters().map(filter => `${filter.columnId}: ${filter.value}`).join(', ')
     firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount, filters: filtersInString })).then(
       (translatedText: string) => {
         this.liveAnnouncer.announce(translatedText)

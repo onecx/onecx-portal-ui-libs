@@ -244,6 +244,14 @@ describe('FilterViewComponent (class logic)', () => {
   
         expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
         expect(announceSpy).toHaveBeenCalledWith('no-results')
+
+        component.filters.set(undefined as any)
+        fixture.detectChanges()
+  
+        await Promise.resolve()
+  
+        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
+        expect(announceSpy).toHaveBeenCalledWith('no-results')
       })
   
       it('announces SELECTED_FILTERS_COUNT when filters are active', async () => {
@@ -251,7 +259,7 @@ describe('FilterViewComponent (class logic)', () => {
         const liveAnnouncer = TestBed.inject(LiveAnnouncer)
   
         jest.spyOn(translateService, 'get').mockReturnValue(of('some-results'))
-        const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+        const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()        
   
         component.filters.set([{ columnId: 'c1', filterType: 'equals', value: 'v1' } as Filter])
         fixture.detectChanges()
