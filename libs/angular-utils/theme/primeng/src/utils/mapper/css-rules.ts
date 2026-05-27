@@ -22,27 +22,27 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.table.default.bg',
+        from: 'usages.table.base.bg',
       },
       {
         property: 'border-color',
-        from: 'usages.table.default.border.color',
+        from: 'usages.table.base.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.table.default.border.width',
+        from: 'usages.table.base.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.table.default.border.style',
+        from: 'usages.table.base.border.style',
       },
       {
         property: 'border-radius',
-        from: 'usages.table.default.border.radius',
+        from: 'usages.table.base.border.radius',
       },
       {
         property: 'box-shadow',
-        from: 'usages.table.default.shadow',
+        from: 'usages.table.base.shadow',
       },
       {
         // Required for border-radius to clip child elements (header, rows).
@@ -79,7 +79,7 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'border-collapse',
-        from: 'usages.table.default.borderCollapse',
+        from: 'usages.table.base.borderCollapse',
       },
     ],
   },
@@ -95,19 +95,19 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'border-top-width',
-        from: 'usages.table.row.default.even.default.cell.default.border.width.top',
+        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top',
       },
       {
         property: 'border-right-width',
-        from: 'usages.table.row.default.even.default.cell.default.border.width.right',
+        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.right',
       },
       {
         property: 'border-bottom-width',
-        from: 'usages.table.row.default.even.default.cell.default.border.width.bottom',
+        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.bottom',
       },
       {
         property: 'border-left-width',
-        from: 'usages.table.row.default.even.default.cell.default.border.width.left',
+        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.left',
       },
     ],
   },
@@ -118,23 +118,23 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'font-size',
-        from: 'usages.table.header.default.cell.default.font.size',
+        from: 'usages.table.header.defaultState.cell.defaultState.font.size',
       },
       {
         property: 'font-weight',
-        from: 'usages.table.header.default.cell.default.font.weight',
+        from: 'usages.table.header.defaultState.cell.defaultState.font.weight',
       },
       {
         property: 'font-family',
-        from: 'usages.table.header.default.cell.default.font.family',
+        from: 'usages.table.header.defaultState.cell.defaultState.font.family',
       },
       {
         property: 'line-height',
-        from: 'usages.table.header.default.cell.default.font.lineHeight',
+        from: 'usages.table.header.defaultState.cell.defaultState.font.lineHeight',
       },
       {
         property: 'letter-spacing',
-        from: 'usages.table.header.default.cell.default.font.letterSpacing',
+        from: 'usages.table.header.defaultState.cell.defaultState.font.letterSpacing',
       },
     ],
   },
@@ -145,19 +145,19 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'border-top-width',
-        from: 'usages.table.header.default.cell.default.border.width.top',
+        from: 'usages.table.header.defaultState.cell.defaultState.border.width.top',
       },
       {
         property: 'border-right-width',
-        from: 'usages.table.header.default.cell.default.border.width.right',
+        from: 'usages.table.header.defaultState.cell.defaultState.border.width.right',
       },
       {
         property: 'border-bottom-width',
-        from: 'usages.table.header.default.cell.default.border.width.bottom',
+        from: 'usages.table.header.defaultState.cell.defaultState.border.width.bottom',
       },
       {
         property: 'border-left-width',
-        from: 'usages.table.header.default.cell.default.border.width.left',
+        from: 'usages.table.header.defaultState.cell.defaultState.border.width.left',
       },
     ],
   },
@@ -168,19 +168,19 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'font-size',
-        from: 'usages.table.footer.default.cell.default.font.size',
+        from: 'usages.table.footer.defaultState.cell.defaultState.font.size',
       },
       {
         property: 'font-weight',
-        from: 'usages.table.footer.default.cell.default.font.weight',
+        from: 'usages.table.footer.defaultState.cell.defaultState.font.weight',
       },
       {
         property: 'font-family',
-        from: 'usages.table.footer.default.cell.default.font.family',
+        from: 'usages.table.footer.defaultState.cell.defaultState.font.family',
       },
       {
         property: 'text-align',
-        from: 'usages.table.footer.default.cell.default.textAlign',
+        from: 'usages.table.footer.defaultState.cell.defaultState.textAlign',
       },
     ],
   },
@@ -191,19 +191,19 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'border-top-width',
-        from: 'usages.table.footer.default.cell.default.border.width.top',
+        from: 'usages.table.footer.defaultState.cell.defaultState.border.width.top',
       },
       {
         property: 'border-right-width',
-        from: 'usages.table.footer.default.cell.default.border.width.right',
+        from: 'usages.table.footer.defaultState.cell.defaultState.border.width.right',
       },
       {
         property: 'border-bottom-width',
-        from: 'usages.table.footer.default.cell.default.border.width.bottom',
+        from: 'usages.table.footer.defaultState.cell.defaultState.border.width.bottom',
       },
       {
         property: 'border-left-width',
-        from: 'usages.table.footer.default.cell.default.border.width.left',
+        from: 'usages.table.footer.defaultState.cell.defaultState.border.width.left',
       },
     ],
   },
@@ -214,7 +214,7 @@ export const CSS_RULES: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.table.default.bg',
+        from: 'usages.table.base.bg',
       },
       {
         property: 'border-top',

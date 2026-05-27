@@ -4,7 +4,7 @@ import * as z from "zod";
 
 // A reference to another value in the same theme using dot-notation path wrapped in double braces.
 // At runtime the consumer resolves these references before applying the theme to PrimeNG.
-// Example: "{{primitives.variant.primary.bg.color}}" or "{{primitives.space.md}}"
+// Example: "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}" or "{{primitives.space.md}}"
 const themeRef = z
   .string()
   .regex(/^\{\{[\w.]+\}\}$/)
@@ -62,7 +62,7 @@ const componentBorders = z
 
 const borderWithVariants = z
   .object({
-    default: border.optional(),
+    defaultVariant: border.optional(),
     variant: componentBorders.optional(),
   })
   .meta({ id: "borderWithVariants" });
@@ -92,11 +92,11 @@ const severityVariants = z
   })
   .meta({ id: "severityVariants" });
 
-// A single interaction-state group: a baseline style (default) and per-level severity
-// overrides (variants). Used as the type for variantWithStates.default and each state.
+// A single interaction-state group: a baseline style (defaultVariant) and per-level severity
+// overrides (variants). Used as the type for variantWithStates.defaultState and each state entry.
 const severityVariantGroup = z
   .object({
-    default: severityStyles.optional(),
+    defaultVariant: severityStyles.optional(),
     variant: severityVariants.optional(),
   })
   .meta({ id: "severityVariantGroup" });
@@ -105,7 +105,7 @@ const severityVariantGroup = z
 
 const variantWithStates = bgContrast
   .extend({
-    default: severityVariantGroup.optional(),
+    defaultState: severityVariantGroup.optional(),
     state: z
       .object({
         hover: severityVariantGroup.optional(),
@@ -213,7 +213,7 @@ const font = z
 
 const primitives = z
   .object({
-    default: (variantWithStates as typeof variantWithStates).optional(),
+    defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
     variant: colorVariants as typeof colorVariants,
     area: (areas as typeof areas).optional(),
     shadow: (shadow as typeof shadow).optional(),
@@ -253,9 +253,9 @@ const region = z
 const blockStyles = bgContrast
   .extend({
     border: border.default({
-      color: "{{primitives.border.default.color}}",
-      width: "{{primitives.border.default.width}}",
-      style: "{{primitives.border.default.style}}",
+      color: "{{primitives.border.defaultVariant.color}}",
+      width: "{{primitives.border.defaultVariant.width}}",
+      style: "{{primitives.border.defaultVariant.style}}",
       radius: "{{primitives.radius.md}}",
     }),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
@@ -276,9 +276,9 @@ const tableStyles = blockStyles
     // Override bg/contrast from blockStyles with defaults pointing to the surface area primitive
     bg: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.area.surface.default.default.bg}}"),
+      .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
     contrast: color.default(
-      "{{primitives.area.surface.default.default.contrast}}"
+      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
     ),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
     borderCollapse: withRef(z.enum(["collapse", "separate"])).default(
@@ -311,7 +311,7 @@ const tableCellStyles = blockStyles
 
 const cellWithStates = z
   .object({
-    default: (tableCellStyles as typeof tableCellStyles).optional(),
+    defaultState: (tableCellStyles as typeof tableCellStyles).optional(),
     state: z
       .object({
         hover: (tableCellStyles as typeof tableCellStyles).optional(),
@@ -334,7 +334,7 @@ const tableRowStyles = blockStyles
 
 const rowWithStates = z
   .object({
-    default: (tableRowStyles as typeof tableRowStyles).optional(),
+    defaultState: (tableRowStyles as typeof tableRowStyles).optional(),
     state: z
       .object({
         hover: (tableRowStyles as typeof tableRowStyles).optional(),
@@ -354,7 +354,7 @@ const alternatingRowStyles = z
   .meta({ id: "alternatingRowStyles" });
 
 const tableRow = z.object({
-  default: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+  defaultState: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
   state: z.object({
     hover: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
     active: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
@@ -366,7 +366,7 @@ const tableRow = z.object({
 const table = z
   .object({
     settings: (tableSettings as typeof tableSettings).optional(),
-    default: (tableStyles as typeof tableStyles).optional(),
+    base: (tableStyles as typeof tableStyles).optional(),
     header: (rowWithStates as typeof rowWithStates).optional(),
     footer: (rowWithStates as typeof rowWithStates).optional(),
     row: (tableRow as typeof tableRow).optional(),
