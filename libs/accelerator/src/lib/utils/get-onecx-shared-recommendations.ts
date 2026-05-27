@@ -1,6 +1,3 @@
-/**
- * Patterns for identifying shared libraries that should have specific configuration recommendations.
- */
 export interface SharedLibraryConfig {
   singleton?: boolean
   strictVersion?: boolean
