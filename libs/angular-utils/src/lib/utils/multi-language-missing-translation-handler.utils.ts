@@ -24,7 +24,7 @@ export class MultiLanguageMissingTranslationHandler implements MissingTranslatio
       shareReplay(1)
     )
 
-    console.warn('[MultiLanguageMissingTranslationHandler] No translation found for key: ', params.key, 'in language: ', params.translateService.currentLang, '. Trying to resolve with fallback languages...')
+    console.debug('[MultiLanguageMissingTranslationHandler] No translation found for key: ', params.key, 'in language: ', params.translateService.currentLang, '. Trying to resolve with fallback languages...')
     return locales$.pipe(
       concatMap((locales) => this.loadTranslations(locales, params)),
       catchError((err: Error) => {
