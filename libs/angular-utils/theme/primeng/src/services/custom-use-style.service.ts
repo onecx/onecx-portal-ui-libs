@@ -16,6 +16,7 @@ import { toVariables } from '@primeuix/styled'
 import { replaceRootWithScope } from '@onecx/angular-utils/style'
 import { ReplaySubject } from 'rxjs'
 import { createLogger } from '../utils/logger.utils'
+import { THEME_OPTIONS } from './theme-config.service'
 
 @Injectable({ providedIn: 'any' })
 export class CustomUseStyle extends UseStyle {
@@ -24,6 +25,7 @@ export class CustomUseStyle extends UseStyle {
   private readonly skipStyleScoping: boolean | null = inject(SKIP_STYLE_SCOPING, { optional: true })
   private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig> | null = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
   private readonly themeOverrides: ThemeOverrides = inject(THEME_OVERRIDES, { optional: true })
+  private readonly themeOptions = inject(THEME_OPTIONS, { optional: true })
   private readonly injector = inject(Injector)
 
   constructor() {
@@ -48,10 +50,12 @@ export class CustomUseStyle extends UseStyle {
   }
 
   private applyOverrides(scopeId: string): Promise<any> {
-    if (!this.themeOverrides) return Promise.resolve()
+    const themeOverrides = this.themeOptions?.overrides ?? this.themeOverrides
+
+    if (!themeOverrides) return Promise.resolve()
 
     const overrides = Promise.resolve(
-      typeof this.themeOverrides === 'function' ? runInInjectionContext(this.injector,() => this.themeOverrides()) : this.themeOverrides
+      typeof themeOverrides === 'function' ? runInInjectionContext(this.injector,() => themeOverrides()) : themeOverrides
     )
     return overrides.then((resolvedOverrides) => {
       const variablesData = toVariables(resolvedOverrides)

@@ -1,0 +1,1436 @@
+= Theme V2 Token Reference
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 3
+
+This document provides a complete reference of all tokens in the OneCX Theme V2 schema. Each token is listed with its CSS variable name(s) and purpose.
+
+toc::[]
+
+[#naming-convention]
+== CSS Variable Naming Convention
+
+All theme tokens are injected as CSS custom properties on `<html>` following this pattern:
+
+[source]
+----
+--onecx-theme-{path-with-dots-replaced-by-dashes}
+----
+
+For **dual-mode colors** (tokens with separate light/dark values), three variables are set:
+
+[cols="2,3"]
+|===
+| Variable | Value
+
+| `--onecx-theme-{path}-light`
+| Light mode value
+
+| `--onecx-theme-{path}-dark`
+| Dark mode value
+
+| `--onecx-theme-{path}`
+| `light-dark(var(--onecx-theme-{path}-light), var(--onecx-theme-{path}-dark))`
+|===
+
+Single-value tokens produce only `--onecx-theme-{path}` with the direct value.
+
+Throughout this document, tokens marked with *(+light/dark)* support dual-mode and produce three CSS variables as shown above.
+
+[#primitives-font]
+== Primitives: Font
+
+Global typography baseline applied to all text unless overridden at a more specific level.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.font.family`
+| `--onecx-theme-primitives-font-family`
+| Font family for all text (e.g. `"Inter"`, `"sans-serif"`)
+
+| `primitives.font.size`
+| `--onecx-theme-primitives-font-size`
+| Base font size (e.g. `"1rem"`, `"14px"`)
+
+| `primitives.font.weight`
+| `--onecx-theme-primitives-font-weight`
+| Default font weight (e.g. `"400"`, `"normal"`)
+
+| `primitives.font.lineHeight`
+| `--onecx-theme-primitives-font-lineHeight`
+| Default line height (e.g. `"1.5"`, `"24px"`)
+
+| `primitives.font.letterSpacing`
+| `--onecx-theme-primitives-font-letterSpacing`
+| Default letter spacing (e.g. `"0"`, `"0.01em"`)
+
+| `primitives.font.style`
+| `--onecx-theme-primitives-font-style`
+| Default font style (e.g. `"normal"`, `"italic"`)
+|===
+
+[#primitives-space]
+== Primitives: Space
+
+Spacing scale used for padding, margin, and gap tokens across components.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.space.xs`
+| `--onecx-theme-primitives-space-xs`
+| Extra-small spacing (e.g. `"0.25rem"`)
+
+| `primitives.space.sm`
+| `--onecx-theme-primitives-space-sm`
+| Small spacing (e.g. `"0.5rem"`)
+
+| `primitives.space.md`
+| `--onecx-theme-primitives-space-md`
+| Medium spacing — default for most component padding (e.g. `"1rem"`)
+
+| `primitives.space.lg`
+| `--onecx-theme-primitives-space-lg`
+| Large spacing (e.g. `"1.5rem"`)
+
+| `primitives.space.xl`
+| `--onecx-theme-primitives-space-xl`
+| Extra-large spacing (e.g. `"2rem"`)
+
+| `primitives.space.xxl`
+| `--onecx-theme-primitives-space-xxl`
+| Double extra-large spacing (e.g. `"3rem"`)
+|===
+
+[#primitives-radius]
+== Primitives: Radius
+
+Border-radius scale used for consistent rounding across components.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.radius.none`
+| `--onecx-theme-primitives-radius-none`
+| No rounding — sharp corners (e.g. `"0"`)
+
+| `primitives.radius.sm`
+| `--onecx-theme-primitives-radius-sm`
+| Small radius (e.g. `"0.25rem"`)
+
+| `primitives.radius.md`
+| `--onecx-theme-primitives-radius-md`
+| Medium radius — default for cards, inputs (e.g. `"0.5rem"`)
+
+| `primitives.radius.lg`
+| `--onecx-theme-primitives-radius-lg`
+| Large radius (e.g. `"0.75rem"`)
+
+| `primitives.radius.xl`
+| `--onecx-theme-primitives-radius-xl`
+| Extra-large radius (e.g. `"1rem"`)
+
+| `primitives.radius.full`
+| `--onecx-theme-primitives-radius-full`
+| Fully rounded — pills, circles (e.g. `"9999px"`)
+|===
+
+[#primitives-shadow]
+== Primitives: Shadow
+
+Box-shadow elevation levels. Components reference these for consistent depth.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.shadow.none`
+| `--onecx-theme-primitives-shadow-none`
+| No shadow (e.g. `"none"`)
+
+| `primitives.shadow.sm`
+| `--onecx-theme-primitives-shadow-sm`
+| Subtle shadow for slight elevation (e.g. cards)
+
+| `primitives.shadow.md`
+| `--onecx-theme-primitives-shadow-md`
+| Medium shadow for moderate elevation (e.g. dropdowns)
+
+| `primitives.shadow.lg`
+| `--onecx-theme-primitives-shadow-lg`
+| Pronounced shadow for higher elevation (e.g. dialogs)
+
+| `primitives.shadow.xl`
+| `--onecx-theme-primitives-shadow-xl`
+| Maximum shadow for prominent floating elements
+|===
+
+[#primitives-layout]
+== Primitives: Layout
+
+Structural constraints for page layout.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.layout.contentMaxWidth`
+| `--onecx-theme-primitives-layout-contentMaxWidth`
+| Max-width of the main content container (e.g. `"1280px"`)
+
+| `primitives.layout.gap`
+| `--onecx-theme-primitives-layout-gap`
+| Default gap between layout sections / grid columns (e.g. `"1rem"`)
+|===
+
+[#primitives-border]
+== Primitives: Border
+
+Global default border styles. Components that don't define their own border inherit from here.
+
+[#primitives-border-default]
+=== Default Variant
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.border.defaultVariant.color`
+| `--onecx-theme-primitives-border-defaultVariant-color` (+light/dark)
+| Default border color for all components
+
+| `primitives.border.defaultVariant.width`
+| `--onecx-theme-primitives-border-defaultVariant-width`
+| Default border width (e.g. `"1px"`)
+
+| `primitives.border.defaultVariant.width.top`
+| `--onecx-theme-primitives-border-defaultVariant-width-top`
+| Per-side border width (top) — alternative to uniform width
+
+| `primitives.border.defaultVariant.width.right`
+| `--onecx-theme-primitives-border-defaultVariant-width-right`
+| Per-side border width (right)
+
+| `primitives.border.defaultVariant.width.bottom`
+| `--onecx-theme-primitives-border-defaultVariant-width-bottom`
+| Per-side border width (bottom)
+
+| `primitives.border.defaultVariant.width.left`
+| `--onecx-theme-primitives-border-defaultVariant-width-left`
+| Per-side border width (left)
+
+| `primitives.border.defaultVariant.style`
+| `--onecx-theme-primitives-border-defaultVariant-style`
+| Default border style (e.g. `"solid"`, `"dashed"`)
+
+| `primitives.border.defaultVariant.radius`
+| `--onecx-theme-primitives-border-defaultVariant-radius`
+| Default border radius for bordered elements
+
+| `primitives.border.defaultVariant.offset`
+| `--onecx-theme-primitives-border-defaultVariant-offset`
+| Default border offset (outline-offset)
+|===
+
+[#primitives-border-component-variants]
+=== Component-Specific Border Variants
+
+Each component variant has the same properties as the default variant above (`color`, `width`, `style`, `radius`, `offset`).
+
+Pattern: `--onecx-theme-primitives-border-variant-{component}-{property}`
+
+[cols="3,4,4"]
+|===
+| Token Path Pattern | CSS Variable Pattern | Description
+
+| `primitives.border.variant.button.*`
+| `--onecx-theme-primitives-border-variant-button-{property}`
+| Border overrides specific to buttons
+
+| `primitives.border.variant.input.*`
+| `--onecx-theme-primitives-border-variant-input-{property}`
+| Border overrides specific to input fields
+
+| `primitives.border.variant.card.*`
+| `--onecx-theme-primitives-border-variant-card-{property}`
+| Border overrides specific to cards/panels
+
+| `primitives.border.variant.dialog.*`
+| `--onecx-theme-primitives-border-variant-dialog-{property}`
+| Border overrides specific to dialogs/modals
+|===
+
+Where `{property}` is one of: `color` (+light/dark), `width` (or `width.top`/`right`/`bottom`/`left`), `style`, `radius`, `offset`.
+
+[#primitives-focus-ring]
+== Primitives: Focus Ring
+
+Global focus ring style applied to focused interactive elements.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.focusRing.color`
+| `--onecx-theme-primitives-focusRing-color` (+light/dark)
+| Focus ring color
+
+| `primitives.focusRing.width`
+| `--onecx-theme-primitives-focusRing-width`
+| Focus ring width (e.g. `"2px"`)
+
+| `primitives.focusRing.style`
+| `--onecx-theme-primitives-focusRing-style`
+| Focus ring border style (e.g. `"solid"`)
+
+| `primitives.focusRing.offset`
+| `--onecx-theme-primitives-focusRing-offset`
+| Space between element edge and focus ring (e.g. `"2px"`)
+
+| `primitives.focusRing.radius`
+| `--onecx-theme-primitives-focusRing-radius`
+| Focus ring border radius
+|===
+
+[#variant-with-states-pattern]
+== Pattern: Variant With States
+
+The following pattern is reused across multiple token groups (`primitives.defaultVariant`, `primitives.variant.*`, `primitives.area.*`). It defines **background/contrast colors** with **interaction states** and **severity variants**.
+
+[#variant-structure]
+=== Structure
+
+[source]
+----
+{parent}
+├── bg                              // background (object or string)
+│   ├── color                       // (+light/dark)
+│   ├── image
+│   ├── position
+│   ├── size
+│   └── repeat
+├── contrast                        // foreground/text color (+light/dark)
+├── defaultState
+│   ├── defaultVariant              // base severity
+│   │   ├── bg / bg.color (+light/dark) / bg.image / bg.position / bg.size / bg.repeat
+│   │   ├── contrast (+light/dark)
+│   │   ├── border.defaultVariant.{color,width,style,radius,offset}
+│   │   ├── border.variant.{button,input,card,dialog}.{color,width,style,radius,offset}
+│   │   └── focusRing.{color,width,style,radius,offset}
+│   └── variant
+│       ├── success.*               // same properties as defaultVariant
+│       ├── info.*
+│       ├── warning.*
+│       ├── danger.*
+│       └── contrast.*
+└── state
+    ├── hover                       // same structure as defaultState
+    ├── active
+    ├── selected
+    └── focus
+----
+
+[#variant-leaf-properties]
+=== Leaf Properties
+
+For any `{parent}` path, the following leaf tokens exist:
+
+[cols="3,4,4"]
+|===
+| Relative Path | CSS Variable Suffix | Description
+
+| `bg`
+| `-bg`
+| Background color as a plain string value
+
+| `bg.color`
+| `-bg-color` (+light/dark)
+| Background color (when bg is an object)
+
+| `bg.image`
+| `-bg-image`
+| Background image URL
+
+| `bg.position`
+| `-bg-position`
+| Background position (e.g. `"center"`)
+
+| `bg.size`
+| `-bg-size`
+| Background size (e.g. `"cover"`)
+
+| `bg.repeat`
+| `-bg-repeat`
+| Background repeat (e.g. `"no-repeat"`)
+
+| `contrast`
+| `-contrast` (+light/dark)
+| Foreground/text color for content on this background
+
+| `border.defaultVariant.color`
+| `-border-defaultVariant-color` (+light/dark)
+| Border color
+
+| `border.defaultVariant.width`
+| `-border-defaultVariant-width`
+| Border width
+
+| `border.defaultVariant.style`
+| `-border-defaultVariant-style`
+| Border style
+
+| `border.defaultVariant.radius`
+| `-border-defaultVariant-radius`
+| Border radius
+
+| `border.defaultVariant.offset`
+| `-border-defaultVariant-offset`
+| Border offset
+
+| `border.variant.{component}.color`
+| `-border-variant-{component}-color` (+light/dark)
+| Component-specific border color (button, input, card, dialog)
+
+| `border.variant.{component}.width`
+| `-border-variant-{component}-width`
+| Component-specific border width
+
+| `border.variant.{component}.style`
+| `-border-variant-{component}-style`
+| Component-specific border style
+
+| `border.variant.{component}.radius`
+| `-border-variant-{component}-radius`
+| Component-specific border radius
+
+| `border.variant.{component}.offset`
+| `-border-variant-{component}-offset`
+| Component-specific border offset
+
+| `focusRing.color`
+| `-focusRing-color` (+light/dark)
+| Focus ring color for this context
+
+| `focusRing.width`
+| `-focusRing-width`
+| Focus ring width
+
+| `focusRing.style`
+| `-focusRing-style`
+| Focus ring style
+
+| `focusRing.radius`
+| `-focusRing-radius`
+| Focus ring radius
+
+| `focusRing.offset`
+| `-focusRing-offset`
+| Focus ring offset
+|===
+
+[#variant-css-variable-template]
+=== CSS Variable Template
+
+Full CSS variable name for any token in this pattern:
+
+[source]
+----
+--onecx-theme-{parent}-{state}-{severity}-{property}
+----
+
+Where:
+
+* `{parent}` = e.g. `primitives-variant-primary`, `primitives-area-surface`, `primitives-defaultVariant`
+* `{state}` = `defaultState` | `state-hover` | `state-active` | `state-selected` | `state-focus`
+* `{severity}` = `defaultVariant` | `variant-success` | `variant-info` | `variant-warning` | `variant-danger` | `variant-contrast`
+* `{property}` = any leaf from the table above
+
+[#primitives-default-variant]
+== Primitives: Default Variant
+
+Content-level defaults — the base colors for general content areas. Uses the <<variant-with-states-pattern>> pattern.
+
+**Root path:** `primitives.defaultVariant` +
+**CSS variable prefix:** `--onecx-theme-primitives-defaultVariant-`
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-bg-color` (+light/dark)
+| Default content background color
+
+| `primitives.defaultVariant.contrast`
+| `--onecx-theme-primitives-defaultVariant-contrast` (+light/dark)
+| Default content text color
+
+| `primitives.defaultVariant.defaultState.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-bg-color` (+light/dark)
+| Content background in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.contrast`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-contrast` (+light/dark)
+| Content text color in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.color`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-border-defaultVariant-color` (+light/dark)
+| Content border color in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.width`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-border-defaultVariant-width`
+| Content border width in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.style`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-border-defaultVariant-style`
+| Content border style in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.radius`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-border-defaultVariant-radius`
+| Content border radius in default state
+
+| `primitives.defaultVariant.defaultState.defaultVariant.focusRing.color`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-focusRing-color` (+light/dark)
+| Focus ring color for content elements
+
+| `primitives.defaultVariant.defaultState.defaultVariant.focusRing.width`
+| `--onecx-theme-primitives-defaultVariant-defaultState-defaultVariant-focusRing-width`
+| Focus ring width for content elements
+
+| `primitives.defaultVariant.state.hover.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-state-hover-defaultVariant-bg-color` (+light/dark)
+| Content background on hover
+
+| `primitives.defaultVariant.state.hover.defaultVariant.contrast`
+| `--onecx-theme-primitives-defaultVariant-state-hover-defaultVariant-contrast` (+light/dark)
+| Content text color on hover
+
+| `primitives.defaultVariant.state.active.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-state-active-defaultVariant-bg-color` (+light/dark)
+| Content background when active/pressed
+
+| `primitives.defaultVariant.state.selected.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-state-selected-defaultVariant-bg-color` (+light/dark)
+| Content background when selected
+
+| `primitives.defaultVariant.state.focus.defaultVariant.bg.color`
+| `--onecx-theme-primitives-defaultVariant-state-focus-defaultVariant-bg-color` (+light/dark)
+| Content background when focused
+|===
+
+All other severities (`success`, `info`, `warning`, `danger`, `contrast`) are available under both `defaultState.variant.{severity}` and `state.{state}.variant.{severity}`. See <<variant-with-states-pattern>>.
+
+[#primitives-color-variants]
+== Primitives: Color Variants
+
+Named color families for interactive components. Each uses the <<variant-with-states-pattern>> pattern.
+
+[cols="2,3,4"]
+|===
+| Variant | CSS Variable Prefix | Purpose
+
+| `primitives.variant.primary`
+| `--onecx-theme-primitives-variant-primary-`
+| Primary brand color — main actions, active states, links
+
+| `primitives.variant.secondary`
+| `--onecx-theme-primitives-variant-secondary-`
+| Secondary actions — less prominent than primary
+
+| `primitives.variant.tertiary`
+| `--onecx-theme-primitives-variant-tertiary-`
+| Tertiary level — subtle emphasis, toggled states
+
+| `primitives.variant.quaternary`
+| `--onecx-theme-primitives-variant-quaternary-`
+| Fourth-level variant for additional differentiation
+
+| `primitives.variant.quinary`
+| `--onecx-theme-primitives-variant-quinary-`
+| Fifth-level variant for maximum differentiation
+|===
+
+[#color-variant-common-paths]
+=== Most Common Paths (Primary example)
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.variant.primary.defaultState.defaultVariant.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color` (+light/dark)
+| Primary button/element background
+
+| `primitives.variant.primary.defaultState.defaultVariant.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-contrast` (+light/dark)
+| Text color on primary background
+
+| `primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-border-defaultVariant-color` (+light/dark)
+| Border color of primary elements
+
+| `primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.width`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-border-defaultVariant-width`
+| Border width of primary elements
+
+| `primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.style`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-border-defaultVariant-style`
+| Border style of primary elements
+
+| `primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.radius`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-border-defaultVariant-radius`
+| Border radius of primary elements
+
+| `primitives.variant.primary.defaultState.defaultVariant.focusRing.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-focusRing-color` (+light/dark)
+| Focus ring color for primary elements
+
+| `primitives.variant.primary.defaultState.defaultVariant.focusRing.width`
+| `--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-focusRing-width`
+| Focus ring width for primary elements
+
+| `primitives.variant.primary.state.hover.defaultVariant.bg.color`
+| `--onecx-theme-primitives-variant-primary-state-hover-defaultVariant-bg-color` (+light/dark)
+| Primary element background on hover
+
+| `primitives.variant.primary.state.hover.defaultVariant.contrast`
+| `--onecx-theme-primitives-variant-primary-state-hover-defaultVariant-contrast` (+light/dark)
+| Text color on primary hover background
+
+| `primitives.variant.primary.state.active.defaultVariant.bg.color`
+| `--onecx-theme-primitives-variant-primary-state-active-defaultVariant-bg-color` (+light/dark)
+| Primary element background when active/pressed
+
+| `primitives.variant.primary.state.active.defaultVariant.contrast`
+| `--onecx-theme-primitives-variant-primary-state-active-defaultVariant-contrast` (+light/dark)
+| Text color on primary active background
+
+| `primitives.variant.primary.state.selected.defaultVariant.bg.color`
+| `--onecx-theme-primitives-variant-primary-state-selected-defaultVariant-bg-color` (+light/dark)
+| Primary element background when selected
+
+| `primitives.variant.primary.state.selected.defaultVariant.contrast`
+| `--onecx-theme-primitives-variant-primary-state-selected-defaultVariant-contrast` (+light/dark)
+| Text color on primary selected background
+
+| `primitives.variant.primary.state.focus.defaultVariant.focusRing.color`
+| `--onecx-theme-primitives-variant-primary-state-focus-defaultVariant-focusRing-color` (+light/dark)
+| Focus ring color for focused primary elements
+
+| `primitives.variant.primary.defaultState.variant.success.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-success-bg-color` (+light/dark)
+| Primary success severity background
+
+| `primitives.variant.primary.defaultState.variant.success.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-success-contrast` (+light/dark)
+| Text on primary success background
+
+| `primitives.variant.primary.defaultState.variant.info.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-info-bg-color` (+light/dark)
+| Primary info severity background
+
+| `primitives.variant.primary.defaultState.variant.info.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-info-contrast` (+light/dark)
+| Text on primary info background
+
+| `primitives.variant.primary.defaultState.variant.warning.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-warning-bg-color` (+light/dark)
+| Primary warning severity background
+
+| `primitives.variant.primary.defaultState.variant.warning.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-warning-contrast` (+light/dark)
+| Text on primary warning background
+
+| `primitives.variant.primary.defaultState.variant.danger.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-danger-bg-color` (+light/dark)
+| Primary danger severity background
+
+| `primitives.variant.primary.defaultState.variant.danger.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-danger-contrast` (+light/dark)
+| Text on primary danger background
+
+| `primitives.variant.primary.defaultState.variant.contrast.bg.color`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-contrast-bg-color` (+light/dark)
+| Primary high-contrast severity background
+
+| `primitives.variant.primary.defaultState.variant.contrast.contrast`
+| `--onecx-theme-primitives-variant-primary-defaultState-variant-contrast-contrast` (+light/dark)
+| Text on primary high-contrast background
+|===
+
+Replace `primary` with `secondary`, `tertiary`, `quaternary`, or `quinary` for other variants. Replace `defaultState` with `state.hover`, `state.active`, `state.selected`, or `state.focus` for other interaction states. See <<variant-with-states-pattern>> for the full structure.
+
+[#primitives-areas]
+== Primitives: Areas
+
+Semantic surface layers representing depth in the UI. Each uses the <<variant-with-states-pattern>> pattern.
+
+[cols="2,3,4"]
+|===
+| Area | CSS Variable Prefix | Purpose
+
+| `primitives.area.canvas`
+| `--onecx-theme-primitives-area-canvas-`
+| Page-level background — the outermost layer behind everything
+
+| `primitives.area.surface`
+| `--onecx-theme-primitives-area-surface-`
+| Card/panel background — elevated from the canvas
+
+| `primitives.area.onSurface`
+| `--onecx-theme-primitives-area-onSurface-`
+| Content layer on top of a surface (e.g. list items, table rows)
+
+| `primitives.area.overlay`
+| `--onecx-theme-primitives-area-overlay-`
+| Floating elements — dialogs, dropdowns, tooltips
+|===
+
+[#area-common-paths]
+=== Most Common Paths (Surface example)
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `primitives.area.surface.bg.color`
+| `--onecx-theme-primitives-area-surface-bg-color` (+light/dark)
+| Surface background color (top-level shortcut)
+
+| `primitives.area.surface.contrast`
+| `--onecx-theme-primitives-area-surface-contrast` (+light/dark)
+| Text color on surface (top-level shortcut)
+
+| `primitives.area.surface.defaultState.defaultVariant.bg.color`
+| `--onecx-theme-primitives-area-surface-defaultState-defaultVariant-bg-color` (+light/dark)
+| Surface background in normal state
+
+| `primitives.area.surface.defaultState.defaultVariant.contrast`
+| `--onecx-theme-primitives-area-surface-defaultState-defaultVariant-contrast` (+light/dark)
+| Text color on surface in normal state
+
+| `primitives.area.surface.defaultState.defaultVariant.border.defaultVariant.color`
+| `--onecx-theme-primitives-area-surface-defaultState-defaultVariant-border-defaultVariant-color` (+light/dark)
+| Surface border color in normal state
+
+| `primitives.area.surface.state.hover.defaultVariant.bg.color`
+| `--onecx-theme-primitives-area-surface-state-hover-defaultVariant-bg-color` (+light/dark)
+| Surface background on hover
+
+| `primitives.area.surface.state.hover.defaultVariant.contrast`
+| `--onecx-theme-primitives-area-surface-state-hover-defaultVariant-contrast` (+light/dark)
+| Text color on surface hover
+
+| `primitives.area.surface.state.selected.defaultVariant.bg.color`
+| `--onecx-theme-primitives-area-surface-state-selected-defaultVariant-bg-color` (+light/dark)
+| Surface background when selected
+|===
+
+Replace `surface` with `canvas`, `onSurface`, or `overlay` for other areas. Full state/severity structure follows <<variant-with-states-pattern>>.
+
+[#usages-region]
+== Usages: Region
+
+Typography defaults for a page region. All properties default to their corresponding primitive font token via theme references.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.region.font.family`
+| `--onecx-theme-usages-region-font-family`
+| Font family for this region (default: `{{primitives.font.family}}`)
+
+| `usages.region.font.size`
+| `--onecx-theme-usages-region-font-size`
+| Font size for this region (default: `{{primitives.font.size}}`)
+
+| `usages.region.font.weight`
+| `--onecx-theme-usages-region-font-weight`
+| Font weight for this region (default: `{{primitives.font.weight}}`)
+
+| `usages.region.font.lineHeight`
+| `--onecx-theme-usages-region-font-lineHeight`
+| Line height for this region (default: `{{primitives.font.lineHeight}}`)
+
+| `usages.region.font.letterSpacing`
+| `--onecx-theme-usages-region-font-letterSpacing`
+| Letter spacing for this region (default: `{{primitives.font.letterSpacing}}`)
+
+| `usages.region.font.style`
+| `--onecx-theme-usages-region-font-style`
+| Font style for this region (default: `{{primitives.font.style}}`)
+|===
+
+[#usages-table]
+== Usages: Table
+
+Comprehensive datatable theming tokens. These control the appearance of data tables including the container, headers, footers, and body rows with states.
+
+[#usages-table-settings]
+=== Table Settings
+
+Behavioural configuration (not visual styling).
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.table.settings.checkboxColumnPosition`
+| `--onecx-theme-usages-table-settings-checkboxColumnPosition`
+| Position of checkbox column: `"start"` or `"end"` (default: `"start"`)
+
+| `usages.table.settings.actionColumnPosition`
+| `--onecx-theme-usages-table-settings-actionColumnPosition`
+| Position of action column: `"start"` or `"end"` (default: `"end"`)
+
+| `usages.table.settings.actionColumnSticky`
+| `--onecx-theme-usages-table-settings-actionColumnSticky`
+| Whether action column is sticky: `true` or `false` (default: `false`)
+|===
+
+[#usages-table-base]
+=== Table Base (Container)
+
+Styles for the table container element.
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.table.base.bg`
+| `--onecx-theme-usages-table-base-bg` (+light/dark)
+| Table container background (default: `{{primitives.area.surface.defaultState.defaultVariant.bg}}`)
+
+| `usages.table.base.bg.color`
+| `--onecx-theme-usages-table-base-bg-color` (+light/dark)
+| Table container background color (when bg is an object)
+
+| `usages.table.base.bg.image`
+| `--onecx-theme-usages-table-base-bg-image`
+| Table container background image
+
+| `usages.table.base.bg.position`
+| `--onecx-theme-usages-table-base-bg-position`
+| Table container background position
+
+| `usages.table.base.bg.size`
+| `--onecx-theme-usages-table-base-bg-size`
+| Table container background size
+
+| `usages.table.base.bg.repeat`
+| `--onecx-theme-usages-table-base-bg-repeat`
+| Table container background repeat
+
+| `usages.table.base.contrast`
+| `--onecx-theme-usages-table-base-contrast` (+light/dark)
+| Table container text color (default: `{{primitives.area.surface.defaultState.defaultVariant.contrast}}`)
+
+| `usages.table.base.border.color`
+| `--onecx-theme-usages-table-base-border-color` (+light/dark)
+| Table container border color (default: `{{primitives.border.defaultVariant.color}}`)
+
+| `usages.table.base.border.width`
+| `--onecx-theme-usages-table-base-border-width`
+| Table container border width (default: `{{primitives.border.defaultVariant.width}}`)
+
+| `usages.table.base.border.width.top`
+| `--onecx-theme-usages-table-base-border-width-top`
+| Table container border width (top)
+
+| `usages.table.base.border.width.right`
+| `--onecx-theme-usages-table-base-border-width-right`
+| Table container border width (right)
+
+| `usages.table.base.border.width.bottom`
+| `--onecx-theme-usages-table-base-border-width-bottom`
+| Table container border width (bottom)
+
+| `usages.table.base.border.width.left`
+| `--onecx-theme-usages-table-base-border-width-left`
+| Table container border width (left)
+
+| `usages.table.base.border.style`
+| `--onecx-theme-usages-table-base-border-style`
+| Table container border style (default: `{{primitives.border.defaultVariant.style}}`)
+
+| `usages.table.base.border.radius`
+| `--onecx-theme-usages-table-base-border-radius`
+| Table container border radius (default: `{{primitives.radius.md}}`)
+
+| `usages.table.base.border.offset`
+| `--onecx-theme-usages-table-base-border-offset`
+| Table container border offset
+
+| `usages.table.base.padding`
+| `--onecx-theme-usages-table-base-padding`
+| Table container padding (default: `{{primitives.space.md}}`)
+
+| `usages.table.base.font.family`
+| `--onecx-theme-usages-table-base-font-family`
+| Table font family (default: `{{primitives.font.family}}`)
+
+| `usages.table.base.font.size`
+| `--onecx-theme-usages-table-base-font-size`
+| Table font size (default: `{{primitives.font.size}}`)
+
+| `usages.table.base.font.weight`
+| `--onecx-theme-usages-table-base-font-weight`
+| Table font weight (default: `{{primitives.font.weight}}`)
+
+| `usages.table.base.font.lineHeight`
+| `--onecx-theme-usages-table-base-font-lineHeight`
+| Table font line height (default: `{{primitives.font.lineHeight}}`)
+
+| `usages.table.base.font.letterSpacing`
+| `--onecx-theme-usages-table-base-font-letterSpacing`
+| Table font letter spacing (default: `{{primitives.font.letterSpacing}}`)
+
+| `usages.table.base.font.style`
+| `--onecx-theme-usages-table-base-font-style`
+| Table font style (default: `{{primitives.font.style}}`)
+
+| `usages.table.base.textAlign`
+| `--onecx-theme-usages-table-base-textAlign`
+| Table text alignment (default: `"left"`)
+
+| `usages.table.base.borderCollapse`
+| `--onecx-theme-usages-table-base-borderCollapse`
+| Table border-collapse mode: `"collapse"` or `"separate"` (default: `"separate"`)
+
+| `usages.table.base.shadow`
+| `--onecx-theme-usages-table-base-shadow`
+| Table container box-shadow (default: `{{primitives.shadow.none}}`)
+|===
+
+[#usages-table-row-pattern]
+=== Pattern: Row With States
+
+The `header`, `footer`, and inner row sections use a row-with-states pattern. Each row state contains `blockStyles` properties (bg, contrast, border, padding, font, textAlign) plus additional row-specific properties.
+
+[#row-leaf-properties]
+==== Row Leaf Properties
+
+[cols="3,4,4"]
+|===
+| Relative Path | CSS Variable Suffix | Description
+
+| `bg` / `bg.color`
+| `-bg` / `-bg-color` (+light/dark)
+| Row background
+
+| `bg.image`
+| `-bg-image`
+| Row background image
+
+| `bg.position`
+| `-bg-position`
+| Row background position
+
+| `bg.size`
+| `-bg-size`
+| Row background size
+
+| `bg.repeat`
+| `-bg-repeat`
+| Row background repeat
+
+| `contrast`
+| `-contrast` (+light/dark)
+| Row text color
+
+| `border.color`
+| `-border-color` (+light/dark)
+| Row border color
+
+| `border.width`
+| `-border-width`
+| Row border width (uniform)
+
+| `border.width.top`
+| `-border-width-top`
+| Row border width (top)
+
+| `border.width.right`
+| `-border-width-right`
+| Row border width (right)
+
+| `border.width.bottom`
+| `-border-width-bottom`
+| Row border width (bottom)
+
+| `border.width.left`
+| `-border-width-left`
+| Row border width (left)
+
+| `border.style`
+| `-border-style`
+| Row border style
+
+| `border.radius`
+| `-border-radius`
+| Row border radius
+
+| `border.offset`
+| `-border-offset`
+| Row border offset
+
+| `padding`
+| `-padding`
+| Row padding
+
+| `font.family`
+| `-font-family`
+| Row font family
+
+| `font.size`
+| `-font-size`
+| Row font size
+
+| `font.weight`
+| `-font-weight`
+| Row font weight
+
+| `font.lineHeight`
+| `-font-lineHeight`
+| Row line height
+
+| `font.letterSpacing`
+| `-font-letterSpacing`
+| Row letter spacing
+
+| `font.style`
+| `-font-style`
+| Row font style
+
+| `textAlign`
+| `-textAlign`
+| Row text alignment
+
+| `height`
+| `-height`
+| Fixed row height (for dense/compact layouts)
+|===
+
+[#row-cell-properties]
+==== Cell Leaf Properties (within a row)
+
+Cells extend the blockStyles properties above and add:
+
+[cols="3,4,4"]
+|===
+| Relative Path | CSS Variable Suffix | Description
+
+| `cell.defaultState.verticalAlign`
+| `-cell-defaultState-verticalAlign`
+| Vertical alignment within a cell (default: `"middle"`)
+
+| `cell.defaultState.truncate`
+| `-cell-defaultState-truncate`
+| Whether to truncate overflowing text with ellipsis (default: `false`)
+
+| `cell.defaultState.bg.color`
+| `-cell-defaultState-bg-color` (+light/dark)
+| Cell background color
+
+| `cell.defaultState.contrast`
+| `-cell-defaultState-contrast` (+light/dark)
+| Cell text color
+
+| `cell.defaultState.border.color`
+| `-cell-defaultState-border-color` (+light/dark)
+| Cell border color
+
+| `cell.defaultState.border.width`
+| `-cell-defaultState-border-width`
+| Cell border width
+
+| `cell.defaultState.border.style`
+| `-cell-defaultState-border-style`
+| Cell border style
+
+| `cell.defaultState.border.radius`
+| `-cell-defaultState-border-radius`
+| Cell border radius
+
+| `cell.defaultState.padding`
+| `-cell-defaultState-padding`
+| Cell padding
+
+| `cell.defaultState.font.family`
+| `-cell-defaultState-font-family`
+| Cell font family
+
+| `cell.defaultState.font.size`
+| `-cell-defaultState-font-size`
+| Cell font size
+
+| `cell.defaultState.font.weight`
+| `-cell-defaultState-font-weight`
+| Cell font weight
+
+| `cell.defaultState.textAlign`
+| `-cell-defaultState-textAlign`
+| Cell text alignment
+
+| `cell.state.hover.*`
+| `-cell-state-hover-{property}`
+| Cell properties on hover (same leaf properties as defaultState)
+
+| `cell.state.active.*`
+| `-cell-state-active-{property}`
+| Cell properties when active
+
+| `cell.state.selected.*`
+| `-cell-state-selected-{property}`
+| Cell properties when selected
+
+| `cell.state.focus.*`
+| `-cell-state-focus-{property}`
+| Cell properties when focused
+|===
+
+[#usages-table-header]
+=== Table Header
+
+Styles for the table header row(s). Uses the <<usages-table-row-pattern>> pattern.
+
+**CSS variable prefix:** `--onecx-theme-usages-table-header-`
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.table.header.defaultState.bg.color`
+| `--onecx-theme-usages-table-header-defaultState-bg-color` (+light/dark)
+| Header row background in default state
+
+| `usages.table.header.defaultState.contrast`
+| `--onecx-theme-usages-table-header-defaultState-contrast` (+light/dark)
+| Header row text color
+
+| `usages.table.header.defaultState.border.color`
+| `--onecx-theme-usages-table-header-defaultState-border-color` (+light/dark)
+| Header row border color
+
+| `usages.table.header.defaultState.border.width`
+| `--onecx-theme-usages-table-header-defaultState-border-width`
+| Header row border width
+
+| `usages.table.header.defaultState.border.style`
+| `--onecx-theme-usages-table-header-defaultState-border-style`
+| Header row border style
+
+| `usages.table.header.defaultState.border.radius`
+| `--onecx-theme-usages-table-header-defaultState-border-radius`
+| Header row border radius
+
+| `usages.table.header.defaultState.padding`
+| `--onecx-theme-usages-table-header-defaultState-padding`
+| Header row padding
+
+| `usages.table.header.defaultState.font.family`
+| `--onecx-theme-usages-table-header-defaultState-font-family`
+| Header font family
+
+| `usages.table.header.defaultState.font.size`
+| `--onecx-theme-usages-table-header-defaultState-font-size`
+| Header font size
+
+| `usages.table.header.defaultState.font.weight`
+| `--onecx-theme-usages-table-header-defaultState-font-weight`
+| Header font weight (typically bold)
+
+| `usages.table.header.defaultState.font.lineHeight`
+| `--onecx-theme-usages-table-header-defaultState-font-lineHeight`
+| Header font line height
+
+| `usages.table.header.defaultState.font.letterSpacing`
+| `--onecx-theme-usages-table-header-defaultState-font-letterSpacing`
+| Header font letter spacing
+
+| `usages.table.header.defaultState.font.style`
+| `--onecx-theme-usages-table-header-defaultState-font-style`
+| Header font style
+
+| `usages.table.header.defaultState.textAlign`
+| `--onecx-theme-usages-table-header-defaultState-textAlign`
+| Header text alignment
+
+| `usages.table.header.defaultState.height`
+| `--onecx-theme-usages-table-header-defaultState-height`
+| Fixed header row height
+
+| `usages.table.header.defaultState.cell.defaultState.*`
+| `--onecx-theme-usages-table-header-defaultState-cell-defaultState-{property}`
+| Header cell properties (see <<row-cell-properties>>)
+
+| `usages.table.header.state.hover.*`
+| `--onecx-theme-usages-table-header-state-hover-{property}`
+| Header row on hover (same leaf properties)
+
+| `usages.table.header.state.active.*`
+| `--onecx-theme-usages-table-header-state-active-{property}`
+| Header row when active
+
+| `usages.table.header.state.selected.*`
+| `--onecx-theme-usages-table-header-state-selected-{property}`
+| Header row when selected
+
+| `usages.table.header.state.focus.*`
+| `--onecx-theme-usages-table-header-state-focus-{property}`
+| Header row when focused
+|===
+
+[#usages-table-footer]
+=== Table Footer
+
+Styles for the table footer row(s). Uses the <<usages-table-row-pattern>> pattern.
+
+**CSS variable prefix:** `--onecx-theme-usages-table-footer-`
+
+Same structure as <<usages-table-header>> — replace `header` with `footer` in all paths.
+
+[#usages-table-row]
+=== Table Row (Body)
+
+Body rows support **alternating styles** (odd/even) and **interaction states**, making this the most deeply nested section.
+
+[#table-row-structure]
+==== Structure
+
+[source]
+----
+usages.table.row
+├── defaultState                         // outer state (normal)
+│   ├── odd                              // odd rows
+│   │   ├── defaultState                 // inner state (normal)
+│   │   │   ├── {row leaf properties}
+│   │   │   └── cell
+│   │   │       ├── defaultState.{cell properties}
+│   │   │       └── state.{hover|active|selected|focus}.{cell properties}
+│   │   └── state
+│   │       ├── hover.{row + cell properties}
+│   │       ├── active.{row + cell properties}
+│   │       ├── selected.{row + cell properties}
+│   │       └── focus.{row + cell properties}
+│   └── even                             // even rows (same structure as odd)
+└── state                                // outer state
+    ├── hover.{odd|even}.{innerState}.{properties}
+    ├── active.{odd|even}.{innerState}.{properties}
+    ├── selected.{odd|even}.{innerState}.{properties}
+    └── focus.{odd|even}.{innerState}.{properties}
+----
+
+[#table-row-common-paths]
+==== Most Common Paths
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.table.row.defaultState.odd.defaultState.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-bg-color` (+light/dark)
+| Odd row background in default state
+
+| `usages.table.row.defaultState.odd.defaultState.contrast`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-contrast` (+light/dark)
+| Odd row text color in default state
+
+| `usages.table.row.defaultState.odd.defaultState.border.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-border-color` (+light/dark)
+| Odd row border color
+
+| `usages.table.row.defaultState.odd.defaultState.border.width`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-border-width`
+| Odd row border width
+
+| `usages.table.row.defaultState.odd.defaultState.border.style`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-border-style`
+| Odd row border style
+
+| `usages.table.row.defaultState.odd.defaultState.padding`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-padding`
+| Odd row padding
+
+| `usages.table.row.defaultState.odd.defaultState.font.weight`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-font-weight`
+| Odd row font weight
+
+| `usages.table.row.defaultState.odd.defaultState.height`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-height`
+| Odd row fixed height
+
+| `usages.table.row.defaultState.odd.defaultState.textAlign`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-textAlign`
+| Odd row text alignment
+
+| `usages.table.row.defaultState.even.defaultState.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-even-defaultState-bg-color` (+light/dark)
+| Even row background (for striped rows)
+
+| `usages.table.row.defaultState.even.defaultState.contrast`
+| `--onecx-theme-usages-table-row-defaultState-even-defaultState-contrast` (+light/dark)
+| Even row text color
+
+| `usages.table.row.defaultState.odd.state.hover.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-hover-bg-color` (+light/dark)
+| Odd row background on hover
+
+| `usages.table.row.defaultState.odd.state.hover.contrast`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-hover-contrast` (+light/dark)
+| Odd row text on hover
+
+| `usages.table.row.defaultState.odd.state.selected.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-selected-bg-color` (+light/dark)
+| Odd row background when selected
+
+| `usages.table.row.defaultState.odd.state.selected.contrast`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-selected-contrast` (+light/dark)
+| Odd row text when selected
+
+| `usages.table.row.defaultState.odd.state.active.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-active-bg-color` (+light/dark)
+| Odd row background when active
+
+| `usages.table.row.defaultState.odd.state.focus.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-state-focus-bg-color` (+light/dark)
+| Odd row background when focused
+|===
+
+[#table-row-cell-paths]
+==== Cell Paths Within Rows
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-bg-color` (+light/dark)
+| Cell background in odd rows (default state)
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.contrast`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-contrast` (+light/dark)
+| Cell text color in odd rows
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.padding`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-padding`
+| Cell padding in odd rows
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.verticalAlign`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-verticalAlign`
+| Cell vertical alignment in odd rows (default: `"middle"`)
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.truncate`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-truncate`
+| Whether cells truncate overflow in odd rows (default: `false`)
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.font.weight`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-font-weight`
+| Cell font weight in odd rows
+
+| `usages.table.row.defaultState.odd.defaultState.cell.defaultState.textAlign`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-defaultState-textAlign`
+| Cell text alignment in odd rows
+
+| `usages.table.row.defaultState.odd.defaultState.cell.state.hover.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-state-hover-bg-color` (+light/dark)
+| Cell background on hover in odd rows
+
+| `usages.table.row.defaultState.odd.defaultState.cell.state.selected.bg.color`
+| `--onecx-theme-usages-table-row-defaultState-odd-defaultState-cell-state-selected-bg-color` (+light/dark)
+| Cell background when selected in odd rows
+|===
+
+[#table-row-css-template]
+==== CSS Variable Template
+
+[source]
+----
+--onecx-theme-usages-table-row-{outerState}-{parity}-{innerState}-{property}
+--onecx-theme-usages-table-row-{outerState}-{parity}-{innerState}-cell-{cellState}-{cellProperty}
+----
+
+Where:
+
+* `{outerState}` = `defaultState` | `state-hover` | `state-active` | `state-selected` | `state-focus`
+* `{parity}` = `odd` | `even`
+* `{innerState}` = `defaultState` | `state-hover` | `state-active` | `state-selected` | `state-focus`
+* `{property}` = any row leaf property (bg, bg-color, contrast, border-color, border-width, border-style, border-radius, padding, font-*, textAlign, height)
+* `{cellState}` = `defaultState` | `state-hover` | `state-active` | `state-selected` | `state-focus`
+* `{cellProperty}` = any cell leaf property (bg-color, contrast, border-*, padding, font-*, textAlign, verticalAlign, truncate)
+
+[#region-overrides-tokens]
+== Region Overrides
+
+NOTE: This section documents an early-stage feature subject to change.
+
+Region overrides allow per-layout-region customisation of primitives and usages. The Shell layout defines these regions corresponding to slots in the viewport:
+
+[cols="2,3,3"]
+|===
+| Region Key | Shell Slot Name | CSS Variable Prefix
+
+| `header`
+| `onecx-shell-header`
+| `--onecx-theme-regionOverrides-header-`
+
+| `subHeader`
+| `onecx-shell-sub-header`
+| `--onecx-theme-regionOverrides-subHeader-`
+
+| `bodyStart`
+| `onecx-shell-body-start`
+| `--onecx-theme-regionOverrides-bodyStart-`
+
+| `bodyHeader`
+| `onecx-shell-body-header`
+| `--onecx-theme-regionOverrides-bodyHeader-`
+
+| `bodyFooter`
+| `onecx-shell-body-footer`
+| `--onecx-theme-regionOverrides-bodyFooter-`
+
+| `bodyEnd`
+| `onecx-shell-body-end`
+| `--onecx-theme-regionOverrides-bodyEnd-`
+
+| `footer`
+| `onecx-shell-footer`
+| `--onecx-theme-regionOverrides-footer-`
+|===
+
+Each region override can contain:
+
+* `primitives.*` — overrides any primitive token for that region
+* `usages.*` — overrides any usage token for that region
+
+The tokens within each override follow the exact same structure documented in the sections above.
+
+=== Example Paths
+
+[cols="3,4,4"]
+|===
+| Token Path | CSS Variable | Description
+
+| `regionOverrides.header.primitives.font.size`
+| `--onecx-theme-regionOverrides-header-primitives-font-size`
+| Override font size in the header region
+
+| `regionOverrides.header.primitives.variant.primary.defaultState.defaultVariant.bg.color`
+| `--onecx-theme-regionOverrides-header-primitives-variant-primary-defaultState-defaultVariant-bg-color` (+light/dark)
+| Override primary background in the header region
+
+| `regionOverrides.footer.usages.region.font.weight`
+| `--onecx-theme-regionOverrides-footer-usages-region-font-weight`
+| Override region font weight in the footer
+
+| `regionOverrides.bodyStart.primitives.area.surface.defaultState.defaultVariant.bg.color`
+| `--onecx-theme-regionOverrides-bodyStart-primitives-area-surface-defaultState-defaultVariant-bg-color` (+light/dark)
+| Override surface background in the body-start sidebar region
+|===

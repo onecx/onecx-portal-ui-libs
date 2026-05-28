@@ -1,0 +1,76 @@
+import * as z from "zod";
+import { primitives } from "./schema/primitives";
+import { region } from "./schema/region";
+import { table } from "./schema/table";
+
+const usages = z
+  .object({
+    region: (region as typeof region).optional(),
+    table: (table as typeof table).optional(),
+  })
+  .meta({ id: "usages" });
+
+type PrimitivesInput = z.input<typeof primitives>
+type UsagesInput = z.input<typeof usages>
+
+type RegionOverrideInput = {
+  primitives?: PrimitivesInput
+  usages?: UsagesInput
+}
+
+// Explicit type annotation breaks the inference chain to avoid TS2589
+// (regionOverrides repeats this schema 7 times, causing depth explosion)
+const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
+  .object({
+    primitives: primitives.optional(),
+    usages: usages.optional(),
+  }).optional()
+  .meta({ id: "regionOverride" }) as any;
+
+const regionOverrides = z
+  .object({
+    header: regionOverride as typeof regionOverride,
+    subHeader: regionOverride as typeof regionOverride,
+    bodyStart: regionOverride as typeof regionOverride,
+    bodyHeader: regionOverride as typeof regionOverride,
+    bodyFooter: regionOverride as typeof regionOverride,
+    bodyEnd: regionOverride as typeof regionOverride,
+    footer: regionOverride as typeof regionOverride,
+  }).optional()
+  .meta({ id: "regionOverrides" });
+
+export const themePropertiesV2 = z
+  .object({
+    primitives: primitives as typeof primitives,
+    usages: usages.optional(),
+    regionOverrides: regionOverrides as typeof regionOverrides,
+  })
+  .meta({ id: 'themePropertiesV2' })
+
+export const theme = z
+  .object({
+    v2: themePropertiesV2.optional(),
+    v1: z.record(z.string(), z.record(z.string(), z.string())).optional(),
+  })
+  .meta({ id: 'theme' })
+
+type RegionOverridesInput = {
+  header?: RegionOverrideInput
+  subHeader?: RegionOverrideInput
+  bodyStart?: RegionOverrideInput
+  bodyHeader?: RegionOverrideInput
+  bodyFooter?: RegionOverrideInput
+  bodyEnd?: RegionOverrideInput
+  footer?: RegionOverrideInput
+}
+
+export type ThemePropertiesV2 = {
+  primitives?: PrimitivesInput
+  usages?: UsagesInput
+  regionOverrides?: RegionOverridesInput
+}
+
+export type ThemeProperties = {
+  v2?: ThemePropertiesV2
+  v1?: Record<string, Record<string, string>>
+}
