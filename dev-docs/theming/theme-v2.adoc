@@ -1,0 +1,676 @@
+
+= Theme V2 Architecture
+
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 3
+:source-highlighter: highlight.js
+:schema_root: ../../libs/integration-interface/src/lib/topics/current-themes/v1
+:mapper_root: ../../libs/angular-utils/theme/primeng/src/utils/mapper
+:theme_service_root: ../../libs/angular-utils/theme/primeng/src/services
+:shell_root: ../../../onecx-shell/onecx-shell-ui/src/app/shell
+
+This document describes the Theme V2 schema, the mapping pipeline that translates theme tokens into PrimeNG presets, and the runtime mechanisms in the Shell and MFEs. It is aimed at developers who will **extend** the schema or add new mapping rules.
+
+toc::[]
+
+[#prerequisites]
+== Prerequisites
+
+Familiarity with:
+
+* https://primeng.org/theming[PrimeNG theming (design tokens & presets)]
+* https://zod.dev[Zod schema library]
+* link:concept.adoc[OneCX theming concept]
+* link:primeng.adoc[OneCX × PrimeNG theming integration]
+
+[#top-level-structure]
+== Top-Level Structure
+
+A v2 theme is described by the `ThemePropertiesV2` type (link:{schema_root}/current-themes.schema.ts[current-themes.schema.ts]):
+
+[source,typescript]
+----
+ThemePropertiesV2 = {
+  primitives?: PrimitivesInput   // foundational design tokens
+  usages?: UsagesInput           // component-specific token groups
+  regionOverrides?: RegionOverridesInput  // per-region overrides (early-stage)
+}
+----
+
+The backend stores both versions side by side:
+
+[source,typescript]
+----
+ThemeProperties = {
+  v1?: Record<string, Record<string, string>>  // legacy flat variables
+  v2?: ThemePropertiesV2                        // structured token tree
+}
+----
+
+The Shell determines which version to use based on the `versions` array published alongside the theme data.
+
+[#primitives]
+== Primitives
+
+Primitives (link:{schema_root}/schema/primitives.ts[primitives.ts]) are the **foundational design tokens** — colors, typography, spacing, radii, shadows — that form the building blocks referenced by everything else.
+
+[source,typescript]
+----
+primitives = {
+  defaultVariant?: variantWithStates   // default content colors & borders
+  variant: colorVariants               // primary, secondary, tertiary, quaternary, quinary
+  area?: areas                         // canvas, surface, onSurface, overlay
+  shadow?: shadow                      // none, sm, md, lg, xl
+  font?: font                          // family, size, weight, lineHeight, letterSpacing, style
+  space?: space                        // xs, sm, md, lg, xl, xxl
+  layout?: layout                      // contentMaxWidth, gap
+  radius?: radius                      // none, sm, md, lg, xl, full
+  border?: borderWithVariants          // defaultVariant + component-specific (button, input, card, dialog)
+  focusRing?: border                   // global focus ring style
+}
+----
+
+[#color-variants]
+=== Color Variants
+
+The `variant` object contains named color families. Each family is a `variantWithStates` block:
+
+[source,typescript]
+----
+variantWithStates = {
+  bg?: bg | string              // background (color, image, position, size, repeat)
+  contrast?: color              // foreground/text color
+  defaultState?: severityVariantGroup
+  state?: {
+    hover?: severityVariantGroup
+    active?: severityVariantGroup
+    selected?: severityVariantGroup
+    focus?: severityVariantGroup
+  }
+}
+----
+
+Each `severityVariantGroup` contains a `defaultVariant` and optional severity overrides (`success`, `info`, `warning`, `danger`, `contrast`).
+
+[#color-values]
+=== Color Values (Light / Dark)
+
+A color value is either a plain CSS string or a dual-mode object:
+
+[source,typescript]
+----
+// Plain (same in both modes)
+"#3B82F6"
+
+// Dual-mode
+{ "light": "#3B82F6", "dark": "#60A5FA" }
+----
+
+At runtime the Shell injects both as separate CSS custom properties and combines them with the CSS `light-dark()` function. See <<shell-css-variable-injection>>.
+
+[#areas]
+=== Areas
+
+Areas represent semantic surface layers:
+
+[cols="1,3"]
+|===
+| Token | Purpose
+
+| `canvas`
+| Page-level background (outermost layer)
+
+| `surface`
+| Card/panel-level background
+
+| `onSurface`
+| Content on top of a surface (e.g. list items)
+
+| `overlay`
+| Dialogs, dropdowns, tooltips
+|===
+
+Each area is a `variantWithStates` block (colors + states).
+
+[#utility-tokens]
+=== Utility Tokens
+
+[cols="1,2,2"]
+|===
+| Token | Keys | Example Values
+
+| `font`
+| family, size, weight, lineHeight, letterSpacing, style
+| `"Inter"`, `"1rem"`, `"400"`
+
+| `space`
+| xs, sm, md, lg, xl, xxl
+| `"0.25rem"` … `"3rem"`
+
+| `radius`
+| none, sm, md, lg, xl, full
+| `"0"` … `"9999px"`
+
+| `shadow`
+| none, sm, md, lg, xl
+| `"none"`, `"0 1px 3px rgba(0,0,0,.1)"`
+
+| `layout`
+| contentMaxWidth, gap
+| `"1280px"`, `"1rem"`
+
+| `border`
+| defaultVariant.color/width/style/radius/offset + variant (button, input, card, dialog)
+| `"1px"`, `"solid"`, `"#e5e7eb"`
+
+| `focusRing`
+| color, width, style, offset
+| `"#3B82F6"`, `"2px"`, `"solid"`, `"2px"`
+|===
+
+[#usages]
+== Usages
+
+Usages (link:{schema_root}/current-themes.schema.ts[current-themes.schema.ts]) define **component-specific** token groups that default back to primitives via theme references.
+
+[source,typescript]
+----
+usages = {
+  region?: region    // typography defaults for a page region
+  table?: table      // comprehensive datatable theming
+}
+----
+
+[#usage-region]
+=== Region
+
+The `region` usage (link:{schema_root}/schema/region.ts[region.ts]) provides typography defaults for a layout region. All properties default to primitive references:
+
+[source,typescript]
+----
+region = {
+  font?: {
+    family:        default "{{primitives.font.family}}"
+    size:          default "{{primitives.font.size}}"
+    weight:        default "{{primitives.font.weight}}"
+    lineHeight:    default "{{primitives.font.lineHeight}}"
+    letterSpacing: default "{{primitives.font.letterSpacing}}"
+    style:         default "{{primitives.font.style}}"
+  }
+}
+----
+
+[#usage-table]
+=== Table
+
+The `table` usage (link:{schema_root}/schema/table.ts[table.ts]) provides full datatable theming:
+
+[source,typescript]
+----
+table = {
+  settings?: {
+    checkboxColumnPosition: "start" | "end"  (default "start")
+    actionColumnPosition:   "start" | "end"  (default "end")
+    actionColumnSticky:     boolean           (default false)
+  }
+  base?: tableStyles       // container: bg, contrast, border, padding, font, borderCollapse, shadow
+  header?: rowWithStates   // header row: blockStyles + cell states
+  footer?: rowWithStates   // footer row: blockStyles + cell states
+  row?: tableRow           // body rows: alternating (odd/even) × states × cell states
+}
+----
+
+Key features:
+
+* `tableStyles` extends `blockStyles` (bg, contrast, border, padding, font, textAlign) with `borderCollapse`, `shadow`
+* `tableCellStyles` adds `verticalAlign` and `truncate`
+* `tableRow` supports alternating row styles (`odd`/`even`) each with their own interaction states
+* All properties default to primitive references (e.g. `border` → `{{primitives.border.defaultVariant.*}}`, `bg` → `{{primitives.area.surface...}}`)
+
+[#region-overrides]
+== Region Overrides (Early-Stage)
+
+NOTE: This mechanism exists in the schema but is considered early-stage and subject to change.
+
+Region overrides allow **per-layout-region** customisation of primitives and usages without affecting the rest of the page. The Shell layout defines these regions:
+
+[cols="1,2"]
+|===
+| Region key | Shell slot group
+
+| `header`
+| `onecx-shell-header`
+
+| `subHeader`
+| `onecx-shell-sub-header`
+
+| `bodyStart`
+| `onecx-shell-body-start`
+
+| `bodyHeader`
+| `onecx-shell-body-header`
+
+| `bodyFooter`
+| `onecx-shell-body-footer`
+
+| `bodyEnd`
+| `onecx-shell-body-end`
+
+| `footer`
+| `onecx-shell-footer`
+|===
+
+Each region override can contain its own `primitives` and `usages` objects, which are merged on top of the global values for that region.
+
+[source,typescript]
+----
+regionOverrides = {
+  header?: { primitives?, usages? }
+  subHeader?: { primitives?, usages? }
+  bodyStart?: { primitives?, usages? }
+  // ... etc.
+}
+----
+
+[#theme-references]
+== Theme References
+
+Theme references allow any value in the theme to point to another value via dot-path notation.
+
+[#reference-syntax]
+=== Syntax
+
+[source]
+----
+"{{primitives.font.family}}"
+"{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}"
+"{{primitives.space.md}}"
+----
+
+References are wrapped in double braces. The inner path is a dot-separated walk through the theme object.
+
+[#reference-resolution]
+=== Resolution Algorithm
+
+The `resolveThemeRefs()` function (link:{mapper_root}/resolve-refs.ts[resolve-refs.ts]) resolves references recursively:
+
+1. Walk the theme tree node-by-node.
+2. For each string value matching `^\{\{[\w.]+\}\}$`, look up the referenced path in the root theme object.
+3. If the referenced value is itself a reference, resolve it recursively.
+4. If the target is an object, resolve all values within it recursively.
+5. **Circular reference detection**: a visited-path set is maintained per resolution chain — if a path is revisited, an error is thrown.
+6. **Depth guard**: resolution stops after 20 levels of indirection.
+7. Unresolvable references (path doesn't exist) are kept as-is.
+
+[source,typescript]
+----
+// Example
+const theme = {
+  primitives: { font: { family: 'Inter' } },
+  usages: { region: { font: { family: '{{primitives.font.family}}' } } },
+};
+const resolved = resolveThemeRefs(theme);
+// resolved.usages.region.font.family === 'Inter'
+----
+
+[#defaults-in-usage-schemas]
+=== Defaults in Usage Schemas
+
+Usage schemas define Zod `.default()` values that are theme references. For example, the table's border defaults to:
+
+[source,typescript]
+----
+border: border.default({
+  color: "{{primitives.border.defaultVariant.color}}",
+  width: "{{primitives.border.defaultVariant.width}}",
+  style: "{{primitives.border.defaultVariant.style}}",
+  radius: "{{primitives.radius.md}}",
+})
+----
+
+This means that if a theme only defines primitives, the table automatically inherits consistent border values.
+
+[#mapping-pipeline]
+== Mapping Pipeline
+
+The mapping pipeline transforms a raw `ThemePropertiesV2` object into a PrimeNG preset and companion CSS. It is implemented in link:{mapper_root}/mapper.ts[mapper.ts].
+
+[#pipeline-overview]
+=== Overview
+
+[source]
+----
+┌───────────────────┐     ┌──────────────────┐     ┌─────────────────────┐
+│ ThemePropertiesV2 │────▶│ resolveThemeRefs  │────▶│   Resolved theme    │
+│ (raw, with refs)  │     │                  │     │ (all refs expanded) │
+└───────────────────┘     └──────────────────┘     └──────────┬──────────┘
+                                                               │
+                          ┌────────────────────────────────────┼──────────────────┐
+                          │                                    │                  │
+                          ▼                                    ▼                  │
+                 ┌─────────────────┐                  ┌──────────────────┐       │
+                 │  MAPPING_RULES  │                  │    CSS_RULES     │       │
+                 │ (from → to)     │                  │ (selector+decls) │       │
+                 └────────┬────────┘                  └────────┬─────────┘       │
+                          │                                    │                  │
+                          ▼                                    ▼                  │
+                 ┌─────────────────┐                  ┌──────────────────┐       │
+                 │  variables: {}  │                  │  css: string     │       │
+                 │  (preset obj)   │                  │                  │       │
+                 └─────────────────┘                  └──────────────────┘       │
+                                                                                  │
+                          └─────────────────── { variables, css } ────────────────┘
+----
+
+[source,typescript]
+----
+export function mapThemeToPreset(
+  theme: ThemePropertiesV2,
+  mappingRules: MappingRule[] = MAPPING_RULES,
+  cssRules: CssRule[] = CSS_RULES
+): { variables: Record<string, unknown>; css: string }
+----
+
+[#mapping-rules]
+=== Mapping Rules
+
+A `MappingRule` (link:{mapper_root}/mapper.types.ts[mapper.types.ts]) maps a single resolved theme token to a PrimeNG preset path:
+
+[source,typescript]
+----
+interface MappingRule {
+  from: ThemePath      // dot-path into the resolved theme
+  to: PresetPath       // dot-path into the PrimeNG preset output
+  transform?: (value: unknown) => unknown  // optional normalisation
+}
+----
+
+[#mapping-rule-from]
+==== `from` — Theme Path
+
+Constrained at compile time by the `ThemePath` type (link:{mapper_root}/theme-path.types.ts[theme-path.types.ts]), which recursively generates all valid dot-paths through `ThemePropertiesV2.primitives` and `ThemePropertiesV2.usages`. A typo in `from` causes a TypeScript error.
+
+[#mapping-rule-to]
+==== `to` — Preset Path
+
+Constrained by `PresetPath`, which generates valid paths through PrimeNG's `ComponentsDesignTokens` plus semantic paths. Supports a `{mode}` placeholder:
+
+* When `to` contains `{mode}`, the mapper expands to **both** `light` and `dark` paths.
+* If the resolved value is a `{ light, dark }` object, the respective variant is written to each mode.
+* Otherwise the same value is written to both.
+
+[#mapping-rule-transform]
+==== `transform`
+
+Applied to the resolved value before writing. Common transforms:
+
+* `toColorString` — normalises `{ light, dark }` objects, `{ color }` bg-objects, or plain strings to a CSS color string.
+
+[#mapping-rule-example]
+==== Example
+
+[source,typescript]
+----
+// From: mapping-rules/primitives/default.rules.ts
+{
+  from: 'primitives.defaultVariant.defaultState.defaultVariant.bg',
+  to: 'semantic.colorScheme.{mode}.content.background',
+  transform: toColorString,
+}
+----
+
+This reads `primitives.defaultVariant.defaultState.defaultVariant.bg` from the resolved theme, normalises it via `toColorString`, and writes the result into both `semantic.colorScheme.light.content.background` and `semantic.colorScheme.dark.content.background` in the preset output.
+
+[#css-rules]
+=== CSS Rules
+
+A `CssRule` produces a CSS rule block for styles that **cannot** be expressed as PrimeNG preset tokens:
+
+[source,typescript]
+----
+interface CssRule {
+  selector: string           // CSS selector, e.g. '.p-datatable'
+  declarations: CssDeclaration[]
+}
+
+interface CssDeclaration {
+  property: string           // CSS property name, e.g. 'border-radius'
+  from?: ThemePath           // dot-path → generates var(--onecx-theme-{path-as-dashes})
+  value?: string             // static CSS value (always emitted)
+}
+----
+
+Emission rules:
+
+* A declaration with `from` is only emitted when the resolved theme has a value at that path.
+* A declaration with `value` is always emitted.
+* An entire selector block is omitted when none of its declarations contribute output.
+
+The CSS variable names are generated by `cssVar()`:
+
+[source,typescript]
+----
+cssVar('usages.table.base.bg') → 'var(--onecx-theme-usages-table-base-bg)'
+----
+
+These CSS variables are populated on `<html>` by the Shell (see <<shell-css-variable-injection>>).
+
+[#rule-file-organisation]
+=== File Organisation
+
+[source]
+----
+mapper/
+├── mapping-rules.ts              ← aggregated MAPPING_RULES array
+├── mapping-rules/
+│   ├── primitive-mapping-rules.ts
+│   ├── primitives/
+│   │   ├── default.rules.ts      ← content bg/contrast/border
+│   │   ├── variant.rules.ts      ← primary/secondary colors
+│   │   ├── focus-ring.rules.ts
+│   │   └── radius.rules.ts
+│   ├── usage-mapping-rules.ts
+│   └── usages/
+│       └── datatable.rules.ts    ← imports datatable/{base,header,row,footer}.rules.ts
+├── css-rules.ts                  ← aggregated CSS_RULES array
+└── css-rules/
+    ├── usage-css-rules.ts
+    └── usages/
+        └── datatable.rules.ts    ← imports datatable/{base,header,footer}.rules.ts
+----
+
+Rules are evaluated in order. The mapper skips a rule when the source path yields `undefined`.
+
+[#shell-runtime]
+== Shell-side Runtime
+
+The Shell (link:{shell_root}/services/theme-apply.service.ts[theme-apply.service.ts]) is responsible for parsing the raw theme from the backend and making it available to all MFEs.
+
+[#shell-theme-parsing]
+=== Theme Parsing
+
+1. The `ThemeApplyService.applyTheme()` receives a raw `Theme` object from the backend BFF.
+2. It detects whether the `properties` JSON contains v2 data (presence of `"usages":` key).
+3. For v2 themes, it validates with the Zod `themeSchema.safeParse()`.
+4. It determines `receivedThemeVersions` (can be `[1]`, `[2]`, or `[1, 2]` for backwards-compatible themes).
+
+[#shell-topic-publishing]
+=== Topic Publishing
+
+The parsed theme is published to two topics:
+
+* `CurrentThemesTopic` — carries the full `ThemeProperties` (both v1 + v2) plus `versions` array.
+* `currentTheme$` (legacy) — carries the v1 representation for backwards compatibility.
+
+These topics use `BroadcastChannel` under the hood, making the data available to all MFEs on the page.
+
+[#shell-css-variable-injection]
+=== CSS Variable Injection
+
+After publishing, the Shell calls `applyThemeV2Variables()` which recursively walks the `ThemePropertiesV2` object and sets CSS custom properties on `document.documentElement`:
+
+[source,typescript]
+----
+// Recursive walk produces:
+--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color: #3B82F6;
+--onecx-theme-primitives-font-family: Inter;
+--onecx-theme-usages-table-base-border-radius: 0.5rem;
+// ... etc.
+----
+
+For `{ light, dark }` color objects, three properties are set:
+
+[source,css]
+----
+--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color-light: #3B82F6;
+--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color-dark: #60A5FA;
+--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color: light-dark(
+  var(--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color-light),
+  var(--onecx-theme-primitives-variant-primary-defaultState-defaultVariant-bg-color-dark)
+);
+----
+
+The `color-scheme: light dark` property is set on `<html>` to enable the CSS `light-dark()` function, which automatically resolves based on the user's OS preference.
+
+Unresolved references (`{{...}}`) in values are converted to CSS variable references:
+
+[source,typescript]
+----
+"{{primitives.font.family}}" → "var(--onecx-theme-primitives-font-family)"
+----
+
+[#mfe-runtime]
+== MFE-side Runtime
+
+Each MFE that provides `provideThemeConfig()` (link:{theme_service_root}/../utils/application-config.ts[application-config.ts]) gets theme v2 support.
+
+[#theme-config-service]
+=== ThemeConfigService
+
+The `ThemeConfigService` (link:{theme_service_root}/theme-config.service.ts[theme-config.service.ts]) subscribes to `CurrentThemesTopic` and:
+
+1. Checks `maxVersion` (from options or config) to decide whether to use v2 or fall back to v1.
+2. For v2: calls `mapThemeToPreset(theme.properties.v2)` to produce `{ variables, css }`.
+3. Merges any theme overrides (if advanced theming is enabled).
+4. Appends optional `cssOverrides` from the MFE provider options.
+5. Applies via `PrimeNG.setThemeConfig()`:
+
+[source,typescript]
+----
+this.primeNG.setThemeConfig({
+  theme: {
+    preset: { ...mergeDeep(variables, overridesFolded), css: joinedCustomCss },
+    options: { darkModeSelector: 'system' },
+  },
+})
+----
+
+[#custom-use-style]
+=== CustomUseStyle (Style Scoping)
+
+`CustomUseStyle` replaces PrimeNG's default `UseStyle` service and ensures that:
+
+* All PrimeNG style sheets are scoped per-MFE using `@scope` rules and prefixed CSS variable names.
+* Theme overrides (if provided) are appended as the last style sheet in the document head.
+
+This ensures that multiple MFEs on the same page each receive correctly scoped PrimeNG styles. Details are covered in link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping].
+
+[#webpack-modifications]
+=== Webpack Modifications (Shell)
+
+The Shell's `webpack.config.ts` applies source modifications to PrimeNG and Angular platform code at build time:
+
+* `document.createElement(` in PrimeNG → replaced with `document.createElementFromPrimeNg(...)` to inject style scope data into dynamically created elements.
+* `Theme.setLoadedStyleName` → replaced with a no-op to prevent unwanted theme recomputations.
+* `document.createElement('style'` in `@angular/platform-browser` → replaced with `document.createElementFromSharedStylesHost(...)` to ensure Angular component styles carry scope data.
+
+[#extending]
+== How to Extend
+
+[#adding-a-usage-schema]
+=== Adding a New Usage Schema
+
+1. Create a new Zod schema file in `libs/integration-interface/src/lib/topics/current-themes/v1/schema/` (e.g. `dialog.ts`).
+2. Define your schema using the primitives building blocks (`bg`, `border`, `font`, `color`, etc.) with `.default("{{primitives...}}")` references.
+3. Import and add to the `usages` object in link:{schema_root}/current-themes.schema.ts[current-themes.schema.ts]:
++
+[source,typescript]
+----
+import { dialog } from "./schema/dialog";
+
+const usages = z.object({
+  region: region.optional(),
+  table: table.optional(),
+  dialog: dialog.optional(),  // ← new
+});
+----
+4. Export any new types from the library's public API (`index.ts`).
+
+[#adding-a-mapping-rule]
+=== Adding a New Mapping Rule
+
+1. Create a `.rules.ts` file in the appropriate folder:
+   * `mapping-rules/primitives/` for primitive token mappings
+   * `mapping-rules/usages/<component>/` for usage-specific mappings
+2. Define your rules array:
++
+[source,typescript]
+----
+import type { MappingRule } from '../../mapper.types';
+import { toColorString } from '../../mapper.utils';
+
+export const myRules: MappingRule[] = [
+  {
+    from: 'usages.dialog.bg',            // ← type-checked against ThemePath
+    to: 'components.dialog.colorScheme.{mode}.background',  // ← type-checked against PresetPath
+    transform: toColorString,
+  },
+];
+----
+3. Import and spread into the parent barrel file (e.g. `usage-mapping-rules.ts`).
+4. **No changes to `mapper.ts` are needed** — it reads from the aggregated `MAPPING_RULES` array.
+
+[#adding-a-css-rule]
+=== Adding a New CSS Rule
+
+For styles that have no PrimeNG preset equivalent:
+
+1. Create a `.rules.ts` file under `css-rules/usages/<component>/`.
+2. Define your rules:
++
+[source,typescript]
+----
+import type { CssRule } from '../../mapper.types';
+
+export const myDialogCssRules: CssRule[] = [
+  {
+    selector: '.p-dialog .p-dialog-header',
+    declarations: [
+      { property: 'padding', from: 'usages.dialog.header.padding' },
+      { property: 'overflow', value: 'hidden' },  // always emitted
+    ],
+  },
+];
+----
+3. Import and spread into the parent barrel (`usage-css-rules.ts`).
+
+[#type-safety]
+=== Type Safety
+
+Both `ThemePath` and `PresetPath` are compile-time unions generated by recursive type traversal:
+
+* `ThemePath` — all valid dot-paths through `primitives` + `usages` (excludes `regionOverrides` to avoid TS2589).
+* `PresetPath` — all valid dot-paths through PrimeNG's `ComponentsDesignTokens` plus semantic paths, with `{mode}` alias support.
+
+If you add a new schema property and reference it in a mapping rule, the type system will validate both the `from` and `to` paths. Typos produce immediate compile errors.
+
+[#cross-references]
+== Related Documentation
+
+* link:concept.adoc[Theming Concept] — what themes are in OneCX, how variables work
+* link:primeng.adoc[PrimeNG Theming Integration] — v1 preset, OneCX extend section, appliance
+* link:theme-overrides.adoc[Theme Overrides] — per-application PrimeNG token overrides
+* link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping] — how PrimeNG CSS is scoped per-MFE
+* link:../styles/primeng-token-variables.adoc[PrimeNG Token Variables] — CSS variable prefixing
