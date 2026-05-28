@@ -1,6 +1,13 @@
 import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
-import { ThemeService } from '@onecx/angular-integration-interface'
-import { OverrideType, Theme as OneCXTheme, ThemeOverride, ThemePropertiesV2, ThemeCommonData, CurrentThemes } from '@onecx/integration-interface'
+import { CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import {
+  OverrideType,
+  Theme as OneCXTheme,
+  ThemeOverride,
+  ThemePropertiesV2,
+  ThemeCommonData,
+  CurrentThemes,
+} from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
 import ThemeConfig from '../utils/theme-config'
@@ -8,12 +15,24 @@ import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
 import { mergeDeep } from '@onecx/angular-utils'
+import { mapThemeToPreset } from '../utils/mapper/mapper'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
-export function provideThemeConfigService(isAdvanced?: boolean) {
+export const THEME_CONFIG_SERVICE_OPTIONS = new InjectionToken<{ isAdvanced?: boolean; maxVersion?: number }>(
+  'THEME_CONFIG_SERVICE_OPTIONS'
+)
+
+type Options = { isAdvanced?: boolean; maxVersion: number } /**
+    @deprecated
+    */
+export function provideThemeConfigService(isAdvanced?: boolean): any
+export function provideThemeConfigService(options: Options): any
+
+export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Options): any {
   Theme.clearLoadedStyleNames()
   Base.clearLoadedStyleNames()
+  const isAdvanced = typeof isAdvancedOrOptions === 'boolean' ? isAdvancedOrOptions : isAdvancedOrOptions?.isAdvanced
   return [
     {
       provide: ENVIRONMENT_INITIALIZER,
@@ -28,6 +47,11 @@ export function provideThemeConfigService(isAdvanced?: boolean) {
       useClass: CustomUseStyle,
     },
     { provide: IS_ADVANCED_THEMING, useValue: isAdvanced ?? false },
+    {
+      provide: THEME_CONFIG_SERVICE_OPTIONS,
+      useValue:
+        typeof isAdvancedOrOptions === 'boolean' ? { isAdvanced: isAdvancedOrOptions } : (isAdvancedOrOptions ?? {}),
+    },
   ]
 }
 
@@ -39,21 +63,26 @@ interface ThemeV2 extends ThemeCommonData {
 })
 export class ThemeConfigService {
   private themeService = inject(ThemeService)
+  private configService = inject(ConfigurationService)
   private primeNG = inject(PrimeNG)
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
+  private readonly options = inject(THEME_CONFIG_SERVICE_OPTIONS)
 
   constructor() {
-    this.themeService.currentThemes$.subscribe((theme) => {
-      if (theme.versions.includes(2)) {
+    this.themeService.currentThemes$.subscribe(async (theme) => {
+      const maxVersion = this.options.maxVersion ?? await this.configService.getProperty(CONFIG_KEY.DEFAULT_THEME_VERSION) ?? 1
+      if (theme.versions?.includes(2) && Number(maxVersion) === 2) {
         this.applyThemeVariablesV2({
           ...theme,
           properties: theme.properties?.v2 ?? {},
         })
-      } else {
+      } else if(theme.versions?.includes(1) && Number(maxVersion) >= 1) {
         this.applyThemeVariablesV1({
           ...theme,
           properties: theme.properties.v1,
         })
+      } else {
+        throw new Error(`App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${maxVersion}`) 
       }
     })
   }
@@ -81,13 +110,25 @@ export class ThemeConfigService {
     return parsedOverrides
   }
 
-  async applyThemeVariablesV2(theme: ThemeV2): Promise<void> {}
+  async applyThemeVariablesV2(
+    theme: CurrentThemes & {
+      properties: ThemePropertiesV2
+    }
+  ): Promise<void> {
+    const overridesFolded = this.generateThemeOverrides(theme.overrides)
+    const { variables, css } = mapThemeToPreset(theme.properties)
+
+    this.primeNG.setThemeConfig({
+      theme: {
+        preset: { ...mergeDeep(variables, overridesFolded), css },
+        options: { darkModeSelector: false }, // TODO: Add darkmode selector to shell, find a way to have a solution that's compatible with both themes (since darkmode support is a v2 feature only)
+      },
+    })
+  }
 
   async applyThemeVariablesV1(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
-    const overridesFolded = this.isAdvancedTheming
-      ? this.foldOverrides(this.parsePrimeNGOverridesValue(oldTheme.overrides))
-      : {}
+    const overridesFolded = this.generateThemeOverrides(oldTheme.overrides)
 
     const themeConfig = new ThemeConfig(oldThemeVariables)
     const preset = await (await import('../preset/custom-preset')).CustomPreset
@@ -97,5 +138,12 @@ export class ThemeConfigService {
         options: { darkModeSelector: false },
       },
     })
+  }
+
+  private generateThemeOverrides(overrides: Array<ThemeOverride> | undefined) {
+    if (!overrides?.length) {
+      return {}
+    }
+    return (this.isAdvancedTheming || this.options.isAdvanced) ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides)) : {}
   }
 }

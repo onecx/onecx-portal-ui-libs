@@ -1,7 +1,7 @@
 import type { MappingRule } from '../../../mapper.types';
 import { toColorString } from '../../../mapper.utils';
 
-export const defaultRules: MappingRule[] = [
+export const baseRules: MappingRule[] = [
   {
     from: 'usages.table.base.border.color',
     to: 'components.datatable.root.borderColor',

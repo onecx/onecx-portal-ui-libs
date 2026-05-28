@@ -1,4 +1,4 @@
-import type { Theme } from '@onecx/integration-interface';
+import type { ThemePropertiesV2 } from '@onecx/integration-interface';
 import type { MappingRule, CssRule } from './mapper.types';
 import { resolveThemeRefs } from './resolve-refs';
 import { getByPath, setByPath, cssVar, isLightDark } from './mapper.utils';
@@ -121,17 +121,17 @@ function buildCss(cssRules: CssRule[], resolved: unknown): string {
  * @param mappingRules - Override the default MAPPING_RULES (for testing /
  *   extension without modifying the shared table).
  * @param cssRules - Override the default CSS_RULES.
- * @returns `{ preset, css }` where `preset` is a plain object whose shape
+ * @returns `{ variables, css }` where `variables` is a plain object whose shape
  *   matches PrimeNG's `Preset` structure and `css` is the companion CSS string
  *   for unmappable styles.  Use `as unknown as Preset` when passing to
  *   `definePreset` to satisfy TypeScript's strict index-signature check on the
  *   `Preset` type.
  */
 export function mapThemeToPreset(
-  theme: Theme,
+  theme: ThemePropertiesV2,
   mappingRules: MappingRule[] = MAPPING_RULES,
   cssRules: CssRule[] = CSS_RULES
-): { preset: Record<string, unknown>; css: string } {
+): { variables: Record<string, unknown>; css: string } {
   const resolved = resolveThemeRefs(theme);
   const presetObj: Record<string, unknown> = {};
 
@@ -141,5 +141,5 @@ export function mapThemeToPreset(
 
   const css = buildCss(cssRules, resolved);
 
-  return { preset: presetObj, css };
+  return { variables: presetObj, css };
 }
