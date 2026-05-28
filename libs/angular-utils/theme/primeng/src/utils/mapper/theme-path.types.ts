@@ -1,4 +1,7 @@
 import type { ThemePropertiesV2 } from '@onecx/integration-interface';
+import type { ComponentsDesignTokens } from '@primeuix/themes/types';
+
+// ─── Shared Utilities ─────────────────────────────────────────────────────────
 
 /**
  * Depth counter for recursive type traversal.
@@ -8,10 +11,29 @@ import type { ThemePropertiesV2 } from '@onecx/integration-interface';
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 /**
- * Distributively extracts string keys from all object members of a union type.
- * Non-object members (e.g. `string`, `number`) contribute `never`.
+ * Removes index signatures from a type, keeping only explicitly declared keys.
+ * Necessary because `ComponentsDesignTokens` has `[key: PropertyKey]: ...`
+ * which would otherwise make any string a valid key.
  */
-type ObjKeys<T> = T extends object ? keyof T & string : never;
+type RemoveIndex<T> = {
+  [K in keyof T as string extends K
+    ? never
+    : number extends K
+      ? never
+      : symbol extends K
+        ? never
+        : K]: T[K];
+};
+
+/**
+ * Distributively extracts string keys from all object members of a union type.
+ * Non-object members (e.g. `string`, `number`, functions) contribute `never`.
+ */
+type ObjKeys<T> = T extends (...args: unknown[]) => unknown
+  ? never
+  : T extends object
+    ? keyof T & string
+    : never;
 
 /**
  * Distributively indexes into object members of a union type.
@@ -22,6 +44,8 @@ type ObjIndex<T, K extends string> = T extends object
     ? T[K]
     : never
   : never;
+
+// ─── Theme Paths (from) ──────────────────────────────────────────────────────
 
 /**
  * Recursively generates all valid dot-notation paths through type `T`,
@@ -57,3 +81,57 @@ type ThemePathSource = Required<Pick<ThemePropertiesV2, 'primitives' | 'usages'>
  * in theme paths are caught at compile time.
  */
 export type ThemePath = Paths<ThemePathSource>;
+
+// ─── Preset Paths (to) ───────────────────────────────────────────────────────
+
+/**
+ * Keys on component token types (from `DesignTokens<T>`) that are NOT valid
+ * token paths — they hold CSS strings or extension records.
+ */
+type PresetExcluded = 'css' | 'extend';
+
+/**
+ * Expands `'light'` and `'dark'` keys to also include `'{mode}'` — matching
+ * the mapper's `{mode}` placeholder convention that expands to both modes.
+ */
+type ModeAlias<K extends string> = K extends 'light' | 'dark' ? K | '{mode}' : K;
+
+/**
+ * Recursively generates all valid dot-notation paths through a PrimeNG preset type.
+ * Similar to `Paths` but with:
+ * - `{mode}` alias support for `light`/`dark` keys
+ * - Exclusion of non-token keys (`css`, `extend`)
+ * - Index signature stripping via `RemoveIndex`
+ */
+type PresetPaths<T, D extends number = 10> = [D] extends [never]
+  ? never
+  : Exclude<ObjKeys<RemoveIndex<NonNullable<T>>>, PresetExcluded> extends infer K
+    ? K extends string
+      ? ModeAlias<K> | `${ModeAlias<K>}.${PresetPaths<ObjIndex<NonNullable<T>, K>, Prev[D]>}`
+      : never
+    : never;
+
+/**
+ * All valid dot-notation paths into the PrimeNG `components` section.
+ * Fully validated against `ComponentsDesignTokens` from `@primeuix/themes/types`.
+ * Handles the `{mode}` placeholder in `colorScheme.{mode}.X` paths.
+ */
+type ComponentPaths = `components.${PresetPaths<RemoveIndex<ComponentsDesignTokens>>}`;
+
+/**
+ * Unconstrained paths for the `semantic` section of a PrimeNG preset.
+ * Not validated because projects use custom base themes whose semantic tokens
+ * are not captured by any single published type definition.
+ */
+type SemanticPaths = `semantic.${string}`;
+
+/**
+ * Union of all valid PrimeNG preset dot-paths for `MappingRule.to`.
+ *
+ * - **Component paths** (`components.*`): Strictly validated against the typed
+ *   `ComponentsDesignTokens` from `@primeuix/themes/types`. Supports `{mode}`
+ *   as an alias for `light`/`dark` in `colorScheme` paths.
+ * - **Semantic paths** (`semantic.*`): Unconstrained — accepts any sub-path
+ *   because projects use custom base themes.
+ */
+export type PresetPath = ComponentPaths | SemanticPaths;

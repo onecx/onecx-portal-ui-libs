@@ -1,5 +1,5 @@
 import type { Preset } from '@primeuix/themes/types';
-import type { ThemePath } from './theme-path.types';
+import type { PresetPath, ThemePath } from './theme-path.types';
 
 export type { Preset };
 
@@ -20,7 +20,7 @@ export type { Preset };
  */
 export interface MappingRule {
   from: ThemePath;
-  to: string;
+  to: PresetPath;
   transform?: (value: unknown) => unknown;
 }
 
