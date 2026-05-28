@@ -1,4 +1,4 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
+import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, Injector, inject, runInInjectionContext } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   OverrideType,
@@ -16,14 +16,15 @@ import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
 import { mergeDeep } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
+import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
-export const THEME_CONFIG_SERVICE_OPTIONS = new InjectionToken<{ isAdvanced?: boolean; maxVersion?: number }>(
-  'THEME_CONFIG_SERVICE_OPTIONS'
-)
+type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOverrides; overrides?: ThemeOverrides }
 
-type Options = { isAdvanced?: boolean; maxVersion: number } /**
+export const THEME_OPTIONS = new InjectionToken<Options>('THEME_OPTIONS')
+
+/**
     @deprecated
     */
 export function provideThemeConfigService(isAdvanced?: boolean): any
@@ -48,7 +49,7 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
     },
     { provide: IS_ADVANCED_THEMING, useValue: isAdvanced ?? false },
     {
-      provide: THEME_CONFIG_SERVICE_OPTIONS,
+      provide: THEME_OPTIONS,
       useValue:
         typeof isAdvancedOrOptions === 'boolean' ? { isAdvanced: isAdvancedOrOptions } : (isAdvancedOrOptions ?? {}),
     },
@@ -66,23 +67,27 @@ export class ThemeConfigService {
   private configService = inject(ConfigurationService)
   private primeNG = inject(PrimeNG)
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
-  private readonly options = inject(THEME_CONFIG_SERVICE_OPTIONS)
+  private readonly options = inject(THEME_OPTIONS)
+  private readonly injector = inject(Injector)
 
   constructor() {
     this.themeService.currentThemes$.subscribe(async (theme) => {
-      const maxVersion = this.options.maxVersion ?? await this.configService.getProperty(CONFIG_KEY.DEFAULT_THEME_VERSION) ?? 1
+      const maxVersion =
+        this.options.maxVersion ?? (await this.configService.getProperty(CONFIG_KEY.DEFAULT_THEME_VERSION)) ?? 1
       if (theme.versions?.includes(2) && Number(maxVersion) === 2) {
         this.applyThemeVariablesV2({
           ...theme,
           properties: theme.properties?.v2 ?? {},
         })
-      } else if(theme.versions?.includes(1) && Number(maxVersion) >= 1) {
+      } else if (theme.versions?.includes(1) && Number(maxVersion) >= 1) {
         this.applyThemeVariablesV1({
           ...theme,
           properties: theme.properties.v1,
         })
       } else {
-        throw new Error(`App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${maxVersion}`) 
+        throw new Error(
+          `App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${maxVersion}`
+        )
       }
     })
   }
@@ -117,10 +122,16 @@ export class ThemeConfigService {
   ): Promise<void> {
     const overridesFolded = this.generateThemeOverrides(theme.overrides)
     const { variables, css } = mapThemeToPreset(theme.properties)
-
+    const cssOverrides = this.options.cssOverrides
+    const overrides = Promise.resolve(
+      typeof cssOverrides === 'function' && cssOverrides !== undefined
+        ? runInInjectionContext(this.injector, () => cssOverrides())
+        : cssOverrides
+    )
+    const joinedCustomCss = css + (await overrides ?? '')
     this.primeNG.setThemeConfig({
       theme: {
-        preset: { ...mergeDeep(variables, overridesFolded), css },
+        preset: { ...mergeDeep(variables, overridesFolded), css: joinedCustomCss },
         options: { darkModeSelector: 'system' },
       },
     })
@@ -144,6 +155,8 @@ export class ThemeConfigService {
     if (!overrides?.length) {
       return {}
     }
-    return (this.isAdvancedTheming || this.options.isAdvanced) ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides)) : {}
+    return this.isAdvancedTheming || this.options.isAdvanced
+      ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides))
+      : {}
   }
 }
