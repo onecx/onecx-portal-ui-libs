@@ -1,4 +1,5 @@
 import type { Preset } from '@primeuix/themes/types';
+import type { ThemePath } from './theme-path.types';
 
 export type { Preset };
 
@@ -6,6 +7,8 @@ export type { Preset };
  * A single token-level mapping from a resolved theme dot-path to a PrimeNG preset dot-path.
  *
  * - `from` is read from the fully resolved theme object (after `resolveThemeRefs`).
+ *   Constrained to `ThemePath` so that only valid paths into the theme schema
+ *   are accepted at compile time.
  * - `to` is written into the plain preset object that the mapper builds.
  *   May contain the literal `{mode}` segment, which the mapper expands to both
  *   `'light'` and `'dark'`. When the source value is a `{ light, dark }` color
@@ -16,7 +19,7 @@ export type { Preset };
  *   `.color` string).
  */
 export interface MappingRule {
-  from: string;
+  from: ThemePath;
   to: string;
   transform?: (value: unknown) => unknown;
 }
@@ -37,8 +40,9 @@ export interface CssDeclaration {
   /**
    * Dot-path in the theme whose variable name (`--onecx-theme-{dashes}`) is
    * used as the CSS value.  Omit when `value` is provided instead.
+   * Constrained to `ThemePath` for compile-time validation.
    */
-  from?: string;
+  from?: ThemePath;
   /**
    * Literal CSS value, always emitted.  Omit when `from` is provided instead.
    */
