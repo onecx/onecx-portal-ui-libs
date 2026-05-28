@@ -27,6 +27,7 @@
   </ng-template>
 
   <p-pickList
+    #pickList
     [source]="displayedColumnsModel"
     [target]="hiddenColumnsModel"
     [sourceHeader]="activeColumnsLabel || (activeColumnsLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate)"
@@ -43,6 +44,12 @@
     [allRightButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_RIGHT' | translate)"
     [leftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.LEFT' | translate)"
     [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
+    (onMoveToTarget)="onPickListMoveToTarget($event)"
+    (onMoveAllToTarget)="onPickListMoveAllToTarget($event)"
+    (onMoveToSource)="onPickListMoveToSource($event)"
+    (onMoveAllToSource)="onPickListMoveAllToSource($event)"
+    (onSourceReorder)="onPickListSourceReorder()"
+    (onTargetReorder)="onPickListTargetReorder()"
   >
     <ng-template let-item #item>
       <div>{{ item.nameKey | translate }}</div>
