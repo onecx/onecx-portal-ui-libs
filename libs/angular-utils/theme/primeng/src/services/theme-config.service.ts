@@ -121,7 +121,7 @@ export class ThemeConfigService {
     this.primeNG.setThemeConfig({
       theme: {
         preset: { ...mergeDeep(variables, overridesFolded), css },
-        options: { darkModeSelector: false }, // TODO: Add darkmode selector to shell, find a way to have a solution that's compatible with both themes (since darkmode support is a v2 feature only)
+        options: { darkModeSelector: 'system' },
       },
     })
   }
