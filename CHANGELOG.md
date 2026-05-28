@@ -1,3 +1,18 @@
+## [6.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.1...v6.23.2) (2026-05-22)
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([107fc1e](https://github.com/onecx/onecx-portal-ui-libs/commit/107fc1e7f67b0d73bac55894d1abcc49783a8827))
+
+## [6.23.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.0...v6.23.1) (2026-05-22)
+
+### Bug Fixes
+
+* added .card styling from v5 ([#1455](https://github.com/onecx/onecx-portal-ui-libs/issues/1455)) ([3162ac8](https://github.com/onecx/onecx-portal-ui-libs/commit/3162ac8e682a9e677c2bfb731ce4dcef5f4d5af3))
+* better error handling + skip existing packages (v6) ([#1438](https://github.com/onecx/onecx-portal-ui-libs/issues/1438)) ([9a675bf](https://github.com/onecx/onecx-portal-ui-libs/commit/9a675bf8e5ce9fe9b0c0d4fdb3cdeaaf56c1ad10))
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([6cb12fc](https://github.com/onecx/onecx-portal-ui-libs/commit/6cb12fc4bb596c27b5763e77dd1f091b132af1f8))
+* ngrx-integration-interface buildTarget pointing to non-existent target ([#1466](https://github.com/onecx/onecx-portal-ui-libs/issues/1466)) ([5e7b744](https://github.com/onecx/onecx-portal-ui-libs/commit/5e7b74429ebe0bf26f085da371cecb1c5ae71ed1))
+
 ## [6.23.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.22.1...v6.23.0) (2026-05-11)
 
 ### Features
