@@ -24,7 +24,7 @@ const angularCore = '@angular/core';
 /**
  * Callbacks that can be passed to the SharedLibraryConfigOptions function to customize its behavior.
  * @property {function} configCallback - A function that receives the package name and current shared configuration, returning a modified configuration. Must return a SharedLibraryConfig object.
- * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, undefined or use onecxFilter to use default blacklist. 
+ * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, use onecxFilter to use default blacklist. 
 */
 export interface SharedLibraryConfigOptions {
   configCallback?: (packageName: string, currentConfig: SharedLibraryConfig) => SharedLibraryConfig;
@@ -76,14 +76,14 @@ function removeExportPrefix(str: string) {
 
 
 /**
- * The default OneCX package filter.
+ * onecxPackageFilter is the default OneCX package filter.
  * @param {string} packageName - The full package name to check against the default blacklist.
  * @param {Record<string, string>} dependencies - The dependencies object from package.json, used to check if the package is explicitly listed as a dependency.
  * @returns {boolean} - Returns `true` if the package is on the default blacklist, `false` otherwise.
  */
-export function onecxFilter(packageName: string, dependencies: Record<string, string>): boolean {
-  if (dependencies[packageName]) {
-    return isDependencyBlacklisted(packageName); 
+export function onecxPackageFilter(packageName: string): boolean {
+  if(isDependencyBlacklisted(packageName)){
+    return true;
   }
   return DEFAULT_FULL_PACKAGE_BLACKLIST.includes(packageName);
 }
@@ -92,42 +92,13 @@ export function onecxFilter(packageName: string, dependencies: Record<string, st
 /**
  * Check whether a dependency matches any blacklist entry. Supports RegExp entries and exact string matches.
  */
-function isDependencyBlacklisted(dependency: string, packageFilterCallback?: SharedLibraryConfigOptions['packageFilterCallback']): boolean {
-  const filterResult = packageFilterCallback ? packageFilterCallback(dependency) : undefined;
-  
-  // Explicit true ->  EXCLUDE 
-  if (filterResult === true) return true;
-  // Explicit false ->  INCLUDE 
-  if (filterResult === false) return false;
-
-  // undefined/no callback result: fallback to DEFAULT_DEPENDENCY_BLACKLIST
+function isDependencyBlacklisted(dependency: string): boolean {
   return DEFAULT_DEPENDENCY_BLACKLIST.some((entry) => {
     if (entry instanceof RegExp) {
       return entry.test(dependency);
     }
     return entry === dependency;
   });
-}
-
-/**
- * Check if a complete package name is blacklisted, using the packageFilterCallback if provided, or falling back to a default blacklist.
- * @param {string} packageName - The full package name to check
- * @param {function} packageFilterCallback - Optional callback that returns true to EXCLUDE, false to INCLUDE, undefined to use default
- * @returns {boolean} true if the package should be blacklisted (excluded), false otherwise
- */
-function isFullPackageBlacklisted(
-  packageName: string,
-  packageFilterCallback?: SharedLibraryConfigOptions['packageFilterCallback']
-): boolean {
-  const filterResult = packageFilterCallback ? packageFilterCallback(packageName) : undefined;
-
-  // Explicit true ->  EXCLUDE 
-  if (filterResult === true) return true;
-  // Explicit false ->  INCLUDE 
-  if (filterResult === false) return false;
-
-  // undefined/no callback result: fallback to DEFAULT_FULL_PACKAGE_BLACKLIST
-  return DEFAULT_FULL_PACKAGE_BLACKLIST.includes(packageName);
 }
 
 /**
@@ -158,9 +129,10 @@ function readDependencyPackageJson(dependency: string) {
  * and creates fully qualified package names.
  * @param {string} dependency - Package name
  * @param {string} version - Package version
+ * @param {function} packageFilterCallback - Optional callback to filter out specific subpackages. Should return true to exclude a package, false to include it.
  * @returns {Array} Array of subpackage objects with name and version
  */
-function generateSubPackageConfig(dependency: string, version: string, packageFilterCallback?: SharedLibraryConfigOptions['packageFilterCallback']) {
+function generateSubPackageConfig(dependency: string, version: string, packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback']) {
   const subpackages : { name: string, requiredVersion: string }[] = [];
   const dependencyPackage = readDependencyPackageJson(dependency);
 
@@ -174,7 +146,7 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
     if (EXPORTS_BLACKLIST.includes(exportKey)) continue;
 
     const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`;
-    if (isFullPackageBlacklisted(subpackageName, packageFilterCallback)) continue;
+    if (packageFilterCallback && packageFilterCallback(subpackageName)) continue;
     subpackages.push({ name: subpackageName, requiredVersion: version });
   }
   return subpackages;
@@ -186,11 +158,12 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
  * @param {Object} versionMap - Map of dependency names to versions
  * @param {string} dependency - Package name to generate packages for
  * @param {boolean} shouldGenerateSubDeps - Flag indicating whether to include subpackages based on exports
+ * @param {function} packageFilterCallback - Optional callback to filter out specific packages. Should return true to exclude a package, false to include it. 
  * @returns {Array} Array of all packages (main + subpackages)
  */
-function generatePackageConfig(versionMap : Record<string, string>, dependency : string, shouldGenerateSubDeps : boolean, packageFilterCallback?: SharedLibraryConfigOptions['packageFilterCallback']
+function generatePackageConfig(versionMap : Record<string, string>, dependency : string, shouldGenerateSubDeps : boolean, packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback'] = onecxPackageFilter
 ): { name: string, requiredVersion: string }[] {
-  if (isDependencyBlacklisted(dependency , packageFilterCallback)) {
+  if(packageFilterCallback(dependency)){
     return [];
   }
   const allPackages = [];
@@ -223,11 +196,6 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * const config = {
  *   name: 'onecx-test-project-ui',
  *   filename: 'remoteEntry.js',
-
- * Note: Do not use share() from @angular-architects/module-federation.
- * ```js
- * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, true);odule': './src/main.ts'
- *   },
  *   shared: sharedEntries,
  *   shareScope: 'angular_21'
  * }
