@@ -1,3 +1,21 @@
+## [8.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.0...v8.3.1) (2026-05-26)
+
+### Bug Fixes
+
+* search header viewMode efffect and storybook ([#1453](https://github.com/onecx/onecx-portal-ui-libs/issues/1453)) ([3eda3ac](https://github.com/onecx/onecx-portal-ui-libs/commit/3eda3ac05a103f79a35207672d75b1418b244b89))
+
+## [8.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.2...v8.3.0) (2026-05-22)
+
+### Features
+
+* shared shell federation instance util ([#1444](https://github.com/onecx/onecx-portal-ui-libs/issues/1444)) ([#1467](https://github.com/onecx/onecx-portal-ui-libs/issues/1467)) ([77151a0](https://github.com/onecx/onecx-portal-ui-libs/commit/77151a090493a868e95043300e9847310e234069))
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([#1470](https://github.com/onecx/onecx-portal-ui-libs/issues/1470)) ([409cb20](https://github.com/onecx/onecx-portal-ui-libs/commit/409cb20ca8cf3d83e9eaef3a6395478e920c1870))
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1462](https://github.com/onecx/onecx-portal-ui-libs/issues/1462)) ([f5f3ff0](https://github.com/onecx/onecx-portal-ui-libs/commit/f5f3ff03ead0988c0240859ffe121c2bbc4daaff))
+* generator related conversion ([#1465](https://github.com/onecx/onecx-portal-ui-libs/issues/1465)) ([2cd86f0](https://github.com/onecx/onecx-portal-ui-libs/commit/2cd86f01d2ad6c194897db5e3375846655ca0757))
+
 ## [8.2.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.1...v8.2.2) (2026-05-21)
 
 ### Bug Fixes
