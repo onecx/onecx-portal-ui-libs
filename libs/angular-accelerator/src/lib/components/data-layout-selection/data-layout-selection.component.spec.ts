@@ -55,7 +55,7 @@ describe('DataLayoutSelectionComponent', () => {
     it('should initialize with table layout as default', () => {
       fixture.detectChanges()
 
-      expect(component.selectedViewLayout()?.layout ?? 'table').toBe('table')
+      expect(component.selectedViewLayout()?.layout ?? 'grid').toBe('grid')
     })
   })
 

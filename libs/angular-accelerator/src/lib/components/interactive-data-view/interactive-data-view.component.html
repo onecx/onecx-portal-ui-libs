@@ -65,8 +65,8 @@
         [displayedColumns]="displayedColumns()"
         [customGroupKey]="customGroupKey()"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
-        [frozenActionColumn]="frozenActionColumn"
-        [actionColumnPosition]="actionColumnPosition"
+        [frozenActionColumn]="stateService.actionColumnConfigFrozen()"
+        [actionColumnPosition]="stateService.actionColumnConfigPosition()"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
       ></ocx-custom-group-column-selector>
       }

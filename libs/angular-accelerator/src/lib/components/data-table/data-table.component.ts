@@ -95,7 +95,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
-  stateService = inject(DataViewStateService)
+  readonly stateService = inject(DataViewStateService)
 
   FilterType = FilterType
   TemplateType = TemplateType

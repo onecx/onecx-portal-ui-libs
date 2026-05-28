@@ -26,7 +26,7 @@ export interface InteractiveDataView {
 
 @Injectable()
 export class DataViewStateService {
-  layout = signal<ViewLayout>('table')
+  layout = signal<ViewLayout>('grid')
   activeColumnGroupKey = signal<string | undefined>(undefined)
   columns = signal<DataTableColumn[]>([])
   actionColumnConfigFrozen = signal<boolean>(false)
