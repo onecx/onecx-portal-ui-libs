@@ -7,3 +7,5 @@ export const REMOTE_COMPONENT_CONFIG = new InjectionToken<ReplaySubject<RemoteCo
 )
 
 export const SKIP_STYLE_SCOPING = new InjectionToken<boolean>('SKIP_STYLE_SCOPING')
+
+export const SLOT_GROUP_NAME = new InjectionToken<ReplaySubject<string>>('SLOT_GROUP_NAME')

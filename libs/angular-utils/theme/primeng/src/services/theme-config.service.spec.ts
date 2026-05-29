@@ -42,7 +42,7 @@ describe('ThemeConfigService', () => {
 
   it('should subscribe to currentThemeTopic$', fakeAsync(() => {
     const themeService = TestBed.inject(ThemeService)
-    const spy = jest.spyOn(TestBed.inject(ThemeConfigService), 'applyThemeVariables')
+    const spy = jest.spyOn(TestBed.inject(ThemeConfigService), 'applyThemeVariablesV1')
 
     themeService.currentTheme$.publish(theme)
     tick(100)

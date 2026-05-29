@@ -54,11 +54,11 @@ export const theme = z
   })
   .meta({ id: 'theme' })
 
-type RegionOverridesInput = {
+export type RegionOverridesInput = {
   header?: RegionOverrideInput
   subHeader?: RegionOverrideInput
   bodyStart?: RegionOverrideInput
-  bodyHeader?: RegionOverrideInput
+  bodyHeader?: RegionOverrideInput //onecx-shell-body-header
   bodyFooter?: RegionOverrideInput
   bodyEnd?: RegionOverrideInput
   footer?: RegionOverrideInput

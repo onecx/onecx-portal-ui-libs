@@ -7,6 +7,7 @@ import {
   ThemePropertiesV2,
   ThemeCommonData,
   CurrentThemes,
+  RegionOverridesInput,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -14,9 +15,10 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep } from '@onecx/angular-utils'
+import { mergeDeep, SLOT_GROUP_NAME } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
+import { firstValueFrom, of } from 'rxjs'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
@@ -68,6 +70,7 @@ export class ThemeConfigService {
   private primeNG = inject(PrimeNG)
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
   private readonly options = inject(THEME_OPTIONS)
+  private readonly slotGroupName = inject(SLOT_GROUP_NAME, { optional: true }) ?? of('')
   private readonly injector = inject(Injector)
 
   constructor() {
@@ -121,7 +124,21 @@ export class ThemeConfigService {
     }
   ): Promise<void> {
     const overridesFolded = this.generateThemeOverrides(theme.overrides)
-    const { variables, css } = mapThemeToPreset(theme.properties)
+    const regionName = this.dashToCamelCase(await firstValueFrom(this.slotGroupName, { defaultValue: '' })) as keyof RegionOverridesInput
+    let properties = null
+    const regionOverrides = theme.properties.regionOverrides
+    if (regionName && regionOverrides) {
+       const region = regionOverrides[regionName]
+       const primitives = region?.primitives ?? {}
+       const usages = region?.usages ?? {}
+       properties = {
+        primitives: mergeDeep(theme.properties.primitives, primitives),
+        usages: mergeDeep(theme.properties.usages, usages)
+      }
+    } else {
+      properties = theme.properties
+    }
+    const { variables, css } = mapThemeToPreset(properties)
     const cssOverrides = this.options.cssOverrides
     const overrides = Promise.resolve(
       typeof cssOverrides === 'function' && cssOverrides !== undefined
@@ -159,4 +176,10 @@ export class ThemeConfigService {
       ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides))
       : {}
   }
-}
+
+  private dashToCamelCase(value: string): string{
+    return value?.replace(/-([a-z])/g, (_: string, letter: string) =>
+      letter.toUpperCase()
+    );
+  }
+} 
