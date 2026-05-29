@@ -164,6 +164,7 @@
     [stringFilterCellTemplate]="_stringTableFilterCell ? stringFilterCell : undefined"
     [relativeDateFilterCellTemplate]="_relativeDateTableFilterCell ? relativeDateFilterCell : undefined"
     [translationKeyFilterCellTemplate]="_translationKeyTableFilterCell ? translationKeyFilterCell : undefined"
+    [columnHeaderCellTemplate]="_columnHeader ? columnHeader : undefined"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer"
@@ -277,6 +278,15 @@
     <ng-container
       [ngTemplateOutlet]="_translationKeyTableFilterCell"
       [ngTemplateOutletContext]="{rowObject:rowObject, column:column}"
+    >
+    </ng-container>
+    }
+  </ng-template>
+  <ng-template #columnHeader let-column="column">
+    @if (_columnHeader) {
+    <ng-container
+      [ngTemplateOutlet]="_columnHeader"
+      [ngTemplateOutletContext]="{ column: column }"
     >
     </ng-container>
     }
