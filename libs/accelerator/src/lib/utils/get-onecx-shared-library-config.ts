@@ -205,7 +205,7 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * ```js
  * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
  *   currentConfig[includeSecondaries]=true
- *   currentConfig[requiredVersion]=auto  
+ *   currentConfig[requiredVersion]='auto'  
  *   return currentConfig
  * }
  * 
