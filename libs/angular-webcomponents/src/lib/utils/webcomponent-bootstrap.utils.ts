@@ -107,9 +107,7 @@ function findAndReplaceAppId(providers: Array<any>): any {
       if (typeof provider.useValue === 'string') {
         id = provider.useValue
       } else {
-        logger.warn(
-          "APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID"
-        )
+        logger.warn("APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID")
       }
       provider.useValue = new DynamicAppId(id)
       return provider
@@ -131,10 +129,11 @@ function createEntrypoint(
   entrypointType: EntrypointType,
   _?: AppOptions
 ) {
-  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
   // Save element name in DynamicAppId for later use in SharedStylesHost
   const appId = injector.get(APP_ID) as any as DynamicAppId
   appId.appElementName = elementName
+  // Important: WebcomponentConnector utilizes APP_ID with element name to connect styles to the web component. This means that APP_ID provider must be set before creating WebcomponentConnector instance.
+  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
 
   const originalNgInit = component.prototype.ngOnInit
 

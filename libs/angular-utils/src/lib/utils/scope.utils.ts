@@ -8,6 +8,32 @@ const logger = createLogger('scope.utils')
 export const shellScopeId = 'shell-ui'
 
 const everythingNotACharacterOrNumberRegex = /[^a-zA-Z0-9-]/g
+
+/**
+ * @interface StyleData
+ * @description Interface representing the style data for an application scope.
+ * @property {string | undefined} styleId - The unique identifier for the style scope, typically derived from the product name and app ID.
+ * @property {string | undefined} noPortalLayoutStyles - A flag indicating whether portal layout styles should be applied to this scope.
+ * @property {string | undefined} mfeElement - A flag indicating whether the scope is associated with a micro frontend (MFE) element.
+ */
+export interface StyleData {
+  styleId: string | undefined
+  noPortalLayoutStyles: string | undefined
+  mfeElement: string | undefined
+}
+
+/**
+ * @constant {string} dataOnecxDynamicContainerKey
+ * @description Marks the container element for dynamic content coming from an application.
+ */
+export const dataOnecxDynamicContainerKey = 'onecxDynamicContainer'
+
+/**
+ * @constant {string} dataOnecxDynamicContainerAttribute
+ * @description HTML attribute for dynamic container. See {@link dataOnecxDynamicContainerKey} for more details.
+ */
+export const dataOnecxDynamicContainerAttribute = 'data-onecx-dynamic-container'
+
 /**
  * @constant {string} dataStyleIdKey
  * @description Marks start of scope section for scopeId (e.g. data-style-id="onecx-workspace|onecx-workspace-ui")

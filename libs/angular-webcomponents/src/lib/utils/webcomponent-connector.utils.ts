@@ -1,4 +1,4 @@
-import { Injector } from '@angular/core'
+import { APP_ID, Injector } from '@angular/core'
 import { EntrypointType } from './webcomponent-bootstrap.utils'
 import { CurrentLocationTopicPayload, EventsTopic, TopicEventType } from '@onecx/integration-interface'
 import { filter, Observable, Subscription } from 'rxjs'
@@ -17,8 +17,13 @@ import {
 import { ActivatedRouteSnapshot, GuardsCheckEnd, GuardsCheckStart, Router, RoutesRecognized } from '@angular/router'
 import { getLocation } from '@onecx/accelerator'
 import { createLogger } from './logger.utils'
+import { DynamicAppId } from './dynamic-app-id.utils'
 
 const logger = createLogger('WebcomponentConnector')
+
+interface ShellDocument extends Document {
+  createOnecxDynamicContainer: (tagName: string, elementName: string) => HTMLElement
+}
 
 /**
  * WebcomponentConnector is a utility class that connects Angular web components.
@@ -37,6 +42,8 @@ export class WebcomponentConnector {
   }
   private readonly guardsGatherer: GuardsGatherer
   private readonly guardsNavigationStateController: GuardsNavigationStateController
+  private readonly appElementName: string
+  private appDynamicContainer: HTMLElement | null = null
 
   constructor(
     private readonly injector: Injector,
@@ -45,11 +52,18 @@ export class WebcomponentConnector {
     this.capabilityService = new ShellCapabilityService()
     this.guardsGatherer = this.injector.get(GuardsGatherer)
     this.guardsNavigationStateController = this.injector.get(GuardsNavigationStateController)
+    const appId = this.injector.get(APP_ID) as any as DynamicAppId
+    this.appElementName = appId.appElementName
   }
 
   connect() {
     this.guardsGatherer.activate()
     this.connectionSubscriptions.push(...this.connectRouter())
+    // Relying on shell provided function to create dynamic container
+    this.appDynamicContainer = (document as ShellDocument).createOnecxDynamicContainer(
+      `onecx-dynamic-${this.appElementName}`,
+      this.appElementName
+    )
   }
 
   disconnect() {
@@ -58,6 +72,10 @@ export class WebcomponentConnector {
     }
     this._eventsTopic$?.destroy()
     this.guardsGatherer.deactivate()
+    if (this.appDynamicContainer) {
+      this.appDynamicContainer.remove()
+      this.appDynamicContainer = null
+    }
   }
 
   /**
