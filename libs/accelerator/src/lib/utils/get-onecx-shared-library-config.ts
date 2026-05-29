@@ -24,7 +24,7 @@ const angularCore = '@angular/core';
 /**
  * Callbacks that can be passed to the SharedLibraryConfigOptions function to customize its behavior.
  * @property {function} configCallback - A function that receives the package name and current shared configuration, returning a modified configuration. Must return a SharedLibraryConfig object.
- * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, use onecxFilter to use default blacklist. 
+ * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, use onecxPackageFilter to use default blacklist. 
 */
 export interface SharedLibraryConfigOptions {
   configCallback?: (packageName: string, currentConfig: SharedLibraryConfig) => SharedLibraryConfig;
@@ -78,7 +78,6 @@ function removeExportPrefix(str: string) {
 /**
  * onecxPackageFilter is the default OneCX package filter.
  * @param {string} packageName - The full package name to check against the default blacklist.
- * @param {Record<string, string>} dependencies - The dependencies object from package.json, used to check if the package is explicitly listed as a dependency.
  * @returns {boolean} - Returns `true` if the package is on the default blacklist, `false` otherwise.
  */
 export function onecxPackageFilter(packageName: string): boolean {
@@ -179,20 +178,20 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
 
 
 /**
- * Generates Config for all shared library entries as a object for all dependency (main + subpackages(if needed)) for a given dependency.
+ * Generates a shared library configuration object for all dependencies (main + subpackages if needed).
  * @param {Record<string, string>} dependencies - Map of dependency names to versions
- * @param {boolean} itShouldGenerateSubDeps - Flag indicating whether to include subpackages based on exports
- * @param {GetSharedLibraryConfigOptions} options - Optional callbacks for customizing the configuration generation process. Includes:
- *   - configCallback: A function Callback that adds currentConfig.
- *      configCallback?: (currentConfig: Record<string, any>) => Record<string, any>;
- *   - packageFilterCallback: A function Callback indicating whether the package should be included in the configuration.
- *      packageFilterCallback?: (packageName: string) => boolean;
- * @returns {Array} Array of all packages (main + subpackages)
+ * @param {boolean} shouldGenerateSubDeps - Flag indicating whether to include subpackages based on exports
+ * @param {SharedLibraryConfigOptions} options - Optional callbacks for customizing the configuration generation process. Includes:
+ *   - configCallback: A function that receives the package name and current shared configuration, returning a modified configuration.
+ *      configCallback?: (packageName: string, currentConfig: SharedLibraryConfig) => SharedLibraryConfig;
+ *   - packageFilterCallback: A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it.
+ *      packageFilterCallback?: (packageName: string) => boolean | undefined;
+ * @returns {Record<string, SharedLibraryConfig>} A map of package names to their shared library configuration
  * 
  * @example
- * **if shouldGenerateSubDeps is true, the usage will be like:**
+ * **if shouldGenerateSubDeps is true then the usage is as follows:**
  * ```js
- * const sharedConfig = getSharedLibraryConfig(dependencies, true);
+ * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, true);
  * const config = {
  *   name: 'onecx-test-project-ui',
  *   filename: 'remoteEntry.js',
@@ -201,9 +200,10 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * }
  * ```
  * 
- * **if itShouldGenerateSubDeps is false, the usage will be like:**
+ * **if shouldGenerateSubDeps is false then the usage is as follows:**
+ * The share function from @angular-architects/module-federation.
  * ```js
- * const sharedConfig = getSharedLibraryConfig(dependencies, false);
+ * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, false);
  * const config = withModuleFederationPlugin({
  *   name: 'onecx-<%= remoteModuleFileName %>-ui',
  *   filename: 'remoteEntryOneCX.js',
@@ -212,6 +212,41 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  *   },
  *   shared: share(sharedEntries),
  * });
+ * ```
+ * \
+ * **With options (custom filter and config override) you can customize the behavior as follows:**
+ * ```js
+ * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, true, {
+ *   packageFilterCallback: customPackageFilter,
+ *   configCallback: customConfigCallback,
+ * });
+ * ```
+ * \
+ * Following are some Custom Implementation: 
+ * 1. Adding Custom Config or overiding default config (example if you are using share())
+ *```js
+ * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
+ *   currentConfig[includeSecondaries]=true
+ *   currentConfig[requiredVersion]=auto  
+ *   return currentConfig
+ * }
+ * ```
+ *
+ * 2. Custom Package without using onecxPckageFilter
+ * ```js
+ * function customPackageFilter(packageName: string): boolean {
+ *   if (packageName.startsWith('@internal/')) return true;
+ *   return false;
+ * }
+ * ```
+ * 
+ * 3. Custom Package using onecxPckageFilter as defaut:
+ * ```js
+ * function customPackageFilter(packageName: string): boolean {
+ *   if (packageName.startsWith('@internal/')) return true;
+ *   return onecxPackageFilter(packageName);
+ * }
+ *  
  * ```
  * 
  */
