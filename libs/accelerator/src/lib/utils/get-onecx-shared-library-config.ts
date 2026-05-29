@@ -189,7 +189,7 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * @returns {Record<string, SharedLibraryConfig>} A map of package names to their shared library configuration
  * 
  * @example
- * **if shouldGenerateSubDeps is true then the usage is as follows:**
+ * **Recommended usage for @module-federation/enhanced:**
  * ```js
  * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, true);
  * const config = {
@@ -200,10 +200,16 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * }
  * ```
  * 
- * **if shouldGenerateSubDeps is false then the usage is as follows:**
- * The share function from @angular-architects/module-federation.
+ * **Recommended usage for @angular-architects/module-federation:**
+ * The share function is from @angular-architects/module-federation.
  * ```js
- * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, false);
+ * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
+ *   currentConfig[includeSecondaries]=true
+ *   currentConfig[requiredVersion]=auto  
+ *   return currentConfig
+ * }
+ * 
+ * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, false, { configCallback: customConfigCallback });
  * const config = withModuleFederationPlugin({
  *   name: 'onecx-<%= remoteModuleFileName %>-ui',
  *   filename: 'remoteEntryOneCX.js',
@@ -223,11 +229,10 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * ```
  * \
  * Following are some Custom Implementation: 
- * 1. Adding Custom Config or overiding default config (example if you are using share())
+ * 1. Adding Custom Config or overiding default config
  *```js
  * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
- *   currentConfig[includeSecondaries]=true
- *   currentConfig[requiredVersion]=auto  
+ *   currentConfig[singleton]=true
  *   return currentConfig
  * }
  * ```
