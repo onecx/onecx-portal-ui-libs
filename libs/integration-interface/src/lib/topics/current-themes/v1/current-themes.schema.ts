@@ -54,15 +54,8 @@ export const theme = z
   })
   .meta({ id: 'theme' })
 
-export type RegionOverridesInput = {
-  header?: RegionOverrideInput
-  subHeader?: RegionOverrideInput
-  bodyStart?: RegionOverrideInput
-  bodyHeader?: RegionOverrideInput //onecx-shell-body-header
-  bodyFooter?: RegionOverrideInput
-  bodyEnd?: RegionOverrideInput
-  footer?: RegionOverrideInput
-}
+export const regionKeys = ["header", "subHeader", "bodyStart", "bodyHeader", "bodyFooter", "bodyEnd", "footer"] as const
+export type RegionOverridesInput = Partial<Record<typeof regionKeys[number], RegionOverrideInput>>
 
 export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
@@ -74,3 +67,5 @@ export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
 }
+
+export const SLOT_GROUP_PREFIX = 'onecx-shell-'

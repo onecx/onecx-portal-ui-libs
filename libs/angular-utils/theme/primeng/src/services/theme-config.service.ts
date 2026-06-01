@@ -8,6 +8,8 @@ import {
   ThemeCommonData,
   CurrentThemes,
   RegionOverridesInput,
+  SLOT_GROUP_PREFIX,
+  regionKeys,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -124,20 +126,7 @@ export class ThemeConfigService {
     }
   ): Promise<void> {
     const overridesFolded = this.generateThemeOverrides(theme.overrides)
-    const regionName = this.dashToCamelCase(await firstValueFrom(this.slotGroupName, { defaultValue: '' })) as keyof RegionOverridesInput
-    let properties = null
-    const regionOverrides = theme.properties.regionOverrides
-    if (regionName && regionOverrides) {
-       const region = regionOverrides[regionName]
-       const primitives = region?.primitives ?? {}
-       const usages = region?.usages ?? {}
-       properties = {
-        primitives: mergeDeep(theme.properties.primitives, primitives),
-        usages: mergeDeep(theme.properties.usages, usages)
-      }
-    } else {
-      properties = theme.properties
-    }
+    const properties = await this.getThemeProperties(theme)
     const { variables, css } = mapThemeToPreset(properties)
     const cssOverrides = this.options.cssOverrides
     const overrides = Promise.resolve(
@@ -177,7 +166,30 @@ export class ThemeConfigService {
       : {}
   }
 
-  private dashToCamelCase(value: string): string{
+  private async getThemeProperties(theme: CurrentThemes & {
+    properties: ThemePropertiesV2
+  }): Promise<ThemePropertiesV2> {
+    const slotGroupName = await firstValueFrom(this.slotGroupName)
+    const regionName = this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput
+    const regionOverrides = theme.properties.regionOverrides
+    if (regionName && regionOverrides) {
+      if (!regionKeys.includes(regionName)) {
+        throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
+      }
+      const region = regionOverrides[regionName]
+      const regionPrimitives = region?.primitives ?? {}
+      const regionUsages = region?.usages ?? {}
+      return {
+        primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
+        usages: mergeDeep(theme.properties.usages, regionUsages)
+      }
+    } else {
+      return theme.properties
+    }
+  }
+
+  private dashToCamelCase(value: string): string {
+    value = value.replace(SLOT_GROUP_PREFIX, '')
     return value?.replace(/-([a-z])/g, (_: string, letter: string) =>
       letter.toUpperCase()
     );
