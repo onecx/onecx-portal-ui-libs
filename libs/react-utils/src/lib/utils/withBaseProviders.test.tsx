@@ -1,33 +1,26 @@
-const React = require('react')
-const { render } = require('@testing-library/react')
+import { render } from '@testing-library/react'
+import type { PropsWithChildren } from 'react'
+import { withBaseProviders } from './withBaseProviders'
 
-jest.mock('@onecx/react-integration-interface', () => {
-  const React = require('react')
-  return {
-    AppStateProvider: ({ children }) => React.createElement('div', { 'data-testid': 'app-state' }, children),
-    ConfigurationProvider: ({ children }) => React.createElement('div', { 'data-testid': 'config' }, children),
-    UserProvider: ({ children }) => React.createElement('div', { 'data-testid': 'user' }, children),
-  }
-}, { virtual: true })
+jest.mock('@onecx/react-integration-interface', () => ({
+  AppStateProvider: ({ children }: PropsWithChildren) => <div data-testid="app-state">{children}</div>,
+  ConfigurationProvider: ({ children }: PropsWithChildren) => <div data-testid="config">{children}</div>,
+  UserProvider: ({ children }: PropsWithChildren) => <div data-testid="user">{children}</div>,
+}))
 
-jest.mock('@onecx/react-webcomponents', () => {
-  const React = require('react')
-  return {
-    SyncedRouterProvider: ({ children }) => React.createElement('div', { 'data-testid': 'router' }, children),
-  }
-}, { virtual: true })
+jest.mock('@onecx/react-webcomponents', () => ({
+  SyncedRouterProvider: ({ children }: PropsWithChildren) => <div data-testid="router">{children}</div>,
+}))
 
 jest.mock('./translationBridge', () => ({
   TranslationBridge: () => null,
 }))
 
-const { withBaseProviders } = require('./withBaseProviders')
-
 describe('withBaseProviders', () => {
   it('should wrap a component with all base providers', () => {
-    const TestComponent = (props) => props.label
+    const TestComponent = ({ label }: { label: string }) => label
     const Wrapped = withBaseProviders(TestComponent)
-    const { container, getByTestId } = render(createElement(Wrapped, { label: 'hello' }))
+    const { container, getByTestId } = render(<Wrapped label="hello" />)
 
     expect(getByTestId('app-state')).toBeDefined()
     expect(getByTestId('config')).toBeDefined()
