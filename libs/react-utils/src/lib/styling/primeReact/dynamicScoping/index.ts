@@ -5,8 +5,9 @@ import { getOnecxTriggerElement } from './functions/onecx-trigger-element'
 import { getStyleDataOrIntermediateStyleData } from './functions/getStyleDataOrIntermediateStyleData'
 import { appendIntermediateStyleData } from './functions/appendIntermediateStyleData'
 
-const originalCreatePortal = ReactDOM.createPortal
-;(function ensurePrimereactDynamicDataIncludesIntermediateStyleData() {
+if (ReactDOM && ReactDOM.createPortal) {
+  const originalCreatePortal = ReactDOM.createPortal
+  ;(function ensurePrimereactDynamicDataIncludesIntermediateStyleData() {
   const patchedCreatePortal = function (children: any, container: any, ...rest: any) {
     if (!isValidElement(children)) {
       return originalCreatePortal(children, container, ...rest)
@@ -39,13 +40,14 @@ const originalCreatePortal = ReactDOM.createPortal
       ...rest
     )
   }
-  try {
-    Object.defineProperty(ReactDOM, 'createPortal', {
-      value: patchedCreatePortal,
-      writable: true,
-      configurable: true,
-    })
-  } catch {
-    ;(ReactDOM as any).createPortal = patchedCreatePortal
-  }
-})()
+    try {
+      Object.defineProperty(ReactDOM, 'createPortal', {
+        value: patchedCreatePortal,
+        writable: true,
+        configurable: true,
+      })
+    } catch {
+      ;(ReactDOM as any).createPortal = patchedCreatePortal
+    }
+  })()
+}
