@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import * as path from 'path'
+import * as path from 'node:path'
 
 export default defineConfig({
   root: __dirname,
@@ -28,12 +28,25 @@ export default defineConfig({
         styling: 'src/lib/styling/primeReact/index.ts',
         utils: 'src/lib/utils/index.ts',
         guards: 'src/lib/guards/index.ts',
+        'prime-base-theme': 'src/lib/styling/primeReact/styles.ts',
       },
       name: 'react-utils',
-      fileName: (format, entryName) => entryName,
+      fileName: (format, entryName) => `lib/${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      output: [
+        {
+          format: 'es',
+          entryFileNames: 'lib/[name].mjs',
+          chunkFileNames: 'lib/[name].mjs',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: 'lib/[name].cjs',
+          chunkFileNames: 'lib/[name].cjs',
+        },
+      ],
       external: [
         'react',
         'react-dom',

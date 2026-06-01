@@ -1,21 +1,17 @@
-import { createRoot } from 'react-dom/client'
+import { render, waitFor } from '@testing-library/react'
 import type { WrappedGuards } from '../utils/wrap-guards.utils'
 import * as GuardsHooks from './use-guard-check'
 import { useWrappedGuards } from './use-wrapped-guards'
-import { act } from 'react'
 
 jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
-  useLocation: jest.fn(() => ({ key: 'loc' })),
+  useLocation: jest.fn(() => ({ key: 'loc', pathname: '/', search: '', hash: '', state: null })),
   useMatches: jest.fn(() => []),
-  useNavigate: jest.fn(),
+  useNavigate: jest.fn(() => jest.fn()),
 }))
 
 jest.mock('./use-wrapped-guards', () => ({
   useWrappedGuards: jest.fn(),
 }))
-
-const flushPromises = () => new Promise((resolve) => setImmediate(resolve))
 
 describe('useGuardCheck', () => {
   it('runs canMatch -> canActivateChild -> canActivate sequence', async () => {
@@ -40,12 +36,10 @@ describe('useGuardCheck', () => {
       return null
     }
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent />)
 
-    await act(async () => {
-      root.render(<TestComponent />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(onGuardCheck).toHaveBeenCalledWith(true)
     })
 
     expect(canMatch).toHaveBeenCalled()
@@ -53,7 +47,6 @@ describe('useGuardCheck', () => {
     expect(canActivate).toHaveBeenCalled()
     expect(onGuardCheck).toHaveBeenCalledWith(true)
 
-    root.unmount()
     jest.restoreAllMocks()
   })
 })

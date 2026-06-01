@@ -2,7 +2,7 @@ import { importProvidersFrom, signal } from '@angular/core'
 import { ReactiveFormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
-import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, StoryFn, applicationConfig, argsToTemplate, moduleMetadata } from '@storybook/angular'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { SelectModule } from 'primeng/select'
@@ -14,13 +14,15 @@ import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { PageHeaderComponent, Action } from '../page-header/page-header.component'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
-import { ConfigurationService } from '@onecx/angular-integration-interface'
 import { provideHttpClient } from '@angular/common/http'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from 'primeng/tooltip'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { action } from 'storybook/actions'
 import { TagModule } from 'primeng/tag'
+import { provideConfigurationServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { AdvancedDirective } from '../../directives/advanced.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 export default {
   title: 'Components/SearchHeaderComponent',
@@ -30,13 +32,14 @@ export default {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
-        importProvidersFrom(ConfigurationService),
+        provideConfigurationServiceMock(),
+        provideUserServiceMock(),
         provideHttpClient(),
         importProvidersFrom(StorybookThemeModule),
       ],
     }),
     moduleMetadata({
-      declarations: [SearchHeaderComponent, DynamicPipe, PageHeaderComponent],
+      declarations: [SearchHeaderComponent, DynamicPipe, PageHeaderComponent, AdvancedDirective],
       imports: [
         MenuModule,
         InputTextModule,
@@ -53,28 +56,50 @@ export default {
         TooltipModule,
         FloatLabelModule,
         TagModule,
+        OcxTooltipDirective,
       ],
     }),
   ],
 } as Meta<SearchHeaderComponent>
 
-const Template: StoryFn<SearchHeaderComponent> = (args) => ({
-  props: args,
-})
+const defaultComponentArgs = {
+  header: 'My title',
+}
+
+const defaultActionsArgs = {
+  resetted: {
+    observed: () => true,
+    emit: action('resetted'),
+  },
+  searched: action('searched'),
+  componentStateChanged: action('componentStateChanged'),
+}
 
 export const Basic = {
-  render: Template,
-
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultActionsArgs,
+    },
+    template: `
+      <ocx-search-header ${argsToTemplate(args)} (resetted)="resetted($event)" (searched)="searched($event)" (componentStateChanged)="componentStateChanged($event)">
+      </ocx-search-header>
+    `,
+  }),
   args: {
-    header: 'My title',
+    ...defaultComponentArgs,
   },
 }
 
-const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
-  props: args,
-  template: `
-    <ocx-search-header [header]="header" (resetted)="resetted">
-        <form>
+export const WithCustomTemplates = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultActionsArgs,
+    },
+    template: `
+      <ocx-search-header ${argsToTemplate(args)} (resetted)="resetted($event)" (searched)="searched($event)" (componentStateChanged)="componentStateChanged($event)">
+       <form>
           <div class="flex flex-wrap gap-3">
             <p-floatlabel variant="on">
                 <input
@@ -120,17 +145,60 @@ const BasicSearchHeader: StoryFn<SearchHeaderComponent> = (args) => ({
             </p-floatlabel>
           </div>
         </form>
-    </ocx-search-header>
+      </ocx-search-header>
     `,
-})
-
-export const WithCustomTemplates = {
-  render: BasicSearchHeader,
-  argTypes: {
-    resetted: { action: 'resetted' },
-  },
+  }),
   args: {
-    header: 'My title',
+    ...defaultComponentArgs,
+  },
+}
+
+export const WithViewMode = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultActionsArgs,
+    },
+    template: `
+      <ocx-search-header ${argsToTemplate(args)} (resetted)="resetted($event)" (searched)="searched($event)" (componentStateChanged)="componentStateChanged($event)">
+       <form>
+          <div class="flex flex-wrap gap-3">
+            <p-floatlabel variant="on">
+                <input
+                    id="basic"
+                    pInputText
+                    type="text"
+                    class="w-18rem"
+                    [ocxTooltip]="'basic'"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                />
+                <label for="basic" style="white-space: nowrap">
+                    basic
+                </label>
+            </p-floatlabel>
+            <p-floatlabel variant="on" *ocxAdvanced>
+                <input
+                    id="advanced"
+                    pInputText
+                    type="text"
+                    class="w-18rem"
+                    [ocxTooltip]="'advanced'"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                />
+                <label for="advanced" style="white-space: nowrap">
+                    advanced
+                </label>
+            </p-floatlabel>
+          </div>
+        </form>
+      </ocx-search-header>
+    `,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    viewMode: 'basic',
   },
 }
 
@@ -252,5 +320,4 @@ export const WithSearchNoResults = {
   args: {
     header: 'Product Search',
   },
-  
 }

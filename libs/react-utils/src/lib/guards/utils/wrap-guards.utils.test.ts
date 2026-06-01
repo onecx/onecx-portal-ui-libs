@@ -60,6 +60,12 @@ describe('wrapGuards', () => {
     await expect(wrapped.canActivate()).resolves.toBe(true)
   })
 
+  it('returns empty params object when matches array is empty', async () => {
+    const wrapped = wrapGuards({ matches: [], location })
+    await expect(wrapped.canActivate()).resolves.toBe(true)
+    await expect(wrapped.canMatch()).resolves.toBe(true)
+  })
+
   it('executes canDeactivate guards with next location', async () => {
     const canDeactivate: CanDeactivateGuard = jest.fn(async ({ nextLocation: target }) => target.pathname === '/next')
 
