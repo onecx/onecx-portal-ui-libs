@@ -1,3 +1,9 @@
+## [8.4.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.0...v8.4.1) (2026-06-01)
+
+### Bug Fixes
+
+* add missing export for get-onecx-shared-library-config ([#1499](https://github.com/onecx/onecx-portal-ui-libs/issues/1499)) ([40fc529](https://github.com/onecx/onecx-portal-ui-libs/commit/40fc529cf77b5fa281a1ec6b0b7653533e7538b4))
+
 ## [8.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.1...v8.4.0) (2026-06-01)
 
 ### Features
