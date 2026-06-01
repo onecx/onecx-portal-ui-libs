@@ -34,7 +34,7 @@ export interface SharedLibraryConfigOptions {
 /**
  * Blacklist of export paths to exclude when generating subpackage entries.
  */
-const EXPORTS_BLACKLIST = ['.', './package.json'];
+const EXPORTS_BLACKLIST = new Set(['.', './package.json']);
 
 /**
  * Patterns for identifying dependencies that should be blacklisted.
@@ -47,7 +47,7 @@ const DEFAULT_DEPENDENCY_BLACKLIST: RegExp[] = [
 /**
  * For identifying full package paths that should be blacklisted.
  */
-const DEFAULT_FULL_PACKAGE_BLACKLIST = [
+const DEFAULT_FULL_PACKAGE_BLACKLIST = new Set([
   '@angular/common/locales/global/*',
   '@angular/common/locales/*',
   '@angular/common/upgrade',
@@ -63,7 +63,7 @@ const DEFAULT_FULL_PACKAGE_BLACKLIST = [
   'primeng/editor',
   '@onecx/angular-accelerator/testing',
   '@onecx/angular-accelerator/migrations.json',
-];
+]);
 
 /**
  * Removes the './' prefix from a string, typically used for export paths in package.json files.
@@ -84,7 +84,7 @@ export function onecxPackageFilter(packageName: string): boolean {
   if(isDependencyBlacklisted(packageName)){
     return true;
   }
-  return DEFAULT_FULL_PACKAGE_BLACKLIST.includes(packageName);
+  return DEFAULT_FULL_PACKAGE_BLACKLIST.has(packageName);
 }
 
 
@@ -142,10 +142,10 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
   const exportKeys = Object.keys(dependencyPackage.exports);
 
   for (const exportKey of exportKeys) {
-    if (EXPORTS_BLACKLIST.includes(exportKey)) continue;
+    if (EXPORTS_BLACKLIST.has(exportKey)) continue;
 
     const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`;
-    if (packageFilterCallback && packageFilterCallback(subpackageName)) continue;
+    if (packageFilterCallback?.(subpackageName)) continue;
     subpackages.push({ name: subpackageName, requiredVersion: version });
   }
   return subpackages;
@@ -266,7 +266,7 @@ export function getOneCXSharedLibraryConfig(dependencies: Record<string, string>
     sharedLibConfig['shareScope'] = 'default';    
 
     const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '');
-    if (angularCoreVersion && parseInt(angularCoreVersion, 10) >= 21) {
+    if (angularCoreVersion && Number.parseInt(angularCoreVersion, 10) >= 21) {
       const shareScope = ('angular_').concat(angularCoreVersion);
       sharedLibConfig['shareScope'] = shareScope;
     }
