@@ -1,15 +1,15 @@
-import { createElement } from 'react'
 import { render } from '@testing-library/react'
+import type { PropsWithChildren } from 'react'
 import { withBaseProviders } from './withBaseProviders'
 
 jest.mock('@onecx/react-integration-interface', () => ({
-  AppStateProvider: ({ children }: any) => createElement('div', { 'data-testid': 'app-state' }, children),
-  ConfigurationProvider: ({ children }: any) => createElement('div', { 'data-testid': 'config' }, children),
-  UserProvider: ({ children }: any) => createElement('div', { 'data-testid': 'user' }, children),
+  AppStateProvider: ({ children }: PropsWithChildren) => <div data-testid="app-state">{children}</div>,
+  ConfigurationProvider: ({ children }: PropsWithChildren) => <div data-testid="config">{children}</div>,
+  UserProvider: ({ children }: PropsWithChildren) => <div data-testid="user">{children}</div>,
 }))
 
 jest.mock('@onecx/react-webcomponents', () => ({
-  SyncedRouterProvider: ({ children }: any) => createElement('div', { 'data-testid': 'router' }, children),
+  SyncedRouterProvider: ({ children }: PropsWithChildren) => <div data-testid="router">{children}</div>,
 }))
 
 jest.mock('./translationBridge', () => ({
@@ -18,9 +18,9 @@ jest.mock('./translationBridge', () => ({
 
 describe('withBaseProviders', () => {
   it('should wrap a component with all base providers', () => {
-    const TestComponent = (props: { label: string }) => props.label
+    const TestComponent = ({ label }: { label: string }) => label
     const Wrapped = withBaseProviders(TestComponent)
-    const { container, getByTestId } = render(createElement(Wrapped, { label: 'hello' }))
+    const { container, getByTestId } = render(<Wrapped label="hello" />)
 
     expect(getByTestId('app-state')).toBeDefined()
     expect(getByTestId('config')).toBeDefined()
