@@ -14,7 +14,7 @@ export interface ThemeCommonData {
   previewImageUrl?: string
   customCssVariables?: Record<string, string>
   overrides?: Array<ThemeOverride>
-  fonts?: FontDefinition[]
+  fonts?: Array<FontDefinition>
 }
 
 export interface CurrentThemes extends ThemeCommonData {
