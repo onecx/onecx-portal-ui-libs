@@ -1,3 +1,10 @@
+## [8.4.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.1...v8.4.2) (2026-06-01)
+
+### Bug Fixes
+
+* dynamic scoping adjustments (v8) ([#1501](https://github.com/onecx/onecx-portal-ui-libs/issues/1501)) ([d376b52](https://github.com/onecx/onecx-portal-ui-libs/commit/d376b52efda2a4f9fef767e1507aa0d79608c743))
+* missing translation flickering issue ([#1495](https://github.com/onecx/onecx-portal-ui-libs/issues/1495)) ([0f92709](https://github.com/onecx/onecx-portal-ui-libs/commit/0f927096a2aac5018bea738d0fce617dffaada73))
+
 ## [8.4.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.0...v8.4.1) (2026-06-01)
 
 ### Bug Fixes
