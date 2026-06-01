@@ -61,12 +61,13 @@ export type Row = {
 export enum TemplateType {
   CELL = 'CELL',
   FILTERCELL = 'FILTERCELL',
+  HEADER = 'HEADER',
 }
 
 interface TemplatesData {
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
   idSuffix: Array<string>
-  templateNames: Record<ColumnType, Array<string>>
+  templateNames: Record<ColumnType, Array<string>> | Array<string>
 }
 
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
@@ -164,6 +165,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  columnHeaderTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
@@ -173,12 +175,18 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     this._columns$.next(value)
     const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
     const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
+    const headerObs = value.map((c) => this.getTemplate(c, TemplateType.HEADER))
+
     this.columnTemplates$ = combineLatest(obs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
       debounceTime(50)
     )
     this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
       map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
+    )
+    this.columnHeaderTemplates$ = combineLatest(headerObs).pipe(
+      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
+      debounceTime(50)
     )
   }
   @Input() clientSideFiltering = true
@@ -306,6 +314,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @ContentChild('translationKeyFilterCell') translationKeyFilterCellChildTemplate: TemplateRef<any> | undefined
   get _translationKeyFilterCell(): TemplateRef<any> | undefined {
     return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
+  }
+
+  @Input() columnHeaderTemplate: TemplateRef<any> | undefined
+  @ContentChild('columnHeader') columnHeaderChildTemplate: TemplateRef<any> | undefined
+  get _columnHeader(): TemplateRef<any> | undefined {
+    return this.columnHeaderTemplate || this.columnHeaderChildTemplate
   }
 
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -646,9 +660,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         case 'translationKeyFilterCell':
           this.translationKeyFilterCellChildTemplate = item.template
           break
+        case 'columnHeader':
+          this.columnHeaderChildTemplate = item.template
+          break
       }
     })
-    
+
     this.allTemplates$ = combineLatest([this.templates$, this.viewTemplates$, this.parentTemplates$]).pipe(
       map(([templates, viewTemplates, parentTemplates]) => {
         const all =
@@ -886,6 +903,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return isValidDate(d)
   }
 
+  headerTemplatesData: TemplatesData = {
+    templatesObservables: {},
+    idSuffix: ['IdTableHeader', 'IdHeader'],
+    templateNames: ['columnHeader', 'defaultColumnHeader'],
+  }
+
   cellTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableCell', 'IdCell'],
@@ -937,12 +960,19 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   templatesDataMap: Record<TemplateType, TemplatesData> = {
     [TemplateType.CELL]: this.cellTemplatesData,
     [TemplateType.FILTERCELL]: this.filterTemplatesData,
+    [TemplateType.HEADER]: this.headerTemplatesData,
   }
 
   getColumnTypeTemplate(templates: PrimeTemplate[], columnType: ColumnType, templateType: TemplateType) {
     let template: TemplateRef<any> | undefined
 
     switch (templateType) {
+      case TemplateType.HEADER:
+        return (
+          this._columnHeader ??
+          findTemplate(templates, this.templatesDataMap[templateType].templateNames as string[])?.template ??
+          null
+        )
       case TemplateType.CELL:
         switch (columnType) {
           case ColumnType.DATE:
@@ -981,9 +1011,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         break
     }
 
+    const templateNames = this.templatesDataMap[templateType].templateNames as Record<ColumnType, string[]>
     return (
       template ??
-      findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      findTemplate(templates, templateNames[columnType])?.template ??
       null
     )
   }
