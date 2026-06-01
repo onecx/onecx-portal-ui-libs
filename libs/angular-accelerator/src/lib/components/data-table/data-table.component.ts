@@ -67,7 +67,7 @@ export enum TemplateType {
 interface TemplatesData {
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
   idSuffix: Array<string>
-  templateNames: Record<ColumnType, Array<string>>
+  templateNames?: Record<ColumnType, Array<string>>
 }
 
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
@@ -316,10 +316,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return this.translationKeyFilterCellTemplate || this.translationKeyFilterCellChildTemplate
   }
 
-  @Input() columnHeaderCellTemplate: TemplateRef<any> | undefined
-  @ContentChild('columnHeader') columnHeaderCellChildTemplate: TemplateRef<any> | undefined
-  get _columnHeaderCell(): TemplateRef<any> | undefined {
-    return this.columnHeaderCellTemplate || this.columnHeaderCellChildTemplate
+  @Input() columnHeaderTemplate: TemplateRef<any> | undefined
+  @ContentChild('columnHeader') columnHeaderChildTemplate: TemplateRef<any> | undefined
+  get _columnHeader(): TemplateRef<any> | undefined {
+    return this.columnHeaderTemplate || this.columnHeaderChildTemplate
   }
 
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -661,7 +661,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           this.translationKeyFilterCellChildTemplate = item.template
           break
         case 'columnHeader':
-          this.columnHeaderCellChildTemplate = item.template
+          this.columnHeaderChildTemplate = item.template
           break
       }
     })
@@ -906,14 +906,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   headerTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableHeader', 'IdHeader'],
-    templateNames: {
-      [ColumnType.DATE]: ['columnHeader', 'defaultColumnHeader'],
-      [ColumnType.NUMBER]: ['columnHeader', 'defaultColumnHeader'],
-      [ColumnType.RELATIVE_DATE]: ['columnHeader', 'defaultColumnHeader'],
-      [ColumnType.TRANSLATION_KEY]: ['columnHeader', 'defaultColumnHeader'],
-      [ColumnType.STRING]: ['columnHeader', 'defaultColumnHeader'],
-    },
   }
+  headerTemplateName = ['columnHeader', 'defaultColumnHeader']
 
   cellTemplatesData: TemplatesData = {
     templatesObservables: {},
@@ -974,8 +968,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     switch (templateType) {
       case TemplateType.HEADER:
-        template = this._columnHeaderCell
-        break
+        return (
+          this._columnHeader ??
+          findTemplate(templates, this.headerTemplateName)?.template ??
+          null
+        )
       case TemplateType.CELL:
         switch (columnType) {
           case ColumnType.DATE:
@@ -1016,7 +1013,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     return (
       template ??
-      findTemplate(templates, this.templatesDataMap[templateType].templateNames[columnType])?.template ??
+      findTemplate(templates, this.templatesDataMap[templateType].templateNames?.[columnType] ?? [])?.template ??
       null
     )
   }
