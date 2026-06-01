@@ -1,5 +1,4 @@
-import { createRoot } from 'react-dom/client'
-import { act } from 'react'
+import { render, waitFor } from '@testing-library/react'
 import { useGuardsGatherer } from './use-guards-gatherer'
 
 const mockActivate = jest.fn()
@@ -15,8 +14,6 @@ jest.mock('../services/guards-gatherer', () => ({
     deactivate: mockDeactivate,
   })),
 }))
-
-const flushPromises = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
 function TestComponent({
   activate,
@@ -37,64 +34,46 @@ describe('useGuardsGatherer', () => {
 
   it('returns a GuardsGatherer instance', async () => {
     let result: any
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(
+      <TestComponent
+        onResult={(r) => {
+          result = r
+        }}
+      />
+    )
 
-    await act(async () => {
-      root.render(
-        <TestComponent
-          onResult={(r) => {
-            result = r
-          }}
-        />
-      )
-      await flushPromises()
+    await waitFor(() => {
+      expect(result).toBeDefined()
     })
 
-    expect(result).toBeDefined()
     expect(typeof result.activate).toBe('function')
-    root.unmount()
   })
 
   it('calls activate on mount when activate option is true (default)', async () => {
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent />)
 
-    await act(async () => {
-      root.render(<TestComponent />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(mockActivate).toHaveBeenCalled()
     })
-
-    expect(mockActivate).toHaveBeenCalled()
-    root.unmount()
   })
 
   it('calls deactivate on unmount', async () => {
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    const { unmount } = render(<TestComponent />)
 
-    await act(async () => {
-      root.render(<TestComponent />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(mockActivate).toHaveBeenCalled()
     })
 
-    await act(async () => {
-      root.unmount()
-    })
+    unmount()
 
     expect(mockDeactivate).toHaveBeenCalled()
   })
 
   it('does not call activate when activate option is false', async () => {
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent activate={false} />)
 
-    await act(async () => {
-      root.render(<TestComponent activate={false} />)
-      await flushPromises()
+    await waitFor(() => {
+      expect(mockActivate).not.toHaveBeenCalled()
     })
-
-    expect(mockActivate).not.toHaveBeenCalled()
-    root.unmount()
   })
 })
