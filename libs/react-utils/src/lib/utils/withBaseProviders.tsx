@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import { ComponentType } from 'react'
 import { AppStateProvider, ConfigurationProvider, UserProvider } from '@onecx/react-integration-interface'
 import { SyncedRouterProvider } from '@onecx/react-webcomponents'
 import '../styling/primeReact/dynamicScoping/index'
