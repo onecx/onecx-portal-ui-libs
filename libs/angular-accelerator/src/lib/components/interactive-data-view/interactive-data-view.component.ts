@@ -199,6 +199,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   primeNgStringTableFilterCell: TemplateRef<any> | undefined
   @ContentChild('numberTableFilterCell') numberTableFilterCell: TemplateRef<any> | undefined
   primeNgNumberTableFilterCell: TemplateRef<any> | undefined
+  @ContentChild('columnHeader') columnHeader: TemplateRef<any> | undefined
+  primeNgColumnHeader: TemplateRef<any> | undefined
 
   templates$: BehaviorSubject<QueryList<PrimeTemplate> | undefined> = new BehaviorSubject<
     QueryList<PrimeTemplate> | undefined
@@ -311,6 +313,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   }
   get _numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCell
+  }
+  get _columnHeader(): TemplateRef<any> | undefined {
+    return this.columnHeader
   }
 
   _data: RowListGridData[] = []
@@ -510,6 +515,9 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
           break
         case 'numberTableFilterCell':
           this.primeNgNumberTableFilterCell = item.template
+          break
+        case 'columnHeader':
+          this.primeNgColumnHeader = item.template
           break
       }
     })
