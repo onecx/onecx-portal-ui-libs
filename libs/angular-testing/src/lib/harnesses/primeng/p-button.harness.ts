@@ -37,15 +37,15 @@ export class PButtonHarness extends ComponentHarness {
   /**
    * Returns the icon class string (e.g. `"pi pi-check"`) or `null` if no icon is present.
    *
-   * Reads the `icon` attribute first (static bindings). Falls back to the last two classes of
-   * the icon `<span>` for dynamic bindings (e.g. `class="p-button-icon pi pi-check"` → `"pi pi-check"`),
-   * assuming PrimeNG always appends icon classes at the end of the class list (based on PrimeNG source).
+   * Reads the `icon` attribute first (static bindings). Falls back to a regex match on the icon
+   * `<span>` classes for dynamic bindings (e.g. `class="p-button-icon pi pi-check"` → `"pi pi-check"`).
    */
   async getIcon(): Promise<string | null> {
     const iconAttribute = await (await this.host()).getAttribute('icon')
     const classAttr = await (await (await this.getIconSpan())?.host())?.getAttribute('class')
+    const iconClassMatch = classAttr?.match(/\bpi\s+pi-[a-z0-9-]+\b/i)
 
-    return iconAttribute ?? classAttr?.split(" ").slice(-2).join(' ') ?? null
+    return iconAttribute ?? iconClassMatch?.[0] ?? null
   }
 
   async click() {
