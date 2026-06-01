@@ -1,16 +1,22 @@
-import { createElement } from 'react'
+import React, { type ReactNode } from 'react'
 import { render } from '@testing-library/react'
 import { withBaseProviders } from './withBaseProviders'
 
-jest.mock('@onecx/react-integration-interface', () => ({
-  AppStateProvider: ({ children }) => createElement('div', { 'data-testid': 'app-state' }, children),
-  ConfigurationProvider: ({ children }) => createElement('div', { 'data-testid': 'config' }, children),
-  UserProvider: ({ children }) => createElement('div', { 'data-testid': 'user' }, children),
-}))
+jest.mock('@onecx/react-integration-interface', () => {
+  const React = require('react')
+  return {
+    AppStateProvider: ({ children }: { children?: ReactNode }) => React.createElement('div', { 'data-testid': 'app-state' }, children),
+    ConfigurationProvider: ({ children }: { children?: ReactNode }) => React.createElement('div', { 'data-testid': 'config' }, children),
+    UserProvider: ({ children }: { children?: ReactNode }) => React.createElement('div', { 'data-testid': 'user' }, children),
+  }
+})
 
-jest.mock('@onecx/react-webcomponents', () => ({
-  SyncedRouterProvider: ({ children }) => createElement('div', { 'data-testid': 'router' }, children),
-}))
+jest.mock('@onecx/react-webcomponents', () => {
+  const React = require('react')
+  return {
+    SyncedRouterProvider: ({ children }: { children?: ReactNode }) => React.createElement('div', { 'data-testid': 'router' }, children),
+  }
+})
 
 jest.mock('./translationBridge', () => ({
   TranslationBridge: () => null,
