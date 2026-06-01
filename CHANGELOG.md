@@ -1,3 +1,9 @@
+## [8.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.1...v8.4.0) (2026-06-01)
+
+### Features
+
+* utility to generate packages ([#1475](https://github.com/onecx/onecx-portal-ui-libs/issues/1475)) ([f04eadf](https://github.com/onecx/onecx-portal-ui-libs/commit/f04eadf6004d2f7b1405ac9498fcc24c550160f9))
+
 ## [8.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.0...v8.3.1) (2026-05-26)
 
 ### Bug Fixes
