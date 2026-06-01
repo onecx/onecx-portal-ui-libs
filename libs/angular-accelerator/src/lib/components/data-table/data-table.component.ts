@@ -67,7 +67,7 @@ export enum TemplateType {
 interface TemplatesData {
   templatesObservables: Record<string, Observable<TemplateRef<any> | null>>
   idSuffix: Array<string>
-  templateNames?: Record<ColumnType, Array<string>>
+  templateNames: Record<ColumnType, Array<string>> | Array<string>
 }
 
 export type Sort = { sortColumn: string; sortDirection: DataSortDirection }
@@ -906,8 +906,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   headerTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableHeader', 'IdHeader'],
+    templateNames: ['columnHeader', 'defaultColumnHeader'],
   }
-  headerTemplateName = ['columnHeader', 'defaultColumnHeader']
 
   cellTemplatesData: TemplatesData = {
     templatesObservables: {},
@@ -970,7 +970,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       case TemplateType.HEADER:
         return (
           this._columnHeader ??
-          findTemplate(templates, this.headerTemplateName)?.template ??
+          findTemplate(templates, this.templatesDataMap[templateType].templateNames as string[])?.template ??
           null
         )
       case TemplateType.CELL:
@@ -1011,9 +1011,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         break
     }
 
+    const templateNames = this.templatesDataMap[templateType].templateNames as Record<ColumnType, string[]>
     return (
       template ??
-      findTemplate(templates, this.templatesDataMap[templateType].templateNames?.[columnType] ?? [])?.template ??
+      findTemplate(templates, templateNames[columnType])?.template ??
       null
     )
   }
