@@ -5,11 +5,10 @@ import {
   Theme as OneCXTheme,
   ThemeOverride,
   ThemePropertiesV2,
-  ThemeCommonData,
   CurrentThemes,
   RegionOverridesInput,
-  SLOT_GROUP_PREFIX,
   regionKeys,
+  ThemeCommonData,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -22,6 +21,8 @@ import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom, of } from 'rxjs'
 
+export const SLOT_GROUP_PREFIX = 'onecx-shell-'
+
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
 type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOverrides; overrides?: ThemeOverrides }
@@ -29,8 +30,8 @@ type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOve
 export const THEME_OPTIONS = new InjectionToken<Options>('THEME_OPTIONS')
 
 /**
-    @deprecated
-    */
+    @deprecated
+    */
 export function provideThemeConfigService(isAdvanced?: boolean): any
 export function provideThemeConfigService(options: Options): any
 
@@ -172,6 +173,7 @@ export class ThemeConfigService {
     const slotGroupName = await firstValueFrom(this.slotGroupName)
     const regionName = this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput
     const regionOverrides = theme.properties.regionOverrides
+
     if (regionName && regionOverrides) {
       if (!regionKeys.includes(regionName)) {
         throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
@@ -179,6 +181,7 @@ export class ThemeConfigService {
       const region = regionOverrides[regionName]
       const regionPrimitives = region?.primitives ?? {}
       const regionUsages = region?.usages ?? {}
+
       return {
         primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
         usages: mergeDeep(theme.properties.usages, regionUsages)
