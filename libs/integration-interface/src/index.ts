@@ -15,6 +15,7 @@ export * from './lib/topics/current-themes/v1/current-themes.topic'
 export * from './lib/topics/current-themes/v1/current-themes.model'
 export * from './lib/topics/current-themes/v1/current-themes.schema'
 export * from './lib/topics/current-themes/v1/font-definition.model'
+export * from './lib/topics/current-themes/v1/font-definition.schema'
 
 export * from './lib/topics/user-profile/v1/user-profile.model'
 export * from './lib/topics/user-profile/v1/user-profile.topic'
