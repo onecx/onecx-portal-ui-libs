@@ -66,6 +66,4 @@ export type ThemePropertiesV2 = {
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
-}
-
-export const SLOT_GROUP_PREFIX = 'onecx-shell-'
+};

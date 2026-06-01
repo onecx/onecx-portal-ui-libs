@@ -1,12 +1,64 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { IS_ADVANCED_THEMING, ThemeConfigService } from './theme-config.service'
+import { IS_ADVANCED_THEMING, SLOT_GROUP_PREFIX, THEME_OPTIONS, ThemeConfigService } from './theme-config.service'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import defaultThemeVariables from '../preset/default-theme-variables'
-import { SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
+import { SKIP_STYLE_SCOPING, SLOT_GROUP_NAME } from '@onecx/angular-utils'
 import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
+import { provideConfigurationServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { of } from 'rxjs'
 
+const THEME_V2_MOCK:any = {
+  id: 'theme-v2',
+  versions: [2],
+  properties: {
+    v2: {
+      primitives: {
+        variant: {
+          primary: {
+            bg: { color: '#1976d2' },
+            contrast: '#ffffff',
+            color: 'green'
+          },
+        },
+        font: {
+          family: 'Inter, sans-serif',
+          size: '16px',
+          weight: '400',
+        },
+      },
+      usages: {
+        region: {
+          font: {
+            family: 'Existing_font_family'
+          },
+        },
+      },
+      regionOverrides: {
+        header: {
+          primitives: {
+            variant: {
+              primary: {
+                bg: { color: 'override_#0d47a1' },
+              },
+            },
+            font: {
+              weight: 'override_600',
+            },
+          },
+          usages: {
+            region: {
+              font: {
+                family: 'override_font_family',
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 describe('ThemeConfigService', () => {
 
   const theme = {
@@ -24,14 +76,19 @@ describe('ThemeConfigService', () => {
   beforeEach(() => {
     const themeServiceMock = {
       currentTheme$: new FakeTopic(),
+      currentThemes$: new FakeTopic(),
     }
 
     TestBed.configureTestingModule({
       providers: [
+        ThemeService,
         ThemeConfigService,
+        provideConfigurationServiceMock(),
+        { provide: SLOT_GROUP_NAME, useValue: of(SLOT_GROUP_PREFIX+'header') },
         { provide: IS_ADVANCED_THEMING, useValue: true },
         { provide: ThemeService, useValue: themeServiceMock },
         { provide: SKIP_STYLE_SCOPING, useValue: true },
+        { provide: THEME_OPTIONS, useValue: { isAdvanced: true, maxVersion: 2 } },
       ],
     })
   })
@@ -169,4 +226,57 @@ describe('ThemeConfigService', () => {
 
     expect(preset.semantic.primary['500']).toEqual('#04ff00');
   }))
+
+  describe('getThemeProperties', () => {    
+
+    it('merges base primitives/usages with valid region override', async () => {
+      const configService = TestBed.inject(ThemeConfigService)
+      const themeParam = { ...THEME_V2_MOCK, properties: THEME_V2_MOCK.properties.v2 ?? {} }
+
+      const properties = await (configService['getThemeProperties'])(themeParam)
+
+      expect(properties.primitives?.font?.family).toEqual('Inter, sans-serif')
+      expect(properties.primitives?.font?.size).toEqual('16px')
+      expect(properties.primitives?.font?.weight).toEqual('override_600')
+      expect(properties.usages?.region?.font?.family).toEqual('override_font_family')
+    })
+
+    it('returns base properties when regionOverrides is missing', async () => {
+      const themeWithoutOverrides = {
+        ...THEME_V2_MOCK,
+        properties: {
+          ...THEME_V2_MOCK.properties.v2,
+          regionOverrides: undefined,
+        }
+      }
+      const configService = TestBed.inject(ThemeConfigService)
+      const properties = await (configService['getThemeProperties'])(themeWithoutOverrides)
+
+      expect(properties).toEqual(themeWithoutOverrides.properties)
+      expect(properties.primitives?.variant?.primary?.contrast).toEqual('#ffffff')
+      expect(properties.usages?.region?.font?.family).toEqual('Existing_font_family')
+    })
+
+    it('returns base values when region key is valid but override entry is not set', async () => {
+      const configService = TestBed.inject(ThemeConfigService)
+      const themeNoHeaderOverrides = {
+        ...THEME_V2_MOCK,
+        properties: {
+          ...THEME_V2_MOCK.properties.v2,
+          regionOverrides: {
+            subHeader: {
+              primitives: {
+                font: { weight: 'bold' },
+              },
+            },
+          },
+        },
+      }
+
+      const properties = await (configService['getThemeProperties'])(themeNoHeaderOverrides)
+
+      expect((properties.primitives?.variant?.primary?.bg as any)?.color).toEqual('#1976d2')
+      expect(properties.primitives?.font?.family).toEqual('Inter, sans-serif')
+    })
+  })
 })
