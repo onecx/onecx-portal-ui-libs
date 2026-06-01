@@ -1,6 +1,14 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 import { SpanHarness } from '../span.harness'
 
+/**
+ * Matches a PrimeIcons class pair in one class attribute string, e.g. `pi pi-check`.
+ *
+ * - `\bpi\s+`: the base PrimeIcons class.
+ * - `pi-[a-z0-9-]+\b`: the specific icon class.
+ */
+const ICON_CLASS_PATTERN = /\bpi\s+pi-[a-z0-9-]+\b/i
+
 export interface PButtonHarnessFilters extends BaseHarnessFilters {
   id?: string
   name?: string
@@ -43,7 +51,7 @@ export class PButtonHarness extends ComponentHarness {
   async getIcon(): Promise<string | null> {
     const iconAttribute = await (await this.host()).getAttribute('icon')
     const classAttr = await (await (await this.getIconSpan())?.host())?.getAttribute('class')
-    const iconClassMatch = classAttr?.match(/\bpi\s+pi-[a-z0-9-]+\b/i)
+    const iconClassMatch = classAttr?.match(ICON_CLASS_PATTERN)
 
     return iconAttribute ?? iconClassMatch?.[0] ?? null
   }
