@@ -299,4 +299,39 @@ export const ExampleWithTemplateControl = {
   },
 }
 
+const CustomHeaderTemplateInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
+
+    <!-- Type-level: overrides ALL column headers general -->
+    <ng-template pTemplate="columnHeader" let-column="column">
+      <span style="color: darkgreen; font-weight: bold">
+        ★ {{ column?.nameKey }}
+      </span>
+    </ng-template>
+    
+    <!-- Column-specific: overrides only the 'product' column header -->
+    <ng-template pTemplate="productIdTableHeader" let-column="column">
+      <span style="color: crimson; font-weight: bold">
+        🧺 Product (custom)
+      </span>
+    </ng-template>
+
+    <!-- Column-specific: overrides only the 'date' column header -->
+    <ng-template pTemplate="dateIdTableHeader" let-column="column">
+      <span style="color: crimson; font-weight: blue">
+        📅 Date Custom
+      </span>
+    </ng-template>
+
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomHeaderTemplate = {
+  name: 'With Custom Header Template',
+  render: CustomHeaderTemplateInteractiveDataView,
+  args: defaultComponentArgs,
+}
+
 export default InteractiveDataViewComponentDefaultSBConfig

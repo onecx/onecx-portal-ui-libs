@@ -116,6 +116,7 @@
 </ng-template>
 
 @if (displayedPageSize(); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
+@if ((columnHeaderTemplates$ | async) ?? {}; as columnHeaderTemplates) {
 <p-table
   [value]="(displayedRows$ | async) ?? []"
   [paginator]="paginator()"
@@ -164,7 +165,17 @@
           class="table-header-wrapper flex flex-column justify-content-between align-items-start"
           style="height: 100%"
         >
-          <span class="flex" [id]="column.id + '-header-name'">{{ column.nameKey | translate }}</span>
+          <span
+            class="flex"
+            id="{{column.id}}-header-name"
+            [ocxTooltip]="column.tooltipKey ? (column.tooltipKey | translate) : ''"
+            tooltipPosition="top"
+          >
+            <ng-container
+              [ngTemplateOutlet]="columnHeaderTemplates[column.id]"
+              [ngTemplateOutletContext]="{ column: column }"
+            ></ng-container>
+          </span>
           <span class="flex icon-button-header-wrapper">
             @if (column.sortable) {
             <button
@@ -262,7 +273,10 @@
         </div>
       </th>
       } @else {
-      <th scope="col">{{ column.nameKey | translate }}</th>
+      <th scope="col">
+        <ng-container [ngTemplateOutlet]="columnHeaderTemplates[column.id]"
+          [ngTemplateOutletContext]="{ column: column }"></ng-container>
+      </th>
       } } @if (actionColumnPosition() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       }
@@ -347,7 +361,7 @@
     </tr>
   </ng-template>
 </p-table>
-} }
+} } }
 
 <ng-template #expansionColumn let-rowObject="localRowObject">
   @if (expandable() && expansionTemplate()) {
@@ -389,3 +403,9 @@
 <ng-template pTemplate="defaultTranslationKeyCell" let-rowObject="rowObject" let-column="column">
   <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
+
+<ng-template pTemplate="defaultColumnHeader" let-column="column">
+  <ng-container>{{ column.nameKey | translate }}</ng-container>
+</ng-template>
+
+
