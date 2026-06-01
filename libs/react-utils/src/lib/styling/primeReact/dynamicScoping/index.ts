@@ -1,5 +1,5 @@
 import { isValidElement, cloneElement, type ReactElement } from 'react'
-import * as ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom'
 
 import { getOnecxTriggerElement } from './functions/onecx-trigger-element'
 import { getStyleDataOrIntermediateStyleData } from './functions/getStyleDataOrIntermediateStyleData'
@@ -7,7 +7,7 @@ import { appendIntermediateStyleData } from './functions/appendIntermediateStyle
 
 const originalCreatePortal = ReactDOM.createPortal
 ;(function ensurePrimereactDynamicDataIncludesIntermediateStyleData() {
-  ;(ReactDOM as any).createPortal = function (children: any, container: any, ...rest: any) {
+  const patchedCreatePortal = function (children: any, container: any, ...rest: any) {
     if (!isValidElement(children)) {
       return originalCreatePortal(children, container, ...rest)
     }
@@ -38,5 +38,14 @@ const originalCreatePortal = ReactDOM.createPortal
       container,
       ...rest
     )
+  }
+  try {
+    Object.defineProperty(ReactDOM, 'createPortal', {
+      value: patchedCreatePortal,
+      writable: true,
+      configurable: true,
+    })
+  } catch {
+    ;(ReactDOM as any).createPortal = patchedCreatePortal
   }
 })()
