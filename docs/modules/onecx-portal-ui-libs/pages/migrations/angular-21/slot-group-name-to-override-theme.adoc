@@ -1,29 +1,59 @@
-[#theme-override-with-slotgroupname]
-== Override theme with slotGroupName
+[#override-theme-for-slotgroup]
+= Override theme for slotgroup
 
-Tn this guide, we will add slotgroupname to remotecomponent and override the theme with the help of slotgroupname.
-Following are steps to perform the same:
+This guide will help you add slotGroupName in a remote component and emit the value of slotGroupName with the help of the SLOT_GROUP_NAME injection token. The theme service will use the provided value and override theme properties in the region accordingly.
 
-== Step 1: Add slotGroupName to remote component
+The following are the steps to send slotGroupName:
 
-In remote component, you will be able to extract slotGroupName. 
+== Step 1: Extract slotGroupName
+In a remote component, you will be able to extract slotGroupName from input properties.
 
-Same slotgroupname has to be set as replaySubject to override the theme.
+The same slotGroupName has to be set as the value in the SLOT_GROUP_NAME injection token.
 
-== step 2: add import for injection token and add entry in providers array of remote component bootstrap
+== Step 2: Configure SLOT_GROUP_NAME
+
+Add SLOT_GROUP_NAME to the providers array of the bootstrapRemoteComponent function. Please refer to the code snippet below.
 
 .Example - my-remote.component.bootstrap.ts
-.After:
 [source, typescript]
-----
+--
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import { SLOT_GROUP_NAME } from '@onecx/angular-utils'
+import { ReplaySubject } from 'rxjs'
 
 bootstrapRemoteComponent(
   MyRemoteComponent,
   'ocx-my-remote',
   environment.production,
   [
-    { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
+    { provide: SLOT_GROUP_NAME, useValue: new ReplaySubject<string>(1) },
   ]
 )
-----
+--
+
+== Step 3: Emit slotGroupName
+
+Emit the value of slotGroupName with the help of the SLOT_GROUP_NAME injection token. Please refer to the code snippet below.
+
+.Example - my-remote.component.ts
+[source, typescript]
+--
+import { Input, inject } from '@angular/core'
+import { SLOT_GROUP_NAME } from "@onecx/angular-utils"
+import { ReplaySubject } from 'rxjs'
+
+export class MyRemoteComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
+  private readonly slotGroupName$ = inject<ReplaySubject<string>>(SLOT_GROUP_NAME)
+
+  @Input() slotGroupName: string
+
+  ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.slotGroupName$.next(this.slotGroupName)
+  }
+}
+--
+
+[NOTE]
+====
+The theme service will listen to slotGroupName and override properties in the region accordingly. Please test whether the override changes are applied to the region properly.
+====
