@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { themeSchemaRegistry } from "./schema/registry";
 
 export const fontSourceDefinition = z
   .object({
@@ -6,7 +7,7 @@ export const fontSourceDefinition = z
     format: z.string().optional(),
     local: z.string().optional(),
   })
-  .meta({ id: "fontSourceDefinition" });
+  .register(themeSchemaRegistry, { id: "fontSourceDefinition" });
 
 export const fontDefinition = z
   .object({
@@ -28,6 +29,6 @@ export const fontDefinition = z
     lineGapOverride: z.string().optional(),
     sizeAdjust: z.string().optional(),
   })
-  .meta({ id: "fontDefinition" });
+  .register(themeSchemaRegistry, { id: "fontDefinition" });
 
-export const fontDefinitions = z.array(fontDefinition).meta({ id: "fontDefinitions" });
+export const fontDefinitions = z.array(fontDefinition).register(themeSchemaRegistry, { id: "fontDefinitions" });
