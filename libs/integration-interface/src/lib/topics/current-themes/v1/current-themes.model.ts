@@ -1,6 +1,8 @@
+import * as z from 'zod'
+
 import { ThemeOverride } from '../../current-theme/v1/theme-override.model'
 import { ThemeProperties } from './current-themes.schema'
-import { FontDefinition } from './font-definition.model'
+import { fontDefinitions } from './font-definition.schema'
 
 export interface ThemeCommonData {
   id?: string
@@ -14,7 +16,7 @@ export interface ThemeCommonData {
   previewImageUrl?: string
   customCssVariables?: Record<string, string>
   overrides?: Array<ThemeOverride>
-  fonts?: Array<FontDefinition>
+  fonts?: z.infer<typeof fontDefinitions>
 }
 
 export interface CurrentThemes extends ThemeCommonData {
