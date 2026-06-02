@@ -1,3 +1,48 @@
+## [7.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.2...v7.10.0) (2026-06-02)
+
+### Features
+
+* v6 custom column header ([#1491](https://github.com/onecx/onecx-portal-ui-libs/issues/1491)) ([#1505](https://github.com/onecx/onecx-portal-ui-libs/issues/1505)) ([ad52783](https://github.com/onecx/onecx-portal-ui-libs/commit/ad52783e7956f4ac5f9f4667b8e841d1d5d4c131))
+
+### Bug Fixes
+
+* missing translation flickering issue ([#1494](https://github.com/onecx/onecx-portal-ui-libs/issues/1494)) ([1b8b079](https://github.com/onecx/onecx-portal-ui-libs/commit/1b8b079b9c15e46796535d80c901ef949fdb2216))
+
+## [7.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.1...v7.9.2) (2026-05-22)
+
+### Bug Fixes
+
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1463](https://github.com/onecx/onecx-portal-ui-libs/issues/1463)) ([67d35b3](https://github.com/onecx/onecx-portal-ui-libs/commit/67d35b32a64e48b86886321e10f02791a1bdf01b))
+
+## [7.9.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.0...v7.9.1) (2026-05-21)
+
+### Bug Fixes
+
+* added .card styling from v5 ([#1456](https://github.com/onecx/onecx-portal-ui-libs/issues/1456)) ([74ffcb0](https://github.com/onecx/onecx-portal-ui-libs/commit/74ffcb0177931766a0ea1ef1ddb7bb297f63d365))
+* better error handling + skip existing packages (v7) ([#1439](https://github.com/onecx/onecx-portal-ui-libs/issues/1439)) ([58e0bbd](https://github.com/onecx/onecx-portal-ui-libs/commit/58e0bbdb891d463ad0798e266ce6128e57c9a9f3))
+
+## [7.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.8.0...v7.9.0) (2026-05-11)
+
+### Features
+
+* trigger release ([#1424](https://github.com/onecx/onecx-portal-ui-libs/issues/1424)) ([3a59c11](https://github.com/onecx/onecx-portal-ui-libs/commit/3a59c11eda02ffd63f32e037eef391a53166769b))
+
+### Chores
+
+* adjust channels for v7 ([#1421](https://github.com/onecx/onecx-portal-ui-libs/issues/1421)) ([98ed03d](https://github.com/onecx/onecx-portal-ui-libs/commit/98ed03d9a7d15d8e332feb4673c0fdaf8af06801))
+
+## [7.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.2...v7.8.0) (2026-05-11)
+
+### Features
+
+* add ngrx to onecx shared recommendation ([#1411](https://github.com/onecx/onecx-portal-ui-libs/issues/1411)) ([5fcf7ed](https://github.com/onecx/onecx-portal-ui-libs/commit/5fcf7ed471706c10057c79724698cd8e699467a8))
+
+## [7.7.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.1...v7.7.2) (2026-05-08)
+
+### Bug Fixes
+
+* changes related singal conversion in generator ([#1398](https://github.com/onecx/onecx-portal-ui-libs/issues/1398)) ([9bcbffb](https://github.com/onecx/onecx-portal-ui-libs/commit/9bcbffbd541686f04e9ac8d5e8f3ade2a5201aae))
+
 ## [7.7.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.7.0...v7.7.1) (2026-04-30)
 
 ### Bug Fixes
