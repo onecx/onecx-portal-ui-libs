@@ -20,19 +20,19 @@ export class PPasswordHarness extends ComponentHarness {
   }
 
   async getPromptLabel(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-prompt-label')
+    return await (await this.host()).getAttribute('promptlabel')
   }
 
   async getWeakLabel(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-weak-label')
+    return await (await this.host()).getAttribute('weaklabel')
   }
 
   async getMediumLabel(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-medium-label')
+    return await (await this.host()).getAttribute('mediumlabel')
   }
 
   async getStrongLabel(): Promise<string | null> {
-    return await (await this.host()).getAttribute('ng-reflect-strong-label')
+    return await (await this.host()).getAttribute('stronglabel')
   }
 
   async getValue(): Promise<string | null> {
