@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
@@ -11,7 +12,7 @@ import {
 } from '@angular/core'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { BehaviorSubject, Observable, combineLatest, debounceTime, map } from 'rxjs'
+import { BehaviorSubject, Observable, combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from 'primeng/api'
 import { findTemplate } from '../../utils/template.utils'
@@ -20,6 +21,8 @@ import { limit } from '../../utils/filter.utils'
 import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { Button } from 'primeng/button'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { TranslateService } from '@ngx-translate/core'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -42,6 +45,9 @@ export interface FilterViewComponentState {
   styleUrls: ['./filter-view.component.scss'],
 })
 export class FilterViewComponent implements OnInit {
+  readonly translateService = inject(TranslateService)
+  readonly liveAnnouncer = inject(LiveAnnouncer)
+  
   ColumnType = ColumnType
   FilterType = FilterType
   filters$ = new BehaviorSubject<Filter[]>([])
@@ -51,6 +57,7 @@ export class FilterViewComponent implements OnInit {
   }
   set filters(value: Filter[]) {
     this.filters$.next(value)
+    this.annouceFilterCount()
   }
   columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
@@ -301,5 +308,24 @@ export class FilterViewComponent implements OnInit {
       id: row.id,
       [row['valueColumnId'] as string]: row['value'],
     }
+  }
+
+  private annouceFilterCount() {
+    const currentCount = this.filters?.length ?? 0
+
+    if (currentCount === 0) {
+      firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')).then(
+        (translatedText: string) => {
+          this.liveAnnouncer.announce(translatedText)
+        }
+      )
+      return
+    }
+
+    firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })).then(
+      (translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText)
+      }
+    )
   }
 }
