@@ -266,7 +266,7 @@ describe('FilterViewComponent (class logic)', () => {
   
         await Promise.resolve()
   
-        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: 1, filters: 'c1: v1' })
+        expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: 1 })
         expect(announceSpy).toHaveBeenCalledWith('some-results')
       })
     })
