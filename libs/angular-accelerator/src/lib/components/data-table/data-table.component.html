@@ -168,8 +168,6 @@
           <span
             class="flex"
             id="{{column.id}}-header-name"
-            [ocxTooltip]="column.tooltipKey ? (column.tooltipKey | translate) : ''"
-            tooltipPosition="top"
           >
             <ng-container
               [ngTemplateOutlet]="columnHeaderTemplates[column.id]"
