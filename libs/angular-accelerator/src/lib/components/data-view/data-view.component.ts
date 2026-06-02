@@ -234,6 +234,11 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   get _numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCellTemplate || this.numberTableFilterCellChildTemplate
   }
+  @Input() columnHeaderTemplate: TemplateRef<any> | undefined
+  @ContentChild('columnHeader') columnHeaderChildTemplate: TemplateRef<any> | undefined
+  get _columnHeader(): TemplateRef<any> | undefined {
+    return this.columnHeaderTemplate || this.columnHeaderChildTemplate
+  }
 
   @Input() additionalActions: DataAction[] = []
 
@@ -388,6 +393,9 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
           break
         case 'numberTableFilterCell':
           this.numberTableFilterCellChildTemplate = item.template
+          break
+        case 'columnHeader':
+          this.columnHeaderChildTemplate = item.template
           break
       }
     })
