@@ -1,0 +1,29 @@
+[#theme-override-with-slotgroupname]
+== Override theme with slotGroupName
+
+Tn this guide, we will add slotgroupname to remotecomponent and override the theme with the help of slotgroupname.
+Following are steps to perform the same:
+
+== Step 1: Add slotGroupName to remote component
+
+In remote component, you will be able to extract slotGroupName. 
+
+Same slotgroupname has to be set as replaySubject to override the theme.
+
+== step 2: add import for injection token and add entry in providers array of remote component bootstrap
+
+.Example - my-remote.component.bootstrap.ts
+.After:
+[source, typescript]
+----
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+
+bootstrapRemoteComponent(
+  MyRemoteComponent,
+  'ocx-my-remote',
+  environment.production,
+  [
+    { provide: REMOTE_COMPONENT_CONFIG, useValue: new ReplaySubject<RemoteComponentConfig>(1) },
+  ]
+)
+----
