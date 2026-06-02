@@ -279,7 +279,7 @@
     </ng-container>
     }
   </ng-template>
-  <ng-template #columnHeader let-column="column">
+  <ng-template #columnHeaderTemplate let-column="column">
     @if (columnHeader) {
     <ng-container
       [ngTemplateOutlet]="columnHeader"
