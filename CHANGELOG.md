@@ -1,3 +1,13 @@
+## [7.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.2...v7.10.0) (2026-06-02)
+
+### Features
+
+* v6 custom column header ([#1491](https://github.com/onecx/onecx-portal-ui-libs/issues/1491)) ([#1505](https://github.com/onecx/onecx-portal-ui-libs/issues/1505)) ([ad52783](https://github.com/onecx/onecx-portal-ui-libs/commit/ad52783e7956f4ac5f9f4667b8e841d1d5d4c131))
+
+### Bug Fixes
+
+* missing translation flickering issue ([#1494](https://github.com/onecx/onecx-portal-ui-libs/issues/1494)) ([1b8b079](https://github.com/onecx/onecx-portal-ui-libs/commit/1b8b079b9c15e46796535d80c901ef949fdb2216))
+
 ## [7.9.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.1...v7.9.2) (2026-05-22)
 
 ### Bug Fixes
