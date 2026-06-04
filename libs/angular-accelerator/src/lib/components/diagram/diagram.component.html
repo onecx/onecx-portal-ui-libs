@@ -85,17 +85,19 @@
   <div aria-hidden="true" class="custom-legends-container">
     <div class="custom-legends-content-container">
       <table class="legends-table">
-        <tr class="sr-only">
-          @if(i % 2 === 0) {
-          <ng-container>
-            <th>LEGEND COLUMN 1</th>
-            @if(legendItems[i + 1])
-            {
-            <th>LEGEND COLUMN 2</th>
+        @for (item of legendItems; track $index; let i = $index) {
+          <tr class="sr-only">
+            @if(i % 2 === 0) {
+            <ng-container>
+              <th>LEGEND COLUMN 1</th>
+              @if(legendItems[i + 1])
+              {
+              <th>LEGEND COLUMN 2</th>
+              }
+            </ng-container>
             }
-          </ng-container>
-          }
-        </tr>
+          </tr>
+        }
         @for (item of legendItems; track $index; let i = $index) {
         <tr>
           @if(i % 2 === 0) {
