@@ -137,8 +137,8 @@ export class DiagramComponent implements OnDestroy {
     })
 
     this.legendItems = data.map((value, index) => ({
-      label: value?.label,
-      color: COLORS[index],
+      label: value.label,
+      color: COLORS[index]
     }))
 
     const labelColor = getLabelColor(this.highContrast())

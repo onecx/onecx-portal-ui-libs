@@ -1,4 +1,4 @@
-const mediaQueryForHighContrast = window.matchMedia('(forced-colors: active)')
+const mediaQueryForHighContrast = globalThis.matchMedia('(forced-colors: active)')
 
 export function hasHighContrast(): boolean {
   return mediaQueryForHighContrast.matches

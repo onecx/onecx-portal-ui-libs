@@ -28,7 +28,7 @@ const forcedColorsMediaQuery = {
   }),
 } as unknown as MediaQueryList
 
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => {
     if (query === '(forced-colors: active)') return forcedColorsMediaQuery
@@ -45,7 +45,7 @@ Object.defineProperty(window, 'matchMedia', {
   }),
 })
 
-Object.defineProperty(window, '__setForcedColorsActive', {
+Object.defineProperty(globalThis, '__setForcedColorsActive', {
   writable: true,
   value: (active: boolean) => {
     forcedColorsActive = active
