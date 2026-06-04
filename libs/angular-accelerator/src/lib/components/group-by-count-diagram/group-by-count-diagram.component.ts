@@ -54,6 +54,8 @@ export class GroupByCountDiagramComponent {
 
   fullHeight = input<boolean>(false)
   
+  customLegends = input<boolean>(false)
+  
   colors = model<Record<string, string>>({})
 
   dataSelected = output<any>()

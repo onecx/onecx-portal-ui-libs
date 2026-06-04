@@ -6,7 +6,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
-import { addHighContrastListener, getLabelColor, isHighContrast, removeHighContrastListener } from './diagram-contrast-utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from './diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -60,6 +60,7 @@ export class DiagramComponent implements OnDestroy {
   fullHeight = input<boolean>(false)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  customLegends = input<boolean>(false)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -98,6 +99,7 @@ export class DiagramComponent implements OnDestroy {
 
   private static nextUniqueId = 0;
   uniqueInstanceId: number;
+  legendItems: { label: string | undefined, color: string | undefined, value?: number }[] = []
 
   constructor() {
     this.refreshTheme()
@@ -113,7 +115,7 @@ export class DiagramComponent implements OnDestroy {
   }
 
   refreshTheme = () => {
-    this.highContrast.set(isHighContrast())
+    this.highContrast.set(hasHighContrast())
     this.generateChart(this.colorScale, this.colorRangeInfo)
   }
 
@@ -134,12 +136,18 @@ export class DiagramComponent implements OnDestroy {
       ],
     })
 
-  const labelColor = getLabelColor(this.highContrast())
+    this.legendItems = data.map((value, index) => ({
+      label: value?.label,
+      color: COLORS[index],
+    }))
+
+    const labelColor = getLabelColor(this.highContrast())
     this.chartOptions.set({
       plugins: {
         legend: {
-          position: 'right',
-          labels: { color: labelColor},
+          display: !this.customLegends(),
+          position: 'bottom',                    
+          labels: { color: labelColor },
         },
       },
       maintainAspectRatio: false,
