@@ -1,24 +1,26 @@
+import { existsSync, readFileSync } from 'fs'
 import { getOneCXSharedRecommendations, SharedLibraryConfig } from "./get-onecx-shared-recommendations";
+const angularCore = '@angular/core';
 
 
 /**
- * As we have { platform: 'browser'} in accelerator's & integration-interface project.json.
- * We use dynamic require (provided by Node.js) to read package.json of dependencies, which is not supported in browser environment.
- * So we need to check if the environment is node before using it. So it will only return valid require function while building
- */ 
-const nodeRequire = (() => {
+ * Resolves and reads a dependency's package.json file.
+ * Handles module resolution across npm/yarn/pnpm layouts.
+ * @param {string} dependency - Package name to resolve
+ * @returns {Record<string, unknown> | null} Parsed package.json or null if not found
+ */
+function readDependencyPackageJson(dependency: string): Record<string, unknown> | null {
+  let packagePath: string
   try {
-    if (typeof process !== 'undefined' && process?.versions?.node) {
-      return (eval('require') as NodeJS.Require);
-    }else{
-      throw new Error('Node.js environment is required for dynamic require.');
-    }
+    packagePath = require.resolve(`${dependency}/package.json`)
   } catch {
-    throw new Error('Node.js environment is required for dynamic require.');
+    return null;
   }
-})();
-
-const angularCore = '@angular/core';
+  if (!existsSync(packagePath)) {
+    return null
+  }
+  return JSON.parse(readFileSync(packagePath, 'utf-8')) as Record<string, unknown>
+}
 
 
 /**
@@ -42,6 +44,7 @@ const EXPORTS_BLACKLIST = ['.', './package.json'];
 const DEFAULT_DEPENDENCY_BLACKLIST: RegExp[] = [
   /^@nx(\/.*)?$/,
   /^@module-federation(\/.*)?$/,
+  /^@onecx\/build-utils(\/.*)?$/,
 ];
 
 /**
@@ -101,29 +104,6 @@ function isDependencyBlacklisted(dependency: string): boolean {
 }
 
 /**
- * Resolves and reads a dependency's package.json file.
- * Handles module resolution across npm/yarn/pnpm layouts.
- * @param {string} dependency - Package name to resolve
- * @returns {Object|null} Parsed package.json or null if not found
- */
-function readDependencyPackageJson(dependency: string) {
-  if (!nodeRequire) return null;
-  let packagePath;
-  try {
-    packagePath = nodeRequire.resolve(`${dependency}/package.json`);
-  } catch {
-    return null;
-  }
-  const fs = nodeRequire('fs');
-  if (!fs.existsSync(packagePath)) {
-    return null;
-  }
-  const packageContent = fs.readFileSync(packagePath, 'utf-8');
-  return JSON.parse(packageContent);
-}
-
-
-/**
  * Generates subpackages from a dependency's export entries. Reads the dependency's package.json to find all exported subpackages
  * and creates fully qualified package names.
  * @param {string} dependency - Package name
@@ -134,12 +114,16 @@ function readDependencyPackageJson(dependency: string) {
 function generateSubPackageConfig(dependency: string, version: string, packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback']) {
   const subpackages : { name: string, requiredVersion: string }[] = [];
   const dependencyPackage = readDependencyPackageJson(dependency);
+  // try{
+  // }catch(error){
+  //   return [];
+  // }
 
-  if (!dependencyPackage?.exports) {
+  if (!dependencyPackage?.['exports']) {
     return subpackages;
   }
 
-  const exportKeys = Object.keys(dependencyPackage.exports);
+  const exportKeys = Object.keys(dependencyPackage['exports'] as object);
 
   for (const exportKey of exportKeys) {
     if (EXPORTS_BLACKLIST.includes(exportKey)) continue;
