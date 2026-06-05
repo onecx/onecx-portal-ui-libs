@@ -533,15 +533,15 @@ describe('PortalDialogService', () => {
     expect(secondaryButtonLabel).toBeUndefined()
   })
 
-  it('should display dialog without top close button when one button defined', async () => {
+  it('should display dialog with top close button when one button defined', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', 'message', 'button1', undefined, false) // Todo- discuss this condition then enable this option
+    fixture.componentInstance.show('title', 'message', 'button1', undefined, false)
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       DialogContentComponent,
       expect.objectContaining({
-        closable: false,
+        closable: true
       })
     )
   })
