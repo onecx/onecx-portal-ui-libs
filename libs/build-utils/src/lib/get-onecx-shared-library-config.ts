@@ -9,7 +9,7 @@ const angularCore = '@angular/core';
  * @param {string} dependency - Package name to resolve
  * @returns {Record<string, unknown> | null} Parsed package.json or null if not found
  */
-function readDependencyPackageJson(dependency: string): Record<string, unknown> | null {
+function readDependencyPackageJson(dependency: string){
   let packagePath: string
   try {
     packagePath = require.resolve(`${dependency}/package.json`)
@@ -19,7 +19,7 @@ function readDependencyPackageJson(dependency: string): Record<string, unknown> 
   if (!existsSync(packagePath)) {
     return null
   }
-  return JSON.parse(readFileSync(packagePath, 'utf-8')) as Record<string, unknown>
+  return JSON.parse(readFileSync(packagePath, 'utf-8'))
 }
 
 
@@ -115,11 +115,11 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
   const subpackages : { name: string, requiredVersion: string }[] = [];
   const dependencyPackage = readDependencyPackageJson(dependency);
 
-  if (!dependencyPackage?.['exports']) {
+  if (!dependencyPackage?.exports) {
     return subpackages;
   }
 
-  const exportKeys = Object.keys(dependencyPackage['exports'] as object);
+  const exportKeys = Object.keys(dependencyPackage.exports);
 
   for (const exportKey of exportKeys) {
     if (EXPORTS_BLACKLIST.has(exportKey)) continue;
