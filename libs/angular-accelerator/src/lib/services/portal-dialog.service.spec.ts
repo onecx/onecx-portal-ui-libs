@@ -536,7 +536,7 @@ describe('PortalDialogService', () => {
   it('should display dialog without top close button when one button defined', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', 'message', 'button1', undefined, true)
+    fixture.componentInstance.show('title', 'message', 'button1', undefined, false) // Todo- discuss this condition then enable this option
 
     expect(pDialogService.open).toHaveBeenCalledWith(
       DialogContentComponent,
@@ -817,6 +817,27 @@ describe('PortalDialogService', () => {
     expect(isPrimaryButtonDisabled).toBeTruthy()
 
     await closeBasicDialog('secondary')
+  })
+
+  it('should show close button when secondary or any custom button is not present and showXButton is false', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show(
+      'title',
+      {
+        type: DialogPrimaryButtonDisabledComponent,
+      },
+      'button1',
+      undefined,
+      { showXButton: false, customButtons: [] }
+    )
+
+    expect(pDialogService.open).toHaveBeenCalledWith(
+      DialogContentComponent,
+      expect.objectContaining({
+        closable: true
+      })
+    )
   })
 
   it('should disable secondary button when component implements DialogSecondaryButtonDisabled interface', async () => {

@@ -438,14 +438,13 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
-    const dialogOptions: PortalDialogConfig =
-      typeof extrasOrShowXButton === 'object'
-        ? extrasOrShowXButton
-        : {
-            showXButton: extrasOrShowXButton,
-          }
+    const isObject = typeof extrasOrShowXButton === 'object'
+    const hasKeys = Object.entries(extrasOrShowXButton).length
+    const dialogOptions: PortalDialogConfig = isObject ? (hasKeys ? extrasOrShowXButton : { showXButton: false }) : { showXButton: extrasOrShowXButton }
+    const hasExtraConfigObject = Boolean(isObject && hasKeys)
+    const noCustomButton = Boolean(hasExtraConfigObject && !(extrasOrShowXButton as PortalDialogConfig).customButtons?.length)
+    const showXButtonWithRules = !dialogOptions?.showXButton && noCustomButton
     const translateParams = this.prepareTitleForTranslation(title)
-
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
@@ -475,7 +474,7 @@ export class PortalDialogService implements OnDestroy {
               buttonClicked$: new Subject<DialogState<unknown>>(),
             } satisfies PortalDialogServiceData,
           },
-          closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: dialogOptions.showXButton || showXButtonWithRules,
           modal: true,
           ...dialogOptions,
           focusOnShow: false,
