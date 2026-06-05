@@ -624,8 +624,8 @@ export class PortalDialogService implements OnDestroy {
     return obj instanceof Type
   }
 
-  private getShowXStatus(secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
-    extrasOrShowXButton: PortalDialogConfig | boolean = {}): boolean {
+  private getShowXStatus(secondaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails | undefined,
+    extrasOrShowXButton: PortalDialogConfig | boolean): boolean {
     const hasSecondaryButton = secondaryButtonTranslationKeyOrDetails !== undefined
     let hasCustomButton = false
     let showXButton = false

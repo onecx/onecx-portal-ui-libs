@@ -546,6 +546,32 @@ describe('PortalDialogService', () => {
     )
   })
 
+  it('should display dialog with top close button when one button defined and showXButton in config is null', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show('title', 'message', 'button1', undefined, {showXButton: null})
+
+    expect(pDialogService.open).toHaveBeenCalledWith(
+      DialogContentComponent,
+      expect.objectContaining({
+        closable: true
+      })
+    )
+  })
+
+  it('should display dialog without close button when custom buttons are defined and showXButton in config is null', async () => {
+    jest.spyOn(pDialogService, 'open')
+
+    fixture.componentInstance.show('title', 'message', 'button1', 'button2', {showXButton: null, customButtons:['1234']})
+
+    expect(pDialogService.open).toHaveBeenCalledWith(
+      DialogContentComponent,
+      expect.objectContaining({
+        closable: false,
+      })
+    )
+  })
+
   it('should display dialog without top close button when both buttons defined but specified to remove the button', async () => {
     jest.spyOn(pDialogService, 'open')
 
