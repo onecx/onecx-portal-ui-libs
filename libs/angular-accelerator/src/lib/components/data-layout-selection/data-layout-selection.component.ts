@@ -1,11 +1,13 @@
-import { Component, computed, input, model, OnInit, output } from '@angular/core'
+import { Component, computed, inject, Input, input, OnInit, output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { DataViewStateService } from '../../services/data-view-state.service'
+import { ViewLayout } from '../../model/view-layout.model'
 
 interface ViewingLayouts {
   id: string
   icon: PrimeIcon
-  layout: 'grid' | 'list' | 'table'
+  layout: ViewLayout
   tooltip?: string
   tooltipKey: string
   label?: string
@@ -37,7 +39,7 @@ const ALL_VIEW_LAYOUTS: ViewingLayouts[] = [
 ]
 
 export interface DataLayoutSelectionComponentState {
-  layout?: 'grid' | 'list' | 'table'
+  layout?: ViewLayout
 }
 @Component({
   standalone: false,
@@ -46,28 +48,30 @@ export interface DataLayoutSelectionComponentState {
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {
+  readonly stateService = inject(DataViewStateService)
   supportedViewLayouts = input<Array<string>>([])
 
-  layout = model<'grid' | 'list' | 'table'>('table')
+  @Input()
+  set layout(value: ViewLayout) {
+    this.stateService.layout.set(value)
+  }
 
-  dataViewLayoutChange = output<'grid' | 'list' | 'table'>()
-  componentStateChanged = output<DataLayoutSelectionComponentState>()
+  readonly dataViewLayoutChange = output<ViewLayout>()
+  readonly componentStateChanged = output<DataLayoutSelectionComponentState>()
 
   viewingLayouts = computed(() => ALL_VIEW_LAYOUTS.filter((vl) => this.supportedViewLayouts().includes(vl.layout)))
 
-  readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.layout()))
-
+  readonly selectedViewLayout = computed(() => ALL_VIEW_LAYOUTS.find((v) => v.layout === this.stateService.layout()))
+  
   ngOnInit(): void {
     this.componentStateChanged.emit({
-      layout: this.layout(),
+      layout: this.stateService.layout(),
     })
   }
 
-  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
-    this.layout.set(event.layout)
+  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: ViewLayout }): void {
+    this.stateService.layout.set(event.layout)
     this.dataViewLayoutChange.emit(event.layout)
-    this.componentStateChanged.emit({
-      layout: event.layout,
-    })
+    this.componentStateChanged.emit({ layout: event.layout })
   }
 }
