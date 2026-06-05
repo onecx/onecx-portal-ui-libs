@@ -1,9 +1,12 @@
 import {
   Component,
   Injector,
+  Input,
   LOCALE_ID,
   OnInit,
+  Optional,
   Output,
+  SkipSelf,
   TemplateRef,
   computed,
   contentChild,
@@ -40,14 +43,14 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { DataViewStateService } from '../../services/data-view-state.service'
+import { RowListGridData } from '../../model/row-list-grid-data.model'
 
 export type ListGridData = {
   id: string | number
   imagePath: string | number
   [columnId: string]: unknown
 }
-
-type RowListGridData = ListGridData & Row
 
 export interface ListGridDataMenuItem extends MenuItem {
   permission: string
@@ -63,8 +66,17 @@ export interface DataListGridComponentState {
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
+  providers: [
+    {
+      provide: DataViewStateService,
+      useFactory: (parentService: DataViewStateService | null) => parentService ?? new DataViewStateService(),
+      deps: [[new Optional(), new SkipSelf(), DataViewStateService]],
+    },
+  ],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
+  readonly stateService = inject(DataViewStateService)
+
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
@@ -78,11 +90,19 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   clientSideFiltering = input<boolean>(true)
   sortStates = input<DataSortDirection[]>([])
 
-  pageSize = model<number | undefined>(undefined)
+  @Input()
+  set page(value: number) {
+    this.stateService.activePage.set(value)
+  }
+
+  @Input()
+  set pageSize(value: number) {
+    this.stateService.pageSize.set(value)
+  }
   pageSizes = input<number[]>([10, 25, 50])
 
   displayedPageSize = computed(() => {
-    const pageSize = this.pageSize()
+    const pageSize = this.stateService.pageSize()
     const pageSizes = this.pageSizes()
 
     return pageSize ?? pageSizes.find((val): val is number => typeof val === 'number') ?? 50
@@ -90,7 +110,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   emptyResultsMessage = input<string | undefined>(undefined)
   fallbackImage = input<string>('placeholder.png')
-  layout = input<'grid' | 'list'>('grid')
+  
+  @Input()
+  set layout(value: 'grid' | 'list') {
+    this.stateService.layout.set(value)
+  }
+  
   viewPermission = input<PermissionInput>(undefined)
   editPermission = input<PermissionInput>(undefined)
   deletePermission = input<PermissionInput>(undefined)
@@ -104,9 +129,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   editMenuItemKey = input<string | undefined>(undefined)
   deleteMenuItemKey = input<string | undefined>(undefined)
   paginator = input<boolean>(true)
-  page = model<number>(0)
   columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  columns = input<DataTableColumn[]>([])
+
+  @Input()
+  set columns(value: DataTableColumn[]) {
+    this.stateService.columns.set(value)
+  }
+
   filteredColumns = computed(() => {
     const subtitleLineIds = this.subtitleLineIds() ?? []
     const ids: string[] = [...subtitleLineIds]
@@ -114,7 +143,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     if (titleLineId) {
       ids.unshift(titleLineId)
     }
-    return this.columns().filter((c) => !ids.includes(c.id))
+    return this.stateService.columns().filter((c) => !ids.includes(c.id))
   })
 
   name = model<string | undefined>(undefined)
@@ -134,14 +163,27 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     }
   })
 
-  data = input<RowListGridData[]>([])
-  previousData = computedPrevious(this.data)
+  @Input()
+  set data(value: RowListGridData[]) {
+    this.stateService.data.set(value)
+  }
+  previousData = computedPrevious(this.stateService.data)
 
-  filters = input<Filter[]>([])
-  previousFilters = computedPrevious(this.filters)
+  @Input()
+  set filters(value: Filter[]) {
+    this.stateService.filters.set(value)
+  }
+  previousFilters = computedPrevious(this.stateService.filters)
 
-  sortDirection = input<DataSortDirection>(DataSortDirection.NONE)
-  sortField = input<string>('')
+  @Input()
+  set sortDirection(value: DataSortDirection) {
+    this.stateService.sortDirection.set(value)
+  }
+
+  @Input()
+  set sortField(value: string) {
+    this.stateService.sortColumn.set(value)
+  }
 
   private readonly permissions$ = this.getPermissions()
 
@@ -205,12 +247,16 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     return this.dateListValueTemplate() || this.dateListValueChildTemplate()
   }
 
-  additionalActions = input<DataAction[]>([])
+  @Input()
+  set additionalActions(value: DataAction[]) {
+    this.stateService.additionalActions.set(value)
+  }
+
   inlineListActions = computed(() => {
-    return this.additionalActions().filter((action) => !action.showAsOverflow)
+    return this.stateService.additionalActions().filter((action) => !action.showAsOverflow)
   })
   overflowListActions = computed(() => {
-    return this.additionalActions().filter((action) => action.showAsOverflow)
+    return this.stateService.additionalActions().filter((action) => action.showAsOverflow)
   })
   overflowListActions$ = toObservable(this.overflowListActions)
   currentMenuRow = signal<Row | null>(null)
@@ -245,6 +291,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   @Output() viewItem = observableOutput<ListGridData | undefined>()
   @Output() editItem = observableOutput<ListGridData | undefined>()
   @Output() deleteItem = observableOutput<ListGridData | undefined>()
+
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
   componentStateChanged = output<DataListGridComponentState>()
@@ -267,14 +314,14 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   })
 
   get sortDirectionNumber(): number {
-    if (this.sortDirection() === DataSortDirection.ASCENDING) return 1
-    if (this.sortDirection() === DataSortDirection.DESCENDING) return -1
+    if (this.stateService.sortDirection() === DataSortDirection.ASCENDING) return 1
+    if (this.stateService.sortDirection() === DataSortDirection.DESCENDING) return -1
     return 0
   }
 
   selectedItem = signal<ListGridData | undefined>(undefined)
 
-  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.additionalActions)]).pipe(
+  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.stateService.additionalActions)]).pipe(
     map(([permissions, additionalActions]) => {
       return this.filterActionsBasedOnPermissions(additionalActions, permissions)
     })
@@ -282,7 +329,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   gridMenuState$ = combineLatest([
     // Trigger the whole chain to recalculate when data changes, to update the enabled/visible state of menu items based on the selected row
-    toObservable(this.data),
+    toObservable(this.stateService.data),
     this.permissions$,
     this.permittedAdditionalActions$,
     toObservable(this.selectedItem),
@@ -382,11 +429,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   )
 
   displayedItems$ = combineLatest([
-    toObservable(this.data),
-    toObservable(this.filters),
-    toObservable(this.sortField),
-    toObservable(this.sortDirection),
-    toObservable(this.columns),
+    toObservable(this.stateService.data),
+    toObservable(this.stateService.filters),
+    toObservable(this.stateService.sortColumn),
+    toObservable(this.stateService.sortDirection),
+    toObservable(this.stateService.columns),
     toObservable(this.clientSideFiltering),
     toObservable(this.clientSideSorting),
   ]).pipe(
@@ -445,12 +492,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
-      const data = this.data()
+      const data = this.stateService.data()
       // Not track previousData change to avoid the trigger
       untracked(() => {
         const previousData = this.previousData()
         if (previousData.length && !equal(data, previousData)) {
-          this.page.set(0)
+          this.stateService.activePage.set(0)
         }
       })
 
@@ -466,7 +513,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      const columns = this.columns()
+      const columns = this.stateService.columns()
       const obs = columns.map((c) => this.getTemplate(c))
       this.columnTemplates$ = combineLatest(obs).pipe(
         map((values) => Object.fromEntries(columns.map((c, i) => [c.id, values[i]]))),
@@ -475,12 +522,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.filters()
+      this.stateService.filters()
       // Not track previousFilters change to avoid the trigger
       untracked(() => {
         const previousFilters = this.previousFilters()
-        if (previousFilters.length && !equal(this.filters(), previousFilters)) {
-          this.page.set(0)
+        if (previousFilters.length && !equal(this.stateService.filters(), previousFilters)) {
+          this.stateService.activePage.set(0)
         }
       })
     })
@@ -494,11 +541,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      this.pageChanged.emit(this.page())
+      this.pageChanged.emit(this.stateService.activePage())
     })
 
     effect(() => {
-      const pageSize = this.pageSize()
+      const pageSize = this.stateService.pageSize()
       if (pageSize === undefined) {
         return
       }
@@ -543,14 +590,14 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   emitComponentStateChanged() {
     this.componentStateChanged.emit({
       pageSize: this.displayedPageSize(),
-      activePage: this.page(),
+      activePage: this.stateService.activePage(),
     })
   }
 
   onPageChange(event: any) {
     const page = event.first / event.rows
-    this.page.set(page)
-    this.pageSize.set(event.rows)
+    this.page = page
+    this.pageSize = event.rows
   }
 
   fieldIsTruthy(object: any, key: any) {

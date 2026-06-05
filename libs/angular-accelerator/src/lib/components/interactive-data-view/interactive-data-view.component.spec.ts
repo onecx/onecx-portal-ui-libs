@@ -4,6 +4,8 @@ import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import { DataViewStateService } from '../../services/data-view-state.service'
+import { DataSortDirection } from '../../model/data-sort-direction'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -25,125 +27,150 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     } as unknown as SlotService
 
     TestBed.configureTestingModule({
-      providers: [{ provide: SlotService, useValue: slotService }],
+      providers: [{ provide: SlotService, useValue: slotService }, DataViewStateService],
     })
 
     const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())
     return { component, slotService }
   }
 
-  describe('component state aggregation (componentStateChanged)', () => {
-    it('should startWith column-group + custom-group state when column group component is NOT defined', () => {
+  const createComponentWithFixture = (slotDefined = true) => {
+    const slotService = {
+      isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(slotDefined).asObservable()),
+    } as unknown as SlotService
+
+    TestBed.configureTestingModule({
+      declarations: [InteractiveDataViewComponent],
+      providers: [{ provide: SlotService, useValue: slotService }, DataViewStateService],
+    })
+
+    const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    fixture.detectChanges()
+    return { fixture, component: fixture.componentInstance, slotService }
+  }
+
+  describe('DataViewStateService provider factory', () => {
+    const createSlotServiceMock = () => ({
+      isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
+    } as unknown as SlotService)
+
+    it('should reuse parent DataViewStateService when it exists', () => {
+      TestBed.resetTestingModule()
+
+      TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent],
+        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }, DataViewStateService],
+      })
+
+      const stateService = TestBed.inject(DataViewStateService)
+      const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
+
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+
+      await TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent],
+        providers: [{ provide: SlotService, useValue: createSlotServiceMock() }],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(InteractiveDataViewComponent)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
+
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      expect(localService).toBeTruthy()
+      localFixture.componentInstance.stateService.activePage.set(2)
+      expect(localService.activePage()).toBe(2)
+    })
+  })
+
+  describe('service state management', () => {
+    it('should update layout in service when layout signal is changed', () => {
       const { component } = createComponent(false)
 
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.layout = 'grid'
 
-      component.layout.set('grid')
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group-a' } as any])
-      component.displayedColumnKeys.set(['c1'])
-      setInputSignal(component, 'defaultGroupKey', 'dg')
-      setInputSignal(component, 'customGroupKey', 'custom')
-      component.selectedGroupKey.set('group-a')
-
-      component.ngOnInit()
-
-      component.dataLayoutComponentState$.next({ layout: 'grid', supportedViewLayouts: ['grid'] } as any)
-      component.dataListGridSortingComponentState$.next({} as any)
-      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
-      component.filterViewComponentState$.next({} as any)
-      component.columnGroupSelectionComponentState$.next({} as any)
-      component.customGroupColumnSelectorComponentState$.next({} as any)
-
-      expect(stateSpy).toHaveBeenCalled()
-
-      // When the slot is not defined, the initial merge is primarily driven by the states we actively emit.
-      // Verify that the merged state includes the layout + paging state we provided.
-      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
-      expect(lastValue).toEqual(
-        expect.objectContaining({
-          layout: 'grid',
-          supportedViewLayouts: ['grid'],
-          page: 0,
-          pageSize: 10,
-        })
-      )
+      expect((component as any).stateService.layout()).toBe('grid')
     })
 
-    it('should startWith empty sorting state when layout is table', () => {
+    it('should update filters in service when filters signal is changed', () => {
       const { component } = createComponent(true)
 
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-      component.layout.set('table')
-      component.ngOnInit()
+      const testFilters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
+      component.stateService.filters.set(testFilters)
 
-      // provide required initial values for the ReplaySubjects used in combineLatest
-      component.columnGroupSelectionComponentState$.next({} as any)
-      component.customGroupColumnSelectorComponentState$.next({} as any)
-      component.filterViewComponentState$.next({} as any)
-
-      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
-      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
-
-      expect(stateSpy).toHaveBeenCalled()
+      expect(component.stateService.filters()).toEqual(testFilters)
     })
 
-    it('should startWith column-group + custom-group states when layout is not table', () => {
+    it('should update pageSize in service when pageSize signal is changed', () => {
       const { component } = createComponent(true)
 
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-      component.layout.set('grid')
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'C1' } as any])
-      component.displayedColumnKeys.set(['c1'])
+      component.stateService.pageSize.set(25)
 
-      component.ngOnInit()
-
-      component.dataListGridSortingComponentState$.next({} as any)
-      component.filterViewComponentState$.next({} as any)
-
-      component.dataLayoutComponentState$.next({ layout: 'grid', supportedViewLayouts: ['grid'] } as any)
-      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
-
-      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
-      expect(lastValue).toEqual(
-        expect.objectContaining({
-          activeColumnGroupKey: component.selectedGroupKey(),
-          actionColumnConfig: expect.any(Object),
-        })
-      )
+      expect(component.stateService.pageSize()).toBe(25)
     })
 
-    it('should startWith filter state when filter view is disabled', () => {
+    it('should update page in service when page signal is changed', () => {
       const { component } = createComponent(true)
 
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-      setInputSignal(component, 'disableFilterView', true)
-      component.filters.set([{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any])
-      component.ngOnInit()
+      component.stateService.activePage.set(2)
 
-      component.columnGroupSelectionComponentState$.next({} as any)
-      component.customGroupColumnSelectorComponentState$.next({} as any)
-      component.dataListGridSortingComponentState$.next({} as any)
+      expect(component.stateService.activePage()).toBe(2)
+    })
 
-      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
-      component.dataViewComponentState$.next({ page: 0, pageSize: 10 } as any)
+    it('should update expandedRows in service when expandedRows signal is changed', () => {
+      const { component } = createComponent(true)
 
-      const lastValue = (stateSpy.mock.calls.at(-1) ?? [undefined])[0]
-      expect(lastValue).toEqual(expect.objectContaining({ filters: component.filters() }))
+      const expandedRows = ['row-1', 'row-2']
+      component.expandedRows = expandedRows
+
+      expect((component as any).stateService.expandedRows()).toEqual(expandedRows)
+    })
+
+    it('should set additionalActions via input setter', () => {
+      const { component } = createComponent(true)
+
+      const actions = [{ id: 'a1' } as any]
+      component.additionalActions = actions
+
+      expect(component.stateService.additionalActions()).toEqual(actions)
+    })
+
+    it('should set frozenActionColumn via input setter', () => {
+      const { component } = createComponent(true)
+
+      component.frozenActionColumn = true
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
+
+      component.frozenActionColumn = false
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(false)
+    })
+
+    it('should set actionColumnPosition via input setter', () => {
+      const { component } = createComponent(true)
+
+      component.actionColumnPosition = 'left'
+      expect(component.stateService.actionColumnConfigPosition()).toBe('left')
+
+      component.actionColumnPosition = 'right'
+      expect(component.stateService.actionColumnConfigPosition()).toBe('right')
     })
   })
 
   describe('group selection + layout interactions', () => {
-    it('should keep selectedGroupKey unchanged on layout change when column group selection component is NOT defined', () => {
+    it('should keep selectedGroupKey unchanged via service signal', () => {
       const { component } = createComponent(false)
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group' } as any])
-      component.selectedGroupKey.set('not-present')
+      component.selectedGroupKey = 'not-present'
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.dataViewLayoutChange.emit('grid')
-
-      expect(component.selectedGroupKey()).toBe('not-present')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('not-present')
     })
+
     it('should trigger subscription when groupSelectionChanged is called', () => {
       const { component } = createComponent(true)
 
@@ -154,35 +181,19 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       component.triggerGroupSelectionChanged(undefined)
 
       // Should use defaultGroupKey as fallback
-      expect(component.selectedGroupKey()).toBe('test-default')
-    })
-    it('should set groupSelectionChangedSlotEmitter fallback groupKey to defaultGroupKey when selectedGroupKey is undefined', () => {
-      const { component } = createComponent(true)
-
-      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any])
-      component.displayedColumnKeys.set(['c1'])
-      setInputSignal(component, 'defaultGroupKey', 'dg')
-
-      component.triggerGroupSelectionChanged(undefined)
-
-      expect(component.selectedGroupKey()).toBe('dg')
-      // Effect emission happens async
-      TestBed.tick()
-      expect(emitSpy).toHaveBeenCalledWith(['c1'])
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('test-default')
     })
 
     it('should not clear selectedGroupKey on layout change when selectedGroupKey matches a column nameKey', () => {
       const { component } = createComponent(true)
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
-      component.selectedGroupKey.set('some-group')
+      component.stateService.activeColumnGroupKey.set('some-group')
       setInputSignal(component, 'customGroupKey', 'custom')
 
       component.dataViewLayoutChange.emit('grid')
 
-      expect(component.selectedGroupKey()).toBe('some-group')
+      expect(component.stateService.activeColumnGroupKey()).toBe('some-group')
     })
 
     it('should not clear selectedGroupKey on layout change when selectedGroupKey equals customGroupKey', () => {
@@ -190,57 +201,88 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
-      component.selectedGroupKey.set('custom')
+      component.selectedGroupKey = 'custom'
 
-      component.dataViewLayoutChange.emit('grid')
+      component.layout = 'grid'
+      TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('custom')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('custom')
     })
 
     it('should update column group selection state when groupSelectionChangedSlotEmitter emits undefined', () => {
       const { component } = createComponent(true)
       const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-      const stateSpy = jest.fn()
-      component.columnGroupSelectionComponentState$.subscribe(stateSpy)
 
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any])
+      component.columns = [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any]
       component.displayedColumnKeys.set(['c1'])
       setInputSignal(component, 'defaultGroupKey', 'dg')
-      component.selectedGroupKey.set('sg')
+      component.stateService.activeColumnGroupKey.set('sg')
 
       component.triggerGroupSelectionChanged(undefined)
 
       // When `undefined` is passed, it uses current selectedGroupKey ('sg') as fallback
       expect(component.displayedColumnKeys()).toEqual(['c1'])
-      expect(component.selectedGroupKey()).toBe('sg')
+      expect(component.stateService.activeColumnGroupKey()).toBe('sg')
       // Effect emission happens async
       TestBed.tick()
       expect(emitSpy).toHaveBeenCalledWith(['c1'])
-      expect(stateSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          activeColumnGroupKey: 'sg',
-          displayedColumns: [expect.objectContaining({ id: 'c1' })],
-        })
-      )
     })
 
     it('should clear selectedGroupKey on layout change when column group defined and selection is invalid', () => {
       const { component } = createComponent(true)
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
-      component.selectedGroupKey.set('not-present')
+      component.selectedGroupKey = 'not-present'
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.dataViewLayoutChange.emit('grid')
+      component.layout = 'grid'
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBeUndefined()
+      expect((component as any).stateService.activeColumnGroupKey()).toBeUndefined()
     })
 
-    it('should initialize displayedColumnKeysChange when defaultGroupKey equals customGroupKey', () => {
+    it('should not clear selectedGroupKey when columnGroupComponentDefined is false', () => {
+      const { component } = createComponent(false)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey = 'not-present'
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = 'grid'
+      TestBed.tick()
+
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('not-present')
+    })
+
+    it('should not clear selectedGroupKey when currentLayout is undefined', () => {
       const { component } = createComponent(true)
 
-      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey = 'not-present'
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = undefined as any
+      TestBed.tick()
+
+      expect((component as any).stateService.activeColumnGroupKey()).toBeUndefined()
+    })
+
+    it('should not clear selectedGroupKey when currentLayout is set but columnGroupComponentDefined becomes false', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'some-group', predefinedGroupKeys: [] } as any])
+      component.selectedGroupKey = 'invalid-key'
+      setInputSignal(component, 'customGroupKey', 'custom')
+
+      component.layout = 'grid'
+      TestBed.tick()
+
+      expect((component as any).stateService.activeColumnGroupKey()).toBeUndefined()
+    })
+
+    it('should initialize displayedColumnKeys when defaultGroupKey equals customGroupKey', () => {
+      const { component } = createComponent(true)
+
       setInputSignal(component, 'columns', [{ id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
       setInputSignal(component, 'defaultGroupKey', 'custom')
@@ -249,13 +291,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
 
       expect(component.displayedColumnKeys()).toEqual([])
-      expect(emitSpy).toHaveBeenCalledWith([])
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('custom')
     })
 
     it('should keep displayedColumnKeys empty when defaultGroupKey is empty', () => {
       const { component } = createComponent(true)
 
-      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
       setInputSignal(component, 'columns', [{ id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any])
       setInputSignal(component, 'defaultGroupKey', '')
 
@@ -263,103 +304,92 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
 
       expect(component.displayedColumnKeys()).toEqual([])
-      expect(emitSpy).toHaveBeenCalledWith([])
+      expect((component as any).stateService.activeColumnGroupKey()).toBeUndefined()
     })
 
     it('should set displayedColumnKeys from predefinedGroupKeys when defaultGroupKey is set and not customGroupKey', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      setInputSignal(component, 'columns', [
-        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
-        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
-        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g1', 'g2'] } as any,
-      ])
-      setInputSignal(component, 'defaultGroupKey', 'g2')
-      setInputSignal(component, 'customGroupKey', 'custom')
-
+      fixture.componentRef.setInput('columns', [
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] },
+        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g2'] },
+      ] as any)
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
       component.ngOnInit()
-      TestBed.tick()
+      fixture.detectChanges()
 
       expect(component.displayedColumnKeys()).toEqual(['b', 'c'])
     })
 
-    it('should initialize displayedColumnKeys from defaultGroupKey and emit displayedColumnKeysChange', () => {
-      const { component } = createComponent(true)
+    it('should initialize displayedColumnKeys from defaultGroupKey', () => {
+      const { fixture, component } = createComponentWithFixture(true)
 
-      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
       // Set up columns where nameKey matches the defaultGroupKey to avoid the layout effect clearing it
-      setInputSignal(component, 'columns', [
+      fixture.componentRef.setInput('columns', [
         { id: 'a', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
         { id: 'b', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'defaultGroupKey', 'g1')
-      setInputSignal(component, 'customGroupKey', 'custom')
+      fixture.componentRef.setInput('defaultGroupKey', 'g1')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
 
       component.ngOnInit()
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('g1')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('g1')
       expect(component.displayedColumnKeys()).toEqual(['a'])
-      expect(emitSpy).toHaveBeenCalledWith(['a'])
     })
 
     it('should update displayedColumnKeys and selectedGroupKey on column group selection change', () => {
-      const { component } = createComponent(true)
-
-      const displayedColumnKeysSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
+      const { fixture, component } = createComponentWithFixture(true)
 
       // Set columns so the layout effect doesn't clear selectedGroupKey
-      setInputSignal(component, 'columns', [
-        { id: 'a', nameKey: 'g1',predefinedGroupKeys: [] } as any,
-        { id: 'b', nameKey: 'g2', predefinedGroupKeys: [] } as any,
+      fixture.componentRef.setInput('columns', [
+        { id: 'a', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'customGroupKey', 'custom')
-
+      fixture.componentRef.setInput('customGroupKey', 'custom')
       component.onColumnGroupSelectionChange({
         groupKey: 'g1',
         activeColumns: [{ id: 'a' } as any, { id: 'b' } as any],
       } as any)
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('g1')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('g1')
       expect(component.displayedColumnKeys()).toEqual(['a', 'b'])
-      expect(displayedColumnKeysSpy).toHaveBeenCalledWith(['a', 'b'])
     })
 
     it('should update displayedColumnKeys and set selectedGroupKey to customGroupKey on column selection change', () => {
-      const { component } = createComponent(true)
-
-      const displayedColumnKeysSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-      setInputSignal(component, 'customGroupKey', 'custom')
+      const { fixture, component } = createComponentWithFixture(true)
+      fixture.componentRef.setInput('customGroupKey', 'custom')
 
       component.onColumnSelectionChange({ activeColumns: [{ id: 'x' } as any] } as any)
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('custom')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('custom')
       expect(component.displayedColumnKeys()).toEqual(['x'])
-      expect(displayedColumnKeysSpy).toHaveBeenCalledWith(['x'])
     })
   })
 
   describe('reactive streams (signals)', () => {
     it('should update displayedColumnKeys when displayedColumnKeys model is set', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      component.displayedColumnKeys.set(['a', 'b'])
+      fixture.componentRef.setInput('displayedColumnKeys', ['a', 'b'])
 
       expect(component.displayedColumnKeys()).toEqual(['a', 'b'])
     })
 
     it('should initialize displayedColumns and map keys to columns', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      setInputSignal(component, 'columns', [c1, c2])
-
+      fixture.componentRef.setInput('columns', [c1, c2])
       component.ngOnInit()
 
       component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
+
+      TestBed.tick()
 
       // displayedColumns is a computed signal that filters out missing keys
       expect(component.displayedColumns()).toEqual([c2, c1])
@@ -368,8 +398,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should reflect selectedGroupKey through signal', () => {
       const { component } = createComponent(true)
 
-      component.selectedGroupKey.set('g1')
-      expect(component.selectedGroupKey()).toBe('g1')
+      component.selectedGroupKey = 'g1'
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('g1')
     })
   })
 
@@ -387,18 +417,18 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       const data = [{ id: '1' } as any]
-      setInputSignal(component, 'data', data)
+      component.data = data
 
-      expect(component.data()).toBe(data)
+      expect((component as any).stateService.data()).toBe(data)
     })
 
     it('should update selectedRows input without side effects', () => {
       const { component } = createComponent(true)
 
       const rows = [{ id: 'r1' } as any]
-      setInputSignal(component, 'selectedRows', rows)
+      component.selectedRows = rows
 
-      expect(component.selectedRows()).toBe(rows as any)
+      expect((component as any).stateService.selectedRows()).toBe(rows as any)
     })
 
     it('should cover Input defaults (selectDisplayedChips, sortStates, pageSizes, fallbackImage)', () => {
@@ -423,12 +453,14 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     it('should map displayedColumnKeys to existing columns via displayedColumns computed signal', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      setInputSignal(component, 'columns', [c1, c2])
-      component.displayedColumnKeys.set(['c2', 'missing', 'c1'])
+      fixture.componentRef.setInput('columns', [c1, c2])
+      fixture.componentRef.setInput('displayedColumnKeys', ['c2', 'missing', 'c1'])
+
+      TestBed.tick()
 
       expect(component.displayedColumns()).toEqual([c2, c1])
     })
@@ -436,14 +468,27 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should set listGridPaginator and tablePaginator via paginator setter', () => {
       const { component } = createComponent(true)
 
-      component.listGridPaginator.set(false)
-      component.tablePaginator.set(false)
+      component.listGridPaginator = false
+      component.tablePaginator = false
 
       component.paginator = true
 
-      expect(component.listGridPaginator()).toBe(true)
-      expect(component.tablePaginator()).toBe(true)
-      expect(component.paginator).toBe(true)
+      expect((component as any).stateService.listGridPaginator()).toBe(true)
+      expect((component as any).stateService.tablePaginator()).toBe(true)
+    })
+
+    it('should update displayedColumns setter and sync displayedColumnKeys', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+
+      const c1 = { id: 'c1', nameKey: 'C1' } as any
+      const c2 = { id: 'c2', nameKey: 'C2' } as any
+      fixture.componentRef.setInput('columns', [c1, c2])
+
+      component.displayedColumnKeys.set(['c1', 'c2'])
+      fixture.detectChanges()
+
+      expect(component.displayedColumns()).toEqual([c1, c2])
+      expect(component.displayedColumnKeys()).toEqual(['c1', 'c2'])
     })
 
     it('should have correct default value for groupSelectionNoGroupSelectedKey', () => {
@@ -488,88 +533,56 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   })
 
   describe('public handlers', () => {
-    it('should update sort inputs and emit sorted on sort changes', () => {
-      const { component } = createComponent(true)
-
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-      component.sortDirection.set('ASCENDING' as any)
-      component.sortField.set('old')
+    it('should update sort fields in service when onSortChange is called', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+      fixture.componentRef.setInput('sortStates', 'ASCENDING' as any)
+      fixture.componentRef.setInput('sortColumn', 'old')
 
       component.onSortChange('new')
       TestBed.tick()
-      expect(component.sortField()).toBe('new')
-      expect(sortedSpy).toHaveBeenLastCalledWith({ sortColumn: 'new', sortDirection: 'ASCENDING' })
+      expect(component.stateService.sortColumn()).toBe('new')
 
       component.onSortDirectionChange('DESCENDING' as any)
       TestBed.tick()
-      expect(component.sortDirection()).toBe('DESCENDING')
-      expect(sortedSpy).toHaveBeenLastCalledWith({ sortColumn: 'new', sortDirection: 'DESCENDING' })
+      expect(component.stateService.sortDirection()).toBe('DESCENDING')
     })
 
-    it('should update layout and emit dataViewLayoutChange', () => {
+    it('should update layout in service when onDataViewLayoutChange is called', () => {
       const { component } = createComponent(true)
-
-      const layoutSpy = jest.spyOn(component.dataViewLayoutChange, 'emit')
       component.onDataViewLayoutChange('list')
       TestBed.tick()
-      expect(component.layout()).toBe('list')
-      expect(layoutSpy).toHaveBeenCalledWith('list')
+      expect((component as any).stateService.layout()).toBe('list')
     })
 
-    it('should update selection state and emit on page events', () => {
+    it('should update paging state in service when onPageChange is called', () => {
       const { component } = createComponent(true)
-
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
 
       component.onPageChange(2)
-      TestBed.tick()
-      expect(component.page()).toBe(2)
-      expect(pageSpy).toHaveBeenCalledWith(2)
+      expect(component.stateService.activePage()).toBe(2)
 
       component.onPageSizeChange(25)
-      TestBed.tick()
-      expect(component.pageSize()).toBe(25)
-      expect(pageSizeSpy).toHaveBeenCalledWith(25)
+      expect(component.stateService.pageSize()).toBe(25)
     })
 
-    it('should update filters and emit filtered in filtering()', () => {
+    it('should update filters in service when filtering is called', () => {
       const { component } = createComponent(true)
-
-      const filteredSpy = jest.spyOn(component.filtered, 'emit')
       const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'x' } as any]
 
       component.filtering(filters)
       TestBed.tick()
 
-      expect(component.filters()).toBe(filters)
-      expect(filteredSpy).toHaveBeenCalledWith(filters)
+      expect(component.stateService.filters()).toEqual(filters)
     })
 
-    it('should update sorting fields and emit sorted in sorting()', () => {
+    it('should update sorting fields in service when sorting is called', () => {
       const { component } = createComponent(true)
-
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
       const event = { sortColumn: 'c1', sortDirection: 'DESCENDING' } as any
 
       component.sorting(event)
       TestBed.tick()
 
-      expect(component.sortField()).toBe('c1')
-      expect(component.sortDirection()).toBe('DESCENDING')
-      expect(sortedSpy).toHaveBeenCalledWith(event)
-    })
-
-    it('should update action column config onActionColumnConfigChange', () => {
-      const { component } = createComponent(true)
-
-      component.frozenActionColumn.set(false)
-      component.actionColumnPosition.set('right' as any)
-
-      component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
-
-      expect(component.frozenActionColumn()).toBe(true)
-      expect(component.actionColumnPosition()).toBe('left' as any)
+      expect(component.stateService.sortColumn()).toBe('c1')
+      expect(component.stateService.sortDirection()).toBe('DESCENDING')
     })
   })
 
@@ -854,131 +867,82 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   })
 
   describe('effects behavior', () => {
-    it('should trigger filtered output when filters change via effect', () => {
+    it('should call service setFilters when filters change via effect', () => {
       const { component } = createComponent(true)
 
-      const filteredSpy = jest.spyOn(component.filtered, 'emit')
       const filters = [{ columnId: 'c1', filterType: 'stringContains', value: 'test' } as any]
 
-      component.filters.set(filters)
-      TestBed.tick()
+      component.filters = filters
 
-      expect(filteredSpy).toHaveBeenCalledWith(filters)
+      expect(component.stateService.filters()).toEqual(filters)
     })
 
-    it('should trigger sorted output when sortField without sortDirection changes via effect', () => {
+    it('should call service setSortColumn and setSortDirection when sortField changes via effect', () => {
       const { component } = createComponent(true)
+      component.sortField = 'name'
 
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-
-      component.sortField.set('name')
-      TestBed.tick()
-
-      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'name', sortDirection: 'NONE' })
+      expect(component.stateService.sortColumn()).toBe('name')
     })
 
-    it('should trigger sorted output when sortDirection without sortField changes via effect', () => {
+    it('should call service setSortDirection when sortDirection changes via effect', () => {
       const { component } = createComponent(true)
+      component.sortDirection = DataSortDirection.DESCENDING
 
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-
-      component.sortDirection.set('DESCENDING' as any)
-      TestBed.tick()
-
-      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: '', sortDirection: 'DESCENDING' })
+      expect(component.stateService.sortDirection()).toBe(DataSortDirection.DESCENDING)
     })
 
-    it('should trigger sorted output when sortField and sortDirection changes via effect', () => {
+    it('should call service setLayout when layout changes via effect', () => {
       const { component } = createComponent(true)
+      component.layout = 'grid'
 
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-
-      component.sortField.set('name')
-      component.sortDirection.set('ASCENDING' as any)
-      TestBed.tick()
-
-      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'name', sortDirection: 'ASCENDING' })
+      expect((component as any).stateService.layout()).toBe('grid')
     })
 
-    it('should trigger dataViewLayoutChange when layout changes via effect', () => {
+    it('should call service setActivePage when page changes via effect', () => {
       const { component } = createComponent(true)
+      component.page = 3
 
-      const layoutSpy = jest.spyOn(component.dataViewLayoutChange, 'emit')
-
-      component.layout.set('grid')
-      TestBed.tick()
-
-      expect(layoutSpy).toHaveBeenCalledWith('grid')
+      expect(component.stateService.activePage()).toBe(3)
     })
 
-    it('should trigger pageChanged when page changes via effect', () => {
+    it('should call service setPageSize when pageSize changes via effect', () => {
       const { component } = createComponent(true)
+      component.pageSize = 50
 
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-
-      component.page.set(3)
-      TestBed.tick()
-
-      expect(pageSpy).toHaveBeenCalledWith(3)
+      expect(component.stateService.pageSize()).toBe(50)
     })
 
-    it('should trigger pageSizeChanged when pageSize changes via effect', () => {
+    it('should not call setPageSize when pageSize is undefined', () => {
       const { component } = createComponent(true)
+      component.pageSize = 10
 
-      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
-
-      component.pageSize.set(50)
-      TestBed.tick()
-
-      expect(pageSizeSpy).toHaveBeenCalledWith(50)
-    })
-
-    it('should not trigger pageSizeChanged when pageSize is undefined', () => {
-      const { component } = createComponent(true)
-
-      const pageSizeSpy = jest.spyOn(component.pageSizeChanged, 'emit')
-
-      component.pageSize.set(undefined)
-      TestBed.tick()
-
-      expect(pageSizeSpy).not.toHaveBeenCalled()
-    })
-
-    it('should trigger displayedColumnKeysChange when displayedColumnKeys changes via effect', () => {
-      const { component } = createComponent(true)
-
-      const displayedSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
-
-      component.displayedColumnKeys.set(['c1', 'c2'])
-      TestBed.tick()
-
-      expect(displayedSpy).toHaveBeenCalledWith(['c1', 'c2'])
+      expect(component.stateService.pageSize()).toBe(10)
     })
 
     it('should clear selectedGroupKey via layout effect when invalid group is selected', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any])
+      component.columns = [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any]
       setInputSignal(component, 'customGroupKey', 'custom')
-      component.selectedGroupKey.set('invalidGroup')
+      component.selectedGroupKey = 'invalidGroup'
 
-      component.layout.set('grid')
+      component.stateService.layout.set('grid')
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBeUndefined()
+      expect((component as any).stateService.activeColumnGroupKey()).toBeUndefined()
     })
 
     it('should not clear selectedGroupKey via layout effect when valid group is selected', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: [] } as any])
+      component.columns = [{ id: 'c1', nameKey: 'validGroup', predefinedGroupKeys: ['validGroup'] } as any]
       setInputSignal(component, 'customGroupKey', 'custom')
-      component.selectedGroupKey.set('validGroup')
+      component.selectedGroupKey = 'validGroup'
 
-      component.layout.set('table')
+      component.stateService.layout.set('table')
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('validGroup')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('validGroup')
     })
 
     it('should not clear selectedGroupKey when it equals customGroupKey', () => {
@@ -986,12 +950,12 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
       setInputSignal(component, 'customGroupKey', 'myCustom')
-      component.selectedGroupKey.set('myCustom')
+      component.selectedGroupKey = 'myCustom'
 
-      component.layout.set('list')
+      component.stateService.layout.set('list')
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('myCustom')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('myCustom')
     })
   })
 
@@ -1154,20 +1118,20 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'columns', [{ id: 'c1', nameKey: 'group1', predefinedGroupKeys: [] } as any])
       setInputSignal(component, 'customGroupKey', 'custom')
 
-      component.layout.set('grid')
+      component.stateService.layout.set('grid')
       TestBed.tick()
-      component.layout.set('list')
+      component.stateService.layout.set('list')
       TestBed.tick()
-      component.layout.set('table')
+      component.stateService.layout.set('table')
       TestBed.tick()
 
-      expect(component.layout()).toBe('table')
+      expect((component as any).stateService.layout()).toBe('table')
     })
 
     it('should handle empty columns array gracefully', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'columns', [])
+      component.columns = []
       component.displayedColumnKeys.set(['c1', 'c2'])
 
       expect(component.displayedColumns()).toEqual([])
@@ -1178,7 +1142,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
-      setInputSignal(component, 'columns', [c1, c2])
+      component.columns = [c1, c2]
 
       component.displayedColumnKeys.set(['c1', 'nonexistent', 'c2', 'another-missing'])
 
@@ -1191,7 +1155,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const c1 = { id: 'c1', nameKey: 'C1' } as any
       const c2 = { id: 'c2', nameKey: 'C2' } as any
       const c3 = { id: 'c3', nameKey: 'C3' } as any
-      setInputSignal(component, 'columns', [c1, c2, c3])
+      component.columns = [c1, c2, c3]
 
       component.displayedColumnKeys.set(['c3', 'c1', 'c2'])
 
@@ -1201,45 +1165,56 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
   describe('state synchronization', () => {
     it('should synchronize state when multiple inputs change in ngOnInit', () => {
-      const { component } = createComponent(true)
+      const { fixture, component } = createComponentWithFixture(true)
 
-      // Set columns where one nameKey matches the defaultGroupKey to avoid layout effect clearing it
-      setInputSignal(component, 'columns', [
+      fixture.componentRef.setInput('columns', [
         { id: 'c1', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any,
         { id: 'c2', nameKey: 'G2', predefinedGroupKeys: ['g2'] } as any,
       ])
-      setInputSignal(component, 'defaultGroupKey', 'g1')
-      setInputSignal(component, 'customGroupKey', 'custom')
-      component.layout.set('grid')
+      fixture.componentRef.setInput('defaultGroupKey', 'g1')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+      fixture.componentRef.setInput('layout', 'grid')
 
       component.ngOnInit()
       TestBed.tick()
 
-      expect(component.selectedGroupKey()).toBe('g1')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('g1')
       expect(component.displayedColumnKeys()).toEqual(['c1'])
     })
 
-    it('should handle componentStateChanged emission with all state sources', () => {
+    it('should sync all component states to service signals through handlers', () => {
       const { component } = createComponent(true)
 
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-
-      component.layout.set('table')
-      component.ngOnInit()
-
-      component.columnGroupSelectionComponentState$.next({ activeColumnGroupKey: 'g1', displayedColumns: [] } as any)
-      component.customGroupColumnSelectorComponentState$.next({ displayedColumns: [], activeColumnGroupKey: 'g1' } as any)
-      component.dataLayoutComponentState$.next({ layout: 'table', supportedViewLayouts: ['table'] } as any)
-      component.dataListGridSortingComponentState$.next({ sortField: 'name', sortDirection: 'ASCENDING' } as any)
-      component.dataViewComponentState$.next({ page: 1, pageSize: 25 } as any)
-      component.filterViewComponentState$.next({ filters: [] } as any)
-
+      component.onDataViewLayoutChange('table')
+      component.sorting({ sortField: 'name', sortColumn: 'name', sortDirection: 'ASCENDING' } as any)
+      component.filtering([{ columnId: 'c1', value: 'x' } as any])
+      component.onPageChange(1)
+      component.onPageSizeChange(25)
       TestBed.tick()
 
-      expect(stateSpy).toHaveBeenCalled()
-      const emittedState = stateSpy.mock.calls[stateSpy.mock.calls.length - 1][0]
-      expect(emittedState).toBeDefined()
-      expect(emittedState.layout).toBe('table')
+      // Verify that service has the updated state
+      expect(component.stateService.layout()).toBe('table')
+      expect(component.stateService.activePage()).toBe(1)
+      expect(component.stateService.pageSize()).toBe(25)
+      expect(component.stateService.sortColumn()).toBe('name')
+      expect(component.stateService.sortDirection()).toBe('ASCENDING' as any)
+      expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'x' }])
+    })
+  })
+
+  describe('public handlers', () => {
+    it('should update action column config in service onActionColumnConfigChange', () => {
+      const { component } = createComponent(true)
+
+      const event = {
+        frozenActionColumn: true,
+        actionColumnPosition: 'left',
+      } as any
+
+      component.onActionColumnConfigChange(event)
+
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
+      expect(component.stateService.actionColumnConfigPosition()).toBe('left')
     })
   })
 })

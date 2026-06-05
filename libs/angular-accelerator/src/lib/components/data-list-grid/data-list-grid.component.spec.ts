@@ -4,6 +4,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
+import { DataViewStateService } from '../../services/data-view-state.service'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -20,6 +21,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { DataSortDirection } from '../../model/data-sort-direction'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -40,6 +42,7 @@ describe('DataListGridComponent', () => {
   let translateService: TranslateService
   let listGrid: DataListGridHarness
   let router: Router
+  let stateService: DataViewStateService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -249,6 +252,7 @@ describe('DataListGridComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        DataViewStateService,
       ],
     }).compileComponents()
 
@@ -264,6 +268,7 @@ describe('DataListGridComponent', () => {
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     router = TestBed.inject(Router)
+    stateService = TestBed.inject(DataViewStateService)
   })
 
   it('should create the data list grid component', () => {
@@ -273,6 +278,60 @@ describe('DataListGridComponent', () => {
   it('loads dataListGrid', async () => {
     const dataListGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     expect(dataListGrid).toBeTruthy()
+  })
+
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists (in main beforeEach)', () => {
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataListGridComponent],
+        imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+          provideUserServiceMock(),
+          provideAppStateServiceMock(),
+          TooltipStyle,
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataListGridComponent)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
+
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      localFixture.componentInstance.stateService.activePage.set(2)
+      localFixture.componentInstance.stateService.pageSize.set(25)
+
+      expect(localService.activePage()).toBe(2)
+      expect(localService.pageSize()).toBe(25)
+    })
+  })
+
+  describe('filters effect', () => {
+    it('should reset active page to 0 when filters changed and previous filters exist', async () => {
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
+
+      stateService.activePage.set(3)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 1' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).not.toHaveBeenCalledWith(0)
+
+      fixture.componentRef.setInput('filters', [{ columnId: 'name', value: 'name 2' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(0)
+      expect(stateService.activePage()).toBe(0)
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {
@@ -411,7 +470,7 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -469,7 +528,7 @@ describe('DataListGridComponent', () => {
         expect(icon === 'pi pi-eye').toBe(false)
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -649,7 +708,7 @@ describe('DataListGridComponent', () => {
         }
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -713,7 +772,7 @@ describe('DataListGridComponent', () => {
         expect(text === 'OCX_DATA_LIST_GRID.MENU.VIEW').toBe(false)
       }
 
-      const tempData = [...component.data()]
+      const tempData = [...(component as any).stateService.data()]
 
       tempData[0]['ready'] = true
 
@@ -1359,6 +1418,39 @@ describe('DataListGridComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('sortDirectionNumber', () => {
+    it('should return 1 when sortDirection is ASCENDING', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.ASCENDING)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(1)
+    })
+
+    it('should return -1 when sortDirection is DESCENDING', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.DESCENDING)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(-1)
+    })
+
+    it('should return 0 when sortDirection is NONE', () => {
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.NONE)
+      fixture.detectChanges()
+
+      expect(component.sortDirectionNumber).toBe(0)
+    })
+  })
+
+  describe('filteredColumns', () => {
+    it('should return all columns when subtitleLineIds is an empty array', () => {
+      fixture.componentRef.setInput('subtitleLineIds', [])
+      fixture.componentRef.setInput('titleLineId', undefined)
+      fixture.detectChanges()
+
+      expect(component.filteredColumns().length).toBe(mockColumns.length)
     })
   })
 })

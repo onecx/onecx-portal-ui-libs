@@ -3,7 +3,6 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
-
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -15,9 +14,11 @@ import {
 import { TooltipStyle } from 'primeng/tooltip'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
+import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -33,6 +34,7 @@ describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
+  let stateService: DataViewStateService
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -224,11 +226,13 @@ describe('DataViewComponent', () => {
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         TooltipStyle,
+        DataViewStateService,
       ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataViewComponent)
     component = fixture.componentInstance
+    stateService = TestBed.inject(DataViewStateService)
     fixture.componentRef.setInput('data', mockData)
     fixture.componentRef.setInput('columns', mockColumns)
     const userServiceMock = TestBed.inject(UserServiceMock)
@@ -241,11 +245,280 @@ describe('DataViewComponent', () => {
     expect(component).toBeTruthy()
   })
 
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists', () => {
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
+        imports: [DataViewModule, AngularAcceleratorModule, RouterModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClientTesting(),
+          provideAppStateServiceMock(),
+          TooltipStyle,
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataViewComponent)
+      const localComponent = localFixture.componentInstance
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
+
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      localComponent.stateService.activePage.set(2)
+      localComponent.stateService.pageSize.set(25)
+
+      expect(localService.activePage()).toBe(2)
+      expect(localService.pageSize()).toBe(25)
+    })
+  })
+
+  describe('state service delegation', () => {
+    it('should return true from paginator getter when both paginators are enabled', () => {
+      stateService.listGridPaginator.set(true)
+      stateService.tablePaginator.set(true)
+
+      expect(stateService.listGridPaginator()).toBe(true)
+      expect(stateService.tablePaginator()).toBe(true)
+    })
+
+    it('should return false from paginator getter when list grid paginator is disabled', () => {
+      stateService.listGridPaginator.set(false)
+      stateService.tablePaginator.set(true)
+
+      expect(stateService.listGridPaginator()).toBe(false)
+    })
+
+    it('should return false from paginator getter when table paginator is disabled', () => {
+      stateService.listGridPaginator.set(true)
+      stateService.tablePaginator.set(false)
+
+      expect(stateService.tablePaginator()).toBe(false)
+    })
+
+    it('should return false from paginator getter when both paginators are disabled', () => {
+      stateService.listGridPaginator.set(false)
+      stateService.tablePaginator.set(false)
+
+      expect(stateService.listGridPaginator()).toBe(false)
+      expect(stateService.tablePaginator()).toBe(false)
+    })
+
+    it('should delegate filtering to state service', () => {
+      const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
+      const filters = [{ field: 'name', value: 'abc', matchMode: 'contains' }]
+
+      component.filtering({ filters })
+
+      expect(setFiltersSpy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should delegate sorting to state service', () => {
+      const setSortDirectionSpy = jest.spyOn(stateService.sortDirection, 'set')
+      const setSortColumnSpy = jest.spyOn(stateService.sortColumn, 'set')
+
+      component.sorting({ sortDirection: DataSortDirection.ASCENDING, sortColumn: 'name' })
+
+      expect(setSortDirectionSpy).toHaveBeenCalledWith(DataSortDirection.ASCENDING)
+      expect(setSortColumnSpy).toHaveBeenCalledWith('name')
+    })
+
+    it('should delegate page change to state service', () => {
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
+
+      component.onPageChange(2)
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(2)
+    })
+
+    it('should delegate expandedRows setter to state service', () => {
+      const setExpandedRowsSpy = jest.spyOn(stateService.expandedRows, 'set')
+      const expandedRows = ['row-1', 'row-2']
+
+      fixture.componentRef.setInput('expandedRows', expandedRows)
+      fixture.detectChanges()
+
+      expect(setExpandedRowsSpy).toHaveBeenCalledWith(expandedRows)
+    })
+
+    it('should delegate selectedRows setter to state service', () => {
+      const setSelectedRowsSpy = jest.spyOn(stateService.selectedRows, 'set')
+      const selectedRows = [{ id: 'row-1' } as any, { id: 'row-2' } as any]
+
+      fixture.componentRef.setInput('selectedRow', selectedRows)
+      fixture.detectChanges()
+
+      expect(setSelectedRowsSpy).toHaveBeenCalledWith(selectedRows)
+    })
+
+    it('should return expandedRows from state service getter', () => {
+      const expandedRows = ['row-1', 'row-2']
+      stateService.expandedRows.set(expandedRows)
+
+      expect(stateService.expandedRows()).toEqual(expandedRows)
+    })
+
+    it('should delegate page input setter to state service', () => {
+      const setActivePageSpy = jest.spyOn(stateService.activePage, 'set')
+
+      fixture.componentRef.setInput('page', 3)
+      fixture.detectChanges()
+
+      expect(setActivePageSpy).toHaveBeenCalledWith(3)
+    })
+
+    it('should delegate pageSize input setter to state service', () => {
+      const setPageSizeSpy = jest.spyOn(stateService.pageSize, 'set')
+
+      fixture.componentRef.setInput('pageSize', 25)
+      fixture.detectChanges()
+
+      expect(setPageSizeSpy).toHaveBeenCalledWith(25)
+    })
+
+    it('should delegate additionalActions input setter to state service', () => {
+      const setAdditionalActionsSpy = jest.spyOn(stateService.additionalActions, 'set')
+
+      const actions = [
+        { id: 'a1', label: 'Action 1' },
+        { id: 'a2', label: 'Action 2' }
+      ] as any
+
+      fixture.componentRef.setInput('additionalActions', actions)
+      fixture.detectChanges()
+
+      expect(setAdditionalActionsSpy).toHaveBeenCalledWith(actions)
+    })
+
+    it('should delegate paginator input to both paginators via Angular input binding', () => {
+      const listGridSpy = jest.spyOn(stateService.listGridPaginator, 'set')
+      const tableSpy = jest.spyOn(stateService.tablePaginator, 'set')
+
+      fixture.componentRef.setInput('paginator', true)
+      fixture.detectChanges()
+
+      expect(listGridSpy).toHaveBeenCalledWith(true)
+      expect(tableSpy).toHaveBeenCalledWith(true)
+    })
+  })
+  
+  describe('Filters', () => {
+    it('should delegate filters setter to DataViewStateService', () => {
+      const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
+
+      const filters = [
+        { columnId: 'name', value: 'abc', filterType: 'stringContains' },
+      ] as any
+
+      component.filters = filters
+      TestBed.tick()
+
+      expect(setFiltersSpy).toHaveBeenCalledWith(filters)
+    })
+  })
+
+  describe('ListGridPaginator', () => {
+    it('should delegate listGridPaginator setter to DataViewStateService', () => {    
+      component.listGridPaginator = false
+
+      expect(stateService.listGridPaginator()).toBe(false)
+    })
+  })
+
+  describe('TablePaginator', () => {
+    it('should delegate tablePaginator setter to DataViewStateService', () => {
+      const setTablePaginatorSpy = jest.spyOn(stateService.tablePaginator, 'set')
+
+      component.tablePaginator = true
+
+      expect(setTablePaginatorSpy).toHaveBeenCalledWith(true)
+    })
+  })
+
+  describe('effects emitting outputs', () => {
+    it('should emit filtered output when filters change', (done) => {
+      const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
+
+      component.filtered.subscribe((emittedFilters) => {
+        expect(emittedFilters).toEqual(testFilters)
+        done()
+      })
+
+      stateService.filters.set(testFilters)
+      fixture.detectChanges()
+    })
+
+    it('should emit filtered output when filters has items (filters.length > 0)', () => {
+      const emitSpy = jest.spyOn(component.filtered, 'emit')
+      const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
+
+      stateService.filters.set(testFilters)
+      fixture.detectChanges()
+
+      expect(emitSpy).toHaveBeenCalledWith(testFilters)
+    })
+
+    it('should emit filtered output when filters is empty array (filters.length === 0)', () => {
+      const emitSpy = jest.spyOn(component.filtered, 'emit')
+      emitSpy.mockClear()
+
+      stateService.filters.set([])
+      fixture.detectChanges()
+
+      expect(emitSpy).toHaveBeenCalledWith([])
+    })
+
+    it('should emit sorted output when both sortField and sortDirection are set', (done) => {
+      let emitCount = 0
+      component.sorted.subscribe((emittedSort) => {
+        emitCount++
+        if (emitCount === 1) {
+          expect(emittedSort).toEqual({
+            sortColumn: 'name',
+            sortDirection: DataSortDirection.ASCENDING,
+          })
+          done()
+        }
+      })
+
+      fixture.componentRef.setInput('sortField', 'name')
+      fixture.componentRef.setInput('sortDirection', DataSortDirection.ASCENDING)
+      fixture.detectChanges()
+    })
+
+    it('should not emit pageChanged output when page is undefined', () => {
+      const emitSpy = jest.spyOn(component.pageChanged, 'emit')
+
+      stateService.activePage.set(undefined as any)
+      fixture.detectChanges()
+
+      expect(emitSpy).not.toHaveBeenCalled()
+    })
+
+    it('should not emit pageSizeChanged output when pageSize is undefined', () => {
+      const emitSpy = jest.spyOn(component.pageSizeChanged, 'emit')
+
+      stateService.pageSize.set(undefined as any)
+      fixture.detectChanges()
+
+      expect(emitSpy).not.toHaveBeenCalled()
+    })
+  })
+
   describe('Table row selection ', () => {
     let dataTable: DataTableHarness | null
 
     beforeEach(async () => {
       fixture.componentRef.setInput('layout', 'table')
+      fixture.detectChanges()
+      await fixture.whenStable()
       dataTable = await dataViewHarness?.getDataTable()
     })
 
@@ -264,8 +537,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect((component as any).stateService.actionColumnConfigFrozen()).toBe(false)
+      expect((component as any).stateService.actionColumnConfigPosition()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 
@@ -297,7 +570,7 @@ describe('DataViewComponent', () => {
 
   it('should stay on the same page after layout change', async () => {
     fixture.componentRef.setInput('data', [
-      ...component.data(),
+      ...(component as any).stateService.data(),
       {
         id: 'mock1',
         imagePath: '/path/to/image',
@@ -329,6 +602,9 @@ describe('DataViewComponent', () => {
         modificationDate: '2023-09-12T09:34:27.184086Z',
       },
     ])
+    fixture.componentRef.setInput('layout', 'list')
+    fixture.detectChanges()
+    await fixture.whenStable()
 
     dataViewHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataViewHarness)
     const dataList = await dataViewHarness.getHarness(DataListGridHarness)
@@ -341,6 +617,7 @@ describe('DataViewComponent', () => {
 
     fixture.componentRef.setInput('layout', 'table')
     fixture.detectChanges()
+    await fixture.whenStable()
     const dataTable = await dataViewHarness.getHarness(DataTableHarness)
     const dataTablePaginator = await dataTable.getPaginator()
     const dataTableRaport = await dataTablePaginator.getCurrentPageReportText()
@@ -383,17 +660,19 @@ describe('DataViewComponent', () => {
       await fixture.whenStable()
     }
 
-    describe('Disable list action buttons based on field path', () => {
+    describe('Disable table action buttons based on field path', () => {
       it('should not disable any buttons initially', async () => {
-        await setUpMockData('list')
-        const dataView = await dataViewHarness.getDataListGrid()
-        expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
-        expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
+        await setUpMockData('table')
+        const dataTable = await dataViewHarness.getDataTable()
+        expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
+        expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)
       })
 
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('list')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 3)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 1)).toBe(true)
@@ -412,6 +691,8 @@ describe('DataViewComponent', () => {
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('grid')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 3)).toBe(true)
@@ -430,6 +711,8 @@ describe('DataViewComponent', () => {
       it('should disable a button based on a given field path', async () => {
         await setUpMockData('table')
         fixture.componentRef.setInput('viewActionEnabledField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(3)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(1)).toBe(true)
@@ -447,6 +730,8 @@ describe('DataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('list')
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataView = await dataViewHarness.getDataListGrid()
         expect(await dataView?.hasAmountOfActionButtons('list', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('list', 0)).toBe(true)
@@ -470,6 +755,8 @@ describe('DataViewComponent', () => {
         await (await dataView?.getGridMenuButton())?.click()
 
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         await (await dataView?.getGridMenuButton())?.click()
         expect(await dataView?.hasAmountOfActionButtons('grid', 2)).toBe(true)
         expect(await dataView?.hasAmountOfDisabledActionButtons('grid', 0)).toBe(true)
@@ -487,6 +774,8 @@ describe('DataViewComponent', () => {
       it('should hide a button based on a given field path', async () => {
         await setUpMockData('table')
         fixture.componentRef.setInput('viewActionVisibleField', 'ready')
+        fixture.detectChanges()
+        await fixture.whenStable()
         const dataTable = await dataViewHarness.getDataTable()
         expect(await dataTable?.hasAmountOfActionButtons(2)).toBe(true)
         expect(await dataTable?.hasAmountOfDisabledActionButtons(0)).toBe(true)

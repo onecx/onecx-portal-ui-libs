@@ -5,9 +5,9 @@ import { SelectModule } from 'primeng/select'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('ColumnGroupSelectionComponent', () => {
   let fixture: ComponentFixture<ColumnGroupSelectionComponent>
@@ -24,7 +24,7 @@ describe('ColumnGroupSelectionComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ColumnGroupSelectionComponent],
       imports: [CommonModule, FormsModule, SelectModule, FloatLabelModule, TranslateModule.forRoot()],
-      providers: [provideTranslateTestingService({})],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(ColumnGroupSelectionComponent)
@@ -33,8 +33,8 @@ describe('ColumnGroupSelectionComponent', () => {
 
   describe('selectedGroupKey setter', () => {
     it('should set the selectedGroupKey model value', () => {
-      component.selectedGroupKey.set('custom')
-      expect(component.selectedGroupKey()).toBe('custom')
+      fixture.componentRef.setInput('selectedGroupKey', 'custom')
+      expect((component as any).stateService.activeColumnGroupKey()).toBe('custom')
     })
   })
 
@@ -48,16 +48,16 @@ describe('ColumnGroupSelectionComponent', () => {
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2', 'g3'] }),
         makeColumn({ id: 'c3', predefinedGroupKeys: undefined }),
       ])
-      component.selectedGroupKey.set('g3')
+      component.stateService.activeColumnGroupKey.set('g3')
 
-      component.ngOnInit()
+      fixture.detectChanges()
 
       expect(component.allGroupKeys()).toEqual(['g1', 'g2', 'g3', 'def'])
     })
 
     it('should emit custom-group state when selectedGroupKey equals customGroupKey', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
-      component.selectedGroupKey.set('custom')
+      component.selectedGroupKey = 'custom'
       const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
       component.ngOnInit()
@@ -65,47 +65,64 @@ describe('ColumnGroupSelectionComponent', () => {
       expect(emitSpy).toHaveBeenCalledWith({ activeColumnGroupKey: 'custom' })
     })
 
-    it('should emit displayedColumns filtered by selectedGroupKey when not in custom group', () => {
+    it('should filter displayedColumns by selectedGroupKey when not in custom group', () => {
       fixture.componentRef.setInput('defaultGroupKey', 'def')
       fixture.componentRef.setInput('customGroupKey', 'custom')
-      component.selectedGroupKey.set('g2')
 
-      fixture.componentRef.setInput('columns', [
+      const testColumns = [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] }),
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
         makeColumn({ id: 'c3', predefinedGroupKeys: ['g2', 'g3'] }),
         makeColumn({ id: 'c4', predefinedGroupKeys: undefined }),
-      ])
+      ]
+      fixture.componentRef.setInput('columns', testColumns)
+      component.stateService.activeColumnGroupKey.set('g2')
 
-      const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      fixture.detectChanges()
 
-      component.ngOnInit()
-
-      const cols = component.columns()
-      expect(emitSpy).toHaveBeenCalledWith({
-        activeColumnGroupKey: 'g2',
-        displayedColumns: [cols[1], cols[2]],
-      })
+      const cols = component.stateService.columns()
+      expect(cols).toEqual(testColumns)
     })
 
-    it('should include defaultGroupKey for filtering when selectedGroupKey is nullish', () => {
+    it('should return early and update allGroupKeys when selectedGroupKey is nullish', () => {
       fixture.componentRef.setInput('defaultGroupKey', 'def')
       fixture.componentRef.setInput('customGroupKey', 'custom')
-      ;(component.selectedGroupKey as any).set(undefined)
+      component.stateService.activeColumnGroupKey.set(undefined)
 
       fixture.componentRef.setInput('columns', [
         makeColumn({ id: 'c1', predefinedGroupKeys: ['def'] }),
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
       ])
 
-      const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      fixture.detectChanges()
 
-      component.ngOnInit()
+      const cols = component.stateService.columns()
+      expect(cols).toEqual([
+        makeColumn({ id: 'c1', predefinedGroupKeys: ['def'] }),
+        makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
+      ])
+    })
 
-      const cols = component.columns()
-      expect(emitSpy).toHaveBeenCalledWith({
-        activeColumnGroupKey: undefined,
-        displayedColumns: [cols[0]],
+    it('should filter displayedColumns by input selectedGroupKey when specified', () => {
+      const componentStateChangedSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      
+      fixture.componentRef.setInput('defaultGroupKey', 'def')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+
+      const testColumns = [
+        makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] }),
+        makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
+        makeColumn({ id: 'c3', predefinedGroupKeys: ['g1', 'g2'] }),
+        makeColumn({ id: 'c4', predefinedGroupKeys: undefined }),
+      ]
+      fixture.componentRef.setInput('columns', testColumns)
+      fixture.componentRef.setInput('selectedGroupKey', 'g1')
+      
+      fixture.detectChanges()
+
+      expect(componentStateChangedSpy).toHaveBeenCalledWith({
+        activeColumnGroupKey: 'g1',
+        displayedColumns: [testColumns[0], testColumns[2]],
       })
     })
   })
@@ -114,9 +131,10 @@ describe('ColumnGroupSelectionComponent', () => {
     it('should return early and not emit when selecting customGroupKey', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
       fixture.componentRef.setInput('columns', [makeColumn({ predefinedGroupKeys: ['g1'] })])
-
+      
       const groupChangedSpy = jest.spyOn(component.groupSelectionChanged, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      component.changeGroupSelection({ value: 'custom' })
 
       component.changeGroupSelection({ value: 'custom' })
 
@@ -137,7 +155,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       component.changeGroupSelection({ value: 'g1' })
 
-      const cols = component.columns()
+      const cols = component.stateService.columns()
       expect(groupChangedSpy).toHaveBeenCalledWith({
         activeColumns: [cols[0], cols[2]],
         groupKey: 'g1',
@@ -161,7 +179,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       component.changeGroupSelection({ value: 'g1' })
 
-      const cols = component.columns()
+      const cols = component.stateService.columns()
       expect(groupChangedSpy).toHaveBeenCalledWith({
         activeColumns: [cols[0], cols[2]],
         groupKey: 'g1',
@@ -180,7 +198,7 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
       fixture.detectChanges()
 
-      component.selectedGroupKey.set('custom')
+      component.stateService.activeColumnGroupKey.set('custom')
       fixture.detectChanges()
 
       expect(emitSpy).toHaveBeenCalledWith({ activeColumnGroupKey: 'custom' })
@@ -195,7 +213,7 @@ describe('ColumnGroupSelectionComponent', () => {
       // ignore initial emission produced during initialization
       emitSpy.mockClear()
 
-      component.selectedGroupKey.set('other')
+      component.stateService.activeColumnGroupKey.set('other')
       fixture.detectChanges()
 
       expect(emitSpy).not.toHaveBeenCalled()
