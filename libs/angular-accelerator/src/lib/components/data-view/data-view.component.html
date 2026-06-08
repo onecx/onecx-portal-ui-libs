@@ -282,11 +282,11 @@
     </ng-container>
     }
   </ng-template>
-  <ng-template #columnHeader let-column="column">
+  <ng-template #columnHeader let-column="column" let-labelTemplate="labelTemplate" let-sortTemplate="sortTemplate" let-filterTemplate="filterTemplate">
     @if (_columnHeader) {
     <ng-container
       [ngTemplateOutlet]="_columnHeader"
-      [ngTemplateOutletContext]="{ column: column }"
+      [ngTemplateOutletContext]="{ column: column, labelTemplate: labelTemplate, sortTemplate: sortTemplate, filterTemplate: filterTemplate }"
     >
     </ng-container>
     }
