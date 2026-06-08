@@ -1,3 +1,9 @@
+## [6.24.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.24.0...v6.24.1) (2026-06-08)
+
+### Bug Fixes
+
+* improve column header template ([#1516](https://github.com/onecx/onecx-portal-ui-libs/issues/1516)) ([d969434](https://github.com/onecx/onecx-portal-ui-libs/commit/d969434ff512eaf2391c720330ae413b8f256a54))
+
 ## [6.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.2...v6.24.0) (2026-06-02)
 
 ### Features
