@@ -1,3 +1,14 @@
+## [6.24.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.2...v6.24.0) (2026-06-02)
+
+### Features
+
+* v6 custom column header ([#1491](https://github.com/onecx/onecx-portal-ui-libs/issues/1491)) ([8f4409b](https://github.com/onecx/onecx-portal-ui-libs/commit/8f4409bd650baab7eb061a92669ac4a9c936ca10))
+
+### Bug Fixes
+
+* cherry-picked and adapted solution from v5 ([#1492](https://github.com/onecx/onecx-portal-ui-libs/issues/1492)) ([37637f0](https://github.com/onecx/onecx-portal-ui-libs/commit/37637f0283532d75f853232fc46ed91f63905610))
+* picklist primng bug handled ([#1482](https://github.com/onecx/onecx-portal-ui-libs/issues/1482)) ([5920589](https://github.com/onecx/onecx-portal-ui-libs/commit/5920589485a2b27b84171fcbe02cee0b4f2c83d0))
+
 ## [6.23.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.23.1...v6.23.2) (2026-05-22)
 
 ### Bug Fixes
