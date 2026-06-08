@@ -2,10 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 
+export type Layout = 'grid' | 'list' | 'table';
+
 interface ViewingLayouts {
   id: string
   icon: PrimeIcon
-  layout: 'grid' | 'list' | 'table'
+  layout: Layout,
   tooltip?: string
   tooltipKey: string
   label?: string
@@ -37,7 +39,7 @@ const ALL_VIEW_LAYOUTS: ViewingLayouts[] = [
 ]
 
 export interface DataLayoutSelectionComponentState {
-  layout?: 'grid' | 'list' | 'table'
+  layout?: Layout
 }
 @Component({
   standalone: false,
@@ -48,14 +50,14 @@ export interface DataLayoutSelectionComponentState {
 export class DataLayoutSelectionComponent implements OnInit {
   @Input() supportedViewLayouts: Array<string> = []
   @Input()
-  set layout(value: 'grid' | 'list' | 'table') {
+  set layout(value: Layout) {
     this.selectedViewLayout = ALL_VIEW_LAYOUTS.find((v) => v.layout === value)
   }
-  get layout(): 'grid' | 'list' | 'table' {
+  get layout(): Layout {
     return this.selectedViewLayout?.layout || 'table'
   }
 
-  @Output() dataViewLayoutChange: EventEmitter<'grid' | 'list' | 'table'> = new EventEmitter()
+  @Output() dataViewLayoutChange: EventEmitter<Layout> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<DataLayoutSelectionComponentState> = new EventEmitter()
 
   viewingLayouts: ViewingLayouts[] = []
@@ -68,7 +70,7 @@ export class DataLayoutSelectionComponent implements OnInit {
     })
   }
 
-  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: 'grid' | 'list' | 'table' }): void {
+  onDataViewLayoutChange(event: { icon: PrimeIcon; layout: Layout }): void {
     this.dataViewLayoutChange.emit(event.layout)
     this.componentStateChanged.emit({
       layout: event.layout,
