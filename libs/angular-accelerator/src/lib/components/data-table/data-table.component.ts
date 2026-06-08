@@ -906,7 +906,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   headerTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableHeader', 'IdHeader'],
-    templateNames: ['columnHeader', 'defaultColumnHeader'],
+    templateNames: ['columnHeader'],
   }
 
   cellTemplatesData: TemplatesData = {
