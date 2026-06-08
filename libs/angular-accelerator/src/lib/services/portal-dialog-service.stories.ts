@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -31,6 +31,7 @@ import { OcxTooltipDirective } from '../directives/tooltip.directive'
 })
 class ButtonDialogWithPortalDialogServiceComponent {
   private portalDialogService = inject(PortalDialogService)
+  private elementRef = inject(ElementRef)
 
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'
@@ -39,8 +40,10 @@ class ButtonDialogWithPortalDialogServiceComponent {
   @Input() extras = {}
 
   openDialog() {
+    const nativeElement = this.elementRef.nativeElement as HTMLElement
+    const button = nativeElement.querySelector('#custom-button-1234 .p-button') as HTMLElement
     this.portalDialogService
-      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, this.extras)
+      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, { ...this.extras, initiatorRef: button })
       .subscribe(() => {
         console.log('dialog closed')
       })

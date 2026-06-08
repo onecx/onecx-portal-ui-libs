@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of } from 'rxjs'
+import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -234,6 +234,7 @@ export type PortalDialogConfig = {
   minimizeIcon?: string
   position?: string
   closeAriaLabel?: string
+  initiatorRef?: HTMLElement
 }
 
 export interface PortalDialogServiceData {
@@ -442,11 +443,11 @@ export class PortalDialogService implements OnDestroy {
       typeof extrasOrShowXButton === 'object'
         ? extrasOrShowXButton
         : {
-            showXButton: extrasOrShowXButton,
-          }
+          showXButton: extrasOrShowXButton,
+        }
     const translateParams = this.prepareTitleForTranslation(title)
-
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
+    const initiatorRef = this.getDialogInitiator(dialogOptions)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
       config: {
@@ -458,6 +459,7 @@ export class PortalDialogService implements OnDestroy {
         ),
         autoFocusButton: dialogOptions.autoFocusButton,
         autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
+        initiatorRef,
       },
       componentData: componentToRender.inputs,
     }
@@ -497,7 +499,8 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose
+        return dialogRef.onClose.pipe(tap(() => { this.setFocusOnInitiator(initiatorRef) })
+        )
       })
     )
   }
@@ -511,6 +514,7 @@ export class PortalDialogService implements OnDestroy {
           )
           return
         }
+        this.dialogService.getInstance(dialogRef)
         dialogRef.close()
         this.removeDialogFromHtml(dialogComponent)
       })
@@ -626,6 +630,21 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
+  }
+
+  private getDialogInitiator(dialogOptions: PortalDialogConfig) {
+    return dialogOptions.initiatorRef ??
+      ((typeof document !== 'undefined' ? document.activeElement : undefined) as HTMLElement | undefined)
+  }
+
+  private setFocusOnInitiator(initiatorRef?: HTMLElement) {
+    if (!initiatorRef || typeof initiatorRef.focus !== 'function') {
+      return
+    }
+
+    if (typeof document !== 'undefined' && document.contains(initiatorRef)) {
+      initiatorRef.focus()
+    }
   }
 }
 
