@@ -11,4 +11,3 @@ export * from './lib/utils/get-normalized-browser-locales.utils'
 export * from './lib/utils/gatherer'
 export * from './lib/utils/create-logger.utils'
 export * from './lib/utils/ensure-property.utils'
-

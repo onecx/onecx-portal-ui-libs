@@ -14,9 +14,11 @@ function readDependencyPackageJson(dependency: string){
   try {
     packagePath = require.resolve(`${dependency}/package.json`)
   } catch {
+    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
     return null;
   }
   if (!existsSync(packagePath)) {
+    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
     return null
   }
   return JSON.parse(readFileSync(packagePath, 'utf-8'))

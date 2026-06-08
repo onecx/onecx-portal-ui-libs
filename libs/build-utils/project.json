@@ -75,6 +75,19 @@
         }
       }
     },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/build-utils/**/*.ts",
+          "libs/build-utils/**/*.html",
+          "libs/build-utils/package.json"
+        ]
+      }
+    },
     "release": {
       "executor": "@onecx/release:update-build-publish",
       "options": {
