@@ -1,6 +1,6 @@
 {
   "name": "@onecx/ngrx-linter-rules",
-  "version": "8.4.2",
+  "version": "8.5.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
