@@ -30,8 +30,8 @@ import { OcxTooltipDirective } from '../directives/tooltip.directive'
   template: `<p-button label="Open dialog" (click)="openDialog()" id="custom-button-1234" class="portal-dialog"/>`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
-  private portalDialogService = inject(PortalDialogService)
-  private elementRef = inject(ElementRef)
+  private readonly portalDialogService = inject(PortalDialogService)
+  private readonly elementRef = inject(ElementRef)
 
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'

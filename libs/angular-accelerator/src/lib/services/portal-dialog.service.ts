@@ -499,9 +499,7 @@ export class PortalDialogService implements OnDestroy {
           )
         }
         return dialogRef.onClose.pipe(tap(() => {
-          if (isExtrasObject && extrasOrShowXButton?.initiatorRef) {
-            this.setFocusOnInitiator(extrasOrShowXButton as PortalDialogConfig)
-          }
+          if(isExtrasObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
         })
         )
       })
@@ -636,12 +634,11 @@ export class PortalDialogService implements OnDestroy {
   }
 
   private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
-    const isDocumentAvailable = typeof document !== 'undefined'
-    const defaultInitiator = (isDocumentAvailable ? document.activeElement : undefined) as HTMLElement | undefined
-    const initiator = dialogOptions.initiatorRef && isDocumentAvailable && document.contains(dialogOptions.initiatorRef)
-      ? dialogOptions.initiatorRef
-      : defaultInitiator
-    initiator?.focus()
+    const initiator = dialogOptions.initiatorRef
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator)) return
+    else {
+      initiator.focus()
+    }
   }
 }
 
