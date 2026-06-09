@@ -439,15 +439,15 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
+    const isExtrasObject = typeof extrasOrShowXButton === 'object'
     const dialogOptions: PortalDialogConfig =
-      typeof extrasOrShowXButton === 'object'
+      isExtrasObject
         ? extrasOrShowXButton
         : {
           showXButton: extrasOrShowXButton,
         }
     const translateParams = this.prepareTitleForTranslation(title)
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
-    const initiatorRef = this.getDialogInitiator(dialogOptions)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
       config: {
@@ -458,8 +458,7 @@ export class PortalDialogService implements OnDestroy {
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
         autoFocusButton: dialogOptions.autoFocusButton,
-        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
-        initiatorRef,
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId
       },
       componentData: componentToRender.inputs,
     }
@@ -499,7 +498,11 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose.pipe(tap(() => { this.setFocusOnInitiator(initiatorRef) })
+        return dialogRef.onClose.pipe(tap(() => {
+          if (isExtrasObject && extrasOrShowXButton?.initiatorRef) {
+            this.setFocusOnInitiator(extrasOrShowXButton as PortalDialogConfig)
+          }
+        })
         )
       })
     )
@@ -632,19 +635,13 @@ export class PortalDialogService implements OnDestroy {
     return obj instanceof Type
   }
 
-  private getDialogInitiator(dialogOptions: PortalDialogConfig) {
-    return dialogOptions.initiatorRef ??
-      ((typeof document !== 'undefined' ? document.activeElement : undefined) as HTMLElement | undefined)
-  }
-
-  private setFocusOnInitiator(initiatorRef?: HTMLElement) {
-    if (!initiatorRef || typeof initiatorRef.focus !== 'function') {
-      return
-    }
-
-    if (typeof document !== 'undefined' && document.contains(initiatorRef)) {
-      initiatorRef.focus()
-    }
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const isDocumentAvailable = typeof document !== 'undefined'
+    const defaultInitiator = (isDocumentAvailable ? document.activeElement : undefined) as HTMLElement | undefined
+    const initiator = dialogOptions.initiatorRef && isDocumentAvailable && document.contains(dialogOptions.initiatorRef)
+      ? dialogOptions.initiatorRef
+      : defaultInitiator
+    initiator?.focus()
   }
 }
 

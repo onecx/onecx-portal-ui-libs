@@ -48,7 +48,6 @@ $primaryColorRGB: 39, 75, 95; //rgb for #274b5f
 }
 
 *:focus {
-  outline: 3px solid cornflowerblue !important;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(100, 149, 237, 0.25) !important;
+  outline: 3px solid #333 !important;
+  outline-offset: 1px !important;
 }

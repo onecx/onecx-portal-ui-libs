@@ -27,7 +27,7 @@ import { OcxTooltipDirective } from '../directives/tooltip.directive'
 @Component({
   standalone: false,
   selector: 'ocx-button-dialog-with-portal-dialog-service',
-  template: `<p-button label="Open dialog" (click)="openDialog()" />`,
+  template: `<p-button label="Open dialog" (click)="openDialog()" id="custom-button-1234" class="portal-dialog"/>`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
   private portalDialogService = inject(PortalDialogService)
