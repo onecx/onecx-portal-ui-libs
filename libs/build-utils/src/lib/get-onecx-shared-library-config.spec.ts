@@ -19,6 +19,8 @@ describe('get-onecx-shared-library-config', () => {
       ['@module-federation/enhanced'],
       ['primeng/editor'],
       ['@onecx/angular-accelerator/testing'],
+      ['@onecx/build-utils'],
+      ['@onecx/build-utils/test-lib'],
     ])('should return true (EXCLUDE) for blacklisted package %s', (pkg) => {
       expect(onecxPackageFilter(pkg)).toBe(true)
     })
@@ -43,6 +45,8 @@ describe('get-onecx-shared-library-config', () => {
         '@nx/angular/something': '^20.0.0',
         '@module-federation/enhanced': '^2.0.0',
         '@module-federation/runtime-core/utils': '^2.0.0',
+        '@onecx/build-utils': '^8.4.2',
+        '@onecx/build-utils/test-lib': '^8.4.2',
         'some-random-lib': '^1.0.0',
         '@angular/core': '^21.0.0',
         'rxjs': '^7.8.0',
@@ -54,6 +58,8 @@ describe('get-onecx-shared-library-config', () => {
       expect(result['@nx/angular/something']).toBeUndefined()
       expect(result['@module-federation/enhanced']).toBeUndefined()
       expect(result['@module-federation/runtime-core/utils']).toBeUndefined()
+      expect(result['@onecx/build-utils']).toBeUndefined()
+      expect(result['@onecx/build-utils/test-lib']).toBeUndefined()
       expect(result['some-random-lib']).toBeUndefined()
       expect(result['@angular/core']).toBeDefined()
       expect(result['rxjs']).toBeDefined()
