@@ -1,3 +1,9 @@
+## [9.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.5...v9.0.0-rc.6) (2026-06-09)
+
+### Features
+
+* bump release version ([#1522](https://github.com/onecx/onecx-portal-ui-libs/issues/1522)) ([5493376](https://github.com/onecx/onecx-portal-ui-libs/commit/5493376f8f4db876eb0a01c118af0966f949f546))
+
 ## [9.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.4...v9.0.0-rc.5) (2026-06-09)
 
 ### Features
