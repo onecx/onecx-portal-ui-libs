@@ -1,3 +1,9 @@
+## [8.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.6.0...v8.6.1) (2026-06-09)
+
+### Bug Fixes
+
+* temporarily fix dynamic require error ([#1524](https://github.com/onecx/onecx-portal-ui-libs/issues/1524)) ([113dd9d](https://github.com/onecx/onecx-portal-ui-libs/commit/113dd9d2d95c2904329ae6c825304e0df289c024))
+
 ## [8.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.5.0...v8.6.0) (2026-06-09)
 
 ### Features
