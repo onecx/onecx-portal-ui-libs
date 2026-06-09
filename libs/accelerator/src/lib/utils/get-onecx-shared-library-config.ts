@@ -4,19 +4,19 @@ import { getOneCXSharedRecommendations, SharedLibraryConfig } from "./get-onecx-
 /**
  * As we have { platform: 'browser'} in accelerator's & integration-interface project.json.
  * We use dynamic require (provided by Node.js) to read package.json of dependencies, which is not supported in browser environment.
- * So we need to check if the environment is node before using it. So it will only return valid require function while building
- */ 
-const nodeRequire = (() => {
+ * Resolved lazily on first call so that merely importing this module from a browser bundle does not throw.
+ * Only `getOneCXSharedLibraryConfig` (build-time webpack config) calls into the file system helpers below.
+ */
+function getNodeRequire(): NodeJS.Require | null {
   try {
     if (typeof process !== 'undefined' && process?.versions?.node) {
-      return (eval('require') as NodeJS.Require);
-    }else{
-      throw new Error('Node.js environment is required for dynamic require.');
+      return eval('require') as NodeJS.Require;
     }
   } catch {
-    throw new Error('Node.js environment is required for dynamic require.');
+    // fall through
   }
-})();
+  return null;
+}
 
 const angularCore = '@angular/core';
 
@@ -107,6 +107,7 @@ function isDependencyBlacklisted(dependency: string): boolean {
  * @returns {Object|null} Parsed package.json or null if not found
  */
 function readDependencyPackageJson(dependency: string) {
+  const nodeRequire = getNodeRequire();
   if (!nodeRequire) return null;
   let packagePath;
   try {
