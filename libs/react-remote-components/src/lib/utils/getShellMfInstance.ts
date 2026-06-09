@@ -5,5 +5,5 @@ export const getShellMfInstance = (): ModuleFederation | undefined => {
   if (!Array.isArray(instances)) {
     return undefined
   }
-  return instances.find((instance) => instance.name === 'onecx-shell-ui')
+  return instances.find((instance) => instance.name === 'onecx-shell-ui' || instance.name === 'onecx_shell_ui')
 }

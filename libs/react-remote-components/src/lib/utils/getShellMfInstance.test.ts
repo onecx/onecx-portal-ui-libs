@@ -38,6 +38,17 @@ describe('getShellMfInstance', () => {
     expect(result).toBe(shellInstance)
   })
 
+  it('should return the shell module federation instance when named "onecx_shell_ui"', () => {
+    const shellInstance = { name: 'onecx_shell_ui', loadRemote: jest.fn() }
+    ;(globalThis as any).__FEDERATION__.__INSTANCES__ = [
+      { name: 'other-app' },
+      shellInstance,
+      { name: 'another-app' },
+    ]
+    const result = getShellMfInstance()
+    expect(result).toBe(shellInstance)
+  })
+
   it('should return the first matching instance when multiple shell instances exist', () => {
     const firstShell = { name: 'onecx-shell-ui', id: 1 }
     const secondShell = { name: 'onecx-shell-ui', id: 2 }
