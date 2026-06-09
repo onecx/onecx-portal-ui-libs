@@ -1,28 +1,24 @@
-import { existsSync, readFileSync } from 'node:fs'
 import { getOneCXSharedRecommendations, SharedLibraryConfig } from "./get-onecx-shared-recommendations";
-const angularCore = '@angular/core';
 
 
 /**
- * Resolves and reads a dependency's package.json file.
- * Handles module resolution across npm/yarn/pnpm layouts.
- * @param {string} dependency - Package name to resolve
- * @returns {Record<string, unknown> | null} Parsed package.json or null if not found
- */
-function readDependencyPackageJson(dependency: string){
-  let packagePath: string
+ * As we have { platform: 'browser'} in accelerator's & integration-interface project.json.
+ * We use dynamic require (provided by Node.js) to read package.json of dependencies, which is not supported in browser environment.
+ * So we need to check if the environment is node before using it. So it will only return valid require function while building
+ */ 
+const nodeRequire = (() => {
   try {
-    packagePath = require.resolve(`${dependency}/package.json`)
+    if (typeof process !== 'undefined' && process?.versions?.node) {
+      return (eval('require') as NodeJS.Require);
+    }else{
+      throw new Error('Node.js environment is required for dynamic require.');
+    }
   } catch {
-    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
-    return null;
+    throw new Error('Node.js environment is required for dynamic require.');
   }
-  if (!existsSync(packagePath)) {
-    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
-    return null
-  }
-  return JSON.parse(readFileSync(packagePath, 'utf-8'))
-}
+})();
+
+const angularCore = '@angular/core';
 
 
 /**
@@ -38,7 +34,7 @@ export interface SharedLibraryConfigOptions {
 /**
  * Blacklist of export paths to exclude when generating subpackage entries.
  */
-const EXPORTS_BLACKLIST = new Set(['.', './package.json']);
+const EXPORTS_BLACKLIST = ['.', './package.json'];
 
 /**
  * Patterns for identifying dependencies that should be blacklisted.
@@ -46,13 +42,12 @@ const EXPORTS_BLACKLIST = new Set(['.', './package.json']);
 const DEFAULT_DEPENDENCY_BLACKLIST: RegExp[] = [
   /^@nx(\/.*)?$/,
   /^@module-federation(\/.*)?$/,
-  /^@onecx\/build-utils(\/.*)?$/,
 ];
 
 /**
  * For identifying full package paths that should be blacklisted.
  */
-const DEFAULT_FULL_PACKAGE_BLACKLIST = new Set([
+const DEFAULT_FULL_PACKAGE_BLACKLIST = [
   '@angular/common/locales/global/*',
   '@angular/common/locales/*',
   '@angular/common/upgrade',
@@ -68,7 +63,7 @@ const DEFAULT_FULL_PACKAGE_BLACKLIST = new Set([
   'primeng/editor',
   '@onecx/angular-accelerator/testing',
   '@onecx/angular-accelerator/migrations.json',
-]);
+];
 
 /**
  * Removes the './' prefix from a string, typically used for export paths in package.json files.
@@ -89,7 +84,7 @@ export function onecxPackageFilter(packageName: string): boolean {
   if(isDependencyBlacklisted(packageName)){
     return true;
   }
-  return DEFAULT_FULL_PACKAGE_BLACKLIST.has(packageName);
+  return DEFAULT_FULL_PACKAGE_BLACKLIST.includes(packageName);
 }
 
 
@@ -104,6 +99,29 @@ function isDependencyBlacklisted(dependency: string): boolean {
     return entry === dependency;
   });
 }
+
+/**
+ * Resolves and reads a dependency's package.json file.
+ * Handles module resolution across npm/yarn/pnpm layouts.
+ * @param {string} dependency - Package name to resolve
+ * @returns {Object|null} Parsed package.json or null if not found
+ */
+function readDependencyPackageJson(dependency: string) {
+  if (!nodeRequire) return null;
+  let packagePath;
+  try {
+    packagePath = nodeRequire.resolve(`${dependency}/package.json`);
+  } catch {
+    return null;
+  }
+  const fs = nodeRequire('fs');
+  if (!fs.existsSync(packagePath)) {
+    return null;
+  }
+  const packageContent = fs.readFileSync(packagePath, 'utf-8');
+  return JSON.parse(packageContent);
+}
+
 
 /**
  * Generates subpackages from a dependency's export entries. Reads the dependency's package.json to find all exported subpackages
@@ -124,10 +142,10 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
   const exportKeys = Object.keys(dependencyPackage.exports);
 
   for (const exportKey of exportKeys) {
-    if (EXPORTS_BLACKLIST.has(exportKey)) continue;
+    if (EXPORTS_BLACKLIST.includes(exportKey)) continue;
 
     const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`;
-    if (packageFilterCallback?.(subpackageName)) continue;
+    if (packageFilterCallback && packageFilterCallback(subpackageName)) continue;
     subpackages.push({ name: subpackageName, requiredVersion: version });
   }
   return subpackages;
@@ -248,7 +266,7 @@ export function getOneCXSharedLibraryConfig(dependencies: Record<string, string>
     sharedLibConfig['shareScope'] = 'default';    
 
     const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '');
-    if (angularCoreVersion && Number.parseInt(angularCoreVersion, 10) >= 21) {
+    if (angularCoreVersion && parseInt(angularCoreVersion, 10) >= 21) {
       const shareScope = ('angular_').concat(angularCoreVersion);
       sharedLibConfig['shareScope'] = shareScope;
     }
