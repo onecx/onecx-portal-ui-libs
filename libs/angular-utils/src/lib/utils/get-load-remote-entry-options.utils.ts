@@ -58,7 +58,7 @@ function getRemoteName(r: RemoteEntry): string {
 }
 
 export function getShellMfInstance(): ModuleFederation | null {
-  return (globalThis as any)['onecxFederationInstance'] ?? getInstance((instance: ModuleFederation) => instance.name === 'onecx-shell-ui' || instance.name === 'onecx_shell_ui')
+  return (globalThis as any)['onecxFederationInstance'] ?? getInstance((instance: ModuleFederation) => instance.name === 'onecx-shell-ui' || instance.name === 'onecx_shell_ui')
 }
 
 export async function registerAndLoadRemote<T>(instance: ModuleFederation, remoteConfig: Remote, exposedModule: string): Promise<T | undefined> {
