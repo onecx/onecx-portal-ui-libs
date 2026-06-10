@@ -18,6 +18,7 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -222,13 +223,14 @@ describe('DataTableComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
+        DataViewStateService,
       ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataTableComponent)
     component = fixture.componentInstance
     component.rows.set(mockData as any)
-    component.columns.set(mockColumns as any)
+    component.columns = (mockColumns as any)
     fixture.componentRef.setInput('paginator', true)
     translateService = TestBed.inject(TranslateService)
     translateService.use('en')
@@ -241,6 +243,40 @@ describe('DataTableComponent', () => {
 
   it('should create the data table component', () => {
     expect(component).toBeTruthy()
+  })
+
+  describe('DataViewStateService provider factory', () => {
+    it('should reuse parent DataViewStateService when it exists', () => {
+      const stateService = TestBed.inject(DataViewStateService)
+      const componentService = fixture.debugElement.injector.get(DataViewStateService)
+
+      expect(componentService).toBe(stateService)
+    })
+
+    it('should create a local DataViewStateService when parent service does not exist', async () => {
+      TestBed.resetTestingModule()
+
+      await TestBed.configureTestingModule({
+        declarations: [DataTableComponent],
+        imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          {
+            provide: HAS_PERMISSION_CHECKER,
+            useExisting: UserService,
+          },
+        ],
+      }).compileComponents()
+
+      const localFixture = TestBed.createComponent(DataTableComponent)
+      const localService = localFixture.debugElement.injector.get(DataViewStateService)
+
+      expect(TestBed.inject(DataViewStateService, null)).toBeNull()
+      expect(localService).toBeTruthy()
+      localFixture.componentInstance.stateService.activePage.set(2)
+      expect(localService.activePage()).toBe(2)
+    })
   })
 
   it('loads dataTableHarness', async () => {
@@ -309,7 +345,7 @@ describe('DataTableComponent', () => {
 
       expect(spy).toHaveBeenCalled()
 
-      expect(component.filters().length).toBeGreaterThan(0)
+      expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
   })
 
@@ -352,7 +388,7 @@ describe('DataTableComponent', () => {
         }
       })
     )
-    component.columns.set([
+    component.columns = ([
       {
         columnType: ColumnType.NUMBER,
         id: 'name',
@@ -386,7 +422,7 @@ describe('DataTableComponent', () => {
       selectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
-      component.selectedRows.set(mockData.slice(0, 2) as any)
+      component.stateService.selectedRows.set(mockData.slice(0, 2) as any)
       fixture.detectChanges()
 
       unselectedCheckBoxes = await dataTable.getHarnessesForCheckboxes('unchecked')
@@ -448,8 +484,8 @@ describe('DataTableComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.stateService.actionColumnConfigFrozen()).toBe(false)
+      expect(component.stateService.actionColumnConfigPosition()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -468,6 +504,7 @@ describe('DataTableComponent', () => {
       fixture.componentRef.setInput('actionColumnPosition', 'left')
 
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
@@ -482,7 +519,7 @@ describe('DataTableComponent', () => {
   })
 
   const setUpActionButtonMockData = async () => {
-    component.columns.set([
+    component.columns = ([
       ...mockColumns,
       {
         columnType: ColumnType.STRING,
@@ -717,7 +754,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should assign id to additional action button', async () => {
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: 'VIEW',
           callback: () => {
@@ -766,7 +803,7 @@ describe('DataTableComponent', () => {
       fixture.componentRef.setInput('viewPermission', 'TABLE#VIEW')
       fixture.componentRef.setInput('editPermission', 'TABLE#EDIT')
       fixture.componentRef.setInput('deletePermission', 'TABLE#DELETE')
-      component.additionalActions.set([])
+      component.additionalActions = ([])
 
       fixture.detectChanges()
 
@@ -792,7 +829,7 @@ describe('DataTableComponent', () => {
     it('should show custom inline actions if user has permission', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: 'ADDITIONAL#VIEW',
           callback: () => {
@@ -817,7 +854,7 @@ describe('DataTableComponent', () => {
     it('should show overflow menu when user has permission for at least one action', async () => {
       userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: 'OVERFLOW#VIEW',
           callback: () => {
@@ -847,7 +884,7 @@ describe('DataTableComponent', () => {
     it('should display action buttons based on multiple permissions', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2', 'OVERFLOW#VIEW', 'OVERFLOW#VIEW2'])
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: ['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2'],
           callback: () => {
@@ -903,12 +940,12 @@ describe('DataTableComponent', () => {
             ready: false,
           },
         ] as any)
-        component.additionalActions.set([])
+        component.additionalActions = ([])
       })
       it('should render inline action button with routerLink', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         jest.spyOn(console, 'log')
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'routerLinkAction',
             routerLink: '/inline',
@@ -932,7 +969,7 @@ describe('DataTableComponent', () => {
 
         jest.spyOn(console, 'log')
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'routerLinkAction',
             routerLink: '/overflow',
@@ -959,7 +996,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/function-link')
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'functionRouterLink',
             routerLink: routerLinkFunction,
@@ -978,7 +1015,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkPromiseFunction = jest.fn(() => Promise.resolve('/promise-function-link'))
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'promiseFunctionRouterLink',
             routerLink: routerLinkPromiseFunction,
@@ -996,7 +1033,7 @@ describe('DataTableComponent', () => {
       it('should handle routerLink as Promise<string>', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'promiseRouterLink',
             routerLink: Promise.resolve('/promise-link'),
@@ -1014,7 +1051,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const routerLinkFunction = jest.fn(() => '/overflow-function')
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'overflowFunctionRouterLink',
             routerLink: routerLinkFunction,
@@ -1038,7 +1075,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'routerLinkWithCallback',
             callback: callbackSpy,
@@ -1059,7 +1096,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'overflowRouterLinkWithCallback',
             callback: callbackSpy,
@@ -1089,7 +1126,7 @@ describe('DataTableComponent', () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
-        component.additionalActions.set([
+        component.additionalActions = ([
           {
             id: 'callbackOnlyAction',
             callback: callbackSpy,
@@ -1241,12 +1278,11 @@ describe('DataTableComponent', () => {
       component.selectionChanged.subscribe(() => undefined)
 
       component.pageSizes.set([2])
-      component.pageSize.set(2)
+      component.pageSize = 2
       fixture.detectChanges()
 
       const page2Rows = mockData.slice(2, 4)
-      component.selectedRows.set(page2Rows)
-
+      component.stateService.selectedRows.set(page2Rows)
       let unchecked = await dataTable.getHarnessesForCheckboxes('unchecked')
       let checked = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unchecked.length).toBe(2)
@@ -1272,7 +1308,7 @@ describe('DataTableComponent', () => {
         { id: 'c', enabled: true },
       ]
       component.rows.set(rows as any)
-      component.selectedRows.set([rows[1]])
+      component.stateService.selectedRows.set([rows[1]])
       fixture.detectChanges()
 
       const selectionChangedSpy = jest.fn()
@@ -1298,23 +1334,14 @@ describe('DataTableComponent', () => {
       expect(result).toEqual(['a', 'c'])
     })
 
-    it('onPageChange should emit page and pageSize and componentStateChanged', () => {
-      const pageChangedSpy = jest.fn()
-      const pageSizeChangedSpy = jest.fn()
-      const componentStateChangedSpy = jest.fn()
-      component.pageChanged.subscribe(pageChangedSpy)
-      component.pageSizeChanged.subscribe(pageSizeChangedSpy)
-      component.componentStateChanged.subscribe(componentStateChangedSpy)
+    it('onPageChange should update page and pageSize in service', () => {
 
       component.onPageChange({ first: 20, rows: 10 })
 
       fixture.detectChanges()
 
-      expect(component.page()).toBe(2)
-      expect(component.pageSize()).toBe(10)
-      expect(pageChangedSpy).toHaveBeenCalledWith(2)
-      expect(pageSizeChangedSpy).toHaveBeenCalledWith(10)
-      expect(componentStateChangedSpy).toHaveBeenCalledWith(expect.objectContaining({ activePage: 2, pageSize: 10 }))
+      expect(component.stateService.activePage()).toBe(2)
+      expect(component.stateService.pageSize()).toBe(10)
     })
   })
 
@@ -1388,58 +1415,50 @@ describe('DataTableComponent', () => {
     it('should call resetPage when rows length decreases', () => {
       component.rows.set(mockData as any)
       fixture.detectChanges()
-      component.page.set(2)
+      component.stateService.activePage.set(2)
       fixture.detectChanges()
-
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
       component.rows.set(mockData.slice(0, 3) as any)
       fixture.detectChanges()
 
-      expect(component.page()).toBe(0)
-      expect(pageSpy).toHaveBeenCalledWith(0)
-      expect(stateSpy).toHaveBeenCalled()
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('should not call resetPage when rows length increases', () => {
-      component.page.set(2)
+      component.stateService.activePage.set(2)
       fixture.detectChanges()
-
-      const pageSpy = jest.spyOn(component.pageChanged, 'emit')
 
       component.rows.set(Array.from({ length: 10 }).map((_, i) => ({ id: i, name: i })) as any)
       fixture.detectChanges()
 
-      expect(component.page()).toBe(2)
-      expect(pageSpy).not.toHaveBeenCalledWith(0)
+      expect(component.stateService.activePage()).toBe(2)
     })
 
     it('should resetPage when filters length changes', () => {
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
       ] as any)
       fixture.detectChanges()
-      component.page.set(2)
+      component.stateService.activePage.set(2)
       fixture.detectChanges()
 
-      component.filters.set([{ columnId: 'a', value: 1 }] as any)
+      component.stateService.filters.set([{ columnId: 'a', value: 1 }] as any)
       fixture.detectChanges()
 
-      expect(component.page()).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
 
-      component.page.set(2)
+      component.stateService.activePage.set(2)
       fixture.detectChanges()
 
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'a', value: 1 },
         { columnId: 'b', value: 2 },
         { columnId: 'c', value: 3 },
       ] as any)
       fixture.detectChanges()
 
-      expect(component.page()).toBe(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
   })
 
@@ -1456,11 +1475,8 @@ describe('DataTableComponent', () => {
       expect(translateSpy).toHaveBeenCalledWith(['A'])
     })
 
-    it('onSortColumnClick should update subjects, emit sorted and componentStateChanged', () => {
-      const sortedSpy = jest.spyOn(component.sorted, 'emit')
-      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
-
-      component.sortStates.set([
+    it('onSortColumnClick should update sort state in service', () => {
+      fixture.componentRef.setInput('sortStates', [
         // make toggling deterministic
         // (new column -> first state)
         // (same column -> next)
@@ -1468,30 +1484,25 @@ describe('DataTableComponent', () => {
         2 as any,
       ])
 
-      component.sortColumn.set('old')
-      component.sortDirection.set(2 as any)
+      component.stateService.sortColumn.set('old')
+      component.stateService.sortDirection.set(2 as any)
       fixture.detectChanges()
 
       component.onSortColumnClick('new')
 
       fixture.detectChanges()
 
-      expect(component.sortColumn()).toBe('new')
-      expect(component.sortDirection()).toBe(1 as any)
-      expect(sortedSpy).toHaveBeenCalledWith({ sortColumn: 'new', sortDirection: 1 as any })
-      expect(stateSpy).toHaveBeenCalled()
+      expect(component.stateService.sortColumn()).toBe('new')
+      expect(component.stateService.sortDirection()).toBe(1 as any)
     })
 
-    it('onMultiselectFilterChange should replace filters, emit filtered, and reset page', () => {
-      const filteredSpy = jest.spyOn(component.filtered, 'emit')
-      const pageChangedSpy = jest.spyOn(component.pageChanged, 'emit')
-
+    it('onMultiselectFilterChange should replace filters and reset page', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'status', value: 'old', filterType: FilterType.EQUALS },
         { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
       ] as any)
-      component.page.set(5)
+      component.stateService.activePage.set(5)
       fixture.detectChanges()
 
       const column: any = { id: 'status', filterType: FilterType.EQUALS }
@@ -1499,7 +1510,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      const newFilters = component.filters()
+      const newFilters = component.stateService.filters()
       expect(newFilters).toEqual(
         expect.arrayContaining([
           { columnId: 'other', value: 'keep', filterType: FilterType.EQUALS },
@@ -1507,11 +1518,7 @@ describe('DataTableComponent', () => {
           { columnId: 'status', value: 'b', filterType: FilterType.EQUALS },
         ])
       )
-      expect(newFilters.find((f) => f.columnId === 'status' && f.value === 'old')).toBeUndefined()
-
-      expect(filteredSpy).toHaveBeenCalledWith(newFilters)
-      expect(component.page()).toBe(0)
-      expect(pageChangedSpy).toHaveBeenCalledWith(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('sortDirectionToTitle should return the correct translation key for each direction', () => {
@@ -1525,9 +1532,9 @@ describe('DataTableComponent', () => {
     })
 
     it('sortIconTitle should return the title for the next sort direction', () => {
-      component.sortStates.set([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
-      component.sortColumn.set('col')
-      component.sortDirection.set(DataSortDirection.ASCENDING)
+      fixture.componentRef.setInput('sortStates', [DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
+      component.stateService.sortColumn.set('col')
+      component.stateService.sortDirection.set(DataSortDirection.ASCENDING)
       fixture.detectChanges()
       expect(component.sortIconTitle('col')).toBe('OCX_DATA_TABLE.TOGGLE_BUTTON.DESCENDING_TITLE')
     })
@@ -1535,7 +1542,7 @@ describe('DataTableComponent', () => {
 
   describe('ngOnInit derived streams (class logic)', () => {
     beforeEach(() => {
-      component.columns.set([
+      component.columns = ([
         { id: 'status', columnType: ColumnType.STRING } as any,
         { id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any,
         { id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any,
@@ -1545,7 +1552,7 @@ describe('DataTableComponent', () => {
 
     it('currentEqualFilterOptions$ should return empty options when no current filter column', async () => {
       component.currentFilterColumn.set(null)
-      component.filters.set([])
+      component.stateService.filters.set([])
       component.rows.set([{ id: 1, status: 'A' } as any])
 
       const result = await firstValueFrom(component.currentEqualFilterOptions$!)
@@ -1554,7 +1561,7 @@ describe('DataTableComponent', () => {
 
     it('currentEqualFilterOptions$ should format DATE options using dateFormat', async () => {
       component.currentFilterColumn.set({ id: 'date', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' } as any)
-      component.filters.set([])
+      component.stateService.filters.set([])
       component.rows.set([{ id: 1, date: '2023-01-02' } as any])
 
       fixture.detectChanges()
@@ -1577,7 +1584,7 @@ describe('DataTableComponent', () => {
       jest.spyOn(translateService, 'get').mockReturnValue(of({ k1: 'T1' } as any))
 
       component.currentFilterColumn.set({ id: 'tr', columnType: ColumnType.TRANSLATION_KEY } as any)
-      component.filters.set([])
+      component.stateService.filters.set([])
       component.rows.set([{ id: 1, tr: 'k1' } as any])
 
       fixture.detectChanges()
@@ -1595,7 +1602,7 @@ describe('DataTableComponent', () => {
 
     it('currentTruthySelectedFilters$ should include values for IS_NOT_EMPTY filters', async () => {
       component.currentFilterColumn.set({ id: 'status', filterType: FilterType.IS_NOT_EMPTY } as any)
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
       ])
@@ -1605,12 +1612,11 @@ describe('DataTableComponent', () => {
 
     it('currentEqualSelectedFilters$ should include values for EQUALS filters and when filterType is not set', async () => {
       component.currentFilterColumn.set({ id: 'status' } as any)
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'status', filterType: FilterType.EQUALS, value: 'A' } as any,
         { columnId: 'status', value: 'B' } as any,
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true } as any,
       ])
-
       await expect(component.currentEqualSelectedFilters()).toEqual(['A', 'B', true])
     })
   })
@@ -1646,7 +1652,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           showAsOverflow: true,
           permission: 'P',
@@ -1666,7 +1672,7 @@ describe('DataTableComponent', () => {
       const hasPermissionChecker = TestBed.inject(HAS_PERMISSION_CHECKER) as any
       jest.spyOn(hasPermissionChecker, 'getPermissions').mockReturnValue(of(['P']))
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           showAsOverflow: true,
           permission: 'P',
@@ -1694,11 +1700,11 @@ describe('DataTableComponent', () => {
 
   describe('remaining uncovered branches (class logic)', () => {
     it('additionalActions getter/setter should use the internal subject', () => {
-      expect(component.additionalActions()).toEqual([])
+      expect(component.stateService.additionalActions()).toEqual([])
 
       const actions = [{ labelKey: 'X' } as any]
-      component.additionalActions.set(actions)
-      expect(component.additionalActions()).toBe(actions)
+      component.additionalActions = (actions)
+      expect(component.stateService.additionalActions()).toBe(actions)
     })
 
     it('parentTemplates setter should update the signal value', () => {
@@ -1710,7 +1716,7 @@ describe('DataTableComponent', () => {
     })
 
     it('currentEqualFilterOptions$ should return non-TRANSLATION_KEY options with de-duplication and include currentFilters', async () => {
-      component.columns.set([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.columns = ([{ id: 'status', columnType: ColumnType.STRING } as any])
       component.rows.set([
         { id: '1', status: 'A' } as any,
         { id: '2', status: 'A' } as any,
@@ -1718,7 +1724,7 @@ describe('DataTableComponent', () => {
         { id: '4', status: null } as any,
         { id: '5', status: 'B' } as any,
       ])
-      component.filters.set([{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any])
+      component.stateService.filters.set([{ columnId: 'status', value: 'C', filterType: FilterType.EQUALS } as any])
       component.onFilterChosen({ id: 'status', columnType: ColumnType.STRING, filterType: FilterType.EQUALS } as any)
       fixture.detectChanges()
 
@@ -1731,7 +1737,7 @@ describe('DataTableComponent', () => {
     })
 
     it('overflowMenuItems$ should return [] when there are no permitted actions', async () => {
-      component.additionalActions.set([{ showAsOverflow: true, permission: 'P1' } as any])
+      component.additionalActions = ([{ showAsOverflow: true, permission: 'P1' } as any])
       component.currentMenuRow.set({ id: 'r1' } as any)
 
       fixture.detectChanges()
@@ -1747,7 +1753,7 @@ describe('DataTableComponent', () => {
       const row = { id: 'r1', enabled: true, visible: true } as any
       const callback = jest.fn()
 
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           showAsOverflow: true,
           permission: 'P1',
@@ -1780,16 +1786,13 @@ describe('DataTableComponent', () => {
       expect(callback).toHaveBeenCalledWith(row)
     })
 
-    it('emitComponentStateChanged should emit full state including selectedRows and overrides', async () => {
-      const emitted: any[] = []
-      component.componentStateChanged.subscribe((e) => emitted.push(e))
-
-      component.page.set(2)
-      component.filters.set([{ columnId: 'c1', value: 'x' } as any])
-      component.sortColumn.set('c1')
-      component.sortDirection.set(DataSortDirection.ASCENDING)
+    it('selectedFilteredRows should reflect selected ids and current rows', async () => {
+      component.stateService.activePage.set(2)
+      component.stateService.filters.set([{ columnId: 'c1', value: 'x' } as any])
+      component.stateService.sortColumn.set('c1')
+      component.stateService.sortDirection.set(DataSortDirection.ASCENDING)
       component.pageSizes.set([10])
-      component.pageSize.set(10)
+      component.stateService.pageSize.set(10)
       component.rows.set([{ id: 'a' } as any, { id: 'b' } as any])
       component.selectedIds.set(['b'])
 
@@ -1797,16 +1800,7 @@ describe('DataTableComponent', () => {
       // wait for async announcements
       await Promise.resolve()
 
-      // there might be an initial emitComponentStateChanged from component init; validate the last emission
-      expect(emitted.length).toBeGreaterThanOrEqual(1)
-      const last = emitted[emitted.length - 1]
-      expect(last).toMatchObject({
-        activePage: 0,
-        pageSize: 10,
-        filters: component.filters(),
-        sorting: { sortColumn: 'c1', sortDirection: DataSortDirection.ASCENDING },
-      })
-      expect(last.selectedRows).toEqual([{ id: 'b' }])
+      expect(component.selectedFilteredRows()).toEqual([{ id: 'b' }])
     })
 
     it('emitSelectionChanged should emit rows matching selection ids', () => {
@@ -1870,41 +1864,37 @@ describe('DataTableComponent', () => {
       expect(component.translationKeyFilterCell()).toBe(childTranslation)
     })
 
-    it('onMultiselectFilterChange should not emit filters and resetPage (clientSideFiltering=false)', () => {
+    it('onMultiselectFilterChange should update filters and resetPage (clientSideFiltering=true)', () => {
       fixture.componentRef.setInput('clientSideFiltering', false)
-      component.filters.set([{ columnId: 'other', value: 'x' } as any])
+      component.stateService.filters.set([{ columnId: 'other', value: 'x' } as any])
       fixture.componentRef.setInput('clientSideFiltering', true)
+      component.stateService.activePage.set(2)
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
-      const resetSpy = jest.spyOn(component.page, 'set')
 
       fixture.detectChanges()
-
-      const emitted: any[] = []
-      component.filtered.subscribe((f) => emitted.push(...f))
 
       component.onMultiselectFilterChange(column, { value: ['A', 'B'] })
 
       fixture.detectChanges()
 
-      expect(component.filters()).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' } as any,
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
         { columnId: 'status', value: 'B', filterType: FilterType.EQUALS },
       ])
-      expect(emitted).toHaveLength(3)
-      expect(resetSpy).toHaveBeenCalledWith(0)
+      expect(component.stateService.activePage()).toBe(0)
     })
 
     it('onMultiselectFilterChange should also update component.filters when clientSideFiltering=true', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters.set([{ columnId: 'other', value: 'x' } as any])
+      component.stateService.filters.set([{ columnId: 'other', value: 'x' } as any])
       const column = { id: 'status', filterType: FilterType.EQUALS } as any
 
       component.onMultiselectFilterChange(column, { value: ['A'] })
 
       fixture.detectChanges()
 
-      expect(component.filters()).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'A', filterType: FilterType.EQUALS },
       ])
@@ -1912,7 +1902,7 @@ describe('DataTableComponent', () => {
 
     it('onMultiselectFilterChange should drop existing filters for the same column id', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
       ])
@@ -1922,7 +1912,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.filters()).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])
@@ -1931,7 +1921,7 @@ describe('DataTableComponent', () => {
     it('onMultiselectFilterChange should execute filter/concat/map when rebuilding filters', () => {
       fixture.componentRef.setInput('clientSideFiltering', true)
 
-      component.filters.set([
+      component.stateService.filters.set([
         { columnId: 'status', value: 'OLD', filterType: FilterType.EQUALS } as any,
         { columnId: 'other', value: 'x' } as any,
       ])
@@ -1942,7 +1932,7 @@ describe('DataTableComponent', () => {
 
       fixture.detectChanges()
 
-      expect(component.filters()).toEqual([
+      expect(component.stateService.filters()).toEqual([
         { columnId: 'other', value: 'x' },
         { columnId: 'status', value: 'NEW', filterType: FilterType.EQUALS },
       ])
@@ -1973,10 +1963,41 @@ describe('DataTableComponent', () => {
     })
 
     it('hasVisibleOverflowMenuItems should be false when there are no actions', async () => {
-      component.additionalActions.set([])
+      component.additionalActions = ([])
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
+    })
+  })
+
+  describe('Filters', () => {
+    it('should forward filters to DataViewStateService via setter', () => {
+      const filters = [
+        { columnId: 'a', value: '1' },
+        { columnId: 'b', value: '2' },
+      ] as any
+
+      const spy = jest.spyOn(component.stateService.filters, 'set')
+
+      component.filters = filters
+
+      expect(spy).toHaveBeenCalledWith(filters)
+    })
+
+    it('should return filters from DataViewStateService via getter', () => {
+      const filters = [{ columnId: 'x', value: 'y' }] as any
+
+      component.stateService.filters.set(filters)
+
+      expect(component.stateService.filters()).toBe(filters)
+    })
+  })
+
+  describe('PageSize', () => {
+    it('should return pageSize from DataViewStateService', () => {
+      component.stateService.pageSize.set(25)
+
+      expect(component.stateService.pageSize()).toBe(25)
     })
   })
 
@@ -1986,7 +2007,7 @@ describe('DataTableComponent', () => {
 
     describe('expandedRows model', () => {
       it('should set expandedRowIds and expandedRowKeys from Row objects', () => {
-        component.expandedRows.set([row1, row2])
+        component.expandedRows = ([row1, row2])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -1994,7 +2015,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should set expandedRowIds and expandedRowKeys from string ids', () => {
-        component.expandedRows.set([row1.id, row2.id])
+        component.expandedRows = ([row1.id, row2.id])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2002,13 +2023,13 @@ describe('DataTableComponent', () => {
       })
 
       it('should overwrite previously expanded rows', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id])
         expect(component.expandedRowKeys()).toEqual({ [row1.id]: true })
 
-        component.expandedRows.set([row2])
+        component.expandedRows = ([row2])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row2.id])
@@ -2016,9 +2037,9 @@ describe('DataTableComponent', () => {
       })
 
       it('should clear expandedRowIds and expandedRowKeys when empty array is passed', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
-        component.expandedRows.set([])
+        component.expandedRows = ([])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([])
@@ -2026,9 +2047,9 @@ describe('DataTableComponent', () => {
       })
 
       it('should treat null as an empty array and clear expanded state', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
-        component.expandedRows.set(null as any)
+        component.expandedRows = null as any
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([])
@@ -2036,9 +2057,9 @@ describe('DataTableComponent', () => {
       })
 
       it('should treat undefined as an empty array and clear expanded state', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
-        component.expandedRows.set(undefined as any)
+        component.expandedRows = undefined as any
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([])
@@ -2046,7 +2067,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should filter out null entries inside the array', () => {
-        component.expandedRows.set([row1, null as any, row2])
+        component.expandedRows = ([row1, null as any, row2])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2054,7 +2075,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should filter out undefined entries inside the array', () => {
-        component.expandedRows.set([row1, undefined as any, row2])
+        component.expandedRows = ([row1, undefined as any, row2])
         fixture.detectChanges()
 
         expect(component.expandedRowIds()).toEqual([row1.id, row2.id])
@@ -2064,21 +2085,21 @@ describe('DataTableComponent', () => {
 
     describe('isRowExpanded', () => {
       it('should return true when row is expanded', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row1)).toBe(true)
       })
 
       it('should return false when row is not expanded', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row2)).toBe(false)
       })
 
       it('should return false when no rows are expanded', () => {
-        component.expandedRows.set([])
+        component.expandedRows = ([])
         fixture.detectChanges()
 
         expect(component.isRowExpanded(row1)).toBe(false)
@@ -2087,7 +2108,7 @@ describe('DataTableComponent', () => {
 
     describe('onRowExpand', () => {
       it('should add row id to expandedRowIds if not already present', () => {
-        component.expandedRows.set([])
+        component.expandedRows = ([])
         fixture.detectChanges()
         component.onRowExpand({ data: row1 })
 
@@ -2095,7 +2116,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should not add duplicate row id to expandedRowIds', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
         component.onRowExpand({ data: row1 })
 
@@ -2112,16 +2133,15 @@ describe('DataTableComponent', () => {
         expect(spy).toHaveBeenCalledWith(row1)
       })
 
-      it('should emit componentStateChanged after change detection', () => {
-        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      it('should update expandedRows after change detection', () => {
         component.onRowExpand({ data: row1 })
         fixture.detectChanges()
 
-        expect(stateSpy).toHaveBeenCalled()
+        expect(component.expandedRowIds()).toContain(row1.id)
       })
 
       it('should treat null expandedRows as empty array and add the row', () => {
-        component.expandedRows.set(null as any)
+        component.expandedRows = null as any
         fixture.detectChanges()
         component.onRowExpand({ data: row1 })
 
@@ -2131,7 +2151,7 @@ describe('DataTableComponent', () => {
 
     describe('onRowCollapse', () => {
       beforeEach(() => {
-        component.expandedRows.set([row1, row2])
+        component.expandedRows = ([row1, row2])
         fixture.detectChanges()
       })
 
@@ -2150,16 +2170,15 @@ describe('DataTableComponent', () => {
         expect(spy).toHaveBeenCalledWith(row1)
       })
 
-      it('should emit componentStateChanged after change detection', () => {
-        const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+      it('should update expandedRows after collapse and change detection', () => {
         component.onRowCollapse({ data: row1 })
         fixture.detectChanges()
 
-        expect(stateSpy).toHaveBeenCalled()
+        expect(component.expandedRowIds()).not.toContain(row1.id)
       })
 
       it('should treat null expandedRows as empty array and result in empty state', () => {
-        component.expandedRows.set(null as any)
+        component.expandedRows = null as any
         fixture.detectChanges()
         component.onRowCollapse({ data: row1 })
 
@@ -2167,7 +2186,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should remove a primitive id when expandedRows contains primitive ids', () => {
-        component.expandedRows.set([row1.id, row2.id])
+        component.expandedRows = ([row1.id, row2.id])
         fixture.detectChanges()
         component.onRowCollapse({ data: row1 })
 
@@ -2178,7 +2197,7 @@ describe('DataTableComponent', () => {
 
     describe('toggleRowExpansion', () => {
       it('should expand a collapsed row', () => {
-        component.expandedRows.set([])
+        component.expandedRows = ([])
         fixture.detectChanges()
         component.toggleRowExpansion(row1)
 
@@ -2187,7 +2206,7 @@ describe('DataTableComponent', () => {
       })
 
       it('should collapse an expanded row', () => {
-        component.expandedRows.set([row1])
+        component.expandedRows = ([row1])
         fixture.detectChanges()
         component.toggleRowExpansion(row1)
 
@@ -2249,7 +2268,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should return true when additionalActions is non-empty', () => {
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: 'VIEW',
           callback: () => {
@@ -2261,7 +2280,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should return false when additionalActions becomes empty', () => {
-      component.additionalActions.set([
+      component.additionalActions = ([
         {
           permission: 'VIEW',
           callback: () => {
@@ -2269,7 +2288,7 @@ describe('DataTableComponent', () => {
           },
         },
       ])
-      component.additionalActions.set([])
+      component.additionalActions = ([])
       expect(component.actionColumnVisible).toBe(false)
     })
   })

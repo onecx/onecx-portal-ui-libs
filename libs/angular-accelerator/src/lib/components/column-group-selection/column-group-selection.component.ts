@@ -1,5 +1,6 @@
-import { Component, OnInit, computed, effect, input, model, output } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, OnInit, output } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type GroupSelectionChangedEvent = { activeColumns: DataTableColumn[]; groupKey: string }
 export interface ColumnGroupSelectionComponentState {
@@ -14,9 +15,18 @@ export interface ColumnGroupSelectionComponentState {
   styleUrls: ['./column-group-selection.component.scss'],
 })
 export class ColumnGroupSelectionComponent implements OnInit {
-  readonly selectedGroupKey = model<string>('')
+  readonly stateService = inject(DataViewStateService)
 
-  readonly columns = input<DataTableColumn[]>([])
+  @Input()
+  set selectedGroupKey(value: string) {
+    this.stateService.activeColumnGroupKey.set(value)
+  }
+
+  @Input()
+  set columns(value: DataTableColumn[]) {
+    this.stateService.columns.set(value)
+  }
+
   readonly placeholderKey = input<string>('')
   readonly defaultGroupKey = input<string>('')
   readonly customGroupKey = input<string>('')
@@ -25,21 +35,21 @@ export class ColumnGroupSelectionComponent implements OnInit {
   readonly componentStateChanged = output<ColumnGroupSelectionComponentState>()
 
   readonly allGroupKeys = computed<string[]>(() => {
-    const columns = this.columns()
-    const selectedGroupKey = this.selectedGroupKey()
+    const columns = this.stateService.columns()
+    const selectedGroupKey = this.stateService.activeColumnGroupKey()
     const defaultGroupKey = this.defaultGroupKey()
 
     return columns
       .flatMap((c) => c.predefinedGroupKeys || [])
       .concat([defaultGroupKey])
-      .concat([selectedGroupKey])
+      .concat(selectedGroupKey ? [selectedGroupKey] : [])
       .filter((value) => !!value)
       .filter((value, index, self) => self.indexOf(value) === index && value != null)
   })
 
   constructor() {
     effect(() => {
-      const selected = this.selectedGroupKey()
+      const selected = this.stateService.activeColumnGroupKey()
       const custom = this.customGroupKey()
 
       if (selected === custom) {
@@ -51,7 +61,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    const selected = this.selectedGroupKey()
+    const selected = this.stateService.activeColumnGroupKey()
 
     if (selected === this.customGroupKey()) {
       this.componentStateChanged.emit({
@@ -60,10 +70,8 @@ export class ColumnGroupSelectionComponent implements OnInit {
       return
     }
 
-    const activeColumns = this.columns().filter((c) =>
-      c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey())
-    )
-
+    const activeColumns = this.stateService.columns().filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
+    
     this.componentStateChanged.emit({
       activeColumnGroupKey: selected,
       displayedColumns: activeColumns,
@@ -75,10 +83,9 @@ export class ColumnGroupSelectionComponent implements OnInit {
       return
     }
 
-    // keep ngModel / model() in sync (PrimeNG also updates via ngModel)
-    this.selectedGroupKey.set(event.value)
+    this.stateService.activeColumnGroupKey.set(event.value)
 
-    const activeColumns = this.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
+    const activeColumns = this.stateService.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
 
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
     this.componentStateChanged.emit({

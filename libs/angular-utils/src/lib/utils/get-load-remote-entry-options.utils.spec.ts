@@ -208,6 +208,18 @@ describe('get-load-remote-entry-options', () => {
       expect(result).toBe(mockShellInstance)
     })
 
+    it('should match instances named "onecx-shell-ui" or "onecx_shell_ui" and reject others', () => {
+      delete (globalThis as any).onecxFederationInstance
+      mockGetInstance.mockReturnValue(null)
+
+      getShellMfInstance()
+
+      const predicate = mockGetInstance.mock.calls[0][0] as (instance: { name: string }) => boolean
+      expect(predicate({ name: 'onecx-shell-ui' })).toBe(true)
+      expect(predicate({ name: 'onecx_shell_ui' })).toBe(true)
+      expect(predicate({ name: 'some-other-mf' })).toBe(false)
+    })
+
     it('should return null when getInstance cannot find any instance', () => {
       delete (globalThis as any).onecxFederationInstance
       mockGetInstance.mockReturnValue(null)
