@@ -1,3 +1,64 @@
+## [8.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.6.0...v8.6.1) (2026-06-09)
+
+### Bug Fixes
+
+* temporarily fix dynamic require error ([#1524](https://github.com/onecx/onecx-portal-ui-libs/issues/1524)) ([113dd9d](https://github.com/onecx/onecx-portal-ui-libs/commit/113dd9d2d95c2904329ae6c825304e0df289c024))
+
+## [8.6.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.5.0...v8.6.0) (2026-06-09)
+
+### Features
+
+* bump release version ([#1523](https://github.com/onecx/onecx-portal-ui-libs/issues/1523)) ([5255d68](https://github.com/onecx/onecx-portal-ui-libs/commit/5255d68686d8b88bacf0239e46041906d55c42ac))
+
+## [8.5.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.2...v8.5.0) (2026-06-09)
+
+### Features
+
+* v8 build-utils added ([#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513)) ([6177a22](https://github.com/onecx/onecx-portal-ui-libs/commit/6177a22754ae87c88802c27a85e1d9ab1ed15cfd))
+
+### Bug Fixes
+
+* generator error ([#1507](https://github.com/onecx/onecx-portal-ui-libs/issues/1507)) ([8d628b8](https://github.com/onecx/onecx-portal-ui-libs/commit/8d628b8c02862df57fb63f5dd7286cfc1561ae98))
+* improve shell instance fallback logic ([#1519](https://github.com/onecx/onecx-portal-ui-libs/issues/1519)) ([dfdf027](https://github.com/onecx/onecx-portal-ui-libs/commit/dfdf02792c6bff68d4c82a7b4ab209aa5b7d3bd1))
+* temporarily revert "feat: v8 build-utils added ([#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513))" ([#1521](https://github.com/onecx/onecx-portal-ui-libs/issues/1521)) ([c81c10b](https://github.com/onecx/onecx-portal-ui-libs/commit/c81c10bd87d785e785f351ccf37b1035ed0b908f))
+
+## [8.4.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.1...v8.4.2) (2026-06-01)
+
+### Bug Fixes
+
+* dynamic scoping adjustments (v8) ([#1501](https://github.com/onecx/onecx-portal-ui-libs/issues/1501)) ([d376b52](https://github.com/onecx/onecx-portal-ui-libs/commit/d376b52efda2a4f9fef767e1507aa0d79608c743))
+* missing translation flickering issue ([#1495](https://github.com/onecx/onecx-portal-ui-libs/issues/1495)) ([0f92709](https://github.com/onecx/onecx-portal-ui-libs/commit/0f927096a2aac5018bea738d0fce617dffaada73))
+
+## [8.4.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.4.0...v8.4.1) (2026-06-01)
+
+### Bug Fixes
+
+* add missing export for get-onecx-shared-library-config ([#1499](https://github.com/onecx/onecx-portal-ui-libs/issues/1499)) ([40fc529](https://github.com/onecx/onecx-portal-ui-libs/commit/40fc529cf77b5fa281a1ec6b0b7653533e7538b4))
+
+## [8.4.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.1...v8.4.0) (2026-06-01)
+
+### Features
+
+* utility to generate packages ([#1475](https://github.com/onecx/onecx-portal-ui-libs/issues/1475)) ([f04eadf](https://github.com/onecx/onecx-portal-ui-libs/commit/f04eadf6004d2f7b1405ac9498fcc24c550160f9))
+
+## [8.3.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.3.0...v8.3.1) (2026-05-26)
+
+### Bug Fixes
+
+* search header viewMode efffect and storybook ([#1453](https://github.com/onecx/onecx-portal-ui-libs/issues/1453)) ([3eda3ac](https://github.com/onecx/onecx-portal-ui-libs/commit/3eda3ac05a103f79a35207672d75b1418b244b89))
+
+## [8.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.2...v8.3.0) (2026-05-22)
+
+### Features
+
+* shared shell federation instance util ([#1444](https://github.com/onecx/onecx-portal-ui-libs/issues/1444)) ([#1467](https://github.com/onecx/onecx-portal-ui-libs/issues/1467)) ([77151a0](https://github.com/onecx/onecx-portal-ui-libs/commit/77151a090493a868e95043300e9847310e234069))
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([#1470](https://github.com/onecx/onecx-portal-ui-libs/issues/1470)) ([409cb20](https://github.com/onecx/onecx-portal-ui-libs/commit/409cb20ca8cf3d83e9eaef3a6395478e920c1870))
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1462](https://github.com/onecx/onecx-portal-ui-libs/issues/1462)) ([f5f3ff0](https://github.com/onecx/onecx-portal-ui-libs/commit/f5f3ff03ead0988c0240859ffe121c2bbc4daaff))
+* generator related conversion ([#1465](https://github.com/onecx/onecx-portal-ui-libs/issues/1465)) ([2cd86f0](https://github.com/onecx/onecx-portal-ui-libs/commit/2cd86f01d2ad6c194897db5e3375846655ca0757))
+
 ## [8.2.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.2.1...v8.2.2) (2026-05-21)
 
 ### Bug Fixes
