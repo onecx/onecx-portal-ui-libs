@@ -236,7 +236,7 @@ describe('FilterViewComponent (class logic)', () => {
         jest.spyOn(translateService, 'get').mockReturnValue(of('no-results'))
         const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
   
-        component.filters.set([])
+        component.filters = []
         fixture.detectChanges()
   
         await Promise.resolve()
@@ -244,7 +244,7 @@ describe('FilterViewComponent (class logic)', () => {
         expect(translateService.get).toHaveBeenCalledWith('OCX_FILTER_VIEW.NO_FILTERS')
         expect(announceSpy).toHaveBeenCalledWith('no-results')
 
-        component.filters.set(undefined as any)
+        component.filters = undefined as any
         fixture.detectChanges()
   
         await Promise.resolve()
@@ -260,7 +260,7 @@ describe('FilterViewComponent (class logic)', () => {
         jest.spyOn(translateService, 'get').mockReturnValue(of('some-results'))
         const announceSpy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()        
   
-        component.filters.set([{ columnId: 'c1', filterType: 'equals', value: 'v1' } as Filter])
+        component.filters = [{ columnId: 'c1', filterType: 'equals', value: 'v1' } as Filter]
         fixture.detectChanges()
   
         await Promise.resolve()

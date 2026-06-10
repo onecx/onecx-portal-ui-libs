@@ -305,7 +305,7 @@ export class FilterViewComponent {
   }
 
   private annouceFilterCount() {
-    const currentCount = this.filters()?.length ?? 0
+    const currentCount = this.stateService.filters()?.length ?? 0
 
     if (currentCount === 0) {
       firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')).then(
