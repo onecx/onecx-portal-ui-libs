@@ -1,3 +1,27 @@
+## [9.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.5...v9.0.0-rc.6) (2026-06-09)
+
+### Features
+
+* bump release version ([#1522](https://github.com/onecx/onecx-portal-ui-libs/issues/1522)) ([5493376](https://github.com/onecx/onecx-portal-ui-libs/commit/5493376f8f4db876eb0a01c118af0966f949f546))
+
+## [9.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.4...v9.0.0-rc.5) (2026-06-09)
+
+### Features
+
+* add fallbackClass to requestIconAsync ([#1388](https://github.com/onecx/onecx-portal-ui-libs/issues/1388)) ([e0bf9ea](https://github.com/onecx/onecx-portal-ui-libs/commit/e0bf9eadf6e60ec49e058d095f061ba66e5a73b6))
+* enhance state management in InteractiveDataView ([#1353](https://github.com/onecx/onecx-portal-ui-libs/issues/1353)) ([db2e042](https://github.com/onecx/onecx-portal-ui-libs/commit/db2e0424df72a2278d53654605d41110a6b8bd57))
+* shared shell federation instance util ([#1444](https://github.com/onecx/onecx-portal-ui-libs/issues/1444)) ([dfe1497](https://github.com/onecx/onecx-portal-ui-libs/commit/dfe14974bdbbb4478ddd5e0330f30ba3e1895eb6))
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([#1471](https://github.com/onecx/onecx-portal-ui-libs/issues/1471)) ([12be533](https://github.com/onecx/onecx-portal-ui-libs/commit/12be533aa62198418ed874649db378ccf1fae58b))
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1464](https://github.com/onecx/onecx-portal-ui-libs/issues/1464)) ([d1b5b27](https://github.com/onecx/onecx-portal-ui-libs/commit/d1b5b2701a781322caa3d73f24bd3775ec0f2f79))
+* dynamic scoping adjustments ([#1500](https://github.com/onecx/onecx-portal-ui-libs/issues/1500)) ([08bd4f0](https://github.com/onecx/onecx-portal-ui-libs/commit/08bd4f0fa2ae1654de431720033ab2a039eafb70))
+* improve shell instance fallback logic ([#1518](https://github.com/onecx/onecx-portal-ui-libs/issues/1518)) ([4a4c949](https://github.com/onecx/onecx-portal-ui-libs/commit/4a4c94963f35fcb052df32eb98adaf04655ae826))
+* missing translation flickering issue ([#1496](https://github.com/onecx/onecx-portal-ui-libs/issues/1496)) ([863f903](https://github.com/onecx/onecx-portal-ui-libs/commit/863f903fdb3fdd9fe7014e8cff8962632f332fe2))
+* remove ng-reflect and update harnesses ([#1403](https://github.com/onecx/onecx-portal-ui-libs/issues/1403)) ([ca79e9d](https://github.com/onecx/onecx-portal-ui-libs/commit/ca79e9dd955df29809e3a804f49da6c88384f00e))
+* search header viewMode efffect and storybook ([#1453](https://github.com/onecx/onecx-portal-ui-libs/issues/1453)) ([#1479](https://github.com/onecx/onecx-portal-ui-libs/issues/1479)) ([04cb74b](https://github.com/onecx/onecx-portal-ui-libs/commit/04cb74be2a21260d2a26792e242fe0afa2ee5659))
+
 ## [9.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.3...v9.0.0-rc.4) (2026-05-21)
 
 ### Bug Fixes

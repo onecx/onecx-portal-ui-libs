@@ -3,23 +3,23 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
   let fixture: ComponentFixture<CustomGroupColumnSelectorComponent>
-
+  
   const makeColumn = (id: string): DataTableColumn => ({ id, nameKey: id }) as any
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
       imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
-      providers: [provideTranslateTestingService({})],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
@@ -53,7 +53,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const c3 = makeColumn('c3')
 
       fixture.componentRef.setInput('columns', [c1, c2, c3])
-      component.displayedColumns.set([c1, c3])
+      fixture.componentRef.setInput('displayedColumns', [c1, c3])
       fixture.componentRef.setInput('frozenActionColumn', true)
       fixture.componentRef.setInput('actionColumnPosition', 'left')
 
@@ -159,6 +159,19 @@ describe('CustomGroupColumnSelectorComponent', () => {
         },
         displayedColumns: [makeColumn('c1')],
       })
+    })
+  })
+
+  describe('actionColumnPosition and frozenActionColumn setter', () => {
+    it('should call setActionColumnConfig with new position value and current frozenActionColumn', () => {
+      const frozenSpy = jest.spyOn(component.stateService.actionColumnConfigFrozen, 'set')
+      const positionSpy = jest.spyOn(component.stateService.actionColumnConfigPosition, 'set')
+
+      component.stateService.actionColumnConfigFrozen.set(true)
+      component.stateService.actionColumnConfigPosition.set('left')
+
+      expect(frozenSpy).toHaveBeenCalledWith(true)
+      expect(positionSpy).toHaveBeenCalledWith('left')
     })
   })
 })
