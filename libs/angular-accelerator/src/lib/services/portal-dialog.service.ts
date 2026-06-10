@@ -210,6 +210,7 @@ export type DialogState<T> = {
 
 export type PortalDialogConfig = {
   showXButton?: boolean
+  closable?: boolean
   customButtons?: ButtonDialogCustomButtonDetails[]
   autoFocusButton?: DialogButton
   autoFocusButtonCustomId?: string
@@ -438,9 +439,8 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
-    const dialogOptions: PortalDialogConfig =
-    typeof extrasOrShowXButton === 'object' ? extrasOrShowXButton : { showXButton: extrasOrShowXButton }
-    dialogOptions.showXButton = this.getShowXStatus(secondaryButtonTranslationKeyOrDetails, extrasOrShowXButton)
+    const isObject = typeof extrasOrShowXButton === 'object'
+    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -471,7 +471,7 @@ export class PortalDialogService implements OnDestroy {
               buttonClicked$: new Subject<DialogState<unknown>>(),
             } satisfies PortalDialogServiceData,
           },
-          closable: dialogOptions.showXButton,
+          closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
           ...dialogOptions,
           focusOnShow: false,
@@ -624,28 +624,19 @@ export class PortalDialogService implements OnDestroy {
     return obj instanceof Type
   }
 
-  private getShowXStatus(secondaryButtonTranslationKeyOrDetails: TranslationKey | ButtonDialogButtonDetails | undefined,
-    extrasOrShowXButton: PortalDialogConfig | boolean): boolean {
-    const hasSecondaryButton = secondaryButtonTranslationKeyOrDetails !== undefined
-    let hasCustomButton = false
-    let showXButton = false
-    if (typeof extrasOrShowXButton === 'object') {
-      if ('showXButton' in extrasOrShowXButton) {
-        showXButton = extrasOrShowXButton.showXButton ?? false
-      }
-
-      if (extrasOrShowXButton.customButtons && extrasOrShowXButton.customButtons.length > 0) {
-        hasCustomButton = true
+  private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
+    let showXButton;
+    if (configuration) {
+      if (Object.prototype.hasOwnProperty.call(configuration, 'closable')) {
+        showXButton = configuration.closable
+      } else {
+        showXButton = configuration.showXButton
+        showXButton = showXButton && isSecondaryButtonPresent
       }
     } else {
-      showXButton = extrasOrShowXButton
+      showXButton = configuration
     }
-    if (showXButton) {
-      return showXButton
-    } else {
-      const showXButtonStatus = !hasSecondaryButton && !hasCustomButton
-      return showXButtonStatus
-    }
+    return Boolean(showXButton)
   }
 }
 

@@ -383,7 +383,7 @@ export const CustomButtonsWithAutofocus = {
 }
 
 
-export const noSecondaryButton = {
+export const withClosableOption = {
   render: (args: any) => ({
     props: {
       ...args,
@@ -406,7 +406,7 @@ export const noSecondaryButton = {
     },
     secondaryKey: undefined,
     extras: {
-      showXButton: false,
+      closable: true
     }
   }
 }
