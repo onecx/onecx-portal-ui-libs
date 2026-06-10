@@ -515,7 +515,6 @@ export class PortalDialogService implements OnDestroy {
           )
           return
         }
-        this.dialogService.getInstance(dialogRef)
         dialogRef.close()
         this.removeDialogFromHtml(dialogComponent)
       })
