@@ -1005,5 +1005,26 @@ describe('PortalDialogService', () => {
         })
       )
     })
+
+    it('should not show close button when configuration is empty', async () => {
+      jest.spyOn(pDialogService, 'open')
+
+      fixture.componentInstance.show(
+        'title',
+        {
+          type: DialogPrimaryButtonDisabledComponent,
+        },
+        'button1',
+        'button2',
+        {}
+      )
+
+      expect(pDialogService.open).toHaveBeenCalledWith(
+        DialogContentComponent,
+        expect.objectContaining({
+          closable: false
+        })
+      )
+    })
   })
 })

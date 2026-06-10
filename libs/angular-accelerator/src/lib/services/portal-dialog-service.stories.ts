@@ -404,7 +404,6 @@ export const withClosableOption = {
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
-    secondaryKey: undefined,
     extras: {
       closable: true
     }

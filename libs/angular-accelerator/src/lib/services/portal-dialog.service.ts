@@ -440,7 +440,7 @@ export class PortalDialogService implements OnDestroy {
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
     const isObject = typeof extrasOrShowXButton === 'object'
-    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton }
+    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -625,16 +625,11 @@ export class PortalDialogService implements OnDestroy {
   }
 
   private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
-    let showXButton;
-    if (configuration) {
-      if (Object.prototype.hasOwnProperty.call(configuration, 'closable')) {
-        showXButton = configuration.closable
-      } else {
-        showXButton = configuration.showXButton
-        showXButton = showXButton && isSecondaryButtonPresent
-      }
+    let showXButton
+    if (Object.hasOwn(configuration, 'closable')) {
+      showXButton = configuration.closable
     } else {
-      showXButton = configuration
+      showXButton = configuration.showXButton && isSecondaryButtonPresent
     }
     return Boolean(showXButton)
   }
