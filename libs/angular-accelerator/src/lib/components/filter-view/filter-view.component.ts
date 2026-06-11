@@ -14,7 +14,7 @@ import {
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
-import { combineLatest, debounceTime, map } from 'rxjs'
+import { combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from 'primeng/api'
 import { findTemplate } from '../../utils/template.utils'
@@ -25,6 +25,8 @@ import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { Button } from 'primeng/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { TranslateService } from '@ngx-translate/core'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -47,6 +49,9 @@ export interface FilterViewComponentState {
   styleUrls: ['./filter-view.component.scss'],
 })
 export class FilterViewComponent {
+  readonly translateService = inject(TranslateService)
+  readonly liveAnnouncer = inject(LiveAnnouncer)
+  
   ColumnType = ColumnType
   FilterType = FilterType
 
@@ -214,6 +219,7 @@ export class FilterViewComponent {
       const filters = this.stateService.filters()
       this.filtered.emit(filters)
       this.componentStateChanged.emit({ filters })
+      this.annouceFilterCount()
     })
   }
 
@@ -296,5 +302,24 @@ export class FilterViewComponent {
       id: row.id,
       [row['valueColumnId'] as string]: row['value'],
     }
+  }
+
+  private annouceFilterCount() {
+    const currentCount = this.stateService.filters()?.length ?? 0
+
+    if (currentCount === 0) {
+      firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')).then(
+        (translatedText: string) => {
+          this.liveAnnouncer.announce(translatedText)
+        }
+      )
+      return
+    }
+
+    firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })).then(
+      (translatedText: string) => {
+        this.liveAnnouncer.announce(translatedText)
+      }
+    )
   }
 }

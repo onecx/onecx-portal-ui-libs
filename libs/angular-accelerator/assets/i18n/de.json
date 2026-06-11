@@ -125,6 +125,7 @@
   },
   "OCX_FILTER_VIEW": {
     "NO_FILTERS": "Keine Filter ausgewählt",
+    "SELECTED_FILTERS_COUNT": "{{results}} aktive Filters.",
     "RESET_FILTERS_BUTTON": {
       "ARIA_LABEL": "Angewandte Filter zurücksetzen",
       "DETAIL": "Angewandte Filter zurücksetzen"
