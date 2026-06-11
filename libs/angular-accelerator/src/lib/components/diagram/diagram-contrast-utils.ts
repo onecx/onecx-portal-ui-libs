@@ -1,7 +1,7 @@
-const mediaQueryForHighContrast = globalThis.matchMedia('(forced-colors: active)')
+const highContrastSelector = globalThis.matchMedia('(forced-colors: active)')
 
 export function hasHighContrast(): boolean {
-  return mediaQueryForHighContrast.matches
+  return highContrastSelector.matches
 }
 
 export function getLabelColor(highContrast: boolean): string {
@@ -10,9 +10,9 @@ export function getLabelColor(highContrast: boolean): string {
 }
 
 export function addHighContrastListener(handler: () => void): void {
-  mediaQueryForHighContrast.addEventListener('change', handler)
+  highContrastSelector.addEventListener('change', handler)
 }
 
 export function removeHighContrastListener(handler: () => void): void {
-  mediaQueryForHighContrast.removeEventListener('change', handler)
+  highContrastSelector.removeEventListener('change', handler)
 }

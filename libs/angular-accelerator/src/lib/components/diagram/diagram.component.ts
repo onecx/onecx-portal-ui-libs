@@ -152,14 +152,12 @@ export class DiagramComponent implements OnDestroy {
       },
       maintainAspectRatio: false,
       ...(this.diagramType() === DiagramType.VERTICAL_BAR && {
-        plugins: { legend: {labels: { color: labelColor } } },
         scales: { y: { ticks: { precision: 0, color: labelColor } }, x: { ticks: { color: labelColor } } },
       }),
       ...(this.diagramType() === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
-        plugins: { legend: {labels: { color: labelColor } } },
         scales: { x: { ticks: { precision: 0, color: labelColor } }, y: { ticks: { color: labelColor } } },
-      }),
+      })
     })
   }
 

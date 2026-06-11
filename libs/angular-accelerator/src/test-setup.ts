@@ -2,8 +2,12 @@ import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone'
 setupZoneTestEnv()
 
 let forcedColorsActive = false
+// Shared listener store for the full Jest runtime. Tests/components are expected
+// to remove listeners they register to avoid cross-test leakage.
 const forcedColorsListeners = new Set<(event: MediaQueryListEvent) => void>()
 
+// Minimal MediaQueryList mock for '(forced-colors: active)'. It supports the
+// listener APIs used in tests, but does not try to emulate full browser behavior.
 const forcedColorsMediaQuery = {
   media: '(forced-colors: active)',
   get matches() {
@@ -28,6 +32,7 @@ const forcedColorsMediaQuery = {
   }),
 } as unknown as MediaQueryList
 
+// Global monkey patch for matchMedia used by all tests in this project.
 Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => {
@@ -45,6 +50,7 @@ Object.defineProperty(globalThis, 'matchMedia', {
   }),
 })
 
+// Test helper to toggle contrast mode and notify current listeners.
 Object.defineProperty(globalThis, '__setForcedColorsActive', {
   writable: true,
   value: (active: boolean) => {
