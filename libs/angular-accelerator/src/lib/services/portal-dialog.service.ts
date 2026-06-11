@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of } from 'rxjs'
+import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -235,6 +235,7 @@ export type PortalDialogConfig = {
   minimizeIcon?: string
   position?: string
   closeAriaLabel?: string
+  initiatorRef?: HTMLElement
 }
 
 export interface PortalDialogServiceData {
@@ -442,7 +443,6 @@ export class PortalDialogService implements OnDestroy {
     const isObject = typeof extrasOrShowXButton === 'object'
     const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
-
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
@@ -454,10 +454,11 @@ export class PortalDialogService implements OnDestroy {
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
         autoFocusButton: dialogOptions.autoFocusButton,
-        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId
       },
       componentData: componentToRender.inputs,
     }
+
     return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
       mergeMap((dialogTitle) => {
         const dialogRef = this.dialogService.open(DialogContentComponent, {
@@ -493,7 +494,10 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose
+        return dialogRef.onClose.pipe(tap(() => {
+          if(isObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
+        })
+        )
       })
     )
   }
@@ -622,6 +626,14 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
+  }
+
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const initiator = dialogOptions.initiatorRef
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator)) return
+    else {
+      initiator.focus()
+    }
   }
 
   private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
