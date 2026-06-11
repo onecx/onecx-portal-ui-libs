@@ -42,6 +42,7 @@ export interface ButtonDialogConfig {
   customButtons?: ButtonDialogCustomButtonDetails[]
   autoFocusButton?: DialogButton
   autoFocusButtonCustomId?: string
+  initiatorRef?: HTMLElement
 }
 
 export interface ButtonDialogData {

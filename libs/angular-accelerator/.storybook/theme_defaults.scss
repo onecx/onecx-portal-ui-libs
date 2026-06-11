@@ -46,3 +46,8 @@ $primaryColorRGB: 39, 75, 95; //rgb for #274b5f
   --primary-color: rgb(#{$primaryColorRGB});
   --secondary-color: #1c4257;
 }
+
+*:focus {
+  outline: 3px solid #333 !important;
+  outline-offset: 1px !important;
+}
