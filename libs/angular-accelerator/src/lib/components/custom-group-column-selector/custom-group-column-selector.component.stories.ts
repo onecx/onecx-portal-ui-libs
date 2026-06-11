@@ -15,6 +15,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import { TooltipModule } from 'primeng/tooltip'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
@@ -41,6 +42,7 @@ const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelector
         StorybookTranslateModule,
         OcxTooltipDirective
       ],
+      providers: [DataViewStateService]
     }),
   ],
 }
