@@ -1,15 +1,18 @@
 import { dataMfeElementAttribute, dataNoPortalLayoutStylesAttribute, dataStyleIdAttribute, dataStyleIsolationAttribute, isCssScopeRuleSupported} from "@onecx/angular-utils";
 import { 
-    dataAppStylesAttribute
+    dataAppStylesAttribute,
+    dataStyleTypeAttribute
 } from "../index";
 
 /**
  * Get the style element with application styles based on a scope.
  * @param scopeId - scope id related to the app
+ * @param styleType - optional style type to filter by
  * @returns {HTMLStyleElement | null} the style element related for a given scope
  */
-export function getAppStyleByScope(scopeId: string): HTMLStyleElement | null {
-  return document.head.querySelector<HTMLStyleElement>(`style[${dataAppStylesAttribute}="${scopeId}"]`)
+export function getAppStyleByScope(scopeId: string, styleType?: string): HTMLStyleElement | null {
+  const styleTypeSelector = styleType ? `[${dataAppStylesAttribute}="${scopeId}"][${dataStyleTypeAttribute}="${styleType}"]` : `[${dataAppStylesAttribute}="${scopeId}"]`
+  return document.head.querySelector<HTMLStyleElement>(`style${styleTypeSelector}`)
 }
 
 /**

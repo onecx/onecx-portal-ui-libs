@@ -41,6 +41,20 @@ export const dataShellStylesKey = 'shellStyles'
 export const dataAppStylesAttribute = 'data-app-styles'
 
 /**
+ * @constant {string} dataStyleTypeKey
+ * @description Marks style element as one containing styles for a given style type (e.g. application styles, theme styles etc.).
+ * Such style sheet contains variables applied globally and CSS scoped to a given scope until style isolation.
+ * (e.g. data-style-type="theme")
+ */
+export const dataStyleTypeKey = 'styleType'
+
+/**
+ * @constant {string} dataStyleTypeAttribute
+ * @description HTML attribute for style type. It is used together with dataAppStylesAttribute to distinguish styles for different style types (e.g. application styles, theme styles etc.).
+ */
+export const dataStyleTypeAttribute = 'data-style-type'
+
+/**
  * @constant {string} dataMfeStylesAttribute
  * @description HTML attribute for mfeStyles. See {@link dataMfeStylesKey} for more details.
  */
