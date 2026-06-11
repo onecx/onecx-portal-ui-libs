@@ -210,6 +210,7 @@ export type DialogState<T> = {
 
 export type PortalDialogConfig = {
   showXButton?: boolean
+  closable?: boolean
   customButtons?: ButtonDialogCustomButtonDetails[]
   autoFocusButton?: DialogButton
   autoFocusButtonCustomId?: string
@@ -439,13 +440,8 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
-    const isExtrasObject = typeof extrasOrShowXButton === 'object'
-    const dialogOptions: PortalDialogConfig =
-      isExtrasObject
-        ? extrasOrShowXButton
-        : {
-          showXButton: extrasOrShowXButton,
-        }
+    const isObject = typeof extrasOrShowXButton === 'object'
+    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const dynamicDialogDataConfig: ButtonDialogData = {
@@ -476,7 +472,7 @@ export class PortalDialogService implements OnDestroy {
               buttonClicked$: new Subject<DialogState<unknown>>(),
             } satisfies PortalDialogServiceData,
           },
-          closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
           ...dialogOptions,
           focusOnShow: false,
@@ -499,7 +495,7 @@ export class PortalDialogService implements OnDestroy {
           )
         }
         return dialogRef.onClose.pipe(tap(() => {
-          if(isExtrasObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
+          if(isObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
         })
         )
       })
@@ -638,6 +634,16 @@ export class PortalDialogService implements OnDestroy {
     else {
       initiator.focus()
     }
+  }
+
+  private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
+    let showXButton
+    if (Object.hasOwn(configuration, 'closable')) {
+      showXButton = configuration.closable
+    } else {
+      showXButton = configuration.showXButton && isSecondaryButtonPresent
+    }
+    return Boolean(showXButton)
   }
 }
 
