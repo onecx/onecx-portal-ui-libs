@@ -360,6 +360,26 @@ export const ListWithOnlyAdditionalOverflowActions = {
   },
 }
 
+export const ListWithRouterLinkOverflowActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-overflow-link',
+      },
+    ],
+  },
+}
+
 export const ListWithPageSizes = {
   render: (args: any) => ({
     props: { ...args, ...defaultActionsArgs },

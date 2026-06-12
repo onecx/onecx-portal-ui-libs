@@ -199,6 +199,29 @@ export const WithCustomButtons = {
   },
 }
 
+export const WithRouterLinkActions = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    disableDefaultActions: true,
+    showBreadcrumbs: false,
+    actions: [
+      {
+        label: 'Inline Router Link',
+        routerLink: '/page-header-inline-link',
+        show: 'always',
+      },
+      {
+        label: 'Overflow Router Link',
+        routerLink: '/page-header-overflow-link',
+        show: 'asOverflow',
+      },
+    ],
+  },
+}
+
 export const WithBreadcrumbs = {
   render: Template,
 
