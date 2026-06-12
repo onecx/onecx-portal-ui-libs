@@ -108,8 +108,7 @@ type Usages = NonNullable<RequiredThemeV2['usages']>;
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
-  | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
-  | `usages.button.${LeafPaths<NonNullable<Usages['button']>>}`;
+  | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`;
 
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
