@@ -1,24 +1,25 @@
 [#override-theme-for-slotgroup]
 = Override theme for slotgroup
 
-This guide will help you add slotGroupName in a remote component and emit the value of slotGroupName with the help of the SLOT_GROUP_NAME injection token. The theme service will use the provided value and override theme properties in the region accordingly.
+This guide will help you add slotGroupName in a remote component and emit the value of slotGroupName with the help of the REMOTE_COMPONENT_CONTEXT injection token. The theme service will use the provided value and override theme properties in the region accordingly.
 
 The following are the steps to send slotGroupName:
 
 == Step 1: Extract slotGroupName
 In a remote component, you will be able to extract slotGroupName from input properties.
 
-The same slotGroupName has to be set as the value in the SLOT_GROUP_NAME injection token.
+The same slotGroupName has to be set as the value in the REMOTE_COMPONENT_CONTEXT injection token.
+REMOTE_COMPONENT_CONTEXT accepts a ReplaySubject of type RemoteComponentContext. Please set the value of slotGroupName in the emitted object of REMOTE_COMPONENT_CONTEXT. Please refer to the code snippet below.
 
-== Step 2: Configure SLOT_GROUP_NAME
+== Step 2: Configure REMOTE_COMPONENT_CONTEXT
 
-Add SLOT_GROUP_NAME to the providers array of the bootstrapRemoteComponent function. Please refer to the code snippet below.
+Add REMOTE_COMPONENT_CONTEXT to the providers array of the bootstrapRemoteComponent function. Please refer to the code snippet below.
 
 .Example - my-remote.component.bootstrap.ts
 [source, typescript]
 --
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
-import { SLOT_GROUP_NAME } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
 import { ReplaySubject } from 'rxjs'
 
 bootstrapRemoteComponent(
@@ -26,29 +27,29 @@ bootstrapRemoteComponent(
   'ocx-my-remote',
   environment.production,
   [
-    { provide: SLOT_GROUP_NAME, useValue: new ReplaySubject<string>(1) },
+    { provide: REMOTE_COMPONENT_CONTEXT, useValue: new ReplaySubject<RemoteComponentContext>(1) },
   ]
 )
 --
 
 == Step 3: Emit slotGroupName
 
-Emit the value of slotGroupName with the help of the SLOT_GROUP_NAME injection token. Please refer to the code snippet below.
+Emit the value of slotGroupName with the help of the REMOTE_COMPONENT_CONTEXT injection token. Please refer to the code snippet below.
 
 .Example - my-remote.component.ts
 [source, typescript]
 --
 import { Input, inject } from '@angular/core'
-import { SLOT_GROUP_NAME } from "@onecx/angular-utils"
+import { REMOTE_COMPONENT_CONTEXT } from "@onecx/angular-utils"
 import { ReplaySubject } from 'rxjs'
 
 export class MyRemoteComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
-  private readonly slotGroupName$ = inject<ReplaySubject<string>>(SLOT_GROUP_NAME)
-
+  private readonly componentContext$ = inject<ReplaySubject<RemoteComponentContext>>(REMOTE_COMPONENT_CONTEXT)
+  @Input() slotName: string
   @Input() slotGroupName: string
 
   ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.slotGroupName$.next(this.slotGroupName)
+    this.componentContext$.next({ slotName: this.slotName, slotGroupName: this.slotGroupName })
   }
 }
 --

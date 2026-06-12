@@ -14,7 +14,7 @@ export interface ThemeConfigProviderOptions {
   overrides?: ThemeOverrides
   cssOverrides?: CssOverrides
   isAdvancedTheming?: boolean
-  maxVersion: number
+  maxVersion?: number
 }
 
 export function provideThemeConfig(options?: ThemeConfigProviderOptions) {

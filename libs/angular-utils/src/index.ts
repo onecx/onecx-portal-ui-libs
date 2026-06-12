@@ -22,6 +22,7 @@ export * from './lib/utils/get-load-remote-entry-options.utils'
 // Model
 export * from './lib/model/injection-tokens'
 export * from './lib/model/remote-component-config.model'
+export * from './lib/model/remote-component-context.model'
 
 // Services
 export * from './lib/services/translation-cache.service'

@@ -4,7 +4,7 @@ import { ThemeService } from '@onecx/angular-integration-interface'
 import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import defaultThemeVariables from '../preset/default-theme-variables'
-import { SKIP_STYLE_SCOPING, SLOT_GROUP_NAME } from '@onecx/angular-utils'
+import { REMOTE_COMPONENT_CONTEXT, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
 import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 import { provideConfigurationServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { of } from 'rxjs'
@@ -84,7 +84,7 @@ describe('ThemeConfigService', () => {
         ThemeService,
         ThemeConfigService,
         provideConfigurationServiceMock(),
-        { provide: SLOT_GROUP_NAME, useValue: of(SLOT_GROUP_PREFIX+'header') },
+        { provide: REMOTE_COMPONENT_CONTEXT, useValue: of({ slotGroupName: SLOT_GROUP_PREFIX+'header', slotName: 'header' }) },
         { provide: IS_ADVANCED_THEMING, useValue: true },
         { provide: ThemeService, useValue: themeServiceMock },
         { provide: SKIP_STYLE_SCOPING, useValue: true },

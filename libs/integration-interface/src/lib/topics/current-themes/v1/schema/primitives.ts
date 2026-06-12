@@ -4,6 +4,7 @@
  */
 
 import * as z from "zod";
+import { themeSchemaRegistry } from "./registry";
 
 // A reference to another value in the same theme using dot-notation path wrapped in double braces.
 // At runtime the consumer resolves these references before applying the theme to PrimeNG.
@@ -11,7 +12,7 @@ import * as z from "zod";
 export const themeRef = z
   .string()
   .regex(/^\{\{[\w.]+\}\}$/)
-  .meta({ id: "themeRef" });
+  .register(themeSchemaRegistry, { id: "themeRef" });
 
 // Allows any typed schema value to alternatively be a theme reference string.
 // Use this wrapper for non-string scalar types (enums, booleans) — they would otherwise
@@ -32,7 +33,7 @@ export const bg = z
     size: withRef(z.string()).optional(),
     repeat: withRef(z.string()).optional(),
   })
-  .meta({ id: "bg" });
+  .register(themeSchemaRegistry, { id: "bg" });
 
 export const border = z
   .object({
@@ -52,7 +53,7 @@ export const border = z
     radius: withRef(z.string()).optional(),
     offset: withRef(z.string()).optional(),
   })
-  .meta({ id: "border" });
+  .register(themeSchemaRegistry, { id: "border" });
 
 export const componentBorders = z
   .object({
@@ -61,14 +62,14 @@ export const componentBorders = z
     card: border.optional(),
     dialog: border.optional(),
   })
-  .meta({ id: "componentBorders" });
+  .register(themeSchemaRegistry, { id: "componentBorders" });
 
 export const borderWithVariants = z
   .object({
     defaultVariant: border.optional(),
     variant: componentBorders.optional(),
   })
-  .meta({ id: "borderWithVariants" });
+  .register(themeSchemaRegistry, { id: "borderWithVariants" });
 
 export const bgContrast = z.object({
   bg: z.union([bg, withRef(z.string())]).optional(),
@@ -80,7 +81,7 @@ export const severityStyles = bgContrast
     border: borderWithVariants.optional(),
     focusRing: border.optional(),
   })
-  .meta({ id: "severityStyles" });
+  .register(themeSchemaRegistry, { id: "severityStyles" });
 
 // Per-named-level style overrides. Each severity level maps to a severityStyles block
 // (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, warning, danger, and contrast cases.
@@ -92,7 +93,7 @@ export const severityVariants = z
     danger: severityStyles.optional(),
     contrast: severityStyles.optional(),
   })
-  .meta({ id: "severityVariants" });
+  .register(themeSchemaRegistry, { id: "severityVariants" });
 
 // A single interaction-state group: a baseline style (defaultVariant) and per-level severity overrides (variants). 
 // Used as the type for variantWithStates.defaultState and each state entry.
@@ -101,7 +102,7 @@ export const severityVariantGroup = z
     defaultVariant: severityStyles.optional(),
     variant: severityVariants.optional(),
   })
-  .meta({ id: "severityVariantGroup" });
+  .register(themeSchemaRegistry, { id: "severityVariantGroup" });
 
 export const variantWithStates = bgContrast
   .extend({
@@ -115,7 +116,7 @@ export const variantWithStates = bgContrast
       })
       .optional(),
   })
-  .meta({ id: "variantWithStates" });
+  .register(themeSchemaRegistry, { id: "variantWithStates" });
 
 export const colorVariants = z
   .object({
@@ -126,7 +127,7 @@ export const colorVariants = z
     quinary: variantWithStates.optional(),
     // TODO: Add a link variant to all components that support link display (e.g. buttons)
   })
-  .meta({ id: "colorVariants" });
+  .register(themeSchemaRegistry, { id: "colorVariants" });
 
 export const area = variantWithStates.extend({});
 
@@ -137,7 +138,7 @@ export const areas = z
     onSurface: area.optional(),
     overlay: area.optional(),
   })
-  .meta({ id: "areas" });
+  .register(themeSchemaRegistry, { id: "areas" });
 
 // Named shadow tokens map to CSS box-shadow values at different elevation levels.
 // Components reference these tokens for consistent elevation (e.g. cards, dialogs, dropdowns).
@@ -149,7 +150,7 @@ export const shadow = z
     lg: withRef(z.string()).optional(),
     xl: withRef(z.string()).optional(),
   })
-  .meta({ id: "shadow" });
+  .register(themeSchemaRegistry, { id: "shadow" });
 
 // Named border-radius tokens. Components reference these via semantic size names
 // rather than hard-coded pixel values, enabling global shape changes from one place.
@@ -162,7 +163,7 @@ export const radius = z
     xl: withRef(z.string()).optional(),
     full: withRef(z.string()).optional(),
   })
-  .meta({ id: "radius" });
+  .register(themeSchemaRegistry, { id: "radius" });
 
 // Spacing scale used for padding, margin, and gap tokens across components.
 // Defining it here allows components to reference e.g. space.md instead of a hard-coded value.
@@ -175,7 +176,7 @@ export const space = z
     xl: withRef(z.string()).optional(),
     xxl: withRef(z.string()).optional(),
   })
-  .meta({ id: "space" });
+  .register(themeSchemaRegistry, { id: "space" });
 
 // Layout tokens control structural constraints like content max-width and section gaps.
 // Useful for theming applications that need different layout densities (compact vs. comfortable).
@@ -186,7 +187,7 @@ export const layout = z
     // Default gap between layout sections / grid columns
     gap: withRef(z.string()).optional(),
   })
-  .meta({ id: "layout" });
+  .register(themeSchemaRegistry, { id: "layout" });
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
@@ -199,7 +200,7 @@ export const font = z
     letterSpacing: withRef(z.string()).optional(),
     style: withRef(z.string()).optional(),
   })
-  .meta({ id: "font" });
+  .register(themeSchemaRegistry, { id: "font" });
 
 export const primitives = z
   .object({
@@ -217,4 +218,4 @@ export const primitives = z
     focusRing: (border as typeof border).optional(),
   })
   .optional()
-  .meta({ id: "primitives" });
+  .register(themeSchemaRegistry, { id: "primitives" });

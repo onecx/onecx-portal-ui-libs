@@ -1,5 +1,12 @@
-import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, Injector, inject, runInInjectionContext } from '@angular/core'
-import { CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import {
+  ENVIRONMENT_INITIALIZER,
+  Injectable,
+  InjectionToken,
+  Injector,
+  inject,
+  runInInjectionContext,
+} from '@angular/core'
+import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   OverrideType,
   Theme as OneCXTheme,
@@ -8,7 +15,6 @@ import {
   CurrentThemes,
   RegionOverridesInput,
   regionKeys,
-  ThemeCommonData,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -16,22 +22,29 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep, SLOT_GROUP_NAME } from '@onecx/angular-utils'
+import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
-import { firstValueFrom, of } from 'rxjs'
-
-export const SLOT_GROUP_PREFIX = 'onecx-shell-'
+import { firstValueFrom } from 'rxjs'
+import {
+  ensureStyles,
+  removeMfeUsageFromStyle,
+  removeRcUsageFromStyle,
+  useStyleForMfe,
+  useStyleForRc,
+} from '@onecx/angular-utils/style'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
+
+export const SLOT_GROUP_PREFIX = 'onecx-shell-'
 
 type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOverrides; overrides?: ThemeOverrides }
 
 export const THEME_OPTIONS = new InjectionToken<Options>('THEME_OPTIONS')
 
 /**
-    @deprecated
-    */
+@deprecated Please pass an options object instead of passing isAdvanced as a boolean directly.
+*/
 export function provideThemeConfigService(isAdvanced?: boolean): any
 export function provideThemeConfigService(options: Options): any
 
@@ -61,9 +74,6 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
   ]
 }
 
-interface ThemeV2 extends ThemeCommonData {
-  properties: ThemePropertiesV2
-}
 @Injectable({
   providedIn: 'root',
 })
@@ -71,9 +81,11 @@ export class ThemeConfigService {
   private themeService = inject(ThemeService)
   private configService = inject(ConfigurationService)
   private primeNG = inject(PrimeNG)
+  private appStateService = inject(AppStateService)
+  private readonly rcConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
+  private readonly rcContext = inject(REMOTE_COMPONENT_CONTEXT, { optional: true })
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
   private readonly options = inject(THEME_OPTIONS)
-  private readonly slotGroupName = inject(SLOT_GROUP_NAME, { optional: true }) ?? of('')
   private readonly injector = inject(Injector)
 
   constructor() {
@@ -126,22 +138,72 @@ export class ThemeConfigService {
       properties: ThemePropertiesV2
     }
   ): Promise<void> {
-    const overridesFolded = this.generateThemeOverrides(theme.overrides)
+    // theme.properties has already been resolved against region overrides upstream
     const properties = await this.getThemeProperties(theme)
-    const { variables, css } = mapThemeToPreset(properties)
-    const cssOverrides = this.options.cssOverrides
-    const overrides = Promise.resolve(
-      typeof cssOverrides === 'function' && cssOverrides !== undefined
-        ? runInInjectionContext(this.injector, () => cssOverrides())
-        : cssOverrides
-    )
-    const joinedCustomCss = css + (await overrides ?? '')
+    const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(properties)
+
+    const primeNgThemeOverrides = this.generateThemeOverrides(theme.overrides)
+    const primeNgPreset = mergeDeep(primeNgPresetFromTheme, primeNgThemeOverrides)
+
+    const primeNgCssOverrides = await this.resolvePrimeNgCssOverrides()
+    const customCss = cssFromTheme + (primeNgCssOverrides ?? '')
+
+    await this.applyCustomCssToAppStyles(customCss)
+
     this.primeNG.setThemeConfig({
       theme: {
-        preset: { ...mergeDeep(variables, overridesFolded), css: joinedCustomCss },
+        preset: { ...primeNgPreset },
         options: { darkModeSelector: 'system' },
       },
     })
+  }
+
+  private async resolvePrimeNgCssOverrides(): Promise<string | null | undefined> {
+    const cssOverrides = this.options.cssOverrides
+    if (typeof cssOverrides === 'function' && cssOverrides !== undefined) {
+      return runInInjectionContext(this.injector, () => cssOverrides())
+    }
+    return cssOverrides
+  }
+
+  private async applyCustomCssToAppStyles(css: string): Promise<void> {
+    const { productName, appId } = await this.resolveAppIdentity()
+    const slotName = this.rcContext ? (await firstValueFrom(this.rcContext)).slotName : ''
+
+    const ensureStylesOptions: { type: 'rc'; slotName: string } | { type: 'mfe' } = this.rcContext
+      ? { type: 'rc', slotName }
+      : { type: 'mfe' }
+
+    const useStyleCallback = this.rcContext
+      ? (document: HTMLStyleElement) => useStyleForRc(document, slotName)
+      : (document: HTMLStyleElement) => useStyleForMfe(document)
+
+    const removeUsageFromStyleCallback = this.rcContext
+      ? (document: HTMLStyleElement) => removeRcUsageFromStyle(document, slotName)
+      : (document: HTMLStyleElement) => removeMfeUsageFromStyle(document)
+
+    ensureStyles(
+      productName,
+      appId,
+      ensureStylesOptions,
+      useStyleCallback,
+      removeUsageFromStyleCallback,
+      () => Promise.resolve(css),
+      'theme'
+    )
+  }
+
+  private async resolveAppIdentity(): Promise<{ productName: string; appId: string }> {
+    let productName = (await firstValueFrom(this.appStateService.currentMfe$)).productName
+    let appId = (await firstValueFrom(this.appStateService.currentMfe$)).appId
+
+    if (this.rcConfig) {
+      const rcConfig = await firstValueFrom(this.rcConfig)
+      productName = rcConfig.productName
+      appId = rcConfig.appId
+    }
+
+    return { productName, appId }
   }
 
   async applyThemeVariablesV1(oldTheme: OneCXTheme): Promise<void> {
@@ -170,8 +232,8 @@ export class ThemeConfigService {
   private async getThemeProperties(theme: CurrentThemes & {
     properties: ThemePropertiesV2
   }): Promise<ThemePropertiesV2> {
-    const slotGroupName = await firstValueFrom(this.slotGroupName)
-    const regionName = this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput
+    const slotGroupName = this.rcContext ? ((await firstValueFrom(this.rcContext))?.slotGroupName) : undefined
+    const regionName = slotGroupName ? this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput : undefined
     const regionOverrides = theme.properties.regionOverrides
 
     if (regionName && regionOverrides) {

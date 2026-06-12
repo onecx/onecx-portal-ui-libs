@@ -14,7 +14,8 @@ import {
   createApplicationScopedCss,
   getAllStylesUsedByKey,
   dataMfeStylesAttribute,
-  dataRcStylesAttribute
+  dataRcStylesAttribute,
+  dataStyleTypeKey
 } from "../index";
 
 /**
@@ -98,11 +99,30 @@ async function updateStyles(
   useStyleCallback: (document: HTMLStyleElement) => void,
   removeUsageFromStyleCallback: (document: HTMLStyleElement) => void
 ){
-  const scopeId = scopeIdFromProductNameAndAppId(productName, appId)
+  ensureStyles(
+    productName,
+    appId,
+    options,
+    useStyleCallback,
+    removeUsageFromStyleCallback,
+    () => fetchAppCss(httpClient, url)
+  )
+}
+
+export async function ensureStyles(
+  productName: string,
+  appId: string,
+  options: {type:'rc',slotName:string} | {type:'mfe'},
+  useStyleCallback: (document: HTMLStyleElement) => void,
+  removeUsageFromStyleCallback: (document: HTMLStyleElement) => void,
+  cssCallback: () => Promise<string | null | undefined>,
+  styleType?: string
+) {
+    const scopeId = scopeIdFromProductNameAndAppId(productName, appId)
 
   if(options.type === 'mfe') removeAllMfeUsagesFromStyles(scopeId)
   
-  const existingStyleElement = getAppStyleByScope(scopeId)
+  const existingStyleElement = getAppStyleByScope(scopeId, styleType)
 
   if (existingStyleElement) {
     useStyleCallback(existingStyleElement)
@@ -110,7 +130,10 @@ async function updateStyles(
   }
 
   const styleElement = createStyleUsedByMfeRc(scopeId, options)
-  const css = await fetchAppCss(httpClient, url);
+  if (styleType) {
+    styleElement.dataset[dataStyleTypeKey] = styleType
+  }
+  const css = await cssCallback();
   (styleElement as any).onecxOriginalCss = css
 
   if (!css) {

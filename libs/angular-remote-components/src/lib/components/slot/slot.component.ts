@@ -26,7 +26,7 @@ import {
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs'
 import { ocxRemoteComponent } from '../../model/remote-component'
 import { RemoteComponentInfo, SLOT_SERVICE, SlotComponentConfiguration, SlotService } from '../../services/slot.service'
-import { RemoteComponentConfig, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
+import { RemoteComponentConfig, RemoteComponentContext, scopeIdFromProductNameAndAppId } from '@onecx/angular-utils'
 import { HttpClient } from '@angular/common/http'
 import { debounceTime, filter, take } from 'rxjs/operators'
 import { updateStylesForRcCreation, removeAllRcUsagesFromStyles } from '@onecx/angular-utils/style'
@@ -367,6 +367,13 @@ export class SlotComponent implements OnInit, OnDestroy {
       baseUrl: componentInfo.remoteComponent.baseUrl,
       permissions: permissions,
     } satisfies RemoteComponentConfig
+
+    const slotGroupName = this.inputs()['slotGroupName']?.toString()
+
+    ;(element as any)['ocxRemoteComponentContext'] = {
+      slotName: this.name(),
+      slotGroupName: slotGroupName,
+    } satisfies RemoteComponentContext
 
     const span: HTMLSpanElement | undefined = this.viewContainerRef.element.nativeElement.querySelector(
       `span[data-index="${index}"]`
