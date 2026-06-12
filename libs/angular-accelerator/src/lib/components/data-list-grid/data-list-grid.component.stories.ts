@@ -41,7 +41,16 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     }),
     moduleMetadata({
       declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule, OcxTooltipDirective],
+      imports: [
+        DataViewModule,
+        MenuModule,
+        ButtonModule,
+        MultiSelectModule,
+        TooltipModule,
+        StorybookTranslateModule,
+        OcxTooltipDirective,
+        RouterModule,
+      ],
     }),
   ],
 }

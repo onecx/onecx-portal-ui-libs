@@ -949,7 +949,6 @@ describe('DataTableComponent', () => {
         component.additionalActions = ([])
       })
       it('should render inline action button with routerLink', async () => {
-        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         jest.spyOn(console, 'log')
         component.additionalActions = ([
           {
@@ -965,8 +964,8 @@ describe('DataTableComponent', () => {
         expect(tableActions.length).toBe(1)
 
         await tableActions[0].click()
-        expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(['/inline'])
+        await fixture.whenStable()
+        expect(router.url).toBe('/inline')
         expect(console.log).not.toHaveBeenCalledWith('My routing Action')
       })
 
@@ -1075,7 +1074,6 @@ describe('DataTableComponent', () => {
       })
 
       it('should prioritize routerLink over actionCallback when both are provided', async () => {
-        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
         component.additionalActions = ([
@@ -1090,8 +1088,8 @@ describe('DataTableComponent', () => {
         const tableActions = await dataTable.getActionButtons()
         await tableActions[0].click()
 
-        expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+        await fixture.whenStable()
+        expect(router.url).toBe('/prioritized-link')
         expect(callbackSpy).not.toHaveBeenCalled()
       })
 

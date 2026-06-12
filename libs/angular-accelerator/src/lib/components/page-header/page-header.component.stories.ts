@@ -49,6 +49,7 @@ export default {
         ]),
         TooltipModule,
         OcxTooltipDirective,
+        RouterModule,
       ],
     }),
   ],

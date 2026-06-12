@@ -972,7 +972,6 @@ describe('DataListGridComponent', () => {
       describe('action buttons with routerLink', () => {
         it('should render inline action button with routerLink', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
           jest.spyOn(console, 'log')
 
           fixture.componentRef.setInput('additionalActions', [
@@ -990,8 +989,8 @@ describe('DataListGridComponent', () => {
           expect(tableActions.length).toBe(1)
 
           await tableActions[0].click()
-          expect(spy).toHaveBeenCalledTimes(1)
-          expect(spy).toHaveBeenCalledWith(['/inline'])
+          await fixture.whenStable()
+          expect(router.url).toBe('/inline')
           expect(console.log).not.toHaveBeenCalledWith('My routing Action')
         })
 
@@ -1094,7 +1093,6 @@ describe('DataListGridComponent', () => {
 
           it('should prioritize routerLink over actionCallback when both are provided', async () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
             fixture.componentRef.setInput('additionalActions', [
@@ -1112,8 +1110,8 @@ describe('DataListGridComponent', () => {
             const tableActions = await listGrid.getActionButtons('list')
             await tableActions[0].click()
 
-            expect(spy).toHaveBeenCalledTimes(1)
-            expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+            await fixture.whenStable()
+            expect(router.url).toBe('/prioritized-link')
             expect(callbackSpy).not.toHaveBeenCalled()
           })
 

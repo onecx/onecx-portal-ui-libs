@@ -54,6 +54,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         ButtonModule,
         MultiSelectModule,
         StorybookTranslateModule,
+        RouterModule,
         MenuModule,
         CheckboxModule,
         FormsModule,
