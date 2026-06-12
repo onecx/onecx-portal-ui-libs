@@ -47,6 +47,7 @@
       "@onecx/react-utils/styling": ["libs/react-utils/src/lib/styling/index.ts"],
       "@onecx/react-utils/theme": ["libs/react-utils/src/lib/styling/theme/index.ts"],
       "@onecx/react-utils/utils": ["libs/react-utils/src/lib/utils/index.ts"],
+      "@onecx/build-utils": ["libs/build-utils/src/index.ts"]
     },
     "allowSyntheticDefaultImports": true
   },
