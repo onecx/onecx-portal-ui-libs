@@ -2,6 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { Component } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -25,6 +26,9 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -231,8 +235,13 @@ describe('DataListGridComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataListGridComponent],
-      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+      declarations: [DataListGridComponent, TestRouteComponent],
+      imports: [
+        AngularAcceleratorPrimeNgModule,
+        AngularAcceleratorModule,
+        RouterModule.forRoot([{ path: '**', component: TestRouteComponent }]),
+        NoopAnimationsModule,
+      ],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         {
@@ -988,8 +997,6 @@ describe('DataListGridComponent', () => {
 
         it('should render overflow action button with routerLink', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-
           jest.spyOn(console, 'log')
 
           fixture.componentRef.setInput('additionalActions', [
@@ -1013,8 +1020,7 @@ describe('DataListGridComponent', () => {
           expect(tableActions!.length).toBe(1)
 
           await tableActions![0].selectItem()
-          expect(spy).toHaveBeenCalledTimes(1)
-          expect(spy).toHaveBeenCalledWith(['/overflow'])
+          expect(router.url).toBe('/overflow')
           expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
         })
 
@@ -1113,7 +1119,6 @@ describe('DataListGridComponent', () => {
 
           it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
             fixture.componentRef.setInput('additionalActions', [
@@ -1138,8 +1143,7 @@ describe('DataListGridComponent', () => {
             expect(tableActions!.length).toBe(1)
 
             await tableActions![0].selectItem()
-            expect(spy).toHaveBeenCalledTimes(1)
-            expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+            expect(router.url).toBe('/overflow-prioritized')
             expect(callbackSpy).not.toHaveBeenCalled()
           })
         })
@@ -1268,10 +1272,9 @@ describe('DataListGridComponent', () => {
         expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
       })
 
-      it('should execute handleActionSync when grid menu item with routerLink is clicked', async () => {
+      it('should provide routerLink on grid menu item when action has string routerLink', async () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-        const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-        
+
         fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'CUSTOM#ACTION',
@@ -1289,14 +1292,8 @@ describe('DataListGridComponent', () => {
         
         const customMenuItem = menuItems.find(item => item.label === 'CUSTOM_ACTION_KEY')
         expect(customMenuItem).toBeTruthy()
-        expect(customMenuItem?.command).toBeDefined()
-        
-        const dummyEvent = { originalEvent: new Event('click') } as any
-        customMenuItem!.command!(dummyEvent)
-
-        await fixture.whenStable()
-        
-        expect(routerSpy).toHaveBeenCalledWith(['/test-route'])
+                expect(customMenuItem?.routerLink).toBe('/test-route')
+                expect(customMenuItem?.command).toBeUndefined()
       })
     })
   })

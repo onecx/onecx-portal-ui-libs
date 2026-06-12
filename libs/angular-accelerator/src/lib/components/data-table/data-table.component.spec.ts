@@ -17,8 +17,13 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
+import { Component } from '@angular/core'
+import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -214,11 +219,12 @@ describe('DataTableComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataTableComponent],
+      declarations: [DataTableComponent, TestRouteComponent],
       imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
         {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
@@ -965,8 +971,6 @@ describe('DataTableComponent', () => {
       })
 
       it('should render overflow action button with routerLink', async () => {
-        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-
         jest.spyOn(console, 'log')
 
         component.additionalActions = ([
@@ -987,8 +991,7 @@ describe('DataTableComponent', () => {
         expect(tableActions!.length).toBe(1)
 
         await tableActions![0].selectItem()
-        expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(['/overflow'])
+        expect(router.url).toBe('/overflow')
         expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
       })
 
@@ -1093,7 +1096,6 @@ describe('DataTableComponent', () => {
       })
 
       it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
-        const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
 
         component.additionalActions = ([
@@ -1115,8 +1117,7 @@ describe('DataTableComponent', () => {
         expect(tableActions!.length).toBe(1)
 
         await tableActions![0].selectItem()
-        expect(spy).toHaveBeenCalledTimes(1)
-        expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+        expect(router.url).toBe('/overflow-prioritized')
         expect(callbackSpy).not.toHaveBeenCalled()
       })
 

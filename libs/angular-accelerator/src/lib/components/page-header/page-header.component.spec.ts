@@ -22,7 +22,7 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { provideRouter, Router } from '@angular/router'
 import { of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
-import { Injectable } from '@angular/core'
+import { Component, Injectable } from '@angular/core'
 import { By } from '@angular/platform-browser'
 
 export function provideBreadcrumbServiceMock() {
@@ -51,6 +51,9 @@ export class BreadcrumbServiceMock {
     return this.generatedItemsSource
   }
 }
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 const mockActions: Action[] = [
   {
@@ -90,7 +93,7 @@ describe('PageHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe],
+      declarations: [PageHeaderComponent, PageHeaderComponent, DynamicPipe, TestRouteComponent],
       imports: [BreadcrumbModule, MenuModule, ButtonModule, TooltipModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService({
@@ -105,7 +108,7 @@ describe('PageHeaderComponent', () => {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
         },
-        provideRouter([]),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
         provideBreadcrumbServiceMock(),
       ],
     }).compileComponents()
@@ -349,7 +352,6 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should render overflow action button with routerLink', async () => {
-    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     jest.spyOn(console, 'log')
 
     fixture.componentRef.setInput('actions', [
@@ -369,8 +371,7 @@ describe('PageHeaderComponent', () => {
     expect(menuItems.length).toBe(1)
 
     await menuItems[0]?.selectItem()
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(['/overflow'])
+    expect(router.url).toBe('/overflow')
     expect(console.log).not.toHaveBeenCalledWith('My routing Action')
   })
 
@@ -478,7 +479,6 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
-    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
     const callbackSpy = jest.fn()
 
     fixture.componentRef.setInput('actions', [
@@ -497,8 +497,7 @@ describe('PageHeaderComponent', () => {
     const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
     await menuItems[0]?.selectItem()
 
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+    expect(router.url).toBe('/overflow-prioritized')
     expect(callbackSpy).not.toHaveBeenCalled()
   })
 
@@ -542,8 +541,6 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should navigate via routerLink in overflow menu when no actionCallback is provided', async () => {
-    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-
     fixture.componentRef.setInput('actions', [
       {
         label: 'Overflow with routerLink only',
@@ -559,8 +556,7 @@ describe('PageHeaderComponent', () => {
     const menuItems = await pageHeaderHarness.getOverFlowMenuItems()
     await menuItems[0]?.selectItem()
 
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(['/overflow-routerlink-only'])
+    expect(router.url).toBe('/overflow-routerlink-only')
   })
 
   it('should render objectDetails as object info in the page header', async () => {
