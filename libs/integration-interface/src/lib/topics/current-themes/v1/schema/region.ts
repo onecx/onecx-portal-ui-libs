@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { withRef } from "./primitives";
+import { themeSchemaRegistry } from "./registry";
 
 export const fontWithDefaults = z
   .object({
@@ -12,7 +13,7 @@ export const fontWithDefaults = z
     ),
     style: withRef(z.string()).default("{{primitives.font.style}}"),
   })
-  .meta({ id: "fontWithDefaults" });
+  .register(themeSchemaRegistry, { id: "fontWithDefaults" });
 
   /**
    * Contains settings that should be applied to the current theme region (e.g. body or slot group). Contains stuff like background color, typography etc.
@@ -21,4 +22,4 @@ export const region = z
   .object({
     font: fontWithDefaults.optional(),
   })
-  .meta({ id: "region" });
+  .register(themeSchemaRegistry, { id: "region" });

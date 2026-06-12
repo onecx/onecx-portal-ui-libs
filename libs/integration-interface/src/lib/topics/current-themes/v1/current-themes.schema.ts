@@ -2,13 +2,14 @@ import * as z from "zod";
 import { primitives } from "./schema/primitives";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
+import { themeSchemaRegistry } from "./schema/registry";
 
 const usages = z
   .object({
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
   })
-  .meta({ id: "usages" });
+  .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
 type UsagesInput = z.input<typeof usages>
@@ -25,7 +26,7 @@ const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
     primitives: primitives.optional(),
     usages: usages.optional(),
   }).optional()
-  .meta({ id: "regionOverride" }) as any;
+  .register(themeSchemaRegistry, { id: "regionOverride" }) as any;
 
 const regionOverrides = z
   .object({
@@ -37,7 +38,7 @@ const regionOverrides = z
     bodyEnd: regionOverride as typeof regionOverride,
     footer: regionOverride as typeof regionOverride,
   }).optional()
-  .meta({ id: "regionOverrides" });
+  .register(themeSchemaRegistry, { id: "regionOverrides" });
 
 export const themePropertiesV2 = z
   .object({
@@ -45,14 +46,14 @@ export const themePropertiesV2 = z
     usages: usages.optional(),
     regionOverrides: regionOverrides as typeof regionOverrides,
   })
-  .meta({ id: 'themePropertiesV2' })
+  .register(themeSchemaRegistry, { id: 'themePropertiesV2' })
 
 export const theme = z
   .object({
     v2: themePropertiesV2.optional(),
     v1: z.record(z.string(), z.record(z.string(), z.string())).optional(),
   })
-  .meta({ id: 'theme' })
+  .register(themeSchemaRegistry, { id: 'theme' })
 
 type RegionOverridesInput = {
   header?: RegionOverrideInput

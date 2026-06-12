@@ -3,6 +3,7 @@
  */
 import * as z from "zod";
 import { bg, bgContrast, border, color, font, withRef } from "./primitives";
+import { themeSchemaRegistry } from "./registry";
 
 export const blockStyles = bgContrast
   .extend({
@@ -23,7 +24,7 @@ export const blockStyles = bgContrast
     }),
     textAlign: withRef(z.string()).default("left"),
   })
-  .meta({ id: "blockStyles" });
+  .register(themeSchemaRegistry, { id: "blockStyles" });
 
 export const tableStyles = blockStyles
   .extend({
@@ -42,7 +43,7 @@ export const tableStyles = blockStyles
     // visual separation from the surrounding page surface.
     shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
   })
-  .meta({ id: "tableStyles" });
+  .register(themeSchemaRegistry, { id: "tableStyles" });
 
 export const tableSettings = z
   .object({
@@ -50,7 +51,7 @@ export const tableSettings = z
     actionColumnPosition: withRef(z.enum(["start", "end"])).default("end"),
     actionColumnSticky: withRef(z.boolean()).default(false),
   })
-  .meta({ id: "tableSettings" });
+  .register(themeSchemaRegistry, { id: "tableSettings" });
 
 export const tableCellStyles = blockStyles
   .extend({
@@ -61,7 +62,7 @@ export const tableCellStyles = blockStyles
     // Useful for cells with constrained width (e.g. description or name columns).
     truncate: withRef(z.boolean()).default(false),
   })
-  .meta({ id: "tableCellStyles" });
+  .register(themeSchemaRegistry, { id: "tableCellStyles" });
 
 export const cellWithStates = z
   .object({
@@ -75,7 +76,7 @@ export const cellWithStates = z
       })
       .optional(),
   })
-  .meta({ id: "cellWithStates" });
+  .register(themeSchemaRegistry, { id: "cellWithStates" });
 
 export const tableRowStyles = blockStyles
   .extend({
@@ -84,7 +85,7 @@ export const tableRowStyles = blockStyles
     height: withRef(z.string()).optional(),
     cell: (cellWithStates as typeof cellWithStates).optional(),
   })
-  .meta({ id: "tableRowStyles" });
+  .register(themeSchemaRegistry, { id: "tableRowStyles" });
 
 export const rowWithStates = z
   .object({
@@ -98,14 +99,14 @@ export const rowWithStates = z
       })
       .optional(),
   })
-  .meta({ id: "rowWithStates" });
+  .register(themeSchemaRegistry, { id: "rowWithStates" });
 
 export const alternatingRowStyles = z
   .object({
     odd: (rowWithStates as typeof rowWithStates).optional(),
     even: (rowWithStates as typeof rowWithStates).optional(),
   })
-  .meta({ id: "alternatingRowStyles" });
+  .register(themeSchemaRegistry, { id: "alternatingRowStyles" });
 
 export const tableRow = z.object({
   defaultState: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
@@ -125,4 +126,4 @@ export const table = z
     footer: (rowWithStates as typeof rowWithStates).optional(),
     row: (tableRow as typeof tableRow).optional(),
   })
-  .meta({ id: "table" });
+  .register(themeSchemaRegistry, { id: "table" });
