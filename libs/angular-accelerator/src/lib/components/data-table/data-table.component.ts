@@ -776,7 +776,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly headerTemplatesData: TemplatesData = {
     templatesObservables: {},
     idSuffix: ['IdTableHeader', 'IdHeader'],
-    templateNames: ['columnHeader', 'defaultColumnHeader'],
+    templateNames: ['columnHeader'],
   }
 
   private readonly cellTemplatesData: TemplatesData = {
