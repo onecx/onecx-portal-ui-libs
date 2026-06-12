@@ -1,3 +1,13 @@
+## [6.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.24.1...v6.25.0) (2026-06-12)
+
+### Features
+
+* improve keycloak ([#1528](https://github.com/onecx/onecx-portal-ui-libs/issues/1528)) ([f2c46d2](https://github.com/onecx/onecx-portal-ui-libs/commit/f2c46d2094740865feddc886bc9b49820ceed0d5))
+
+### Bug Fixes
+
+* filter count text ([#1510](https://github.com/onecx/onecx-portal-ui-libs/issues/1510)) ([c1d94bc](https://github.com/onecx/onecx-portal-ui-libs/commit/c1d94bc83d0477b90a77f69167d5c31653cbf04f))
+
 ## [6.24.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.24.0...v6.24.1) (2026-06-08)
 
 ### Bug Fixes
