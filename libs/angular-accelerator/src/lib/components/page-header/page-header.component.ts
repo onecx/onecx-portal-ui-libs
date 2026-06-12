@@ -321,7 +321,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
     const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
     breadcrumbItems.forEach((item: Element, index: number) => {
-      const text = (item as HTMLElement).innerText.trim()
+      const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
       
       this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
