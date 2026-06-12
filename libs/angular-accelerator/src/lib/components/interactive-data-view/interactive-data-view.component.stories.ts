@@ -343,7 +343,7 @@ const CustomHeaderPerColumnLayouts: StoryFn<InteractiveDataViewComponent> = (arg
 })
 
 export const WithCustomHeaderPerColumnLayouts = {
-  name: 'Custom Header Distict Layouts Per Column',
+  name: 'Custom Header Distinct Layouts Per Column',
   render: CustomHeaderPerColumnLayouts,
   args: defaultComponentArgs,
 }
