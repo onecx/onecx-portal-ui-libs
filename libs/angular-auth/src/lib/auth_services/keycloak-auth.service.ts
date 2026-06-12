@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { AuthService } from '../auth.service'
 import { KeycloakConfig, KeycloakInstance } from './keycloak.types'
+import Semaphore from 'ts-semaphore'
 
 const KC_REFRESH_TOKEN_LS = 'onecx_kc_refreshToken'
 const KC_ID_TOKEN_LS = 'onecx_kc_idToken'
@@ -11,6 +12,7 @@ const KC_TOKEN_LS = 'onecx_kc_token'
 export class KeycloakAuthService implements AuthService {
   private configService = inject(ConfigurationService)
   private keycloak: KeycloakInstance | undefined
+  private readonly updateTokenSemaphore = new Semaphore(1)
 
   config?: Record<string, unknown>
 
@@ -40,12 +42,17 @@ export class KeycloakAuthService implements AuthService {
     const enableSilentSSOCheck =
       (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ENABLE_SILENT_SSO)) === 'true'
 
+    const timeSkew = await this.getConfigValueNumberOrUndefined(CONFIG_KEY.KEYCLOAK_TIME_SKEW)
+
     try {
       await import('keycloak-js').then(({ default: Keycloak }) => {
         this.keycloak = new Keycloak(kcConfig)
       })
     } catch (err) {
-      console.error('Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.', err)
+      console.error(
+        'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.',
+        err
+      )
       throw new Error(
         'Keycloak initialization failed! Could not load keycloak-js library which is required in the current environment.'
       )
@@ -54,6 +61,8 @@ export class KeycloakAuthService implements AuthService {
     if (!this.keycloak) {
       throw new Error('Keycloak initialization failed!')
     }
+
+    await this.setupEventListener()
 
     this.setupEventListener()
 
@@ -65,6 +74,7 @@ export class KeycloakAuthService implements AuthService {
         idToken: idToken || undefined,
         refreshToken: refreshToken || undefined,
         token: token || undefined,
+        timeSkew: timeSkew,
       })
       .catch((err) => {
         console.log(`Keycloak err: ${err}, try force login`)
@@ -103,8 +113,14 @@ export class KeycloakAuthService implements AuthService {
     }
   }
 
-  private setupEventListener() {
+  private async setupEventListener() {
     if (this.keycloak) {
+      const onTokenExpiredEnabled =
+        (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED)) === 'true'
+
+      const onAuthRefreshErrorEnabled =
+        (await this.configService.getProperty(CONFIG_KEY.KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED)) === 'true'
+
       this.keycloak.onAuthError = () => {
         this.updateLocalStorage()
       }
@@ -118,12 +134,23 @@ export class KeycloakAuthService implements AuthService {
       }
       this.keycloak.onAuthRefreshError = () => {
         this.updateLocalStorage()
+        if (onAuthRefreshErrorEnabled) {
+          console.warn('Auth refresh error - initiating re-login')
+          this.keycloak?.login(this.config)
+        }
       }
       this.keycloak.onAuthSuccess = () => {
         this.updateLocalStorage()
       }
       this.keycloak.onTokenExpired = () => {
         this.updateLocalStorage()
+        if (onTokenExpiredEnabled) {
+          // A semaphore is used to prevent executing multiple updateToken calls in parallel.
+          this.updateTokenSemaphore.use(async () => {
+            console.log('Token expired - proactively refreshing')
+            this.keycloak?.updateToken()
+          })
+        }
       }
       this.keycloak.onActionUpdate = () => {
         this.updateLocalStorage()
@@ -180,11 +207,15 @@ export class KeycloakAuthService implements AuthService {
   }
 
   async updateTokenIfNeeded(): Promise<boolean> {
-    if (!this.keycloak?.authenticated) {
-      return this.keycloak?.login(this.config).then(() => false) ?? Promise.reject('Keycloak not initialized!')
-    } else {
-      return this.keycloak.updateToken()
-    }
+    return this.updateTokenSemaphore.use(async () => {
+      if (!this.keycloak?.authenticated) {
+        return this.keycloak?.login(this.config).then(() => false) ?? Promise.reject('Keycloak not initialized!')
+      }
+
+      const minValidity = await this.getConfigValueNumberOrUndefined(CONFIG_KEY.KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY)
+
+      return this.keycloak.updateToken(minValidity)
+    })
   }
 
   getAuthProviderName(): string {
@@ -201,5 +232,14 @@ export class KeycloakAuthService implements AuthService {
 
   getHeaderValues(): Record<string, string> {
     return { 'apm-principal-token': this.getIdToken() ?? '', Authorization: `Bearer ${this.getAccessToken()}` }
+  }
+
+  async getConfigValueNumberOrUndefined(configKey: CONFIG_KEY): Promise<number | undefined> {
+    const value = await this.configService.getProperty(configKey)
+    if (value === undefined) return undefined
+
+    const parsed = Number.parseInt(value, 10)
+    if (Number.isNaN(parsed)) return undefined
+    return parsed
   }
 }
