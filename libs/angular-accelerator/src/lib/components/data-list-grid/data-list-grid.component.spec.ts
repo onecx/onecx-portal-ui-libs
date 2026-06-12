@@ -14,7 +14,7 @@ import {
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
@@ -1448,6 +1448,107 @@ describe('DataListGridComponent', () => {
       fixture.detectChanges()
 
       expect(component.filteredColumns().length).toBe(mockColumns.length)
+    })
+  })
+
+  describe('row event handlers and image fallback', () => {
+    it('should emit row events and handle image error', () => {
+      const row = mockData[0] as any
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+
+      component.onDeleteRow(row)
+      component.onViewRow(row)
+      component.onEditRow(row)
+
+      expect(deleteSpy).toHaveBeenCalledWith(row)
+      expect(viewSpy).toHaveBeenCalledWith(row)
+      expect(editSpy).toHaveBeenCalledWith(row)
+
+      const item = { imagePath: '/x.png' } as any
+      component.imgError(item)
+      expect(item.imagePath).toBe('')
+    })
+  })
+
+  describe('template resolution helper branches', () => {
+    it('should return undefined when template name is not found', () => {
+      const templates = [{ name: 'some-template' }] as any
+      expect(component.findTemplate(templates, ['missing-template'])).toBeUndefined()
+    })
+
+    it('should return direct template from getTemplate when column-specific template exists', async () => {
+      const column = { id: 'name', columnType: ColumnType.STRING } as any
+      const templateRef = {} as any
+
+      ;(component as any).templatesObservables = {}
+      ;(component as any).templates$ = of([{ name: 'nameIdListValue', template: templateRef }] as any)
+      ;(component as any).viewTemplates$ = of([])
+      ;(component as any).parentTemplates$ = of([])
+
+      await expect(firstValueFrom(component.getTemplate(column))).resolves.toBe(templateRef)
+    })
+  })
+
+  describe('grid menu command wiring', () => {
+    it('should execute grid menu commands for view/edit/delete and callback actions', async () => {
+      const userServiceMock = TestBed.inject(UserServiceMock)
+      userServiceMock.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE', 'CUSTOM#ACTION'])
+
+      component.viewItem.subscribe(() => undefined)
+      component.editItem.subscribe(() => undefined)
+      component.deleteItem.subscribe(() => undefined)
+
+      const callbackSpy = jest.fn()
+
+      fixture.componentRef.setInput('viewPermission', 'GRID#VIEW')
+      fixture.componentRef.setInput('viewMenuItemKey', 'GRID_VIEW_KEY')
+      fixture.componentRef.setInput('editPermission', 'GRID#EDIT')
+      fixture.componentRef.setInput('editMenuItemKey', 'GRID_EDIT_KEY')
+      fixture.componentRef.setInput('deletePermission', 'GRID#DELETE')
+      fixture.componentRef.setInput('deleteMenuItemKey', 'GRID_DELETE_KEY')
+      fixture.componentRef.setInput('additionalActions', [
+        {
+          permission: 'CUSTOM#ACTION',
+          callback: callbackSpy,
+          id: 'customAction',
+          labelKey: 'CUSTOM_ACTION_KEY',
+        },
+      ])
+
+      const selectedItem = mockData[0] as any
+      component.setSelectedItem(selectedItem)
+
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuItems = await firstValueFrom(component.gridMenuItems$)
+      menuItems.find((item) => item.label === 'GRID_VIEW_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'GRID_EDIT_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'GRID_DELETE_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'CUSTOM_ACTION_KEY')?.command?.({} as any)
+
+      expect(viewSpy).toHaveBeenCalledWith(selectedItem)
+      expect(editSpy).toHaveBeenCalledWith(selectedItem)
+      expect(deleteSpy).toHaveBeenCalledWith(selectedItem)
+      expect(callbackSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('permissions provider fallback', () => {
+    it('should fallback to userService permissions when hasPermissionChecker is not provided', async () => {
+      const userServiceMock = TestBed.inject(UserServiceMock)
+      const getPermissionsSpy = jest.spyOn(userServiceMock, 'getPermissions').mockReturnValue(of(['FALLBACK#PERM']))
+
+      ;(component as any).hasPermissionChecker = undefined
+
+      await expect(firstValueFrom((component as any).getPermissions())).resolves.toEqual(['FALLBACK#PERM'])
+      expect(getPermissionsSpy).toHaveBeenCalledTimes(1)
     })
   })
 })
