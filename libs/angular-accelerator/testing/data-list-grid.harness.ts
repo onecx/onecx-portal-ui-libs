@@ -19,7 +19,7 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
 
   async getActionButtons(actionButtonType: 'list' | 'grid' | 'grid-hidden') {
     if (actionButtonType === 'list') {
-      return await this.locatorForAll(`[name="data-list-action-button"]`)()
+      return await this.locatorForAll(`[name="data-list-action-button"], [data-testid="data-list-action-button"]`)()
     } else if (actionButtonType === 'grid-hidden') {
       return await this.documentRootLocatorFactory().locatorForAll(
         `li:has([data-automationid="data-grid-action-button-hidden"])`

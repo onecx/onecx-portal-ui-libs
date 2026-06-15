@@ -63,7 +63,7 @@
         [routerLink]="action.routerLink"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
-        [attr.name]="'data-table-action-button'"
+        [attr.data-testid]="'data-table-action-button'"
       ></a>
       } @else {
       <button

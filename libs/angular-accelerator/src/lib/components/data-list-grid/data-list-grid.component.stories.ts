@@ -389,6 +389,26 @@ export const ListWithRouterLinkOverflowActions = {
   },
 }
 
+export const ListWithRouterLinkInlineActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: false,
+        routerLink: '/data-list-grid-inline-link',
+      },
+    ],
+  },
+}
+
 export const ListWithPageSizes = {
   render: (args: any) => ({
     props: { ...args, ...defaultActionsArgs },

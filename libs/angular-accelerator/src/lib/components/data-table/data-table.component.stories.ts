@@ -604,6 +604,32 @@ export const WithRouterLinkOverflowActions = {
   },
 }
 
+export const WithRouterLinkInlineActions = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: false,
+        routerLink: '/data-table-inline-link',
+      },
+    ],
+  },
+}
+
 export const WithPageSizes = {
   render: (args: any) => ({
     props: {
