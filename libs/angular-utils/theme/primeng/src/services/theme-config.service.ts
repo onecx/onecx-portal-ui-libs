@@ -20,7 +20,7 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
+import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT, THEME_MAX_VERSION, themeVersionAvailable } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom } from 'rxjs'
@@ -67,6 +67,10 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
       useValue:
         typeof isAdvancedOrOptions === 'boolean' ? { isAdvanced: isAdvancedOrOptions } : (isAdvancedOrOptions ?? {}),
     },
+    {
+      provide: THEME_MAX_VERSION,
+      useValue: typeof isAdvancedOrOptions === 'boolean' ? undefined : isAdvancedOrOptions?.maxVersion,
+    }
   ]
 }
 
@@ -86,21 +90,19 @@ export class ThemeConfigService {
 
   constructor() {
     this.themeService.currentThemes$.subscribe(async (theme) => {
-      const maxVersion =
-        this.options.maxVersion ?? (await this.configService.getProperty(CONFIG_KEY.DEFAULT_THEME_VERSION)) ?? 1
-      if (theme.versions?.includes(2) && Number(maxVersion) === 2) {
+      if (await themeVersionAvailable(2, this.injector)) {
         this.applyThemeVariablesV2({
           ...theme,
           properties: theme.properties?.v2 ?? {},
         })
-      } else if (theme.versions?.includes(1) && Number(maxVersion) >= 1) {
+      } else if (await themeVersionAvailable(1, this.injector)) {
         this.applyThemeVariablesV1({
           ...theme,
           properties: theme.properties.v1,
         })
       } else {
         throw new Error(
-          `App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${maxVersion}`
+          `App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${this.options.maxVersion}`
         )
       }
     })
