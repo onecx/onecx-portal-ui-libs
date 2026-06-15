@@ -109,6 +109,7 @@ export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
+  | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
   | `usages.button.${LeafPaths<NonNullable<Usages['button']>>}`;
 
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
