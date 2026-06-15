@@ -4,11 +4,36 @@
 /* eslint-disable */
 import { createReportsConfig } from '../../jest-config-factory'
 
+const reportsConfig = createReportsConfig('angular-utils')
+
 export default {
-  ...createReportsConfig('angular-utils'),
+  ...reportsConfig,
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
+  testMatch: [
+    '<rootDir>/src/lib/**/*.spec.ts',
+    '<rootDir>/guards/**/*.spec.ts',
+    '<rootDir>/theme/**/*.spec.ts',
+  ],
+  collectCoverageFrom: [
+    ...reportsConfig.collectCoverageFrom,
+    '<rootDir>/guards/**/*.{ts,js}',
+    '!<rootDir>/guards/**/logger.utils.ts',
+    '!<rootDir>/guards/**/*.stories.ts',
+    '!<rootDir>/guards/**/storybook-config.ts',
+    '!<rootDir>/guards/**/*.module.ts',
+    '!<rootDir>/guards/**/*.spec.ts',
+    '!<rootDir>/guards/**/*.harness.ts',
+    '!<rootDir>/guards/**/testing/**',
+    '<rootDir>/theme/**/*.{ts,js}',
+    '!<rootDir>/theme/**/logger.utils.ts',
+    '!<rootDir>/theme/**/*.stories.ts',
+    '!<rootDir>/theme/**/storybook-config.ts',
+    '!<rootDir>/theme/**/*.module.ts',
+    '!<rootDir>/theme/**/*.spec.ts',
+    '!<rootDir>/theme/**/*.harness.ts',
+    '!<rootDir>/theme/**/testing/**',
+  ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
     '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
