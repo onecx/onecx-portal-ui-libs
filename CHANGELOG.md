@@ -1,3 +1,16 @@
+## [9.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.6...v9.0.0-rc.7) (2026-06-15)
+
+### Features
+
+* close-dialog-without-secondary-button ([#1514](https://github.com/onecx/onecx-portal-ui-libs/issues/1514)) ([1de3041](https://github.com/onecx/onecx-portal-ui-libs/commit/1de3041307c88fa61e004daffc4306e165d1e981))
+* v8 build-utils added ([#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513)) ([#1525](https://github.com/onecx/onecx-portal-ui-libs/issues/1525)) ([b8b79d7](https://github.com/onecx/onecx-portal-ui-libs/commit/b8b79d757c4d6a9c568b0065e96e7d8503669499))
+
+### Bug Fixes
+
+* a11y - filter count ([#1480](https://github.com/onecx/onecx-portal-ui-libs/issues/1480)) ([7280ffb](https://github.com/onecx/onecx-portal-ui-libs/commit/7280ffb11e5607b3de270ce669cab372d31a96b3))
+* a11y portal dialog enhancement ([#1517](https://github.com/onecx/onecx-portal-ui-libs/issues/1517)) ([5f42e03](https://github.com/onecx/onecx-portal-ui-libs/commit/5f42e03b4097ef403a27bd0f3374aee17003f91e))
+* axe issue ([#1515](https://github.com/onecx/onecx-portal-ui-libs/issues/1515)) ([87225c3](https://github.com/onecx/onecx-portal-ui-libs/commit/87225c3ade625e781d8b0d1c8b6a3087fa6dfb52))
+
 ## [9.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.5...v9.0.0-rc.6) (2026-06-09)
 
 ### Features
