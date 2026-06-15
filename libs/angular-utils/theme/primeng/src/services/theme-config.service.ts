@@ -12,7 +12,6 @@ import {
   Theme as OneCXTheme,
   ThemeOverride,
   ThemePropertiesV2,
-  ThemeCommonData,
   CurrentThemes,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
@@ -21,11 +20,7 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import {
-  mergeDeep,
-  REMOTE_COMPONENT_CONFIG,
-  REMOTE_COMPONENT_CONTEXT,
-} from '@onecx/angular-utils'
+import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom } from 'rxjs'
@@ -44,8 +39,8 @@ type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOve
 export const THEME_OPTIONS = new InjectionToken<Options>('THEME_OPTIONS')
 
 /**
-    @deprecated
-    */
+@deprecated Please pass an options object instead of passing isAdvanced as a boolean directly.
+*/
 export function provideThemeConfigService(isAdvanced?: boolean): any
 export function provideThemeConfigService(options: Options): any
 
@@ -75,9 +70,6 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
   ]
 }
 
-interface ThemeV2 extends ThemeCommonData {
-  properties: ThemePropertiesV2
-}
 @Injectable({
   providedIn: 'root',
 })
@@ -192,7 +184,7 @@ export class ThemeConfigService {
       useStyleCallback,
       removeUsageFromStyleCallback,
       () => Promise.resolve(css),
-      "theme"
+      'theme'
     )
   }
 
