@@ -5,11 +5,11 @@ import { FakeTopic } from '@onecx/accelerator'
 import { PrimeNG } from 'primeng/config'
 import defaultThemeVariables from '../preset/default-theme-variables'
 import { REMOTE_COMPONENT_CONTEXT, SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
-import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
+import { CurrentThemes, OverrideType, ThemeOverride } from '@onecx/integration-interface'
 import { provideConfigurationServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { of } from 'rxjs'
 
-const THEME_V2_MOCK:any = {
+const THEME_V2_MOCK: CurrentThemes = {
   id: 'theme-v2',
   versions: [2],
   properties: {
@@ -18,8 +18,7 @@ const THEME_V2_MOCK:any = {
         variant: {
           primary: {
             bg: { color: '#1976d2' },
-            contrast: '#ffffff',
-            color: 'green'
+            contrast: '#ffffff'
           },
         },
         font: {
@@ -266,11 +265,16 @@ describe('ThemeConfigService', () => {
           regionOverrides: {
             subHeader: {
               primitives: {
+                variant: {
+                  primary: {
+                    bg: { color: 'override_#0d47a1' },
+                  },
+                },
                 font: { weight: 'bold' },
-              },
-            },
-          },
-        },
+              }
+            }
+          }
+        }
       }
 
       const properties = await (configService['getThemeProperties'])(themeNoHeaderOverrides)
