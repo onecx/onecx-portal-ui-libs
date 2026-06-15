@@ -37,6 +37,9 @@ function removeSpacesAndNewlines(str?: string) {
 }
 
 jest.mock('@primeuix/utils', () => ({
+  setAttribute: (element: ElementMock, name: string, value: string) => {
+    element.setAttribute(name, value)
+  },
   setAttributes: (element: ElementMock, attributes: Record<string, string>) => {
     Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value))
   },
@@ -234,7 +237,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="shell-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--p-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="shell-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--p-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -307,7 +310,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="${styleId}"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -380,7 +383,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -401,7 +404,7 @@ describe('CustomUseStyleService', () => {
       overrides['semantic'] = {
         primaryColor: 'red',
       }
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:red;}}`
       service.use(regularCss, {
         name: 'semantic-variables',
       })
@@ -422,7 +425,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -446,7 +449,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -469,7 +472,7 @@ describe('CustomUseStyleService', () => {
       configureMfeWithOverrides(overrides)
 
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--test-test-ui-primary-color:red;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--test-test-ui-primary-color:red;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
@@ -515,7 +518,7 @@ describe('CustomUseStyleService', () => {
         },
       ])
       const regularCss = ":root{--p-primary-color: '#ababab';}"
-      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope{--${prefix}-primary-color:purple;}}`
+      const expectedOverrideCss = `@scope([${dataStyleIdAttribute}="test|test-ui"][${dataNoPortalLayoutStylesAttribute}]) to ([${dataStyleIsolationAttribute}]){:scope,:host{--${prefix}-primary-color:purple;}}`
 
       service.use(regularCss, {
         name: 'semantic-variables',
