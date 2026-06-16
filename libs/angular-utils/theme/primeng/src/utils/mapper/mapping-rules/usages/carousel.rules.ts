@@ -69,11 +69,4 @@ export const carouselMappingRules: MappingRule[] = [
     from: 'usages.carousel.indicator.styles.state.focus.focusRing.offset',
     to: 'components.carousel.indicator.focusRing.offset',
   },
-
-  // Note: The following carousel schema properties have no corresponding PrimeNG design tokens,
-  // but are mapped via CSS rules in css-rules/usages/carousel.rules.ts:
-  // - container.bg, container.contrast, container.padding, container.border (root styling)
-  // - indicator.styles.*.contrast (indicator text/icon color)
-  // - indicator.styles.*.border.color/width/style (indicator borders except radius)
-  // - navigation.padding (navigation button spacing)
 ];

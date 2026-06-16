@@ -14,7 +14,6 @@ export const carouselSettings = z
 
 export const indicatorStyles = bgContrast
   .extend({
-    // Override bg/contrast from bgContrast with defaults pointing to the overlay area primitive
     bg: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
