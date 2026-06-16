@@ -52,7 +52,6 @@ export const border = z
     style: withRef(z.string()).optional(),
     radius: withRef(z.string()).optional(),
     offset: withRef(z.string()).optional(),
-    shadow: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "border" });
 
