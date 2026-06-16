@@ -26,7 +26,7 @@ function generateMockData(count = 10): DiagramData[] {
   }))
 }
 
-export const mockData2: DiagramData[] = generateMockData(20)
+export const mockData2: DiagramData[] = generateMockData(25)
 
 export default {
   title: 'Components/DiagramComponent',
@@ -57,7 +57,7 @@ export default {
         SelectButtonModule,
         FormsModule,
         TooltipModule,
-        OcxTooltipDirective
+        OcxTooltipDirective,
       ],
     }),
   ],
@@ -168,7 +168,41 @@ export const WithAccessibilityImprovements = {
   render: Template,
   args: {
     diagramType: DiagramType.PIE,
-    data: mockData,
+    customLegends: true,
+    data: [
+      {
+        label: 'Fruit 1',
+        value: 1,
+      },
+      {
+        label: 'Fruit 2',
+        value: 21,
+      },
+      {
+        label: 'Fruit 3',
+        value: 41,
+      },
+      {
+        label: 'Fruit 4',
+        value: 61,
+      },
+      {
+        label: 'Fruit 5',
+        value: 81,
+      },
+      {
+        label: 'Fruit 6',
+        value: 101,
+      },
+      {
+        label: 'Fruit 7',
+        value: 121,
+      },
+      {
+        label: 'Fruit 8',
+        value: 141,
+      },
+    ],
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
     chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
     chartDescriptionKey: 'OCX_DIAGRAM.ACCESSIBILITY_DESCRIPTION',
