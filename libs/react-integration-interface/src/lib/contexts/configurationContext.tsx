@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo, type ReactNode, useRef, useCallback } from 'react'
 import { Config, ConfigurationTopic, resolveConfigPayload } from '@onecx/integration-interface'
-import { firstValueFrom, map, Subscription } from 'rxjs'
+import { firstValueFrom, map } from 'rxjs'
 import Semaphore from 'ts-semaphore'
 import { CONFIG_KEY } from '../model/config-key.model'
 import { createLogger } from '../utils/logger.utils'
@@ -47,6 +47,16 @@ interface ConfigurationContextProps {
    */
   init: () => Promise<boolean>
 }
+const DEFAULT_LIB_CONFIG: LibConfig = {
+  skipRemoteConfigLoad: false,
+  remoteConfigURL: 'assets/env.json',
+  appId: '',
+  portalId: '',
+}
+
+const defaultConfigTopic = new ConfigurationTopic()
+const defaultSemaphore = new Semaphore(1)
+const defaultLogger = createLogger('ConfigurationProvider')
 
 const ConfigurationContext = createContext<ConfigurationContextProps | null>(null)
 
@@ -74,32 +84,23 @@ const useConfiguration = (): ConfigurationContextProps => {
  */
 const ConfigurationProvider = ({
   children,
-  defaultConfig = {
-    skipRemoteConfigLoad: false,
-    remoteConfigURL: 'assets/env.json',
-    appId: '',
-    portalId: '',
-  },
+  defaultConfig = DEFAULT_LIB_CONFIG,
 }: {
   children: ReactNode
   defaultConfig?: LibConfig
 }) => {
   const [config, setConfig] = useState<Config | null>(null)
-  const configRef = useRef(new ConfigurationTopic())
-  const subscriptionsRef = useRef<Subscription[]>([])
-  const semaphoreRef = useRef(new Semaphore(1))
-  const loggerRef = useRef(createLogger('ConfigurationProvider'))
+  const configRef = useRef(defaultConfigTopic)
+  const semaphoreRef = useRef(defaultSemaphore)
+  const loggerRef = useRef(defaultLogger)
 
   useEffect(() => {
     const subscription = configRef.current.asObservable().subscribe((nextConfig) => {
       setConfig(nextConfig ?? null)
     })
-    subscriptionsRef.current.push(subscription)
 
     return () => {
-      subscriptionsRef.current.forEach((sub) => sub.unsubscribe())
-      subscriptionsRef.current = []
-      configRef.current.destroy()
+      subscription.unsubscribe()
     }
   }, [])
 
@@ -172,20 +173,20 @@ const ConfigurationProvider = ({
   useEffect(() => {
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [init])
+  }, [])
 
+  const config$ = configRef.current
   const contextValue = useMemo(
     () => ({
       config,
-      config$: configRef.current,
-      isInitialized: configRef.current.isInitialized,
+      config$,
+      isInitialized: config$.isInitialized,
       getConfig,
       getProperty,
       setProperty,
       init,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config, init, getConfig, getProperty, setProperty]
+    [config$, config, init, getConfig, getProperty, setProperty]
   )
 
   return <ConfigurationContext.Provider value={contextValue}>{children}</ConfigurationContext.Provider>

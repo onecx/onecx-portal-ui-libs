@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react'
+import { createContext, type ReactNode, useContext, useMemo } from 'react'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 
 /**
@@ -13,6 +13,8 @@ type ThemeProviderProps = {
   children: ReactNode
   value?: Partial<ThemeContextValue>
 }
+
+const defaultCurrentTheme$ = new CurrentThemeTopic()
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
@@ -39,8 +41,7 @@ const useTheme = () => {
  * @returns Provider wrapping the given children.
  */
 const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
-  const currentTheme$ = useMemo(() => value?.currentTheme$ ?? new CurrentThemeTopic(), [value?.currentTheme$])
-  const isInternalTopic = !value?.currentTheme$
+  const currentTheme$ = value?.currentTheme$ ?? defaultCurrentTheme$
 
   const contextValue = useMemo(
     () => ({
@@ -49,13 +50,6 @@ const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
     [currentTheme$]
   )
 
-  useEffect(() => {
-    return () => {
-      if (isInternalTopic) {
-        currentTheme$.destroy()
-      }
-    }
-  }, [currentTheme$, isInternalTopic])
   return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
 }
 
