@@ -71,13 +71,8 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
       let resolvedProductName = productName
       let resolvedAppId = appId
 
-      if (!resolvedProductName) {
-        resolvedProductName = await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.productName)))
-      }
-
-      if (!resolvedAppId) {
-        resolvedAppId = await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.appId)))
-      }
+      resolvedProductName ??= await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.productName)))
+      resolvedAppId ??= await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.appId)))
 
       const valueResult = await firstValueFrom(
         parameters$.pipe(map((payload) => findParameterValue(payload, key, resolvedProductName, resolvedAppId)))
