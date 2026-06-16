@@ -4,6 +4,7 @@ import { firstValueFrom, map } from 'rxjs'
 import { useAppState } from './appStateContext'
 import { useShellCapability } from './shellCapability'
 import { ShellCapability } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Parameters context value shape.
@@ -22,8 +23,6 @@ interface ParametersProviderProps {
   children: ReactNode
   value?: Partial<ParametersContextValue>
 }
-
-const defaultParameters$ = new ParametersTopic()
 
 const ParametersContext = createContext<ParametersContextValue | null>(null)
 
@@ -52,7 +51,7 @@ const useParameters = (): ParametersContextValue => {
 const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value }) => {
   const { hasCapability } = useShellCapability()
   const { currentMfe$ } = useAppState()
-  const parameters$ = value?.parameters$ ?? defaultParameters$
+  const parameters$ = useTopic(value?.parameters$, ParametersTopic)
 
   /**
    * Resolve a parameter value for the current MFE context.

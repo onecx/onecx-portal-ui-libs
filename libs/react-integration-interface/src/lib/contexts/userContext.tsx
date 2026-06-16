@@ -1,5 +1,5 @@
-import { createContext, useContext, useMemo, useEffect, useState, type ReactNode, useRef, useCallback } from 'react'
-import { BehaviorSubject, firstValueFrom, map, Observable, Subscription } from 'rxjs'
+import { createContext, useContext, useMemo, useEffect, useState, type ReactNode, useCallback } from 'react'
+import { BehaviorSubject, firstValueFrom, map, Observable } from 'rxjs'
 import {
   PermissionsTopic,
   UserProfileTopic,
@@ -8,6 +8,7 @@ import {
 } from '@onecx/integration-interface'
 import { DEFAULT_LANG } from '../api/constants'
 import { getNormalizedBrowserLocales } from '@onecx/accelerator'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * User context value shape.
@@ -36,9 +37,6 @@ interface UserProviderProps {
   value?: Partial<UserContextValue>
 }
 
-const defaultProfile$ = new UserProfileTopic()
-const defaultPermissionsTopic$ = new PermissionsTopic()
-
 const UserContext = createContext<UserContextValue | null>(null)
 
 /**
@@ -64,25 +62,20 @@ const useUserService = (): UserContextValue => {
  * @returns Provider wrapping the given children.
  */
 const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
-  const profile$ = value?.profile$ ?? defaultProfile$
+  const profile$ = useTopic(value?.profile$, UserProfileTopic)
 
-  const [lang$] = useState(() => {
+  const lang$ = useMemo(() => {
     const initialLang = determineBrowserLanguage() ?? DEFAULT_LANG
     return value?.lang$ ?? new BehaviorSubject(initialLang)
-  })
+  }, [value?.lang$])
 
-  const permissionsTopic$ = value?.permissionsTopic$ ?? defaultPermissionsTopic$
-
-  // Use ref to store subscriptions for cleanup
-  const subscriptionsRef = useRef<Subscription[]>([])
+  const permissionsTopic$ = useTopic(value?.permissionsTopic$, PermissionsTopic)
 
   // Subscribe to profile changes and update language
   useEffect(() => {
     const subscription = profile$
       .pipe(map((profile) => resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)))
       .subscribe(lang$)
-
-    subscriptionsRef.current.push(subscription)
 
     return () => {
       subscription.unsubscribe()

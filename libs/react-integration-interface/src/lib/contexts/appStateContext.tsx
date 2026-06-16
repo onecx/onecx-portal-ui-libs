@@ -8,6 +8,7 @@ import {
   CurrentWorkspaceTopic,
   IsAuthenticatedTopic,
 } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 interface AppStateContextProps {
   globalError$: GlobalErrorTopic
@@ -26,14 +27,6 @@ interface AppStateContextProps {
   isAuthenticated$: IsAuthenticatedTopic
 }
 
-const defaultGlobalError$ = new GlobalErrorTopic()
-const defaultGlobalLoading$ = new GlobalLoadingTopic()
-const defaultCurrentMfe$ = new CurrentMfeTopic()
-const defaultCurrentLocation$ = new CurrentLocationTopic()
-const defaultCurrentPage$ = new CurrentPageTopic()
-const defaultCurrentWorkspace$ = new CurrentWorkspaceTopic()
-const defaultIsAuthenticated$ = new IsAuthenticatedTopic()
-
 const AppStateContext = createContext<AppStateContextProps>({} as any)
 
 /**
@@ -44,13 +37,13 @@ const AppStateContext = createContext<AppStateContextProps>({} as any)
  * @returns Provider wrapping the given children.
  */
 const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Partial<AppStateContextProps> }) => {
-  const globalError$ = value?.globalError$ ?? defaultGlobalError$
-  const globalLoading$ = value?.globalLoading$ ?? defaultGlobalLoading$
-  const currentMfe$ = value?.currentMfe$ ?? defaultCurrentMfe$
-  const currentLocation$ = value?.currentLocation$ ?? defaultCurrentLocation$
-  const currentPage$ = value?.currentPage$ ?? defaultCurrentPage$
-  const currentWorkspace$ = value?.currentWorkspace$ ?? defaultCurrentWorkspace$
-  const isAuthenticated$ = value?.isAuthenticated$ ?? defaultIsAuthenticated$
+  const globalError$ = useTopic(value?.globalError$, GlobalErrorTopic)
+  const globalLoading$ = useTopic(value?.globalLoading$, GlobalLoadingTopic)
+  const currentMfe$ = useTopic(value?.currentMfe$, CurrentMfeTopic)
+  const currentLocation$ = useTopic(value?.currentLocation$, CurrentLocationTopic)
+  const currentPage$ = useTopic(value?.currentPage$, CurrentPageTopic)
+  const currentWorkspace$ = useTopic(value?.currentWorkspace$, CurrentWorkspaceTopic)
+  const isAuthenticated$ = useTopic(value?.isAuthenticated$, IsAuthenticatedTopic)
 
   // Memoize the context value to avoid unnecessary re-renders
   const contextValue = useMemo(
