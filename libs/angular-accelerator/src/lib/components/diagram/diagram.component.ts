@@ -6,7 +6,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
-import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from './diagram-contrast-utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
