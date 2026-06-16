@@ -201,14 +201,14 @@ describe('ThemeConfigService', () => {
     } as any)
   })
 
-  xdescribe('creation', () => {
+  describe('creation', () => {
     it('should be created', () => {
       configure()
       expect(TestBed.inject(ThemeConfigService)).toBeTruthy()
     })
   })
 
-  xdescribe('currentThemes$ subscription', () => {
+  describe('currentThemes$ subscription', () => {
     it('should invoke applyThemeVariablesV2 when v2 is available', fakeAsync(() => {
       themeVersionAvailableMock.mockImplementation(async (version: number) => version === 2)
       configure()
@@ -268,7 +268,7 @@ describe('ThemeConfigService', () => {
     })
   })
 
-  xdescribe('applyThemeVariablesV2', () => {
+  describe('applyThemeVariablesV2', () => {
     beforeEach(() => {
       themeVersionAvailableMock.mockImplementation(async (version: number) => version === 2)
     })
@@ -441,7 +441,7 @@ describe('ThemeConfigService', () => {
     }))
   })
 
-  xdescribe('applyThemeVariablesV1', () => {
+  describe('applyThemeVariablesV1', () => {
     beforeEach(() => {
       themeVersionAvailableMock.mockImplementation(async (version: number) => version === 1)
     })
@@ -535,7 +535,7 @@ describe('ThemeConfigService', () => {
     })
   })
 
-  xdescribe('subscribe block edge cases', () => {
+  describe('subscribe block edge cases', () => {
     it('should fall back to empty properties when v2 is missing on the theme payload', fakeAsync(() => {
       themeVersionAvailableMock.mockImplementation(async (version: number) => version === 2)
       configure()
@@ -588,7 +588,7 @@ describe('ThemeConfigService', () => {
     })
   })
 
-  xdescribe('private helper edge cases', () => {
+  describe('private helper edge cases', () => {
     it('foldOverrides returns an empty object when overrides is missing or empty', () => {
       configure()
       const service = TestBed.inject(ThemeConfigService) as any

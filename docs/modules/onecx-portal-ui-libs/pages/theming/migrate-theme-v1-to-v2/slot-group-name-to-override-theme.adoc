@@ -6,7 +6,7 @@ This guide will help you add `slotGroupName` in a remote component and emit the 
 The following are the steps to send `slotGroupName`:
 
 == Step 1: Extract slotGroupName
-In a remote component, you will be able to extract slotGroupName from input properties.
+In a remote component, you will be able to extract slotGroupName from input signals.
 
 The same `slotGroupName` has to be set as the value in the `REMOTE_COMPONENT_CONTEXT` injection token.
 `REMOTE_COMPONENT_CONTEXT` accepts a `ReplaySubject` of type `RemoteComponentContext`. Please set the value of `slotGroupName` in the emitted object of `REMOTE_COMPONENT_CONTEXT`. Please refer to the code snippet below.
@@ -39,17 +39,17 @@ Emit the value of `slotGroupName` with the help of the `REMOTE_COMPONENT_CONTEXT
 .Example - my-remote.component.ts
 [source, typescript]
 --
-import { Input, inject } from '@angular/core'
+import { input, inject } from '@angular/core'
 import { REMOTE_COMPONENT_CONTEXT } from "@onecx/angular-utils"
 import { ReplaySubject } from 'rxjs'
 
 export class MyRemoteComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   private readonly componentContext$ = inject<ReplaySubject<RemoteComponentContext>>(REMOTE_COMPONENT_CONTEXT)
-  @Input() slotName: string
-  @Input() slotGroupName: string
+  readonly slotName = input<string>('')
+  readonly slotGroupName = input<string>('')
 
   ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
-    this.componentContext$.next({ slotName: this.slotName, slotGroupName: this.slotGroupName })
+    this.componentContext$.next({ slotName: this.slotName(), slotGroupName: this.slotGroupName() })
   }
 }
 --
