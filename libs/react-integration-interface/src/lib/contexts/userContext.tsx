@@ -36,6 +36,9 @@ interface UserProviderProps {
   value?: Partial<UserContextValue>
 }
 
+const defaultProfile$ = new UserProfileTopic()
+const defaultPermissionsTopic$ = new PermissionsTopic()
+
 const UserContext = createContext<UserContextValue | null>(null)
 
 /**
@@ -61,19 +64,14 @@ const useUserService = (): UserContextValue => {
  * @returns Provider wrapping the given children.
  */
 const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
-  // Create stable instances using refs to prevent unnecessary re-renders
-  const profile$ = useMemo(() => value?.profile$ ?? new UserProfileTopic(), [value?.profile$])
+  const profile$ = value?.profile$ ?? defaultProfile$
 
   const [lang$] = useState(() => {
     const initialLang = determineBrowserLanguage() ?? DEFAULT_LANG
     return value?.lang$ ?? new BehaviorSubject(initialLang)
   })
 
-  const permissionsTopic$ = useMemo(
-    () => value?.permissionsTopic$ ?? new PermissionsTopic(),
-    [value?.permissionsTopic$]
-  )
-  const isInternalPermissionsTopic = !value?.permissionsTopic$
+  const permissionsTopic$ = value?.permissionsTopic$ ?? defaultPermissionsTopic$
 
   // Use ref to store subscriptions for cleanup
   const subscriptionsRef = useRef<Subscription[]>([])
@@ -90,21 +88,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children, value }) => {
       subscription.unsubscribe()
     }
   }, [profile$, lang$])
-
-  // Cleanup on unmount - destroy topics and unsubscribe
-  useEffect(() => {
-    return () => {
-      // Unsubscribe all subscriptions
-      subscriptionsRef.current.forEach((sub) => sub.unsubscribe())
-      subscriptionsRef.current = []
-
-      // Destroy topics
-      profile$.destroy()
-      if (isInternalPermissionsTopic) {
-        permissionsTopic$.destroy()
-      }
-    }
-  }, [profile$, permissionsTopic$, isInternalPermissionsTopic])
 
   // Memoize functions to prevent unnecessary re-renders
   const getPermissions = useCallback((): Observable<string[]> => {
