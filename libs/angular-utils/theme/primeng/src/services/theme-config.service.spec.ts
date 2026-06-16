@@ -21,6 +21,7 @@ jest.mock('../utils/mapper/mapper', () => ({
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
 import {
   IS_ADVANCED_THEMING,
+  SLOT_GROUP_PREFIX,
   THEME_OPTIONS,
   ThemeConfigService,
   provideThemeConfigService,
@@ -73,6 +74,55 @@ const flushAsync = async () => {
   }
 }
 
+const THEME_V2_MOCK: CurrentThemes = {
+  id: 'theme-v2',
+  versions: [2],
+  properties: {
+    v2: {
+      primitives: {
+        variant: {
+          primary: {
+            bg: { color: '#1976d2' },
+            contrast: '#ffffff'
+          },
+        },
+        font: {
+          family: 'Inter, sans-serif',
+          size: '16px',
+          weight: '400',
+        },
+      },
+      usages: {
+        region: {
+          font: {
+            family: 'Existing_font_family'
+          },
+        },
+      },
+      regionOverrides: {
+        header: {
+          primitives: {
+            variant: {
+              primary: {
+                bg: { color: 'override_#0d47a1' },
+              },
+            },
+            font: {
+              weight: 'override_600',
+            },
+          },
+          usages: {
+            region: {
+              font: {
+                family: 'override_font_family',
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 describe('ThemeConfigService', () => {
   let currentThemes$: FakeTopic<CurrentThemes>
   let currentMfe$: FakeTopic<MfeInfo>
@@ -562,6 +612,75 @@ describe('ThemeConfigService', () => {
       const service = TestBed.inject(ThemeConfigService) as any
       expect(service.parsePrimeNGOverridesValue(undefined)).toEqual({})
       expect(service.parsePrimeNGOverridesValue([])).toEqual({})
+    })
+  })
+
+  describe('getThemeProperties', () => {
+    const configureWithSlotGroupName = () => {
+      const rcContext = new ReplaySubject<{ slotGroupName: string }>(1)
+      rcContext.next({ slotGroupName: SLOT_GROUP_PREFIX + 'header' })
+
+       configure({}, [
+        { provide: REMOTE_COMPONENT_CONTEXT, useValue: rcContext }
+      ])
+    }
+
+    it('merges base primitives/usages with valid region override', async () => {
+      configureWithSlotGroupName()      
+      const themeConfigService = TestBed.inject(ThemeConfigService)
+      const themeParam = { ...THEME_V2_MOCK, properties: THEME_V2_MOCK.properties.v2 ?? {} }
+
+      const properties = await (themeConfigService['getThemeProperties'])(themeParam)
+
+      expect(properties.primitives?.font?.family).toEqual('Inter, sans-serif')
+      expect(properties.primitives?.font?.size).toEqual('16px')
+      //expect(properties.primitives?.font?.weight).toEqual('override_600')
+      expect(properties.usages?.region?.font?.family).toEqual('override_font_family')
+    })
+
+    it('returns base properties when regionOverrides is missing', async () => {
+      configureWithSlotGroupName()
+      const themeWithoutOverrides = {
+        ...THEME_V2_MOCK,
+        properties: {
+          ...THEME_V2_MOCK.properties.v2,
+          regionOverrides: undefined,
+        }
+      }
+      const themeConfigService = TestBed.inject(ThemeConfigService)
+      const properties = await (themeConfigService['getThemeProperties'])(themeWithoutOverrides)
+
+      expect(properties).toEqual(themeWithoutOverrides.properties)
+      expect(properties.primitives?.variant?.primary?.contrast).toEqual('#ffffff')
+      expect(properties.usages?.region?.font?.family).toEqual('Existing_font_family')
+    })
+
+    it('returns base values when region key is valid but override entry is not set', async () => {
+      configureWithSlotGroupName()
+      const themeConfigService = TestBed.inject(ThemeConfigService)
+      const themeNoHeaderOverrides = {
+        ...THEME_V2_MOCK,
+        properties: {
+          ...THEME_V2_MOCK.properties.v2,
+          regionOverrides: {
+            subHeader: {
+              primitives: {
+                variant: {
+                  primary: {
+                    bg: { color: 'override_#0d47a1' },
+                  },
+                },
+                font: { weight: 'bold' },
+              }
+            }
+          }
+        }
+      }
+
+      const properties = await (themeConfigService['getThemeProperties'])(themeNoHeaderOverrides)
+
+      expect((properties.primitives?.variant?.primary?.bg as any)?.color).toEqual('#1976d2')
+      expect(properties.primitives?.font?.family).toEqual('Inter, sans-serif')
     })
   })
 })

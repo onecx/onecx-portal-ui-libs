@@ -57,15 +57,8 @@ export const theme = z
   })
   .register(themeSchemaRegistry, { id: 'theme' })
 
-type RegionOverridesInput = {
-  header?: RegionOverrideInput
-  subHeader?: RegionOverrideInput
-  bodyStart?: RegionOverrideInput
-  bodyHeader?: RegionOverrideInput
-  bodyFooter?: RegionOverrideInput
-  bodyEnd?: RegionOverrideInput
-  footer?: RegionOverrideInput
-}
+export const regionKeys = ["header", "subHeader", "bodyStart", "bodyHeader", "bodyFooter", "bodyEnd", "footer"] as const
+export type RegionOverridesInput = Partial<Record<typeof regionKeys[number], RegionOverrideInput>>
 
 export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
@@ -76,4 +69,4 @@ export type ThemePropertiesV2 = {
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
-}
+};

@@ -6,13 +6,15 @@ import {
   inject,
   runInInjectionContext,
 } from '@angular/core'
-import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import { AppStateService, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   OverrideType,
   Theme as OneCXTheme,
   ThemeOverride,
   ThemePropertiesV2,
   CurrentThemes,
+  RegionOverridesInput,
+  regionKeys,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -33,6 +35,8 @@ import {
 } from '@onecx/angular-utils/style'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
+
+export const SLOT_GROUP_PREFIX = 'onecx-shell-'
 
 type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOverrides; overrides?: ThemeOverrides }
 
@@ -137,7 +141,8 @@ export class ThemeConfigService {
     }
   ): Promise<void> {
     // theme.properties has already been resolved against region overrides upstream
-    const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(theme.properties)
+    const properties = await this.getThemeProperties(theme)
+    const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(properties)
 
     const primeNgThemeOverrides = this.generateThemeOverrides(theme.overrides)
     const primeNgPreset = mergeDeep(primeNgPresetFromTheme, primeNgThemeOverrides)
@@ -225,4 +230,35 @@ export class ThemeConfigService {
       ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides))
       : {}
   }
-}
+
+  private async getThemeProperties(theme: CurrentThemes & {
+    properties: ThemePropertiesV2
+  }): Promise<ThemePropertiesV2> {
+    const slotGroupName = this.rcContext ? ((await firstValueFrom(this.rcContext))?.slotGroupName) : undefined
+    const regionName = slotGroupName ? this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput : undefined
+    const regionOverrides = theme.properties.regionOverrides
+
+    if (regionName && regionOverrides) {
+      if (!regionKeys.includes(regionName)) {
+        throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
+      }
+      const region = regionOverrides[regionName]
+      const regionPrimitives = region?.primitives ?? {}
+      const regionUsages = region?.usages ?? {}
+
+      return {
+        primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
+        usages: mergeDeep(theme.properties.usages, regionUsages)
+      }
+    } else {
+      return theme.properties
+    }
+  }
+
+  private dashToCamelCase(value: string): string {
+    value = value.replace(SLOT_GROUP_PREFIX, '')
+    return value?.replace(/-([a-z])/g, (_: string, letter: string) =>
+      letter.toUpperCase()
+    );
+  }
+} 
