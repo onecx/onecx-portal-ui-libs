@@ -184,6 +184,8 @@ export const layout = z
   .object({
     // Max-width of the main content container, e.g. '1280px'
     contentMaxWidth: withRef(z.string()).optional(),
+    // Max-width of overlay components (tooltips, popovers), e.g. '12.5rem'
+    overlayMaxWidth: withRef(z.string()).optional(),
     // Default gap between layout sections / grid columns
     gap: withRef(z.string()).optional(),
   })
