@@ -532,6 +532,27 @@ export const GridWithConditionallyVisibleAdditionalActions = {
   },
 }
 
+export const GridWithRouterLinkOverflowActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-grid-overflow-link',
+      },
+    ],
+  },
+}
+
 export const GridWithPageSizes = {
   render: (args: any) => ({
     props: { ...args, ...defaultActionsArgs },

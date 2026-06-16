@@ -57,7 +57,7 @@
         [id]="resolveFieldData(rowObject, 'id')+'-'+(action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
         *ocxIfPermission="action.permission"
         pButton
-        class="p-button-rounded p-button-text"
+        class="p-button-rounded p-button-text no-underline"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
         [routerLink]="action.routerLink"
