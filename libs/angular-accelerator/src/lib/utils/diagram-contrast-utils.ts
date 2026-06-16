@@ -11,8 +11,9 @@ export function hasHighContrast(): boolean {
   return highContrastSelector.matches
 }
 
-/* This function returns the background color based on the high contrast mode. 
-Explicitly returns white for high contrast mode because all colors are set to white in high contrast mode,
+/* This function returns the background color based on the high contrast mode.
+When high contrast mode is enabled, all background colors are overidden to black and all text color are overriden to white,
+In chart we need to add this behavior manually, so we explicitly return white for high contrast mode, 
 otherwise it uses the CSS variable --text-color */
 export function getLabelColor(highContrast: boolean): string {
   if (highContrast) return '#ffffff'
