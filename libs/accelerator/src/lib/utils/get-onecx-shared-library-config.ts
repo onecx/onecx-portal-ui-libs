@@ -43,6 +43,7 @@ const EXPORTS_BLACKLIST = ['.', './package.json'];
 const DEFAULT_DEPENDENCY_BLACKLIST: RegExp[] = [
   /^@nx(\/.*)?$/,
   /^@module-federation(\/.*)?$/,
+  /^@onecx\/build-utils(\/.*)?$/,
 ];
 
 /**
