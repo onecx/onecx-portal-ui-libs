@@ -4,6 +4,7 @@ import { firstValueFrom, map } from 'rxjs'
 import Semaphore from 'ts-semaphore'
 import { CONFIG_KEY } from '../model/config-key.model'
 import { createLogger } from '../utils/logger.utils'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Default configuration values used for configuration bootstrap.
@@ -54,7 +55,6 @@ const DEFAULT_LIB_CONFIG: LibConfig = {
   portalId: '',
 }
 
-const defaultConfigTopic = new ConfigurationTopic()
 const defaultSemaphore = new Semaphore(1)
 const defaultLogger = createLogger('ConfigurationProvider')
 
@@ -90,19 +90,19 @@ const ConfigurationProvider = ({
   defaultConfig?: LibConfig
 }) => {
   const [config, setConfig] = useState<Config | null>(null)
-  const configRef = useRef(defaultConfigTopic)
+  const config$ = useTopic(undefined, ConfigurationTopic)
   const semaphoreRef = useRef(defaultSemaphore)
   const loggerRef = useRef(defaultLogger)
 
   useEffect(() => {
-    const subscription = configRef.current.asObservable().subscribe((nextConfig) => {
+    const subscription = config$.asObservable().subscribe((nextConfig) => {
       setConfig(nextConfig ?? null)
     })
 
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [config$])
 
   const init = useCallback(async (): Promise<boolean> => {
     const { skipRemoteConfigLoad, remoteConfigURL } = defaultConfig
@@ -143,7 +143,7 @@ const ConfigurationProvider = ({
         )
       }
 
-      await configRef.current.publish({ ...defaultConfigValues, ...(config ?? {}) })
+      await config$.publish({ ...defaultConfigValues, ...(config ?? {}) })
       return true
     } catch (e) {
       loggerRef.current.error('Failed to load env configuration', e)
@@ -152,30 +152,35 @@ const ConfigurationProvider = ({
   }, [defaultConfig])
 
   const getConfig = useCallback(async (): Promise<Config | undefined> => {
-    return firstValueFrom(configRef.current.asObservable())
-  }, [])
+    return firstValueFrom(config$.asObservable())
+  }, [config$])
 
-  const getProperty = useCallback(async (key: CONFIG_KEY): Promise<string | undefined> => {
-    if (!Object.values(CONFIG_KEY).includes(key)) {
-      loggerRef.current.error('Invalid config key ', key)
-    }
-    return firstValueFrom(configRef.current.pipe(map((currentConfig) => currentConfig?.[key])))
-  }, [])
+  const getProperty = useCallback(
+    async (key: CONFIG_KEY): Promise<string | undefined> => {
+      if (!Object.values(CONFIG_KEY).includes(key)) {
+        loggerRef.current.error('Invalid config key ', key)
+      }
+      return firstValueFrom(config$.pipe(map((currentConfig) => currentConfig?.[key])))
+    },
+    [config$]
+  )
 
-  const setProperty = useCallback(async (key: string, value: string) => {
-    return semaphoreRef.current.use(async () => {
-      const currentValues = await firstValueFrom(configRef.current.asObservable())
-      const nextValues = { ...(currentValues ?? {}), [key]: value }
-      await configRef.current.publish(nextValues)
-    })
-  }, [])
+  const setProperty = useCallback(
+    async (key: string, value: string) => {
+      return semaphoreRef.current.use(async () => {
+        const currentValues = await firstValueFrom(config$.asObservable())
+        const nextValues = { ...(currentValues ?? {}), [key]: value }
+        await config$.publish(nextValues)
+      })
+    },
+    [config$]
+  )
 
   useEffect(() => {
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const config$ = configRef.current
   const contextValue = useMemo(
     () => ({
       config,

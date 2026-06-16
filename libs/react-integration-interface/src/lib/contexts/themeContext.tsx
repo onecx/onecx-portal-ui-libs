@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useContext, useMemo } from 'react'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Theme context value shape.
@@ -13,8 +14,6 @@ type ThemeProviderProps = {
   children: ReactNode
   value?: Partial<ThemeContextValue>
 }
-
-const defaultCurrentTheme$ = new CurrentThemeTopic()
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
@@ -41,7 +40,7 @@ const useTheme = () => {
  * @returns Provider wrapping the given children.
  */
 const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
-  const currentTheme$ = value?.currentTheme$ ?? defaultCurrentTheme$
+  const currentTheme$ = useTopic(value?.currentTheme$, CurrentThemeTopic)
 
   const contextValue = useMemo(
     () => ({
