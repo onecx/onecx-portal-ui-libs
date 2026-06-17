@@ -1,6 +1,7 @@
-import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
+import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffect, useRef, useState } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import { useTopic } from '@onecx/react-integration-interface'
 
 /**
  * React context carrying the current synced location payload.
@@ -19,14 +20,18 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     url: locationHook.pathname,
     isFirst: false,
   })
+  const pathnameRef = useRef(locationHook.pathname)
+  pathnameRef.current = locationHook.pathname
+
+  const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useEffect(() => {
-    const locationSubscription = new CurrentLocationTopic().subscribe((location) => {
+    const locationSubscription = currentLocation$.subscribe((location) => {
       const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
       const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
-      if (locationHook.pathname !== location.url) {
+      if (pathnameRef.current !== location.url) {
         setCurrentLocation(() => {
-          const rawUrl = location.url ?? locationHook.pathname
+          const rawUrl = location.url ?? pathnameRef.current
           const normalizedUrl = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`
           const urlWithBase = normalizedUrl.startsWith(normalizedBaseHref)
             ? normalizedUrl
@@ -44,7 +49,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     return () => {
       locationSubscription.unsubscribe()
     }
-  }, [])
+  }, [currentLocation$, navigate])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
