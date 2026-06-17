@@ -76,3 +76,4 @@ Once the previous steps are completed, **the application should be upgraded to A
 ** [ ] xref:./add-required-plugin-to-primeng.adoc[Add Webpack Plugin for PrimeNG]
 ** [ ] xref:./add-angular-material-plugin.adoc[Add Webpack Plugin for Angular Material]
 ** [ ] xref:./provide-theme-config.adoc[Provide ThemeConfig]
+** [ ] xref:./update-webpack-config.adoc[Update Webpack Config to Use Dynamic Shared Entries]
