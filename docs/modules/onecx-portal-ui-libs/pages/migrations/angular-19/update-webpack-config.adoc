@@ -1,0 +1,54 @@
+[#update-webpack-config]
+= Update Webpack Config to Use Dynamic Shared Entries
+
+In OneCX v6, the `shared` entries in `webpack.config.js` should no longer be hardcoded.
+Shared configuration can instead be generated dynamically using `getOneCXSharedRecommendations` from `@onecx/accelerator`, based on the dependencies declared in `package.json`.
+
+== Update webpack.config.js
+
+* `getOneCXSharedRecommendations` from `@onecx/accelerator` and `dependencies` from `./package.json` should be imported.
+* The hardcoded `share({...})` entries should be replaced with a loop over `Object.keys(dependencies)`.
+  For each dependency, `getOneCXSharedRecommendations(libName, { requiredVersion: 'auto', includeSecondaries: true })` should be called.
+  If the result is not `false`, the entry should be added to the `sharedEntries` object.
+* `sharedEntries` should be passed to `share(sharedEntries)` instead of the hardcoded object.
+
+=== Example
+
+.Before
+[source, javascript]
+----
+const { share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
+
+const config = withModuleFederationPlugin({
+  // ...
+  shared: share({
+    '@angular/core': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-accelerator': { requiredVersion: 'auto', includeSecondaries: true },
+    'primeng': { requiredVersion: 'auto', includeSecondaries: true },
+    // ... more hardcoded entries for every dependency
+  }),
+  sharedMappings: ['@onecx/portal-integration-angular'],
+});
+----
+
+.After
+[source, javascript]
+----
+const { share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
+const { getOneCXSharedRecommendations } = require('@onecx/accelerator')
+const { dependencies } = require('./package.json')
+
+const sharedEntries = {}
+for (const libName of Object.keys(dependencies)) {
+  const result = getOneCXSharedRecommendations(libName, { requiredVersion: 'auto', includeSecondaries: true })
+  if (result !== false) {
+    sharedEntries[libName] = result
+  }
+}
+
+const config = withModuleFederationPlugin({
+  // ...
+  shared: share(sharedEntries),
+  sharedMappings: ['@onecx/portal-integration-angular'],
+});
+----
