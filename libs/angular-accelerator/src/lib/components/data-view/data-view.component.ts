@@ -282,6 +282,12 @@ export class DataViewComponent implements OnInit {
   get numberTableFilterCell(): TemplateRef<any> | undefined {
     return this.numberTableFilterCellTemplate() || this.numberTableFilterCellChildTemplate()
   }
+  columnHeaderTemplate = input<TemplateRef<any> | undefined>()
+  columnHeaderChildTemplate = contentChild<TemplateRef<any>>('columnHeaderTemplate')
+  get columnHeader(): TemplateRef<any> | undefined {
+    return this.columnHeaderTemplate() || this.columnHeaderChildTemplate()
+  }
+
 
   @Input()
   set additionalActions(value: DataAction[]) {
@@ -487,3 +493,5 @@ export class DataViewComponent implements OnInit {
     this.stateService.pageSize.set(event)
   }
 }
+
+
