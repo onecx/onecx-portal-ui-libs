@@ -110,6 +110,7 @@ export type ThemePath =
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
+  | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
 
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
