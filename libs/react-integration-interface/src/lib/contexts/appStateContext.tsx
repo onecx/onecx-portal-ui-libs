@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import {
   GlobalErrorTopic,
   GlobalLoadingTopic,
@@ -8,6 +8,7 @@ import {
   CurrentWorkspaceTopic,
   IsAuthenticatedTopic,
 } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 interface AppStateContextProps {
   globalError$: GlobalErrorTopic
@@ -36,44 +37,13 @@ const AppStateContext = createContext<AppStateContextProps>({} as any)
  * @returns Provider wrapping the given children.
  */
 const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Partial<AppStateContextProps> }) => {
-  // Track which topics are created internally for proper cleanup
-  const internalTopics = useMemo(
-    () => ({
-      globalError$: !value?.globalError$,
-      globalLoading$: !value?.globalLoading$,
-      currentMfe$: !value?.currentMfe$,
-      currentLocation$: !value?.currentLocation$,
-      currentPage$: !value?.currentPage$,
-      currentWorkspace$: !value?.currentWorkspace$,
-      isAuthenticated$: !value?.isAuthenticated$,
-    }),
-    [
-      value?.globalError$,
-      value?.globalLoading$,
-      value?.currentMfe$,
-      value?.currentLocation$,
-      value?.currentPage$,
-      value?.currentWorkspace$,
-      value?.isAuthenticated$,
-    ]
-  )
-
-  const globalError$ = useMemo(() => value?.globalError$ ?? new GlobalErrorTopic(), [value?.globalError$])
-  const globalLoading$ = useMemo(() => value?.globalLoading$ ?? new GlobalLoadingTopic(), [value?.globalLoading$])
-  const currentMfe$ = useMemo(() => value?.currentMfe$ ?? new CurrentMfeTopic(), [value?.currentMfe$])
-  const currentLocation$ = useMemo(
-    () => value?.currentLocation$ ?? new CurrentLocationTopic(),
-    [value?.currentLocation$]
-  )
-  const currentPage$ = useMemo(() => value?.currentPage$ ?? new CurrentPageTopic(), [value?.currentPage$])
-  const currentWorkspace$ = useMemo(
-    () => value?.currentWorkspace$ ?? new CurrentWorkspaceTopic(),
-    [value?.currentWorkspace$]
-  )
-  const isAuthenticated$ = useMemo(
-    () => value?.isAuthenticated$ ?? new IsAuthenticatedTopic(),
-    [value?.isAuthenticated$]
-  )
+  const globalError$ = useTopic(value?.globalError$, GlobalErrorTopic)
+  const globalLoading$ = useTopic(value?.globalLoading$, GlobalLoadingTopic)
+  const currentMfe$ = useTopic(value?.currentMfe$, CurrentMfeTopic)
+  const currentLocation$ = useTopic(value?.currentLocation$, CurrentLocationTopic)
+  const currentPage$ = useTopic(value?.currentPage$, CurrentPageTopic)
+  const currentWorkspace$ = useTopic(value?.currentWorkspace$, CurrentWorkspaceTopic)
+  const isAuthenticated$ = useTopic(value?.isAuthenticated$, IsAuthenticatedTopic)
 
   // Memoize the context value to avoid unnecessary re-renders
   const contextValue = useMemo(
@@ -88,27 +58,6 @@ const AppStateProvider = ({ children, value }: { children: ReactNode; value?: Pa
     }),
     [globalError$, globalLoading$, currentMfe$, currentLocation$, currentPage$, currentWorkspace$, isAuthenticated$]
   )
-
-  useEffect(() => {
-    return () => {
-      if (internalTopics.globalError$) globalError$.destroy()
-      if (internalTopics.globalLoading$) globalLoading$.destroy()
-      if (internalTopics.currentMfe$) currentMfe$.destroy()
-      if (internalTopics.currentLocation$) currentLocation$.destroy()
-      if (internalTopics.currentPage$) currentPage$.destroy()
-      if (internalTopics.currentWorkspace$) currentWorkspace$.destroy()
-      if (internalTopics.isAuthenticated$) isAuthenticated$.destroy()
-    }
-  }, [
-    globalError$,
-    globalLoading$,
-    currentMfe$,
-    currentLocation$,
-    currentPage$,
-    currentWorkspace$,
-    isAuthenticated$,
-    internalTopics,
-  ])
 
   return <AppStateContext.Provider value={contextValue}>{children}</AppStateContext.Provider>
 }
