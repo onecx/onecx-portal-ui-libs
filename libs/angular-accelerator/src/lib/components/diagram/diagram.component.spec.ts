@@ -14,6 +14,12 @@ import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
 
+declare global {
+  interface Window {
+    __setForcedColorsActive?: (active: boolean) => void
+  }
+}
+
 describe('DiagramComponent', () => {
   let translateService: TranslateService
   let component: DiagramComponent
@@ -34,6 +40,7 @@ describe('DiagramComponent', () => {
   const numberOfResults = Math.pow(2, diagramData.length) - 1
 
   beforeEach(async () => {
+    window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
       imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot(), OcxTooltipDirective],
@@ -349,5 +356,22 @@ describe('DiagramComponent', () => {
     fixture.detectChanges()
 
     expect(component.chartType()).toEqual('pie')
+  })
+
+  describe('High Contrast Mode', () => {
+    it('should apply white chart label colors when high contrast mode is enabled', () => {
+      window.__setForcedColorsActive?.(true)
+      fixture.detectChanges()
+
+      expect(component.chartOptions().plugins?.legend?.labels?.color).toEqual('#ffffff')
+    })
+
+    it('should apply text-color variable when high contrast mode is disabled', () => {
+      window.__setForcedColorsActive?.(false)
+      fixture.detectChanges()
+
+      const expectedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim()
+      expect(component.chartOptions().plugins?.legend?.labels?.color).toEqual(expectedColor)
+    })
   })
 })

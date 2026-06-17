@@ -19,6 +19,36 @@
     border: 0;
   }
 
-  .diagram-title, .diagram-description {
-    text-align: center;
+.diagram-title,
+.diagram-description {
+  text-align: center;
+}
+
+.custom-legends-container {
+  display: flex;
+  justify-content: center;
+  .custom-legends-content-container {
+    max-height: 250px;
+    overflow-y: auto; //add scrollbar when entries are greater than 10 
+  }  
+
+  .legends-table {
+    margin: 10px auto 0;
+    border-collapse: collapse;
+    text-align: left;
   }
+
+  .legends-table td {
+    padding: 0.25rem 1rem;
+    vertical-align: middle;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+  }
+
+  .box {
+    width: 36px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
