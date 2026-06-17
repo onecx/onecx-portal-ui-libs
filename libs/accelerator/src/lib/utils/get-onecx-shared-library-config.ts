@@ -1,4 +1,8 @@
 import { getOneCXSharedRecommendations, SharedLibraryConfig } from "./get-onecx-shared-recommendations";
+import { createLogger } from "./logger.utils";
+
+const angularCore = '@angular/core';
+const logger = createLogger('getOneCXSharedLibraryConfig')
 
 /**
  * As we have { platform: 'browser'} in accelerator's & integration-interface project.json.
@@ -12,13 +16,10 @@ function getNodeRequire(): NodeJS.Require | null {
       return eval('require') as NodeJS.Require;
     }
   } catch {
-    console.log(`[accelerator] Shared Config: Node require is not available.`);
+    logger.warn(`Node require is not available.`);
   }
   return null;
 }
-
-const angularCore = '@angular/core';
-
 
 /**
  * @deprecated This interface is deprecated and will be moved to `@onecx/build-utils` in v9.
