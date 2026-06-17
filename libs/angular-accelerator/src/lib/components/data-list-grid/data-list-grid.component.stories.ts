@@ -41,7 +41,16 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     }),
     moduleMetadata({
       declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule, OcxTooltipDirective],
+      imports: [
+        DataViewModule,
+        MenuModule,
+        ButtonModule,
+        MultiSelectModule,
+        TooltipModule,
+        StorybookTranslateModule,
+        OcxTooltipDirective,
+        RouterModule,
+      ],
     }),
   ],
 }
@@ -360,6 +369,46 @@ export const ListWithOnlyAdditionalOverflowActions = {
   },
 }
 
+export const ListWithRouterLinkOverflowActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-overflow-link',
+      },
+    ],
+  },
+}
+
+export const ListWithRouterLinkInlineActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)} (deleteItem)="deleteItem($event)" (editItem)="editItem($event)" (viewItem)="viewItem($event)"></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: false,
+        routerLink: '/data-list-grid-inline-link',
+      },
+    ],
+  },
+}
+
 export const ListWithPageSizes = {
   render: (args: any) => ({
     props: { ...args, ...defaultActionsArgs },
@@ -478,6 +527,27 @@ export const GridWithConditionallyVisibleAdditionalActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
         callback: () => console.log('Additional action clicked'),
+      },
+    ],
+  },
+}
+
+export const GridWithRouterLinkOverflowActions = {
+  render: (args: any) => ({
+    props: { ...args, ...defaultActionsArgs },
+    template: `<ocx-data-list-grid ${argsToTemplate(args)}></ocx-data-list-grid>`,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-grid-overflow-link',
       },
     ],
   },
