@@ -491,6 +491,18 @@ export class InteractiveDataViewComponent implements OnInit {
     return primeNgNumberTableFilterCell ?? childNumberTableFilterCell ?? undefined
   })
 
+  childColumnHeader = contentChild<TemplateRef<any> | undefined>('columnHeader')
+  primeNgColumnHeader = computed(() => {
+    const templates = this.templates()
+    const columnHeaderTemplate = templates.find((t) => t.getType() === 'columnHeader')
+    return columnHeaderTemplate?.template ?? undefined
+  })
+  _columnHeader = computed(() => {
+    const primeNgColumnHeader = this.primeNgColumnHeader()
+    const childColumnHeader = this.childColumnHeader()
+    return primeNgColumnHeader ?? childColumnHeader ?? undefined
+  })
+  
   templates = contentChildren<PrimeTemplate>(PrimeTemplate)
 
   filtered = output<Filter[]>()
