@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
-import { useTopic } from '@onecx/react-integration-interface'
+import { useTopic, createLogger } from '@onecx/react-integration-interface'
 
 /**
  * React context carrying the current synced location payload.
@@ -22,6 +22,8 @@ export const SyncedLocationContext = createContext<CurrentLocationTopicPayload |
  * @param children - nested content rendered with synced location context.
  * @returns Provider for synced location state.
  */
+const logger = createLogger('RouterSync')
+
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const locationHook = useLocation()
@@ -78,10 +80,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       return
     }
     if (locationHook.pathname !== currentLocation.url) {
-      currentLocation$.publish({
-        url: locationHook.pathname,
-        isFirst: false,
-      })
+      currentLocation$
+        .publish({
+          url: locationHook.pathname,
+          isFirst: false,
+        })
+        .catch((err) => {
+          logger.error('publish failed:', err)
+        })
     }
   }, [locationHook.pathname, currentLocation.url, currentLocation$])
 
