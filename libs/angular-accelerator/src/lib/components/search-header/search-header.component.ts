@@ -13,11 +13,23 @@ import {
   model,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
-import { Observable, combineLatest, debounceTime, filter, firstValueFrom, from, map, mergeMap, of, startWith } from 'rxjs'
+import {
+  Observable,
+  combineLatest,
+  debounceTime,
+  filter,
+  firstValueFrom,
+  from,
+  map,
+  mergeMap,
+  of,
+  startWith,
+} from 'rxjs'
 import { getLocation } from '@onecx/accelerator'
 import { CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import { Action } from '../page-header/page-header.component'
@@ -57,7 +69,7 @@ export class SearchHeaderComponent {
   subheader = input<string | undefined>(undefined)
 
   loading = input<boolean>(false)
-  
+
   viewMode = model<'basic' | 'advanced'>('basic')
 
   manualBreadcrumbs = input<boolean>(false)
@@ -91,11 +103,11 @@ export class SearchHeaderComponent {
 
   hasAdvanced = signal<boolean>(false)
 
-  simpleAdvancedAction = signal<Action>({
+  simpleAdvancedAction: Action = {
     id: 'simpleAdvancedButton',
     actionCallback: () => this.toggleViewMode(),
     show: 'always',
-  })
+  }
 
   headerActions = signal<Action[]>([])
 
@@ -123,15 +135,26 @@ export class SearchHeaderComponent {
   constructor() {
     effect(() => {
       const viewMode = this.viewMode()
-      this.viewModeChanged?.emit(viewMode)
-      this.componentStateChanged.emit({
-        activeViewMode: viewMode,
+      untracked(() => {
+        this.viewModeChanged?.emit(viewMode)
+        this.componentStateChanged.emit({
+          activeViewMode: viewMode,
+        })
       })
-      this.updateHeaderActions()
-      setTimeout(() => this.addKeyUpEventListener())
     })
 
-    this.announceSearchResults()    
+    // Update header actions whenever view mode, advanced availability or actions input changes
+    effect(() => {
+      this.viewMode()
+      this.hasAdvanced()
+      this.actions()
+      untracked(() => {
+        this.updateHeaderActions()
+        setTimeout(() => this.addKeyUpEventListener())
+      })
+    })
+
+    this.announceSearchResults()
 
     const configurationService = inject(ConfigurationService)
 
@@ -162,7 +185,7 @@ export class SearchHeaderComponent {
     const headerActions: Action[] = []
 
     if (this.hasAdvanced()) {
-      const simpleAdvancedAction = this.simpleAdvancedAction()
+      const simpleAdvancedAction = this.simpleAdvancedAction
       simpleAdvancedAction.labelKey =
         this.viewMode() === 'basic'
           ? 'OCX_SEARCH_HEADER.TOGGLE_BUTTON.ADVANCED.TEXT'
@@ -210,13 +233,14 @@ export class SearchHeaderComponent {
       } else {
         announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
       }
-      
+
       firstValueFrom(
-        this.translate.get(announmentKey, { count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null })
+        this.translate.get(announmentKey, {
+          count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null,
+        })
       ).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText, 'polite')
-      });
-
-    });
+      })
+    })
   }
 }

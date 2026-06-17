@@ -31,7 +31,7 @@ export function hash(s: string): string {
  * @param el - Element to inspect.
  * @returns True if the element is a PrimeReact style tag.
  */
-export function isPrimeReactStyle(el: Element): boolean {
+function isPrimeReactStyle(el: Element): boolean {
   return (
     el.tagName === 'STYLE' &&
     !el.hasAttribute('data-app-primereact-style') &&

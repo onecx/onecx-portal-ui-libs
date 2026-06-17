@@ -4,7 +4,7 @@ import { normalizeForHash, hash, getStyleFromNode, shouldInclude, scopeCss } fro
 /**
  * Attaches a per-app MutationObserver that writes scoped copies of
  * PrimeReact style blocks to a dedicated <style data-app-primereact-style="...">.
- * It NEVER edits PrimeReact’s own style tags.
+ * Optionally, it can also rewrite PrimeReact source style tags in-place.
  *
  * Returns a disposer to disconnect the observer (it does not remove the app style tag).
  */
@@ -23,25 +23,16 @@ export function attachPrimeReactScoper({
   normalizeBeforeHash = true,
   blockFurtherUpdatesForCapturedIds = false,
   dataPrimereactStyleName = 'app',
+  scopePrimeReactSourceStyles = false,
   productName,
   themeStyleId,
   enableThemeCaptureOnce = true,
 }: PrimeReactScoperOptions) {
   /**
    * Changes the data-style-id in @scope selector to match the current app's scope
-   * @param css - CSS content that may contain @scope wrapper
-   * @returns CSS content with updated scope selector
    */
   const adjustScopeIdToRemote = (css: string): string => {
-    const scopeRegex = /@scope\(\[data-style-id="[^"]+"\]/g
-    const newScopeSelector = `@scope([data-style-id="${id}"]`
-
-    const cssWithScopedCorrectly = css.replace(scopeRegex, newScopeSelector)
-
-    if (cssWithScopedCorrectly !== css) return cssWithScopedCorrectly
-
-    console.log('⚠️ No @scope data-style-id found to update')
-    return css
+    return css.replace(/@scope\(\[data-style-id="[^"]+"\]/g, `@scope([data-style-id="${id}"]`)
   }
 
   const styleTag = document.createElement('style')
@@ -88,12 +79,10 @@ export function attachPrimeReactScoper({
     if (!rawCss) return
     // Global per-style lock
     if (blockFurtherUpdatesForCapturedIds && capturedIds.has(styleId)) {
-      console.log('[upsertScopedBlock] skip: global lock; ignoring further updates', styleId)
       return
     }
     // Theme-only one-time capture
     if (enableThemeCaptureOnce && themeStyleId && styleId === themeStyleId && capturedIds.has(styleId)) {
-      console.log('[upsertScopedBlock] skip: theme captured once; ignoring further updates', styleId)
       return
     }
     if (!inCaptureWindow()) return
@@ -116,31 +105,73 @@ export function attachPrimeReactScoper({
     lastHashById.set(styleId, h)
   }
 
+  const maybeScopeSourceStyleElement = (
+    styleEl: HTMLStyleElement,
+    styleId: string,
+    rawCss: string,
+    attrName: string
+  ) => {
+    if (!scopePrimeReactSourceStyles) return
+    if (attrName !== 'data-primereact-style-id') return
+    if (!rawCss) return
+
+    const hasExistingScope = rawCss.includes('@scope')
+    const scopedCss = hasExistingScope ? rawCss : scopeCss(rawCss, scopeRootSelector, scopeLimitSelector)
+
+    if (styleEl.textContent !== scopedCss) {
+      styleEl.textContent = scopedCss
+      styleEl.dataset.appPrimeScoped = 'true'
+    }
+
+    const normalizedScoped = normalizeForHash(scopedCss, normalizeBeforeHash)
+    lastHashById.set(styleId, hash(normalizedScoped))
+  }
+
   const processStyleElement = (styleEl: HTMLStyleElement, attrName = 'data-primereact-style-id') => {
     const styleId = styleEl.getAttribute(attrName) || styleEl.id || 'unknown'
     let cssContent = styleEl.textContent || ''
 
     if (cssContent && attrName !== 'data-primereact-style-id') cssContent = adjustScopeIdToRemote(cssContent)
 
+    console.log(
+      '[PrimeReactScoper] captured style',
+      JSON.stringify({
+        styleId,
+        attrName,
+        productName,
+        styleTagId: styleEl.id,
+        hasPrimeReactAttr: !!styleEl.dataset.primereactStyleId,
+      })
+    )
+
+    maybeScopeSourceStyleElement(styleEl, styleId, cssContent, attrName)
     upsertScopedBlock(styleId, cssContent)
   }
 
+  const getCandidateIds = (appId: string, prefix: string): string[] => (prefix ? [appId, prefix] : [appId])
+
+  const appPrefix = productName ? `${productName}|${productName}` : ''
+
   const observer = new MutationObserver((records) => {
+    const expectedIds = getCandidateIds(id, appPrefix)
+
+    const matchesThemeStyleParent = (styleEl: HTMLStyleElement): string | null => {
+      if (styleEl.dataset.appPrimeScoped) return null
+      const { appStyles } = styleEl.dataset
+      if (appStyles && expectedIds.includes(appStyles)) return 'data-app-styles'
+      if (appPrefix && styleEl.id.startsWith(appPrefix)) return 'id'
+      return null
+    }
+
     for (const record of records) {
       if (record.type === 'childList') {
         record.addedNodes.forEach((node) => {
           const style = getStyleFromNode(node)
-          if (style) processStyleElement(style)
-          // Theme style capture path
-          else if (
-            node.parentElement instanceof HTMLStyleElement &&
-            (node.parentElement.hasAttribute('data-app-styles') ||
-              (productName &&
-                typeof node.parentElement.id === 'string' &&
-                node.parentElement.id.startsWith(`${productName}|${productName}-ui`)))
-          ) {
-            const attrName = node.parentElement.hasAttribute('data-app-styles') ? 'data-app-styles' : 'id'
-            processStyleElement(node.parentElement, attrName)
+          if (style) {
+            processStyleElement(style)
+          } else if (node.parentElement instanceof HTMLStyleElement) {
+            const attrName = matchesThemeStyleParent(node.parentElement)
+            if (attrName) processStyleElement(node.parentElement, attrName)
           }
         })
       } else if (record.type === 'characterData') {
@@ -157,11 +188,29 @@ export function attachPrimeReactScoper({
   })
 
   if (bootstrapExisting) {
-    const attrName = 'data-app-styles'
+    const appAttrName = 'data-app-styles'
+    const expectedAppIds = getCandidateIds(id, appPrefix)
 
     document.head
-      .querySelectorAll(`style[${attrName}], style[id^="${productName}|${productName}-ui"]`)
-      .forEach((el) => processStyleElement(el as HTMLStyleElement, attrName))
+      .querySelectorAll(`style[${appAttrName}], style[id^="${productName}|${productName}"]`)
+      .forEach((el) => {
+        const styleEl = el as HTMLStyleElement
+        const appStylesValue = styleEl.getAttribute(appAttrName) || ''
+        const isExpectedAppStyle = expectedAppIds.includes(appStylesValue)
+        const isPrefixedThemeStyle = !!appPrefix && styleEl.id.startsWith(appPrefix)
+
+        if (isExpectedAppStyle) {
+          processStyleElement(styleEl, appAttrName)
+        } else if (isPrefixedThemeStyle) {
+          processStyleElement(styleEl, 'id')
+        }
+      })
+
+    // Also process already-existing PrimeReact style tags like:
+    // <style data-primereact-style-id="base">...</style>
+    document.head
+      .querySelectorAll('style[data-primereact-style-id]')
+      .forEach((el) => processStyleElement(el as HTMLStyleElement))
   }
 
   return () => {

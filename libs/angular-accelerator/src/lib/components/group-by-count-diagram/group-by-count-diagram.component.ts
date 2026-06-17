@@ -54,6 +54,8 @@ export class GroupByCountDiagramComponent {
 
   fullHeight = input<boolean>(false)
   
+  customLegends = input<boolean>(false)
+  
   colors = model<Record<string, string>>({})
 
   dataSelected = output<any>()
@@ -91,7 +93,7 @@ export class GroupByCountDiagramComponent {
         occurrences = columnData.reduce((acc, current) => {
           return acc.some((e: { label: string }) => e.label === current)
             ? (acc.find((e: { label: string }) => e.label === current).value++, acc)
-            : [...acc, { label: current, value: 1, backgroundColor: colors[current.toString()] }]
+            : [...acc, { label: current, value: 1, backgroundColor: colors[current?.toString()] }]
         }, [])
       }
 

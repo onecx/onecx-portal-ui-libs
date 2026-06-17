@@ -1,4 +1,4 @@
-@if (columns(); as columns) { @if (filters(); as filters) {
+@if (stateService.columns(); as columns) { @if (stateService.filters(); as filters) {
 <div class="flex flex-wrap align-items-center gap-2">
   @if (displayMode() === 'chips') {
   <ng-container *ocxIfBreakpoint="'desktop'; elseTemplate: noChipsContent">
@@ -99,8 +99,6 @@
       "
       tooltipPosition="top"
       tooltipEvent="hover"
-      aria-describedby="ocx-manage-filters-tooltip"
-      [tooltipOptions]="{ id: 'ocx-manage-filters-tooltip' }"
       [badge]="filters.length.toString()"
       [ariaLabel]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>

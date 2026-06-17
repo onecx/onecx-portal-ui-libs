@@ -1,8 +1,9 @@
-import { Component, computed, effect, input, model, output } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, output } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { SelectChangeEvent } from 'primeng/select'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
 export interface DataListGridSortingComponentState {
@@ -16,11 +17,24 @@ export interface DataListGridSortingComponentState {
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {
-  readonly columns = input<DataTableColumn[]>([])
+  readonly stateService = inject(DataViewStateService)
+  
+  @Input()
+  set columns(value: DataTableColumn[]) {
+    this.stateService.columns.set(value)
+  }
+  
   readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
-  readonly sortDirection = model<DataSortDirection>(DataSortDirection.NONE)
-  readonly sortField = model<string>('')
+  @Input()
+  set sortDirection(value: DataSortDirection) {
+    this.stateService.sortDirection.set(value)
+  }
+
+  @Input()
+  set sortField(value: string) {
+    this.stateService.sortColumn.set(value)
+  }
 
   readonly sortChange = output<string>()
   readonly sortDirectionChange = output<DataSortDirection>()
@@ -28,13 +42,13 @@ export class DataListGridSortingComponent {
   readonly columnsChange = output<string[]>()
 
   readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
-    return this.columns()
+    return this.stateService.columns()
       .filter((c) => !!c.sortable)
       .map((c) => ({ columnId: c.id, columnName: c.nameKey }))
   })
 
   readonly selectedSortingOption = computed<DataColumnNameId | undefined>(() => {
-    const sortField = this.sortField()
+    const sortField = this.stateService.sortColumn()
     return this.dropdownOptions().find((e) => e.columnId === sortField)
   })
 
@@ -42,31 +56,31 @@ export class DataListGridSortingComponent {
     effect(() => {
       this.componentStateChanged.emit({
         sorting: {
-          sortColumn: this.sortField(),
-          sortDirection: this.sortDirection(),
+          sortColumn: this.stateService.sortColumn(),
+          sortDirection: this.stateService.sortDirection(),
         },
       })
     })
   }
 
   selectSorting(event: SelectChangeEvent): void {
-    this.sortField.set(event.value.columnId)
+    this.stateService.sortColumn.set(event.value.columnId) 
     this.sortChange.emit(event.value.columnId)
   }
 
   sortDirectionChanged(): void {
     const newSortDirection = this.nextSortDirection()
-    this.sortDirection.set(newSortDirection)
+    this.stateService.sortDirection.set(newSortDirection)
     this.sortDirectionChange.emit(newSortDirection)
   }
 
   nextSortDirection(): DataSortDirection {
     const states = this.sortStates()
-    return states[(states.indexOf(this.sortDirection()) + 1) % states.length]
+    return states[(states.indexOf(this.stateService.sortDirection()) + 1) % states.length]
   }
 
   sortIcon(): string {
-    switch (this.sortDirection()) {
+    switch (this.stateService.sortDirection()) {
       case DataSortDirection.ASCENDING:
         return 'pi-sort-amount-up'
       case DataSortDirection.DESCENDING:

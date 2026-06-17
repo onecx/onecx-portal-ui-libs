@@ -1,3 +1,52 @@
+## [9.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.6...v9.0.0-rc.7) (2026-06-15)
+
+### Features
+
+* close-dialog-without-secondary-button ([#1514](https://github.com/onecx/onecx-portal-ui-libs/issues/1514)) ([1de3041](https://github.com/onecx/onecx-portal-ui-libs/commit/1de3041307c88fa61e004daffc4306e165d1e981))
+* v8 build-utils added ([#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513)) ([#1525](https://github.com/onecx/onecx-portal-ui-libs/issues/1525)) ([b8b79d7](https://github.com/onecx/onecx-portal-ui-libs/commit/b8b79d757c4d6a9c568b0065e96e7d8503669499))
+
+### Bug Fixes
+
+* a11y - filter count ([#1480](https://github.com/onecx/onecx-portal-ui-libs/issues/1480)) ([7280ffb](https://github.com/onecx/onecx-portal-ui-libs/commit/7280ffb11e5607b3de270ce669cab372d31a96b3))
+* a11y portal dialog enhancement ([#1517](https://github.com/onecx/onecx-portal-ui-libs/issues/1517)) ([5f42e03](https://github.com/onecx/onecx-portal-ui-libs/commit/5f42e03b4097ef403a27bd0f3374aee17003f91e))
+* axe issue ([#1515](https://github.com/onecx/onecx-portal-ui-libs/issues/1515)) ([87225c3](https://github.com/onecx/onecx-portal-ui-libs/commit/87225c3ade625e781d8b0d1c8b6a3087fa6dfb52))
+
+## [9.0.0-rc.6](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.5...v9.0.0-rc.6) (2026-06-09)
+
+### Features
+
+* bump release version ([#1522](https://github.com/onecx/onecx-portal-ui-libs/issues/1522)) ([5493376](https://github.com/onecx/onecx-portal-ui-libs/commit/5493376f8f4db876eb0a01c118af0966f949f546))
+
+## [9.0.0-rc.5](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.4...v9.0.0-rc.5) (2026-06-09)
+
+### Features
+
+* add fallbackClass to requestIconAsync ([#1388](https://github.com/onecx/onecx-portal-ui-libs/issues/1388)) ([e0bf9ea](https://github.com/onecx/onecx-portal-ui-libs/commit/e0bf9eadf6e60ec49e058d095f061ba66e5a73b6))
+* enhance state management in InteractiveDataView ([#1353](https://github.com/onecx/onecx-portal-ui-libs/issues/1353)) ([db2e042](https://github.com/onecx/onecx-portal-ui-libs/commit/db2e0424df72a2278d53654605d41110a6b8bd57))
+* shared shell federation instance util ([#1444](https://github.com/onecx/onecx-portal-ui-libs/issues/1444)) ([dfe1497](https://github.com/onecx/onecx-portal-ui-libs/commit/dfe14974bdbbb4478ddd5e0330f30ba3e1895eb6))
+
+### Bug Fixes
+
+* added new scss to package and project ([#1468](https://github.com/onecx/onecx-portal-ui-libs/issues/1468)) ([#1471](https://github.com/onecx/onecx-portal-ui-libs/issues/1471)) ([12be533](https://github.com/onecx/onecx-portal-ui-libs/commit/12be533aa62198418ed874649db378ccf1fae58b))
+* data pipe error ([#1459](https://github.com/onecx/onecx-portal-ui-libs/issues/1459)) ([#1464](https://github.com/onecx/onecx-portal-ui-libs/issues/1464)) ([d1b5b27](https://github.com/onecx/onecx-portal-ui-libs/commit/d1b5b2701a781322caa3d73f24bd3775ec0f2f79))
+* dynamic scoping adjustments ([#1500](https://github.com/onecx/onecx-portal-ui-libs/issues/1500)) ([08bd4f0](https://github.com/onecx/onecx-portal-ui-libs/commit/08bd4f0fa2ae1654de431720033ab2a039eafb70))
+* improve shell instance fallback logic ([#1518](https://github.com/onecx/onecx-portal-ui-libs/issues/1518)) ([4a4c949](https://github.com/onecx/onecx-portal-ui-libs/commit/4a4c94963f35fcb052df32eb98adaf04655ae826))
+* missing translation flickering issue ([#1496](https://github.com/onecx/onecx-portal-ui-libs/issues/1496)) ([863f903](https://github.com/onecx/onecx-portal-ui-libs/commit/863f903fdb3fdd9fe7014e8cff8962632f332fe2))
+* remove ng-reflect and update harnesses ([#1403](https://github.com/onecx/onecx-portal-ui-libs/issues/1403)) ([ca79e9d](https://github.com/onecx/onecx-portal-ui-libs/commit/ca79e9dd955df29809e3a804f49da6c88384f00e))
+* search header viewMode efffect and storybook ([#1453](https://github.com/onecx/onecx-portal-ui-libs/issues/1453)) ([#1479](https://github.com/onecx/onecx-portal-ui-libs/issues/1479)) ([04cb74b](https://github.com/onecx/onecx-portal-ui-libs/commit/04cb74be2a21260d2a26792e242fe0afa2ee5659))
+
+## [9.0.0-rc.4](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.3...v9.0.0-rc.4) (2026-05-21)
+
+### Bug Fixes
+
+* data-table stories ([#1432](https://github.com/onecx/onecx-portal-ui-libs/issues/1432)) ([#1434](https://github.com/onecx/onecx-portal-ui-libs/issues/1434)) ([f6ef12e](https://github.com/onecx/onecx-portal-ui-libs/commit/f6ef12e82ea1667cc7eef67db9b03c9634c6931f))
+* filter view custom no selection template story ([#1433](https://github.com/onecx/onecx-portal-ui-libs/issues/1433)) ([#1435](https://github.com/onecx/onecx-portal-ui-libs/issues/1435)) ([8e218e3](https://github.com/onecx/onecx-portal-ui-libs/commit/8e218e37420a0700760fdc98df5b52c38b4c2c7e))
+* generator related conversions ([#1378](https://github.com/onecx/onecx-portal-ui-libs/issues/1378)) ([a2cbe83](https://github.com/onecx/onecx-portal-ui-libs/commit/a2cbe83f338710f46d561e043c32c0dda6b1d2a4))
+* inject in factory for theme overrides fixed ([#1454](https://github.com/onecx/onecx-portal-ui-libs/issues/1454)) ([3fad66a](https://github.com/onecx/onecx-portal-ui-libs/commit/3fad66a37c1a6cee4513f3f7ce9cf71bd4499ff0))
+* React libs typescript ([#1425](https://github.com/onecx/onecx-portal-ui-libs/issues/1425)) ([80ed8b4](https://github.com/onecx/onecx-portal-ui-libs/commit/80ed8b43eeb0ec04b132d169cfb2fcdf9799c2d5))
+* router link in additional actions ([#1431](https://github.com/onecx/onecx-portal-ui-libs/issues/1431)) ([c828823](https://github.com/onecx/onecx-portal-ui-libs/commit/c828823bffd90dc7deb79a901ad6ce45205738e2))
+* update build configuration and module exports for react libraries ([#1443](https://github.com/onecx/onecx-portal-ui-libs/issues/1443)) ([2fae388](https://github.com/onecx/onecx-portal-ui-libs/commit/2fae38881aca0ec137d2aea359edaf81a429e24e))
+
 ## [9.0.0-rc.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.2...v9.0.0-rc.3) (2026-05-12)
 
 ### Features

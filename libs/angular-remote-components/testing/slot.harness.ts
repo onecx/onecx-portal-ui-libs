@@ -34,7 +34,7 @@ export class SlotHarness extends ContentContainerComponentHarness {
   }
 
   /**
-   * Gets the name of the slot from either the 'name' attribute or 'ng-reflect-name' attribute.
+   * Gets the name of the slot from the 'name' attribute.
    * Checks both for robust detection during different Angular compilation modes.
    * @returns Promise that resolves to the slot name or null if not found.
    */
@@ -44,11 +44,6 @@ export class SlotHarness extends ContentContainerComponentHarness {
     const nameAttr = await host.getAttribute('name')
     if (nameAttr !== null) {
       return nameAttr
-    }
-
-    const reflectName = await host.getAttribute('ng-reflect-name')
-    if (reflectName !== null) {
-      return reflectName
     }
 
     return null

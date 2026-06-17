@@ -17,7 +17,7 @@ const PrimeReactStyleContext = createContext<{ rootRef: RefObject<HTMLDivElement
 export const PrimeReactStyleProvider = ({ children }: PrimeReactStyleProviderProps) => {
   const rootRef = useRef<HTMLDivElement>(null)
   const { PRODUCT_NAME } = useAppGlobals()
-  const appId = `${PRODUCT_NAME}|${PRODUCT_NAME}-ui`
+  const appId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
 
   useEffect(() => {
     const detach = attachPrimeReactScoper({

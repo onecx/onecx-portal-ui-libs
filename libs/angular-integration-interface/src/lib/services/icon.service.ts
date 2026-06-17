@@ -13,8 +13,10 @@ export class IconService implements OnDestroy {
     return this.iconServiceInterface.requestIcon(name, type)
   }
 
-  requestIconAsync(name: string, type?: IconClassType): Promise<string | null> {
-    return this.iconServiceInterface.requestIconAsync(name, type)
+  requestIconAsync(name: string, type?: IconClassType): Promise<string | null>
+  requestIconAsync(name: string, type: IconClassType, fallbackClass: string): Promise<string>
+  requestIconAsync(name: string, type?: IconClassType, fallbackClass?: string): Promise<string | null> {
+    return this.iconServiceInterface.requestIconAsync(name, type, fallbackClass)
   }
 
   ngOnDestroy(): void {

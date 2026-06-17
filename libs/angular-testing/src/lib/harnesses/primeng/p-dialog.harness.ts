@@ -8,6 +8,7 @@ export interface PDialogHarnessFilters extends BaseHarnessFilters {
 export class PDialogHarness extends ContentContainerComponentHarness {
   static hostSelector = 'p-dialog'
 
+  getMaskElement = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-mask' }))
   getHeader = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-header' }))
   getFooter = this.locatorForOptional(DivHarness.with({ class: 'p-dialog-footer' }))
 
@@ -24,6 +25,6 @@ export class PDialogHarness extends ContentContainerComponentHarness {
   }
 
   async isVisible(): Promise<boolean> {
-    return (await (await this.host()).getAttribute('ng-reflect-visible')) === 'true' ? true : false
+    return (await this.getMaskElement()) !== null
   }
 }

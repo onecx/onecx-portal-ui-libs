@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import * as path from 'path'
+import * as path from 'node:path'
 
 export default defineConfig({
   root: __dirname,
@@ -25,14 +25,27 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'react-webcomponents',
-      fileName: 'index',
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'mjs' : 'cjs'}`,
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
+      output: [
+        {
+          format: 'es',
+          entryFileNames: '[name].mjs',
+          chunkFileNames: '[name].mjs',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: '[name].cjs',
+          chunkFileNames: '[name].cjs',
+        },
+      ],
       external: [
         'react',
         'react-dom',
         'react/jsx-runtime',
+        'react-router',
         '@onecx/react-integration-interface',
         '@onecx/integration-interface',
         '@r2wc/react-to-web-component',

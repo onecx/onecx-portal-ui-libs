@@ -42,6 +42,7 @@ export * from './lib/components/error-component/global-error.component'
 export * from './lib/services/breadcrumb.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
+export * from './lib/services/data-view-state.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
@@ -63,6 +64,7 @@ export * from './lib/model/diagram-column'
 export * from './lib/model/diagram-type'
 export * from './lib/model/filter.model'
 export * from './lib/model/permission.model'
+export * from './lib/model/view-layout.model'
 
 // core
 export * from './lib/angular-accelerator.module'

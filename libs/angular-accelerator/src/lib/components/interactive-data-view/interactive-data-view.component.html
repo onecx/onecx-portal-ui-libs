@@ -3,21 +3,19 @@
     <div class="flex flex-wrap justify-content-start align-items-center gap-2">
       <ocx-data-layout-selection
         [supportedViewLayouts]="supportedViewLayouts()"
-        [layout]="layout()"
+        [layout]="stateService.layout()"
         (dataViewLayoutChange)="onDataViewLayoutChange($event)"
-        (componentStateChanged)="dataLayoutComponentState$.next($event)"
       ></ocx-data-layout-selection>
       @if (!disableFilterView()) {
       <ocx-filter-view
-        [filters]="filters()"
-        [columns]="columns()"
+        [filters]="stateService.filters()"
+        [columns]="stateService.columns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"
         [chipStyleClass]="filterViewChipStyleClass()"
         [tableStyle]="filterViewTableStyle()"
-        (filtered)="filtering($event)"
-        (componentStateChanged)="filterViewComponentState$.next($event)"
+        [panelStyle]="filterViewPanelStyle()"
       ></ocx-filter-view>
       }
     </div>
@@ -26,32 +24,31 @@
     <div>
       <ng-container [ngTemplateOutlet]="topCenterTemplate"> </ng-container>
     </div>
-    } @if (layout() !== 'table') {
+    } @if (stateService.layout() !== 'table') {
     <div class="flex align-items-center gap-2">
       <ocx-data-list-grid-sorting
-        [sortDirection]="sortDirection()"
-        [sortField]="sortField()"
+        [sortDirection]="stateService.sortDirection()"
+        [sortField]="stateService.sortColumn()"
         [columns]="displayedColumns()"
         [sortStates]="sortStates()"
         (sortChange)="onSortChange($event)"
         (sortDirectionChange)="onSortDirectionChange($event)"
-        (componentStateChanged)="dataListGridSortingComponentState$.next($event)"
       ></ocx-data-list-grid-sorting>
     </div>
     }
 
     <div
-      [ngStyle]="layout() !== 'table' ? {
+      [ngStyle]="stateService.layout() !== 'table' ? {
       'position': 'absolute'
     } : {}"
       class="flex flex-wrap justify-content-between align-items-center gap-2"
     >
       @if (isColumnGroupSelectionComponentDefined() ?? true) {
       <ocx-slot
-        [ngStyle]="layout() !== 'table' ? {'display' : 'none'}  : {}"
+        [ngStyle]="stateService.layout() !== 'table' ? {'display' : 'none'}  : {}"
         *ocxIfPermission="searchConfigPermission(); elseTemplate: defaultColumnGroupSelectionComponent"
         name="{{columnGroupSlotName}}"
-        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: columns(), selectedGroupKey: selectedGroupKey(), layout: layout(), displayedColumnsIds: displayedColumnKeys() }"
+        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: stateService.columns(), selectedGroupKey: selectedGroupKey, layout: stateService.layout(), displayedColumnsIds: displayedColumnKeys() }"
         [outputs]="{ groupSelectionChanged: slotGroupSelectionChangeListener }"
       >
         <ng-template #skeleton>
@@ -62,16 +59,15 @@
       </ocx-slot>
       } @else {
       <ng-container [ngTemplateOutlet]="defaultColumnGroupSelectionComponent"></ng-container>
-      } @if (layout() === 'table') {
+      } @if (stateService.layout() === 'table') {
       <ocx-custom-group-column-selector
-        [columns]="columns()"
+        [columns]="stateService.columns()"
         [displayedColumns]="displayedColumns()"
         [customGroupKey]="customGroupKey()"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
-        [frozenActionColumn]="frozenActionColumn()"
-        [actionColumnPosition]="actionColumnPosition()"
+        [frozenActionColumn]="stateService.actionColumnConfigFrozen()"
+        [actionColumnPosition]="stateService.actionColumnConfigPosition()"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
-        (componentStateChanged)="customGroupColumnSelectorComponentState$.next($event)"
       ></ocx-custom-group-column-selector>
       }
     </div>
@@ -80,19 +76,19 @@
 <div class="p-3" [ngClass]="contentStyleClass()" id="interactiveDataViewContent">
   <ocx-data-view
     [columns]="displayedColumns()"
+    [layout]="stateService.layout()"
     [sortStates]="sortStates()"
-    [sortField]="sortField()"
-    [filters]="filters()"
-    [data]="data()"
-    [sortDirection]="sortDirection()"
+    [sortField]="stateService.sortColumn()"
+    [filters]="stateService.filters()"
+    [data]="stateService.data()"
+    [sortDirection]="stateService.sortDirection()"
     [titleLineId]="titleLineId()"
     [subtitleLineIds]="subtitleLineIds()"
     [clientSideSorting]="clientSideSorting()"
     [clientSideFiltering]="clientSideFiltering()"
     [pageSizes]="pageSizes()"
-    [pageSize]="pageSize()"
+    [pageSize]="stateService.pageSize()"
     [emptyResultsMessage]="emptyResultsMessage()"
-    [layout]="layout()"
     [name]="name()"
     [deletePermission]="deletePermission()"
     [editPermission]="editPermission()"
@@ -103,15 +99,14 @@
     [editActionVisibleField]="editActionVisibleField()"
     [viewActionEnabledField]="viewActionEnabledField()"
     [viewActionVisibleField]="viewActionVisibleField()"
-    [additionalActions]="additionalActions()"
-    [listGridPaginator]="listGridPaginator()"
-    [tablePaginator]="tablePaginator()"
-    [page]="page()"
+    [additionalActions]="stateService.additionalActions()"
+    [listGridPaginator]="stateService.listGridPaginator()"
+    [tablePaginator]="stateService.tablePaginator()"
+    [page]="stateService.activePage()"
     (pageChanged)="onPageChange($event)"
     (pageSizeChanged)="onPageSizeChange($event)"
-    [selectedRows]="selectedRows()"
-    [frozenActionColumn]="frozenActionColumn()"
-    [actionColumnPosition]="actionColumnPosition()"
+    [frozenActionColumn]="stateService.actionColumnConfigFrozen()"
+    [actionColumnPosition]="stateService.actionColumnConfigPosition()"
     [stringTableCellTemplate]="_stringTableCell()"
     [numberTableCellTemplate]="_numberTableCell()"
     [dateTableCellTemplate]="_dateTableCell()"
@@ -134,18 +129,18 @@
     [stringTableFilterCellTemplate]="_stringTableFilterCell()"
     [relativeDateTableFilterCellTemplate]="_relativeDateTableFilterCell()"
     [translationKeyTableFilterCellTemplate]="_translationKeyTableFilterCell()"
+    [columnHeaderTemplate]="_columnHeader()"
     (sorted)="sorting($event)"
     (filtered)="filtering($event)"
     [totalRecordsOnServer]="totalRecordsOnServer()"
     [currentPageShowingKey]="currentPageShowingKey()"
     [currentPageShowingWithTotalOnServerKey]="currentPageShowingWithTotalOnServerKey()"
-    (componentStateChanged)="dataViewComponentState$.next($event)"
     [parentTemplates]="templates()"
     [tableAllowSelectAll]="tableAllowSelectAll()"
     [tableSelectionEnabledField]="tableSelectionEnabledField()"
     [expandable]="expandable()"
     [frozenExpandColumn]="frozenExpandColumn()"
-    [(expandedRows)]="expandedRows"
+    [expandedRows]="stateService.expandedRows()"
     (rowExpanded)="rowExpanded.emit($event)"
     (rowCollapsed)="rowCollapsed.emit($event)"
   >
@@ -153,15 +148,14 @@
 </div>
 
 <ng-template #defaultColumnGroupSelectionComponent>
-  @if (layout() === 'table') {
+  @if (stateService.layout() === 'table') {
   <ocx-column-group-selection
-    [selectedGroupKey]="selectedGroupKey() ?? defaultGroupKey()"
-    [columns]="columns()"
+    [selectedGroupKey]="stateService.activeColumnGroupKey() ?? defaultGroupKey()"
+    [columns]="stateService.columns()"
     [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"
     [customGroupKey]="customGroupKey()"
     [placeholderKey]="groupSelectionNoGroupSelectedKey()"
     (groupSelectionChanged)="onColumnGroupSelectionChange($event)"
-    (componentStateChanged)="columnGroupSelectionComponentState$.next($event)"
   ></ocx-column-group-selection>
   }
 </ng-template>
