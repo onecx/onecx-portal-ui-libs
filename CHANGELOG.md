@@ -1,3 +1,15 @@
+## [9.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.7...v9.0.0-rc.8) (2026-06-17)
+
+### Features
+
+* react integration interface performance improvement  ([#1538](https://github.com/onecx/onecx-portal-ui-libs/issues/1538)) ([a0c13ef](https://github.com/onecx/onecx-portal-ui-libs/commit/a0c13ef95749b50c19ef8c4bf9e1955bcf2f2b33))
+* v9 custom column header ([#1506](https://github.com/onecx/onecx-portal-ui-libs/issues/1506)) ([7e80404](https://github.com/onecx/onecx-portal-ui-libs/commit/7e8040406bc4df8fe068310217221af04be37e3a)), closes [#1491](https://github.com/onecx/onecx-portal-ui-libs/issues/1491) [#1516](https://github.com/onecx/onecx-portal-ui-libs/issues/1516)
+
+### Bug Fixes
+
+* a11y - chart legends in high contrast mode ([#1511](https://github.com/onecx/onecx-portal-ui-libs/issues/1511)) ([9d8cce4](https://github.com/onecx/onecx-portal-ui-libs/commit/9d8cce4393ce79fcf5918c6045d82c5eddd3f0aa))
+* add router link fields in 3 components, fix tests ([#1527](https://github.com/onecx/onecx-portal-ui-libs/issues/1527)) ([cccce10](https://github.com/onecx/onecx-portal-ui-libs/commit/cccce1049e7c62d2cda174d9f7ffe479e904677f))
+
 ## [9.0.0-rc.7](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.6...v9.0.0-rc.7) (2026-06-15)
 
 ### Features
