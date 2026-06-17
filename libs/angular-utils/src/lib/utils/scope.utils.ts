@@ -35,6 +35,18 @@ export const dataOnecxDynamicContainerKey = 'onecxDynamicContainer'
 export const dataOnecxDynamicContainerAttribute = 'data-onecx-dynamic-container'
 
 /**
+ * @constant {string} onecxDynamicContainerSelectorPrefixWithDash
+ * @description Prefix for the selector of the dynamic container. The full selector will be in the format of `onecx-dynamic-{appElementName}`. Includes the dash at the end to ensure correct selector formatting and avoid conflicts with other attributes.
+ */
+export const onecxDynamicContainerSelectorPrefixWithDash = 'onecx-dynamic-'
+
+/**
+ * @constant {string} onecxDynamicContainerSelectorPrefix
+ * @description Prefix for the selector of the dynamic container. The full selector will be in the format of `onecx-dynamic-{appElementName}`. Does not include the dash at the end to allow for flexibility in selector formatting.
+ */
+export const onecxDynamicContainerSelectorPrefix = 'onecx-dynamic'
+
+/**
  * @constant {string} dataStyleIdKey
  * @description Marks start of scope section for scopeId (e.g. data-style-id="onecx-workspace|onecx-workspace-ui")
  * Present for MFE and RC components as well as dynamic content

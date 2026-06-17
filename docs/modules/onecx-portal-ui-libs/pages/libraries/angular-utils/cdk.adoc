@@ -1,0 +1,101 @@
+= @onecx/angular-utils/cdk
+:idprefix:
+:idseparator: -
+
+`@onecx/angular-utils/cdk` is a secondary entry point of `@onecx/angular-utils` that provides customized Angular CDK components. It allows OneCX micro-frontend applications running as web components to properly scope Angular CDK overlays within a designated dynamic container element instead of the document body.
+
+[#overview]
+== Overview
+
+Angular CDK's `OverlayContainer` appends all overlay elements (dialogs, tooltips, dropdowns, etc.) directly to the document body by default. In OneCX micro-frontend applications, dynamic content must be appended to a specific predefined element in the DOM, identified by the `DYNAMIC_CONTAINER` injection token.
+
+This sublibrary provides custom `OverlayContainer` implementations that respect the `DYNAMIC_CONTAINER` token.
+
+[#installation]
+== Installation
+
+`@onecx/angular-utils/cdk` is a secondary entry point and is included in the `@onecx/angular-utils` package:
+
+[source,sh]
+----
+npm i @onecx/angular-utils
+----
+
+[#api]
+== API
+
+[#dynamic-container-token]
+=== DYNAMIC_CONTAINER
+
+An `InjectionToken<() => HTMLElement>` that provides a factory function returning the dynamic container element. This token is used by the custom overlay containers to determine where to append overlay content.
+
+[source,typescript]
+----
+import { DYNAMIC_CONTAINER } from '@onecx/angular-utils/cdk'
+----
+
+[#onecx-overlay-container]
+=== OnecxOverlayContainer
+
+A custom Angular CDK `OverlayContainer` that appends the overlay container element to the OneCX dynamic container instead of the document body.
+
+[source,typescript]
+----
+import { OnecxOverlayContainer } from '@onecx/angular-utils/cdk'
+----
+
+[#onecx-fullscreen-overlay-container]
+=== OnecxFullscreenOverlayContainer
+
+A custom Angular CDK overlay container that extends `OnecxOverlayContainer` and adds support for fullscreen mode. When the browser enters fullscreen mode, the overlay container is moved to the active fullscreen element. When fullscreen mode exits, the container is moved back to the dynamic container.
+
+[source,typescript]
+----
+import { OnecxFullscreenOverlayContainer } from '@onecx/angular-utils/cdk'
+----
+
+[#usage]
+== Usage
+
+[#providing-the-container]
+=== Providing the custom overlay container
+
+Provide the custom overlay container in your application or component providers. The `DYNAMIC_CONTAINER` token must also be provided, typically by the OneCX bootstrapping utilities in `@onecx/angular-webcomponents`.
+
+[source,typescript]
+----
+import { OverlayContainer } from '@angular/cdk/overlay'
+import { OnecxOverlayContainer } from '@onecx/angular-utils/cdk'
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    { provide: OverlayContainer, useClass: OnecxOverlayContainer },
+  ]
+})
+----
+
+[#providing-fullscreen-container]
+=== Using the fullscreen-aware container
+
+Use `OnecxFullscreenOverlayContainer` when your application needs to support browser fullscreen mode (e.g., video players, fullscreen widgets):
+
+[source,typescript]
+----
+import { OverlayContainer } from '@angular/cdk/overlay'
+import { OnecxFullscreenOverlayContainer } from '@onecx/angular-utils/cdk'
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    { provide: OverlayContainer, useClass: OnecxFullscreenOverlayContainer },
+  ]
+})
+----
+
+[#how-it-works]
+== How it works
+
+Both `OnecxOverlayContainer` and `OnecxFullscreenOverlayContainer` inject the `DYNAMIC_CONTAINER` token using `inject(DYNAMIC_CONTAINER, \{ optional: true })`. If the token is not provided (e.g., in unit tests or standalone usage), they fall back to the default behavior of appending to `document.body`.
+
+When `DYNAMIC_CONTAINER` is provided, `_createContainer()` is overridden to move the CDK overlay container element from `document.body` into the dynamic container element after the base class creates it.
+
+`OnecxFullscreenOverlayContainer` additionally listens for fullscreen change events and moves the overlay container to the active fullscreen element (or back to the dynamic container when fullscreen mode exits), ensuring overlays remain visible during fullscreen mode.
