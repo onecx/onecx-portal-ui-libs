@@ -124,11 +124,9 @@ const ConfigurationProvider = ({
               .then((res) => res.json())
               .catch((e) => {
                 loggerRef.current.error('Failed to load remote config', e)
-                return {}
               })
           } catch (e) {
             loggerRef.current.error('Error while fetching remote config:', e)
-            return {}
           }
         },
       })

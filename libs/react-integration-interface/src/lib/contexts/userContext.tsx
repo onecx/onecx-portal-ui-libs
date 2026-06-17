@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useEffect, useState, type ReactNode, useCallback } from 'react'
+import { createContext, useContext, useMemo, useEffect, type ReactNode, useCallback } from 'react'
 import { BehaviorSubject, firstValueFrom, map, Observable } from 'rxjs'
 import {
   PermissionsTopic,
