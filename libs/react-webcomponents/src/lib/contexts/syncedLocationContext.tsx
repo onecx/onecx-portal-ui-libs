@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { BrowserRouter, useLocation, useNavigate } from 'react-router'
+import { BrowserRouter, useLocation } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import { useTopic, createLogger } from '@onecx/react-integration-interface'
 
@@ -25,20 +25,17 @@ export const SyncedLocationContext = createContext<CurrentLocationTopicPayload |
 const logger = createLogger('RouterSync')
 
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
-  const navigate = useNavigate()
   const locationHook = useLocation()
   const [currentLocation, setCurrentLocation] = useState<CurrentLocationTopicPayload>({
     url: locationHook.pathname,
     isFirst: false,
   })
   const pathnameRef = useRef(locationHook.pathname)
-  const navigateRef = useRef(navigate)
   const skipPublishUntil = useRef<string | null>(null)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useEffect(() => {
     pathnameRef.current = locationHook.pathname
-    navigateRef.current = navigate
   })
 
   useEffect(() => {

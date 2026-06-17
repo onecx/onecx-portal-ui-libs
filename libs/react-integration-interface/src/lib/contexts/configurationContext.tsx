@@ -167,7 +167,7 @@ const ConfigurationProvider = ({
     async (key: string, value: string) => {
       return semaphoreRef.current.use(async () => {
         const currentValues = await firstValueFrom(config$.asObservable())
-        const nextValues = { ...(currentValues ?? {}), [key]: value }
+        const nextValues = { ...currentValues, [key]: value }
         await config$.publish(nextValues)
       })
     },
