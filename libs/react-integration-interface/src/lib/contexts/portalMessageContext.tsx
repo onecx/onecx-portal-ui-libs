@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useCallback, type ReactNode } from 'react'
 import {
   MessageTopic,
   buildPortalMessagePayload,
@@ -63,19 +63,22 @@ const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children,
     }
   }, [isInternalMessageTopic, message$])
 
-  const addTranslated = async (severity: string, msg: Message) => {
-    const [summary, detail] = await Promise.all([
-      resolveTranslation(translate, msg.summaryKey, msg.summaryParameters),
-      resolveTranslation(translate, msg.detailKey, msg.detailParameters),
-    ])
-    const message = buildPortalMessagePayload(severity, msg, summary, detail)
-    await message$.publish(message)
-  }
+  const addTranslated = useCallback(
+    async (severity: string, msg: Message) => {
+      const [summary, detail] = await Promise.all([
+        resolveTranslation(translate, msg.summaryKey, msg.summaryParameters),
+        resolveTranslation(translate, msg.detailKey, msg.detailParameters),
+      ])
+      const message = buildPortalMessagePayload(severity, msg, summary, detail)
+      await message$.publish(message)
+    },
+    [translate, message$]
+  )
 
-  const success = (msg: Message) => addTranslated('success', msg)
-  const info = (msg: Message) => addTranslated('info', msg)
-  const error = (msg: Message) => addTranslated('error', msg)
-  const warning = (msg: Message) => addTranslated('warning', msg)
+  const success = useCallback((msg: Message) => addTranslated('success', msg), [addTranslated])
+  const info = useCallback((msg: Message) => addTranslated('info', msg), [addTranslated])
+  const error = useCallback((msg: Message) => addTranslated('error', msg), [addTranslated])
+  const warning = useCallback((msg: Message) => addTranslated('warning', msg), [addTranslated])
 
   const contextValue = useMemo(
     () => ({
@@ -85,7 +88,7 @@ const PortalMessageProvider: React.FC<PortalMessageProviderProps> = ({ children,
       error,
       warning,
     }),
-    [message$, translate]
+    [message$, success, info, error, warning]
   )
 
   return <PortalMessageContext.Provider value={contextValue}>{children}</PortalMessageContext.Provider>

@@ -1,9 +1,10 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, useCallback, type ReactNode } from 'react'
 import { ParametersTopic, findParameterValue, type ParameterValue } from '@onecx/integration-interface'
 import { firstValueFrom, map } from 'rxjs'
 import { useAppState } from './appStateContext'
 import { useShellCapability } from './shellCapability'
 import { ShellCapability } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Parameters context value shape.
@@ -50,16 +51,7 @@ const useParameters = (): ParametersContextValue => {
 const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value }) => {
   const { hasCapability } = useShellCapability()
   const { currentMfe$ } = useAppState()
-  const parameters$ = useMemo(() => value?.parameters$ ?? new ParametersTopic(), [value?.parameters$])
-  const isInternalParametersTopic = !value?.parameters$
-
-  useEffect(() => {
-    return () => {
-      if (isInternalParametersTopic) {
-        parameters$.destroy()
-      }
-    }
-  }, [isInternalParametersTopic, parameters$])
+  const parameters$ = useTopic(value?.parameters$, ParametersTopic)
 
   /**
    * Resolve a parameter value for the current MFE context.
@@ -69,37 +61,30 @@ const ParametersProvider: React.FC<ParametersProviderProps> = ({ children, value
    * @param appId - optional app id override.
    * @returns resolved parameter value.
    */
-  const get: ParametersContextValue['get'] = async (
-    key,
-    defaultValue,
-    productName = undefined,
-    appId = undefined
-  ): Promise<any> => {
-    if (!hasCapability(ShellCapability.PARAMETERS_TOPIC)) {
-      return Promise.resolve(defaultValue)
-    }
+  const get: ParametersContextValue['get'] = useCallback(
+    async (key, defaultValue, productName = undefined, appId = undefined): Promise<any> => {
+      if (!hasCapability(ShellCapability.PARAMETERS_TOPIC)) {
+        return Promise.resolve(defaultValue)
+      }
 
-    let resolvedProductName = productName
-    let resolvedAppId = appId
+      let resolvedProductName = productName
+      let resolvedAppId = appId
 
-    if (!resolvedProductName) {
-      resolvedProductName = await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.productName)))
-    }
+      resolvedProductName ??= await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.productName)))
+      resolvedAppId ??= await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.appId)))
 
-    if (!resolvedAppId) {
-      resolvedAppId = await firstValueFrom(currentMfe$.pipe(map((mfe) => mfe.appId)))
-    }
+      const valueResult = await firstValueFrom(
+        parameters$.pipe(map((payload) => findParameterValue(payload, key, resolvedProductName, resolvedAppId)))
+      )
 
-    const valueResult = await firstValueFrom(
-      parameters$.pipe(map((payload) => findParameterValue(payload, key, resolvedProductName, resolvedAppId)))
-    )
+      if (valueResult === undefined) {
+        return Promise.resolve(defaultValue)
+      }
 
-    if (valueResult === undefined) {
-      return Promise.resolve(defaultValue)
-    }
-
-    return Promise.resolve(valueResult)
-  }
+      return Promise.resolve(valueResult)
+    },
+    [hasCapability, currentMfe$, parameters$]
+  )
 
   const contextValue = useMemo(
     () => ({

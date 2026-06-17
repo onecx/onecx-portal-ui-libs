@@ -1,6 +1,16 @@
-import { createContext, type FC, type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
-import { BrowserRouter, useLocation, useNavigate } from 'react-router'
+import {
+  createContext,
+  type FC,
+  type PropsWithChildren,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
+import { BrowserRouter, useLocation } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import { useTopic, createLogger } from '@onecx/react-integration-interface'
 
 /**
  * React context carrying the current synced location payload.
@@ -12,31 +22,40 @@ export const SyncedLocationContext = createContext<CurrentLocationTopicPayload |
  * @param children - nested content rendered with synced location context.
  * @returns Provider for synced location state.
  */
+const logger = createLogger('RouterSync')
+
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
-  const navigate = useNavigate()
   const locationHook = useLocation()
   const [currentLocation, setCurrentLocation] = useState<CurrentLocationTopicPayload>({
     url: locationHook.pathname,
     isFirst: false,
   })
+  const pathnameRef = useRef(locationHook.pathname)
+  const skipPublishUntil = useRef<string | null>(null)
+  const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useEffect(() => {
-    const locationSubscription = new CurrentLocationTopic().subscribe((location) => {
-      const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
-      const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
-      if (locationHook.pathname !== location.url) {
-        setCurrentLocation(() => {
-          const rawUrl = location.url ?? locationHook.pathname
-          const normalizedUrl = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`
-          const urlWithBase = normalizedUrl.startsWith(normalizedBaseHref)
-            ? normalizedUrl
-            : `${normalizedBaseHref}${normalizedUrl.replace(/^\//, '')}`
-          const newValue = {
-            url: urlWithBase,
-            isFirst: location.isFirst,
-          }
-          navigate(newValue.url, { replace: true })
-          return newValue
+    pathnameRef.current = locationHook.pathname
+  })
+
+  useEffect(() => {
+    const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
+    const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
+
+    const locationSubscription = currentLocation$.subscribe((location) => {
+      const topicUrl = location.url ?? ''
+      if (topicUrl !== '/' && topicUrl !== '' && !topicUrl.startsWith(normalizedBaseHref)) {
+        return
+      }
+
+      if (pathnameRef.current !== location.url) {
+        // Mark that this URL came from the topic — don't publish it back.
+        // BrowserRouter will see the URL change via window.location
+        // because the shell updates it, so we do NOT call navigate() here.
+        skipPublishUntil.current = location.url ?? null
+        setCurrentLocation({
+          url: location.url ?? pathnameRef.current,
+          isFirst: location.isFirst,
         })
       }
     })
@@ -44,7 +63,30 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     return () => {
       locationSubscription.unsubscribe()
     }
-  }, [])
+  }, [currentLocation$])
+
+  // Publish internal navigation changes so the shell can update the browser URL.
+  // skipPublishUntil prevents echoing topic-driven navigations.
+  // useLayoutEffect runs synchronously after DOM mutations so there is no
+  // extra render between the URL change and the publish.
+  useLayoutEffect(() => {
+    if (skipPublishUntil.current !== null) {
+      if (locationHook.pathname === skipPublishUntil.current) {
+        skipPublishUntil.current = null // reached the target, clear the guard
+      }
+      return
+    }
+    if (locationHook.pathname !== currentLocation.url) {
+      currentLocation$
+        .publish({
+          url: locationHook.pathname,
+          isFirst: false,
+        })
+        .catch((err) => {
+          logger.error('publish failed:', err)
+        })
+    }
+  }, [locationHook.pathname, currentLocation.url, currentLocation$])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
