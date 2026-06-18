@@ -917,4 +917,69 @@ describe('PortalDialogService', () => {
     expect(dialogRefSpy).toHaveBeenCalledTimes(1)
     expect(removeChildSpy).toHaveBeenCalledWith(dialogElement)
   })
+
+   describe('closable feature', () => {
+    it('should show close button when closable is true and skip showXButton check', async () => {
+      jest.spyOn(pDialogService, 'open')
+
+      fixture.componentInstance.show(
+        'title',
+        {
+          type: DialogPrimaryButtonDisabledComponent,
+        },
+        'button1',
+        undefined,
+        { closable: true, customButtons: [] }
+      )
+
+      expect(pDialogService.open).toHaveBeenCalledWith(
+        DialogContentComponent,
+        expect.objectContaining({
+          closable: true
+        })
+      )
+    })
+
+    it('should show close button when closable is not set and showXButton is set to true', async () => {
+      jest.spyOn(pDialogService, 'open')
+
+      fixture.componentInstance.show(
+        'title',
+        {
+          type: DialogPrimaryButtonDisabledComponent,
+        },
+        'button1',
+        'button2',
+        { showXButton: true }
+      )
+
+      expect(pDialogService.open).toHaveBeenCalledWith(
+        DialogContentComponent,
+        expect.objectContaining({
+          closable: true
+        })
+      )
+    })
+
+    it('should not show close button when configuration is empty', async () => {
+      jest.spyOn(pDialogService, 'open')
+
+      fixture.componentInstance.show(
+        'title',
+        {
+          type: DialogPrimaryButtonDisabledComponent,
+        },
+        'button1',
+        'button2',
+        {}
+      )
+
+      expect(pDialogService.open).toHaveBeenCalledWith(
+        DialogContentComponent,
+        expect.objectContaining({
+          closable: false
+        })
+      )
+    })
+  })
 })

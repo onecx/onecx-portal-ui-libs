@@ -35,7 +35,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'
   @Input() primaryKey = 'Primary'
-  @Input() secondaryKey = 'Secondary'
+  @Input() secondaryKey?:string
   @Input() extras = {}
 
   openDialog() {
@@ -380,4 +380,31 @@ export const CustomButtonsWithAutofocus = {
       autoFocusButtonCustomId: 'custom1',
     },
   },
+}
+
+export const withClosableOption = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
+              `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: {
+      type: ComponentToDisplayCustomButtonsComponent,
+    },
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      icon: PrimeIcons.BOOKMARK,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'right',
+    },
+    extras: {
+      closable: true
+    }
+  }
 }
