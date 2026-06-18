@@ -329,8 +329,6 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should navigate when inline action has string routerLink', async () => {
-    const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-
     fixture.componentRef.setInput('actions', [
       {
         label: 'Inline action with routerLink',
@@ -344,12 +342,18 @@ describe('PageHeaderComponent', () => {
       },
     ])
 
-    const routerLinkInline = await pageHeaderHarness.getInlineActionButtonByLabel('Inline action with routerLink')
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const routerLinkInline = fixture.debugElement.query(
+      By.css('a[data-testid="ocx-page-header-inline-action-icon-button"]')
+    )
     expect(routerLinkInline).toBeTruthy()
 
-    await routerLinkInline?.click()
-    expect(spy).toHaveBeenCalledTimes(1)
-    expect(spy).toHaveBeenCalledWith(['/inline'])
+    routerLinkInline.nativeElement.click()
+    await fixture.whenStable()
+
+    expect(router.url).toBe('/inline')
   })
 
   it('should render overflow action button with routerLink', async () => {
