@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { primitives } from "./schema/primitives";
+import { badge } from "./schema/badge";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
@@ -7,6 +8,7 @@ import { themeSchemaRegistry } from "./schema/registry";
 
 const usages = z
   .object({
+    badge: (badge as typeof badge).optional(),
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
