@@ -9,6 +9,9 @@ export const carouselSettings = z
   .object({
     orientation: withRef(z.enum(["horizontal", "vertical"])).default("horizontal"),
     showIndicators: withRef(z.boolean()).default(true),
+    showNavigation: withRef(z.boolean()).default(true),
+    circular: withRef(z.boolean()).default(false),
+    autoplayInterval: withRef(z.number()).default(0)
   })
   .register(themeSchemaRegistry, { id: "carouselSettings" });
 
@@ -45,6 +48,9 @@ export const indicatorWithStates = z
 export const carousel = z
   .object({
     settings: (carouselSettings as typeof carouselSettings).optional(),
+    transition: z.object({
+      duration: withRef(z.number()).default("{{primitives.transition.duration}}"),
+    }).optional(),
     container: bgContrast.extend({
       padding: withRef(z.string()).default("{{primitives.space.md}}"),
       border: border.optional(),

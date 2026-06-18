@@ -2,6 +2,12 @@ import type { MappingRule } from '../../mapper.types';
 import { toColorString } from '../../mapper.utils';
 
 export const carouselMappingRules: MappingRule[] = [
+  // ─── Transition ───────────────────────────────────────────────────────────
+  {
+    from: 'usages.carousel.transition.duration',
+    to: 'components.carousel.root.transitionDuration',
+  },
+
   // ─── Content ──────────────────────────────────────────────────────────────
   {
     from: 'usages.carousel.content.gap',
@@ -68,5 +74,9 @@ export const carouselMappingRules: MappingRule[] = [
   {
     from: 'usages.carousel.indicator.styles.state.focus.focusRing.offset',
     to: 'components.carousel.indicator.focusRing.offset',
+  },
+  {
+    from: 'usages.carousel.indicator.styles.state.focus.focusRing.shadow',
+    to: 'components.carousel.indicator.focusRing.shadow',
   },
 ];

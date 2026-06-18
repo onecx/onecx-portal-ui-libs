@@ -52,6 +52,7 @@ export const border = z
     style: withRef(z.string()).optional(),
     radius: withRef(z.string()).optional(),
     offset: withRef(z.string()).optional(),
+    shadow: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "border" });
 
@@ -118,7 +119,7 @@ export const variantWithStates = bgContrast
   })
   .register(themeSchemaRegistry, { id: "variantWithStates" });
 
-export const colorVariants = z
+export const colorVariants: z.ZodTypeAny =z
   .object({
     primary: variantWithStates.optional(),
     secondary: variantWithStates.optional(),
@@ -204,7 +205,13 @@ export const font = z
   })
   .register(themeSchemaRegistry, { id: "font" });
 
-export const primitives = z
+export const transition = z
+  .object({
+    duration: withRef(z.number()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "transition" });
+
+export const primitives: z.ZodTypeAny = z
   .object({
     defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
     variant: colorVariants as typeof colorVariants,
@@ -218,6 +225,7 @@ export const primitives = z
     // Global default border style applied to components that don't define their own border token
     border: (borderWithVariants as typeof borderWithVariants).optional(),
     focusRing: (border as typeof border).optional(),
+    transition: (transition as typeof transition).optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: "primitives" });
