@@ -28,13 +28,16 @@
 
   @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
   @let resolvedInactiveColumnsLabel = inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
-  <p-pickList [source]="displayedColumnsModel()" [target]="hiddenColumnsModel()"
+  <p-pickList
+    [source]="displayedColumnsModel()"
+    [target]="hiddenColumnsModel()"
     [sourceHeader]="resolvedActiveColumnsLabel"
     [targetHeader]="resolvedInactiveColumnsLabel"
-    [sourceAriaLabel]="resolvedActiveColumnsLabel" 
-    [targetAriaLabel]="resolvedInactiveColumnsLabel" 
+    [sourceAriaLabel]="resolvedActiveColumnsLabel"
+    [targetAriaLabel]="resolvedInactiveColumnsLabel"
     [dragdrop]="true"
-    [responsive]="false" [sourceStyle]="{ height: '300px' }" [targetStyle]="{ height: '300px' }"
+    [responsive]="false" [sourceStyle]="{ height: '300px' }"
+    [targetStyle]="{ height: '300px' }"
     [upButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.UP' | translate)"
     [topButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.TOP' | translate)"
     [downButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.DOWN' | translate)"
