@@ -488,7 +488,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
+              command: () => a.callback?.(row),
             }))
           })
         )

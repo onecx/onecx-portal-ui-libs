@@ -36,7 +36,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction } from '../../model/data-action'
+import { DataAction, RouterLink as DataActionRouterLink } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -385,7 +385,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
+              routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+              command: typeof a.routerLink === 'string' ? undefined : () => this.handleActionSync(a, row),
             }))
           })
         )
@@ -680,7 +681,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => a.callback(selectedItem),
+          routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+          command: typeof a.routerLink === 'string' ? undefined : () => this.handleActionSync(a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
@@ -724,6 +726,39 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         })
       })
     )
+  }
+
+  async onAdditionalActionClick(action: DataAction, item: any): Promise<void> {
+    await this.handleAction(action, item)
+  }
+
+  private async handleAction(action: DataAction, data: any): Promise<void> {
+    if (action.routerLink != null) {
+      const resolvedLink = await this.resolveRouterLink(action.routerLink)
+      await this.router.navigate([resolvedLink])
+      return
+    }
+
+    if (typeof action.callback === 'function') {
+      action.callback(data)
+    }
+  }
+
+  private handleActionSync(action: DataAction, data: any): void {
+    void this.handleAction(action, data)
+  }
+
+  private async resolveRouterLink(routerLink: DataActionRouterLink): Promise<string> {
+    if (typeof routerLink === 'string') {
+      return routerLink
+    }
+
+    if (typeof routerLink === 'function') {
+      const result = routerLink()
+      return typeof result === 'string' ? result : await result
+    }
+
+    return await routerLink
   }
 
   private getPermissions(): Observable<string[]> {

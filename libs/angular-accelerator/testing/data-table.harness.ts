@@ -65,7 +65,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
   }
 
   async getActionButtons() {
-    return await this.locatorForAll(`[name="data-table-action-button"]`)()
+    return await this.locatorForAll(`[name="data-table-action-button"], [data-testid="data-table-action-button"]`)()
   }
 
   async getOverflowActionMenuButton() {

@@ -1,7 +1,8 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { ActivatedRoute, RouterModule } from '@angular/router'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { Component } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
@@ -14,6 +15,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipModule, TooltipStyle } from 'primeng/tooltip'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { DataTableHarness } from '../../../../testing/data-table.harness'
+import { firstValueFrom, of } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -24,6 +26,9 @@ import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -40,6 +45,7 @@ describe('DataListGridComponent', () => {
   let component: DataListGridComponent
   let translateService: TranslateService
   let listGrid: DataListGridHarness
+  let router: Router
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -228,8 +234,15 @@ describe('DataListGridComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataListGridComponent],
-      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule, TooltipModule, OcxTooltipDirective],
+      declarations: [DataListGridComponent, TestRouteComponent],
+      imports: [
+        AngularAcceleratorPrimeNgModule,
+        AngularAcceleratorModule,
+        RouterModule.forRoot([{ path: '**', component: TestRouteComponent }]),
+        NoopAnimationsModule,
+        TooltipModule,
+        OcxTooltipDirective
+      ],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         {
@@ -263,6 +276,7 @@ describe('DataListGridComponent', () => {
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+    router = TestBed.inject(Router)
   })
 
   it('should create the data list grid component', () => {
@@ -890,6 +904,83 @@ describe('DataListGridComponent', () => {
         const menuItems = await overflowMenu?.getAllMenuItems()
         expect(menuItems!.length).toBe(1)
         expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
+      })
+
+      describe('action buttons with routerLink', () => {
+        it('should render inline action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+          component.additionalActions = [
+            {
+              id: 'routerLinkAction',
+              routerLink: '/inline',
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: false,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const inlineAction = fixture.nativeElement.querySelector('#id1-routerLinkActionActionButton') as HTMLElement
+          expect(inlineAction).toBeTruthy()
+
+          inlineAction.click()
+          await fixture.whenStable()
+
+          expect(router.url).toBe('/inline')
+        })
+
+        it('should render overflow action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+          component.additionalActions = [
+            {
+              id: 'routerLinkAction',
+              routerLink: '/overflow',
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: true,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const overflowButton = await listGrid.getListOverflowMenuButton()
+          await overflowButton.click()
+
+          const overflowMenu = await listGrid.getListOverflowMenu()
+          expect(overflowMenu).toBeTruthy()
+          const tableActions = await overflowMenu?.getAllMenuItems()
+          expect(tableActions!.length).toBe(1)
+
+          await tableActions![0].selectItem()
+          expect(router.url).toBe('/overflow')
+        })
+
+        it('should handle routerLink as function returning string', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+          const routerLinkFunction = jest.fn(() => '/function-link')
+
+          component.additionalActions = [
+            {
+              id: 'functionRouterLink',
+              routerLink: routerLinkFunction,
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: false,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const tableActions = await listGrid.getActionButtons('list')
+          await tableActions[0].click()
+
+          expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledWith(['/function-link'])
+        })
       })
     })
 
