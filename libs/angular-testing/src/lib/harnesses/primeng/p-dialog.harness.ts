@@ -24,6 +24,6 @@ export class PDialogHarness extends ContentContainerComponentHarness {
   }
 
   async isVisible(): Promise<boolean> {
-    return (await (await this.host()).getAttribute('ng-reflect-visible')) === 'true' ? true : false
+    return (await (await this.host()).getAttribute('ng-reflect-visible')) === 'true';
   }
 }
