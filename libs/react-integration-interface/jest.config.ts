@@ -18,4 +18,14 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   ...createReportsConfig('react-integration-interface'),
+  testMatch: ['<rootDir>/src/lib/**/*.test.ts', '<rootDir>/src/lib/**/*.test.tsx'],
+  collectCoverageFrom: [
+    '<rootDir>/src/lib/**/*.{ts,tsx,js,jsx}',
+    '!<rootDir>/src/lib/**/index.ts',
+    '!<rootDir>/src/lib/**/logger.utils.ts',
+    '!<rootDir>/src/lib/**/*.test.ts',
+    '!<rootDir>/src/lib/**/*.test.tsx',
+    '!**/node_modules/**',
+  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '\.(test)\.(ts|tsx)$', 'index\.ts$', 'logger\.utils\.ts$'],
 }

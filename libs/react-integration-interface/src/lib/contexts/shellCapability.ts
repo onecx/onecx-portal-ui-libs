@@ -9,16 +9,16 @@ const setCapabilities = (capabilities: ShellCapability[]): void => {
   setShellCapabilities(capabilities)
 }
 
+const hasCapability = (capability: ShellCapability): boolean => {
+  return hasShellCapability(capability)
+}
+
 /**
  * Hook to check if the host application provides a capability.
  *
  * @returns Helper for capability checks.
  */
 const useShellCapability = () => {
-  const hasCapability = (capability: ShellCapability): boolean => {
-    return hasShellCapability(capability)
-  }
-
   return {
     hasCapability,
   }
