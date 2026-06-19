@@ -10,16 +10,6 @@ export const badgeMappingRules: MappingRule[] = [
 
   // Default variant - root properties
   {
-    from: 'usages.badge.defaultVariant.background',
-    to: 'components.badge.root.background',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.badge.defaultVariant.color',
-    to: 'components.badge.root.color',
-    transform: toColorString,
-  },
-  {
     from: 'usages.badge.defaultVariant.border.radius',
     to: 'components.badge.root.borderRadius',
   },
@@ -37,6 +27,10 @@ export const badgeMappingRules: MappingRule[] = [
   },
 
   // Default variant - default size
+  {
+    from: 'usages.badge.defaultVariant.defaultVariant.fontSize',
+    to: 'components.badge.root.fontSize',
+  },
   {
     from: 'usages.badge.defaultVariant.defaultVariant.minWidth',
     to: 'components.badge.root.minWidth',

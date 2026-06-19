@@ -31,7 +31,7 @@ const badgeStyleWithSizeVariants = z.object({
 
 export const badge = z
   .object({
-    // Dot section (from original PrimeNG tokens)
+    // Dot section
     dot: z.object({
       size: withRef(z.string()).default("0.5rem"),
     }).optional(),
@@ -72,7 +72,7 @@ export const badge = z
       },
     }),
     
-    // Severity variants (each can have their own size variants)
+    // Severity variants
     variant: z.object({
       primary: badgeStyleWithSizeVariants.optional().default({
         background: "{{primitives.variant.primary.defaultState.defaultVariant.bg}}",
