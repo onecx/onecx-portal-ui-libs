@@ -10,8 +10,8 @@ export const diagramTextStyles = z
     .object({
         font: font.default({
             family: "{{primitives.font.family}}",
-            size: "{{primitives.font.size}}",
-            weight: "{{primitives.font.weight}}"
+            size: "{{primitives.font.size.md}}",
+            weight: "{{primitives.font.weight.regular}}"
         })
     })
     .register(themeSchemaRegistry, { id: "diagramTextStyles" });
@@ -22,17 +22,17 @@ export const diagramSettings = z.object({
     .register(themeSchemaRegistry, { id: "diagramSettings" })
 
 
-export const selectButtonStyles = bgContrast.register(themeSchemaRegistry, { id: "diagramSelectButtonState" })
+export const selectButtonStyles = bgContrast.optional().register(themeSchemaRegistry, { id: "diagramSelectButtonState" })
 
 export const selectButtonState = z
     .object({
-        defaultState: (selectButtonStyles as typeof selectButtonStyles),
+        defaultState: (selectButtonStyles as typeof selectButtonStyles).optional(),
         state: z
             .object({
-                hover: (selectButtonStyles as typeof selectButtonStyles),
-                active: (selectButtonStyles as typeof selectButtonStyles),
-                selected: (selectButtonStyles as typeof selectButtonStyles),
-                focus: (selectButtonStyles as typeof selectButtonStyles),
+                hover: (selectButtonStyles as typeof selectButtonStyles).optional(),
+                active: (selectButtonStyles as typeof selectButtonStyles).optional(),
+                selected: (selectButtonStyles as typeof selectButtonStyles).optional(),
+                focus: (selectButtonStyles as typeof selectButtonStyles).optional(),
             })
             .optional(),
     })
