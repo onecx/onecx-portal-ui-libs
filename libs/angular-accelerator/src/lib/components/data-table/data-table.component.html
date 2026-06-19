@@ -108,6 +108,7 @@
 </ng-template>
 
 @if ((displayedPageSize$ | async); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
+@if ((columnHeaderTemplates$ | async) ?? {}; as columnHeaderTemplates) {
 <p-table
   [value]="(displayedRows$ | async) ?? []"
   responsiveLayout="scroll"
@@ -147,98 +148,30 @@
       </th>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
-      } @for (column of columns; track column) { @if (column.sortable || column.filterable) {
+      } @for (column of columns; track column) { 
       <th scope="col">
-        <div
-          class="table-header-wrapper flex flex-column justify-content-between align-items-start"
-          style="height: 100%"
-        >
-          <span class="flex" id="{{column.id}}-header-name">{{ column.nameKey | translate }}</span>
-          <span class="flex icon-button-header-wrapper">
-            @if (column.sortable) {
-            <button
-              class="pi sortButton pl-0"
-              [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
-              [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
-              [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
-              (click)="onSortColumnClick(column.id)"
-              [ocxTooltip]="sortIconTitle(column.id) | translate "
-              tooltipPosition="bottom"
-              [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
-            ></button>
-            } @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
-            columnFilterTemplates) { @if (column.filterable && (!column.filterType || column.filterType ===
-            FilterType.EQUALS)) {
-            <p-multiselect
-              class="filterMultiSelect"
-              [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
-              [ngModel]="(currentEqualSelectedFilters$ | async) || []"
-              [showToggleAll]="true"
-              emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
-              [displaySelectedLabel]="false"
-              [resetFilterOnHide]="true"
-              (onChange)="onMultiselectFilterChange(column, $event)"
-              placeholder=" "
-              appendTo="body"
-              filterBy="toFilterBy"
-              (onFocus)="onFilterChosen(column)"
-              [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-              [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
-              [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
-            >
-              <ng-template #selecteditems let-value>
-                <div
-                  class="pi"
-                  [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                  [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
-                ></div>
-              </ng-template>
-              <ng-template #item let-value>
-                @if (columnFilterTemplates[column.id]; as template) {
-                <ng-container
-                  [ngTemplateOutlet]="template"
-                  [ngTemplateOutletContext]="{
-                      rowObject: getRowObjectFromMultiselectItem(value, column),
-                      column: column
-                  }"
-                >
-                </ng-container>
-                }
-              </ng-template>
-            </p-multiselect>
-            } } } @if (column.filterable && column.filterType === FilterType.IS_NOT_EMPTY) {
-            <p-multiselect
-              class="filterMultiSelect"
-              [options]="truthyFilterOptions"
-              [ngModel]="(currentTruthySelectedFilters$ | async) || []"
-              [showToggleAll]="true"
-              emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
-              [displaySelectedLabel]="false"
-              [resetFilterOnHide]="true"
-              (onChange)="onMultiselectFilterChange(column, $event)"
-              placeholder=" "
-              appendTo="body"
-              (onFocus)="onFilterChosen(column)"
-              [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-              [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
-              [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
-            >
-              <ng-template #selecteditems let-value>
-                <div
-                  class="pi"
-                  [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
-                  [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
-                ></div>
-              </ng-template>
-              <ng-template #item let-value> {{value.key | translate}} </ng-template>
-            </p-multiselect>
-            }
-          </span>
-        </div>
+        @if (columnHeaderTemplates[column.id]; as columnHeaderTemplate){
+          <ng-container
+            [ngTemplateOutlet]="columnHeaderTemplate"
+            [ngTemplateOutletContext]="{ column: column, labelTemplate: columnHeaderLabel, sortTemplate: columnHeaderSortButton, filterTemplate: columnHeaderFilter }"
+          ></ng-container>
+        } @else {
+          @if (column.sortable || column.filterable) {
+            <div class="table-header-wrapper flex flex-column justify-content-between align-items-start" style="height: 100%">
+              <span class="flex" id="{{column.id}}-header-name">
+                <ng-container [ngTemplateOutlet]="columnHeaderLabel" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+              </span>
+              <span class="flex icon-button-header-wrapper">
+                <ng-container [ngTemplateOutlet]="columnHeaderSortButton" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+                <ng-container [ngTemplateOutlet]="columnHeaderFilter" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+              </span>
+            </div>
+          } @else {
+            <ng-container [ngTemplateOutlet]="columnHeaderLabel" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+          }
+        }
       </th>
-      } @else {
-      <th scope="col">{{ column.nameKey | translate }}</th>
-      } } @if (actionColumnPosition === 'right';) {
+      } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       }
     </tr>
@@ -314,7 +247,7 @@
     </tr>
   </ng-template>
 </p-table>
-} }
+} } }
 
 <ng-template #expansionColumn let-rowObject="localRowObject">
   @if (expandable && (expansionTemplate$ | async)) {
@@ -353,4 +286,95 @@
 
 <ng-template pTemplate="defaultTranslationKeyCell" let-rowObject="rowObject" let-column="column">
   <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
+</ng-template>
+
+<ng-template #columnHeaderLabel let-column="column">{{ column.nameKey | translate }}</ng-template>
+
+<ng-template #columnHeaderSortButton let-column="column">
+  @if (column.sortable) {
+  <button
+    class="pi sortButton pl-0"
+    [class.pi-sort-alt]="(column?.id === sortColumn && sortDirection === 'NONE') || column?.id !== sortColumn"
+    [class.pi-sort-amount-up]="column?.id === sortColumn && sortDirection === 'ASCENDING'"
+    [class.pi-sort-amount-down]="column?.id === sortColumn && sortDirection === 'DESCENDING'"
+    (click)="onSortColumnClick(column.id)"
+    [ocxTooltip]="sortIconTitle(column.id) | translate "
+    tooltipPosition="top"
+    [attr.aria-label]="('OCX_DATA_TABLE.TOGGLE_BUTTON.ARIA_LABEL' | translate: { column: (column.nameKey | translate), direction: (sortDirectionToTitle(columnNextSortDirection(column.id)) | translate)})"
+  ></button>
+  }
+</ng-template>
+
+<ng-template #columnHeaderFilter let-column="column">
+  @if (currentEqualFilterOptions$ | async; as equalFilterOptions) { @if (columnFilterTemplates$ | async; as
+  columnFilterTemplates) { @if (column.filterable && (!column.filterType || column.filterType ===
+  FilterType.EQUALS)) {
+  <p-multiselect
+    class="filterMultiSelect"
+    [options]="equalFilterOptions.column?.id === column.id ? equalFilterOptions.options : []"
+    [ngModel]="(currentEqualSelectedFilters$ | async) || []"
+    [showToggleAll]="true"
+    emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+    [displaySelectedLabel]="false"
+    [resetFilterOnHide]="true"
+    (onChange)="onMultiselectFilterChange(column, $event)"
+    placeholder=" "
+    appendTo="body"
+    filterBy="toFilterBy"
+    (onFocus)="onFilterChosen(column)"
+    [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+    [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+    tooltipPosition="top"
+    [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+    [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+  >
+    <ng-template #selecteditems let-value>
+      <div
+        class="pi"
+        [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
+        [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+      ></div>
+    </ng-template>
+    <ng-template #item let-value>
+      @if (columnFilterTemplates[column.id]; as template) {
+      <ng-container
+        [ngTemplateOutlet]="template"
+        [ngTemplateOutletContext]="{
+            rowObject: getRowObjectFromMultiselectItem(value, column),
+            column: column
+        }"
+      >
+      </ng-container>
+      }
+    </ng-template>
+  </p-multiselect>
+  } } } @if (column.filterable && column.filterType === FilterType.IS_NOT_EMPTY) {
+  <p-multiselect
+    class="filterMultiSelect"
+    [options]="truthyFilterOptions"
+    [ngModel]="(currentTruthySelectedFilters$ | async) || []"
+    [showToggleAll]="true"
+    emptyFilterMessage="{{ 'OCX_DATA_TABLE.EMPTY_FILTER_MESSAGE' | translate }}"
+    [displaySelectedLabel]="false"
+    [resetFilterOnHide]="true"
+    (onChange)="onMultiselectFilterChange(column, $event)"
+    placeholder=" "
+    appendTo="body"
+    (onFocus)="onFilterChosen(column)"
+    [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+    [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
+    tooltipPosition="top"
+    [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+    [ariaFilterLabel]="('OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate: { column: column.nameKey | translate})"
+  >
+    <ng-template #selecteditems let-value>
+      <div
+        class="pi"
+        [class.pi-filter]="!((filterAmounts$ | async) || {})[column.id]"
+        [class.pi-filter-fill]="((filterAmounts$ | async) || {})[column.id] > 0"
+      ></div>
+    </ng-template>
+    <ng-template #item let-value> {{value.key | translate}} </ng-template>
+  </p-multiselect>
+  }
 </ng-template>

@@ -80,7 +80,7 @@ const rowCount = 500
 const HugeMockDataTemplate: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     ${generateColumnTemplates(Math.ceil(columnCount / 3))}
   </ocx-interactive-data-view>`,
 })
@@ -130,7 +130,7 @@ export const WithCustomStyleClasses = {
 const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     <ng-template #list let-item>
       <div class="w-full px-4 py-2 card mb-4">
         <p>{{item.product}}</p>
@@ -157,7 +157,7 @@ export const WithCustomContentTemplates = {
 const CustomTableCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -180,7 +180,7 @@ export const WithCustomTableCellTemplates = {
 const CustomTableFilterCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -209,7 +209,7 @@ export const WithCustomTableFilterCellTemplates = {
 const CustomTableColumnCellsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
       <ng-container>STRING: {{ rowObject[column.id] }} </ng-container>
     </ng-template>
@@ -250,7 +250,7 @@ export const WithCustomTableColumnTemplates = {
 const ExampleTemplate: StoryFn<InteractiveDataViewComponent & { content: any }> = (args) => ({
   props: args,
   template: `
-  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data">
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
     ${args.content}
   </ocx-interactive-data-view>`,
 })
@@ -263,6 +263,126 @@ export const ExampleWithTemplateControl = {
   <ng-container>MY STRING TEMPLATE PROVIDED VIA CONTENT CONTROL: {{ rowObject[column.id] }} </ng-container>
 </ng-template>`,
   },
+}
+
+const CustomHeaderLabelOnly: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
+    <ng-template pTemplate="columnHeader" let-column="column">
+      <span style="font-weight: bold; color: darkgreen">★ {{ column?.nameKey }}</span>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomHeaderTemplate = {
+  name: 'Custom Header – Label Only',
+  render: CustomHeaderLabelOnly,
+  args: defaultComponentArgs,
+}
+
+
+const CustomHeaderFullControl: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
+    <ng-template pTemplate="columnHeader"
+      let-column="column"
+      let-labelTemplate="labelTemplate"
+      let-sortTemplate="sortTemplate"
+      let-filterTemplate="filterTemplate">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <ng-container [ngTemplateOutlet]="filterTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        <ng-container [ngTemplateOutlet]="labelTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+      </div>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomHeaderFullControl = {
+  name: 'Custom Header with Layout Control',
+  render: CustomHeaderFullControl,
+  args: defaultComponentArgs,
+}
+
+const CustomHeaderPerColumnLayouts: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
+
+    <ng-template pTemplate="productIdTableHeader" let-column="column" let-filterTemplate="filterTemplate">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <ng-container [ngTemplateOutlet]="filterTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        <span style="font-weight:600;">{{ column?.nameKey }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="amountIdTableHeader" let-column="column" let-sortTemplate="sortTemplate" let-filterTemplate="filterTemplate" let-labelTemplate="labelTemplate">
+      <div style="display: flex-direction:column; flex; align-items: center; gap: 4px; color: crimson; font-weight: bold">
+        <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        💰 Amount
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="availableIdTableHeader" let-column="column" let-filterTemplate="filterTemplate">
+      <div style="display:flex; flex-direction:column; align-items:flex-start; gap:3px;">
+        <span style="font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; color:#888;">{{ column?.nameKey }}</span>
+        <ng-container [ngTemplateOutlet]="filterTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="dateIdTableHeader" let-column="column" let-filterTemplate="filterTemplate">
+      <div style="display:flex; align-items:center; justify-content:flex-end; gap:4px; width:100%;">
+        <ng-container [ngTemplateOutlet]="filterTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        <span style="font-style:italic; color:#555;">{{ column?.nameKey }}</span>
+      </div>
+    </ng-template>
+
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomHeaderPerColumnLayouts = {
+  name: 'Custom Header Distinct Layouts Per Column',
+  render: CustomHeaderPerColumnLayouts,
+  args: defaultComponentArgs,
+}
+
+
+const CustomHeaderStyledTheme: StoryFn<InteractiveDataViewComponent> = (args) => ({
+  props: args,
+  template: `
+  <ocx-interactive-data-view [emptyResultsMessage]="emptyResultsMessage" [columns]="columns" [data]="data" [defaultGroupKey]="defaultGroupKey">
+    <ng-template pTemplate="columnHeader"
+      let-column="column"
+      let-labelTemplate="labelTemplate"
+      let-sortTemplate="sortTemplate"
+      let-filterTemplate="filterTemplate">
+      <div style="
+        display:flex; flex-direction:column; gap:4px;
+        padding: 4px 2px 6px 8px;
+        border-left: 3px solid #4a90d9;
+        min-width: 60px;
+      ">
+        <div style="display:flex; align-items:center; gap:4px;">
+          <span style="
+            font-size:0.73rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.8px; color:#1a5f9e;
+          ">
+            <ng-container [ngTemplateOutlet]="labelTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+          </span>
+          <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        </div>
+        <ng-container [ngTemplateOutlet]="filterTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+      </div>
+    </ng-template>
+  </ocx-interactive-data-view>`,
+})
+
+export const WithCustomHeaderStyledTheme = {
+  name: 'Custom Header Styled Theme',
+  render: CustomHeaderStyledTheme,
+  args: defaultComponentArgs,
 }
 
 export default InteractiveDataViewComponentDefaultSBConfig
