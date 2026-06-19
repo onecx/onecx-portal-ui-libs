@@ -16,9 +16,8 @@
       "args": []
     },
     "primeng": {
-      "type": "stdio",
       "command": "npx",
-      "args": ["@primeng/mcp@21.1.9"]
+      "args": ["-y", "@primeng/mcp"]
     }
   }
 }
