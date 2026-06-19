@@ -4,11 +4,11 @@ const CONTAINER: CssRule = {
     declarations: [
         {
             property: 'background',
-            from: 'usages.diagram.container.bg'
+            from: 'usages.diagram.container.bgContrast.bg'
         },
         {
             property: 'color',
-            from: 'usages.diagram.container.contrast'
+            from: 'usages.diagram.container.bgContrast.contrast'
         }
     ]
 }
@@ -18,11 +18,11 @@ const PCHART_CONTAINER: CssRule = {
     declarations: [
         {
             property: 'background',
-            from: 'usages.diagram.container.bg'
+            from: 'usages.diagram.container.bgContrast.bg'
         },
         {
             property: 'color',
-            from: 'usages.diagram.container.contrast'
+            from: 'usages.diagram.container.bgContrast.contrast'
         }
     ]
 }
@@ -70,7 +70,7 @@ const SELECT_BUTTON: CssRule =
         declarations: [
         {
             property: 'background-color',
-            from: 'usages.diagram.selectButton.backgroundColor'
+            from: 'usages.diagram.selectButton.bgContrast.bg'
         },
         {
             property: 'border-color',
@@ -78,7 +78,7 @@ const SELECT_BUTTON: CssRule =
         },
         {
             property: 'color',
-            from: 'usages.diagram.selectButton.color'
+            from: 'usages.diagram.selectButton.bgContrast.contrast'
         }]
     }
 
