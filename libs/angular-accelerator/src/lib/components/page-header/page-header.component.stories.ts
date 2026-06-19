@@ -191,6 +191,46 @@ export const WithCustomButtons = {
   },
 }
 
+export const WithRouterLinkInlineAction = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'Inline action rendered as router link',
+    actions: [
+      {
+        id: 'inline-router-link',
+        label: 'Open Details',
+        icon: PrimeIcons.EXTERNAL_LINK,
+        show: 'always',
+        routerLink: '/details',
+      },
+    ],
+    disableDefaultActions: true,
+    showBreadcrumbs: false,
+  },
+}
+
+export const WithRouterLinkOverflowAction = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'Overflow action rendered as router link',
+    actions: [
+      {
+        id: 'overflow-router-link',
+        label: 'Open Details',
+        icon: PrimeIcons.EXTERNAL_LINK,
+        show: 'asOverflow',
+        routerLink: '/details',
+      },
+    ],
+    disableDefaultActions: true,
+    showBreadcrumbs: false,
+  },
+}
+
 export const WithBreadcrumbs = {
   render: Template,
 

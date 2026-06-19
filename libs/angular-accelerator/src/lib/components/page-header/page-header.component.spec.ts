@@ -310,6 +310,53 @@ describe('PageHeaderComponent', () => {
     expect(await menuItems[1].getText()).toBe('My Test Overflow Disabled Action')
   })
 
+  it('should render inline routerLink action as anchor with href', async () => {
+    component.actions = [
+      {
+        id: 'inline-router-link',
+        label: 'Inline Link',
+        icon: PrimeIcons.EXTERNAL_LINK,
+        show: 'always',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const link = fixture.nativeElement.querySelector('#inline-router-link') as HTMLAnchorElement | null
+    expect(link).toBeTruthy()
+    expect(link?.tagName).toBe('A')
+    expect(link?.getAttribute('href')).toContain('/details')
+  })
+
+  it('should render overflow routerLink action as menu link with href', async () => {
+    component.actions = [
+      {
+        id: 'overflow-router-link',
+        label: 'Overflow Link',
+        show: 'asOverflow',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    expect(menuOverflowButton).toBeTruthy()
+    await menuOverflowButton?.click()
+    await fixture.whenStable()
+
+    const documentRoot = fixture.nativeElement.ownerDocument as Document
+    const menuLinks = Array.from(documentRoot.querySelectorAll('.p-menuitem-link')) as HTMLAnchorElement[]
+    const overflowLink = menuLinks.find((item) => item.textContent?.includes('Overflow Link'))
+    expect(overflowLink).toBeTruthy()
+    expect(overflowLink?.getAttribute('href')).toContain('/details')
+  })
+
   it('should use provided action callback on overflow button click', async () => {
     jest.spyOn(console, 'log')
 
