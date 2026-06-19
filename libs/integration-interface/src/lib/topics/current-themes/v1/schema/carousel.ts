@@ -9,7 +9,7 @@ export const carouselSettings = z
   .object({
     orientation: withRef(z.enum(["horizontal", "vertical"])).default("horizontal"),
     showIndicators: withRef(z.boolean()).default(true),
-    showNavigation: withRef(z.boolean()).default(true),
+    showNavigators: withRef(z.boolean()).default(true),
     circular: withRef(z.boolean()).default(false),
     autoplayInterval: withRef(z.number()).default(0)
   })
