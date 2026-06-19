@@ -773,6 +773,29 @@ describe('DataTableComponent', () => {
       expect(newMenuItems!.length).toBe(0)
     })
 
+    it('should show overflow menu item when routerLink is provided', async () => {
+      userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
+
+      component.additionalActions = [
+        {
+          permission: 'OVERFLOW#VIEW',
+          routerLink: '/details',
+          id: 'actionId',
+          labelKey: 'Label',
+          showAsOverflow: true,
+        },
+      ]
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).toBeTruthy()
+
+      const menuItems = await overflowMenu!.getAllMenuItems()
+      expect(menuItems!.length).toBe(1)
+      const menuItemText = await menuItems![0].getText()
+      expect(menuItemText).toBe('Label')
+    })
+
     it('should display action buttons based on multiple permissions', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2', 'OVERFLOW#VIEW', 'OVERFLOW#VIEW2'])
 

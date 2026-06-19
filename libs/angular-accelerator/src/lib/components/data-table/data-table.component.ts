@@ -483,12 +483,13 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
           map((translations) => {
             return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
+              label: translations[a.labelKey || ''] || a.labelKey || a.id || 'Action',
               icon: a.icon,
               styleClass: (a.classes || []).join(' '),
               disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
               visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback?.(row),
+              routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+              command: typeof a.routerLink === 'string' ? undefined : () => a.callback?.(row),
             }))
           })
         )
