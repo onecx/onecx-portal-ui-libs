@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
@@ -210,7 +211,7 @@ describe('DataTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
-      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule, RouterTestingModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),

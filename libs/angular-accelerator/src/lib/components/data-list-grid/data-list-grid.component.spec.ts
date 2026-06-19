@@ -922,10 +922,10 @@ describe('DataListGridComponent', () => {
           fixture.detectChanges()
           await fixture.whenStable()
 
-          const inlineAction = fixture.nativeElement.querySelector('#id1-routerLinkActionActionButton') as HTMLElement
-          expect(inlineAction).toBeTruthy()
+          const listActions = await listGrid.getActionButtons('list')
+          expect(listActions.length).toBeGreaterThan(0)
 
-          inlineAction.click()
+          await listActions[0].click()
           await fixture.whenStable()
 
           expect(router.url).toBe('/inline')
