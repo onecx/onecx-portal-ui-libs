@@ -52,7 +52,6 @@ export const border = z
     style: withRef(z.string()).optional(),
     radius: withRef(z.string()).optional(),
     offset: withRef(z.string()).optional(),
-    shadow: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "border" });
 
@@ -72,6 +71,12 @@ export const borderWithVariants = z
   })
   .register(themeSchemaRegistry, { id: "borderWithVariants" });
 
+export const borderWithShadow = border
+  .extend({
+    shadow: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "borderWithShadow" });
+
 export const bgContrast = z.object({
   bg: z.union([bg, withRef(z.string())]).optional(),
   contrast: color.optional(),
@@ -80,7 +85,7 @@ export const bgContrast = z.object({
 export const severityStyles = bgContrast
   .extend({
     border: borderWithVariants.optional(),
-    focusRing: border.optional(),
+    focusRing: borderWithShadow.optional(),
   })
   .register(themeSchemaRegistry, { id: "severityStyles" });
 
@@ -119,7 +124,7 @@ export const variantWithStates = bgContrast
   })
   .register(themeSchemaRegistry, { id: "variantWithStates" });
 
-export const colorVariants: z.ZodTypeAny =z
+export const colorVariants: z.ZodTypeAny = z
   .object({
     primary: variantWithStates.optional(),
     secondary: variantWithStates.optional(),
@@ -224,7 +229,7 @@ export const primitives: z.ZodTypeAny = z
     radius: (radius as typeof radius).optional(),
     // Global default border style applied to components that don't define their own border token
     border: (borderWithVariants as typeof borderWithVariants).optional(),
-    focusRing: (border as typeof border).optional(),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
     transition: (transition as typeof transition).optional(),
   })
   .optional()
