@@ -1,3 +1,15 @@
+## [8.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.6.1...v8.7.0) (2026-06-19)
+
+### Features
+
+* react integration interface performance improvement v8 ([#1537](https://github.com/onecx/onecx-portal-ui-libs/issues/1537)) ([bc61295](https://github.com/onecx/onecx-portal-ui-libs/commit/bc612958705b1752b70ca5a3091953c134289b85))
+* v8 custom column header ([#1491](https://github.com/onecx/onecx-portal-ui-libs/issues/1491)) ([#1504](https://github.com/onecx/onecx-portal-ui-libs/issues/1504)) ([ea5d431](https://github.com/onecx/onecx-portal-ui-libs/commit/ea5d431574ad82ce3a640216cc4cd83c807cee8c)), closes [#1516](https://github.com/onecx/onecx-portal-ui-libs/issues/1516)
+
+### Bug Fixes
+
+* a11y-column-group-selector-radio-button ([#1543](https://github.com/onecx/onecx-portal-ui-libs/issues/1543)) ([faa5875](https://github.com/onecx/onecx-portal-ui-libs/commit/faa58753f0217c95488d52d84461e159bdfc6bd0))
+* v8 revert build utils remove ([#1530](https://github.com/onecx/onecx-portal-ui-libs/issues/1530)) ([d5845d2](https://github.com/onecx/onecx-portal-ui-libs/commit/d5845d29c6af665f19b905ec4edb266fcd907dc8)), closes [#1524](https://github.com/onecx/onecx-portal-ui-libs/issues/1524) [#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513) [#1521](https://github.com/onecx/onecx-portal-ui-libs/issues/1521)
+
 ## [8.6.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.6.0...v8.6.1) (2026-06-09)
 
 ### Bug Fixes
