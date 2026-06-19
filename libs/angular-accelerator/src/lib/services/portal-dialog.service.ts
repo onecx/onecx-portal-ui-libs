@@ -232,6 +232,7 @@ export type PortalDialogConfig = {
   minimizeIcon?: string
   position?: string
   closeAriaLabel?: string
+  closable?:boolean
 }
 
 export interface PortalDialogServiceData {
@@ -435,12 +436,8 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T>> {
-    const dialogOptions: PortalDialogConfig =
-      typeof extrasOrShowXButton === 'object'
-        ? extrasOrShowXButton
-        : {
-            showXButton: extrasOrShowXButton,
-          }
+    const isObject = typeof extrasOrShowXButton === 'object'
+    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -472,7 +469,7 @@ export class PortalDialogService implements OnDestroy {
               buttonClicked$: new EventEmitter(),
             } satisfies PortalDialogServiceData,
           },
-          closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
           ...dialogOptions,
           focusOnShow: false,
@@ -605,6 +602,16 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
+  }
+
+  private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
+    let showXButton
+    if (Object.hasOwn(configuration, 'closable')) {
+      showXButton = configuration.closable
+    } else {
+      showXButton = configuration.showXButton && isSecondaryButtonPresent
+    }
+    return Boolean(showXButton)
   }
 }
 
