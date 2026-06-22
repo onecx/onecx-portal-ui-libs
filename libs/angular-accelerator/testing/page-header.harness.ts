@@ -1,4 +1,4 @@
-import { BaseHarnessFilters, ComponentHarness, ContentContainerComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
+import { BaseHarnessFilters, ComponentHarness, ContentContainerComponentHarness, HarnessPredicate, TestElement } from '@angular/cdk/testing'
 import {
   ListItemHarness,
   MenuItemHarness,
@@ -30,7 +30,7 @@ export class PageHeaderHarness extends ComponentHarness {
     return await this.locatorForOptional(ObjectDetailItemHarness.with({ label: objectInfolabel }))()
   }
 
-  async getInlineActionButtons(): Promise<any[]> {
+  async getInlineActionButtons(): Promise<(PButtonHarness | TestElement)[]> {
     const inlineActionButtons = await this.locatorForAll(
       PButtonHarness.with({
         selector:

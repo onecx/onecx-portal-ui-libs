@@ -21,6 +21,7 @@ import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnviro
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { PButtonHarness } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { firstValueFrom } from 'rxjs'
 
@@ -173,8 +174,8 @@ describe('PageHeaderComponent', () => {
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
-    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
+    expect(await (await (inlineButtons[0] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await (inlineButtons[1] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render inline actions buttons with icons', async () => {
@@ -202,8 +203,8 @@ describe('PageHeaderComponent', () => {
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
-    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
+    expect(await (await (inlineButtons[0] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await (inlineButtons[1] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render objectDetails as object info in the page header', async () => {
