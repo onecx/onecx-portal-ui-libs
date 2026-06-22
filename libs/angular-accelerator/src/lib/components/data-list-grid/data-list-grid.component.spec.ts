@@ -1340,6 +1340,15 @@ describe('DataListGridComponent', () => {
       expect(callback).toHaveBeenCalledWith({ id: 'row-1' })
     })
 
+    it('should do nothing when callback is missing', async () => {
+      const action = {
+        id: 'no-callback-action',
+        permission: 'VIEW',
+      }
+
+      await expect((component as any).handleAction(action, { id: 'row-1' })).resolves.toBeUndefined()
+    })
+
     it('should delegate the sync action wrapper to handleAction', async () => {
       const handleActionSpy = jest.spyOn(component as any, 'handleAction').mockResolvedValue(undefined)
       const action = {
@@ -1362,6 +1371,13 @@ describe('DataListGridComponent', () => {
       const routerLink = jest.fn(() => '/dynamic')
 
       await expect((component as any).resolveRouterLink(routerLink)).resolves.toBe('/dynamic')
+      expect(routerLink).toHaveBeenCalledTimes(1)
+    })
+
+    it('should resolve routerLink functions returning promises', async () => {
+      const routerLink = jest.fn(async () => '/dynamic-promise')
+
+      await expect((component as any).resolveRouterLink(routerLink)).resolves.toBe('/dynamic-promise')
       expect(routerLink).toHaveBeenCalledTimes(1)
     })
 
@@ -1402,6 +1418,30 @@ describe('DataListGridComponent', () => {
       menuItem.command?.({} as any)
 
       expect(handleActionSyncSpy).toHaveBeenCalledWith(action, row)
+    })
+
+    it('should set command for grid actions when routerLink is not a string', () => {
+      const action = {
+        id: 'grid-action',
+        permission: 'VIEW',
+        routerLink: () => '/dynamic-grid',
+      }
+      const selectedItem = { id: 'row-1' }
+      const handleActionSyncSpy = jest.spyOn(component as any, 'handleActionSync').mockImplementation(() => undefined)
+
+      const menuItems = (component as any).mapGridMenuItems(
+        ['VIEW'],
+        [action],
+        selectedItem,
+        {}
+      )
+
+      expect(menuItems[0].routerLink).toBeUndefined()
+      expect(menuItems[0].command).toBeDefined()
+
+      menuItems[0].command?.({} as any)
+
+      expect(handleActionSyncSpy).toHaveBeenCalledWith(action, selectedItem)
     })
 
     it('should create overflow items via translation mapping for non-empty actions', async () => {
