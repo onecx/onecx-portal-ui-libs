@@ -4,12 +4,14 @@ import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { themeSchemaRegistry } from "./schema/registry";
+import { button } from "./schema/button";
 
 const usages = z
   .object({
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
+    button: (button as typeof button).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 

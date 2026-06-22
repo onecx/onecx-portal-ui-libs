@@ -218,6 +218,8 @@ export const primitives = z
     // Global default border style applied to components that don't define their own border token
     border: (borderWithVariants as typeof borderWithVariants).optional(),
     focusRing: (border as typeof border).optional(),
+    // Opacity level to apply to disabled components, e.g. '0.5'
+    disabledOpacity: withRef(z.number()).optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: "primitives" });
