@@ -373,24 +373,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           map((permittedActions) => ({ actions: permittedActions, row: row }))
         )
       ),
-      mergeMap(({ actions, row }) => {
-        if (actions.length === 0) {
-          return of([])
-        }
-        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
-              command: typeof a.routerLink === 'string' ? undefined : () => this.handleActionSync(a, row),
-            }))
-          })
-        )
-      })
+      mergeMap(({ actions, row }) => this.createOverflowListMenuItems(actions, row))
     )
     this.hasViewPermission$ = this._viewPermission$.pipe(
       map((permission) => {
@@ -705,6 +688,33 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         })
         .map((a) => a.labelKey || ''),
     ])
+  }
+
+  private createOverflowListMenuItems(actions: DataAction[], row: Row | null): Observable<MenuItem[]> {
+    if (actions.length === 0) {
+      return of([])
+    }
+
+    const translationKeys = actions.map((a) => a.labelKey || '')
+    return this.translateService
+      .get(translationKeys)
+      .pipe(map((translations) => actions.map((action) => this.toOverflowListMenuItem(action, row, translations))))
+  }
+
+  private toOverflowListMenuItem(
+    action: DataAction,
+    row: Row | null,
+    translations: Record<string, string>
+  ): MenuItem {
+    return {
+      label: translations[action.labelKey || ''],
+      icon: action.icon,
+      styleClass: (action.classes || []).join(' '),
+      disabled: action.disabled || (!!action.actionEnabledField && !this.fieldIsTruthy(row, action.actionEnabledField)),
+      visible: !action.actionVisibleField || this.fieldIsTruthy(row, action.actionVisibleField),
+      routerLink: typeof action.routerLink === 'string' ? action.routerLink : undefined,
+      command: typeof action.routerLink === 'string' ? undefined : () => this.handleActionSync(action, row),
+    }
   }
 
   private shouldDisplayAction(

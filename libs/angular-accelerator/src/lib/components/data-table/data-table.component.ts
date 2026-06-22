@@ -475,25 +475,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
           map((permittedActions) => ({ actions: permittedActions, row: row }))
         )
       ),
-      mergeMap(({ actions, row }) => {
-        if (actions.length === 0) {
-          return of([])
-        }
-
-        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''] || a.labelKey || a.id || 'Action',
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
-              command: typeof a.routerLink === 'string' ? undefined : () => a.callback?.(row),
-            }))
-          })
-        )
-      })
+      mergeMap(({ actions, row }) => this.createOverflowMenuItems(actions, row))
     )
 
     this.rowSelectable = this.rowSelectable.bind(this)
@@ -1064,6 +1046,29 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   rowTrackByFunction = (item: any) => {
     return item.id
+  }
+
+  private createOverflowMenuItems(actions: DataAction[], row: Row | null): Observable<MenuItem[]> {
+    if (actions.length === 0) {
+      return of([])
+    }
+
+    const translationKeys = actions.map((a) => a.labelKey || '')
+    return this.translateService
+      .get(translationKeys)
+      .pipe(map((translations) => actions.map((action) => this.toOverflowMenuItem(action, row, translations))))
+  }
+
+  private toOverflowMenuItem(action: DataAction, row: Row | null, translations: Record<string, string>): MenuItem {
+    return {
+      label: translations[action.labelKey || ''] || action.labelKey || action.id || 'Action',
+      icon: action.icon,
+      styleClass: (action.classes || []).join(' '),
+      disabled: action.disabled || (!!action.actionEnabledField && !this.fieldIsTruthy(row, action.actionEnabledField)),
+      visible: !action.actionVisibleField || this.fieldIsTruthy(row, action.actionVisibleField),
+      routerLink: typeof action.routerLink === 'string' ? action.routerLink : undefined,
+      command: typeof action.routerLink === 'string' ? undefined : () => action.callback?.(row),
+    }
   }
 
   private filterActionsBasedOnPermissions(actions: DataAction[]): Observable<DataAction[]> {

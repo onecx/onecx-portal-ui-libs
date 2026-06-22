@@ -59,7 +59,7 @@
             [attr.href]="action.routerLink"
             class="action-button p-button no-underline"
             [ngClass]="action.btnClass"
-            [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [attr.aria-label]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
           >
             @if (action.icon) {
@@ -78,7 +78,7 @@
             class="action-button"
             (onClick)="action.actionCallback?.()"
             [disabled]="action.disabled ? action.disabled : false"
-            [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
           ></p-button>

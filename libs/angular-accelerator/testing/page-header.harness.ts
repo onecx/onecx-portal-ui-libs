@@ -32,10 +32,16 @@ export class PageHeaderHarness extends ComponentHarness {
 
   async getInlineActionButtons() {
     const inlineActionButtons = await this.locatorForAll(
-      PButtonHarness.with({ name: 'ocx-page-header-inline-action-button' })
+      PButtonHarness.with({
+        selector:
+          '[name="ocx-page-header-inline-action-button"], [data-testid="ocx-page-header-inline-action-button"]',
+      })
     )()
     const inlineActionIconButtons = await this.locatorForAll(
-      PButtonHarness.with({ name: 'ocx-page-header-inline-action-icon-button' })
+      PButtonHarness.with({
+        selector:
+          '[name="ocx-page-header-inline-action-icon-button"], [data-testid="ocx-page-header-inline-action-icon-button"]',
+      })
     )()
     return inlineActionButtons.concat(inlineActionIconButtons)
   }
