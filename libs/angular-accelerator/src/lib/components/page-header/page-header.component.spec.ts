@@ -333,7 +333,7 @@ describe('PageHeaderComponent', () => {
     expect(link?.getAttribute('href')).toContain('/details')
   })
 
-  it('should find inline routerLink action via page header harness selector', async () => {
+  it('should create inline routerLink action with provided action configuration', async () => {
     component.actions = [
       {
         id: 'inline-router-link-harness',
@@ -502,6 +502,21 @@ describe('PageHeaderComponent', () => {
       const result = await firstValueFrom((component as any).getActionTranslationKeys([{ show: 'always' }]))
 
       expect(result).toEqual({})
+    })
+
+    it('should fall back to the user service permissions when no permission checker is provided', async () => {
+      ;(component as any).hasPermissionChecker = undefined
+      userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+
+      const filteredActions = (await firstValueFrom(
+        (component as any).filterActionsBasedOnPermissions([
+          { show: 'always', permission: 'TEST#TEST_PERMISSION' },
+          { show: 'always', permission: 'OTHER#PERMISSION' },
+        ])
+      )) as Action[]
+
+      expect(filteredActions).toHaveLength(1)
+      expect(filteredActions[0].permission).toBe('TEST#TEST_PERMISSION')
     })
 
     it('should map overflow label fallback to title, id and Action', () => {
