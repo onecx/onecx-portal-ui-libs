@@ -1332,5 +1332,88 @@ describe('DataListGridComponent', () => {
 
       expect(handleActionSyncSpy).toHaveBeenCalledWith(action, row)
     })
+
+    it('should create overflow items via translation mapping for non-empty actions', async () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const result = await firstValueFrom((component as any).createOverflowListMenuItems([action], { id: 'row-1' }))
+
+      expect(result).toHaveLength(1)
+      expect(result[0].label).toBe('LABEL_KEY')
+    })
+
+    it('should set disabled when action.disabled is true', () => {
+      const action = {
+        id: 'disabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        disabled: true,
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should set disabled when actionEnabledField is false on row', () => {
+      const action = {
+        id: 'field-disabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: false }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should set visible to false when actionVisibleField is false on row', () => {
+      const action = {
+        id: 'invisible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: false }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(false)
+    })
+
+    it('should set visible to true when actionVisibleField is true on row', () => {
+      const action = {
+        id: 'visible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: true }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(true)
+    })
+
+    it('should keep disabled false when enabled field is true and explicit disabled is false', () => {
+      const action = {
+        id: 'enabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        disabled: false,
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: true }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(false)
+    })
   })
 })

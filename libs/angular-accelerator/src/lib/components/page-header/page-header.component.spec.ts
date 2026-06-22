@@ -22,6 +22,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { firstValueFrom } from 'rxjs'
 
 const mockActions: Action[] = [
   {
@@ -493,5 +494,50 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getLabelTooltipContent()).toBeNull()
     expect(await objectInfo.getValueTooltipContent()).toBeNull()
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
+  })
+
+  describe('helper branch coverage', () => {
+    it('should return empty translations when no labelKey/titleKey exist', async () => {
+      const result = await firstValueFrom((component as any).getActionTranslationKeys([{ show: 'always' }]))
+
+      expect(result).toEqual({})
+    })
+
+    it('should map overflow label fallback to title, id and Action', () => {
+      const titleFallback = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', title: 'Title Fallback' }],
+        {}
+      )
+      const idFallback = (component as any).mapOverflowActionsToMenuItems([{ show: 'asOverflow', id: 'id-fallback' }], {})
+      const defaultFallback = (component as any).mapOverflowActionsToMenuItems([{ show: 'asOverflow' }], {})
+
+      expect(titleFallback[0].label).toBe('Title Fallback')
+      expect(idFallback[0].label).toBe('id-fallback')
+      expect(defaultFallback[0].label).toBe('Action')
+    })
+
+    it('should map tooltip from titleKey translation when provided', () => {
+      const items = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', titleKey: 'TITLE_KEY' }],
+        { TITLE_KEY: 'Translated Title' }
+      )
+
+      expect(items[0].tooltipOptions?.tooltipLabel).toBe('Translated Title')
+    })
+
+    it('should map command only when routerLink is missing', () => {
+      const callback = jest.fn()
+      const withoutRouter = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', actionCallback: callback }],
+        {}
+      )
+      const withRouter = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', routerLink: '/details', actionCallback: callback }],
+        {}
+      )
+
+      expect(withoutRouter[0].command).toBe(callback)
+      expect(withRouter[0].command).toBeUndefined()
+    })
   })
 })

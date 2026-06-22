@@ -1474,6 +1474,57 @@ describe('DataTableComponent', () => {
 
       expect(menuItem.label).toBe('Action')
     })
+
+    it('should set disabled when action.disabled is true', () => {
+      const action = {
+        id: 'disabled-action',
+        permission: 'VIEW',
+        disabled: true,
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should set disabled when actionEnabledField is false on row', () => {
+      const action = {
+        id: 'field-disabled-action',
+        permission: 'VIEW',
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: false } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should set visible to false when actionVisibleField is false on row', () => {
+      const action = {
+        id: 'invisible-action',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: false } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.visible).toBe(false)
+    })
+
+    it('should set visible to true when actionVisibleField is true on row', () => {
+      const action = {
+        id: 'visible-action',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: true } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.visible).toBe(true)
+    })
   })
 })
 
