@@ -31,7 +31,7 @@ import { withDocumentUndefined } from '../../test-setup'
 // This component is in charge of dialog display
 @Component({
   standalone: false,
-  template: `<h1>BaseTestComponent</h1>`,
+  template: `<h1>BaseTestComponent</h1><button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
 })
 class BaseTestComponent {
   portalDialogService = inject(PortalDialogService)
