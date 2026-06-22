@@ -1340,7 +1340,9 @@ describe('DataListGridComponent', () => {
         permission: 'VIEW',
       }
 
-      const result = await firstValueFrom((component as any).createOverflowListMenuItems([action], { id: 'row-1' }))
+      const result = (await firstValueFrom(
+        (component as any).createOverflowListMenuItems([action], { id: 'row-1' })
+      )) as any[]
 
       expect(result).toHaveLength(1)
       expect(result[0].label).toBe('LABEL_KEY')
