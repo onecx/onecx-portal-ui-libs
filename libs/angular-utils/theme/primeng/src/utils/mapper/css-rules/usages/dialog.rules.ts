@@ -34,10 +34,6 @@ export const dialogCssRules: CssRule[] = [
 		selector: '.p-dialog .p-resizable-handle',
 		declarations: [
 			{
-				property: 'background-color',
-				from: 'usages.dialog.root.borderColor',
-			},
-			{
 				property: 'border-bottom-right-radius',
 				from: 'usages.dialog.root.borderRadius',
 			},
