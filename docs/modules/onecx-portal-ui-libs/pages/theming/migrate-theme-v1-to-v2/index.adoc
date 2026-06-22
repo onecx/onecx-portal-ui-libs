@@ -1,0 +1,7 @@
+= Migrate OneCX App from Theme v1 to Theme v2
+
+This guide provides information about how to migrate your OneCX application from theme v1 to theme v2.
+
+For more information, refer to the links below:
+
+* xref:./slot-group-name-to-override-theme.adoc#override-theme-for-slotgroup[How to add slotGroupName in a remote component to override theme]

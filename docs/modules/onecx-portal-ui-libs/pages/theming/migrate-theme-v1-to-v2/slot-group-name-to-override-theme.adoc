@@ -1,0 +1,60 @@
+[#override-theme-for-slotgroup]
+= Override theme for slotgroup
+
+This guide will help you add `slotGroupName` in a remote component and emit the value of `slotGroupName` with the help of the `REMOTE_COMPONENT_CONTEXT` injection token. The theme service will use the provided value and override theme properties in the region accordingly.
+
+The following are the steps to send `slotGroupName`:
+
+== Step 1: Extract slotGroupName
+In a remote component, you will be able to extract slotGroupName from input signals.
+
+The same `slotGroupName` has to be set as the value in the `REMOTE_COMPONENT_CONTEXT` injection token.
+`REMOTE_COMPONENT_CONTEXT` accepts a `ReplaySubject` of type `RemoteComponentContext`. Please set the value of `slotGroupName` in the emitted object of `REMOTE_COMPONENT_CONTEXT`. Please refer to the code snippet below.
+
+== Step 2: Configure REMOTE_COMPONENT_CONTEXT
+
+Add `REMOTE_COMPONENT_CONTEXT` to the providers array of the `bootstrapRemoteComponent` function. Please refer to the code snippet below.
+
+.Example - my-remote.component.bootstrap.ts
+[source, typescript]
+--
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import { REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
+import { ReplaySubject } from 'rxjs'
+
+bootstrapRemoteComponent(
+  MyRemoteComponent,
+  'ocx-my-remote',
+  environment.production,
+  [
+    { provide: REMOTE_COMPONENT_CONTEXT, useValue: new ReplaySubject<RemoteComponentContext>(1) },
+  ]
+)
+--
+
+== Step 3: Emit `slotGroupName`
+
+Emit the value of `slotGroupName` with the help of the `REMOTE_COMPONENT_CONTEXT` injection token. Please refer to the code snippet below.
+
+.Example - my-remote.component.ts
+[source, typescript]
+--
+import { input, inject } from '@angular/core'
+import { REMOTE_COMPONENT_CONTEXT } from "@onecx/angular-utils"
+import { ReplaySubject } from 'rxjs'
+
+export class MyRemoteComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
+  private readonly componentContext$ = inject<ReplaySubject<RemoteComponentContext>>(REMOTE_COMPONENT_CONTEXT)
+  readonly slotName = input<string>('')
+  readonly slotGroupName = input<string>('')
+
+  ocxInitRemoteComponent(remoteComponentConfig: RemoteComponentConfig) {
+    this.componentContext$.next({ slotName: this.slotName(), slotGroupName: this.slotGroupName() })
+  }
+}
+--
+
+[NOTE]
+====
+The **theme service** will listen to `slotGroupName` and override properties in the region accordingly. Please test whether the override changes are applied to the region properly.
+====

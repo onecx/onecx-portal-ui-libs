@@ -6,13 +6,15 @@ import {
   inject,
   runInInjectionContext,
 } from '@angular/core'
-import { AppStateService, CONFIG_KEY, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import { AppStateService, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   OverrideType,
   Theme as OneCXTheme,
   ThemeOverride,
   ThemePropertiesV2,
   CurrentThemes,
+  RegionOverridesInput,
+  regionKeys,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -20,7 +22,7 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT } from '@onecx/angular-utils'
+import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT, THEME_MAX_VERSION, themeVersionAvailable } from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom } from 'rxjs'
@@ -33,6 +35,8 @@ import {
 } from '@onecx/angular-utils/style'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
+
+export const SLOT_GROUP_PREFIX = 'onecx-shell-'
 
 type Options = { isAdvanced?: boolean; maxVersion: number; cssOverrides?: CssOverrides; overrides?: ThemeOverrides }
 
@@ -67,6 +71,10 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
       useValue:
         typeof isAdvancedOrOptions === 'boolean' ? { isAdvanced: isAdvancedOrOptions } : (isAdvancedOrOptions ?? {}),
     },
+    {
+      provide: THEME_MAX_VERSION,
+      useValue: typeof isAdvancedOrOptions === 'boolean' ? undefined : isAdvancedOrOptions?.maxVersion,
+    }
   ]
 }
 
@@ -86,21 +94,19 @@ export class ThemeConfigService {
 
   constructor() {
     this.themeService.currentThemes$.subscribe(async (theme) => {
-      const maxVersion =
-        this.options.maxVersion ?? (await this.configService.getProperty(CONFIG_KEY.DEFAULT_THEME_VERSION)) ?? 1
-      if (theme.versions?.includes(2) && Number(maxVersion) === 2) {
+      if (await themeVersionAvailable(2, this.injector)) {
         this.applyThemeVariablesV2({
           ...theme,
           properties: theme.properties?.v2 ?? {},
         })
-      } else if (theme.versions?.includes(1) && Number(maxVersion) >= 1) {
+      } else if (await themeVersionAvailable(1, this.injector)) {
         this.applyThemeVariablesV1({
           ...theme,
           properties: theme.properties.v1,
         })
       } else {
         throw new Error(
-          `App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${maxVersion}`
+          `App is requesting a non-existing theme version. Available versions: ${theme.versions?.join(', ')}, requested maximum version: ${this.options.maxVersion}`
         )
       }
     })
@@ -135,7 +141,8 @@ export class ThemeConfigService {
     }
   ): Promise<void> {
     // theme.properties has already been resolved against region overrides upstream
-    const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(theme.properties)
+    const properties = await this.getThemeProperties(theme)
+    const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(properties)
 
     const primeNgThemeOverrides = this.generateThemeOverrides(theme.overrides)
     const primeNgPreset = mergeDeep(primeNgPresetFromTheme, primeNgThemeOverrides)
@@ -223,4 +230,35 @@ export class ThemeConfigService {
       ? this.foldOverrides(this.parsePrimeNGOverridesValue(overrides))
       : {}
   }
-}
+
+  private async getThemeProperties(theme: CurrentThemes & {
+    properties: ThemePropertiesV2
+  }): Promise<ThemePropertiesV2> {
+    const slotGroupName = this.rcContext ? ((await firstValueFrom(this.rcContext))?.slotGroupName) : undefined
+    const regionName = slotGroupName ? this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput : undefined
+    const regionOverrides = theme.properties.regionOverrides
+
+    if (regionName && regionOverrides) {
+      if (!regionKeys.includes(regionName)) {
+        throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
+      }
+      const region = regionOverrides[regionName]
+      const regionPrimitives = region?.primitives ?? {}
+      const regionUsages = region?.usages ?? {}
+
+      return {
+        primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
+        usages: mergeDeep(theme.properties.usages, regionUsages)
+      }
+    } else {
+      return theme.properties
+    }
+  }
+
+  private dashToCamelCase(value: string): string {
+    value = value.replace(SLOT_GROUP_PREFIX, '')
+    return value?.replace(/-([a-z])/g, (_: string, letter: string) =>
+      letter.toUpperCase()
+    );
+  }
+} 

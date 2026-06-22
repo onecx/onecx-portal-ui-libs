@@ -3,6 +3,7 @@ import { primitives } from "./schema/primitives";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
+import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { button } from "./schema/button";
 
@@ -12,6 +13,7 @@ const usages = z
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     button: (button as typeof button).optional(),
+    carousel: (carousel as typeof carousel).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
@@ -59,15 +61,8 @@ export const theme = z
   })
   .register(themeSchemaRegistry, { id: 'theme' })
 
-type RegionOverridesInput = {
-  header?: RegionOverrideInput
-  subHeader?: RegionOverrideInput
-  bodyStart?: RegionOverrideInput
-  bodyHeader?: RegionOverrideInput
-  bodyFooter?: RegionOverrideInput
-  bodyEnd?: RegionOverrideInput
-  footer?: RegionOverrideInput
-}
+export const regionKeys = ["header", "subHeader", "bodyStart", "bodyHeader", "bodyFooter", "bodyEnd", "footer"] as const
+export type RegionOverridesInput = Partial<Record<typeof regionKeys[number], RegionOverrideInput>>
 
 export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
@@ -78,4 +73,4 @@ export type ThemePropertiesV2 = {
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
-}
+};
