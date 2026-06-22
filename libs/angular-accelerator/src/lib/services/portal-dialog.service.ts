@@ -196,6 +196,7 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
+export type DialogInitiator = 'initiator' | 'default'
 
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
@@ -234,6 +235,7 @@ export type PortalDialogConfig = {
   closeAriaLabel?: string
   closable?:boolean
   initiatorRef?: HTMLElement
+  onCloseFocus?: DialogInitiator
 }
 
 export interface PortalDialogServiceData {
@@ -438,7 +440,9 @@ export class PortalDialogService implements OnDestroy {
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T>> {
     const isObject = typeof extrasOrShowXButton === 'object'
-    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
+    const dialogOptions: PortalDialogConfig = isObject
+      ? extrasOrShowXButton
+      : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -481,16 +485,24 @@ export class PortalDialogService implements OnDestroy {
           },
         })
         this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
-        return dialogRef.onClose.pipe(tap(() => {
-          if(isObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
-        }))
+        return dialogRef.onClose.pipe(
+          tap(() => {
+            if (isObject) {
+              this.setFocusOnInitiator(extrasOrShowXButton)
+            }
+          })
+        )
       })
     )
   }
 
   private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
+    if (hasOnCloseFocus) return
+
     const initiator = dialogOptions.initiatorRef
-    if (!initiator || typeof document === 'undefined' || !document.contains(initiator)) return
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+      return
     else {
       initiator.focus()
     }
