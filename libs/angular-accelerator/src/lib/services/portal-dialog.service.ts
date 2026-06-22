@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialogComponent } from 'primeng/dynamicdialog'
-import { Observable, filter, mergeMap } from 'rxjs'
+import { Observable, filter, mergeMap, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -196,6 +196,7 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
+export type DialogInitiator = 'initiator' | 'default'
 
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
@@ -233,6 +234,8 @@ export type PortalDialogConfig = {
   position?: string
   closeAriaLabel?: string
   closable?:boolean
+  initiatorRef?: HTMLElement
+  onCloseFocus?: DialogInitiator
 }
 
 export interface PortalDialogServiceData {
@@ -437,7 +440,9 @@ export class PortalDialogService implements OnDestroy {
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T>> {
     const isObject = typeof extrasOrShowXButton === 'object'
-    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
+    const dialogOptions: PortalDialogConfig = isObject
+      ? extrasOrShowXButton
+      : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -480,9 +485,27 @@ export class PortalDialogService implements OnDestroy {
           },
         })
         this.setScopeIdentifier(this.dialogService.getInstance(dialogRef))
-        return dialogRef.onClose
+        return dialogRef.onClose.pipe(
+          tap(() => {
+            if (isObject) {
+              this.setFocusOnInitiator(extrasOrShowXButton)
+            }
+          })
+        )
       })
     )
+  }
+
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
+    if (hasOnCloseFocus) return
+
+    const initiator = dialogOptions.initiatorRef
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+      return
+    else {
+      initiator.focus()
+    }
   }
 
   private cleanupAndCloseDialog() {
