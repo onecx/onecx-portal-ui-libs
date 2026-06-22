@@ -331,6 +331,25 @@ describe('PageHeaderComponent', () => {
     expect(link?.getAttribute('href')).toContain('/details')
   })
 
+  it('should find inline routerLink action via page header harness selector', async () => {
+    component.actions = [
+      {
+        id: 'inline-router-link-harness',
+        label: 'Inline Link Harness',
+        show: 'always',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+
+    expect(inlineButtons.length).toBe(1)
+  })
+
   it('should render overflow routerLink action as menu link with href', async () => {
     component.actions = [
       {

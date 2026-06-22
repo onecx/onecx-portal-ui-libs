@@ -22,6 +22,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { firstValueFrom } from 'rxjs'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -1284,6 +1285,52 @@ describe('DataListGridComponent', () => {
 
       expect(emittedPages).toContain(0)
       expect(component.data).toEqual(reducedData)
+    })
+  })
+
+  describe('overflow helper methods', () => {
+    it('should return an empty list when creating overflow menu items with no actions', async () => {
+      const result = await firstValueFrom((component as any).createOverflowListMenuItems([], null))
+
+      expect(result).toEqual([])
+    })
+
+    it('should map routerLink string to menu item without command', () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        icon: 'pi pi-check',
+        classes: ['class-a', 'class-b'],
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.label).toBe('Label')
+      expect(menuItem.icon).toBe('pi pi-check')
+      expect(menuItem.styleClass).toBe('class-a class-b')
+      expect(menuItem.routerLink).toBe('/details')
+      expect(menuItem.command).toBeUndefined()
+    })
+
+    it('should map non-string routerLink to command and execute handleActionSync', () => {
+      const action = {
+        id: 'action-id',
+        permission: 'VIEW',
+        routerLink: () => '/dynamic',
+      }
+      const row = { id: 'row-1' }
+      const handleActionSyncSpy = jest.spyOn(component as any, 'handleActionSync').mockImplementation(() => undefined)
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, {})
+
+      expect(menuItem.routerLink).toBeUndefined()
+      expect(menuItem.command).toBeDefined()
+
+      menuItem.command?.({} as any)
+
+      expect(handleActionSyncSpy).toHaveBeenCalledWith(action, row)
     })
   })
 })

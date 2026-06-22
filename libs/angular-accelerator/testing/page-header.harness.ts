@@ -30,7 +30,7 @@ export class PageHeaderHarness extends ComponentHarness {
     return await this.locatorForOptional(ObjectDetailItemHarness.with({ label: objectInfolabel }))()
   }
 
-  async getInlineActionButtons() {
+  async getInlineActionButtons(): Promise<any[]> {
     const inlineActionButtons = await this.locatorForAll(
       PButtonHarness.with({
         selector:
@@ -43,7 +43,13 @@ export class PageHeaderHarness extends ComponentHarness {
           '[name="ocx-page-header-inline-action-icon-button"], [data-testid="ocx-page-header-inline-action-icon-button"]',
       })
     )()
-    return inlineActionButtons.concat(inlineActionIconButtons)
+    const inlineActionLinks = await this.locatorForAll(
+      'a[name="ocx-page-header-inline-action-button"], a[data-testid="ocx-page-header-inline-action-button"]'
+    )()
+    const inlineActionIconLinks = await this.locatorForAll(
+      'a[name="ocx-page-header-inline-action-icon-button"], a[data-testid="ocx-page-header-inline-action-icon-button"]'
+    )()
+    return [...inlineActionButtons, ...inlineActionIconButtons, ...inlineActionLinks, ...inlineActionIconLinks]
   }
 
   async getInlineActionButtonByLabel(buttonLabel: string) {

@@ -1422,6 +1422,59 @@ describe('DataTableComponent', () => {
       expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
     })
   })
+
+  describe('overflow helper methods', () => {
+    it('should return an empty list when creating overflow menu items with no actions', async () => {
+      const result = await firstValueFrom((component as any).createOverflowMenuItems([], null))
+
+      expect(result).toEqual([])
+    })
+
+    it('should map fallback label and command for non-router-link actions', () => {
+      const row = { id: 'row-1' } as Row
+      const callback = jest.fn()
+      const action = {
+        id: 'fallback-id',
+        permission: 'VIEW',
+        callback,
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.label).toBe('fallback-id')
+      expect(menuItem.routerLink).toBeUndefined()
+      expect(menuItem.command).toBeDefined()
+
+      menuItem.command?.({} as any)
+
+      expect(callback).toHaveBeenCalledWith(row)
+    })
+
+    it('should map routerLink string and omit command', () => {
+      const action = {
+        id: 'router-action',
+        labelKey: 'MISSING_LABEL',
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, null, {})
+
+      expect(menuItem.label).toBe('MISSING_LABEL')
+      expect(menuItem.routerLink).toBe('/details')
+      expect(menuItem.command).toBeUndefined()
+    })
+
+    it('should fallback to generic Action label when id and labelKey are missing', () => {
+      const action = {
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, null, {})
+
+      expect(menuItem.label).toBe('Action')
+    })
+  })
 })
 
 function createQueryList(items: Partial<PrimeTemplate>[]): QueryList<PrimeTemplate> {
