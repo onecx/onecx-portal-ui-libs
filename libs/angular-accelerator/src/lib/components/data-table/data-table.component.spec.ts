@@ -1430,6 +1430,21 @@ describe('DataTableComponent', () => {
       expect(result).toEqual([])
     })
 
+    it('should map mixed actions and use fallback labels when labelKey is missing', async () => {
+      const actions = [
+        { id: 'with-key', labelKey: 'LABEL_KEY', permission: 'VIEW' },
+        { id: 'without-key', permission: 'VIEW' },
+      ]
+
+      const result = (await firstValueFrom(
+        (component as any).createOverflowMenuItems(actions, { id: 'row-1' } as Row)
+      )) as any[]
+
+      expect(result).toHaveLength(2)
+      expect(result[0].label).toBe('LABEL_KEY')
+      expect(result[1].label).toBe('without-key')
+    })
+
     it('should map fallback label and command for non-router-link actions', () => {
       const row = { id: 'row-1' } as Row
       const callback = jest.fn()
@@ -1463,6 +1478,17 @@ describe('DataTableComponent', () => {
       expect(menuItem.label).toBe('MISSING_LABEL')
       expect(menuItem.routerLink).toBe('/details')
       expect(menuItem.command).toBeUndefined()
+    })
+
+    it('should not throw when callback is missing for non-router actions', () => {
+      const action = {
+        id: 'no-callback-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(() => menuItem.command?.({} as any)).not.toThrow()
     })
 
     it('should fallback to generic Action label when id and labelKey are missing', () => {

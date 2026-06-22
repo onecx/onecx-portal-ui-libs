@@ -1314,6 +1314,61 @@ describe('DataListGridComponent', () => {
       expect(menuItem.command).toBeUndefined()
     })
 
+    it('should navigate when routerLink is defined on the action', async () => {
+      const action = {
+        id: 'router-action',
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+      await (component as any).handleAction(action, { id: 'row-1' })
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/details'])
+    })
+
+    it('should execute callback when no routerLink is defined', async () => {
+      const callback = jest.fn()
+      const action = {
+        id: 'callback-action',
+        permission: 'VIEW',
+        callback,
+      }
+
+      await (component as any).handleAction(action, { id: 'row-1' })
+
+      expect(callback).toHaveBeenCalledWith({ id: 'row-1' })
+    })
+
+    it('should delegate the sync action wrapper to handleAction', async () => {
+      const handleActionSpy = jest.spyOn(component as any, 'handleAction').mockResolvedValue(undefined)
+      const action = {
+        id: 'sync-action',
+        permission: 'VIEW',
+      }
+      const row = { id: 'row-1' }
+
+      ;(component as any).handleActionSync(action, row)
+      await Promise.resolve()
+
+      expect(handleActionSpy).toHaveBeenCalledWith(action, row)
+    })
+
+    it('should resolve string routerLink values', async () => {
+      await expect((component as any).resolveRouterLink('/details')).resolves.toBe('/details')
+    })
+
+    it('should resolve routerLink functions returning strings', async () => {
+      const routerLink = jest.fn(() => '/dynamic')
+
+      await expect((component as any).resolveRouterLink(routerLink)).resolves.toBe('/dynamic')
+      expect(routerLink).toHaveBeenCalledTimes(1)
+    })
+
+    it('should resolve async routerLink values', async () => {
+      await expect((component as any).resolveRouterLink(Promise.resolve('/async'))).resolves.toBe('/async')
+    })
+
     it('should use the translated label when a translation exists', () => {
       const action = {
         id: 'action-id',
