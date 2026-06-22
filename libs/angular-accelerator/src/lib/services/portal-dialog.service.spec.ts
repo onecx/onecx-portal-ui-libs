@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { Observable, of, Subscription } from 'rxjs'
@@ -29,15 +29,17 @@ import {
 } from './portal-dialog.service'
 
 import * as loggerUtils from '../utils/logger.utils'
+import { withDocumentUndefined } from '../../test-setup'
 
 // This component is in charge of dialog display
 @Component({
   standalone: false,
-  template: `<h1>BaseTestComponent</h1>`,
+  template: `<h1>BaseTestComponent</h1><button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
 })
 class BaseTestComponent implements OnDestroy {
   portalDialogService = inject(PortalDialogService)
-
+  elementRef = inject(ElementRef)
+  initiatorButton: HTMLElement | undefined
   resultFromShow: DialogState<any> | null = null
   nameResult: string | undefined
   surnameResult: string | undefined
@@ -1027,6 +1029,61 @@ describe('PortalDialogService', () => {
           closable: false
         })
       )
+    })
+  })
+
+  describe('[a11y] - focus management', () => {
+    it('should return focus to the initiator button when dialog is closed', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { initiatorRef: initiatorButton, showXButton: true }
+      )
+
+      const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+      await footerHarness.clickSecondaryButton()
+
+      const isInitiatorButtonFocused = document.activeElement === initiatorButton
+      expect(isInitiatorButtonFocused).toBe(true)
+    })
+
+    it('should not perform any action when initiator reference is not provided or document is undefined', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { showXButton: true }
+      )
+
+      const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+      await footerHarness.clickSecondaryButton()
+
+      const isInitiatorButtonFocused = document.activeElement === initiatorButton
+      expect(isInitiatorButtonFocused).toBe(false)
+
+      // when document is undefined
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { initiatorRef: undefined, showXButton: true }
+      )
+
+      await footerHarness.clickSecondaryButton()
+
+      await withDocumentUndefined(async () => {
+        expect(document?.activeElement).toBeUndefined()
+      })
     })
   })
 })

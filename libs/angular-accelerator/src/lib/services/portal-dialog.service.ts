@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of } from 'rxjs'
+import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -235,6 +235,7 @@ export type PortalDialogConfig = {
   position?: string
   closeAriaLabel?: string
   closable?: boolean
+  initiatorRef?: HTMLElement
 }
 
 export interface PortalDialogServiceData {
@@ -494,10 +495,21 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose
+        return dialogRef.onClose.pipe(tap(() => {
+          if(isObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
+        }))
       })
     )
   }
+
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const initiator = dialogOptions.initiatorRef
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator)) return
+    else {
+      initiator.focus()
+    }
+  }
+  
   private cleanupAndCloseDialog() {
     if (this.dialogService.dialogComponentRefMap.size > 0) {
       this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
