@@ -532,6 +532,15 @@ describe('PageHeaderComponent', () => {
       expect(defaultFallback[0].label).toBe('Action')
     })
 
+    it('should prefer translated labelKey for overflow menu labels when provided', () => {
+      const items = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', labelKey: 'LABEL_KEY' }],
+        { LABEL_KEY: 'Translated Label' }
+      )
+
+      expect(items[0].label).toBe('Translated Label')
+    })
+
     it('should map tooltip from titleKey translation when provided', () => {
       const items = (component as any).mapOverflowActionsToMenuItems(
         [{ show: 'asOverflow', titleKey: 'TITLE_KEY' }],

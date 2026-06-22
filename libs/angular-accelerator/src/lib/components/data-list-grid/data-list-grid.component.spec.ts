@@ -1314,6 +1314,22 @@ describe('DataListGridComponent', () => {
       expect(menuItem.command).toBeUndefined()
     })
 
+    it('should use the translated label when a translation exists', () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(
+        action,
+        { id: 'row-1' },
+        { LABEL_KEY: 'Translated Label' }
+      )
+
+      expect(menuItem.label).toBe('Translated Label')
+    })
+
     it('should map non-string routerLink to command and execute handleActionSync', () => {
       const action = {
         id: 'action-id',
@@ -1361,6 +1377,18 @@ describe('DataListGridComponent', () => {
       expect(menuItem.disabled).toBe(true)
     })
 
+    it('should keep disabled false when no explicit disabled state is provided', () => {
+      const action = {
+        id: 'enabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(false)
+    })
+
     it('should set disabled when actionEnabledField is false on row', () => {
       const action = {
         id: 'field-disabled-action',
@@ -1373,6 +1401,18 @@ describe('DataListGridComponent', () => {
       const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
 
       expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep visible true when no actionVisibleField is provided', () => {
+      const action = {
+        id: 'default-visible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(true)
     })
 
     it('should set visible to false when actionVisibleField is false on row', () => {

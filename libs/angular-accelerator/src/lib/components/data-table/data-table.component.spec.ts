@@ -1487,6 +1487,17 @@ describe('DataTableComponent', () => {
       expect(menuItem.disabled).toBe(true)
     })
 
+    it('should keep disabled false when action is not disabled and no actionEnabledField is provided', () => {
+      const action = {
+        id: 'enabled-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.disabled).toBe(false)
+    })
+
     it('should set disabled when actionEnabledField is false on row', () => {
       const action = {
         id: 'field-disabled-action',
@@ -1498,6 +1509,17 @@ describe('DataTableComponent', () => {
       const menuItem = (component as any).toOverflowMenuItem(action, row, {})
 
       expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep visible true when actionVisibleField is not provided', () => {
+      const action = {
+        id: 'default-visible-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.visible).toBe(true)
     })
 
     it('should set visible to false when actionVisibleField is false on row', () => {
