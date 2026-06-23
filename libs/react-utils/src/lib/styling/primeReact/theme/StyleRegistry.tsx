@@ -1,4 +1,4 @@
-import { type ReactNode, useState, useEffect, useMemo } from 'react'
+import { type ReactNode, useEffect, useMemo } from 'react'
 import { PrimeReactProvider } from 'primereact/api'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
 import applyThemeVariables from './applyThemeVariables'
@@ -10,14 +10,13 @@ type Props = Readonly<{
 }>
 
 /**
- * Subscribes to theme updates and renders children after runtime theme initialization.
+ * Subscribes to theme updates and applies runtime theme variables.
  *
- * @param children - Component subtree rendered once theme variables are applied.
- * @returns PrimeReact provider tree after theme initialization, otherwise null.
+ * @param children - Component subtree rendered within the scoped PrimeReact provider.
+ * @returns PrimeReact provider tree with scoped style container.
  */
 
 export default function StyleRegistry({ children }: Props) {
-  const [isThemed, setIsThemed] = useState(false)
   const { PRODUCT_NAME } = useAppGlobals()
   const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
 
@@ -27,17 +26,16 @@ export default function StyleRegistry({ children }: Props) {
   const styleContainer = useMemo(() => getOrCreateScopedStyleContainer(themeStyleId), [themeStyleId])
 
   useEffect(() => {
-    const themeSubscription = new CurrentThemeTopic().subscribe((theme) => {
+    const topic = new CurrentThemeTopic()
+    const themeSubscription = topic.subscribe((theme) => {
       applyThemeVariables(theme, themeStyleId)
-      setIsThemed(true)
     })
 
     return () => {
       themeSubscription.unsubscribe()
+      topic.destroy()
     }
   }, [themeStyleId])
-
-  if (!isThemed) return null
 
   return (
     <PrimeReactProvider value={{ unstyled: false, appendTo: 'self', styleContainer }}>{children}</PrimeReactProvider>

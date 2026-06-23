@@ -5,6 +5,7 @@ import applyThemeVariables from './applyThemeVariables'
 
 let emitTheme: ((theme: unknown) => void) | undefined
 const unsubscribeSpy = jest.fn()
+const destroySpy = jest.fn()
 
 jest.mock('primereact/api', () => ({
   PrimeReactProvider: ({ children, value }: { children?: ReactNode; value?: unknown }) => (
@@ -21,6 +22,9 @@ jest.mock('@onecx/integration-interface', () => ({
       return {
         unsubscribe: unsubscribeSpy,
       }
+    }
+    destroy() {
+      destroySpy()
     }
   },
 }))
@@ -49,11 +53,12 @@ describe('StyleRegistry', () => {
   beforeEach(() => {
     emitTheme = undefined
     unsubscribeSpy.mockReset()
+    destroySpy.mockReset()
     jest.mocked(applyThemeVariables).mockReset()
     jest.mocked(getOrCreateScopedStyleContainer).mockReset()
   })
 
-  it('creates scoped style container, subscribes to theme, and renders children once themed', async () => {
+  it('creates scoped style container, renders children immediately, and applies theme variables when theme arrives', async () => {
     const theme = { properties: { colors: { primary: '#111' } } }
 
     render(
@@ -62,7 +67,7 @@ describe('StyleRegistry', () => {
       </StyleRegistry>
     )
 
-    expect(screen.queryByText('content')).toBeNull()
+    expect(screen.queryByText('content')).not.toBeNull()
     expect(jest.mocked(getOrCreateScopedStyleContainer)).toHaveBeenCalledWith('demo-app|demo-app')
 
     act(() => {
@@ -70,13 +75,11 @@ describe('StyleRegistry', () => {
     })
 
     await waitFor(() => {
-      expect(screen.queryByText('content')).not.toBeNull()
+      expect(jest.mocked(applyThemeVariables)).toHaveBeenCalledWith(theme, 'demo-app|demo-app')
     })
-
-    expect(jest.mocked(applyThemeVariables)).toHaveBeenCalledWith(theme, 'demo-app|demo-app')
   })
 
-  it('unsubscribes from theme topic on unmount', () => {
+  it('unsubscribes and destroys theme topic on unmount', () => {
     const { unmount } = render(
       <StyleRegistry>
         <div>content</div>
@@ -86,5 +89,6 @@ describe('StyleRegistry', () => {
     unmount()
 
     expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
+    expect(destroySpy).toHaveBeenCalledTimes(1)
   })
 })
