@@ -51,6 +51,20 @@
       ></button>
       } @for (action of inlineActions$ | async; track action) { @if ((!action.actionVisibleField ||
       fieldIsTruthy(rowObject, action.actionVisibleField))) {
+      @if (typeof action.routerLink === 'string' && !(action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField)))) {
+      <a
+        id="{{resolveFieldData(rowObject, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
+        *ocxIfPermission="action.permission"
+        pButton
+        [routerLink]="action.routerLink"
+        class="p-button-rounded p-button-text no-underline"
+        [ngClass]="action.classes"
+        [icon]="action.icon || ''"
+        [title]="action.labelKey ? (action.labelKey | translate) : ''"
+        [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+        [attr.data-testid]="'data-table-action-button'"
+      ></a>
+      } @else {
       <button
         id="{{resolveFieldData(rowObject, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
         *ocxIfPermission="action.permission"
@@ -58,13 +72,13 @@
         class="p-button-rounded p-button-text"
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
-        (click)="action.callback(rowObject)"
+        (click)="action.callback?.(rowObject)"
         [title]="action.labelKey ? (action.labelKey | translate) : ''"
         [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
+      } } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
       <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
       <button
         pButton

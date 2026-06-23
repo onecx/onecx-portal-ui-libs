@@ -36,7 +36,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction } from '../../model/data-action'
+import { DataAction, RouterLink as DataActionRouterLink } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -373,23 +373,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           map((permittedActions) => ({ actions: permittedActions, row: row }))
         )
       ),
-      mergeMap(({ actions, row }) => {
-        if (actions.length === 0) {
-          return of([])
-        }
-        return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
-          map((translations) => {
-            return actions.map((a) => ({
-              label: translations[a.labelKey || ''],
-              icon: a.icon,
-              styleClass: (a.classes || []).join(' '),
-              disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
-              visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-              command: () => a.callback(row),
-            }))
-          })
-        )
-      })
+      mergeMap(({ actions, row }) => this.createOverflowListMenuItems(actions, row))
     )
     this.hasViewPermission$ = this._viewPermission$.pipe(
       map((permission) => {
@@ -680,7 +664,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => a.callback(selectedItem),
+          routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+          command: typeof a.routerLink === 'string' ? undefined : () => this.handleActionSync(a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
@@ -705,6 +690,33 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     ])
   }
 
+  private createOverflowListMenuItems(actions: DataAction[], row: Row | null): Observable<MenuItem[]> {
+    if (actions.length === 0) {
+      return of([])
+    }
+
+    const translationKeys = actions.map((a) => a.labelKey || '')
+    return this.translateService
+      .get(translationKeys)
+      .pipe(map((translations) => actions.map((action) => this.toOverflowListMenuItem(action, row, translations))))
+  }
+
+  private toOverflowListMenuItem(
+    action: DataAction,
+    row: Row | null,
+    translations: Record<string, string>
+  ): MenuItem {
+    return {
+      label: translations[action.labelKey || ''],
+      icon: action.icon,
+      styleClass: (action.classes || []).join(' '),
+      disabled: action.disabled || (!!action.actionEnabledField && !this.fieldIsTruthy(row, action.actionEnabledField)),
+      visible: !action.actionVisibleField || this.fieldIsTruthy(row, action.actionVisibleField),
+      routerLink: typeof action.routerLink === 'string' ? action.routerLink : undefined,
+      command: typeof action.routerLink === 'string' ? undefined : () => this.handleActionSync(action, row),
+    }
+  }
+
   private shouldDisplayAction(
     permission: string | string[] | undefined,
     emitter: EventEmitter<any>,
@@ -724,6 +736,39 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
         })
       })
     )
+  }
+
+  async onAdditionalActionClick(action: DataAction, item: any): Promise<void> {
+    await this.handleAction(action, item)
+  }
+
+  private async handleAction(action: DataAction, data: any): Promise<void> {
+    if (action.routerLink != null) {
+      const resolvedLink = await this.resolveRouterLink(action.routerLink)
+      await this.router.navigate([resolvedLink])
+      return
+    }
+
+    if (typeof action.callback === 'function') {
+      action.callback(data)
+    }
+  }
+
+  private handleActionSync(action: DataAction, data: any): void {
+    void this.handleAction(action, data)
+  }
+
+  private async resolveRouterLink(routerLink: DataActionRouterLink): Promise<string> {
+    if (typeof routerLink === 'string') {
+      return routerLink
+    }
+
+    if (typeof routerLink === 'function') {
+      const result = routerLink()
+      return typeof result === 'string' ? result : await result
+    }
+
+    return await routerLink
   }
 
   private getPermissions(): Observable<string[]> {
