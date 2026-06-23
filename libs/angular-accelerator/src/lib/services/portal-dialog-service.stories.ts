@@ -42,8 +42,9 @@ class ButtonDialogWithPortalDialogServiceComponent {
   openDialog() {
     const nativeElement = this.elementRef.nativeElement as HTMLElement
     const button = nativeElement.querySelector('#custom-button-1234 .p-button') as HTMLElement
+    const extras = { ...this.extras, initiatorRef: (this.extras as any).onCloseFocus ? button : undefined }
     this.portalDialogService
-      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, { ...this.extras, initiatorRef: button })
+      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, extras)
       .subscribe(() => {
         console.log('dialog closed')
       })
@@ -381,6 +382,7 @@ export const CustomButtonsWithAutofocus = {
       ],
       autoFocusButton: 'custom',
       autoFocusButtonCustomId: 'custom1',
+      onCloseFocus: 'initiator',
     },
   },
 }
