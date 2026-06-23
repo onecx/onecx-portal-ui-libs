@@ -108,9 +108,11 @@
             <ng-template pTemplate="item" let-item>
               <a
                 class="p-menuitem-link"
-                [routerLink]="item.routerLink || null"
-                [attr.href]="item.routerLink || null"
-                (click)="!item.disabled && !item.routerLink && item.command?.($event)"
+                [class.p-disabled]="item.disabled"
+                [attr.aria-disabled]="item.disabled ? true : null"
+                [routerLink]="item.disabled ? null : item.routerLink || null"
+                [attr.href]="item.disabled ? null : item.routerLink || null"
+                (click)="item.disabled ? $event.preventDefault() : (!item.routerLink && item.command?.($event))"
               >
                 @if (item.icon) {
                 <span class="p-menuitem-icon" [ngClass]="item.icon"></span>
