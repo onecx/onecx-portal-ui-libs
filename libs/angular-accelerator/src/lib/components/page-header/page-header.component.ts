@@ -304,7 +304,8 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: () => handleActionSync(this.router, a),
+      routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+      command: typeof a.routerLink === 'string' ? undefined : () => handleActionSync(this.router, a),
       disabled: a.disabled,
     }))
   }
