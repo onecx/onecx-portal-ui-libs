@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { InputSignal, LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
+import { RouterModule } from '@angular/router'
 import { Meta, moduleMetadata, applicationConfig, StoryFn } from '@storybook/angular'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
@@ -34,6 +35,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
+        importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
@@ -62,6 +64,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         MenuModule,
         CheckboxModule,
         FormsModule,
+        RouterModule,
         TooltipModule,
         OcxTooltipDirective,
         SkeletonModule,
@@ -442,6 +445,39 @@ export const WithOnlyOverflowActions = {
         permission: 'TEST_MGMT#TEST_VIEW',
         showAsOverflow: true,
         actionEnabledField: 'available',
+      },
+    ],
+  },
+}
+
+export const WithRouterLinkInlineActions = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink',
+        icon: 'pi pi-external-link',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        routerLink: '/details',
+      },
+    ],
+  },
+}
+
+export const WithRouterLinkOverflowActions = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink',
+        icon: 'pi pi-external-link',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        routerLink: '/details',
+        showAsOverflow: true,
       },
     ],
   },

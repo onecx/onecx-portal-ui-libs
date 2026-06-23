@@ -160,6 +160,21 @@
           ></button>
           } @for (action of inlineListActions$ | async; track action) { @if ((!action.actionVisibleField ||
           fieldIsTruthy(item, action.actionVisibleField))) {
+          @if (typeof action.routerLink === 'string' && !(action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField)))) {
+          <a
+            [id]="resolveFieldData(item, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
+            *ocxIfPermission="action.permission"
+            pButton
+            class="p-button-rounded p-button-text no-underline"
+            [ngClass]="action.classes"
+            [icon]="action.icon || ''"
+            [routerLink]="action.routerLink"
+            [ocxTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
+            tooltipPosition="top"
+            [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+            [attr.data-testid]="'data-list-action-button'"
+          ></a>
+          } @else {
           <button
             id="{{resolveFieldData(item, 'id')}}-{{action.id ? action.id.concat('ActionButton') : 'inlineActionButton'}}"
             *ocxIfPermission="action.permission"
@@ -167,7 +182,7 @@
             class="p-button-rounded p-button-text"
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
-            (click)="action.callback(item)"
+            (click)="onAdditionalActionClick(action, item)"
             [ocxTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
             tooltipPosition="top"
             [tooltipOptions]="{
@@ -177,6 +192,7 @@
             [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
             [attr.name]="'data-list-action-button'"
           ></button>
+          }
           } } @if (hasVisibleOverflowMenuItems(item) | async) {
           <p-menu #menu [model]="(overflowListMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
           <button

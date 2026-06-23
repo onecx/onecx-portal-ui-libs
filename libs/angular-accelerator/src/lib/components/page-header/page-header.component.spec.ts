@@ -21,7 +21,9 @@ import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnviro
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
+import { PButtonHarness } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { firstValueFrom } from 'rxjs'
 
 const mockActions: Action[] = [
   {
@@ -172,8 +174,8 @@ describe('PageHeaderComponent', () => {
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
-    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
+    expect(await (await (inlineButtons[0] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await (inlineButtons[1] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render inline actions buttons with icons', async () => {
@@ -201,8 +203,8 @@ describe('PageHeaderComponent', () => {
 
     const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
     expect(inlineButtons).toHaveLength(2)
-    expect(await (await inlineButtons[0].getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
-    expect(await (await inlineButtons[1].getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
+    expect(await (await (inlineButtons[0] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-left')).toBeTruthy()
+    expect(await (await (inlineButtons[1] as PButtonHarness).getIconSpan())?.checkHasClass('p-button-icon-right')).toBeTruthy()
   })
 
   it('should render objectDetails as object info in the page header', async () => {
@@ -308,6 +310,72 @@ describe('PageHeaderComponent', () => {
     expect(menuItems.length).toBe(2)
     expect(await menuItems[0].getText()).toBe('My Test Overflow Action')
     expect(await menuItems[1].getText()).toBe('My Test Overflow Disabled Action')
+  })
+
+  it('should render inline routerLink action as anchor with href', async () => {
+    component.actions = [
+      {
+        id: 'inline-router-link',
+        label: 'Inline Link',
+        icon: PrimeIcons.EXTERNAL_LINK,
+        show: 'always',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const link = fixture.nativeElement.querySelector('#inline-router-link') as HTMLAnchorElement | null
+    expect(link).toBeTruthy()
+    expect(link?.tagName).toBe('A')
+    expect(link?.getAttribute('href')).toContain('/details')
+  })
+
+  it('should create inline routerLink action with provided action configuration', async () => {
+    component.actions = [
+      {
+        id: 'inline-router-link-harness',
+        label: 'Inline Link Harness',
+        show: 'always',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const inlineButtons = await pageHeaderHarness.getInlineActionButtons()
+
+    expect(inlineButtons.length).toBe(1)
+  })
+
+  it('should render overflow routerLink action as menu link with href', async () => {
+    component.actions = [
+      {
+        id: 'overflow-router-link',
+        label: 'Overflow Link',
+        show: 'asOverflow',
+        permission: 'TEST#TEST_PERMISSION',
+        routerLink: '/details',
+      },
+    ]
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const menuOverflowButton = await pageHeaderHarness.getOverflowActionMenuButton()
+    expect(menuOverflowButton).toBeTruthy()
+    await menuOverflowButton?.click()
+    await fixture.whenStable()
+
+    const documentRoot = fixture.nativeElement.ownerDocument as Document
+    const menuLinks = Array.from(documentRoot.querySelectorAll('.p-menuitem-link')) as HTMLAnchorElement[]
+    const overflowLink = menuLinks.find((item) => item.textContent?.includes('Overflow Link'))
+    expect(overflowLink).toBeTruthy()
+    expect(overflowLink?.getAttribute('href')).toContain('/details')
   })
 
   it('should use provided action callback on overflow button click', async () => {
@@ -427,5 +495,74 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getLabelTooltipContent()).toBeNull()
     expect(await objectInfo.getValueTooltipContent()).toBeNull()
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
+  })
+
+  describe('helper branch coverage', () => {
+    it('should return empty translations when no labelKey/titleKey exist', async () => {
+      const result = await firstValueFrom((component as any).getActionTranslationKeys([{ show: 'always' }]))
+
+      expect(result).toEqual({})
+    })
+
+    it('should fall back to the user service permissions when no permission checker is provided', async () => {
+      ;(component as any).hasPermissionChecker = undefined
+      userServiceMock.permissionsTopic$.publish(['TEST#TEST_PERMISSION'])
+
+      const filteredActions = (await firstValueFrom(
+        (component as any).filterActionsBasedOnPermissions([
+          { show: 'always', permission: 'TEST#TEST_PERMISSION' },
+          { show: 'always', permission: 'OTHER#PERMISSION' },
+        ])
+      )) as Action[]
+
+      expect(filteredActions).toHaveLength(1)
+      expect(filteredActions[0].permission).toBe('TEST#TEST_PERMISSION')
+    })
+
+    it('should map overflow label fallback to title, id and Action', () => {
+      const titleFallback = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', title: 'Title Fallback' }],
+        {}
+      )
+      const idFallback = (component as any).mapOverflowActionsToMenuItems([{ show: 'asOverflow', id: 'id-fallback' }], {})
+      const defaultFallback = (component as any).mapOverflowActionsToMenuItems([{ show: 'asOverflow' }], {})
+
+      expect(titleFallback[0].label).toBe('Title Fallback')
+      expect(idFallback[0].label).toBe('id-fallback')
+      expect(defaultFallback[0].label).toBe('Action')
+    })
+
+    it('should prefer translated labelKey for overflow menu labels when provided', () => {
+      const items = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', labelKey: 'LABEL_KEY' }],
+        { LABEL_KEY: 'Translated Label' }
+      )
+
+      expect(items[0].label).toBe('Translated Label')
+    })
+
+    it('should map tooltip from titleKey translation when provided', () => {
+      const items = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', titleKey: 'TITLE_KEY' }],
+        { TITLE_KEY: 'Translated Title' }
+      )
+
+      expect(items[0].tooltipOptions?.tooltipLabel).toBe('Translated Title')
+    })
+
+    it('should map command only when routerLink is missing', () => {
+      const callback = jest.fn()
+      const withoutRouter = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', actionCallback: callback }],
+        {}
+      )
+      const withRouter = (component as any).mapOverflowActionsToMenuItems(
+        [{ show: 'asOverflow', routerLink: '/details', actionCallback: callback }],
+        {}
+      )
+
+      expect(withoutRouter[0].command).toBe(callback)
+      expect(withRouter[0].command).toBeUndefined()
+    })
   })
 })
