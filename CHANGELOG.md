@@ -1,3 +1,9 @@
+## [9.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.8...v9.0.0-rc.9) (2026-06-23)
+
+### Bug Fixes
+
+* added onCloseFocus ([#1561](https://github.com/onecx/onecx-portal-ui-libs/issues/1561)) ([dbb1167](https://github.com/onecx/onecx-portal-ui-libs/commit/dbb1167f68b03254acd6a9bb15a23819ab10326b))
+
 ## [9.0.0-rc.8](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.7...v9.0.0-rc.8) (2026-06-17)
 
 ### Features
