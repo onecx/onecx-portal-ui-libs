@@ -24,7 +24,7 @@ const FIELDSET_CONTENT: CssRule[] = [
     },
     {
         property: 'color',
-        from: 'usages.fieldset.contentContainer.bg.color',
+        from: 'usages.fieldset.contentContainer.contrast',
     },
     {
         property: 'font-size',
