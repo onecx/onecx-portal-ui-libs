@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
@@ -221,6 +222,7 @@ describe('DataTableComponent', () => {
         TooltipModule,
         OcxTooltipDirective,
         AngularAcceleratorModule,
+        RouterTestingModule,
       ],
       providers: [
         provideUserServiceMock(),
@@ -781,6 +783,29 @@ describe('DataTableComponent', () => {
       userService.permissionsTopic$.publish([])
       const newMenuItems = await overflowMenu!.getAllMenuItems()
       expect(newMenuItems!.length).toBe(0)
+    })
+
+    it('should show overflow menu item when routerLink is provided', async () => {
+      userService.permissionsTopic$.publish(['OVERFLOW#VIEW'])
+
+      component.additionalActions = [
+        {
+          permission: 'OVERFLOW#VIEW',
+          routerLink: '/details',
+          id: 'actionId',
+          labelKey: 'Label',
+          showAsOverflow: true,
+        },
+      ]
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const overflowMenu = await dataTable.getOverflowMenu()
+      expect(overflowMenu).toBeTruthy()
+
+      const menuItems = await overflowMenu!.getAllMenuItems()
+      expect(menuItems!.length).toBe(1)
+      const menuItemText = await menuItems![0].getText()
+      expect(menuItemText).toBe('Label')
     })
 
     it('should display action buttons based on multiple permissions', async () => {
@@ -1444,6 +1469,158 @@ describe('DataTableComponent', () => {
       jest.spyOn(component, 'selectionChangedObserved', 'get').mockReturnValue(true)
       jest.spyOn(component, 'actionColumnVisible', 'get').mockReturnValue(true)
       expect(component.getRowColspan(true)).toBe(mockColumns.length + 3)
+    })
+  })
+
+  describe('overflow helper methods', () => {
+    it('should return an empty list when creating overflow menu items with no actions', async () => {
+      const result = await firstValueFrom((component as any).createOverflowMenuItems([], null))
+
+      expect(result).toEqual([])
+    })
+
+    it('should map mixed actions and use fallback labels when labelKey is missing', async () => {
+      const actions = [
+        { id: 'with-key', labelKey: 'LABEL_KEY', permission: 'VIEW' },
+        { id: 'without-key', permission: 'VIEW' },
+      ]
+
+      const result = (await firstValueFrom(
+        (component as any).createOverflowMenuItems(actions, { id: 'row-1' } as Row)
+      )) as any[]
+
+      expect(result).toHaveLength(2)
+      expect(result[0].label).toBe('LABEL_KEY')
+      expect(result[1].label).toBe('without-key')
+    })
+
+    it('should map fallback label and command for non-router-link actions', () => {
+      const row = { id: 'row-1' } as Row
+      const callback = jest.fn()
+      const action = {
+        id: 'fallback-id',
+        permission: 'VIEW',
+        callback,
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.label).toBe('fallback-id')
+      expect(menuItem.routerLink).toBeUndefined()
+      expect(menuItem.command).toBeDefined()
+
+      menuItem.command?.({} as any)
+
+      expect(callback).toHaveBeenCalledWith(row)
+    })
+
+    it('should map routerLink string and omit command', () => {
+      const action = {
+        id: 'router-action',
+        labelKey: 'MISSING_LABEL',
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, null, {})
+
+      expect(menuItem.label).toBe('MISSING_LABEL')
+      expect(menuItem.routerLink).toBe('/details')
+      expect(menuItem.command).toBeUndefined()
+    })
+
+    it('should not throw when callback is missing for non-router actions', () => {
+      const action = {
+        id: 'no-callback-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(() => menuItem.command?.({} as any)).not.toThrow()
+    })
+
+    it('should fallback to generic Action label when id and labelKey are missing', () => {
+      const action = {
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, null, {})
+
+      expect(menuItem.label).toBe('Action')
+    })
+
+    it('should set disabled when action.disabled is true', () => {
+      const action = {
+        id: 'disabled-action',
+        permission: 'VIEW',
+        disabled: true,
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep disabled false when action is not disabled and no actionEnabledField is provided', () => {
+      const action = {
+        id: 'enabled-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.disabled).toBe(false)
+    })
+
+    it('should set disabled when actionEnabledField is false on row', () => {
+      const action = {
+        id: 'field-disabled-action',
+        permission: 'VIEW',
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: false } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep visible true when actionVisibleField is not provided', () => {
+      const action = {
+        id: 'default-visible-action',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowMenuItem(action, { id: 'row-1' } as Row, {})
+
+      expect(menuItem.visible).toBe(true)
+    })
+
+    it('should set visible to false when actionVisibleField is false on row', () => {
+      const action = {
+        id: 'invisible-action',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: false } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.visible).toBe(false)
+    })
+
+    it('should set visible to true when actionVisibleField is true on row', () => {
+      const action = {
+        id: 'visible-action',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: true } as unknown as Row
+
+      const menuItem = (component as any).toOverflowMenuItem(action, row, {})
+
+      expect(menuItem.visible).toBe(true)
     })
   })
 })
