@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular'
+import { RouterModule } from '@angular/router'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -27,6 +28,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
+        importProvidersFrom(RouterModule.forRoot([], { useHash: true })),
         provideUserServiceMock(),
         { provide: HAS_PERMISSION_CHECKER, useExisting: UserServiceMock },
         {
@@ -52,6 +54,7 @@ const DataTableComponentSBConfig: Meta<DataTableComponent> = {
         ButtonModule,
         MultiSelectModule,
         StorybookTranslateModule,
+        RouterModule,
         MenuModule,
         CheckboxModule,
         FormsModule,
@@ -570,6 +573,58 @@ export const WithOnlyOverflowActions = {
         callback: () => {
           console.log('Conditionally Enabled action clicked')
         },
+      },
+    ],
+  },
+}
+
+export const WithRouterLinkOverflowActions = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-table-overflow-link',
+      },
+    ],
+  },
+}
+
+export const WithRouterLinkInlineActions = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...dataTableActionsArgs,
+    },
+    template: `
+      <ocx-data-table ${argsToTemplate(args)} (deleteTableRow)="deleteTableRow($event)" (editTableRow)="editTableRow($event)" (viewTableRow)="viewTableRow($event)">
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: false,
+        routerLink: '/data-table-inline-link',
       },
     ],
   },

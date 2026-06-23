@@ -634,7 +634,8 @@ export class PortalDialogService implements OnDestroy {
     if (hasOnCloseFocus) return
 
     const initiator = dialogOptions.initiatorRef
-    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator') return
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+      return
     else {
       initiator.focus()
     }

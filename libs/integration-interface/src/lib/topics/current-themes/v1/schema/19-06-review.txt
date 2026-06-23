@@ -1,0 +1,17 @@
+
+Things that should be checked on a conceptual level
+
+- check that all design tokens available in PrimeNG have an equivalent in our theme and have a mapper in mapping rules 
+- go through component inputs/attributes, check which make sense to be styled globally and verify that a settings object exists containing each of these attributes 
+- check if CSS rules make sense at first glance and don't contradict any mapping rules 
+- check if selectors are scoped to actual component 
+- e.g. .p-datatable instead of table     
+- check that primitive additions (if any) make sense and are not yet covered by any other pre-existing primitive 
+
+
+Create task to 
+    - map prime ng tokens
+    - adapt CSS
+    - review 
+    - share PR
+    

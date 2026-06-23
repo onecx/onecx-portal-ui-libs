@@ -1,0 +1,500 @@
+{
+  "primitives": {
+    "defaultVariant": {
+      "bg": {
+        "color": "#ffffff"
+      },
+      "contrast": "rgba(0, 0, 0, 0.87)",
+      "defaultState": {
+        "defaultVariant": {
+          "bg": {
+            "color": "#ffffff"
+          },
+          "contrast": "rgba(0, 0, 0, 0.87)"
+        },
+        "variant": {
+          "info": {
+            "bg": {
+              "color": "#b3e5fc"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          },
+          "success": {
+            "bg": {
+              "color": "#c8e6c9"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          },
+          "warning": {
+            "bg": {
+              "color": "#ffecb3"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          },
+          "danger": {
+            "bg": {
+              "color": "#ffcdd2"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          }
+        }
+      }
+    },
+    "variant": {
+      "primary": {
+        "bg": {
+          "color": "#274B5F"
+        },
+        "contrast": "#ffffff",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#274B5F"
+            },
+            "contrast": "#ffffff"
+          },
+          "variant": {
+            "danger": {
+              "bg": {
+                "color": "#D32F2F"
+              },
+              "contrast": "#ffffff"
+            }
+          }
+        },
+        "state": {
+          "hover": {
+            "defaultVariant": {
+              "bg": {
+                "color": "#ad1457"
+              },
+              "contrast": "#ffffff"
+            }
+          },
+          "active": {
+            "defaultVariant": {
+              "bg": {
+                "color": "#ad1457"
+              },
+              "contrast": "#ffffff"
+            }
+          },
+          "focus": {
+            "defaultVariant": {
+              "bg": {
+                "color": "#274B5F"
+              },
+              "contrast": "#ffffff"
+            }
+          }
+        }
+      },
+      "secondary": {
+        "bg": {
+          "color": "#1C4257"
+        },
+        "contrast": "#ffffff",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#1C4257"
+            },
+            "contrast": "#ffffff"
+          }
+        },
+        "state": {
+          "hover": {
+            "defaultVariant": {
+              "bg": {
+                "color": "#ad1457"
+              },
+              "contrast": "#ffffff"
+            }
+          }
+        }
+      },
+      "tertiary": {
+        "bg": {
+          "color": "#ff0044"
+        },
+        "contrast": "#ffffff",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#ff0044"
+            },
+            "contrast": "#ffffff"
+          }
+        }
+      }
+    },
+    "area": {
+      "canvas": {
+        "bg": {
+          "color": "#f7f7f7"
+        },
+        "contrast": "rgba(0, 0, 0, 0.87)",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#f7f7f7"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          }
+        }
+      },
+      "surface": {
+        "bg": {
+          "color": "#ffffff"
+        },
+        "contrast": "rgba(0, 0, 0, 0.87)",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#ffffff"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          }
+        }
+      },
+      "onSurface": {
+        "contrast": "rgba(0, 0, 0, 0.87)",
+        "defaultState": {
+          "defaultVariant": {
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          }
+        }
+      },
+      "overlay": {
+        "bg": {
+          "color": "#ffffff"
+        },
+        "contrast": "rgba(0, 0, 0, 0.87)",
+        "defaultState": {
+          "defaultVariant": {
+            "bg": {
+              "color": "#ffffff"
+            },
+            "contrast": "rgba(0, 0, 0, 0.87)"
+          }
+        }
+      }
+    },
+    "shadow": {
+      "none": "none",
+      "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      "md": "0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+    },
+    "space": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "24px",
+      "xxl": "32px"
+    },
+    "layout": {
+      "contentMaxWidth": "1280px",
+      "gap": "16px"
+    },
+    "radius": {
+      "none": "0",
+      "sm": "2px",
+      "md": "4px",
+      "lg": "8px",
+      "xl": "16px",
+      "full": "9999px"
+    },
+    "border": {
+      "defaultVariant": {
+        "color": "#e4e4e4",
+        "width": "1px",
+        "style": "solid",
+        "radius": "{{primitives.radius.md}}"
+      }
+    },
+    "focusRing": {
+      "color": "#274B5F",
+      "width": "2px",
+      "style": "solid",
+      "offset": "2px"
+    }
+  },
+  "usages": {
+    "table": {
+      "base": {
+        "bg": "hotpink",
+        "contrast": "chartreuse",
+        "border": {
+          "color": "blueviolet",
+          "width": "0",
+          "style": "solid",
+          "radius": "0"
+        },
+        "shadow": "none"
+      },
+      "header": {
+        "defaultState": {
+          "bg": "deeppink",
+          "contrast": "lime",
+          "padding": "14px 4px 10px 4px",
+          "border": {
+            "color": "orange",
+            "width": "0",
+            "style": "solid"
+          },
+          "cell": {
+            "defaultState": {
+              "bg": "cyan",
+              "contrast": "magenta",
+              "padding": "14px 4px 10px 4px",
+              "border": {
+                "color": "yellow",
+                "width": {
+                  "top": "0",
+                  "right": "0",
+                  "bottom": "1px",
+                  "left": "0"
+                }
+              },
+              "font": {
+                "family": "Fira Sans, sans-serif",
+                "size": "18px",
+                "weight": "600",
+                "lineHeight": "24px"
+              }
+            },
+            "state": {
+              "hover": {
+                "bg": "limegreen",
+                "contrast": "red"
+              }
+            }
+          }
+        }
+      },
+      "row": {
+        "defaultState": {
+          "even": {
+            "defaultState": {
+              "bg": "springgreen",
+              "contrast": "tomato",
+              "cell": {
+                "defaultState": {
+                  "padding": "14px 4px 10px 4px",
+                  "border": {
+                    "color": "gold",
+                    "width": {
+                      "top": "0",
+                      "right": "0",
+                      "bottom": "1px",
+                      "left": "0"
+                    }
+                  }
+                }
+              }
+            },
+            "state": {
+              "hover": {
+                "bg": "turquoise",
+                "contrast": "darkorange"
+              }
+            }
+          },
+          "odd": {
+            "defaultState": {
+              "bg": "fuchsia"
+            }
+          }
+        }
+      },
+      "footer": {
+        "defaultState": {
+          "bg": "aqua",
+          "contrast": "crimson",
+          "padding": "14px 4px 10px 4px",
+          "border": {
+            "color": "indigo",
+            "width": "0",
+            "style": "solid"
+          },
+          "cell": {
+            "defaultState": {
+              "bg": "greenyellow",
+              "contrast": "mediumvioletred",
+              "padding": "14px 4px 10px 4px",
+              "border": {
+                "color": "teal",
+                "width": {
+                  "top": "1px",
+                  "right": "0",
+                  "bottom": "0",
+                  "left": "0"
+                }
+              },
+              "font": {
+                "family": "Fira Sans, sans-serif",
+                "size": "18px",
+                "weight": "600"
+              },
+              "textAlign": "left"
+            }
+          }
+        }
+      }
+    },
+    "button": {
+      "backgroundColor": "hotpink",
+      "color": "chartreuse"
+    }
+  },
+  "regionOverrides": {
+    "header": {
+      "primitives": {
+        "area": {
+          "canvas": {
+            "bg": {
+              "color": "#0D3650"
+            },
+            "contrast": "#ffffff",
+            "defaultState": {
+              "defaultVariant": {
+                "bg": {
+                  "color": "#0D3650"
+                },
+                "contrast": "#ffffff"
+              }
+            }
+          },
+          "surface": {
+            "bg": {
+              "color": "#0D3650"
+            },
+            "contrast": "#ffffff",
+            "defaultState": {
+              "defaultVariant": {
+                "bg": {
+                  "color": "#0D3650"
+                },
+                "contrast": "#ffffff"
+              }
+            }
+          },
+          "onSurface": {
+            "contrast": "#ffffff",
+            "defaultState": {
+              "defaultVariant": {
+                "contrast": "#ffffff"
+              }
+            }
+          }
+        },
+        "variant": {
+          "primary": {
+            "bg": {
+              "color": "#ff0044"
+            },
+            "contrast": "#ffffff",
+            "defaultState": {
+              "defaultVariant": {
+                "bg": {
+                  "color": "#ff0044"
+                },
+                "contrast": "#ffffff"
+              }
+            },
+            "state": {
+              "hover": {
+                "defaultVariant": {
+                  "bg": {
+                    "color": "rgba(255, 255, 255, 0.12)"
+                  },
+                  "contrast": "#ffffff"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "bodyStart": {
+      "primitives": {
+        "area": {
+          "surface": {
+            "bg": {
+              "color": "#fdfeff"
+            },
+            "contrast": "#274B5F",
+            "defaultState": {
+              "defaultVariant": {
+                "bg": {
+                  "color": "#fdfeff"
+                },
+                "contrast": "#274B5F"
+              }
+            }
+          },
+          "onSurface": {
+            "contrast": "#515c66",
+            "defaultState": {
+              "defaultVariant": {
+                "contrast": "#515c66"
+              }
+            }
+          }
+        },
+        "variant": {
+          "primary": {
+            "bg": {
+              "color": "#fdfeff"
+            },
+            "contrast": "#515c66",
+            "defaultState": {
+              "defaultVariant": {
+                "bg": {
+                  "color": "#fdfeff"
+                },
+                "contrast": "#515c66"
+              }
+            },
+            "state": {
+              "hover": {
+                "defaultVariant": {
+                  "bg": {
+                    "color": "#e4e4e4"
+                  },
+                  "contrast": "#515c66"
+                }
+              },
+              "selected": {
+                "defaultVariant": {
+                  "bg": {
+                    "color": "rgba(0, 0, 0, 0.04)"
+                  },
+                  "contrast": "#515c66"
+                }
+              },
+              "active": {
+                "defaultVariant": {
+                  "bg": {
+                    "color": "rgba(0, 0, 0, 0.04)"
+                  },
+                  "contrast": "#515c66"
+                }
+              }
+            }
+          }
+        },
+        "border": {
+          "defaultVariant": {
+            "color": "#e4e4e4",
+            "width": "1px",
+            "style": "solid"
+          }
+        }
+      }
+    }
+  }
+}
