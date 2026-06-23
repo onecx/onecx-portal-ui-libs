@@ -26,11 +26,12 @@ import {
   DialogState,
   PortalDialogService,
 } from './portal-dialog.service'
+import { withDocumentUndefined } from '../../test-setup'
 
 // This component is in charge of dialog display
 @Component({
   standalone: false,
-  template: `<h1>BaseTestComponent</h1>`,
+  template: `<h1>BaseTestComponent</h1><button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
 })
 class BaseTestComponent {
   portalDialogService = inject(PortalDialogService)
@@ -1030,6 +1031,80 @@ describe('PortalDialogService', () => {
           closable: false
         })
       )
+    })
+  })
+
+  describe('[a11y] - focus management', () => {
+    it('should return focus to the initiator button when dialog is closed', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { initiatorRef: initiatorButton, onCloseFocus: 'initiator' }
+      )
+
+      const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+      await footerHarness.clickSecondaryButton()
+
+      const isInitiatorButtonFocused = document.activeElement === initiatorButton
+      expect(isInitiatorButtonFocused).toBe(true)
+    })
+
+    it('should not return focus to the initiator button when dialog is closed and onCloseFocus is set to default', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { initiatorRef: initiatorButton, onCloseFocus: 'default' }
+      )
+
+      const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+      await footerHarness.clickSecondaryButton()
+
+      const isInitiatorButtonFocused = document.activeElement === initiatorButton
+      expect(isInitiatorButtonFocused).toBe(false)
+    })
+
+    it('should not perform any action when initiator reference is not provided or document is undefined', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
+
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { showXButton: true }
+      )
+
+      const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
+      await footerHarness.clickSecondaryButton()
+
+      const isInitiatorButtonFocused = document.activeElement === initiatorButton
+      expect(isInitiatorButtonFocused).toBe(false)
+
+      // when document is undefined
+      fixture.componentInstance.show(
+        'title',
+        { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
+        'button1',
+        'button2',
+        { initiatorRef: undefined, showXButton: true }
+      )
+
+      await footerHarness.clickSecondaryButton()
+
+      await withDocumentUndefined(async () => {
+        expect(document?.activeElement).toBeUndefined()
+      })
     })
   })
 })

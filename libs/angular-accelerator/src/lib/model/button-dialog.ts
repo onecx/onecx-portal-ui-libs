@@ -1,5 +1,5 @@
 import { Type } from '@angular/core'
-import { DialogButton } from '../services/portal-dialog.service'
+import { DialogButton, DialogInitiator } from '../services/portal-dialog.service'
 import { PrimeIcon } from '../utils/primeicon.utils'
 
 /**
@@ -42,6 +42,8 @@ export interface ButtonDialogConfig {
   customButtons?: ButtonDialogCustomButtonDetails[]
   autoFocusButton?: DialogButton
   autoFocusButtonCustomId?: string
+  initiatorRef?: HTMLElement
+  onCloseFocus?: DialogInitiator
 }
 
 export interface ButtonDialogData {
