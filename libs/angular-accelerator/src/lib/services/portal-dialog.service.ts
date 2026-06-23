@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of } from 'rxjs'
+import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -198,7 +198,7 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
-
+export type DialogInitiator = 'initiator' | 'default'
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
  */
@@ -234,6 +234,9 @@ export type PortalDialogConfig = {
   minimizeIcon?: string
   position?: string
   closeAriaLabel?: string
+  closable?: boolean
+  initiatorRef?: HTMLElement
+  onCloseFocus?: DialogInitiator
 }
 
 export interface PortalDialogServiceData {
@@ -438,12 +441,10 @@ export class PortalDialogService implements OnDestroy {
     secondaryButtonTranslationKeyOrDetails?: TranslationKey | ButtonDialogButtonDetails,
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
-    const dialogOptions: PortalDialogConfig =
-      typeof extrasOrShowXButton === 'object'
-        ? extrasOrShowXButton
-        : {
-            showXButton: extrasOrShowXButton,
-          }
+    const isObject = typeof extrasOrShowXButton === 'object'
+    const dialogOptions: PortalDialogConfig = isObject
+      ? extrasOrShowXButton
+      : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
 
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
@@ -475,7 +476,7 @@ export class PortalDialogService implements OnDestroy {
               buttonClicked$: new Subject<DialogState<unknown>>(),
             } satisfies PortalDialogServiceData,
           },
-          closable: dialogOptions.showXButton && secondaryButtonTranslationKeyOrDetails !== undefined,
+          closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
           ...dialogOptions,
           focusOnShow: false,
@@ -497,10 +498,29 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose
+        return dialogRef.onClose.pipe(
+          tap(() => {
+            if (isObject) {
+              this.setFocusOnInitiator(extrasOrShowXButton)
+            }
+          })
+        )
       })
     )
   }
+
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
+    if (hasOnCloseFocus) return
+
+    const initiator = dialogOptions.initiatorRef
+    if ( !initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+      return
+    else {
+      initiator.focus()
+    }
+  }
+
   private cleanupAndCloseDialog() {
     if (this.dialogService.dialogComponentRefMap.size > 0) {
       this.dialogService.dialogComponentRefMap.forEach((_, dialogRef) => {
@@ -626,6 +646,16 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
+  }
+
+  private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
+    let showXButton
+    if (Object.hasOwn(configuration, 'closable')) {
+      showXButton = configuration.closable
+    } else {
+      showXButton = configuration.showXButton && isSecondaryButtonPresent
+    }
+    return Boolean(showXButton)
   }
 }
 
