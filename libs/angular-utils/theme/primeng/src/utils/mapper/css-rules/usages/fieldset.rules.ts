@@ -2,7 +2,7 @@ import { CssRule } from "../../mapper.types";
 
 const FIELDSET_TOGGLE_ICON: CssRule[] = [
 {
-    selector: '.p-fieldset .p-fieldset-toggle-button',
+    selector: '.p-fieldset .p-fieldset-toggle-button .p-fieldset-toggle-icon',
     declarations: [{
         property: 'opacity',
         from: 'usages.fieldset.toggleIcon.opacity',
