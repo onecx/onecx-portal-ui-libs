@@ -28,6 +28,7 @@ export interface Action {
   labelKey?: string
   icon?: string
   iconPos?: 'left' | 'right' | 'top' | 'bottom'
+  routerLink?: string
   /**
    * Permission for this action. If the current user does not have this permission, the action will not be shown.
    */
@@ -37,7 +38,7 @@ export interface Action {
   ariaLabel?: string
   ariaLabelKey?: string
   btnClass?: string
-  actionCallback(): void
+  actionCallback?(): void
   disabled?: boolean
   disabledTooltip?: string
   disabledTooltipKey?: string
@@ -301,14 +302,15 @@ export class PageHeaderComponent implements OnInit {
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
       id: a.id,
-      label: a.labelKey ? translations[a.labelKey] : a.label,
+      label: (a.labelKey ? translations[a.labelKey] : undefined) || a.label || a.title || a.id || 'Action',
       icon: a.icon,
+      routerLink: a.routerLink,
       tooltipOptions: {
         tooltipLabel: a.titleKey ? translations[a.titleKey] : a.title,
         tooltipEvent: 'hover',
         tooltipPosition: 'top',
       },
-      command: a.actionCallback,
+      command: a.routerLink ? undefined : a.actionCallback,
       disabled: a.disabled,
     }))
   }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -27,20 +27,24 @@ import { OcxTooltipDirective } from '../directives/tooltip.directive'
 @Component({
   standalone: false,
   selector: 'ocx-button-dialog-with-portal-dialog-service',
-  template: `<p-button label="Open dialog" (click)="openDialog()" />`,
+  template: `<p-button label="Open dialog" (click)="openDialog()" id="custom-button-1234" class="portal-dialog"/>`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
   private portalDialogService = inject(PortalDialogService)
-
+  private readonly elementRef = inject(ElementRef)
+  
   @Input() title = 'Title'
   @Input() messageOrComponent = 'Message'
   @Input() primaryKey = 'Primary'
-  @Input() secondaryKey = 'Secondary'
+  @Input() secondaryKey?: string
   @Input() extras = {}
 
   openDialog() {
+    const nativeElement = this.elementRef.nativeElement as HTMLElement
+    const button = nativeElement.querySelector('#custom-button-1234 .p-button') as HTMLElement
+    const extras = { ...this.extras, initiatorRef: (this.extras as any).onCloseFocus ? button : undefined }
     this.portalDialogService
-      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, this.extras)
+      .openDialog(this.title, this.messageOrComponent, this.primaryKey, this.secondaryKey, extras)
       .subscribe(() => {
         console.log('dialog closed')
       })
@@ -378,6 +382,35 @@ export const CustomButtonsWithAutofocus = {
       ],
       autoFocusButton: 'custom',
       autoFocusButtonCustomId: 'custom1',
+      onCloseFocus: 'initiator',
     },
   },
 }
+
+export const withClosableOption = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+            <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+            </ocx-button-dialog-with-portal-dialog-service>
+              `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: {
+      type: ComponentToDisplayCustomButtonsComponent,
+    },
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      icon: PrimeIcons.BOOKMARK,
+      tooltipKey: 'TOOLTIP_KEY',
+      tooltipPosition: 'right',
+    },
+    extras: {
+      closable: true
+    }
+  }
+}
+
