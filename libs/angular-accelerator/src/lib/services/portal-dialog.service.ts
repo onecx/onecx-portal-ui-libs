@@ -537,12 +537,17 @@ export class PortalDialogService implements OnDestroy {
     )
   }
 
-  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+   private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
     const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
     if (hasOnCloseFocus) return
 
     const initiator = dialogOptions.initiatorRef
-    if ( !initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+    if (
+      !initiator ||
+      typeof document === 'undefined' ||
+      !document.contains(initiator) ||
+      dialogOptions.onCloseFocus !== 'initiator'
+    )
       return
     else {
       initiator.focus()
@@ -671,23 +676,6 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
-  }
-
-  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
-    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
-    if (hasOnCloseFocus) return
-
-    const initiator = dialogOptions.initiatorRef
-    if (
-      !initiator ||
-      typeof document === 'undefined' ||
-      !document.contains(initiator) ||
-      dialogOptions.onCloseFocus !== 'initiator'
-    )
-      return
-    else {
-      initiator.focus()
-    }
   }
 
   private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
