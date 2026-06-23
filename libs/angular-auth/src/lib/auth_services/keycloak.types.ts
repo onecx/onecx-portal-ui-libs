@@ -20,6 +20,7 @@ export interface KeycloakInitOptions {
   idToken?: string
   refreshToken?: string
   token?: string
+  timeSkew?: number
 }
 
 export interface KeycloakLoginOptions {
