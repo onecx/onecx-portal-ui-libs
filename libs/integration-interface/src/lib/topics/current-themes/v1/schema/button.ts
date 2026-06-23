@@ -5,9 +5,6 @@ import * as z from "zod";
 import { bg, color, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 
-/**
- * Focus ring styling.
- */
 export const buttonFocusRing = z
   .object({
     color: color.default("{{primitives.primaryColor}}"),
@@ -15,9 +12,6 @@ export const buttonFocusRing = z
   })
   .register(themeSchemaRegistry, { id: "buttonFocusRing" });
 
-/**
- * Size-specific properties.
- */
 export const buttonSize = z
   .object({
     fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
@@ -27,9 +21,6 @@ export const buttonSize = z
   })
   .register(themeSchemaRegistry, { id: "buttonSize" });
 
-/**
- * Button styling with default and state-specific overrides.
- */
 export const buttonColors = z
   .object({
     background: z
@@ -38,11 +29,8 @@ export const buttonColors = z
     borderColor: color.default("{{primitives.primaryColor}}"),
     color: color.default("{{primitives.primaryContrastColor}}"),
   })
-  .optional();
+  .register(themeSchemaRegistry, { id: "buttonColors" });
 
-/**
- * Main button usage schema.
- */
 export const button = z
   .object({
     borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),

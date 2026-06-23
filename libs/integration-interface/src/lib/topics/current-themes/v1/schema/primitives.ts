@@ -229,7 +229,7 @@ export const primitives: z.ZodTypeAny = z
     radius: (radius as typeof radius).optional(),
     // Global default border style applied to components that don't define their own border token
     border: (borderWithVariants as typeof borderWithVariants).optional(),
-    focusRing: (border as typeof border).optional(),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
     // Opacity level to apply to disabled components, e.g. '0.5'
     disabledOpacity: withRef(z.number()).optional(),
     transition: (transition as typeof transition).optional(),
