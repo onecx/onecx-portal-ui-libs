@@ -2,6 +2,7 @@ import type { MappingRule } from '../mapper.types';
 import { datatableMappingRules } from './usages/datatable.rules';
 import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
+import { carouselMappingRules } from './usages/carousel.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...datatableMappingRules,
