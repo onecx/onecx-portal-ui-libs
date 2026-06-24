@@ -97,7 +97,12 @@ export const rowWithStates = z
 
 export const iconBaseStyles = z
   .object({
-    size: withRef(z.union([z.string(), z.object({ width: z.string(), height: z.string() })])).default('16px'),
+    size: withRef(
+      z.union([
+        z.string(),
+        z.object({ width: z.string().optional(), height: z.string().optional() }),
+      ])
+    ).default('16px'),
     color: color.default('{{primitives.icon.defaultVariant.color}}'),
     backgroundColor: color.default('{{primitives.icon.defaultVariant.bg}}'),
   })
@@ -153,23 +158,27 @@ export const headerRowWithStates = rowWithStates
     sort: z
       .object({
         defaultState: (sortIconStyles as typeof sortIconStyles).optional(),
-        state: z.object({
-          hover: (sortIconStyles as typeof sortIconStyles).optional(),
-          active: (sortIconStyles as typeof sortIconStyles).optional(),
-          selected: (sortIconStyles as typeof sortIconStyles).optional(),
-          focus: (sortIconStyles as typeof sortIconStyles).optional(),
-        }),
+        state: z
+          .object({
+            hover: (sortIconStyles as typeof sortIconStyles).optional(),
+            active: (sortIconStyles as typeof sortIconStyles).optional(),
+            selected: (sortIconStyles as typeof sortIconStyles).optional(),
+            focus: (sortIconStyles as typeof sortIconStyles).optional(),
+          })
+          .optional(),
       })
       .optional(),
     filter: z
       .object({
         defaultState: (filterIconStyles as typeof filterIconStyles).optional(),
-        state: z.object({
-          hover: (filterIconStyles as typeof filterIconStyles).optional(),
-          active: (filterIconStyles as typeof filterIconStyles).optional(),
-          selected: (filterIconStyles as typeof filterIconStyles).optional(),
-          focus: (filterIconStyles as typeof filterIconStyles).optional(),
-        }),
+        state: z
+          .object({
+            hover: (filterIconStyles as typeof filterIconStyles).optional(),
+            active: (filterIconStyles as typeof filterIconStyles).optional(),
+            selected: (filterIconStyles as typeof filterIconStyles).optional(),
+            focus: (filterIconStyles as typeof filterIconStyles).optional(),
+          })
+          .optional(),
       })
       .optional(),
   })
@@ -184,12 +193,14 @@ export const alternatingRowStyles = z
 
 export const tableRow = z.object({
   defaultState: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-  state: z.object({
-    hover: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-    active: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-    selected: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-    focus: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-  }),
+  state: z
+    .object({
+      hover: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+      active: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+      selected: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+      focus: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+    })
+    .optional(),
 })
 
 export const table = z
