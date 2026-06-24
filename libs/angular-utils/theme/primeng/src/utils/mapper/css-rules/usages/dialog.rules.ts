@@ -30,4 +30,26 @@ export const dialogCssRules: CssRule[] = [
 			},
 		],
 	},
+	{
+		selector: '.p-dialog-header',
+		declarations: [
+			{
+				property: 'align-items',
+				from: 'usages.dialog.header.alignItems',
+			},
+			{
+				property: 'justify-content',
+				from: 'usages.dialog.header.justifyContent',
+			}
+		]
+	},
+	{
+		selector: '.p-dialog-footer',
+		declarations: [
+			{
+				property: 'justify-content',
+				from: 'usages.dialog.footer.justifyContent',
+			}
+		]
+	}
 ];

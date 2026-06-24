@@ -3,22 +3,22 @@ import { toColorString } from '../../mapper.utils';
 
 export const dialogMappingRules: MappingRule[] = [
   {
-    from: 'usages.dialog.root.background',
+    from: 'usages.dialog.root.bg',
     to: 'components.dialog.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.dialog.root.borderColor',
+    from: 'usages.dialog.root.border.color',
     to: 'components.dialog.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.dialog.root.color',
+    from: 'usages.dialog.root.contrast',
     to: 'components.dialog.root.color',
     transform: toColorString,
   },
   {
-    from: 'usages.dialog.root.borderRadius',
+    from: 'usages.dialog.root.radius',
     to: 'components.dialog.root.borderRadius',
   },
   {
