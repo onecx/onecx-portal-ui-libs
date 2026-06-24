@@ -116,14 +116,17 @@ export const PortalPage = ({
   const unauthorizedTitle = t('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
   const unauthorizedMessage = t('OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE')
 
-  const content = isLoading ? null : hasAccess ? (
-    children
-  ) : (
-    <>
-      <h3>{unauthorizedTitle}</h3>
-      <p>{unauthorizedMessage}</p>
-    </>
-  )
+  let content: ReactNode = null
+  if (!isLoading) {
+    content = hasAccess ? (
+      children
+    ) : (
+      <>
+        <h3>{unauthorizedTitle}</h3>
+        <p>{unauthorizedMessage}</p>
+      </>
+    )
+  }
 
   return (
     <div className={containerClassName} style={containerStyle}>
