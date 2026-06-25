@@ -1,5 +1,20 @@
 import applyThemeVariables from './applyThemeVariables'
 
+jest.mock('../../../utils/logger.utils', () => {
+  const mockLogger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  }
+  return {
+    createLogger: jest.fn(() => mockLogger),
+    __mockLogger: mockLogger,
+  }
+})
+
+const { __mockLogger: mockLogger } = require('../../../utils/logger.utils')
+
 describe('applyThemeVariables', () => {
   beforeEach(() => {
     document.head.innerHTML = ''
@@ -159,7 +174,7 @@ describe('applyThemeVariables', () => {
   })
 
   it('warns when no scoped style tags are found and still updates scope roots', () => {
-    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    mockLogger.warn.mockClear()
 
     const root = document.createElement('div')
     root.setAttribute('data-style-id', 'demo|app')
@@ -177,7 +192,7 @@ describe('applyThemeVariables', () => {
     )
 
     expect(root.style.getPropertyValue('--app-secondary-color')).toBe('#abcdef')
-    expect(warn).toHaveBeenCalledTimes(1)
-    expect(warn.mock.calls[0]?.[0]).toContain('Style element with data-app-styles')
+    expect(mockLogger.warn).toHaveBeenCalledTimes(1)
+    expect(mockLogger.warn.mock.calls[0]?.[0]).toContain('Style element with data-app-styles')
   })
 })

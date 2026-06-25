@@ -1,12 +1,5 @@
 import { type ComponentType, createContext, type ReactNode, useContext } from 'react'
-
-/**
- * Global application configuration passed through context.
- */
-interface AppGlobals {
-  PRODUCT_NAME: string
-  [key: string]: string | number | boolean
-}
+import type { AppGlobals } from './types/appGlobals'
 
 const AppGlobalsContext = createContext<AppGlobals | null>(null)
 

@@ -97,10 +97,6 @@ export function attachPrimeReactScoper({
     const hasExistingScope = rawCss.includes('@scope')
     const scoped = hasExistingScope ? rawCss : scopeCss(rawCss, scopeRootSelector, scopeLimitSelector)
 
-    if (hasExistingScope) {
-      console.log('⚡ Skipping additional scoping - CSS already has @scope wrapper')
-    }
-
     writeChunk(styleId, scoped)
     lastHashById.set(styleId, h)
   }
@@ -132,17 +128,6 @@ export function attachPrimeReactScoper({
     let cssContent = styleEl.textContent || ''
 
     if (cssContent && attrName !== 'data-primereact-style-id') cssContent = adjustScopeIdToRemote(cssContent)
-
-    console.log(
-      '[PrimeReactScoper] captured style',
-      JSON.stringify({
-        styleId,
-        attrName,
-        productName,
-        styleTagId: styleEl.id,
-        hasPrimeReactAttr: !!styleEl.dataset.primereactStyleId,
-      })
-    )
 
     maybeScopeSourceStyleElement(styleEl, styleId, cssContent, attrName)
     upsertScopedBlock(styleId, cssContent)

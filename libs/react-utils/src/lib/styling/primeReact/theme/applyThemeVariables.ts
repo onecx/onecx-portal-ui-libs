@@ -1,3 +1,7 @@
+import { createLogger } from '../../../utils/logger.utils'
+
+const logger = createLogger('applyThemeVariables')
+
 /**
  * Flattens a nested theme properties object into key-value pairs.
  */
@@ -172,7 +176,7 @@ export default function applyThemeVariables(theme: ThemePayload, styleId: string
   const scopedElements = queryScopedStyleElements(candidateStyleIds, queryRoot)
 
   if (!scopedElements.length) {
-    console.warn(`Style element with data-app-styles="${styleId}" not found; theme vars were applied on scope root.`)
+    logger.warn(`Style element with data-app-styles="${styleId}" not found; theme vars were applied on scope root.`)
 
     return
   }

@@ -4,12 +4,7 @@ import { withRemotesPrimereactStylesIsolation } from '../withRemotesPrimereactSt
 import { composeProviders } from '../../../../utils/composeProviders'
 import { withRemoteStyles } from '../withRemoteStyles'
 import { withAppGlobals } from '../../../../utils/withAppGlobals'
-
-interface AppGlobals {
-  PRODUCT_NAME: string
-  REMOTES_NAME: string
-  [key: string]: string | number | boolean
-}
+import type { AppGlobals } from '../../../../utils/types/appGlobals'
 
 /**
  * Wraps a remote component with base providers and remote style isolation.
