@@ -2,6 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { Component } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import {
@@ -12,7 +13,7 @@ import {
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from 'primeng/tooltip'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
@@ -23,6 +24,9 @@ import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -228,8 +232,13 @@ describe('DataListGridComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataListGridComponent],
-      imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+      declarations: [DataListGridComponent, TestRouteComponent],
+      imports: [
+        AngularAcceleratorPrimeNgModule,
+        AngularAcceleratorModule,
+        RouterModule.forRoot([{ path: '**', component: TestRouteComponent }]),
+        NoopAnimationsModule,
+      ],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         {
@@ -904,7 +913,6 @@ describe('DataListGridComponent', () => {
       describe('action buttons with routerLink', () => {
         it('should render inline action button with routerLink', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
           jest.spyOn(console, 'log')
 
           fixture.componentRef.setInput('additionalActions', [
@@ -925,15 +933,13 @@ describe('DataListGridComponent', () => {
           expect(tableActions.length).toBe(1)
 
           await tableActions[0].click()
-          expect(spy).toHaveBeenCalledTimes(1)
-          expect(spy).toHaveBeenCalledWith(['/inline'])
+          await fixture.whenStable()
+          expect(router.url).toBe('/inline')
           expect(console.log).not.toHaveBeenCalledWith('My routing Action')
         })
 
         it('should render overflow action button with routerLink', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-
           jest.spyOn(console, 'log')
 
           fixture.componentRef.setInput('additionalActions', [
@@ -960,8 +966,7 @@ describe('DataListGridComponent', () => {
           expect(tableActions!.length).toBe(1)
 
           await tableActions![0].selectItem()
-          expect(spy).toHaveBeenCalledTimes(1)
-          expect(spy).toHaveBeenCalledWith(['/overflow'])
+          expect(router.url).toBe('/overflow')
           expect(console.log).not.toHaveBeenCalledWith('My overflow routing Action')
         })
 
@@ -1038,7 +1043,6 @@ describe('DataListGridComponent', () => {
 
           it('should prioritize routerLink over actionCallback when both are provided', async () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
             fixture.componentRef.setInput('additionalActions', [
@@ -1056,14 +1060,13 @@ describe('DataListGridComponent', () => {
             const tableActions = await listGrid.getActionButtons('list')
             await tableActions[0].click()
 
-            expect(spy).toHaveBeenCalledTimes(1)
-            expect(spy).toHaveBeenCalledWith(['/prioritized-link'])
+            await fixture.whenStable()
+            expect(router.url).toBe('/prioritized-link')
             expect(callbackSpy).not.toHaveBeenCalled()
           })
 
           it('should prioritize routerLink over actionCallback in overflow menu when both are provided', async () => {
             userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-            const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
             const callbackSpy = jest.fn()
 
             fixture.componentRef.setInput('additionalActions', [
@@ -1088,8 +1091,7 @@ describe('DataListGridComponent', () => {
             expect(tableActions!.length).toBe(1)
 
             await tableActions![0].selectItem()
-            expect(spy).toHaveBeenCalledTimes(1)
-            expect(spy).toHaveBeenCalledWith(['/overflow-prioritized'])
+            expect(router.url).toBe('/overflow-prioritized')
             expect(callbackSpy).not.toHaveBeenCalled()
           })
         })
@@ -1218,10 +1220,9 @@ describe('DataListGridComponent', () => {
         expect(await gridActions[3].text()).toEqual('CUSTOM_ACTION_KEY')
       })
 
-      it('should execute handleActionSync when grid menu item with routerLink is clicked', async () => {
+      it('should provide routerLink on grid menu item when action has string routerLink', async () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
-        const routerSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
-        
+
         fixture.componentRef.setInput('additionalActions', [
           {
             permission: 'CUSTOM#ACTION',
@@ -1240,14 +1241,8 @@ describe('DataListGridComponent', () => {
         
         const customMenuItem = menuItems.find(item => item.label === 'CUSTOM_ACTION_KEY')
         expect(customMenuItem).toBeTruthy()
-        expect(customMenuItem?.command).toBeDefined()
-        
-        const dummyEvent = { originalEvent: new Event('click') } as any
-        customMenuItem!.command!(dummyEvent)
-
-        await fixture.whenStable()
-        
-        expect(routerSpy).toHaveBeenCalledWith(['/test-route'])
+                expect(customMenuItem?.routerLink).toBe('/test-route')
+                expect(customMenuItem?.command).toBeUndefined()
       })
     })
   })
@@ -1369,6 +1364,107 @@ describe('DataListGridComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('row event handlers and image fallback', () => {
+    it('should emit row events and handle image error', () => {
+      const row = mockData[0] as any
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+
+      component.onDeleteRow(row)
+      component.onViewRow(row)
+      component.onEditRow(row)
+
+      expect(deleteSpy).toHaveBeenCalledWith(row)
+      expect(viewSpy).toHaveBeenCalledWith(row)
+      expect(editSpy).toHaveBeenCalledWith(row)
+
+      const item = { imagePath: '/x.png' } as any
+      component.imgError(item)
+      expect(item.imagePath).toBe('')
+    })
+  })
+
+  describe('template resolution helper branches', () => {
+    it('should return undefined when template name is not found', () => {
+      const templates = [{ name: 'some-template' }] as any
+      expect(component.findTemplate(templates, ['missing-template'])).toBeUndefined()
+    })
+
+    it('should return direct template from getTemplate when column-specific template exists', async () => {
+      const column = { id: 'name', columnType: ColumnType.STRING } as any
+      const templateRef = {} as any
+
+      ;(component as any).templatesObservables = {}
+      ;(component as any).templates$ = of([{ name: 'nameIdListValue', template: templateRef }] as any)
+      ;(component as any).viewTemplates$ = of([])
+      ;(component as any).parentTemplates$ = of([])
+
+      await expect(firstValueFrom(component.getTemplate(column))).resolves.toBe(templateRef)
+    })
+  })
+
+  describe('grid menu command wiring', () => {
+    it('should execute grid menu commands for view/edit/delete and callback actions', async () => {
+      const userServiceMock = TestBed.inject(UserServiceMock)
+      userServiceMock.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT', 'GRID#DELETE', 'CUSTOM#ACTION'])
+
+      component.viewItem.subscribe(() => undefined)
+      component.editItem.subscribe(() => undefined)
+      component.deleteItem.subscribe(() => undefined)
+
+      const callbackSpy = jest.fn()
+
+      fixture.componentRef.setInput('viewPermission', 'GRID#VIEW')
+      fixture.componentRef.setInput('viewMenuItemKey', 'GRID_VIEW_KEY')
+      fixture.componentRef.setInput('editPermission', 'GRID#EDIT')
+      fixture.componentRef.setInput('editMenuItemKey', 'GRID_EDIT_KEY')
+      fixture.componentRef.setInput('deletePermission', 'GRID#DELETE')
+      fixture.componentRef.setInput('deleteMenuItemKey', 'GRID_DELETE_KEY')
+      fixture.componentRef.setInput('additionalActions', [
+        {
+          permission: 'CUSTOM#ACTION',
+          callback: callbackSpy,
+          id: 'customAction',
+          labelKey: 'CUSTOM_ACTION_KEY',
+        },
+      ])
+
+      const selectedItem = mockData[0] as any
+      component.setSelectedItem(selectedItem)
+
+      const viewSpy = jest.spyOn(component.viewItem, 'emit')
+      const editSpy = jest.spyOn(component.editItem, 'emit')
+      const deleteSpy = jest.spyOn(component.deleteItem, 'emit')
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const menuItems = await firstValueFrom(component.gridMenuItems$)
+      menuItems.find((item) => item.label === 'GRID_VIEW_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'GRID_EDIT_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'GRID_DELETE_KEY')?.command?.({} as any)
+      menuItems.find((item) => item.label === 'CUSTOM_ACTION_KEY')?.command?.({} as any)
+
+      expect(viewSpy).toHaveBeenCalledWith(selectedItem)
+      expect(editSpy).toHaveBeenCalledWith(selectedItem)
+      expect(deleteSpy).toHaveBeenCalledWith(selectedItem)
+      expect(callbackSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('permissions provider fallback', () => {
+    it('should fallback to userService permissions when hasPermissionChecker is not provided', async () => {
+      const userServiceMock = TestBed.inject(UserServiceMock)
+      const getPermissionsSpy = jest.spyOn(userServiceMock, 'getPermissions').mockReturnValue(of(['FALLBACK#PERM']))
+
+      ;(component as any).hasPermissionChecker = undefined
+
+      await expect(firstValueFrom((component as any).getPermissions())).resolves.toEqual(['FALLBACK#PERM'])
+      expect(getPermissionsSpy).toHaveBeenCalledTimes(1)
     })
   })
 })
