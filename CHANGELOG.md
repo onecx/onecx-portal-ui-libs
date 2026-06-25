@@ -1,3 +1,9 @@
+## [9.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.9...v9.0.0-rc.10) (2026-06-25)
+
+### Bug Fixes
+
+* make imagePath optional ([4cd5059](https://github.com/onecx/onecx-portal-ui-libs/commit/4cd505909e9ed8609abd3e7d4e1f8ceb60facd1f))
+
 ## [9.0.0-rc.9](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.8...v9.0.0-rc.9) (2026-06-23)
 
 ### Bug Fixes
