@@ -50,7 +50,7 @@ import equal from 'fast-deep-equal'
 
 export type ListGridData = {
   id: string | number
-  imagePath: string | number
+  imagePath?: string | number
   [columnId: string]: unknown
 }
 
