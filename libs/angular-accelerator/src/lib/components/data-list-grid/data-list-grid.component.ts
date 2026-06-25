@@ -48,7 +48,7 @@ import { RowListGridData } from '../../model/row-list-grid-data.model'
 
 export type ListGridData = {
   id: string | number
-  imagePath: string | number
+  imagePath?: string | number
   [columnId: string]: unknown
 }
 
