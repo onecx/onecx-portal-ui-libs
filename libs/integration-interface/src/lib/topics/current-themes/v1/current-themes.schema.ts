@@ -5,6 +5,7 @@ import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
+import { tabs } from "./schema/tabs";
 import { themeSchemaRegistry } from "./schema/registry";
 
 const usages = z
@@ -14,6 +15,7 @@ const usages = z
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
+    tabs: (tabs as typeof tabs).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
