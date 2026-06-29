@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-utils",
-  "version": "9.0.0-rc.7",
+  "version": "9.0.0-rc.10",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -42,19 +42,24 @@
       "require": "./lib/prime-base-theme.cjs",
       "default": "./lib/prime-base-theme.mjs"
     },
+    "./prime-base-theme.css": "./lib/prime-base-theme.css",
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^9.0.0-rc.7",
-    "@onecx/integration-interface": "^9.0.0-rc.7",
-    "@onecx/react-integration-interface": "^9.0.0-rc.7",
-    "@onecx/react-webcomponents": "^9.0.0-rc.7",
+    "@onecx/accelerator": "^9.0.0-rc.10",
+    "@onecx/integration-interface": "^9.0.0-rc.10",
+    "@onecx/react-integration-interface": "^9.0.0-rc.10",
+    "@onecx/react-webcomponents": "^9.0.0-rc.10",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "primereact": "10.9.7",
     "react-i18next": "^16.5.4",
     "react-router": "^7.13.0"
   },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "dependencies": {},
   "publishConfig": {
     "access": "public"

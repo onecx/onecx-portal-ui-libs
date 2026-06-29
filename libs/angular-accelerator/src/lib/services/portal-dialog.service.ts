@@ -198,6 +198,7 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
+export type DialogInitiator = 'initiator' | 'default'
 
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
@@ -236,6 +237,7 @@ export type PortalDialogConfig = {
   position?: string
   closeAriaLabel?: string
   initiatorRef?: HTMLElement
+  onCloseFocus?: DialogInitiator
 }
 
 export interface PortalDialogServiceData {
@@ -441,7 +443,9 @@ export class PortalDialogService implements OnDestroy {
     extrasOrShowXButton: PortalDialogConfig | boolean = {}
   ): Observable<DialogState<T> | null> {
     const isObject = typeof extrasOrShowXButton === 'object'
-    const dialogOptions: PortalDialogConfig = isObject ? extrasOrShowXButton : { showXButton: extrasOrShowXButton || false }
+    const dialogOptions: PortalDialogConfig = isObject
+      ? extrasOrShowXButton
+      : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const dynamicDialogDataConfig: ButtonDialogData = {
@@ -454,7 +458,7 @@ export class PortalDialogService implements OnDestroy {
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
         autoFocusButton: dialogOptions.autoFocusButton,
-        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId
+        autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
     }
@@ -494,9 +498,12 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose.pipe(tap(() => {
-          if(isObject) { this.setFocusOnInitiator(extrasOrShowXButton) }
-        })
+        return dialogRef.onClose.pipe(
+          tap(() => {
+            if (isObject) {
+              this.setFocusOnInitiator(extrasOrShowXButton)
+            }
+          })
         )
       })
     )
@@ -629,8 +636,12 @@ export class PortalDialogService implements OnDestroy {
   }
 
   private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
+    if (hasOnCloseFocus) return
+
     const initiator = dialogOptions.initiatorRef
-    if (!initiator || typeof document === 'undefined' || !document.contains(initiator)) return
+    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+      return
     else {
       initiator.focus()
     }

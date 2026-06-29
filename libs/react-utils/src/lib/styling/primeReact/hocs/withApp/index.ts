@@ -4,12 +4,7 @@ import { withAppPrimereactStylesIsolation } from '../withAppPrimereactStylesIsol
 import { composeProviders } from '../../../../utils/composeProviders'
 import { withAppStyles } from '../withAppStyles'
 import { withAppGlobals } from '../../../../utils/withAppGlobals'
-
-interface AppGlobals {
-  PRODUCT_NAME: string
-  REMOTES_NAME: string
-  [key: string]: string | number | boolean
-}
+import type { AppGlobals } from '../../../../utils/types/appGlobals'
 
 /**
  * Wraps an app component with base providers and app-level style isolation.
