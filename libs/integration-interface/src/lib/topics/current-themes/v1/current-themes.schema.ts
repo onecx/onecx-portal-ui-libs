@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { dialog } from "./schema/dialog";
 import { primitives } from "./schema/primitives";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
@@ -9,6 +10,7 @@ import { button } from "./schema/button";
 
 const usages = z
   .object({
+    dialog: (dialog as typeof dialog).optional(),
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),

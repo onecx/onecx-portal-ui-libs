@@ -124,15 +124,25 @@ export const variantWithStates = bgContrast
   })
   .register(themeSchemaRegistry, { id: "variantWithStates" });
 
-export const colorVariants: z.ZodTypeAny = z
-  .object({
-    primary: variantWithStates.optional(),
-    secondary: variantWithStates.optional(),
-    tertiary: variantWithStates.optional(),
-    quaternary: variantWithStates.optional(),
-    quinary: variantWithStates.optional(),
-    // TODO: Add a link variant to all components that support link display (e.g. buttons)
-  })
+type ColorVariantsShape = {
+  primary: z.ZodOptional<typeof variantWithStates>;
+  secondary: z.ZodOptional<typeof variantWithStates>;
+  tertiary: z.ZodOptional<typeof variantWithStates>;
+  quaternary: z.ZodOptional<typeof variantWithStates>;
+  quinary: z.ZodOptional<typeof variantWithStates>;
+};
+
+const colorVariantsShape: ColorVariantsShape = {
+  primary: variantWithStates.optional(),
+  secondary: variantWithStates.optional(),
+  tertiary: variantWithStates.optional(),
+  quaternary: variantWithStates.optional(),
+  quinary: variantWithStates.optional(),
+  // TODO: Add a link variant to all components that support link display (e.g. buttons)
+};
+
+export const colorVariants = z
+  .object(colorVariantsShape)
   .register(themeSchemaRegistry, { id: "colorVariants" });
 
 export const area = variantWithStates.extend({});
@@ -216,23 +226,37 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: "transition" });
 
-export const primitives: z.ZodTypeAny = z
-  .object({
-    defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
-    variant: colorVariants as typeof colorVariants,
-    area: (areas as typeof areas).optional(),
-    shadow: (shadow as typeof shadow).optional(),
-    // Global typography baseline applied to all text unless overridden at a more specific level
-    font: (font as typeof font).optional(),
-    space: (space as typeof space).optional(),
-    layout: (layout as typeof layout).optional(),
-    radius: (radius as typeof radius).optional(),
-    // Global default border style applied to components that don't define their own border token
-    border: (borderWithVariants as typeof borderWithVariants).optional(),
-    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
-    // Opacity level to apply to disabled components, e.g. '0.5'
-    disabledOpacity: withRef(z.number()).optional(),
-    transition: (transition as typeof transition).optional(),
-  })
+type PrimitivesShape = {
+  defaultVariant: z.ZodOptional<typeof variantWithStates>;
+  variant: typeof colorVariants;
+  area: z.ZodOptional<typeof areas>;
+  shadow: z.ZodOptional<typeof shadow>;
+  font: z.ZodOptional<typeof font>;
+  space: z.ZodOptional<typeof space>;
+  layout: z.ZodOptional<typeof layout>;
+  radius: z.ZodOptional<typeof radius>;
+  border: z.ZodOptional<typeof borderWithVariants>;
+  focusRing: z.ZodOptional<typeof borderWithShadow>;
+  transition: z.ZodOptional<typeof transition>;
+};
+
+const primitivesShape: PrimitivesShape = {
+  defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
+  variant: colorVariants as typeof colorVariants,
+  area: (areas as typeof areas).optional(),
+  shadow: (shadow as typeof shadow).optional(),
+  // Global typography baseline applied to all text unless overridden at a more specific level
+  font: (font as typeof font).optional(),
+  space: (space as typeof space).optional(),
+  layout: (layout as typeof layout).optional(),
+  radius: (radius as typeof radius).optional(),
+  // Global default border style applied to components that don't define their own border token
+  border: (borderWithVariants as typeof borderWithVariants).optional(),
+  focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+  transition: (transition as typeof transition).optional(),
+};
+
+export const primitives = z
+  .object(primitivesShape)
   .optional()
   .register(themeSchemaRegistry, { id: "primitives" });
