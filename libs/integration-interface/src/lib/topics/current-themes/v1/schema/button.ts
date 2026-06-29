@@ -7,7 +7,7 @@ import { themeSchemaRegistry } from "./registry";
 
 export const buttonFocusRing = z
   .object({
-    color: color.default("{{primitives.primaryColor}}"),
+    color: color.default("{{primitives.focusRing.color}}"),
     shadow: withRef(z.string()).default("{{primitives.shadow.sm}}"),
   })
   .register(themeSchemaRegistry, { id: "buttonFocusRing" });
@@ -25,9 +25,9 @@ export const buttonColors = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.primaryColor}}"),
-    borderColor: color.default("{{primitives.primaryColor}}"),
-    color: color.default("{{primitives.primaryContrastColor}}"),
+      .default("{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}"),
+    borderColor: color.default("{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}"),
+    color: color.default("{{primitives.variant.primary.defaultState.defaultVariant.contrast}}"),
   })
   .register(themeSchemaRegistry, { id: "buttonColors" });
 
@@ -43,13 +43,13 @@ export const button = z
     lg: (buttonSize as typeof buttonSize).optional(),
     label: z
       .object({
-        fontWeight: withRef(z.string()).default("{{primitives.font.weight.bold}}"),
+        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
       })
       .optional(),
     raisedShadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
     focusRing: (buttonFocusRing as typeof buttonFocusRing).optional(),
     badgeSize: withRef(z.string()).default("{{primitives.space.lg}}"),
-    transitionDuration: withRef(z.string()).default("{{primitives.transitionDuration}}"),
+    transitionDuration: withRef(z.string()).default("{{primitives.transition.duration}}"),
     defaultState: (buttonColors as typeof buttonColors).optional(),
     state: z
       .object({
