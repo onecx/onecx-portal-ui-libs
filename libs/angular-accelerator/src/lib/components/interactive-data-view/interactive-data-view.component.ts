@@ -100,7 +100,7 @@ export class InteractiveDataViewComponent implements OnInit {
 
   @Input()
   set columns(value: DataTableColumn[]) {
-    this.stateService.columns.set(value)
+    this.stateService.availableColumns.set(value)
   }
 
   emptyResultsMessage = input<string | undefined>(undefined)
@@ -191,7 +191,7 @@ export class InteractiveDataViewComponent implements OnInit {
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return (
-      columnKeys.map((key) => this.stateService.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]
+      columnKeys.map((key) => this.stateService.availableColumns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]
     )
   })
 
@@ -618,7 +618,7 @@ export class InteractiveDataViewComponent implements OnInit {
         if (columnGroupComponentDefined) {
           if (
             !(
-              this.stateService.columns().some((c) => c.nameKey === this.stateService.activeColumnGroupKey()) ||
+              this.stateService.availableColumns().some((c) => c.nameKey === this.stateService.activeColumnGroupKey()) ||
               this.stateService.activeColumnGroupKey() === this.customGroupKey()
             )
           ) {
@@ -652,7 +652,7 @@ export class InteractiveDataViewComponent implements OnInit {
 
     if (this.defaultGroupKey() && this.defaultGroupKey() !== this.customGroupKey()) {
       this.displayedColumnKeys.set(
-        this.stateService.columns()
+        this.stateService.availableColumns()
           .filter((column) => column.predefinedGroupKeys?.includes(this.defaultGroupKey()))
           .map((column) => column.id)
       )

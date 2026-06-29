@@ -12,6 +12,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { DataListGridSortingComponent } from './data-list-grid-sorting.component'
+import { DataViewStateService } from '../../services/data-view-state.service'
 
 const DataListGridSortingComponentSBConfig: Meta<DataListGridSortingComponent> = {
   title: 'Components/DataListGridSortingComponent',
@@ -23,6 +24,7 @@ const DataListGridSortingComponentSBConfig: Meta<DataListGridSortingComponent> =
     moduleMetadata({
       declarations: [DataListGridSortingComponent],
       imports: [FormsModule, FloatLabelModule, SelectModule, ButtonModule, TooltipModule, StorybookTranslateModule],
+      providers: [DataViewStateService,],
     }),
   ],
 }
