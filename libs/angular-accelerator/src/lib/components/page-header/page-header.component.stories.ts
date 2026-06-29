@@ -49,6 +49,7 @@ export default {
         ]),
         TooltipModule,
         OcxTooltipDirective,
+        RouterModule,
       ],
     }),
   ],
@@ -196,6 +197,29 @@ export const WithCustomButtons = {
     objectDetails: demoFields,
     disableDefaultActions: true,
     showBreadcrumbs: false,
+  },
+}
+
+export const WithRouterLinkActions = {
+  render: Template,
+
+  args: {
+    header: 'My title',
+    subheader: 'My subtitle',
+    disableDefaultActions: true,
+    showBreadcrumbs: false,
+    actions: [
+      {
+        label: 'Inline Router Link',
+        routerLink: '/page-header-inline-link',
+        show: 'always',
+      },
+      {
+        label: 'Overflow Router Link',
+        routerLink: '/page-header-overflow-link',
+        show: 'asOverflow',
+      },
+    ],
   },
 }
 

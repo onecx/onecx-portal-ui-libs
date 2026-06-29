@@ -2,6 +2,9 @@ import type { CSSProperties, ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { useAppState, useUserService } from '@onecx/react-integration-interface'
 import { useTranslation } from 'react-i18next'
+import { createLogger } from './logger.utils'
+
+const logger = createLogger('PortalPage')
 
 /**
  * Props for PortalPage wrapper.
@@ -54,6 +57,7 @@ export const PortalPage = ({
   const { currentPage$ } = useAppState()
   const { hasPermission } = useUserService()
   const { t } = useTranslation()
+  const [isLoading, setIsLoading] = useState(!!permission)
   const [hasAccess, setHasAccess] = useState(!permission)
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export const PortalPage = ({
       try {
         return await hasPermission(permission)
       } catch (error) {
-        console.warn('Failed to resolve permission for PortalPage', error)
+        logger.warn('Failed to resolve permission for PortalPage', error)
         return false
       }
     }
@@ -76,6 +80,7 @@ export const PortalPage = ({
       const nextHasAccess = await resolveAccess()
       if (isMounted) {
         setHasAccess(nextHasAccess)
+        setIsLoading(false)
       }
     }
 
@@ -88,7 +93,7 @@ export const PortalPage = ({
 
   useEffect(() => {
     if (!helpArticleId && typeof location !== 'undefined') {
-      console.warn(
+      logger.warn(
         `Portal Page on url ${location.pathname} does not have 'helpArticleId' set. Set to some unique string in order to support help management feature.`
       )
     }
@@ -111,18 +116,21 @@ export const PortalPage = ({
   const unauthorizedTitle = t('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
   const unauthorizedMessage = t('OCX_PORTAL_PAGE.UNAUTHORIZED_MESSAGE')
 
+  let content: ReactNode = null
+  if (!isLoading) {
+    content = hasAccess ? (
+      children
+    ) : (
+      <>
+        <h3>{unauthorizedTitle}</h3>
+        <p>{unauthorizedMessage}</p>
+      </>
+    )
+  }
+
   return (
     <div className={containerClassName} style={containerStyle}>
-      <div className="content-wrapper">
-        {hasAccess ? (
-          children
-        ) : (
-          <>
-            <h3>{unauthorizedTitle}</h3>
-            <p>{unauthorizedMessage}</p>
-          </>
-        )}
-      </div>
+      <div className="content-wrapper">{content}</div>
     </div>
   )
 }
