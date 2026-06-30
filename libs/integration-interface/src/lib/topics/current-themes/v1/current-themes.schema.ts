@@ -5,7 +5,7 @@ import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
-import { fieldSet } from "./schema/fieldset";
+import { fieldset } from "./schema/fieldset";
 
 const usages = z
   .object({
@@ -13,7 +13,7 @@ const usages = z
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
-    fieldSet: (fieldSet as typeof fieldSet).optional(),
+    fieldset: (fieldset as typeof fieldset).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 

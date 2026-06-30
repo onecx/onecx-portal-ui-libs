@@ -111,7 +111,7 @@ export type ThemePath =
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
   | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`
-  | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldSet']>>}`;
+  | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`;
 
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 

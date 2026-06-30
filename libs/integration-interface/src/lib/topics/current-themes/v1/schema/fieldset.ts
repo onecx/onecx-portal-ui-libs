@@ -53,7 +53,7 @@ export const content = layout
   .optional()
   .register(themeSchemaRegistry, { id: 'fieldSetContent' })
 
-export const fieldSet = z.object({
+export const fieldset = z.object({
   settings,
   container,
   legend,
