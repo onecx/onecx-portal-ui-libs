@@ -28,7 +28,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
 
   @Input()
   set columns(value: DataTableColumn[]) {
-    this.stateService.columns.set(value)
+    this.stateService.availableColumns.set(value)
   }
 
   readonly displayedColumns = model<DataTableColumn[]>([])
@@ -119,7 +119,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     this.displayedColumnsModel.set([...this.displayedColumns()])
 
     const displayedIds = new Set(this.displayedColumnsModel().map((c) => c.id))
-    this.hiddenColumnsModel.set(this.stateService.columns().filter((column) => !displayedIds.has(column.id)))
+    this.hiddenColumnsModel.set(this.stateService.availableColumns().filter((column) => !displayedIds.has(column.id)))
 
     this.frozenActionColumnModel.set(this.stateService.actionColumnConfigFrozen())
     this.actionColumnPositionModel.set(this.stateService.actionColumnConfigPosition())

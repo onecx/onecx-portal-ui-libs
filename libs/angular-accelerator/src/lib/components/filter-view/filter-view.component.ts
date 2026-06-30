@@ -47,6 +47,7 @@ export interface FilterViewComponentState {
   selector: 'ocx-filter-view',
   templateUrl: './filter-view.component.html',
   styleUrls: ['./filter-view.component.scss'],
+  providers: [DataViewStateService],
 })
 export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
@@ -55,7 +56,9 @@ export class FilterViewComponent {
   ColumnType = ColumnType
   FilterType = FilterType
 
-  readonly stateService = inject(DataViewStateService)
+  private readonly ownService = inject(DataViewStateService)
+  private readonly parentService = inject(DataViewStateService, { skipSelf: true, optional: true })
+  readonly stateService = this.parentService ?? this.ownService
 
   @Input()
   set filters(value: Filter[]) {
@@ -64,7 +67,7 @@ export class FilterViewComponent {
 
   @Input()
   set columns(value: DataTableColumn[]) {
-    this.stateService.columns.set(value)
+    this.stateService.availableColumns.set(value)
   }
 
   readonly displayMode = input<FilterViewDisplayMode>('button')
@@ -109,7 +112,7 @@ export class FilterViewComponent {
 
   readonly columnFilterDataRows = computed(() => {
     const filters = this.stateService.filters()
-    const columns = this.stateService.columns()
+    const columns = this.stateService.availableColumns()
 
     const columnIds = columns.map((c: DataTableColumn) => c.id)
     return filters
@@ -194,7 +197,7 @@ export class FilterViewComponent {
     })
 
     effect(() => {
-      const cols = this.stateService.columns()
+      const cols = this.stateService.availableColumns()
       const columnFilterTableColumns = this.columnFilterTableColumns()
 
       const chipObs = cols.map((c) =>
