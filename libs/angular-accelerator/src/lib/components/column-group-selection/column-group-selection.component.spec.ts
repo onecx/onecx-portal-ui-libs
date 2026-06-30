@@ -80,7 +80,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       fixture.detectChanges()
 
-      const cols = component.stateService.columns()
+      const cols = component.stateService.availableColumns()
       expect(cols).toEqual(testColumns)
     })
 
@@ -96,7 +96,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       fixture.detectChanges()
 
-      const cols = component.stateService.columns()
+      const cols = component.stateService.availableColumns()
       expect(cols).toEqual([
         makeColumn({ id: 'c1', predefinedGroupKeys: ['def'] }),
         makeColumn({ id: 'c2', predefinedGroupKeys: ['g2'] }),
@@ -155,7 +155,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       component.changeGroupSelection({ value: 'g1' })
 
-      const cols = component.stateService.columns()
+      const cols = component.stateService.availableColumns()
       expect(groupChangedSpy).toHaveBeenCalledWith({
         activeColumns: [cols[0], cols[2]],
         groupKey: 'g1',
@@ -179,7 +179,7 @@ describe('ColumnGroupSelectionComponent', () => {
 
       component.changeGroupSelection({ value: 'g1' })
 
-      const cols = component.stateService.columns()
+      const cols = component.stateService.availableColumns()
       expect(groupChangedSpy).toHaveBeenCalledWith({
         activeColumns: [cols[0], cols[2]],
         groupKey: 'g1',

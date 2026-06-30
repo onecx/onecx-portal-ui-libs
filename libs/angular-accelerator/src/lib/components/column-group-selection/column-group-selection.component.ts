@@ -24,7 +24,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
 
   @Input()
   set columns(value: DataTableColumn[]) {
-    this.stateService.columns.set(value)
+    this.stateService.availableColumns.set(value)
   }
 
   readonly placeholderKey = input<string>('')
@@ -35,7 +35,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
   readonly componentStateChanged = output<ColumnGroupSelectionComponentState>()
 
   readonly allGroupKeys = computed<string[]>(() => {
-    const columns = this.stateService.columns()
+    const columns = this.stateService.availableColumns()
     const selectedGroupKey = this.stateService.activeColumnGroupKey()
     const defaultGroupKey = this.defaultGroupKey()
 
@@ -70,7 +70,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
       return
     }
 
-    const activeColumns = this.stateService.columns().filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
+    const activeColumns = this.stateService.availableColumns().filter((c) => c.predefinedGroupKeys?.includes(selected ?? this.defaultGroupKey()))
     
     this.componentStateChanged.emit({
       activeColumnGroupKey: selected,
@@ -85,7 +85,7 @@ export class ColumnGroupSelectionComponent implements OnInit {
 
     this.stateService.activeColumnGroupKey.set(event.value)
 
-    const activeColumns = this.stateService.columns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
+    const activeColumns = this.stateService.availableColumns().filter((c) => c.predefinedGroupKeys?.includes(event.value))
 
     this.groupSelectionChanged.emit({ activeColumns, groupKey: event.value })
     this.componentStateChanged.emit({
