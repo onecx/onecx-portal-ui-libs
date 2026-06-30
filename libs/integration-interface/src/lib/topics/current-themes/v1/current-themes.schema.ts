@@ -6,6 +6,7 @@ import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
+import { button } from "./schema/button";
 
 const usages = z
   .object({
@@ -13,6 +14,7 @@ const usages = z
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
+    button: (button as typeof button).optional(),
     carousel: (carousel as typeof carousel).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });

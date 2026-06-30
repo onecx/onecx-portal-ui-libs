@@ -237,6 +237,7 @@ type PrimitivesShape = {
   radius: z.ZodOptional<typeof radius>;
   border: z.ZodOptional<typeof borderWithVariants>;
   focusRing: z.ZodOptional<typeof borderWithShadow>;
+  disabledOpacity: z.ZodOptional<z.ZodTypeAny>;
   transition: z.ZodOptional<typeof transition>;
 };
 
@@ -253,6 +254,8 @@ const primitivesShape: PrimitivesShape = {
   // Global default border style applied to components that don't define their own border token
   border: (borderWithVariants as typeof borderWithVariants).optional(),
   focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+  // Opacity level to apply to disabled components, e.g. 0.5
+  disabledOpacity: withRef(z.number()).optional(),
   transition: (transition as typeof transition).optional(),
 };
 
