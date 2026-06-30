@@ -84,6 +84,10 @@ export const buttonMappingRules: MappingRule[] = [
         to: 'components.button.root.transitionDuration',
     },
     {
+        from: 'usages.button.disabledOpacity',
+        to: 'semantic.disabledOpacity',
+    },
+    {
         from: 'usages.button.defaultState.background',
         to: 'components.button.root.primary.background',
         transform: toColorString,

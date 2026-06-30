@@ -47,6 +47,7 @@ export const button = z
       })
       .optional(),
     raisedShadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
+    disabledOpacity: withRef(z.number()).default("{{primitives.disabledOpacity}}"),
     focusRing: (buttonFocusRing as typeof buttonFocusRing).optional(),
     badgeSize: withRef(z.string()).default("{{primitives.space.lg}}"),
     transitionDuration: withRef(z.string()).default("{{primitives.transition.duration}}"),
