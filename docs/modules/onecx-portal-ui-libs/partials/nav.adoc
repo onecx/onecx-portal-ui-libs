@@ -5,6 +5,7 @@
 *** xref:onecx-portal-ui-libs:libraries/react-libraries.adoc[react-libraries]
 *** xref:onecx-portal-ui-libs:libraries/integration-interface.adoc[integration-interface]
 *** xref:onecx-portal-ui-libs:libraries/ngrx-linter-rules.adoc[ngrx-linter-rules]
+*** xref:onecx-portal-ui-libs:libraries/angular-utils/cdk.adoc[angular-utils/cdk]
 
 ** xref:onecx-portal-ui-libs:local-development.adoc[Local Development]
 ** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[Compatibility]

@@ -15,12 +15,19 @@ import {
   getPlatform,
 } from '@angular/core'
 import { Router } from '@angular/router'
-import { dataNoPortalLayoutStylesKey } from '@onecx/angular-utils'
+import { dataNoPortalLayoutStylesKey, onecxDynamicContainerSelectorPrefix } from '@onecx/angular-utils'
+import { DYNAMIC_CONTAINER } from '@onecx/angular-integration-interface'
 import { WebcomponentConnector } from './webcomponent-connector.utils'
 import { createLogger } from './logger.utils'
 
 const logger = createLogger('webcomponent-bootstrap')
 import { DynamicAppId } from './dynamic-app-id.utils'
+import {
+  DYNAMIC_CONTAINER_PROXY,
+  DynamicContainerProxy,
+  getDynamicContainer,
+  removeDynamicContainer,
+} from './get-dynamic-container.utils'
 
 /**
  * Implementation inspired by @angular-architects/module-federation-plugin https://github.com/angular-architects/module-federation-plugin/blob/main/libs/mf-tools/src/lib/web-components/bootstrap-utils.ts
@@ -38,6 +45,7 @@ export interface AppOptions {
 
 export function bootstrapModule<M>(module: Type<M>, appType: AppType, production: boolean): Promise<NgModuleRef<M>> {
   replaceOrAddAppId((module as any)['ɵinj'].providers)
+  addDynamicContainerProvider((module as any)['ɵinj'].providers)
 
   return cachePlatform(production)
     .bootstrapModule(module, {
@@ -59,6 +67,7 @@ export async function bootstrapRemoteComponent(
   options?: AppOptions
 ): Promise<void> {
   replaceOrAddAppId(providers)
+  addDynamicContainerProvider(providers)
 
   const app = await createApplication({
     providers: [
@@ -107,9 +116,7 @@ function findAndReplaceAppId(providers: Array<any>): any {
       if (typeof provider.useValue === 'string') {
         id = provider.useValue
       } else {
-        logger.warn(
-          "APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID"
-        )
+        logger.warn("APP_ID provider in the application was not done via useValue. Will fallback to 'ng' as the APP_ID")
       }
       provider.useValue = new DynamicAppId(id)
       return provider
@@ -124,6 +131,36 @@ function findAndReplaceAppId(providers: Array<any>): any {
   return null
 }
 
+/**
+ * Adds provider for dynamic container creation.
+ * This function adds placeholder provider for dynamic container creation. The actual implementation is provided in createEntrypoint function since it needs access to the element name and injector.
+ */
+function addDynamicContainerProvider(providers: Array<any>) {
+  const proxy: DynamicContainerProxy = {
+    getDynamicContainerCallback: () => {
+      throw new Error(
+        'Placeholder dynamic container callback used. The actual implementation should have been provided but was not.'
+      )
+    },
+    removeDynamicContainer: () => {
+      throw new Error(
+        'Placeholder remove dynamic container function used. The actual implementation should have been provided but was not.'
+      )
+    },
+  }
+
+  providers.push(
+    {
+      provide: DYNAMIC_CONTAINER_PROXY,
+      useValue: proxy,
+    },
+    {
+      provide: DYNAMIC_CONTAINER,
+      useValue: () => proxy.getDynamicContainerCallback(),
+    }
+  )
+}
+
 function createEntrypoint(
   component: Type<any>,
   elementName: string,
@@ -131,10 +168,17 @@ function createEntrypoint(
   entrypointType: EntrypointType,
   _?: AppOptions
 ) {
-  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
   // Save element name in DynamicAppId for later use in SharedStylesHost
   const appId = injector.get(APP_ID) as any as DynamicAppId
   appId.appElementName = elementName
+  // Set the dynamic container callback to create or get the dynamic container for this webcomponent.
+  const dynamicContainerProxy = injector.get(DYNAMIC_CONTAINER_PROXY)
+  dynamicContainerProxy.getDynamicContainerCallback = () =>
+    getDynamicContainer(`${onecxDynamicContainerSelectorPrefix}-${elementName}`, elementName)
+  dynamicContainerProxy.removeDynamicContainer = () =>
+    removeDynamicContainer(`${onecxDynamicContainerSelectorPrefix}-${elementName}`)
+
+  const webcomponentConnector = new WebcomponentConnector(injector, entrypointType)
 
   const originalNgInit = component.prototype.ngOnInit
 
@@ -147,6 +191,8 @@ function createEntrypoint(
   const originalNgDestroy = component.prototype.ngOnDestroy
   component.prototype.ngOnDestroy = function () {
     webcomponentConnector.disconnect()
+    // Cleanup dynamic container on component destroy
+    dynamicContainerProxy.removeDynamicContainer()
     if (originalNgDestroy !== undefined) {
       originalNgDestroy.call(this)
     }

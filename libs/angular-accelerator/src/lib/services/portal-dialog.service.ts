@@ -478,9 +478,9 @@ export class PortalDialogService implements OnDestroy {
           },
           closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
+          appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
           focusOnShow: false,
-          appendTo: 'body', // Important for the function findBodyChild
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,

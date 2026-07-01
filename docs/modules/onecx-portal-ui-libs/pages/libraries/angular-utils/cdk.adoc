@@ -1,0 +1,54 @@
+= @onecx/angular-utils/cdk
+:idprefix:
+:idseparator: -
+
+`@onecx/angular-utils/cdk` is a secondary entry point of `@onecx/angular-utils` that provides Angular CDK utilities.
+
+[#installation]
+== Installation
+
+`@onecx/angular-utils/cdk` is a secondary entry point and is included in the `@onecx/angular-utils` package:
+
+[source,sh]
+----
+npm i @onecx/angular-utils
+----
+
+[#api]
+== API
+
+[#onecx-overlay-container]
+=== OnecxOverlayContainer
+
+A custom Angular CDK `OverlayContainer` that appends the overlay container element to the OneCX dynamic container instead of the document body.
+
+[source,typescript]
+----
+import { OverlayContainer } from '@angular/cdk/overlay'
+import { OnecxOverlayContainer } from '@onecx/angular-utils/cdk'
+
+@NgModule({
+  providers: [
+    { provide: OverlayContainer, useClass: OnecxOverlayContainer },
+  ]
+})
+export class RemoteModule {}
+----
+
+[#onecx-fullscreen-overlay-container]
+=== OnecxFullscreenOverlayContainer
+
+A custom Angular CDK overlay container that appends the overlay container element to the OneCX dynamic container instead of the document body.
+
+[source,typescript]
+----
+import { OverlayContainer } from '@angular/cdk/overlay'
+import { OnecxFullscreenOverlayContainer } from '@onecx/angular-utils/cdk'
+
+@NgModule({
+  providers: [
+    { provide: OverlayContainer, useClass: OnecxFullscreenOverlayContainer },
+  ]
+})
+export class RemoteModule {}
+----

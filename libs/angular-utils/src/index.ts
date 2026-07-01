@@ -18,6 +18,7 @@ export * from './lib/utils/remote-component-translation-path-factory.utils'
 export * from './lib/utils/multi-language-missing-translation-handler.utils'
 export * from './lib/utils/dynamic-locale-id.utils'
 export * from './lib/utils/get-load-remote-entry-options.utils'
+export * from './lib/utils/get-object-injector.utils'
 
 // Model
 export * from './lib/model/injection-tokens'
