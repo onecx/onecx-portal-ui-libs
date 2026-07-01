@@ -1,61 +1,94 @@
-import { render, act } from '@testing-library/react'
+import type { ReactNode } from 'react'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import StyleRegistry from './StyleRegistry'
+import applyThemeVariables from './applyThemeVariables'
 
-const mockUnsubscribe = jest.fn()
-const mockSubscribe = jest.fn((cb: (theme: any) => void) => {
-  cb({ properties: { cat: { key: 'val' } } })
-  return { unsubscribe: mockUnsubscribe }
-})
-
-jest.mock('@onecx/integration-interface', () => ({
-  CurrentThemeTopic: jest.fn(() => ({ subscribe: mockSubscribe })),
-}))
+let emitTheme: ((theme: unknown) => void) | undefined
+const unsubscribeSpy = jest.fn()
+const destroySpy = jest.fn()
 
 jest.mock('primereact/api', () => ({
-  PrimeReactProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="primereact-provider">{children}</div>
+  PrimeReactProvider: ({ children, value }: { children?: ReactNode; value?: unknown }) => (
+    <div data-testid="prime-react-provider" data-value={JSON.stringify(value)}>
+      {children}
+    </div>
   ),
 }))
 
-jest.mock('../../../utils/withAppGlobals', () => ({
-  useAppGlobals: jest.fn(() => ({ PRODUCT_NAME: 'test-app' })),
+jest.mock('@onecx/integration-interface', () => ({
+  CurrentThemeTopic: class {
+    subscribe(callback: (theme: unknown) => void) {
+      emitTheme = callback
+      return {
+        unsubscribe: unsubscribeSpy,
+      }
+    }
+    destroy() {
+      destroySpy()
+    }
+  },
 }))
 
 jest.mock('./applyThemeVariables', () => ({
-  __esModule: true,
   default: jest.fn(),
 }))
 
+jest.mock('./scopedStyleContainer', () => ({
+  getOrCreateScopedStyleContainer: jest.fn(() => ({
+    querySelector: jest.fn(),
+    querySelectorAll: jest.fn(() => []),
+    appendChild: jest.fn(),
+  })),
+}))
+
+jest.mock('../../../utils/withAppGlobals', () => ({
+  useAppGlobals: () => ({
+    PRODUCT_NAME: 'demo-app',
+  }),
+}))
+
+const { getOrCreateScopedStyleContainer } = jest.requireMock('./scopedStyleContainer')
+
 describe('StyleRegistry', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    mockSubscribe.mockImplementation((cb: (theme: any) => void) => {
-      cb({ properties: { cat: { key: 'val' } } })
-      return { unsubscribe: mockUnsubscribe }
+    emitTheme = undefined
+    unsubscribeSpy.mockReset()
+    destroySpy.mockReset()
+    jest.mocked(applyThemeVariables).mockReset()
+    jest.mocked(getOrCreateScopedStyleContainer).mockReset()
+  })
+
+  it('creates scoped style container, renders children immediately, and applies theme variables when theme arrives', async () => {
+    const theme = { properties: { colors: { primary: '#111' } } }
+
+    render(
+      <StyleRegistry>
+        <div>content</div>
+      </StyleRegistry>
+    )
+
+    expect(screen.queryByText('content')).not.toBeNull()
+    expect(jest.mocked(getOrCreateScopedStyleContainer)).toHaveBeenCalledWith('demo-app|demo-app')
+
+    act(() => {
+      emitTheme?.(theme)
+    })
+
+    await waitFor(() => {
+      expect(jest.mocked(applyThemeVariables)).toHaveBeenCalledWith(theme, 'demo-app|demo-app')
     })
   })
 
-  it('renders children inside PrimeReactProvider after theme is applied', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { getByTestId, getByText } = render(
+  it('unsubscribes and destroys theme topic on unmount', () => {
+    const { unmount } = render(
       <StyleRegistry>
-        <span>child content</span>
+        <div>content</div>
       </StyleRegistry>
     )
-    expect(getByTestId('primereact-provider')).toBeDefined()
-    expect(getByText('child content')).toBeDefined()
-  })
 
-  it('renders null before theme is applied', async () => {
-    mockSubscribe.mockImplementation(() => ({ unsubscribe: mockUnsubscribe }))
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { container } = render(<StyleRegistry><span>hidden</span></StyleRegistry>)
-    expect(container.textContent).not.toContain('hidden')
-  })
+    unmount()
 
-  it('unsubscribes on unmount', async () => {
-    const { default: StyleRegistry } = await import('./StyleRegistry')
-    const { unmount } = render(<StyleRegistry />)
-    act(() => { unmount() })
-    expect(mockUnsubscribe).toHaveBeenCalled()
+    expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
+    expect(destroySpy).toHaveBeenCalledTimes(1)
   })
 })

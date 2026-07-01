@@ -1,6 +1,21 @@
 import { render } from '@testing-library/react'
 import { PortalPage } from './portalPage'
 
+jest.mock('./logger.utils', () => {
+  const mockLogger = {
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  }
+  return {
+    createLogger: jest.fn(() => mockLogger),
+    __mockLogger: mockLogger,
+  }
+})
+
+const { __mockLogger: mockLogger } = require('./logger.utils')
+
 jest.mock('@onecx/react-integration-interface', () => ({
   useAppState: jest.fn(() => ({
     currentPage$: { publish: jest.fn() },
@@ -43,14 +58,16 @@ describe('PortalPage', () => {
 
   it('should deny access when permission check throws', async () => {
     const { useUserService } = require('@onecx/react-integration-interface')
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
     useUserService.mockReturnValue({ hasPermission: jest.fn(() => Promise.reject(new Error('fail'))) })
 
-    const { findByText } = render(<PortalPage permission="admin">Secret Content</PortalPage>)
+    const { findByText } = render(
+      <PortalPage permission="admin" helpArticleId="help-123">
+        Secret Content
+      </PortalPage>
+    )
     const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
-    expect(consoleSpy).toHaveBeenCalled()
-    consoleSpy.mockRestore()
+    expect(mockLogger.warn).toHaveBeenCalledWith('Failed to resolve permission for PortalPage', expect.any(Error))
   })
 
   it('should publish current page info', () => {
@@ -88,9 +105,7 @@ describe('PortalPage', () => {
   })
 
   it('should warn when helpArticleId is not set', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
     render(<PortalPage>Content</PortalPage>)
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('helpArticleId'))
-    consoleSpy.mockRestore()
+    expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('helpArticleId'))
   })
 })

@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import * as path from 'path'
+import * as path from 'node:path'
 
 export default defineConfig({
   root: __dirname,
@@ -22,6 +22,7 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    cssCodeSplit: true,
     lib: {
       entry: {
         index: 'src/lib/index.ts',
@@ -40,11 +41,13 @@ export default defineConfig({
           format: 'es',
           entryFileNames: 'lib/[name].mjs',
           chunkFileNames: 'lib/[name].mjs',
+          assetFileNames: 'lib/[name].[ext]',
         },
         {
           format: 'cjs',
           entryFileNames: 'lib/[name].cjs',
           chunkFileNames: 'lib/[name].cjs',
+          assetFileNames: 'lib/[name].[ext]',
         },
       ],
       external: [
@@ -52,6 +55,7 @@ export default defineConfig({
         'react-dom',
         'react/jsx-runtime',
         'primereact',
+        'react-i18next',
         'react-router',
         '@onecx/integration-interface',
         '@onecx/react-integration-interface',

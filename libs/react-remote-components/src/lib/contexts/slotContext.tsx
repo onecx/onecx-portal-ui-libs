@@ -11,6 +11,19 @@ export const SlotContext = createContext<SlotServiceInterface | undefined>(undef
 const remoteComponents$ = new RemoteComponentsTopic()
 const logger = createLogger('SlotProvider')
 
+function resolveSlotComponents(
+  remoteComponentsInfo: { slots?: { name: string; components: string[] }[]; components: RemoteComponent[] },
+  slotName: string
+): RemoteComponent[] {
+  const componentNames = remoteComponentsInfo.slots?.find((s) => s.name === slotName)?.components ?? []
+  const result: RemoteComponent[] = []
+  for (const name of componentNames) {
+    const found = remoteComponentsInfo.components.find((rc) => rc.name === name)
+    if (found) result.push(found)
+  }
+  return result
+}
+
 /**
  * Provides slot services for loading and resolving remote components.
  * @param children - nested content rendered with slot context.
@@ -32,11 +45,7 @@ export const SlotProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
 
     return remoteComponents$.pipe(
-      map((remoteComponentsInfo) =>
-        (remoteComponentsInfo.slots?.find((slotMapping) => slotMapping.name === slotName)?.components ?? [])
-          .map((remoteComponentName) => remoteComponentsInfo.components.find((rc) => rc.name === remoteComponentName))
-          .filter((remoteComponent): remoteComponent is RemoteComponent => !!remoteComponent)
-      ),
+      map((remoteComponentsInfo) => resolveSlotComponents(remoteComponentsInfo, slotName)),
       map((infos) =>
         infos.map((remoteComponent) => {
           if (remoteComponent.technology === Technologies.Angular) {

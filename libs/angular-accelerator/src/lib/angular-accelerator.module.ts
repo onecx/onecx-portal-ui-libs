@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
+import { CommonModule, registerLocaleData } from '@angular/common'
+import { APP_INITIALIZER, LOCALE_ID, NgModule} from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -30,13 +30,14 @@ import {
   provideTranslationPathFromMeta,
   MultiLanguageMissingTranslationHandler,
   provideMultiLanguageIdentifier,
+  DynamicLocaleId,
+  localeLoaders
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { OcxTooltipDirective } from './directives/tooltip.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
-import { DynamicLocaleId } from './utils/dynamic-locale-id'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
 import { TemplateDirective } from './directives/template.directive'
 import { OcxContentComponent } from './components/content/content.component'
@@ -60,7 +61,12 @@ export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMi
 
 function appInitializer(userService: UserService) {
   return async () => {
-    await firstValueFrom(userService.lang$.pipe(skip(1)))
+    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)));
+    try{
+      await localeLoaders[lang]?.().then(data => registerLocaleData(data.default ?? data))
+    }catch (error) {
+      console.warn(`Could not load locale data for '${lang}'. Angular pipes may not format correctly.`, error)
+    }
   }
 }
 

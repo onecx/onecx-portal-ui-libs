@@ -1,5 +1,4 @@
-import { createRoot } from 'react-dom/client'
-import { act } from 'react'
+import { render, waitFor } from '@testing-library/react'
 import { useWrappedGuards } from './use-wrapped-guards'
 import { wrapGuards } from '../utils/wrap-guards.utils'
 
@@ -49,33 +48,29 @@ describe('useWrappedGuards', () => {
 
   it('returns a WrappedGuards object with all required methods', async () => {
     let result: any
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(
+      <TestComponent
+        onResult={(r) => {
+          result = r
+        }}
+      />
+    )
 
-    await act(async () => {
-      root.render(
-        <TestComponent
-          onResult={(r) => {
-            result = r
-          }}
-        />
-      )
+    await waitFor(() => {
+      expect(result).toBeDefined()
     })
 
-    expect(result).toBeDefined()
     expect(typeof result.canMatch).toBe('function')
     expect(typeof result.canActivateChild).toBe('function')
     expect(typeof result.canActivate).toBe('function')
     expect(typeof result.canDeactivate).toBe('function')
-    root.unmount()
   })
 
   it('calls wrapGuards with current matches and location', async () => {
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent />)
 
-    await act(async () => {
-      root.render(<TestComponent />)
+    await waitFor(() => {
+      expect(wrapGuards).toHaveBeenCalled()
     })
 
     expect(wrapGuards).toHaveBeenCalledWith(
@@ -84,21 +79,18 @@ describe('useWrappedGuards', () => {
         location: mockLocation,
       })
     )
-    root.unmount()
   })
 
   it('passes guardsNavigationState and guardsGatherer options to wrapGuards', async () => {
     const guardsNavigationState = { guardCheck: true }
     const guardsGatherer = {} as any
 
-    const container = document.createElement('div')
-    const root = createRoot(container)
+    render(<TestComponent guardsNavigationState={guardsNavigationState} guardsGatherer={guardsGatherer} />)
 
-    await act(async () => {
-      root.render(<TestComponent guardsNavigationState={guardsNavigationState} guardsGatherer={guardsGatherer} />)
+    await waitFor(() => {
+      expect(wrapGuards).toHaveBeenCalled()
     })
 
     expect(wrapGuards).toHaveBeenCalledWith(expect.objectContaining({ guardsNavigationState, guardsGatherer }))
-    root.unmount()
   })
 })

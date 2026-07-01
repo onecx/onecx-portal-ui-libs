@@ -1,5 +1,6 @@
-import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react'
+import { createContext, type ReactNode, useContext, useMemo } from 'react'
 import { CurrentThemeTopic } from '@onecx/integration-interface'
+import { useTopic } from '../utils/use-topic.utils'
 
 /**
  * Theme context value shape.
@@ -39,8 +40,7 @@ const useTheme = () => {
  * @returns Provider wrapping the given children.
  */
 const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
-  const currentTheme$ = useMemo(() => value?.currentTheme$ ?? new CurrentThemeTopic(), [value?.currentTheme$])
-  const isInternalTopic = !value?.currentTheme$
+  const currentTheme$ = useTopic(value?.currentTheme$, CurrentThemeTopic)
 
   const contextValue = useMemo(
     () => ({
@@ -49,13 +49,6 @@ const ThemeProvider = ({ children, value }: ThemeProviderProps) => {
     [currentTheme$]
   )
 
-  useEffect(() => {
-    return () => {
-      if (isInternalTopic) {
-        currentTheme$.destroy()
-      }
-    }
-  }, [currentTheme$, isInternalTopic])
   return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>
 }
 

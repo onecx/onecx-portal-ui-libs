@@ -43,7 +43,7 @@ import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type ListGridData = {
   id: string | number
-  imagePath: string | number
+  imagePath?: string | number
   [columnId: string]: unknown
 }
 
@@ -235,7 +235,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
             styleClass: (a.classes || []).join(' '),
             disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
             visible: !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField),
-            command: this.createMenuItemCommand(a, row),
+            routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+            command: typeof a.routerLink === 'string' ? undefined : this.createMenuItemCommand(a, row),
           }))
         })
       )
@@ -723,7 +724,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
           visible: isVisible,
-          command: () => handleActionSync(this.router, a, selectedItem),
+          routerLink: typeof a.routerLink === 'string' ? a.routerLink : undefined,
+          command: typeof a.routerLink === 'string' ? undefined : () => handleActionSync(this.router, a, selectedItem),
           automationId: isVisible ? automationId : automationIdHidden,
         }
       })
