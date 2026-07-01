@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy, RendererFactory2 } from '@angular/core'
+import { inject, Injectable, OnDestroy } from '@angular/core'
 import {} from './onecx-overlay-container'
 import { FullscreenOverlayContainer } from '@angular/cdk/overlay'
 import { DYNAMIC_CONTAINER } from '@onecx/angular-integration-interface'
