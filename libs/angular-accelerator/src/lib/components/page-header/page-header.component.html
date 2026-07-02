@@ -51,18 +51,38 @@
           tooltipPosition="top"
           tooltipEvent="hover"
         >
+          @if (action.routerLink && !action.disabled) {
+          <a
+            [id]="action.id"
+            pButton
+            [routerLink]="action.routerLink"
+            [attr.href]="action.routerLink"
+            class="action-button p-button no-underline"
+            [ngClass]="action.btnClass"
+            [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [attr.aria-label]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+          >
+            @if (action.icon) {
+            <i class="p-button-icon" [ngClass]="action.icon"></i>
+            }
+            @if (action.label || action.labelKey) {
+            <span class="p-button-label">{{ action.labelKey ? (action.labelKey | translate) : action.label }}</span>
+            }
+          </a>
+          } @else {
           <p-button
             [id]="action.id"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             type="button"
             class="action-button"
-            (onClick)="action.actionCallback()"
+            (onClick)="action.actionCallback?.()"
             [disabled]="action.disabled ? action.disabled : false"
-            [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
+            [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
           ></p-button>
+          }
         </span>
         }
       </div>
@@ -84,7 +104,23 @@
             tooltipEvent="hover"
             tooltipPosition="top"
           ></button>
-          <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body"></p-menu>
+          <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body">
+            <ng-template pTemplate="item" let-item>
+              <a
+                class="p-menuitem-link"
+                [class.p-disabled]="item.disabled"
+                [attr.aria-disabled]="item.disabled ? true : null"
+                [routerLink]="item.disabled ? null : item.routerLink || null"
+                [attr.href]="item.disabled ? null : item.routerLink || null"
+                (click)="item.disabled ? $event.preventDefault() : (!item.routerLink && item.command?.($event))"
+              >
+                @if (item.icon) {
+                <span class="p-menuitem-icon" [ngClass]="item.icon"></span>
+                }
+                <span class="p-menuitem-text">{{ item.label }}</span>
+              </a>
+            </ng-template>
+          </p-menu>
         </div>
         } }
       </ng-container>
