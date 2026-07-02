@@ -148,7 +148,7 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
     if (EXPORTS_BLACKLIST.includes(exportKey)) continue;
 
     const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`;
-    if (packageFilterCallback && packageFilterCallback(subpackageName)) continue;
+    if (packageFilterCallback?.(subpackageName)) continue;
     subpackages.push({ name: subpackageName, requiredVersion: version });
   }
   return subpackages;
@@ -271,7 +271,7 @@ export function getOneCXSharedLibraryConfig(dependencies: Record<string, string>
     sharedLibConfig['shareScope'] = 'default';    
 
     const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '');
-    if (angularCoreVersion && parseInt(angularCoreVersion, 10) >= 21) {
+    if (angularCoreVersion && Number.parseInt(angularCoreVersion, 10) >= 21) {
       const shareScope = ('angular_').concat(angularCoreVersion);
       sharedLibConfig['shareScope'] = shareScope;
     }
