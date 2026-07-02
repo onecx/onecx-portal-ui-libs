@@ -15,6 +15,12 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { TooltipModule } from 'primeng/tooltip'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
+declare global {
+  interface Window {
+    __setForcedColorsActive?: (active: boolean) => void
+  }
+}
+
 describe('DiagramComponent', () => {
   let translateService: TranslateService
   let component: DiagramComponent
@@ -383,4 +389,25 @@ describe('DiagramComponent', () => {
     component.diagramType = DiagramType.PIE
     expect(component.useFullHeight).toBe(false)
   })
+
+  describe('High Contrast Mode', () => {
+    it('should apply white chart label colors when high contrast mode is enabled', () => {
+      component.ngOnChanges()
+      fixture.detectChanges()
+      window.__setForcedColorsActive?.(true)
+
+      expect(component.chartOptions?.plugins?.legend?.labels?.color).toEqual('#ffffff')
+    })
+
+    it('should apply text-color variable when high contrast mode is disabled', () => {
+      component.ngOnChanges()
+      fixture.detectChanges()
+      window.__setForcedColorsActive?.(false)
+
+      const expectedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim()
+      expect(component.chartOptions?.plugins?.legend?.labels?.color).toEqual(expectedColor)
+    })
+  })
 })
+
+
