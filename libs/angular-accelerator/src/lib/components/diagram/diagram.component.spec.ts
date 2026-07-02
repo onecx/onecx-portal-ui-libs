@@ -16,6 +16,12 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { TooltipModule } from 'primeng/tooltip'
 
+declare global {
+  interface Window {
+    __setForcedColorsActive?: (active: boolean) => void
+  }
+}
+
 describe('DiagramComponent', () => {
   let translateService: TranslateService
   let component: DiagramComponent
@@ -36,6 +42,7 @@ describe('DiagramComponent', () => {
   const numberOfResults = Math.pow(2, diagramData.length) - 1
 
   beforeEach(async () => {
+    window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
       imports: [
@@ -83,6 +90,7 @@ describe('DiagramComponent', () => {
   })
 
   it('should display the amountOfData on the diagram component', async () => {
+    component.ngOnChanges()
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const displayedNumber = await diagram.getTotalNumberOfResults()
     expect(displayedNumber).toEqual(numberOfResults)
@@ -387,5 +395,24 @@ describe('DiagramComponent', () => {
     component.fullHeight = false
     component.diagramType = DiagramType.PIE
     expect(component.useFullHeight).toBe(false)
+  })
+
+  describe('High Contrast Mode', () => {
+    it('should apply white chart label colors when high contrast mode is enabled', () => {
+      component.ngOnChanges()
+      fixture.detectChanges()
+      window.__setForcedColorsActive?.(true)
+
+      expect(component.chartOptions?.plugins?.legend?.labels?.color).toEqual('#ffffff')
+    })
+
+    it('should apply text-color variable when high contrast mode is disabled', () => {
+      component.ngOnChanges()
+      fixture.detectChanges()
+      window.__setForcedColorsActive?.(false)
+
+      const expectedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim()
+      expect(component.chartOptions?.plugins?.legend?.labels?.color).toEqual(expectedColor)
+    })
   })
 })
