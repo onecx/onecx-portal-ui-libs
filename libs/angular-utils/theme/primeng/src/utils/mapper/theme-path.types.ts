@@ -107,6 +107,7 @@ type Usages = NonNullable<RequiredThemeV2['usages']>;
  */
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
+  | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
