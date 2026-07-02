@@ -9,7 +9,7 @@
       @if (!disableFilterView()) {
       <ocx-filter-view
         [filters]="stateService.filters()"
-        [columns]="stateService.columns()"
+        [columns]="stateService.availableColumns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"
@@ -48,7 +48,7 @@
         [ngStyle]="stateService.layout() !== 'table' ? {'display' : 'none'}  : {}"
         *ocxIfPermission="searchConfigPermission(); elseTemplate: defaultColumnGroupSelectionComponent"
         name="{{columnGroupSlotName}}"
-        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: stateService.columns(), selectedGroupKey: selectedGroupKey, layout: stateService.layout(), displayedColumnsIds: displayedColumnKeys() }"
+        [inputs]="{ placeholderKey: groupSelectionNoGroupSelectedKey(), defaultGroupKey: defaultGroupKey(), customGroupKey: customGroupKey(), columns: stateService.availableColumns(), selectedGroupKey: selectedGroupKey, layout: stateService.layout(), displayedColumnsIds: displayedColumnKeys() }"
         [outputs]="{ groupSelectionChanged: slotGroupSelectionChangeListener }"
       >
         <ng-template #skeleton>
@@ -61,7 +61,7 @@
       <ng-container [ngTemplateOutlet]="defaultColumnGroupSelectionComponent"></ng-container>
       } @if (stateService.layout() === 'table') {
       <ocx-custom-group-column-selector
-        [columns]="stateService.columns()"
+        [columns]="stateService.availableColumns()"
         [displayedColumns]="displayedColumns()"
         [customGroupKey]="customGroupKey()"
         (columnSelectionChanged)="onColumnSelectionChange($event)"
@@ -151,7 +151,7 @@
   @if (stateService.layout() === 'table') {
   <ocx-column-group-selection
     [selectedGroupKey]="stateService.activeColumnGroupKey() ?? defaultGroupKey()"
-    [columns]="stateService.columns()"
+    [columns]="stateService.availableColumns()"
     [defaultGroupKey]="defaultGroupKey() !== customGroupKey() ? defaultGroupKey() : ''"
     [customGroupKey]="customGroupKey()"
     [placeholderKey]="groupSelectionNoGroupSelectedKey()"

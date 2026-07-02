@@ -28,6 +28,7 @@ export interface InteractiveDataView {
 export class DataViewStateService {
   layout = signal<ViewLayout>('grid')
   activeColumnGroupKey = signal<string | undefined>(undefined)
+  availableColumns = signal<DataTableColumn[]>([])
   columns = signal<DataTableColumn[]>([])
   actionColumnConfigFrozen = signal<boolean>(false)
   actionColumnConfigPosition = signal<'left' | 'right'>('right')

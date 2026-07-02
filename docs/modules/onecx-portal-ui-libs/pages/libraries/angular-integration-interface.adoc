@@ -28,6 +28,16 @@
 == Overview
 `@onecx/angular-integration-interface` library is a set of tools aiming to ease the development of Angular applications integrated with OneCX by utilizing and extending functionalities of {integration-interface_url}[@onecx/integration-interface]. This library offers Injectable services exposing a set of functionalities useful for integrating Microfrontends with OneCX without directly utilizing Topics.
 
+[#injection-tokens]
+== Injection Tokens
+
+[#dynamic-container]
+=== Dynamic Container
+Usage::
+*Get a reference to the container for dynamic content insertion of the Microfrontend or create one if it doesn't exist*.
++
+This injection token allows accessing the container element for dynamic content insertion of the Microfrontend. It should be used when creating new elements dynamically and inserting them into the DOM outside of the Angular component tree (e.g. modals, popups appended to the body, etc.). If the container element doesn't exist, it will be created and appended to the body.
+
 [#services]
 == Services
 
