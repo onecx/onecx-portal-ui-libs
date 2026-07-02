@@ -7,6 +7,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -64,6 +65,7 @@ export class DiagramComponent implements OnInit, OnChanges {
    */
   @Input() fillMissingColors = true
   @Input() fullHeight = false
+  @Input() customLegends = false
   private _diagramType: DiagramType = DiagramType.PIE
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
@@ -77,6 +79,9 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.chartType = this.diagramTypeToChartType(value)
   }
   private _supportedDiagramTypes: DiagramType[] = []
+  private highContrast = false
+  legendItems: { label: string | undefined; color: string | undefined; value?: number }[] = []
+
   @Input()
   get supportedDiagramTypes(): DiagramType[] {
     return this._supportedDiagramTypes
@@ -91,7 +96,7 @@ export class DiagramComponent implements OnInit, OnChanges {
 
   // enabled for only pie chart as it contains legends which are clipped
   get useFullHeight(): boolean {
-    return this._diagramType === DiagramType.PIE && this.fullHeight 
+    return this._diagramType === DiagramType.PIE && this.fullHeight
   }
 
   chartOptions: ChartOptions | undefined
@@ -111,7 +116,7 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.generateChart(this.colorScale, this.colorRangeInfo)
   }
   ngOnInit(): void {
-    this.generateChart(this.colorScale, this.colorRangeInfo)
+    addHighContrastListener(() => this.highContrastHandler())
   }
 
   public generateChart(colorScale: any, colorRangeInfo: any) {
@@ -129,24 +134,32 @@ export class DiagramComponent implements OnInit, OnChanges {
           },
         ],
       }
-    }
 
-    this.chartOptions = {
-      plugins: {
-        legend: {
-          position: 'bottom',
+      this.legendItems = this.data.map((value, index) => ({
+        label: value.label,
+        color: COLORS[index],
+      }))
+
+      const labelColor = getLabelColor(this.highContrast)
+      this.chartOptions = {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            display: !this.customLegends,
+            labels: { color: labelColor },
+          },
         },
-      },
-      maintainAspectRatio: false,
-      ...(this._diagramType === DiagramType.VERTICAL_BAR && {
-        plugins: { legend: { display: false } },
-        scales: { y: { ticks: { precision: 0 } } },
-      }),
-      ...(this._diagramType === DiagramType.HORIZONTAL_BAR && {
-        indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: { x: { ticks: { precision: 0 } } },
-      }),
+        maintainAspectRatio: false,
+        ...(this._diagramType === DiagramType.VERTICAL_BAR && {
+          plugins: { legend: { display: false } },
+          scales: { y: { ticks: { precision: 0, color: labelColor } }, x: { ticks: { color: labelColor } } },
+        }),
+        ...(this._diagramType === DiagramType.HORIZONTAL_BAR && {
+          indexAxis: 'y',
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { precision: 0, color: labelColor } }, y: { ticks: { color: labelColor } } },
+        }),
+      }
     }
   }
 
@@ -191,6 +204,11 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.componentStateChanged.emit({
       activeDiagramType: event.value.layout,
     })
+  }
+
+  private highContrastHandler() {
+    this.highContrast = hasHighContrast()
+    this.generateChart(this.colorScale, this.colorRangeInfo)
   }
 }
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
