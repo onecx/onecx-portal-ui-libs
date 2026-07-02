@@ -21,8 +21,6 @@ const sharedLibraryPatterns: RegExp[] = [
 ]
 
 /**
- * @deprecated This helper is deprecated and will be moved to `@onecx/build-utils` in v9. Use `getOneCXSharedLibraryConfig` to generate the shared config instead.
- * 
  * Provides recommendations for shared library configurations for specific OneCX-related libraries.
  * If the library name matches certain patterns (e.g., Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx), it modifies the shared configuration to set singleton, strictVersion, and eager to false.
  * For non-matching libraries, it returns false and does not modify the configuration.
@@ -37,7 +35,6 @@ export function getOneCXSharedRecommendations(
   if (!sharedLibraryPatterns.some((pattern) => pattern.test(libraryName))) {
     return false
   }
-
   sharedConfig.singleton = false
   sharedConfig.strictVersion = false
   sharedConfig.eager = false

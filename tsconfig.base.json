@@ -34,7 +34,8 @@
       "@onecx/angular-webcomponents": ["libs/angular-webcomponents/src/index.ts"],
       "@onecx/integration-interface": ["libs/integration-interface/src/index.ts"],
       "@onecx/ngrx-accelerator": ["libs/ngrx-accelerator/src/index.ts"],
-      "@onecx/release": ["tools/release/src/index.ts"]
+      "@onecx/release": ["tools/release/src/index.ts"],
+      "@onecx/build-utils": ["libs/build-utils/src/index.ts"]
     },
     "allowSyntheticDefaultImports": true
   },
