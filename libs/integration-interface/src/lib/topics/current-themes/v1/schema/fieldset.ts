@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from './registry'
-import { bgContrast, border, color, font, layout, shadow, transition, withRef } from './primitives'
+import { bgContrast, border, font, layout, transition, withRef } from './primitives'
 
 export const settings = z
   .object({
@@ -13,7 +13,7 @@ export const container = bgContrast
   .extend({
     border: border.optional(),
     padding: withRef(z.string()).optional(),
-    transition: (transition as typeof transition).default({ duration: 300 }),
+    transition: transition.optional(),
   })
   .register(themeSchemaRegistry, { id: 'fieldSetContainer' })
 

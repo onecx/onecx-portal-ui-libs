@@ -41,7 +41,19 @@ const FIELDSET_CONTENT: CssRule[] = [
 ]
 }];
 
+const FIELDSET_LEGEND_LABEL: CssRule[] = [
+{
+    selector: '.p-fieldset .p-fieldset-legend .p-fieldset-legend-label',
+    declarations: [
+    {
+        property: 'color',
+        from: 'usages.fieldset.contentContainer.contrast', // not applied
+    },
+]
+}];
+
 export const fieldsetCssRules: CssRule[] = [
+    ...FIELDSET_LEGEND_LABEL,
     ...FIELDSET_TOGGLE_ICON,
     ...FIELDSET_CONTENT
 ]
