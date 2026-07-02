@@ -1,18 +1,12 @@
-/** @jest-config-loader ts-node */
-// Without jest-config-loader, jest cannot load other ts files
-
 /* eslint-disable */
-import { createReportsConfig } from '../../jest-config-factory'
+import { createReportsConfig } from '../../../jest-config-factory'
 
 export default {
-  ...createReportsConfig('angular-utils'),
-  displayName: 'angular-utils',
-  preset: '../../jest.preset.js',
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts', '<rootDir>/cdk/**/*.spec.ts'],
+  ...createReportsConfig('angular-utils/cdk'),
+  displayName: 'angular-utils/cdk',
+  preset: '../../../jest.preset.js',
+  testMatch: ['<rootDir>/src/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  moduleNameMapper: {
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
-  },
   transform: {
     '^.+\\.(mjs|js|html)$': [
       'jest-preset-angular',
