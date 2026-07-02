@@ -103,10 +103,11 @@ type Usages = NonNullable<RequiredThemeV2['usages']>;
  *
  * Constrains `MappingRule.from` / `CssDeclaration.from` so typos are caught
  * at compile time. Depth covers the deepest real path:
- * `usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top`.
+ * `usages.table.row.defaultStates.even.defaultState.cell.defaultState.border.width.top`.
  */
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
+  | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`

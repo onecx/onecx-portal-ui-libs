@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { calendar } from "./schema/calendar";
 import { dialog } from "./schema/dialog";
 import { primitives } from "./schema/primitives";
 import { region } from "./schema/region";
@@ -9,6 +10,7 @@ import { themeSchemaRegistry } from "./schema/registry";
 
 const usages = z
   .object({
+    calendar: (calendar as typeof calendar).optional(),
     dialog: (dialog as typeof dialog).optional(),
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
