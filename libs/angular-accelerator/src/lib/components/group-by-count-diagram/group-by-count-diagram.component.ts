@@ -30,7 +30,8 @@ export class GroupByCountDiagramComponent implements OnInit {
    *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   @Input() fillMissingColors = true
-  @Input() supportedDiagramTypes: DiagramType[] = [] 
+  @Input() supportedDiagramTypes: DiagramType[] = []
+  @Input() customLegends = false
 
   private readonly _allLabelKeys$ = new BehaviorSubject<string[]>([])
   @Input()

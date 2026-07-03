@@ -1,9 +1,55 @@
 ::ng-deep {
-    .p-buttonset .p-button {
-      min-width: auto;
-    }
-  
-    .p-buttonset {
-      display: flex;
-    }
+  .p-buttonset .p-button {
+    min-width: auto;
   }
+
+  .p-buttonset {
+    display: flex;
+  }
+}
+
+.diagram-title,
+.diagram-description {
+  text-align: center;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.custom-legends-container {
+  display: flex;
+  justify-content: center;
+
+  .custom-legends-content-container {
+    max-height: 250px;
+    overflow-y: auto; //add scrollbar when entries are greater than 10 
+  }
+
+  .legends-table {
+    margin: 10px auto 0;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .legends-table td {
+    padding: 0.25rem 1rem;
+    vertical-align: middle;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+  }
+
+  .box {
+    width: 36px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
