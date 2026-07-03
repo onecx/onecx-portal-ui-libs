@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
@@ -7,7 +7,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
-import { addHighContrastListener, getLabelColor, hasHighContrast } from '../../utils/diagram-contrast-utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -53,7 +53,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],
 })
-export class DiagramComponent implements OnInit, OnChanges {
+export class DiagramComponent implements OnInit, OnChanges, OnDestroy {
   private readonly translateService = inject(TranslateService)
 
   @Input() data: DiagramData[] | undefined
@@ -209,6 +209,10 @@ export class DiagramComponent implements OnInit, OnChanges {
   private highContrastHandler() {
     this.highContrast = hasHighContrast()
     this.generateChart(this.colorScale, this.colorRangeInfo)
+  }
+
+  ngOnDestroy(): void {
+    removeHighContrastListener(this.highContrastHandler)
   }
 }
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
