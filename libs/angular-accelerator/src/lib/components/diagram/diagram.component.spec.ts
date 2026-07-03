@@ -84,6 +84,7 @@ describe('DiagramComponent', () => {
   })
 
   it('should display the amountOfData on the diagram component', async () => {
+    component.ngOnChanges()
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const displayedNumber = await diagram.getTotalNumberOfResults()
     expect(displayedNumber).toEqual(numberOfResults)

@@ -81,14 +81,14 @@ Object.defineProperty(globalThis, 'ResizeObserver', {
   value: mockResizeObserverConstructor,
 })
 
-if (typeof window !== 'undefined') {
-  Object.defineProperty(window, 'ResizeObserver', {
+if (typeof globalThis !== 'undefined') {
+  Object.defineProperty(globalThis, 'ResizeObserver', {
     configurable: true,
     writable: true,
     value: mockResizeObserverConstructor,
   })
 
-  Object.defineProperty(window, 'MutationObserver', {
+  Object.defineProperty(globalThis, 'MutationObserver', {
     configurable: true,
     writable: true,
     value: mockMutationObserverConstructor,

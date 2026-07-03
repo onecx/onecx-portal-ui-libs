@@ -66,6 +66,7 @@ export class DiagramComponent implements OnInit, OnChanges, OnDestroy {
   @Input() fillMissingColors = true
   @Input() fullHeight = false
   private _diagramType: DiagramType = DiagramType.PIE
+  @Input() customLegends = false
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
   @Input()
@@ -100,7 +101,6 @@ export class DiagramComponent implements OnInit, OnChanges, OnDestroy {
   amountOfData: number | undefined | null
   shownDiagramTypes: DiagramLayouts[] = []
   legendItems: { label: string | undefined; color: string | undefined; value?: number }[] = []
-  @Input() customLegends = false
   private highContrast = false
   // Changing the colorRangeInfo, will change the range of the color palette of the diagram.
   private colorRangeInfo = {
