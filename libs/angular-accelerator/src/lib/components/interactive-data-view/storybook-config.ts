@@ -136,14 +136,14 @@ export const defaultInteractiveDataViewArgs = {
       nameKey: 'Product',
       sortable: false,
       filterable: true,
-      predefinedGroupKeys: ['test'],
+      predefinedGroupKeys: ['test', 'all'],
     },
     {
       id: 'amount',
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
-      predefinedGroupKeys: ['test', 'test1'],
+      predefinedGroupKeys: ['test', 'test1', 'all'],
     },
     {
       id: 'available',
@@ -152,7 +152,7 @@ export const defaultInteractiveDataViewArgs = {
       sortable: false,
       filterable: true,
       filterType: FilterType.IS_NOT_EMPTY,
-      predefinedGroupKeys: ['test2'],
+      predefinedGroupKeys: ['test2', 'all'],
     },
     {
       id: 'date',
@@ -160,7 +160,7 @@ export const defaultInteractiveDataViewArgs = {
       nameKey: 'Date',
       sortable: false,
       filterable: true,
-      predefinedGroupKeys: ['test2'],
+      predefinedGroupKeys: ['test2', 'all'],
     },
   ],
   data: [
