@@ -22,6 +22,7 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    cssCodeSplit: true,
     lib: {
       entry: {
         index: 'src/lib/index.ts',
@@ -40,11 +41,13 @@ export default defineConfig({
           format: 'es',
           entryFileNames: 'lib/[name].mjs',
           chunkFileNames: 'lib/[name].mjs',
+          assetFileNames: 'lib/[name].[ext]',
         },
         {
           format: 'cjs',
           entryFileNames: 'lib/[name].cjs',
           chunkFileNames: 'lib/[name].cjs',
+          assetFileNames: 'lib/[name].[ext]',
         },
       ],
       external: [

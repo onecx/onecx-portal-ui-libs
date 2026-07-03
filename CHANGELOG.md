@@ -1,3 +1,23 @@
+## [8.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.8.0...v8.9.0) (2026-07-01)
+
+### Features
+
+* dynamic app container and dynamic document methods improved ([#1497](https://github.com/onecx/onecx-portal-ui-libs/issues/1497)) ([c26d978](https://github.com/onecx/onecx-portal-ui-libs/commit/c26d97881401e178df3ab7a355405d1c0b4c4691))
+
+### Bug Fixes
+
+* make imagePath optional ([66556e3](https://github.com/onecx/onecx-portal-ui-libs/commit/66556e3de869b6bc29f292c4f4a159858e8499fd))
+
+## [8.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.7.0...v8.8.0) (2026-06-24)
+
+### Features
+
+* closable flag in dialog ([#1546](https://github.com/onecx/onecx-portal-ui-libs/issues/1546)) ([f67c68b](https://github.com/onecx/onecx-portal-ui-libs/commit/f67c68bdc66587a31f24cf06db6b5b160c1f22ea))
+
+### Bug Fixes
+
+* a11y-portal-dialog - set focus on initiator - v8 ([#1554](https://github.com/onecx/onecx-portal-ui-libs/issues/1554)) ([2e1d837](https://github.com/onecx/onecx-portal-ui-libs/commit/2e1d8374f8f643cd494c12f6969e03c52cb219c6))
+
 ## [8.7.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.6.1...v8.7.0) (2026-06-19)
 
 ### Features

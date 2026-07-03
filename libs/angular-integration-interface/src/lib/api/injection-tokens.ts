@@ -17,3 +17,5 @@ export const APP_CONFIG = new InjectionToken<LibConfig>('APP_CONFIG')
 export const SANITY_CHECK = new InjectionToken<string>('OCXSANITY_CHECK')
 
 export const APPLICATION_NAME = new InjectionToken<string>('APPLICATION_NAME')
+
+export const DYNAMIC_CONTAINER = new InjectionToken<() => HTMLElement>('DYNAMIC_CONTAINER')
