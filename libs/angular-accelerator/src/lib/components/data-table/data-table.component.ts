@@ -383,13 +383,22 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         .filter((value) => value !== null && value !== undefined && value !== '')
 
       if (currentFilterColumn.columnType === ColumnType.DATE) {
+        const uniqueValues = [
+          ...new Map(
+            columnValues.map(value => [
+              new Date(value as any).getTime(),
+              value,
+            ])
+          ).values(),
+        ];
+
         return of({
-          options: columnValues.map(
-            (c) =>
+          options: uniqueValues.map(
+            (value) =>
               ({
-                label: c,
-                value: c,
-                toFilterBy: formatDate(`${c}`, currentFilterColumn.dateFormat ?? 'medium', this.locale),
+                label: value,
+                value: value,
+                toFilterBy: formatDate(new Date(value as any), currentFilterColumn.dateFormat ?? 'medium', this.locale),
               }) as SelectItem
           ),
           column: currentFilterColumn,
