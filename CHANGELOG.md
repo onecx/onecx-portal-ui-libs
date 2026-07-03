@@ -1,3 +1,17 @@
+## [7.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.10.0...v7.11.0) (2026-06-24)
+
+### Features
+
+* closable flag in portal dialog-v7 ([#1548](https://github.com/onecx/onecx-portal-ui-libs/issues/1548)) ([0dfaf5f](https://github.com/onecx/onecx-portal-ui-libs/commit/0dfaf5ff74a75d03c2eb44f16c3d3497ed2fc0a7))
+
+### Bug Fixes
+
+* a11y-column-group-selector-radio-button ([#1542](https://github.com/onecx/onecx-portal-ui-libs/issues/1542)) ([a073d93](https://github.com/onecx/onecx-portal-ui-libs/commit/a073d93d51d61678993b8784c0cc522671f2f475))
+* a11y-portal-dialog - set focus on initiator - v7 ([#1553](https://github.com/onecx/onecx-portal-ui-libs/issues/1553)) ([19853ae](https://github.com/onecx/onecx-portal-ui-libs/commit/19853aedd1de9769ea07d1b28bd4f8590c3b5613))
+* add routerLink fields to action buttons (v. 7) ([40956ca](https://github.com/onecx/onecx-portal-ui-libs/commit/40956ca23412ac4fe67a0e0e1388980d810a8477))
+* filter count text ([#1509](https://github.com/onecx/onecx-portal-ui-libs/issues/1509)) ([cf05a92](https://github.com/onecx/onecx-portal-ui-libs/commit/cf05a92e46dbaeaf7648bd27a3a6bf57cbc641a2))
+* v7 improve column header ([#1526](https://github.com/onecx/onecx-portal-ui-libs/issues/1526)) ([1286b95](https://github.com/onecx/onecx-portal-ui-libs/commit/1286b95231c7ed7de96c3fb3885ae8b985a65f47)), closes [#1516](https://github.com/onecx/onecx-portal-ui-libs/issues/1516)
+
 ## [7.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.9.2...v7.10.0) (2026-06-02)
 
 ### Features
