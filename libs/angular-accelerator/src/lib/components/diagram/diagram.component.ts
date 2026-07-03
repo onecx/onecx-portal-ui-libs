@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, output, signal } from '@angular/core'
+import { Component, computed, effect, input, model, output, signal, OnDestroy } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'
@@ -6,6 +6,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -53,12 +54,13 @@ const allDiagramTypes: DiagramLayouts[] = [
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],
 })
-export class DiagramComponent {
+export class DiagramComponent implements OnDestroy {
   data = input<DiagramData[] | undefined>(undefined)
   sumKey = input<string>('OCX_DIAGRAM.SUM')
   fullHeight = input<boolean>(false)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  customLegends = input<boolean>(false)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -81,6 +83,7 @@ export class DiagramComponent {
   shownDiagramTypes = computed(() => 
     allDiagramTypes.filter((vl) => this.supportedDiagramTypes().includes(vl.layout))
   )
+  highContrast = signal(false)
   // enabled for only pie chart as it contains legends which are hidden
   useFullHeight = computed(() =>
     this.diagramType() === DiagramType.PIE && this.fullHeight()
@@ -96,12 +99,24 @@ export class DiagramComponent {
 
   private static nextUniqueId = 0;
   uniqueInstanceId: number;
+  legendItems: { label: string | undefined, color: string | undefined, value?: number }[] = []
 
   constructor() {
+    this.refreshTheme()
     this.uniqueInstanceId = DiagramComponent.nextUniqueId++;
+    addHighContrastListener(this.refreshTheme)
     effect(() => {
       this.generateChart(this.colorScale, this.colorRangeInfo)
     })
+  }
+
+  ngOnDestroy() {
+    removeHighContrastListener(this.refreshTheme)
+  }
+
+  refreshTheme = () => {
+    this.highContrast.set(hasHighContrast())
+    this.generateChart(this.colorScale, this.colorRangeInfo)
   }
 
   public generateChart(colorScale: any, colorRangeInfo: any) {
@@ -121,22 +136,28 @@ export class DiagramComponent {
       ],
     })
 
+    this.legendItems = data.map((value, index) => ({
+      label: value.label,
+      color: COLORS[index]
+    }))
+
+    const labelColor = getLabelColor(this.highContrast())
     this.chartOptions.set({
       plugins: {
         legend: {
-          position: 'bottom',
+          display: !this.customLegends(),
+          position: 'bottom',                    
+          labels: { color: labelColor },
         },
       },
       maintainAspectRatio: false,
       ...(this.diagramType() === DiagramType.VERTICAL_BAR && {
-        plugins: { legend: { display: false } },
-        scales: { y: { ticks: { precision: 0 } } },
+        scales: { y: { ticks: { precision: 0, color: labelColor } }, x: { ticks: { color: labelColor } } },
       }),
       ...(this.diagramType() === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: { x: { ticks: { precision: 0 } } },
-      }),
+        scales: { x: { ticks: { precision: 0, color: labelColor } }, y: { ticks: { color: labelColor } } },
+      })
     })
   }
 
