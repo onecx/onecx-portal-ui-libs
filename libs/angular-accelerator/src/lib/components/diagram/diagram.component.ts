@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
@@ -7,6 +7,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { PrimeIcon } from '../../utils/primeicon.utils'
+import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -52,7 +53,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   templateUrl: './diagram.component.html',
   styleUrls: ['./diagram.component.scss'],
 })
-export class DiagramComponent implements OnInit, OnChanges {
+export class DiagramComponent implements OnInit, OnChanges, OnDestroy {
   private readonly translateService = inject(TranslateService)
 
   @Input() data: DiagramData[] | undefined
@@ -65,6 +66,7 @@ export class DiagramComponent implements OnInit, OnChanges {
   @Input() fillMissingColors = true
   @Input() fullHeight = false
   private _diagramType: DiagramType = DiagramType.PIE
+  @Input() customLegends = false
   selectedDiagramType: DiagramLayouts | undefined
   public chartType: 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar' = 'pie'
   @Input()
@@ -98,6 +100,8 @@ export class DiagramComponent implements OnInit, OnChanges {
   chartData: ChartData | undefined
   amountOfData: number | undefined | null
   shownDiagramTypes: DiagramLayouts[] = []
+  legendItems: { label: string | undefined; color: string | undefined; value?: number }[] = []
+  private highContrast = false
   // Changing the colorRangeInfo, will change the range of the color palette of the diagram.
   private colorRangeInfo = {
     colorStart: 0,
@@ -110,8 +114,10 @@ export class DiagramComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     this.generateChart(this.colorScale, this.colorRangeInfo)
   }
+
   ngOnInit(): void {
-    this.generateChart(this.colorScale, this.colorRangeInfo)
+    addHighContrastListener(() => this.highContrastHandler())
+    //this.generateChart(this.colorScale, this.colorRangeInfo)
   }
 
   public generateChart(colorScale: any, colorRangeInfo: any) {
@@ -129,23 +135,29 @@ export class DiagramComponent implements OnInit, OnChanges {
           },
         ],
       }
+      this.legendItems = this.data.map((value, index) => ({
+        label: value.label,
+        color: COLORS[index],
+      }))
     }
-
+    const labelColor = getLabelColor(this.highContrast)   
     this.chartOptions = {
       plugins: {
         legend: {
           position: 'bottom',
+          display: !this.customLegends,
+          labels: { color: labelColor }
         },
       },
       maintainAspectRatio: false,
       ...(this._diagramType === DiagramType.VERTICAL_BAR && {
         plugins: { legend: { display: false } },
-        scales: { y: { ticks: { precision: 0 } } },
+        scales: { y: { ticks: { precision: 0, color: labelColor } }, x: { ticks: { color: labelColor } } },
       }),
       ...(this._diagramType === DiagramType.HORIZONTAL_BAR && {
         indexAxis: 'y',
         plugins: { legend: { display: false } },
-        scales: { x: { ticks: { precision: 0 } } },
+        scales: { x: { ticks: { precision: 0, color: labelColor } }, y: { ticks: { color: labelColor } } },
       }),
     }
   }
@@ -191,6 +203,15 @@ export class DiagramComponent implements OnInit, OnChanges {
     this.componentStateChanged.emit({
       activeDiagramType: event.value.layout,
     })
+  }
+
+  private highContrastHandler() {
+    this.highContrast = hasHighContrast()
+    this.generateChart(this.colorScale, this.colorRangeInfo)
+  }
+
+  ngOnDestroy() {
+    removeHighContrastListener(this.highContrastHandler)
   }
 }
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {

@@ -22,6 +22,7 @@ export class GroupByCountDiagramComponent implements OnInit {
   @Input() sumKey = 'SEARCH.SUMMARY_TITLE'
   @Input() diagramType = DiagramType.PIE
   @Input() fullHeight = false
+  @Input() customLegends = false
   
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.

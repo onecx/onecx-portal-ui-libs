@@ -197,3 +197,14 @@ export const WithChartFillingContainerHeight = {
     fillMissingColors: true,
   },
 }
+
+export const WithAccessibilityImprovements = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    customLegends: true,
+    data: generateMockData(25),
+    supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
+    sumKey: 'OCX_DIAGRAM.SUM',
+  }
+}

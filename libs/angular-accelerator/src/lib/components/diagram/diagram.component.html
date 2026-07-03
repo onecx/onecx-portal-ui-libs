@@ -35,6 +35,9 @@
       [ariaLabel]="(data ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data), valueString: generateDiagramValueString(data)}"
     ></p-chart>
   </div>
+  @if(customLegends && chartType === 'pie') {
+    <ng-container [ngTemplateOutlet]="customLegendsTable"></ng-container>
+  }
   <div class="w-full flex justify-content-center mt-2 sumKey">
     <p class="text-md font-medium text-700">
       <span name="sumLabel"> {{ sumKey | translate }}</span> : <span name="amountOfData">{{ amountOfData}}</span>
@@ -47,3 +50,48 @@
     <p-message severity="info" text="{{ 'OCX_DIAGRAM.NO_DATA' | translate }}"></p-message>
   </div>
 }
+
+<ng-template #customLegendsTable>
+  <div aria-hidden="true" class="custom-legends-container">
+    <div class="custom-legends-content-container">
+      <table class="legends-table">
+        @for (item of legendItems; track $index; let i = $index) {
+        <tr class="sr-only">
+          @if(i % 2 === 0) {
+          <ng-container>
+            <th>LEGEND COLUMN 1</th>
+            @if(legendItems[i + 1]) {
+            <th>LEGEND COLUMN 2</th>
+            }
+          </ng-container>
+          }
+        </tr>
+        } @for (item of legendItems; track $index; let i = $index) {
+        <tr>
+          @if(i % 2 === 0) {
+          <ng-container>
+            <td>
+              <span class="box" [style.backgroundColor]="legendItems[i].color"></span>
+              {{ legendItems[i].label }}
+              <span class="sr-only"
+                >{{ item.label }}, {{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}: {{ item.value }}</span
+              >
+            </td>
+            @if(legendItems[i + 1]) {
+            <td>
+              <span class="box" [style.backgroundColor]="legendItems[i + 1].color"></span>
+              {{ legendItems[i + 1].label }}
+              <span class="sr-only"
+                >{{ legendItems[i + 1].label }}, {{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}: {{ legendItems[i +
+                1].value }}</span
+              >
+            </td>
+            }
+          </ng-container>
+          }
+        </tr>
+        }
+      </table>
+    </div>
+  </div>
+</ng-template>
