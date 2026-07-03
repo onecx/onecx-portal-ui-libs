@@ -1,3 +1,14 @@
+## [6.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.25.0...v6.26.0) (2026-06-24)
+
+### Features
+
+* closable flag in portal dialog-v6 ([#1549](https://github.com/onecx/onecx-portal-ui-libs/issues/1549)) ([e7e71b8](https://github.com/onecx/onecx-portal-ui-libs/commit/e7e71b8abadd55cfb505bbad56138fdcb1fcf16d))
+
+### Bug Fixes
+
+* a11y-portal-dialog - set focus on initiator - v6 ([#1552](https://github.com/onecx/onecx-portal-ui-libs/issues/1552)) ([2241967](https://github.com/onecx/onecx-portal-ui-libs/commit/2241967f1d85c90b7bb4d8bdaf57e85aa28dc455))
+* add routerLink fields to action buttons ([ab18100](https://github.com/onecx/onecx-portal-ui-libs/commit/ab181006f1166fb38f3047c602346ba3d0cb928b))
+
 ## [6.25.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.24.1...v6.25.0) (2026-06-12)
 
 ### Features

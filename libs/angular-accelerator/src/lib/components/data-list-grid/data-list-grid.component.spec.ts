@@ -1,7 +1,8 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
-import { ActivatedRoute, RouterModule } from '@angular/router'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { Component } from '@angular/core'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import {
   provideAppStateServiceMock,
@@ -21,9 +22,13 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { firstValueFrom } from 'rxjs'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
+
+@Component({ standalone: false, template: '' })
+class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -40,6 +45,7 @@ describe('DataListGridComponent', () => {
   let component: DataListGridComponent
   let translateService: TranslateService
   let listGrid: DataListGridHarness
+  let router: Router
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -228,16 +234,16 @@ describe('DataListGridComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataListGridComponent],
+      declarations: [DataListGridComponent, TestRouteComponent],
       imports: [
         AngularAcceleratorPrimeNgModule,
-        TranslateModule.forRoot(),
-        TranslateTestingModule.withTranslations(TRANSLATIONS),
         AngularAcceleratorModule,
+        RouterModule.forRoot([{ path: '**', component: TestRouteComponent }]),
+        NoopAnimationsModule,
         TooltipModule,
         OcxTooltipDirective,
-        RouterModule,
-        NoopAnimationsModule,
+        TranslateModule.forRoot(),
+        TranslateTestingModule.withTranslations(TRANSLATIONS),
       ],
       providers: [
         {
@@ -271,6 +277,7 @@ describe('DataListGridComponent', () => {
     userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
     fixture.detectChanges()
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
+    router = TestBed.inject(Router)
   })
 
   it('should create the data list grid component', () => {
@@ -899,6 +906,83 @@ describe('DataListGridComponent', () => {
         expect(menuItems!.length).toBe(1)
         expect(await menuItems![0].getText()).toEqual('OVERFLOW_ACTION_KEY')
       })
+
+      describe('action buttons with routerLink', () => {
+        it('should render inline action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+          component.additionalActions = [
+            {
+              id: 'routerLinkAction',
+              routerLink: '/inline',
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: false,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const listActions = await listGrid.getActionButtons('list')
+          expect(listActions.length).toBeGreaterThan(0)
+
+          await listActions[0].click()
+          await fixture.whenStable()
+
+          expect(router.url).toBe('/inline')
+        })
+
+        it('should render overflow action button with routerLink', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+
+          component.additionalActions = [
+            {
+              id: 'routerLinkAction',
+              routerLink: '/overflow',
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: true,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const overflowButton = await listGrid.getListOverflowMenuButton()
+          await overflowButton.click()
+
+          const overflowMenu = await listGrid.getListOverflowMenu()
+          expect(overflowMenu).toBeTruthy()
+          const tableActions = await overflowMenu?.getAllMenuItems()
+          expect(tableActions!.length).toBe(1)
+
+          await tableActions![0].selectItem()
+          expect(router.url).toBe('/overflow')
+        })
+
+        it('should handle routerLink as function returning string', async () => {
+          userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
+          const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+          const routerLinkFunction = jest.fn(() => '/function-link')
+
+          component.additionalActions = [
+            {
+              id: 'functionRouterLink',
+              routerLink: routerLinkFunction,
+              permission: 'CUSTOM#ACTION',
+              showAsOverflow: false,
+            },
+          ]
+
+          fixture.detectChanges()
+          await fixture.whenStable()
+
+          const tableActions = await listGrid.getActionButtons('list')
+          await tableActions[0].click()
+
+          expect(routerLinkFunction).toHaveBeenCalledTimes(1)
+          expect(spy).toHaveBeenCalledWith(['/function-link'])
+        })
+      })
     })
 
     describe('grid layout', () => {
@@ -1205,4 +1289,270 @@ describe('DataListGridComponent', () => {
     })
   })
 
+
+  describe('overflow helper methods', () => {
+    it('should return an empty list when creating overflow menu items with no actions', async () => {
+      const result = await firstValueFrom((component as any).createOverflowListMenuItems([], null))
+
+      expect(result).toEqual([])
+    })
+
+    it('should map routerLink string to menu item without command', () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        icon: 'pi pi-check',
+        classes: ['class-a', 'class-b'],
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.label).toBe('Label')
+      expect(menuItem.icon).toBe('pi pi-check')
+      expect(menuItem.styleClass).toBe('class-a class-b')
+      expect(menuItem.routerLink).toBe('/details')
+      expect(menuItem.command).toBeUndefined()
+    })
+
+    it('should navigate when routerLink is defined on the action', async () => {
+      const action = {
+        id: 'router-action',
+        permission: 'VIEW',
+        routerLink: '/details',
+      }
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+
+      await (component as any).handleAction(action, { id: 'row-1' })
+
+      expect(navigateSpy).toHaveBeenCalledWith(['/details'])
+    })
+
+    it('should execute callback when no routerLink is defined', async () => {
+      const callback = jest.fn()
+      const action = {
+        id: 'callback-action',
+        permission: 'VIEW',
+        callback,
+      }
+
+      await (component as any).handleAction(action, { id: 'row-1' })
+
+      expect(callback).toHaveBeenCalledWith({ id: 'row-1' })
+    })
+
+    it('should do nothing when callback is missing', async () => {
+      const action = {
+        id: 'no-callback-action',
+        permission: 'VIEW',
+      }
+
+      await expect((component as any).handleAction(action, { id: 'row-1' })).resolves.toBeUndefined()
+    })
+
+    it('should delegate the sync action wrapper to handleAction', async () => {
+      const handleActionSpy = jest.spyOn(component as any, 'handleAction').mockResolvedValue(undefined)
+      const action = {
+        id: 'sync-action',
+        permission: 'VIEW',
+      }
+      const row = { id: 'row-1' }
+
+      ;(component as any).handleActionSync(action, row)
+      await Promise.resolve()
+
+      expect(handleActionSpy).toHaveBeenCalledWith(action, row)
+    })
+
+    it('should resolve string routerLink values', async () => {
+      await expect((component as any).resolveRouterLink('/details')).resolves.toBe('/details')
+    })
+
+    it('should resolve routerLink functions returning strings', async () => {
+      const routerLink = jest.fn(() => '/dynamic')
+
+      await expect((component as any).resolveRouterLink(routerLink)).resolves.toBe('/dynamic')
+      expect(routerLink).toHaveBeenCalledTimes(1)
+    })
+
+    it('should resolve routerLink functions returning promises', async () => {
+      const routerLink = jest.fn(async () => '/dynamic-promise')
+
+      await expect((component as any).resolveRouterLink(routerLink)).resolves.toBe('/dynamic-promise')
+      expect(routerLink).toHaveBeenCalledTimes(1)
+    })
+
+    it('should resolve async routerLink values', async () => {
+      await expect((component as any).resolveRouterLink(Promise.resolve('/async'))).resolves.toBe('/async')
+    })
+
+    it('should use the translated label when a translation exists', () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(
+        action,
+        { id: 'row-1' },
+        { LABEL_KEY: 'Translated Label' }
+      )
+
+      expect(menuItem.label).toBe('Translated Label')
+    })
+
+    it('should map non-string routerLink to command and execute handleActionSync', () => {
+      const action = {
+        id: 'action-id',
+        permission: 'VIEW',
+        routerLink: () => '/dynamic',
+      }
+      const row = { id: 'row-1' }
+      const handleActionSyncSpy = jest.spyOn(component as any, 'handleActionSync').mockImplementation(() => undefined)
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, {})
+
+      expect(menuItem.routerLink).toBeUndefined()
+      expect(menuItem.command).toBeDefined()
+
+      menuItem.command?.({} as any)
+
+      expect(handleActionSyncSpy).toHaveBeenCalledWith(action, row)
+    })
+
+    it('should set command for grid actions when routerLink is not a string', () => {
+      const action = {
+        id: 'grid-action',
+        permission: 'VIEW',
+        routerLink: () => '/dynamic-grid',
+      }
+      const selectedItem = { id: 'row-1' }
+      const handleActionSyncSpy = jest.spyOn(component as any, 'handleActionSync').mockImplementation(() => undefined)
+
+      const menuItems = (component as any).mapGridMenuItems(
+        ['VIEW'],
+        [action],
+        selectedItem,
+        {}
+      )
+
+      expect(menuItems[0].routerLink).toBeUndefined()
+      expect(menuItems[0].command).toBeDefined()
+
+      menuItems[0].command?.({} as any)
+
+      expect(handleActionSyncSpy).toHaveBeenCalledWith(action, selectedItem)
+    })
+
+    it('should create overflow items via translation mapping for non-empty actions', async () => {
+      const action = {
+        id: 'action-id',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const result = (await firstValueFrom(
+        (component as any).createOverflowListMenuItems([action], { id: 'row-1' })
+      )) as any[]
+
+      expect(result).toHaveLength(1)
+      expect(result[0].label).toBe('LABEL_KEY')
+    })
+
+    it('should set disabled when action.disabled is true', () => {
+      const action = {
+        id: 'disabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        disabled: true,
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep disabled false when no explicit disabled state is provided', () => {
+      const action = {
+        id: 'enabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(false)
+    })
+
+    it('should set disabled when actionEnabledField is false on row', () => {
+      const action = {
+        id: 'field-disabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: false }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(true)
+    })
+
+    it('should keep visible true when no actionVisibleField is provided', () => {
+      const action = {
+        id: 'default-visible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+      }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, { id: 'row-1' }, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(true)
+    })
+
+    it('should set visible to false when actionVisibleField is false on row', () => {
+      const action = {
+        id: 'invisible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: false }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(false)
+    })
+
+    it('should set visible to true when actionVisibleField is true on row', () => {
+      const action = {
+        id: 'visible-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        actionVisibleField: 'showAction',
+      }
+      const row = { id: 'row-1', showAction: true }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.visible).toBe(true)
+    })
+
+    it('should keep disabled false when enabled field is true and explicit disabled is false', () => {
+      const action = {
+        id: 'enabled-action',
+        labelKey: 'LABEL_KEY',
+        permission: 'VIEW',
+        disabled: false,
+        actionEnabledField: 'ready',
+      }
+      const row = { id: 'row-1', ready: true }
+
+      const menuItem = (component as any).toOverflowListMenuItem(action, row, { LABEL_KEY: 'Label' })
+
+      expect(menuItem.disabled).toBe(false)
+    })
+  })
 })

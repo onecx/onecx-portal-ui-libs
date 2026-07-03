@@ -47,7 +47,16 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
     }),
     moduleMetadata({
       declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
-      imports: [DataViewModule, MenuModule, ButtonModule, MultiSelectModule, TooltipModule, StorybookTranslateModule, OcxTooltipDirective],
+      imports: [
+        DataViewModule,
+        MenuModule,
+        ButtonModule,
+        MultiSelectModule,
+        TooltipModule,
+        StorybookTranslateModule,
+        OcxTooltipDirective,
+        RouterModule,
+      ],
     }),
   ],
 }
@@ -315,6 +324,42 @@ export const ListWithOnlyAdditionalOverflowActions = {
   },
 }
 
+export const ListWithRouterLinkOverflowActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-overflow-link',
+      },
+    ],
+  },
+}
+
+export const ListWithRouterLinkInlineActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Inline RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: false,
+        routerLink: '/data-list-grid-inline-link',
+      },
+    ],
+  },
+}
+
 export const ListWithPageSizes = {
   argTypes: defaultArgTypes,
   render: Template,
@@ -415,6 +460,25 @@ export const GridWithConditionallyVisibleAdditionalActions = {
         icon: 'pi pi-plus',
         permission: 'TEST_MGMT#TEST_VIEW',
         actionVisibleField: 'available',
+      },
+    ],
+  },
+}
+
+export const GridWithRouterLinkOverflowActions = {
+  argTypes: defaultArgTypes,
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    additionalActions: [
+      {
+        id: '1',
+        labelKey: 'Overflow RouterLink Action',
+        icon: 'pi pi-plus',
+        permission: 'TEST_MGMT#TEST_VIEW',
+        showAsOverflow: true,
+        routerLink: '/data-list-grid-grid-overflow-link',
       },
     ],
   },
