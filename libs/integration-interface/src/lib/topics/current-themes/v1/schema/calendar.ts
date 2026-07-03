@@ -31,9 +31,9 @@ export const navigationSelector = z
   .object({
     hoverBackground: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.area.content.hoverState.defaultVariant.bg}}"),
-    color: color.default("{{primitives.area.content.defaultState.defaultVariant.contrast}}"),
-    hoverColor: color.default("{{primitives.area.content.hoverState.defaultVariant.contrast}}"),
+      .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
+    color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+    hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
     padding: withRef(z.string()).default("{{primitives.space.sm}}"),
     border: border.default({
       radius: "{{primitives.radius.sm}}",
@@ -115,16 +115,16 @@ export const calendar = z
           .optional(),
         background: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.defaultState.defaultVariant.bg}}"),
+          .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
         hoverBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.hoverState.defaultVariant.bg}}"),
+          .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
         activeBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.activeState.defaultVariant.bg}}"),
-        color: color.default("{{primitives.area.content.defaultState.defaultVariant.contrast}}"),
-        hoverColor: color.default("{{primitives.area.content.hoverState.defaultVariant.contrast}}"),
-        activeColor: color.default("{{primitives.area.content.activeState.defaultVariant.contrast}}"),
+          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
+        activeColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
         border: border.default({
           color: "{{primitives.border.defaultVariant.color}}",
           radius: "{{primitives.radius.md}}",
@@ -136,7 +136,7 @@ export const calendar = z
       .optional(),
     inputIcon: z
       .object({
-        color: color.default("{{primitives.area.content.defaultState.defaultVariant.contrast}}"),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
       })
       .optional(),
     selectMonth: (navigationSelector as typeof navigationSelector).optional(),
@@ -154,24 +154,24 @@ export const calendar = z
       .object({
         padding: withRef(z.string()).default("{{primitives.space.xs}}"),
         fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
-        color: color.default("{{primitives.area.content.defaultState.defaultVariant.contrast}}"),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
       })
       .optional(),
     date: z
       .object({
         hoverBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.hoverState.defaultVariant.bg}}"),
+          .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
         selectedBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.activeState.defaultVariant.bg}}"),
+          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
         rangeSelectedBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.activeState.defaultVariant.bg}}"),
-        color: color.default("{{primitives.area.content.defaultState.defaultVariant.contrast}}"),
-        hoverColor: color.default("{{primitives.area.content.hoverState.defaultVariant.contrast}}"),
-        selectedColor: color.default("{{primitives.area.content.activeState.defaultVariant.contrast}}"),
-        rangeSelectedColor: color.default("{{primitives.area.content.activeState.defaultVariant.contrast}}"),
+          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
+        selectedColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
+        rangeSelectedColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
         width: withRef(z.string()).default("2.5rem"),
         height: withRef(z.string()).default("2.5rem"),
         border: border.default({
@@ -207,8 +207,8 @@ export const calendar = z
       .object({
         background: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.content.defaultState.primaryVariant.bg}}"),
-        color: color.default("{{primitives.area.content.defaultState.primaryVariant.contrast}}"),
+          .default("{{primitives.area.onSurface.defaultState.primaryVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.defaultState.primaryVariant.contrast}}"),
       })
       .optional(),
   })
