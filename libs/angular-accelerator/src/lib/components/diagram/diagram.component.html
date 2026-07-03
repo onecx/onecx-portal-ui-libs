@@ -35,7 +35,6 @@
       [ariaLabel]="(data ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data), valueString: generateDiagramValueString(data)}"
     ></p-chart>
   </div>
-  customLegends -- {{customLegends}}
   @if(customLegends && chartType === 'pie') {
     <ng-container [ngTemplateOutlet]="customLegendsTable"></ng-container>
   }
