@@ -43,7 +43,7 @@ import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
 export type ListGridData = {
   id: string | number
-  imagePath: string | number
+  imagePath?: string | number
   [columnId: string]: unknown
 }
 
