@@ -1,37 +1,37 @@
-import { type FC, createContext, useState, useEffect, useMemo, type PropsWithChildren } from 'react'
+import { type FC, createContext, useMemo, type PropsWithChildren } from 'react'
 import { filter, firstValueFrom, map } from 'rxjs'
-import { type PermissionsRpc, PermissionsRpcTopic } from '@onecx/integration-interface'
+import { PermissionsRpcTopic } from '@onecx/integration-interface'
+import { useTopic } from '@onecx/react-integration-interface'
 
 /**
  * Permission context value shape.
  */
 interface PermissionContextType {
-  permissions: PermissionsRpc[]
   getPermissions: (appId: string, productName: string) => Promise<string[]>
 }
 
 /** Permission context for remote components. */
 export const PermissionContext = createContext<PermissionContextType | undefined>(undefined)
 
-const permissionsTopic$ = new PermissionsRpcTopic()
-
 /**
  * Provides permissions fetched from the portal permissions topic.
+ * Mirrors the Angular `PermissionService` pattern: caches results by `appId:productName`
+ * and does not accumulate messages in state, preventing re-render loops.
+ *
  * @param children - nested content rendered with permission context.
  * @returns Permission context provider component.
  */
 export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [permissions, setPermissions] = useState<PermissionsRpc[]>([])
+  const permissionCache = useMemo(() => new Map<string, Promise<string[]>>(), [])
+  const topic$ = useTopic(undefined, PermissionsRpcTopic)
 
-  /**
-   * Fetch permissions for a given app/product pair.
-   * @param appId - application identifier.
-   * @param productName - product identifier.
-   * @returns list of permissions.
-   */
   const getPermissions = async (appId: string, productName: string): Promise<string[]> => {
+    const cacheKey = `${appId}:${productName}`
+    const cached = permissionCache.get(cacheKey)
+    if (cached) return cached
+
     const permissions = firstValueFrom(
-      permissionsTopic$.pipe(
+      topic$.pipe(
         filter(
           (message) =>
             message.appId === appId && message.productName === productName && Array.isArray(message.permissions)
@@ -39,21 +39,12 @@ export const PermissionProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
         map((message) => message.permissions ?? [])
       )
     )
-    permissionsTopic$.publish({ appId: appId, productName: productName })
+    permissionCache.set(cacheKey, permissions)
+    topic$.publish({ appId, productName })
     return permissions
   }
 
-  useEffect(() => {
-    const subscription = permissionsTopic$.subscribe((message) => {
-      setPermissions((prev) => [...prev, message])
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  const contextValue = useMemo(() => ({ permissions, getPermissions }), [permissions])
+  const contextValue = useMemo(() => ({ getPermissions }), [permissionCache, topic$])
 
   return <PermissionContext.Provider value={contextValue}>{children}</PermissionContext.Provider>
 }
