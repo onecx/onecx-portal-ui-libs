@@ -11,18 +11,32 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 
-const usages = z
-  .object({
-    calendar: (calendar as typeof calendar).optional(),
-    dialog: (dialog as typeof dialog).optional(),
-    badge: (badge as typeof badge).optional(),
-    region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
-    tooltip: (tooltip as typeof tooltip).optional(),
-    carousel: (carousel as typeof carousel).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
-  })
+type UsagesShape = {
+  calendar: z.ZodOptional<typeof calendar>;
+  dialog: z.ZodOptional<typeof dialog>;
+  badge: z.ZodOptional<typeof badge>;
+  region: z.ZodOptional<typeof region>;
+  table: z.ZodOptional<typeof table>;
+  tooltip: z.ZodOptional<typeof tooltip>;
+  carousel: z.ZodOptional<typeof carousel>;
+  fieldset: z.ZodOptional<typeof fieldset>;
+  diagram: z.ZodOptional<typeof diagram>;
+}
+
+const usagesShape: UsagesShape = {
+  calendar: calendar.optional(),
+  dialog: dialog.optional(),
+  badge: badge.optional(),
+  region: region.optional(),
+  table: table.optional(),
+  tooltip: tooltip.optional(),
+  carousel: carousel.optional(),
+  fieldset: fieldset.optional(),
+  diagram: diagram.optional(),
+};
+
+export const usages = z
+  .object(usagesShape)
   .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
