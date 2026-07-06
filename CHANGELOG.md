@@ -1,3 +1,15 @@
+## [9.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.10...v9.0.0-rc.11) (2026-07-06)
+
+### Features
+
+* dynamic app container and dynamic document methods improved ([#1497](https://github.com/onecx/onecx-portal-ui-libs/issues/1497)) ([#1575](https://github.com/onecx/onecx-portal-ui-libs/issues/1575)) ([f976474](https://github.com/onecx/onecx-portal-ui-libs/commit/f976474abc954d77780743beb32016a067eade4b))
+
+### Bug Fixes
+
+* issues observed after adapting to state service ([#1573](https://github.com/onecx/onecx-portal-ui-libs/issues/1573)) ([18b9ed4](https://github.com/onecx/onecx-portal-ui-libs/commit/18b9ed41bd417c68106d4912eb0b553f56b37324))
+* **react:** improve permission provider performance and i18n initiali… ([#1587](https://github.com/onecx/onecx-portal-ui-libs/issues/1587)) ([784b1b8](https://github.com/onecx/onecx-portal-ui-libs/commit/784b1b8ea9706303c3196e3c019b761eb9548ce6))
+* v9 filter duplicates ([#1577](https://github.com/onecx/onecx-portal-ui-libs/issues/1577)) ([93bdb04](https://github.com/onecx/onecx-portal-ui-libs/commit/93bdb040df82eb879b6c3694329c1b40ea276c2c))
+
 ## [9.0.0-rc.10](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.9...v9.0.0-rc.10) (2026-06-25)
 
 ### Bug Fixes
