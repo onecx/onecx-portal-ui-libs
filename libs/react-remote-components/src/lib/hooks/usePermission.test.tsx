@@ -3,8 +3,11 @@ import { type FC, type PropsWithChildren } from 'react'
 import { PermissionContext } from '../contexts/permissionContext'
 import { usePermission } from './usePermission'
 
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => new TopicClass(),
+}))
+
 const mockPermissionService = {
-  permissions: [],
   getPermissions: jest.fn(() => Promise.resolve(['perm1', 'perm2'])),
 }
 
@@ -24,11 +27,6 @@ describe('usePermission', () => {
   it('should return the permission context value', () => {
     const { result } = renderHook(() => usePermission(), { wrapper: PermissionProviderWrapper })
     expect(result.current).toBe(mockPermissionService)
-  })
-
-  it('should expose permissions array', () => {
-    const { result } = renderHook(() => usePermission(), { wrapper: PermissionProviderWrapper })
-    expect(Array.isArray(result.current.permissions)).toBe(true)
   })
 
   it('should expose getPermissions function', () => {
