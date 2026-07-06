@@ -3,6 +3,10 @@ import { type FC, type PropsWithChildren } from 'react'
 import { PermissionContext } from '../contexts/permissionContext'
 import { usePermission } from './usePermission'
 
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => new TopicClass(),
+}))
+
 const mockPermissionService = {
   getPermissions: jest.fn(() => Promise.resolve(['perm1', 'perm2'])),
 }
