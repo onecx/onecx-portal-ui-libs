@@ -109,11 +109,13 @@ export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
   | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
+  | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
-  | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`;
-
+  | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`
+  | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
+  | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
