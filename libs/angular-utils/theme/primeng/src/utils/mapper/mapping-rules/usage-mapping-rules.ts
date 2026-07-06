@@ -6,14 +6,16 @@ import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
+import { inputTextMappingRules } from './usages/inputtext.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
   ...datatableMappingRules,
-  ...tooltipMappingRules,  
+  ...tooltipMappingRules,
   ...dialogMappingRules,
   ...tooltipMappingRules,
   ...carouselMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
+  ...inputTextMappingRules,
 ];
