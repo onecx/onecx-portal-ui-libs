@@ -3,6 +3,10 @@ import { type FC, type PropsWithChildren } from 'react'
 import { SlotContext } from '../contexts/slotContext'
 import { useSlot } from './useSlot'
 
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => new TopicClass(),
+}))
+
 const mockSlotService = {
   remoteComponents$: {} as any,
   getComponentsForSlot: jest.fn(),
