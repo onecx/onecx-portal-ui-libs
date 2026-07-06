@@ -11,7 +11,7 @@ const ensureI18nInitialized = (i18n: typeof i18next) => {
     return
   }
   i18nInitialized = true
-  void i18n.init({
+  i18n.init({
     fallbackLng: 'en',
     resources: {},
     interpolation: { escapeValue: false },
