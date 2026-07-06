@@ -18,6 +18,7 @@ import {
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
 import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { ThemeTableSettingsService } from '../../services/theme-v2-settings-table.service'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -30,6 +31,7 @@ import {
 } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
+import { createThemeTableSettings } from '../../utils/theme-v2-settings-table.utils'
 
 export type RowListGridData = ListGridData & Row
 
@@ -44,6 +46,7 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
+  private readonly themeTableSettings = inject(ThemeTableSettingsService)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -91,8 +94,28 @@ export class DataViewComponent implements OnInit {
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   selectedRows = input<Row[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+  private readonly themeTableSettingsState = createThemeTableSettings(this.themeTableSettings)
+
+  @Input('checkboxColumnPosition')
+  set checkboxColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setCheckboxColumnPosition(value)
+  }
+
+  @Input('frozenActionColumn')
+  set frozenActionColumnInput(value: boolean) {
+    this.themeTableSettingsState.setFrozenActionColumn(value)
+  }
+
+  @Input('actionColumnPosition')
+  set actionColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setActionColumnPosition(value)
+  }
+
+  checkboxColumnPosition = this.themeTableSettingsState.checkboxColumnPosition
+
+  frozenActionColumn = this.themeTableSettingsState.frozenActionColumn
+
+  actionColumnPosition = this.themeTableSettingsState.actionColumnPosition
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
   expandedRows = model<Row[] | string[] | number[]>([])

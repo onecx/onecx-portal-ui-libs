@@ -563,8 +563,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should update action column config onActionColumnConfigChange', () => {
       const { component } = createComponent(true)
 
-      component.frozenActionColumn.set(false)
-      component.actionColumnPosition.set('right' as any)
+      component.frozenActionColumnInput = false
+      component.actionColumnPositionInput = 'right' as any
 
       component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
 

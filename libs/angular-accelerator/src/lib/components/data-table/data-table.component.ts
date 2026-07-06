@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common'
 import {
   Component,
+  Input,
   Injector,
   LOCALE_ID,
   OnInit,
@@ -38,10 +39,12 @@ import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { ThemeTableSettingsService } from '../../services/theme-v2-settings-table.service'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { createThemeTableSettings } from '../../utils/theme-v2-settings-table.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -83,6 +86,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly themeTableSettings = inject(ThemeTableSettingsService)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -126,6 +130,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   selectionEnabledField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
+  private readonly themeTableSettingsState = createThemeTableSettings(this.themeTableSettings)
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
@@ -219,8 +224,26 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   additionalActions = model<DataAction[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+  @Input('checkboxColumnPosition')
+  set checkboxColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setCheckboxColumnPosition(value)
+  }
+
+  @Input('frozenActionColumn')
+  set frozenActionColumnInput(value: boolean) {
+    this.themeTableSettingsState.setFrozenActionColumn(value)
+  }
+
+  @Input('actionColumnPosition')
+  set actionColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setActionColumnPosition(value)
+  }
+
+  checkboxColumnPosition = this.themeTableSettingsState.checkboxColumnPosition
+
+  frozenActionColumn = this.themeTableSettingsState.frozenActionColumn
+
+  actionColumnPosition = this.themeTableSettingsState.actionColumnPosition
 
   expandedRows = model<Row[] | string[] | number[]>([])
   expandedRowIds = computed<(string | number)[]>(() =>
