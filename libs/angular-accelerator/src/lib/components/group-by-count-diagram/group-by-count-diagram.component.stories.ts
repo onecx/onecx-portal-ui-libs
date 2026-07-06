@@ -283,7 +283,7 @@ export const WithChartFillingContainerHeight = {
   render: TemplateWithContainer,
   args: {
     diagramType: DiagramType.PIE,
-    data: generateGroupByCountMockData(20, 1),
+    data: generateGroupByCountMockData(25, 1),
     sumKey: 'Responsive Height Enabled',
     column: {
       id: 'fruitType',
@@ -291,6 +291,7 @@ export const WithChartFillingContainerHeight = {
     },
     fillMissingColors: false,
     showAllLabels: true,
-    allLabelKeys: FRUIT_TYPE
+    allLabelKeys: FRUIT_TYPE,
+    customLegends: true
   }
 }
