@@ -10,90 +10,90 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Week Day ─────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.weekDay.padding',
+    from: 'usages.calendar.panel.datePanel.weekDayLabel.padding',
     to: 'components.datepicker.weekDay.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.weekDay.fontWeight',
+    from: 'usages.calendar.panel.datePanel.weekDayLabel.fontWeight',
     to: 'components.datepicker.weekDay.fontWeight',
   },
   {
-    from: 'usages.calendar.panel.datePanel.weekDay.color',
+    from: 'usages.calendar.panel.datePanel.weekDayLabel.color',
     to: 'components.datepicker.weekDay.color',
     transform: toColorString,
   },
 
   // ─── Date ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.date.hoverBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.hoverBackground',
     to: 'components.datepicker.date.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.selectedBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.selectedBackground',
     to: 'components.datepicker.date.selectedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.rangeSelectedBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelectedBackground',
     to: 'components.datepicker.date.rangeSelectedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.color',
+    from: 'usages.calendar.panel.datePanel.dateCell.color',
     to: 'components.datepicker.date.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.hoverColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.hoverColor',
     to: 'components.datepicker.date.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.selectedColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.selectedColor',
     to: 'components.datepicker.date.selectedColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.rangeSelectedColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelectedColor',
     to: 'components.datepicker.date.rangeSelectedColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.width',
+    from: 'usages.calendar.panel.datePanel.dateCell.width',
     to: 'components.datepicker.date.width',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.height',
+    from: 'usages.calendar.panel.datePanel.dateCell.height',
     to: 'components.datepicker.date.height',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.border.radius',
+    from: 'usages.calendar.panel.datePanel.dateCell.border.radius',
     to: 'components.datepicker.date.borderRadius',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.padding',
+    from: 'usages.calendar.panel.datePanel.dateCell.padding',
     to: 'components.datepicker.date.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.focusRing.width',
+    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.width',
     to: 'components.datepicker.date.focusRing.width',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.focusRing.style',
+    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.style',
     to: 'components.datepicker.date.focusRing.style',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.focusRing.color',
+    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.color',
     to: 'components.datepicker.date.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.focusRing.offset',
+    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.offset',
     to: 'components.datepicker.date.focusRing.offset',
   },
   {
-    from: 'usages.calendar.panel.datePanel.date.focusRing.shadow',
+    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.shadow',
     to: 'components.datepicker.date.focusRing.shadow',
   },
 

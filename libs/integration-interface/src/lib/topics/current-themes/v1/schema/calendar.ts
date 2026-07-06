@@ -52,8 +52,8 @@ export const viewMargin = z
   })
   .register(themeSchemaRegistry, { id: "viewMargin" });
 
-// Shared schema for view items (month, year)
-export const viewItem = z
+// Shared schema for pickable grid items (day, month, year)
+export const pickerCell = z
   .object({
     padding: withRef(z.string()).default("{{primitives.space.sm}}"),
     background: z
@@ -75,7 +75,7 @@ export const viewItem = z
     fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
     fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
   })
-  .register(themeSchemaRegistry, { id: "viewItem" });
+  .register(themeSchemaRegistry, { id: "pickerCell" });
 
 export const panelButton = z
   .object({
@@ -239,14 +239,14 @@ export const calendar = z
 
             //dayViewPanel
             dayView: (viewMargin as typeof viewMargin).optional(),
-            weekDay: z
+            weekDayLabel: z
               .object({
                 padding: withRef(z.string()).default("{{primitives.space.xs}}"),
                 fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
                 color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
               })
               .optional(),
-            date: z
+            dateCell: z
               .object({
                 hoverBackground: z
                   .union([bg, withRef(z.string())])
@@ -278,11 +278,11 @@ export const calendar = z
 
             //monthViewPanel
             monthView: (viewMargin as typeof viewMargin).optional(),
-            month: (viewItem as typeof viewItem).optional(),
+            month: (pickerCell as typeof pickerCell).optional(),
             
             //yearViewPanel
             yearView: (viewMargin as typeof viewMargin).optional(),
-            year: (viewItem as typeof viewItem).optional(),
+            year: (pickerCell as typeof pickerCell).optional(),
 
             today: z
               .object({
