@@ -4,11 +4,11 @@ import { toColorString } from '../../../mapper.utils';
 export const controlsRules: MappingRule[] = [
   // ─── Button Bar ───────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.buttonBar.padding',
+    from: 'usages.calendar.footerButtonBar.padding',
     to: 'components.datepicker.buttonbar.padding',
   },
   {
-    from: 'usages.calendar.buttonBar.border.color',
+    from: 'usages.calendar.footerButtonBar.border.color',
     to: 'components.datepicker.buttonbar.borderColor',
     transform: toColorString,
   },
@@ -34,12 +34,12 @@ export const controlsRules: MappingRule[] = [
 
   // ─── Today ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.today.background',
+    from: 'usages.calendar.panel.datePanel.today.background',
     to: 'components.datepicker.today.background',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.today.color',
+    from: 'usages.calendar.panel.datePanel.today.color',
     to: 'components.datepicker.today.color',
     transform: toColorString,
   },

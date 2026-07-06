@@ -5,6 +5,7 @@
 import * as z from "zod";
 import { bg, border, borderWithShadow, color, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
+import { input } from "@angular/core";
 
 export const calendarSettings = z
   .object({
@@ -34,6 +35,7 @@ export const navigationSelector = z
       .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
     color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
     hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
     padding: withRef(z.string()).default("{{primitives.space.sm}}"),
     border: border.default({
       radius: "{{primitives.radius.sm}}",
@@ -54,11 +56,76 @@ export const viewMargin = z
 export const viewItem = z
   .object({
     padding: withRef(z.string()).default("{{primitives.space.sm}}"),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
+    hoverBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
+    activeBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
+    color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+    hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
+    activeColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
     border: border.default({
       radius: "{{primitives.radius.md}}",
     }),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+    fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+    fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
   })
   .register(themeSchemaRegistry, { id: "viewItem" });
+
+export const panelButton = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
+    hoverBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.overlay.state.hover.defaultVariant.bg}}"),
+    color: color.default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
+    hoverColor: color.default("{{primitives.area.overlay.state.hover.defaultVariant.contrast}}"),
+    width: withRef(z.string()).default("2.5rem"),
+    height: withRef(z.string()).default("2.5rem"),
+    border: border.default({
+      radius: "{{primitives.radius.md}}",
+    }),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "panelButton" });
+
+// Shared schema for icon styling (calendar icon, clear icon)
+export const iconStyles = z
+  .object({
+    color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+    hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+    activeColor: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
+    hoverBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+    activeBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+    focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+    padding: withRef(z.string()).default("{{primitives.space.md}}"),
+    width: withRef(z.string()).optional(),
+    height: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "iconStyles" });
+
+// Shared schema for input background variants (outlined, filled)
+export const inputStyleVariant = z
+  .object({
+    background: z.union([bg, withRef(z.string())]).optional(),
+    hoverBackground: z.union([bg, withRef(z.string())]).optional(),
+    focusBackground: z.union([bg, withRef(z.string())]).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "inputStyleVariant" });
 
 export const calendar = z
   .object({
@@ -66,6 +133,53 @@ export const calendar = z
     root: z
       .object({
         transitionDuration: withRef(z.string()).default("{{primitives.transition.duration}}"),
+      })
+      .optional(),
+    input: z
+      .object({
+        fontFamily: withRef(z.string()).default("{{primitives.font.family}}"),
+        fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+        padding: withRef(z.string()).default("{{primitives.space.md}}"),
+        shadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
+        variant: z
+          .object({
+            outlined: (inputStyleVariant as typeof inputStyleVariant).optional(),
+            filled: (inputStyleVariant as typeof inputStyleVariant).optional(),
+          })
+          .optional(),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        placeholderColor: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        border: border.default({
+          color: "{{primitives.border.defaultVariant.color}}",
+          width: "{{primitives.border.defaultVariant.width}}",
+          style: "{{primitives.border.defaultVariant.style}}",
+          radius: "{{primitives.radius.md}}",
+        }),
+        hoverColor: color.default("{{primitives.variant.primary.state.hover.defaultVariant.contrast}}"),
+        hoverBorderColor: color.default("{{primitives.variant.primary.state.hover.defaultVariant.border.defaultVariant.color}}"),
+        focusColor: color.default("{{primitives.variant.primary.state.focus.defaultVariant.contrast}}"),
+        focusBorderColor: color.default("{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}"),
+        focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+        disabledColor: color.default("{{primitives.variant.primary.state.disabled.defaultVariant.contrast}}"),
+        disabledBorderColor: color.default("{{primitives.variant.primary.state.disabled.defaultVariant.border.defaultVariant.color}}"),
+        disabledBackground: color.default("{{primitives.variant.primary.state.disabled.defaultVariant.bg}}"),
+        invalidColor: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}"),
+        invalidBorderColor: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.border.defaultVariant.color}}"),
+        invalidPlaceholderColor: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}"),
+        invalidFocusRing: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.focusRing.color}}"),
+        sm: z
+          .object({
+            padding: withRef(z.string()).default("{{primitives.space.sm}}"),
+            fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+          })
+          .optional(),
+        lg: z
+          .object({
+            padding: withRef(z.string()).default("{{primitives.space.lg}}"),
+            fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+          })
+          .optional(),
       })
       .optional(),
     panel: z
@@ -79,120 +193,115 @@ export const calendar = z
           radius: "{{primitives.radius.md}}",
         }),
         shadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-      })
-      .optional(),
-    header: z
-      .object({
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
-        color: color.default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
-        border: border.default({
-          color: "{{primitives.border.defaultVariant.color}}",
-        }),
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-      })
-      .optional(),
-    title: z
-      .object({
-        gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
-      })
-      .optional(),
-    dropdown: z
-      .object({
-        width: withRef(z.string()).default("2.5rem"),
-        sm: z
+        padding: withRef(z.string()).default("{{primitives.space.md}}"), 
+
+        headerGap: withRef(z.string()).default("{{primitives.space.sm}}"),
+
+        headerPanel: z
           .object({
-            width: withRef(z.string()).default("2rem"),
+            background: z
+              .union([bg, withRef(z.string())])
+              .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
+            color: color.default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
+            border: border.default({
+              color: "{{primitives.border.defaultVariant.color}}",
+            }),
+            padding: withRef(z.string()).default("{{primitives.space.md}}"),
+            margin: withRef(z.string()).default("{{primitives.space.md}}"),
+
+            // navigation selector buttons in header panel (including e.g. selectMonth, selectYear)
+            yearMonthNav: z
+              .object({
+                gap: withRef(z.string()).default("{{primitives.space.sm}}"),
+                fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+                fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+              })
+              .optional(),
+            
+            selectMonth: (navigationSelector as typeof navigationSelector).optional(),
+            selectYear: (navigationSelector as typeof navigationSelector).optional(),
+
+            navButton: (panelButton as typeof panelButton).optional()
           })
           .optional(),
-        lg: z
+        
+        datePanel: z
           .object({
-            width: withRef(z.string()).default("3rem"),
+            background: z
+              .union([bg, withRef(z.string())])
+              .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
+            color: color.default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
+            border: border.default({
+              color: "{{primitives.border.defaultVariant.color}}",
+            }),
+            padding: withRef(z.string()).default("{{primitives.space.md}}"),
+            margin: withRef(z.string()).default("{{primitives.space.md}}"),
+
+            //dayViewPanel
+            dayView: (viewMargin as typeof viewMargin).optional(),
+            weekDay: z
+              .object({
+                padding: withRef(z.string()).default("{{primitives.space.xs}}"),
+                fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+                color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+              })
+              .optional(),
+            date: z
+              .object({
+                hoverBackground: z
+                  .union([bg, withRef(z.string())])
+                  .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+                selectedBackground: z
+                  .union([bg, withRef(z.string())])
+                  .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+                // endpoints of the selected range
+                rangeSelectedBackground: z
+                  .union([bg, withRef(z.string())])
+                  .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+                // dates between selected endpoints of the range
+                inRangeBackground: z
+                  .union([bg, withRef(z.string())])
+                  .default("{{primitives.area.onSurface.state.primary.defaultVariant.bg}}"),
+                color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+                hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+                selectedColor: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
+                rangeSelectedColor: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
+                width: withRef(z.string()).default("2.5rem"),
+                height: withRef(z.string()).default("2.5rem"),
+                border: border.default({
+                  radius: "{{primitives.radius.md}}",
+                }),
+                padding: withRef(z.string()).default("{{primitives.space.xs}}"),
+                focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+              })
+              .optional(),
+
+            //monthViewPanel
+            monthView: (viewMargin as typeof viewMargin).optional(),
+            month: (viewItem as typeof viewItem).optional(),
+            
+            //yearViewPanel
+            yearView: (viewMargin as typeof viewMargin).optional(),
+            year: (viewItem as typeof viewItem).optional(),
+
+            today: z
+              .object({
+                background: z
+                  .union([bg, withRef(z.string())])
+                  .default("{{primitives.area.onSurface.state.primary.defaultVariant.bg}}"),
+                color: color.default("{{primitives.area.onSurface.state.primary.defaultVariant.contrast}}"),
+              })
+              .optional(),
           })
           .optional(),
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
-        hoverBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
-        activeBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
-        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-        hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
-        activeColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
-        border: border.default({
-          color: "{{primitives.border.defaultVariant.color}}",
-          radius: "{{primitives.radius.md}}",
-        }),
-        hoverBorderColor: color.default("{{primitives.border.defaultVariant.hoverColor}}"),
-        activeBorderColor: color.default("{{primitives.border.defaultVariant.activeColor}}"),
-        focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
       })
       .optional(),
-    inputIcon: z
-      .object({
-        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-      })
-      .optional(),
-    selectMonth: (navigationSelector as typeof navigationSelector).optional(),
-    selectYear: (navigationSelector as typeof navigationSelector).optional(),
-    group: z
-      .object({
-        border: border.default({
-          color: "{{primitives.border.defaultVariant.color}}",
-        }),
-        gap: withRef(z.string()).default("{{primitives.space.md}}"),
-      })
-      .optional(),
-    dayView: (viewMargin as typeof viewMargin).optional(),
-    weekDay: z
-      .object({
-        padding: withRef(z.string()).default("{{primitives.space.xs}}"),
-        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
-        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-      })
-      .optional(),
-    date: z
-      .object({
-        hoverBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.hoverState.defaultVariant.bg}}"),
-        selectedBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
-        rangeSelectedBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.activeState.defaultVariant.bg}}"),
-        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-        hoverColor: color.default("{{primitives.area.onSurface.hoverState.defaultVariant.contrast}}"),
-        selectedColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
-        rangeSelectedColor: color.default("{{primitives.area.onSurface.activeState.defaultVariant.contrast}}"),
-        width: withRef(z.string()).default("2.5rem"),
-        height: withRef(z.string()).default("2.5rem"),
-        border: border.default({
-          radius: "{{primitives.radius.md}}",
-        }),
-        padding: withRef(z.string()).default("{{primitives.space.xs}}"),
-        focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
-      })
-      .optional(),
-    monthView: (viewMargin as typeof viewMargin).optional(),
-    month: (viewItem as typeof viewItem).optional(),
-    yearView: (viewMargin as typeof viewMargin).optional(),
-    year: (viewItem as typeof viewItem).optional(),
-    buttonBar: z
-      .object({
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-        border: border.default({
-          color: "{{primitives.border.defaultVariant.color}}",
-        }),
-      })
-      .optional(),
+
+    // Seperate button with calendar icon to open the panel
+    calendarIconButton: (panelButton as typeof panelButton).optional(),
+    // Calendar icon inside the input field
+    inputCalendarIcon: (iconStyles as typeof iconStyles).optional(),
+
     timePicker: z
       .object({
         padding: withRef(z.string()).default("{{primitives.space.md}}"),
@@ -201,14 +310,63 @@ export const calendar = z
         }),
         gap: withRef(z.string()).default("{{primitives.space.md}}"),
         buttonGap: withRef(z.string()).default("{{primitives.space.xs}}"),
+        margin: withRef(z.string()).default("{{primitives.space.md}}"),
       })
       .optional(),
-    today: z
+    timePickerButton: (panelButton as typeof panelButton).optional(),
+    timeInput: z
       .object({
-        background: z
+        background: z.union([bg, withRef(z.string())]).optional(),
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        border: border.default({
+          color: "{{primitives.border.defaultVariant.color}}",
+        }),
+        padding: withRef(z.string()).default("{{primitives.space.xs}}"),
+        fontFamily: withRef(z.string()).default("{{primitives.font.family}}"),
+        fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+        hoverBackground: z
           .union([bg, withRef(z.string())])
-          .default("{{primitives.area.onSurface.defaultState.primaryVariant.bg}}"),
-        color: color.default("{{primitives.area.onSurface.defaultState.primaryVariant.contrast}}"),
+          .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+        hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+        hoverBorderColor: color.default("{{primitives.variant.primary.state.hover.defaultVariant.border.defaultVariant.color}}"),
+        focusBackground: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.variant.primary.state.focus.defaultVariant.bg}}"),
+        focusColor: color.default("{{primitives.variant.primary.state.focus.defaultVariant.contrast}}"),
+        focusBorderColor: color.default("{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}"),
+        focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+        width: withRef(z.string()).default("3rem"),
+      })
+      .optional(),
+    timeSeparator: z
+      .object({
+        color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
+        padding: withRef(z.string()).default("{{primitives.space.xs}}"),
+        fontFamily: withRef(z.string()).default("{{primitives.font.family}}"),
+        fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
+        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+      })
+      .optional(),
+    
+    multiMonthDivider: z
+      .object({
+        border: border.default({
+          color: "{{primitives.border.defaultVariant.color}}",
+        }),
+        gap: withRef(z.string()).default("{{primitives.space.md}}"),
+      })
+      .optional(),
+   
+    footerButtonBar: z
+      .object({
+        padding: withRef(z.string()).default("{{primitives.space.md}}"),
+        border: border.default({
+          color: "{{primitives.border.defaultVariant.color}}",
+        }),
+        gap: withRef(z.string()).default("{{primitives.space.md}}"),
+        todayButton: (panelButton as typeof panelButton).optional(),
+        clearButton: (panelButton as typeof panelButton).optional(),
       })
       .optional(),
   })

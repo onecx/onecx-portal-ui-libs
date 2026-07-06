@@ -11,7 +11,7 @@ export const calendarCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'gap',
-				from: 'usages.calendar.title.gap',
+				from: 'usages.calendar.panel.headerPanel.yearMonthNav.gap',
 			},
 		],
 	},
@@ -21,17 +21,35 @@ export const calendarCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'gap',
-				from: 'usages.calendar.group.gap',
+				from: 'usages.calendar.multiMonthDivider.gap',
+			},
+			{
+				property: 'margin-top',
+				from: 'usages.calendar.panel.headerGap',
 			},
 		],
 	},
-	// time picker layout gaps
+	// In-range background style for dates inside the selected range
+	{
+		selector: '.p-datepicker-day-range, .p-datepicker-day-inrange, .p-datepicker-day-in-range',
+		declarations: [
+			{
+				property: 'background',
+				from: 'usages.calendar.panel.datePanel.date.inRangeBackground',
+			},
+		],
+	},
+	// time picker layout gaps and margin
 	{
 		selector: '.p-datepicker-time-picker',
 		declarations: [
 			{
 				property: 'gap',
 				from: 'usages.calendar.timePicker.gap',
+			},
+			{
+				property: 'margin',
+				from: 'usages.calendar.timePicker.margin',
 			},
 		],
 	},
