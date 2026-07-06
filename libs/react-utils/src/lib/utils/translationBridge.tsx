@@ -5,6 +5,9 @@ import { useUserService } from '@onecx/react-integration-interface'
 /**
  * Syncs the user language stream with i18next.
  *
+ * Skips language changes until i18n is initialized — react-i18next
+ * handles initialization via its own provider/boundaries.
+ *
  * @returns Null (side-effects only).
  */
 export const TranslationBridge = () => {
@@ -13,7 +16,9 @@ export const TranslationBridge = () => {
 
   useEffect(() => {
     const subscription = lang$.subscribe((lang) => {
-      void i18n.changeLanguage(lang)
+      if (i18n.isInitialized) {
+        i18n.changeLanguage(lang)
+      }
     })
 
     return () => subscription.unsubscribe()
