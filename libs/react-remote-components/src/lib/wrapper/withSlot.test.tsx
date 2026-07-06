@@ -17,6 +17,10 @@ jest.mock('@onecx/integration-interface', () => {
   }
 })
 
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => new TopicClass(),
+}))
+
 jest.mock('../utils/getShellMfInstance', () => ({
   getShellMfInstance: jest.fn(() => ({
     name: 'onecx-shell-ui',
