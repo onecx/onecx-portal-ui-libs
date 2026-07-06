@@ -31,6 +31,7 @@ export class GroupByCountDiagramComponent {
   diagramType = model<DiagramType>(DiagramType.PIE)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  customLegends = input<boolean>(false)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *

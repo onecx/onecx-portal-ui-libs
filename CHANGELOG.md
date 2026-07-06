@@ -1,3 +1,13 @@
+## [8.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.8.0...v8.9.0) (2026-07-01)
+
+### Features
+
+* dynamic app container and dynamic document methods improved ([#1497](https://github.com/onecx/onecx-portal-ui-libs/issues/1497)) ([c26d978](https://github.com/onecx/onecx-portal-ui-libs/commit/c26d97881401e178df3ab7a355405d1c0b4c4691))
+
+### Bug Fixes
+
+* make imagePath optional ([66556e3](https://github.com/onecx/onecx-portal-ui-libs/commit/66556e3de869b6bc29f292c4f4a159858e8499fd))
+
 ## [8.8.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.7.0...v8.8.0) (2026-06-24)
 
 ### Features
