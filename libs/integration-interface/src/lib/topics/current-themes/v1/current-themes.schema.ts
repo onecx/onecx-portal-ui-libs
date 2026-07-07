@@ -1,21 +1,27 @@
 import * as z from "zod";
 import { dialog } from "./schema/dialog";
 import { primitives } from "./schema/primitives";
+import { badge } from "./schema/badge";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
 import { tabs } from "./schema/tabs";
 import { themeSchemaRegistry } from "./schema/registry";
+import { fieldset } from "./schema/fieldset";
+import { diagram } from "./schema/diagram";
 
 const usages = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
+    badge: (badge as typeof badge).optional(),
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
+    fieldset: (fieldset as typeof fieldset).optional(),
+    diagram: (diagram as typeof diagram).optional(),    
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
