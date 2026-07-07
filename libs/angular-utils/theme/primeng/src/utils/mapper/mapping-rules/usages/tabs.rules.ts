@@ -86,24 +86,24 @@ export const tabsMappingRules: MappingRule[] = [
     to: 'components.tabs.tab.gap',
   },
   {
-    from: 'usages.tabs.tab.focusRing.width',
+    from: 'usages.tabs.tab.state.focus.focusRing.width',
     to: 'components.tabs.tab.focusRing.width',
   },
   {
-    from: 'usages.tabs.tab.focusRing.style',
+    from: 'usages.tabs.tab.state.focus.focusRing.style',
     to: 'components.tabs.tab.focusRing.style',
   },
   {
-    from: 'usages.tabs.tab.focusRing.color',
+    from: 'usages.tabs.tab.state.focus.focusRing.color',
     to: 'components.tabs.tab.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.focusRing.offset',
+    from: 'usages.tabs.tab.state.focus.focusRing.offset',
     to: 'components.tabs.tab.focusRing.offset',
   },
   {
-    from: 'usages.tabs.tab.focusRing.shadow',
+    from: 'usages.tabs.tab.state.focus.focusRing.shadow',
     to: 'components.tabs.tab.focusRing.shadow',
   },
   {
@@ -186,7 +186,7 @@ export const tabsMappingRules: MappingRule[] = [
     to: 'components.tabs.navButton.shadow',
   },
   {
-    from: 'usages.tabs.activeBar.height',
+    from: 'usages.tabs.activeBar.size',
     to: 'components.tabs.activeBar.height',
   },
   {

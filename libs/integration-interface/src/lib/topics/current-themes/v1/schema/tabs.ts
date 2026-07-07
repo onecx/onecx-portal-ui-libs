@@ -37,6 +37,18 @@ export const tabsTabState = z
   })
   .register(themeSchemaRegistry, { id: "tabsTabState" });
 
+export const tabsTabFocusState = tabsTabState
+  .extend({
+    focusRing: (tabsFocusRing as typeof tabsFocusRing).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "tabsTabFocusState" });
+
+export const tabsTabDisabledState = tabsTabState
+  .extend({
+    cursor: withRef(z.string()).default("not-allowed"),
+  })
+  .register(themeSchemaRegistry, { id: "tabsTabDisabledState" });
+
 export const tabsTabFont = font
   .pick({ weight: true, size: true })
   .extend({
@@ -92,14 +104,10 @@ export const tabs = z
               color:
                 "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}",
             }),
+            focus: (tabsTabFocusState as typeof tabsTabFocusState).optional(),
+            disabled: (tabsTabDisabledState as typeof tabsTabDisabledState).optional(),
           })
           .optional(),
-        focusBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.surface.state.selected.defaultVariant.bg}}"),
-        activeRippleBackground: withRef(z.string()).default(
-          "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}"
-        ),
         border: z
           .object({
             width: withRef(z.string()).default("1px"),
@@ -113,7 +121,6 @@ export const tabs = z
         userSelect: withRef(z.string()).default("none"),
         whiteSpace: withRef(z.string()).default("nowrap"),
         scrollableFlexGrow: withRef(z.string()).default("0"),
-        focusRing: (tabsFocusRing as typeof tabsFocusRing).optional(),
       })
       .optional(),
     tabpanel: z
@@ -151,7 +158,7 @@ export const tabs = z
       .optional(),
     activeBar: z
       .object({
-        height: withRef(z.string()).default("2px"),
+        size: withRef(z.string()).default("2px"),
         bottom: withRef(z.string()).default("0"),
         borderRadius: withRef(z.string()).default("{{primitives.radius.sm}}"),
         transition: withRef(z.string()).default(

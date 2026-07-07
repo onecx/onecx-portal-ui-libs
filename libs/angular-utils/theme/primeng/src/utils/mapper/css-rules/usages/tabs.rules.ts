@@ -71,20 +71,40 @@ export const tabsCssRules: CssRule[] = [
 		],
 	},
 	{
-		selector: '.p-tab-active',
-		declarations: [
-			{
-				property: '--p-ripple-background',
-				from: 'usages.tabs.tab.activeRippleBackground',
-			},
-		],
-	},
-	{
 		selector: '.p-tab:not(.p-disabled):focus-visible',
 		declarations: [
 			{
 				property: 'background',
-				from: 'usages.tabs.tab.focusBackground',
+				from: 'usages.tabs.tab.state.focus.background',
+			},
+			{
+				property: 'border-color',
+				from: 'usages.tabs.tab.state.focus.borderColor',
+			},
+			{
+				property: 'color',
+				from: 'usages.tabs.tab.state.focus.color',
+			},
+		],
+	},
+	{
+		selector: '.p-tab.p-disabled, .p-tab[aria-disabled="true"]',
+		declarations: [
+			{
+				property: 'background',
+				from: 'usages.tabs.tab.state.disabled.background',
+			},
+			{
+				property: 'border-color',
+				from: 'usages.tabs.tab.state.disabled.borderColor',
+			},
+			{
+				property: 'color',
+				from: 'usages.tabs.tab.state.disabled.color',
+			},
+			{
+				property: 'cursor',
+				from: 'usages.tabs.tab.state.disabled.cursor',
 			},
 		],
 	},
