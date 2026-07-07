@@ -146,8 +146,8 @@
   <ng-template #header>
     <tr style="vertical-align: top">
       <ng-container *ngTemplateOutlet="expansionColumnHeader"></ng-container>
-      @if (selectionChangedObserved) {
-      <th style="width: 4rem" scope="col">
+      @if (selectionChangedObserved && checkboxColumnPosition() === 'left') {
+      <th style="width: 4rem" name="selection-column-header-left" scope="col">
         @if (allowSelectAll()) {
         <p-tableHeaderCheckbox
           [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
@@ -265,6 +265,16 @@
       <th scope="col">{{ column.nameKey | translate }}</th>
       } } @if (actionColumnPosition() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+      } @if (selectionChangedObserved && checkboxColumnPosition() === 'right') {
+      <th style="width: 4rem" name="selection-column-header-right" scope="col">
+        @if (allowSelectAll()) {
+        <p-tableHeaderCheckbox
+          [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
+        ></p-tableHeaderCheckbox>
+        }
+        <span class="sr-only">{{ 'OCX_DATA_TABLE.SELECTION_COLUMN' | translate }}</span>
+      </th>
       }
     </tr>
   </ng-template>
@@ -281,8 +291,8 @@
     @if (columnTemplates) {
     <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
-      @if (selectionChangedObserved) {
-      <td>
+      @if (selectionChangedObserved && checkboxColumnPosition() === 'left') {
+      <td name="selection-column-left">
         @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
         <p-checkbox
           [value]="true"
@@ -314,6 +324,23 @@
       </td>
       } @if (actionColumnPosition() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+      } @if (selectionChangedObserved && checkboxColumnPosition() === 'right') {
+      <td name="selection-column-right">
+        @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
+        <p-checkbox
+          [value]="true"
+          [binary]="true"
+          [disabled]="true"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+        ></p-checkbox>
+        } @else {
+        <p-tableCheckbox
+          [value]="rowObject"
+          [disabled]="isRowSelectionDisabled(rowObject)"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+        ></p-tableCheckbox>
+        }
+      </td>
       }
     </tr>
     }

@@ -138,6 +138,7 @@
     (pageSizeChanged)="onPageSizeChange($event)"
     (componentStateChanged)="dataTableComponentState$.next($event)"
     [selectedRows]="selectedRows()"
+    [checkboxColumnPosition]="checkboxColumnPosition()"
     [frozenActionColumn]="frozenActionColumn()"
     [actionColumnPosition]="actionColumnPosition()"
     [emptyResultsMessage]="emptyResultsMessage()"

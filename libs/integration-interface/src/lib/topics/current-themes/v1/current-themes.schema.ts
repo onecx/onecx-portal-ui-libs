@@ -10,7 +10,19 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 
-const usages = z
+// Explicit type annotation breaks the inference chain to avoid TS7056
+type UsagesInput = {
+  dialog?: z.input<typeof dialog>;
+  badge?: z.input<typeof badge>;
+  region?: z.input<typeof region>;
+  table?: z.input<typeof table>;
+  tooltip?: z.input<typeof tooltip>;
+  carousel?: z.input<typeof carousel>;
+  fieldset?: z.input<typeof fieldset>;
+  diagram?: z.input<typeof diagram>;
+};
+
+const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
     badge: (badge as typeof badge).optional(),
@@ -19,12 +31,13 @@ const usages = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
+    diagram: (diagram as typeof diagram).optional(),
   })
-  .register(themeSchemaRegistry, { id: "usages" });
+  .register(themeSchemaRegistry, { id: "usages" }) as z.ZodType<UsagesInput>;
 
 type PrimitivesInput = z.input<typeof primitives>
-type UsagesInput = z.input<typeof usages>
+
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
 
 type RegionOverrideInput = {
   primitives?: PrimitivesInput
@@ -38,7 +51,7 @@ const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
     primitives: primitives.optional(),
     usages: usages.optional(),
   }).optional()
-  .register(themeSchemaRegistry, { id: "regionOverride" }) as any;
+  .register(themeSchemaRegistry, { id: "regionOverride" }) as z.ZodOptional<z.ZodType<RegionOverrideInput>>;
 
 const regionOverrides = z
   .object({
@@ -75,6 +88,14 @@ export type ThemePropertiesV2 = {
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

@@ -45,6 +45,8 @@ import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
+import { ThemeTableSettingsService } from '../../services/theme-v2-settings-table.service'
+import { createThemeTableSettings } from '../../utils/theme-v2-settings-table.utils'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
 
@@ -69,6 +71,7 @@ export interface ColumnGroupData {
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
   private readonly destroyRef = inject(DestroyRef)
+  private readonly themeTableSettings = inject(ThemeTableSettingsService)
 
   dataViewComponent = viewChild(DataViewComponent)
 
@@ -146,8 +149,28 @@ export class InteractiveDataViewComponent implements OnInit {
       []
     )
   })
-  frozenActionColumn = model<boolean>(false)
-  actionColumnPosition = model<'left' | 'right'>('right')
+  private readonly themeTableSettingsState = createThemeTableSettings(this.themeTableSettings)
+
+  @Input('checkboxColumnPosition')
+  set checkboxColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setCheckboxColumnPosition(value)
+  }
+
+  @Input('frozenActionColumn')
+  set frozenActionColumnInput(value: boolean) {
+    this.themeTableSettingsState.setFrozenActionColumn(value)
+  }
+
+  @Input('actionColumnPosition')
+  set actionColumnPositionInput(value: 'left' | 'right') {
+    this.themeTableSettingsState.setActionColumnPosition(value)
+  }
+
+  checkboxColumnPosition = this.themeTableSettingsState.checkboxColumnPosition
+
+  frozenActionColumn = this.themeTableSettingsState.frozenActionColumn
+
+  actionColumnPosition = this.themeTableSettingsState.actionColumnPosition
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
@@ -704,8 +727,10 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.frozenActionColumn.set(event.frozenActionColumn)
-    this.actionColumnPosition.set(event.actionColumnPosition)
+    this.themeTableSettingsState.setActionColumnConfig({
+      frozenActionColumn: event.frozenActionColumn,
+      actionColumnPosition: event.actionColumnPosition,
+    })
   }
 
   onRowSelectionChange(event: Row[]) {

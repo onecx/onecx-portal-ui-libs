@@ -11,13 +11,14 @@ import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { DataTableComponent, Row } from './data-table.component'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { firstValueFrom, of } from 'rxjs'
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
+import { CurrentThemes } from '@onecx/integration-interface'
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -27,6 +28,7 @@ describe('DataTableComponent', () => {
   let unselectedCheckBoxes: PTableCheckboxHarness[]
   let selectedCheckBoxes: PTableCheckboxHarness[]
   let router: Router
+  let currentThemes$: BehaviorSubject<CurrentThemes>
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -212,12 +214,20 @@ describe('DataTableComponent', () => {
     },
   ]
   beforeEach(async () => {
+    currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
+
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
       imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
+        {
+          provide: ThemeService,
+          useValue: {
+            currentThemes$,
+          },
+        },
         {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
@@ -478,6 +488,123 @@ describe('DataTableComponent', () => {
       expect(leftActionColumn).toBeTruthy()
       expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
       expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+    })
+
+    it('should apply action column defaults from themed table settings', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
+
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  actionColumnSticky: true,
+                  actionColumnPosition: 'start',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+      fixture.detectChanges()
+
+      expect(component.frozenActionColumn()).toBe(true)
+      expect(component.actionColumnPosition()).toBe('left')
+      expect(await dataTable.getActionColumnHeader('right')).toBe(null)
+      expect(await dataTable.getActionColumn('right')).toBe(null)
+
+      const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
+      const leftActionColumn = await dataTable.getActionColumn('left')
+      expect(leftActionColumnHeader).toBeTruthy()
+      expect(leftActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
+      expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+    })
+
+    it('should apply checkbox column defaults from themed table settings', async () => {
+      component.selectionChanged.subscribe(() => undefined)
+
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  checkboxColumnPosition: 'end',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+      fixture.detectChanges()
+
+      expect(component.checkboxColumnPosition()).toBe('right')
+      expect(await dataTable.getSelectionColumnHeader('left')).toBe(null)
+      expect(await dataTable.getSelectionColumn('left')).toBe(null)
+      expect(await dataTable.getSelectionColumnHeader('right')).toBeTruthy()
+      expect(await dataTable.getSelectionColumn('right')).toBeTruthy()
+    })
+
+    it('should prefer explicit action column inputs over themed table settings', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
+
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  actionColumnSticky: true,
+                  actionColumnPosition: 'start',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+      fixture.componentRef.setInput('frozenActionColumn', false)
+      fixture.componentRef.setInput('actionColumnPosition', 'right')
+      fixture.detectChanges()
+
+      expect(component.frozenActionColumn()).toBe(false)
+      expect(component.actionColumnPosition()).toBe('right')
+      expect(await dataTable.getActionColumnHeader('left')).toBe(null)
+      expect(await dataTable.getActionColumn('left')).toBe(null)
+
+      const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
+      const rightActionColumn = await dataTable.getActionColumn('right')
+      expect(rightActionColumnHeader).toBeTruthy()
+      expect(rightActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
+      expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
+    })
+
+    it('should prefer explicit checkbox column input over themed table settings', async () => {
+      component.selectionChanged.subscribe(() => undefined)
+
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  checkboxColumnPosition: 'end',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+      fixture.componentRef.setInput('checkboxColumnPosition', 'left')
+      fixture.detectChanges()
+
+      expect(component.checkboxColumnPosition()).toBe('left')
+      expect(await dataTable.getSelectionColumnHeader('right')).toBe(null)
+      expect(await dataTable.getSelectionColumn('right')).toBe(null)
+      expect(await dataTable.getSelectionColumnHeader('left')).toBeTruthy()
+      expect(await dataTable.getSelectionColumn('left')).toBeTruthy()
     })
   })
 
