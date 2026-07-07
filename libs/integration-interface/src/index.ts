@@ -49,3 +49,6 @@ export * from './lib/topics/parameters/v1/parameters.topic'
 export * from './lib/topics/icons/v1/icon.model'
 export * from './lib/topics/icons/v1/icon.topic'
 export * from './lib/services/icon.service'
+
+export * from './lib/gatherers/ai-context/v1/ai-context.model'
+export * from './lib/gatherers/ai-context/v1/ai-context.gatherer'
