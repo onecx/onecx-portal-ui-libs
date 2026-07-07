@@ -10,7 +10,7 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 
-// Explicit type annotation breaks the inference chain to avoid TS2589
+// Explicit type annotation breaks the inference chain to avoid TS7056
 type UsagesInput = {
   dialog?: z.input<typeof dialog>;
   badge?: z.input<typeof badge>;
