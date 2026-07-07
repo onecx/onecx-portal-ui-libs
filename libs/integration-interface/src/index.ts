@@ -80,3 +80,6 @@ export * from './lib/utils/portal-message.utils'
 export * from './lib/topics/notification/v1/notification.model'
 export * from './lib/topics/notification/v1/notification.topic'
 export * from './lib/services/notification.service'
+
+export * from './lib/gatherers/ai-context/v1/ai-context.model'
+export * from './lib/gatherers/ai-context/v1/ai-context.gatherer'
