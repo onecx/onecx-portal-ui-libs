@@ -1,6 +1,17 @@
 import * as z from 'zod'
-import { bgContrast, border, borderWithShadow, color, font, space, transition, withRef } from './primitives'
+import {
+  bgContrast,
+  border,
+  borderWithShadow,
+  color,
+  font,
+  space,
+  transition,
+  variantWithStates,
+  withRef,
+} from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { expand } from 'rxjs'
 
 export const settings = z
   .object({
@@ -15,9 +26,11 @@ export const settings = z
     resetFilterOnHide: withRef(z.boolean()),
     showClear: withRef(z.boolean()).optional(),
     virtualScroll: withRef(z.boolean()).optional(),
+    virtualScrollItemSize: withRef(z.number()).optional(),
     selectOnFocus: withRef(z.boolean()),
     autoOptionFocus: withRef(z.boolean()),
     appendTo: withRef(z.enum(['self', 'body'])).optional(),
+    lazyLoading: withRef(z.boolean()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'dropdownSettings' })
 
@@ -34,10 +47,12 @@ export const stateVariants = z
     disable: optionalStateVariant,
     hover: optionalStateVariant,
     focus: optionalStateVariant,
+    expanded: optionalStateVariant,
   })
   .register(themeSchemaRegistry, { id: 'dropdownStateVariants' })
 
-export const container = bgContrast.extend({
+export const container = bgContrast
+  .extend({
     space: space.optional(),
     states: (stateVariants as typeof stateVariants).optional(),
     placeholder: bgContrast.optional(),
@@ -46,17 +61,24 @@ export const container = bgContrast.extend({
     focusRing: borderWithShadow.optional(),
     transition: transition.optional(),
     font: font.optional(),
-    width: withRef(z.string()).optional(),    
+    width: withRef(z.string()).optional(),
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'dropdownContainer' })
 
-}).optional().register(themeSchemaRegistry, { id: 'dropdownContainer' })
-
-export const overlay = bgContrast.extend({
+export const overlay = bgContrast
+  .extend({
     border: borderWithShadow.optional(),
-}).optional().register(themeSchemaRegistry, { id: 'dropdownOverlay' })
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'dropdownOverlay' })
 
-export const list = font.extend({
+export const list = font
+  .extend({
     space: space.optional(),
-}).optional().register(themeSchemaRegistry, { id: 'dropdownList' })
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'dropdownList' })
 
 const tokenString = withRef(z.string()).optional()
 
@@ -68,15 +90,29 @@ const optionFont = font.optional()
 
 const optionSelectedFont = font.optional()
 
-const selectedOption = bgContrast.extend({
-  font: optionSelectedFont,
-  focus: optionTone,
-}).optional()
+const icon = z
+  .object({
+    size: withRef(z.string()).optional(),
+    font: font.optional(),
+    state: variantWithStates.optional(),
+    url: z.string().optional(),
+    content: z.string().optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'icon' })
 
-const groupedOption = bgContrast.extend({
-  font: optionFont,
-  padding: tokenString,
-}).optional()
+const selectedOption = bgContrast
+  .extend({
+    font: optionSelectedFont,
+    focus: optionTone,
+  })
+  .optional()
+
+const groupedOption = bgContrast
+  .extend({
+    font: optionFont,
+    padding: tokenString,
+  })
+  .optional()
 
 export const option = z
   .object({
@@ -93,9 +129,14 @@ export const option = z
 
 export const clear = z
   .object({
-    icon: z.object({
-      color: tokenString,
-    }).optional(),
+    icon: icon.optional(),
+    states: z
+      .object({
+        default: bgContrast.optional(),
+        hover: bgContrast.optional(),
+        disabled: bgContrast.optional(),
+      })
+      .optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownClear' })
@@ -103,19 +144,23 @@ export const clear = z
 export const checkmark = z
   .object({
     color: tokenString,
-    gutter: z.object({
-      start: tokenString,
-      end: tokenString,
-    }).optional(),
+    gutter: z
+      .object({
+        start: tokenString,
+        end: tokenString,
+      })
+      .optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownCheckmark' })
 
 export const empty = z
   .object({
-    message: z.object({
-      padding: tokenString,
-    }).optional(),
+    message: z
+      .object({
+        padding: tokenString,
+      })
+      .optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownEmpty' })
@@ -131,4 +176,4 @@ export const dropdown = z
     checkmark,
     empty,
   })
-  .register(themeSchemaRegistry, { id: 'dropdown' }) as any
+  .register(themeSchemaRegistry, { id: 'dropdown' })
