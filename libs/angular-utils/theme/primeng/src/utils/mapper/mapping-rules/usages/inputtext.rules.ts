@@ -2,7 +2,6 @@ import type { MappingRule } from '../../mapper.types';
 import { toColorString } from '../../mapper.utils';
 
 export const inputTextMappingRules: MappingRule[] = [
-  // Root background and text color
   {
     from: 'usages.inputText.background',
     to: 'components.inputtext.root.background',
@@ -13,8 +12,6 @@ export const inputTextMappingRules: MappingRule[] = [
     to: 'components.inputtext.root.color',
     transform: toColorString,
   },
-
-  // Disabled state
   {
     from: 'usages.inputText.disabled.background',
     to: 'components.inputtext.root.disabledBackground',
@@ -25,8 +22,6 @@ export const inputTextMappingRules: MappingRule[] = [
     to: 'components.inputtext.root.disabledColor',
     transform: toColorString,
   },
-
-  // Filled mode backgrounds
   {
     from: 'usages.inputText.filled.background',
     to: 'components.inputtext.root.filledBackground',
@@ -42,8 +37,6 @@ export const inputTextMappingRules: MappingRule[] = [
     to: 'components.inputtext.root.filledFocusBackground',
     transform: toColorString,
   },
-
-  // Border colors
   {
     from: 'usages.inputText.border.color',
     to: 'components.inputtext.root.borderColor',
@@ -64,8 +57,6 @@ export const inputTextMappingRules: MappingRule[] = [
     to: 'components.inputtext.root.invalidBorderColor',
     transform: toColorString,
   },
-
-  // Focus ring
   {
     from: 'usages.inputText.focus.ring.width',
     to: 'components.inputtext.root.focusRing.width',
@@ -87,8 +78,6 @@ export const inputTextMappingRules: MappingRule[] = [
     from: 'usages.inputText.focus.ring.shadow',
     to: 'components.inputtext.root.focusRing.shadow',
   },
-
-  // Placeholder colors
   {
     from: 'usages.inputText.placeholder.color',
     to: 'components.inputtext.root.placeholderColor',
@@ -99,8 +88,6 @@ export const inputTextMappingRules: MappingRule[] = [
     to: 'components.inputtext.root.invalidPlaceholderColor',
     transform: toColorString,
   },
-
-  // Layout and spacing
   {
     from: 'usages.inputText.shadow',
     to: 'components.inputtext.root.shadow',
@@ -117,24 +104,10 @@ export const inputTextMappingRules: MappingRule[] = [
     from: 'usages.inputText.borderRadius',
     to: 'components.inputtext.root.borderRadius',
   },
-
-  // Typography
-  {
-    from: 'usages.inputText.fontSize',
-    to: 'components.inputtext.root.fontSize',
-  },
-  {
-    from: 'usages.inputText.fontWeight',
-    to: 'components.inputtext.root.fontWeight',
-  },
-
-  // Transition
   {
     from: 'usages.inputText.transitionDuration',
     to: 'components.inputtext.root.transitionDuration',
   },
-
-  // Size variants - small
   {
     from: 'usages.inputText.sm.fontSize',
     to: 'components.inputtext.root.sm.fontSize',
@@ -147,8 +120,6 @@ export const inputTextMappingRules: MappingRule[] = [
     from: 'usages.inputText.sm.padding.y',
     to: 'components.inputtext.root.sm.paddingY',
   },
-
-  // Size variants - large
   {
     from: 'usages.inputText.lg.fontSize',
     to: 'components.inputtext.root.lg.fontSize',
