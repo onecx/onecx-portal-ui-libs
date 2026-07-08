@@ -44,10 +44,7 @@
       }
     },
     "release": {
-      "executor": "@onecx/release:update-build-publish",
-      "options": {
-        "buildTarget": "build-migrations"
-      }
+      "executor": "@onecx/release:update-build-publish"
     }
   }
 }
