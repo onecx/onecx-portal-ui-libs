@@ -24,7 +24,17 @@ export const diagramSettings = z.object({
 
 export const selectButtonStyles = bgContrast.optional().register(themeSchemaRegistry, { id: "diagramSelectButtonState" })
 
-export const selectButtonState = z
+type SelectButtonStateInput = {
+    defaultState?: z.input<typeof selectButtonStyles>
+    state?: {
+        hover?: z.input<typeof selectButtonStyles>
+        active?: z.input<typeof selectButtonStyles>
+        selected?: z.input<typeof selectButtonStyles>
+        focus?: z.input<typeof selectButtonStyles>
+    }
+}
+
+export const selectButtonState: z.ZodType<SelectButtonStateInput> = z
     .object({
         defaultState: (selectButtonStyles as typeof selectButtonStyles).optional(),
         state: z
