@@ -6,6 +6,7 @@ import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
+import { toggleswitchMappingRules } from './usages/toggleswitch.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -14,6 +15,7 @@ export const usageMappingRules: MappingRule[] = [
   ...dialogMappingRules,
   ...tooltipMappingRules,
   ...carouselMappingRules,
+  ...toggleswitchMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
 ];

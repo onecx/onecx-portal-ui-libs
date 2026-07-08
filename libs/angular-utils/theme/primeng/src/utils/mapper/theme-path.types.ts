@@ -114,7 +114,9 @@ export type ThemePath =
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
   | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
-  | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`;
+  | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
+  | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`;
+
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
