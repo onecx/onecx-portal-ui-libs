@@ -7,11 +7,18 @@ import {
   font,
   space,
   transition,
-  variantWithStates,
   withRef,
 } from './primitives'
 import { themeSchemaRegistry } from './registry'
-import { expand } from 'rxjs'
+// Todo - remove when page header pr is merged which contains icon primitives
+const icon = z
+  .object({
+    size: withRef(z.string()).optional(),
+    font: font.optional(),
+    url: z.string().optional(),
+    content: z.string().optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'icon' })
 
 export const settings = z
   .object({
@@ -37,6 +44,7 @@ export const settings = z
 export const stateVariant = bgContrast
   .extend({
     border: border.optional(),
+    triggerIcon: icon.optional(),
   })
   .register(themeSchemaRegistry, { id: 'dropdownStateVariant' })
 
@@ -44,6 +52,7 @@ const optionalStateVariant = (stateVariant as typeof stateVariant).optional()
 
 export const stateVariants = z
   .object({
+    default: optionalStateVariant,
     disable: optionalStateVariant,
     hover: optionalStateVariant,
     focus: optionalStateVariant,
@@ -90,16 +99,6 @@ const optionFont = font.optional()
 
 const optionSelectedFont = font.optional()
 
-const icon = z
-  .object({
-    size: withRef(z.string()).optional(),
-    font: font.optional(),
-    state: variantWithStates.optional(),
-    url: z.string().optional(),
-    content: z.string().optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'icon' })
-
 const selectedOption = bgContrast
   .extend({
     font: optionSelectedFont,
@@ -120,7 +119,15 @@ export const option = z
     padding: tokenString,
     border: optionBorder,
     font: optionFont,
-    focus: optionTone,
+    states: z
+      .object({
+        default: bgContrast.optional(),
+        hover: bgContrast.optional(),
+        disabled: bgContrast.optional(),
+        selected: bgContrast.optional(),
+        focus: bgContrast.optional(),
+      })
+      .optional(),
     selected: selectedOption,
     group: groupedOption,
   })
@@ -135,6 +142,7 @@ export const clear = z
         default: bgContrast.optional(),
         hover: bgContrast.optional(),
         disabled: bgContrast.optional(),
+        focus: bgContrast.optional(),
       })
       .optional(),
   })
@@ -144,23 +152,16 @@ export const clear = z
 export const checkmark = z
   .object({
     color: tokenString,
-    gutter: z
-      .object({
-        start: tokenString,
-        end: tokenString,
-      })
-      .optional(),
+    space: space.optional()
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownCheckmark' })
 
 export const empty = z
   .object({
-    message: z
-      .object({
-        padding: tokenString,
-      })
-      .optional(),
+    message: space.extend({
+      font: font.optional(),
+    }).optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownEmpty' })
