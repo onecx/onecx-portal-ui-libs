@@ -4,7 +4,9 @@ import { themeSchemaRegistry } from "./registry";
 
 export const menubarSettings = z
   .object({
-    autohide: withRef(z.boolean()).optional(),
+    autoHide: withRef(z.boolean()).optional(),
+    autoHideDelay: withRef(z.number()).optional(),
+    autoDisplay: withRef(z.boolean()).optional(),
   })
   .register(themeSchemaRegistry, { id: "menubarSettings" });
 
@@ -166,6 +168,7 @@ export const menubarMobileButton = z
 
 export const menubar = z
   .object({
+    settings: (menubarSettings as typeof menubarSettings).optional(),
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
