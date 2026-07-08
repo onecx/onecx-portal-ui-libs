@@ -1,3 +1,16 @@
+## [5.58.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.57.0...v5.58.0) (2026-07-08)
+
+### Features
+
+* Added AiContextGatherer ([#1594](https://github.com/onecx/onecx-portal-ui-libs/issues/1594)) ([78a64e8](https://github.com/onecx/onecx-portal-ui-libs/commit/78a64e8d23d4e354e651bfbf8b419996e3e129e5))
+
+### Bug Fixes
+
+* better error handling + skip existing packages (v5) ([#1437](https://github.com/onecx/onecx-portal-ui-libs/issues/1437)) ([2466320](https://github.com/onecx/onecx-portal-ui-libs/commit/246632049a6c71629bb765bd5a8b2fc6dadc56f8))
+* fix release for ngrx-integration-interface ([#1596](https://github.com/onecx/onecx-portal-ui-libs/issues/1596)) ([b041c3d](https://github.com/onecx/onecx-portal-ui-libs/commit/b041c3d81c90f0d450c72823e89a8f6f92240b35))
+* make imagePath optional ([28c31b0](https://github.com/onecx/onecx-portal-ui-libs/commit/28c31b0fa80e35db01a7abc453b909f4e4c14a71))
+* v5 filter duplicates ([#1577](https://github.com/onecx/onecx-portal-ui-libs/issues/1577)) ([#1585](https://github.com/onecx/onecx-portal-ui-libs/issues/1585)) ([2e477f4](https://github.com/onecx/onecx-portal-ui-libs/commit/2e477f4a74ef985bbc5a518c19c353fbb230dd77))
+
 ## [5.57.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.56.0...v5.57.0) (2026-05-11)
 
 ### Features
