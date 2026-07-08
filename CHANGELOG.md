@@ -1,3 +1,15 @@
+## [6.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.26.0...v6.27.0) (2026-07-08)
+
+### Features
+
+* Added AiContextGatherer ([#1593](https://github.com/onecx/onecx-portal-ui-libs/issues/1593)) ([8f99976](https://github.com/onecx/onecx-portal-ui-libs/commit/8f99976deb4e5d80fc9ab82fc08b238b7bab8e7f))
+
+### Bug Fixes
+
+* chart legends in high contrast mode - v6 ([#1578](https://github.com/onecx/onecx-portal-ui-libs/issues/1578)) ([000b403](https://github.com/onecx/onecx-portal-ui-libs/commit/000b4039f29300c43e20c136c54a8395475432fc))
+* make imagePath optional ([70c1d0b](https://github.com/onecx/onecx-portal-ui-libs/commit/70c1d0b5b4abbbe091d1f8ca2271a99bf0a84bd2))
+* v6 filter duplicates ([#1577](https://github.com/onecx/onecx-portal-ui-libs/issues/1577)) ([#1584](https://github.com/onecx/onecx-portal-ui-libs/issues/1584)) ([5f3f55c](https://github.com/onecx/onecx-portal-ui-libs/commit/5f3f55c1bde667d9f39d25db230b319025dc0a87))
+
 ## [6.26.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.25.0...v6.26.0) (2026-06-24)
 
 ### Features
