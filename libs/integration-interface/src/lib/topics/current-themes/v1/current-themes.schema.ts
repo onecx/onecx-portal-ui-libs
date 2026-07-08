@@ -10,6 +10,7 @@ import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { dropdown } from "./schema/dropdown";
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -33,7 +34,8 @@ const usages: z.ZodType<UsagesInput> = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
+    diagram: (diagram as typeof diagram).optional(),
+    dropdown: (dropdown as typeof dropdown).optional(),    
   })
   .register(themeSchemaRegistry, { id: "usages" }) as any;
 
