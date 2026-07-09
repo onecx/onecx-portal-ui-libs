@@ -1,3 +1,16 @@
+## [7.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.11.0...v7.12.0) (2026-07-09)
+
+### Features
+
+* Added AiContextGatherer ([#1592](https://github.com/onecx/onecx-portal-ui-libs/issues/1592)) ([2501804](https://github.com/onecx/onecx-portal-ui-libs/commit/25018049fef6e1d9d05ca40518f6e410f866e9b1))
+* v7 utility to generate packages ([#1475](https://github.com/onecx/onecx-portal-ui-libs/issues/1475)) ([#1487](https://github.com/onecx/onecx-portal-ui-libs/issues/1487)) ([ab99020](https://github.com/onecx/onecx-portal-ui-libs/commit/ab990205dac88d35287ca5b6a0bdc21bffd710cf)), closes [#1530](https://github.com/onecx/onecx-portal-ui-libs/issues/1530) [#1524](https://github.com/onecx/onecx-portal-ui-libs/issues/1524) [#1513](https://github.com/onecx/onecx-portal-ui-libs/issues/1513) [#1521](https://github.com/onecx/onecx-portal-ui-libs/issues/1521)
+
+### Bug Fixes
+
+* chart legends in high contrast mode - v7 ([#1581](https://github.com/onecx/onecx-portal-ui-libs/issues/1581)) ([69f955f](https://github.com/onecx/onecx-portal-ui-libs/commit/69f955fedc1dec60e742ba1110ed89fbaf407ffa))
+* make imagePath optional ([2f9c1b5](https://github.com/onecx/onecx-portal-ui-libs/commit/2f9c1b5a54b3380742f7f23c931020c519eedbc8))
+* v7 filter duplicates ([#1577](https://github.com/onecx/onecx-portal-ui-libs/issues/1577)) ([#1583](https://github.com/onecx/onecx-portal-ui-libs/issues/1583)) ([90a2c1c](https://github.com/onecx/onecx-portal-ui-libs/commit/90a2c1c8989772078cf7b4c677dfd98dacd0d435))
+
 ## [7.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.10.0...v7.11.0) (2026-06-24)
 
 ### Features
