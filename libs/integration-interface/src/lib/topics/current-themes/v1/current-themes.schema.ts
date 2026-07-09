@@ -10,6 +10,7 @@ import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { dropdown } from "./schema/dropdown";
 
 type UsagesShape = {
   calendar: z.ZodOptional<typeof calendar>;
@@ -21,6 +22,7 @@ type UsagesShape = {
   carousel: z.ZodOptional<typeof carousel>;
   fieldset: z.ZodOptional<typeof fieldset>;
   diagram: z.ZodOptional<typeof diagram>;
+  dropdown: z.ZodOptional<typeof dropdown>;
 }
 
 const usagesShape: UsagesShape = {
@@ -33,6 +35,7 @@ const usagesShape: UsagesShape = {
   carousel: carousel.optional(),
   fieldset: fieldset.optional(),
   diagram: diagram.optional(),
+  dropdown: dropdown.optional(),
 };
 
 export const usages = z
