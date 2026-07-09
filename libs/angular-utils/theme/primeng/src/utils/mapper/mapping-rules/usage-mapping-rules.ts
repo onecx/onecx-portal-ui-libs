@@ -6,6 +6,7 @@ import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
+import { pageHeaderMapping } from './usages/page-header';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -16,4 +17,5 @@ export const usageMappingRules: MappingRule[] = [
   ...carouselMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
+  ...pageHeaderMapping,
 ];

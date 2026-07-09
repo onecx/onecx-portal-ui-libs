@@ -119,6 +119,7 @@ export const variantWithStates = bgContrast
         active: severityVariantGroup.optional(),
         selected: severityVariantGroup.optional(),
         focus: severityVariantGroup.optional(),
+        disabled: severityVariantGroup.optional(),
       })
       .optional(),
   })
@@ -226,6 +227,78 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: "transition" });
 
+const textDecoration = font.extend({
+    textTransform: withRef(z.string()).optional(),
+    textDecoration: withRef(z.string()).optional(),
+}).optional()
+
+const linkTransition = z.object({
+  duration: withRef(z.number()).optional(),
+  timingFunction: withRef(z.string()).optional(),
+});
+
+const linkDefault = font.extend({
+  textTransform: withRef(z.string()).optional(),
+  textDecoration: textDecoration.optional(),
+  opacity: withRef(z.number()).optional(),
+  transition: linkTransition.optional(),
+  color: color.optional(),
+});
+
+const linkStateBase =  linkDefault
+
+const linkHover = linkStateBase.optional()
+
+const linkActive = linkStateBase.optional()
+
+const linkVisited = linkStateBase.optional()
+
+const linkFocus = linkStateBase.extend({
+  focusRing: border.optional(),
+}).optional()
+
+const linkDisabled = linkStateBase.extend({
+  opacity: withRef(z.number()).optional(),
+  cursor: withRef(z.string()).optional(),
+}).optional()
+
+export const link = z
+  .object({
+    default: linkDefault.optional(),
+    hover: linkHover.optional(),
+    active: linkActive.optional(),
+    visited: linkVisited.optional(),
+    focus: linkFocus.optional(),
+    focusVisible: linkFocus.optional(),
+    disabled: linkDisabled.optional(),
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: "link" });
+
+// Named size tokens for icon and element dimensions across components.
+export const size = z
+  .object({
+    xs: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "size" });
+
+export const icon = z
+  .object({
+    size: size.optional(),
+    font: font.optional(),
+    state: variantWithStates.optional(),
+    url: z.string().optional(),
+    content: z.string().optional(),
+    opacity: withRef(z.number()).optional(),
+    bg: bg.optional(),
+    color: color.optional(),
+  })
+  .register(themeSchemaRegistry, { id: "icon" });
+
 type PrimitivesShape = {
   defaultVariant: z.ZodOptional<typeof variantWithStates>;
   variant: typeof colorVariants;
@@ -238,6 +311,7 @@ type PrimitivesShape = {
   border: z.ZodOptional<typeof borderWithVariants>;
   focusRing: z.ZodOptional<typeof borderWithShadow>;
   transition: z.ZodOptional<typeof transition>;
+  link: z.ZodOptional<typeof link>;
 };
 
 const primitivesShape: PrimitivesShape = {
@@ -254,6 +328,7 @@ const primitivesShape: PrimitivesShape = {
   border: (borderWithVariants as typeof borderWithVariants).optional(),
   focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
   transition: (transition as typeof transition).optional(),
+  link: (link as typeof link).optional()
 };
 
 export const primitives = z

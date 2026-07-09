@@ -9,19 +9,36 @@ import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { pageHeader } from './schema/page-header'
+import { breadcrumbs } from "./schema/breadcrumbs";
 
-const usages = z
-  .object({
-    dialog: (dialog as typeof dialog).optional(),
-    badge: (badge as typeof badge).optional(),
-    region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
-    tooltip: (tooltip as typeof tooltip).optional(),
-    carousel: (carousel as typeof carousel).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
-  })
-  .register(themeSchemaRegistry, { id: "usages" });
+type UsagesShape = {
+  dialog: z.ZodOptional<typeof dialog>
+  badge: z.ZodOptional<typeof badge>
+  region: z.ZodOptional<typeof region>
+  table: z.ZodOptional<typeof table>
+  tooltip: z.ZodOptional<typeof tooltip>
+  carousel: z.ZodOptional<typeof carousel>
+  fieldset: z.ZodOptional<typeof fieldset>
+  diagram: z.ZodOptional<typeof diagram>
+  pageHeader: z.ZodOptional<typeof pageHeader>
+  breadcrumbs: z.ZodOptional<typeof breadcrumbs>
+}
+
+const usagesShape: UsagesShape = {
+  dialog: dialog.optional(),
+  badge: badge.optional(),
+  region: region.optional(),
+  table: table.optional(),
+  tooltip: tooltip.optional(),
+  carousel: carousel.optional(),
+  fieldset: fieldset.optional(),
+  diagram: diagram.optional(),
+  pageHeader: pageHeader.optional(),
+  breadcrumbs: breadcrumbs.optional(),
+}
+
+const usages = z.object(usagesShape).register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
 type UsagesInput = z.input<typeof usages>
