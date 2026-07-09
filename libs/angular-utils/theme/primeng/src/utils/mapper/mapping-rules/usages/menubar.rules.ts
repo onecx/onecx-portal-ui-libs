@@ -56,10 +56,6 @@ export const menubarMappingRules: MappingRule[] = [
     to: 'components.menubar.item.padding',
   },
   {
-    from: 'usages.menubar.item.borderRadius',
-    to: 'components.menubar.item.borderRadius',
-  },
-  {
     from: 'usages.menubar.item.gap',
     to: 'components.menubar.item.gap',
   },
@@ -92,27 +88,6 @@ export const menubarMappingRules: MappingRule[] = [
     from: 'usages.menubar.item.state.active.icon.color',
     to: 'components.menubar.colorScheme.{mode}.item.icon.activeColor',
     transform: toColorString,
-  },
-  {
-    from: 'usages.menubar.item.focusRing.width',
-    to: 'components.menubar.item.focusRing.width',
-  },
-  {
-    from: 'usages.menubar.item.focusRing.style',
-    to: 'components.menubar.item.focusRing.style',
-  },
-  {
-    from: 'usages.menubar.item.focusRing.color',
-    to: 'components.menubar.item.focusRing.color',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.menubar.item.focusRing.offset',
-    to: 'components.menubar.item.focusRing.offset',
-  },
-  {
-    from: 'usages.menubar.item.focusRing.shadow',
-    to: 'components.menubar.item.focusRing.shadow',
   },
   {
     from: 'usages.menubar.submenu.background',
@@ -149,7 +124,7 @@ export const menubarMappingRules: MappingRule[] = [
     to: 'components.menubar.submenu.icon.size',
   },
   {
-    from: 'usages.menubar.submenu.icon.defaultState.color',
+    from: 'usages.menubar.submenu.icon.color',
     to: 'components.menubar.colorScheme.{mode}.submenu.icon.color',
     transform: toColorString,
   },

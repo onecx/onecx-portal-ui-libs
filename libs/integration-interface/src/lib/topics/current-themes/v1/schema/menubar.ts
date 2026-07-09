@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { bg, border, color, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
+import { max } from "rxjs";
 
 export const menubarSettings = z
   .object({
@@ -18,41 +19,6 @@ export const menubarItemIcon = z
   })
   .register(themeSchemaRegistry, { id: "menubarItemIcon" });
 
-export const menubarItemState = z
-  .object({
-    color: color.default(
-      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-    ),
-    icon: (menubarItemIcon as typeof menubarItemIcon).optional(),
-  })
-  .register(themeSchemaRegistry, { id: "menubarItemState" });
-
-export const menubarInteractiveItemState = menubarItemState
-  .extend({
-    background: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.surface.state.hover.defaultVariant.bg}}"),
-  })
-  .register(themeSchemaRegistry, { id: "menubarInteractiveItemState" });
-
-export const menubarActiveItemState = menubarInteractiveItemState
-  .extend({
-    color: color.default(
-      "{{primitives.variant.primary.defaultState.defaultVariant.contrast}}"
-    ),
-    icon: z
-      .object({
-        color: color.default(
-          "{{primitives.variant.primary.defaultState.defaultVariant.contrast}}"
-        ),
-      })
-      .optional(),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.defaultState.defaultVariant.bg}}"),
-  })
-  .register(themeSchemaRegistry, { id: "menubarActiveItemState" });
-
 export const menubarFocusRing = z
   .object({
     width: withRef(z.string()).default("{{primitives.focusRing.width}}"),
@@ -62,6 +28,27 @@ export const menubarFocusRing = z
     shadow: withRef(z.string()).default("{{primitives.focusRing.shadow}}"),
   })
   .register(themeSchemaRegistry, { id: "menubarFocusRing" });
+
+export const menubarItemState = z
+  .object({
+    color: color.default(
+      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
+    ),
+    icon: (menubarItemIcon as typeof menubarItemIcon).optional(),
+    border: border.default({
+      color: "{{primitives.border.defaultVariant.color}}",
+      radius: "{{primitives.radius.md}}",
+      width: "{{primitives.border.defaultVariant.width}}",
+    }),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.surface.state.hover.defaultVariant.bg}}"),
+  })
+  .register(themeSchemaRegistry, { id: "menubarItemState" });
+
+export const menubarInteractiveItemState = menubarItemState.register(themeSchemaRegistry, { id: "menubarInteractiveItemState" });
+
+export const menubarActiveItemState = menubarInteractiveItemState.register(themeSchemaRegistry, { id: "menubarActiveItemState" });
 
 export const menubarItemBase = z
   .object({
@@ -75,8 +62,8 @@ export const menubarItem = z
     base: (menubarItemBase as typeof menubarItemBase).optional(),
     defaultState: (menubarItemState as typeof menubarItemState).optional(),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
-    borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
     gap: withRef(z.string()).default("{{primitives.space.sm}}"),
+    cursor: withRef(z.string()).default("pointer"),
     state: z
       .object({
         focus: (menubarInteractiveItemState as typeof menubarInteractiveItemState).optional(),
@@ -107,6 +94,8 @@ export const menubarSubmenu = z
       radius: "{{primitives.radius.md}}",
     }),
     shadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
+    minWidth: withRef(z.string()).default("10rem"),
+    maxWidth: withRef(z.string()).default("20rem"),
     mobile: z
       .object({
         indent: withRef(z.string()).default("{{primitives.space.md}}"),
@@ -115,7 +104,7 @@ export const menubarSubmenu = z
     icon: z
       .object({
         size: withRef(z.string()).default("1rem"),
-        defaultState: (menubarSubmenuIconState as typeof menubarSubmenuIconState).optional(),
+        color: withRef(z.string()).default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
         state: z
           .object({
             focus: (menubarSubmenuIconState as typeof menubarSubmenuIconState).optional(),
@@ -141,11 +130,19 @@ export const menubarMobileButton = z
   .object({
     size: withRef(z.string()).default("2.5rem"),
     borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
+    border: z
+      .object({
+        color: color.default("{{primitives.border.defaultVariant.color}}"),
+      })
+      .optional(),
     defaultState: z
       .object({
         color: color.default(
           "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
         ),
+        background: z
+              .union([bg, withRef(z.string())])
+              .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
       })
       .optional(),
     state: z
@@ -163,12 +160,20 @@ export const menubarMobileButton = z
       })
       .optional(),
     focusRing: (menubarFocusRing as typeof menubarFocusRing).optional(),
+    icon:  z
+      .object({
+        size: withRef(z.string()).default("1rem"),
+        name: withRef(z.string()).default("bars"),
+      })
+      .optional(),
+    cursor: withRef(z.string()).default("pointer"), 
   })
   .register(themeSchemaRegistry, { id: "menubarMobileButton" });
 
 export const menubar = z
   .object({
     settings: (menubarSettings as typeof menubarSettings).optional(),
+    alignItems: withRef(z.string()).default("center"),
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
