@@ -9,6 +9,7 @@ import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { textarea } from "./schema/textarea";
 
 const usages = z
   .object({
@@ -20,6 +21,7 @@ const usages = z
     carousel: (carousel as typeof carousel).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),    
+    textarea: (textarea as typeof textarea).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
