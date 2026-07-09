@@ -7,6 +7,7 @@ import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
 import { pageHeaderMapping } from './usages/page-header';
+import { dropdownMappingRules } from './usages/dropdown.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -18,4 +19,5 @@ export const usageMappingRules: MappingRule[] = [
   ...fieldsetMappingRules,
   ...diagramMappingRules,
   ...pageHeaderMapping,
+  ...dropdownMappingRules,
 ];
