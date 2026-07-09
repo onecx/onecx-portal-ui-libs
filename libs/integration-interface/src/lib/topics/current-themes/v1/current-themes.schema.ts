@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { calendar } from "./schema/calendar";
 import { dialog } from "./schema/dialog";
 import { primitives } from "./schema/primitives";
 import { badge } from "./schema/badge";
@@ -11,18 +12,34 @@ import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
 
-const usages = z
-  .object({
-    dialog: (dialog as typeof dialog).optional(),
-    badge: (badge as typeof badge).optional(),
-    region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
-    tooltip: (tooltip as typeof tooltip).optional(),
-    carousel: (carousel as typeof carousel).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),
-    dropdown: (dropdown as typeof dropdown).optional(),    
-  })
+type UsagesShape = {
+  calendar: z.ZodOptional<typeof calendar>;
+  dialog: z.ZodOptional<typeof dialog>;
+  badge: z.ZodOptional<typeof badge>;
+  region: z.ZodOptional<typeof region>;
+  table: z.ZodOptional<typeof table>;
+  tooltip: z.ZodOptional<typeof tooltip>;
+  carousel: z.ZodOptional<typeof carousel>;
+  fieldset: z.ZodOptional<typeof fieldset>;
+  diagram: z.ZodOptional<typeof diagram>;
+  dropdown: z.ZodOptional<typeof dropdown>;
+}
+
+const usagesShape: UsagesShape = {
+  calendar: calendar.optional(),
+  dialog: dialog.optional(),
+  badge: badge.optional(),
+  region: region.optional(),
+  table: table.optional(),
+  tooltip: tooltip.optional(),
+  carousel: carousel.optional(),
+  fieldset: fieldset.optional(),
+  diagram: diagram.optional(),
+  dropdown: dropdown.optional(),
+};
+
+export const usages = z
+  .object(usagesShape)
   .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
