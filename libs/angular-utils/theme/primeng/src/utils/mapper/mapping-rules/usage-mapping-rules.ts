@@ -8,6 +8,7 @@ import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
 import { pageHeaderMapping } from './usages/page-header';
 import { searchHeaderMapping } from './usages/search-header';
+import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
 
 export const usageMappingRules: MappingRule[] = [
@@ -17,6 +18,7 @@ export const usageMappingRules: MappingRule[] = [
   ...dialogMappingRules,
   ...tooltipMappingRules,
   ...carouselMappingRules,
+  ...tabsMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
   ...pageHeaderMapping,
