@@ -25,14 +25,38 @@ const header = z.object({
         title: font.optional(),
         subtitle: font.optional(),       
     }).optional(),
+    padding: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
+}).optional()
+
+const subHeader = z.object({
+    font: font.optional(),
+    icons: z.object({
+        icon: icon.optional(),
+        infoIcon: icon.optional(),
+        actionIcon: icon.optional(),
+    }).optional(),
+    text: z.object({
+        title: font.optional(),
+        subtitle: font.optional(),       
+    }).optional(),
+    padding: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
 }).optional()
 
 const headerActions = z.object({
+    padding: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
     button: icon.extend({
         bg: bg.optional(),
         color: color.optional(),
     }).optional(),
     buttonStates: (variantWithStates as typeof variantWithStates).optional(),
+    horizontalAlignment: z.enum(["left", "center", "right"]).optional(),
+    verticalAlignment: z.enum(["top", "middle", "bottom"]).optional(),
+    icon: icon.optional(),
+    font: font.optional(),
+    tooltip: tooltip.optional(),
 })
 
 const contentLabel = font.extend({
@@ -59,6 +83,7 @@ type PageHeaderShape = {
     settings: typeof settings
     breadCrumbs: typeof breadcrumbs
     header: typeof header
+    subHeader: typeof subHeader
     headerActions: typeof headerActions
     tooltip: typeof tooltip
     contextMenu: typeof menu
@@ -70,6 +95,7 @@ const pageHeaderShape: PageHeaderShape = {
     settings,
     breadCrumbs: breadcrumbs,
     header,
+    subHeader,
     headerActions,
     tooltip,
     contextMenu: menu,

@@ -218,62 +218,62 @@ const PAGE_HEADER_CONTEXT_MENU: MappingRule[] = [
 const PAGE_HEADER_CUSTOM_SEMANTIC: MappingRule[] = [
 	{
 		from: 'usages.pageHeader.header.text.title.family',
-		to: 'component.pageHeader.title.fontFamily',
+		to: 'semantic.extend.onecx.pageHeader.title.fontFamily',
 	},
 	{
 		from: 'usages.pageHeader.header.text.title.size',
-		to: 'component.pageHeader.title.fontSize',
+		to: 'semantic.extend.onecx.pageHeader.title.fontSize',
 	},
 	{
 		from: 'usages.pageHeader.header.text.title.weight',
-		to: 'component.pageHeader.title.fontWeight',
+		to: 'semantic.extend.onecx.pageHeader.title.fontWeight',
 	},
 	{
 		from: 'usages.pageHeader.header.text.subtitle.family',
-		to: 'component.pageHeader.subtitle.fontFamily',
+		to: 'semantic.extend.onecx.pageHeader.subtitle.fontFamily',
 	},
 	{
 		from: 'usages.pageHeader.header.text.subtitle.size',
-		to: 'component.pageHeader.subtitle.fontSize',
+		to: 'semantic.extend.onecx.pageHeader.subtitle.fontSize',
 	},
 	{
 		from: 'usages.pageHeader.content.bg',
-		to: 'component.pageHeader.content.background',
+		to: 'semantic.extend.onecx.pageHeader.content.background',
 		transform: toColorString,
 	},
 	{
 		from: 'usages.pageHeader.content.contrast',
-		to: 'component.pageHeader.content.color',
+		to: 'semantic.extend.onecx.pageHeader.content.color',
 		transform: toColorString,
 	},
 	{
 		from: 'usages.pageHeader.content.padding',
-		to: 'component.pageHeader.content.padding',
+		to: 'semantic.extend.onecx.pageHeader.content.padding',
 	},
 	{
 		from: 'usages.pageHeader.content.contentLabel.size',
-		to: 'component.pageHeader.content.label.fontSize',
+		to: 'semantic.extend.onecx.pageHeader.content.label.fontSize',
 	},
 	{
 		from: 'usages.pageHeader.content.contentLabel.weight',
-		to: 'component.pageHeader.content.label.fontWeight',
+		to: 'semantic.extend.onecx.pageHeader.content.label.fontWeight',
 	},
 	{
 		from: 'usages.pageHeader.content.contentLabel.color',
-		to: 'component.pageHeader.content.label.color',
+		to: 'semantic.extend.onecx.pageHeader.content.label.color',
 		transform: toColorString,
 	},
 	{
 		from: 'usages.pageHeader.content.contentValue.size',
-		to: 'component.pageHeader.content.value.fontSize',
+		to: 'semantic.extend.onecx.pageHeader.content.value.fontSize',
 	},
 	{
 		from: 'usages.pageHeader.content.contentValue.weight',
-		to: 'component.pageHeader.content.value.fontWeight',
+		to: 'semantic.extend.onecx.pageHeader.content.value.fontWeight',
 	},
 	{
 		from: 'usages.pageHeader.content.contentValue.color',
-		to: 'component.pageHeader.content.value.color',
+		to: 'semantic.extend.onecx.pageHeader.content.value.color',
 		transform: toColorString,
 	},
 ]

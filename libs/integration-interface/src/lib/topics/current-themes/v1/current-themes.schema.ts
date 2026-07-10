@@ -11,6 +11,7 @@ import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
 import { pageHeader } from "./schema/page-header";
+import { searchHeader } from "./schema/search-header";
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -23,6 +24,7 @@ type UsagesInput = {
   diagram?: z.input<typeof diagram>
   dropdown?: z.input<typeof dropdown>
   pageHeader?: z.input<typeof pageHeader>
+  searchHeader?: z.input<typeof searchHeader>
 }
 
 // Explicit annotation breaks deep inference (serializer length / TS2589-like issues)
@@ -38,6 +40,7 @@ const usages: z.ZodType<UsagesInput> = z
     diagram: (diagram as typeof diagram).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     pageHeader: (pageHeader as typeof pageHeader).optional(),
+    searchHeader: (searchHeader as typeof searchHeader).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
