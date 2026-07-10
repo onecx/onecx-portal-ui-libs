@@ -49,6 +49,7 @@ export const content = bgContrast
   .extend({
     font: font.optional(),
     padding: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
     contentLabel,
     contentValue,
   })

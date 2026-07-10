@@ -1,8 +1,7 @@
 import z from "zod"
 import type { ElementRef, TemplateRef } from "@angular/core"
-import { bgContrast, border, borderWithShadow, font, icon, variantWithStates, withRef } from "./primitives"
+import { bgContrast, border, borderWithShadow, font, icon, link, variantWithStates, withRef } from "./primitives"
 import { themeSchemaRegistry } from "./registry"
-import { link } from "./link"
 
 export type MenuAppendToTarget = HTMLElement | ElementRef | TemplateRef<any> | "self" | "body" | null | undefined
 

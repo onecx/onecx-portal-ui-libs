@@ -10,8 +10,23 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
+import { pageHeader } from "./schema/page-header";
 
-const usages = z
+type UsagesInput = {
+  dialog?: z.input<typeof dialog>
+  badge?: z.input<typeof badge>
+  region?: z.input<typeof region>
+  table?: z.input<typeof table>
+  tooltip?: z.input<typeof tooltip>
+  carousel?: z.input<typeof carousel>
+  fieldset?: z.input<typeof fieldset>
+  diagram?: z.input<typeof diagram>
+  dropdown?: z.input<typeof dropdown>
+  pageHeader?: z.input<typeof pageHeader>
+}
+
+// Explicit annotation breaks deep inference (serializer length / TS2589-like issues)
+const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
     badge: (badge as typeof badge).optional(),
@@ -22,12 +37,11 @@ const usages = z
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
-    pageHeader: (pageHeader as typeof pageHeader).optional(),    
+    pageHeader: (pageHeader as typeof pageHeader).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
-type UsagesInput = z.input<typeof usages>
 
 type RegionOverrideInput = {
   primitives?: PrimitivesInput
