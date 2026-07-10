@@ -9,6 +9,7 @@ import { carousel } from "./schema/carousel";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { dropdown } from "./schema/dropdown";
 import { textarea } from "./schema/textarea";
 
 const usages = z
@@ -20,7 +21,8 @@ const usages = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
+    diagram: (diagram as typeof diagram).optional(),
+    dropdown: (dropdown as typeof dropdown).optional(),    
     textarea: (textarea as typeof textarea).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
