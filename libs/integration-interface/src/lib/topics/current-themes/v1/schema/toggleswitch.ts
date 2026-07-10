@@ -69,17 +69,6 @@ export const toggleswitch = z
           background: "{{primitives.area.surface.state.hover.defaultVariant.bg}}",
           borderColor: "{{primitives.border.defaultVariant.color}}",
         }),
-        checked: z
-          .object({
-            background: z
-              .union([bg, withRef(z.string())])
-              .default("{{primitives.variant.primary.defaultState.defaultVariant.bg}}"),
-            borderColor: color.default(
-              "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}"
-            ),
-            hover: (toggleswitchColors as typeof toggleswitchColors).optional(),
-          })
-          .optional(),
         disabled: (toggleswitchColors as typeof toggleswitchColors).optional(),
         invalid: z
           .object({
@@ -88,6 +77,25 @@ export const toggleswitch = z
           .optional(),
       })
       .optional(),
+    variant: z
+      .object({
+        checked: z
+          .object({
+            defaultState: toggleswitchColors.default({
+              background: "{{primitives.variant.primary.defaultState.defaultVariant.bg}}",
+              borderColor: "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}",
+            }),
+            state: z
+              .object({
+                hover: (toggleswitchColors as typeof toggleswitchColors).optional(),
+                disabled: (toggleswitchColors as typeof toggleswitchColors).optional(),
+              })
+              .optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    // Handle represents the circular knob/slider that moves within the toggle switch track
     handle: z
       .object({
         borderRadius: withRef(z.string()).default("{{primitives.radius.full}}"),
@@ -98,20 +106,34 @@ export const toggleswitch = z
         state: z
           .object({
             hover: (toggleswitchHandleColors as typeof toggleswitchHandleColors).optional(),
-            checked: z
-              .object({
-                background: color.default(
-                  "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-                ),
-                color: color.optional(),
-                hover: (toggleswitchHandleColors as typeof toggleswitchHandleColors).optional(),
-              })
-              .optional(),
             disabled: z
               .object({
                 background: color.default(
                   "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
                 ),
+              })
+              .optional(),
+          })
+          .optional(),
+        variant: z
+          .object({
+            checked: z
+              .object({
+                defaultState: toggleswitchHandleColors.default({
+                  background: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                }),
+                state: z
+                  .object({
+                    hover: (toggleswitchHandleColors as typeof toggleswitchHandleColors).optional(),
+                    disabled: z
+                      .object({
+                        background: color.default(
+                          "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
+                        ),
+                      })
+                      .optional(),
+                  })
+                  .optional(),
               })
               .optional(),
           })
