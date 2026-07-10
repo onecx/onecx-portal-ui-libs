@@ -1,4 +1,5 @@
 import type { MappingRule } from '../mapper.types';
+import { buttonMappingRules } from './usages/button.rules';
 import { badgeMappingRules } from './usages/badge.rules';
 import { datatableMappingRules } from './usages/datatable.rules';
 import { dialogMappingRules } from './usages/dialog.rules';
@@ -10,9 +11,10 @@ import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
 
 export const usageMappingRules: MappingRule[] = [
+  ...buttonMappingRules,
   ...badgeMappingRules,
   ...datatableMappingRules,
-  ...tooltipMappingRules,  
+  ...tooltipMappingRules,
   ...dialogMappingRules,
   ...tooltipMappingRules,
   ...carouselMappingRules,

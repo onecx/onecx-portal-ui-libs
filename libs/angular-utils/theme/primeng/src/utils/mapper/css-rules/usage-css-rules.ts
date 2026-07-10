@@ -1,4 +1,5 @@
 import type { CssRule } from '../mapper.types';
+import { buttonCssRules } from './usages/button.rules';
 import { badgeCssRules } from './usages/badge.rules';
 import { carouselCssRules } from './usages/carousel.rules';
 import { datatableCssRules } from './usages/datatable.rules';
@@ -9,6 +10,7 @@ import { tabsCssRules } from './usages/tabs.rules';
 import { dropdownCssRules } from './usages/dropdown.rules';
 
 export const usageCssRules: CssRule[] = [
+  ...buttonCssRules,
   ...carouselCssRules,
   ...datatableCssRules,
   ...fieldsetCssRules,

@@ -8,6 +8,7 @@ import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
 import { tabs } from "./schema/tabs";
 import { themeSchemaRegistry } from "./schema/registry";
+import { button } from "./schema/button";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
@@ -19,11 +20,12 @@ const usages = z
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
+    button: (button as typeof button).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),
-    dropdown: (dropdown as typeof dropdown).optional(),    
+    dropdown: (dropdown as typeof dropdown).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
