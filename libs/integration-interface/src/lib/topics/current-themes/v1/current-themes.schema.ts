@@ -10,6 +10,7 @@ import { toggleswitch } from "./schema/toggleswitch";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
+import { dropdown } from "./schema/dropdown";
 
 const usages = z
   .object({
@@ -22,6 +23,7 @@ const usages = z
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),    
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
+    dropdown: (dropdown as typeof dropdown).optional(),    
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
