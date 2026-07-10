@@ -30,11 +30,15 @@ export const calendarSettings = z
 // Shared schema for month/year navigation selectors (selectMonth, selectYear)
 export const navigationSelector = z
   .object({
-    hoverBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+    hover: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+      })
+      .optional(),
     color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-    hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
     focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
     padding: withRef(z.string()).default("{{primitives.space.sm}}"),
     border: border.default({
@@ -59,15 +63,23 @@ export const pickerCell = z
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
-    hoverBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
-    activeBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+    hover: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+      })
+      .optional(),
+    active: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
+      })
+      .optional(),
     color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-    hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
-    activeColor: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
     border: border.default({
       radius: "{{primitives.radius.md}}",
     }),
@@ -82,11 +94,15 @@ export const panelButton = z
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
-    hoverBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.overlay.state.hover.defaultVariant.bg}}"),
+    hover: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.overlay.state.hover.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.overlay.state.hover.defaultVariant.contrast}}"),
+      })
+      .optional(),
     color: color.default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
-    hoverColor: color.default("{{primitives.area.overlay.state.hover.defaultVariant.contrast}}"),
     width: withRef(z.string()).default("2.5rem"),
     height: withRef(z.string()).default("2.5rem"),
     border: border.default({
@@ -100,17 +116,25 @@ export const panelButton = z
 export const iconStyles = z
   .object({
     color: color.default("{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"),
-    hoverColor: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
-    activeColor: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.onSurface.defaultState.defaultVariant.bg}}"),
-    hoverBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
-    activeBackground: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+    hover: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.onSurface.state.hover.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"),
+      })
+      .optional(),
+    active: z
+      .object({
+        background: z
+          .union([bg, withRef(z.string())])
+          .default("{{primitives.area.onSurface.state.active.defaultVariant.bg}}"),
+        color: color.default("{{primitives.area.onSurface.state.active.defaultVariant.contrast}}"),
+      })
+      .optional(),
     focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
     width: withRef(z.string()).optional(),
