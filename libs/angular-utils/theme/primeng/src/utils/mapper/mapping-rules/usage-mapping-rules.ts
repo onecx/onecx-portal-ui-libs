@@ -8,6 +8,7 @@ import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
 import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
+import { messageMappingRules } from './usages/messages.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -20,4 +21,5 @@ export const usageMappingRules: MappingRule[] = [
   ...fieldsetMappingRules,
   ...diagramMappingRules,
   ...dropdownMappingRules,
+  ...messageMappingRules,
 ];

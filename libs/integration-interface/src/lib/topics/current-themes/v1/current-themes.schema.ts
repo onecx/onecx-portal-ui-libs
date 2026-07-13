@@ -11,6 +11,7 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
+import { message } from "./schema/message";
 
 const usages = z
   .object({
@@ -23,7 +24,8 @@ const usages = z
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),
-    dropdown: (dropdown as typeof dropdown).optional(),    
+    dropdown: (dropdown as typeof dropdown).optional(),
+    message: (message as typeof message).optional(),    
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
