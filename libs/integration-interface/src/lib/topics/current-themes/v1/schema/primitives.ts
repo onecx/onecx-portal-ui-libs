@@ -119,6 +119,8 @@ export const variantWithStates = bgContrast
         active: severityVariantGroup.optional(),
         selected: severityVariantGroup.optional(),
         focus: severityVariantGroup.optional(),
+        invalid: severityVariantGroup.optional(),
+        disabled: severityVariantGroup.optional(),
       })
       .optional(),
   })
