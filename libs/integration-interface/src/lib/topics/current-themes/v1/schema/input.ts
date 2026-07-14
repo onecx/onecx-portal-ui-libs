@@ -2,7 +2,7 @@ import * as z from "zod";
 import { bg, border, color, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 
-export const inputText = z
+export const input = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
@@ -126,4 +126,4 @@ export const inputText = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: "inputText" });
+  .register(themeSchemaRegistry, { id: "input" });

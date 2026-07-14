@@ -6,7 +6,7 @@ import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
-import { inputTextMappingRules } from './usages/inputtext.rules';
+import { inputMappingRules } from './usages/input.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
 
 export const usageMappingRules: MappingRule[] = [
@@ -18,6 +18,6 @@ export const usageMappingRules: MappingRule[] = [
   ...carouselMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
-  ...inputTextMappingRules,
+  ...inputMappingRules,
   ...dropdownMappingRules,
 ];

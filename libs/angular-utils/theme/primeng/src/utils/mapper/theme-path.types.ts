@@ -115,7 +115,7 @@ export type ThemePath =
   | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
   | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
-  | `usages.inputText.${LeafPaths<NonNullable<Usages['inputText']>>}`
+  | `usages.input.${LeafPaths<NonNullable<Usages['input']>>}`
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
