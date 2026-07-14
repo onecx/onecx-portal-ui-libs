@@ -1,3 +1,9 @@
+## [9.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.11...v9.0.0-rc.12) (2026-07-14)
+
+### Features
+
+* Added AiContextGatherer ([#1589](https://github.com/onecx/onecx-portal-ui-libs/issues/1589)) ([2d7dd31](https://github.com/onecx/onecx-portal-ui-libs/commit/2d7dd31d8b092b27c9e5696a2faa2c12b93db0f0))
+
 ## [9.0.0-rc.11](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.10...v9.0.0-rc.11) (2026-07-06)
 
 ### Features
