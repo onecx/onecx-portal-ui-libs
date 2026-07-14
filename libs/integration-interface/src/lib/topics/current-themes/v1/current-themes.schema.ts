@@ -6,6 +6,7 @@ import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
+import { toggleswitch } from "./schema/toggleswitch";
 import { tabs } from "./schema/tabs";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
@@ -22,7 +23,8 @@ const usages = z
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),
+    diagram: (diagram as typeof diagram).optional(),    
+    toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),    
   })
   .register(themeSchemaRegistry, { id: "usages" });
