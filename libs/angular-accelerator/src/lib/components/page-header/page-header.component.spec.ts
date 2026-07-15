@@ -372,7 +372,7 @@ describe('PageHeaderComponent', () => {
     await fixture.whenStable()
 
     const documentRoot = fixture.nativeElement.ownerDocument as Document
-    const menuLinks = Array.from(documentRoot.querySelectorAll('.p-menuitem-link')) as HTMLAnchorElement[]
+    const menuLinks = Array.from(documentRoot.querySelectorAll('.p-menu-item-link')) as HTMLAnchorElement[]
     const overflowLink = menuLinks.find((item) => item.textContent?.includes('Overflow Link'))
     expect(overflowLink).toBeTruthy()
     expect(overflowLink?.getAttribute('href')).toContain('/details')
