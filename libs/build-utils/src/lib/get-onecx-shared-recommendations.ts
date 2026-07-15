@@ -18,6 +18,7 @@ const sharedLibraryPatterns: RegExp[] = [
   /^primeng.*$/,
   /^@ngx-translate.*$/,
   /^@ngrx.*$/,
+  /^react.*$/,
 ]
 
 /**

@@ -6,7 +6,11 @@
  */
 
 import * as fs from 'fs'
-import { getOneCXSharedLibraryConfig, onecxPackageFilter, SharedLibraryConfigOptions } from './get-onecx-shared-library-config'
+import {
+  getOneCXSharedLibraryConfig,
+  onecxPackageFilter,
+  SharedLibraryConfigOptions,
+} from './get-onecx-shared-library-config'
 
 describe('get-onecx-shared-library-config', () => {
   afterEach(() => {
@@ -25,12 +29,12 @@ describe('get-onecx-shared-library-config', () => {
       expect(onecxPackageFilter(pkg)).toBe(true)
     })
 
-    it.each([
-      ['@angular/core/testing'],
-      ['@ngrx/store'],
-    ])('should return false (INCLUDE) for allowed package %s', (pkg) => {
-      expect(onecxPackageFilter(pkg)).toBe(false)
-    })
+    it.each([['@angular/core/testing'], ['@ngrx/store']])(
+      'should return false (INCLUDE) for allowed package %s',
+      (pkg) => {
+        expect(onecxPackageFilter(pkg)).toBe(false)
+      }
+    )
   })
 
   describe('getOneCXSharedLibraryConfig', () => {
@@ -49,7 +53,7 @@ describe('get-onecx-shared-library-config', () => {
         '@onecx/build-utils/test-lib': '^8.4.2',
         'some-random-lib': '^1.0.0',
         '@angular/core': '^21.0.0',
-        'rxjs': '^7.8.0',
+        rxjs: '^7.8.0',
       }
 
       const result = getOneCXSharedLibraryConfig(deps, false)
@@ -67,11 +71,11 @@ describe('get-onecx-shared-library-config', () => {
 
     it('should respect packageFilterCallback: true excludes, false force-includes, undefined defers to default', () => {
       const packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback'] = (pkg) => {
-        if (pkg === 'rxjs') return true             // explicit EXCLUDE
-        if (pkg === '@angular/core') return false   // explicit INCLUDE (default would also include it)
-        return undefined                            // defer to default filter
+        if (pkg === 'rxjs') return true // explicit EXCLUDE
+        if (pkg === '@angular/core') return false // explicit INCLUDE (default would also include it)
+        return undefined // defer to default filter
       }
-      const deps = { '@angular/core': '^21.0.0', 'rxjs': '^7.8.0', '@nx/angular': '^20.0.0' }
+      const deps = { '@angular/core': '^21.0.0', rxjs: '^7.8.0', '@nx/angular': '^20.0.0' }
 
       const result = getOneCXSharedLibraryConfig(deps, false, { packageFilterCallback })
 
@@ -107,8 +111,8 @@ describe('get-onecx-shared-library-config', () => {
 
     it('should set shareScope to default when @angular/core is below v21, absent, or has empty version', () => {
       const below21 = getOneCXSharedLibraryConfig({ '@angular/core': '^20.0.0' }, false)
-      const absent  = getOneCXSharedLibraryConfig({ 'rxjs': '^7.8.0' }, false)
-      const empty   = getOneCXSharedLibraryConfig({ '@angular/core': '' }, false)
+      const absent = getOneCXSharedLibraryConfig({ rxjs: '^7.8.0' }, false)
+      const empty = getOneCXSharedLibraryConfig({ '@angular/core': '' }, false)
 
       expect(below21['@angular/core'].shareScope).toBe('default')
       expect(absent['rxjs'].shareScope).toBe('default')
@@ -117,12 +121,11 @@ describe('get-onecx-shared-library-config', () => {
 
     it('should apply the same shareScope to every package in the result', () => {
       const result = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0', 'rxjs': '^7.8.0', '@ngrx/store': '^17.0.0' },
-        false,
+        { '@angular/core': '^21.0.0', rxjs: '^7.8.0', '@ngrx/store': '^17.0.0' },
+        false
       )
       Object.values(result).forEach((config) => expect(config.shareScope).toBe('angular_21'))
     })
-
 
     it('should not generate subpackages when shouldGenerateSubDeps is false', () => {
       const result = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0' }, false)
@@ -132,10 +135,7 @@ describe('get-onecx-shared-library-config', () => {
     })
 
     it('should generate subpackages from package exports, skipping EXPORTS_BLACKLIST and DEFAULT_FULL_PACKAGE_BLACKLIST entries', () => {
-      const result = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0', '@angular/router': '^21.0.0' },
-        true,
-      )
+      const result = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0', '@angular/router': '^21.0.0' }, true)
 
       expect(result['@angular/core']).toBeDefined()
       expect(result['@angular/router']).toBeDefined()
@@ -147,16 +147,12 @@ describe('get-onecx-shared-library-config', () => {
     })
 
     it('should apply packageFilterCallback to subpackages: explicit true excludes, explicit false force-includes blacklisted entries', () => {
-      const withExclusion = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0' },
-        true,
-        { packageFilterCallback: (pkg) => (pkg.includes('/testing') ? true : undefined) },
-      )
-      const withInclusion = getOneCXSharedLibraryConfig(
-        { '@angular/router': '^21.0.0' },
-        true,
-        { packageFilterCallback: (pkg) => (pkg === '@angular/router/upgrade' ? false : undefined) },
-      )
+      const withExclusion = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0' }, true, {
+        packageFilterCallback: (pkg) => (pkg.includes('/testing') ? true : undefined),
+      })
+      const withInclusion = getOneCXSharedLibraryConfig({ '@angular/router': '^21.0.0' }, true, {
+        packageFilterCallback: (pkg) => (pkg === '@angular/router/upgrade' ? false : undefined),
+      })
 
       expect(Object.keys(withExclusion).filter((k) => k.includes('/testing'))).toHaveLength(0)
       expect(withExclusion['@angular/core']).toBeDefined()
@@ -177,7 +173,6 @@ describe('get-onecx-shared-library-config', () => {
       expect(Object.keys(result).filter((k) => k.startsWith('@angular/core/'))).toHaveLength(0)
     })
 
-
     it('should invoke configCallback with the package name and pre-computed config, and apply the returned config', () => {
       const received: Array<{ name: string; config: Record<string, unknown> }> = []
       const configCallback: SharedLibraryConfigOptions['configCallback'] = (pkgName, config) => {
@@ -194,16 +189,12 @@ describe('get-onecx-shared-library-config', () => {
     })
 
     it('should ignore configCallback result when it returns a non-object (undefined or primitive)', () => {
-      const withUndefined = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0' },
-        false,
-        { configCallback: () => undefined as any },
-      )
-      const withPrimitive = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0' },
-        false,
-        { configCallback: () => 'invalid' as any },
-      )
+      const withUndefined = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0' }, false, {
+        configCallback: () => undefined as any,
+      })
+      const withPrimitive = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0' }, false, {
+        configCallback: () => 'invalid' as any,
+      })
 
       expect(withUndefined['@angular/core'].shareScope).toBe('angular_21')
       expect(withUndefined['@angular/core'].requiredVersion).toBe('^21.0.0')
@@ -211,19 +202,13 @@ describe('get-onecx-shared-library-config', () => {
     })
 
     it('should apply configCallback to all entries including subpackages, and only to packages that pass packageFilterCallback', () => {
-      const withSubs = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0' },
-        true,
-        { configCallback: (_, config) => ({ ...config, shareScope: 'subScope' }) },
-      )
-      const withFilter = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0', 'rxjs': '^7.8.0' },
-        false,
-        {
-          configCallback: (_, config) => ({ ...config, shareScope: 'myScope' }),
-          packageFilterCallback: (pkg) => (pkg === 'rxjs' ? true : undefined),
-        },
-      )
+      const withSubs = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0' }, true, {
+        configCallback: (_, config) => ({ ...config, shareScope: 'subScope' }),
+      })
+      const withFilter = getOneCXSharedLibraryConfig({ '@angular/core': '^21.0.0', rxjs: '^7.8.0' }, false, {
+        configCallback: (_, config) => ({ ...config, shareScope: 'myScope' }),
+        packageFilterCallback: (pkg) => (pkg === 'rxjs' ? true : undefined),
+      })
 
       Object.values(withSubs).forEach((config) => expect(config.shareScope).toBe('subScope'))
       expect(withFilter['@angular/core'].shareScope).toBe('myScope')
@@ -231,16 +216,54 @@ describe('get-onecx-shared-library-config', () => {
     })
   })
 
+  describe('React support', () => {
+    it.each([['react'], ['react-dom'], ['react_something']])(
+      'should include React library %s in shared config',
+      (pkg) => {
+        const result = getOneCXSharedLibraryConfig({ [pkg]: '^18.0.0', react: '^18.0.0' }, false)
+        expect(result[pkg]).toBeDefined()
+        expect(result[pkg].singleton).toBe(false)
+        expect(result[pkg].strictVersion).toBe(false)
+        expect(result[pkg].eager).toBe(false)
+      }
+    )
+
+    it.each([
+      ['^18.0.0', 'react_18'],
+      ['^19.0.0', 'react_19'],
+      ['18.2.0', 'react_18'],
+    ])('should derive shareScope from react version %s → %s', (version, expectedScope) => {
+      const result = getOneCXSharedLibraryConfig({ react: version, 'react-dom': version }, false)
+      expect(result['react'].shareScope).toBe(expectedScope)
+      expect(result['react-dom'].shareScope).toBe(expectedScope)
+    })
+
+    it('should set shareScope to default for React packages when react is absent from dependencies', () => {
+      const result = getOneCXSharedLibraryConfig({ 'react-dom': '^18.0.0' }, false)
+      expect(result['react-dom'].shareScope).toBe('default')
+    })
+
+    it('should assign react_XX scope to React packages and angular_XX scope to Angular packages in mixed deps', () => {
+      const result = getOneCXSharedLibraryConfig(
+        { '@angular/core': '^21.0.0', rxjs: '^7.8.0', react: '^18.0.0', 'react-dom': '^18.0.0' },
+        false
+      )
+      expect(result['@angular/core'].shareScope).toBe('angular_21')
+      expect(result['rxjs'].shareScope).toBe('angular_21')
+      expect(result['react'].shareScope).toBe('react_18')
+      expect(result['react-dom'].shareScope).toBe('react_18')
+    })
+  })
 
   describe('integration', () => {
     it('should generate correct shared config for a typical Angular 21 project', () => {
       const deps = {
         '@angular/core': '^21.0.0',
         '@angular/common': '^21.0.0',
-        'rxjs': '^7.8.0',
+        rxjs: '^7.8.0',
         '@ngrx/store': '^21.0.0',
         '@ngx-translate/core': '^17.0.0',
-        'primeng': '^21.0.0',
+        primeng: '^21.0.0',
         '@nx/angular': '^20.0.0',
         '@module-federation/enhanced': '^2.0.0',
         'some-build-tool': '^1.0.0',
@@ -266,5 +289,3 @@ describe('get-onecx-shared-library-config', () => {
     })
   })
 })
-
-
