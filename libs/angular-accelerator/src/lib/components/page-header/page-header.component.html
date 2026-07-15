@@ -107,15 +107,15 @@
           <p-menu #menu [popup]="true" [model]="overflowActions" appendTo="body">
             <ng-template pTemplate="item" let-item>
               <a
-                class="p-menuitem-link"
+                class="p-menu-item-link"
                 [routerLink]="item.routerLink || null"
                 [attr.href]="item.routerLink || null"
                 (click)="!item.disabled && !item.routerLink && item.command?.($event)"
               >
                 @if (item.icon) {
-                <span class="p-menuitem-icon" [ngClass]="item.icon"></span>
+                <span class="p-menu-item-icon" [ngClass]="item.icon"></span>
                 }
-                <span class="p-menuitem-text">{{ item.label }}</span>
+                <span class="p-menu-item-text">{{ item.label }}</span>
               </a>
             </ng-template>
           </p-menu>
