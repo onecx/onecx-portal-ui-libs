@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs'
-import { getOneCXSharedRecommendations, SharedLibraryConfig } from "./get-onecx-shared-recommendations";
-const angularCore = '@angular/core';
-
+import { getOneCXSharedRecommendations, SharedLibraryConfig } from './get-onecx-shared-recommendations'
+const angularCore = '@angular/core'
 
 /**
  * Resolves and reads a dependency's package.json file.
@@ -9,36 +8,35 @@ const angularCore = '@angular/core';
  * @param {string} dependency - Package name to resolve
  * @returns {Record<string, unknown> | null} Parsed package.json or null if not found
  */
-function readDependencyPackageJson(dependency: string){
+function readDependencyPackageJson(dependency: string) {
   let packagePath: string
   try {
     packagePath = require.resolve(`${dependency}/package.json`)
   } catch {
-    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
-    return null;
+    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`)
+    return null
   }
   if (!existsSync(packagePath)) {
-    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`);
+    console.log(`[build-utils] Shared Config: skipping ${dependency}: package.json not found at resolved path`)
     return null
   }
   return JSON.parse(readFileSync(packagePath, 'utf-8'))
 }
 
-
 /**
  * Callbacks that can be passed to the SharedLibraryConfigOptions function to customize its behavior.
  * @property {function} configCallback - A function that receives the package name and current shared configuration, returning a modified configuration. Must return a SharedLibraryConfig object.
- * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, use onecxPackageFilter to use default blacklist. 
-*/
+ * @property {function} packageFilterCallback - A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it, use onecxPackageFilter to use default blacklist.
+ */
 export interface SharedLibraryConfigOptions {
-  configCallback?: (packageName: string, currentConfig: SharedLibraryConfig) => SharedLibraryConfig;
-  packageFilterCallback?: (packageName: string) => boolean | undefined;
+  configCallback?: (packageName: string, currentConfig: SharedLibraryConfig) => SharedLibraryConfig
+  packageFilterCallback?: (packageName: string) => boolean | undefined
 }
 
 /**
  * Blacklist of export paths to exclude when generating subpackage entries.
  */
-const EXPORTS_BLACKLIST = new Set(['.', './package.json']);
+const EXPORTS_BLACKLIST = new Set(['.', './package.json'])
 
 /**
  * Patterns for identifying dependencies that should be blacklisted.
@@ -47,7 +45,7 @@ const DEFAULT_DEPENDENCY_BLACKLIST: RegExp[] = [
   /^@nx(\/.*)?$/,
   /^@module-federation(\/.*)?$/,
   /^@onecx\/build-utils(\/.*)?$/,
-];
+]
 
 /**
  * For identifying full package paths that should be blacklisted.
@@ -68,7 +66,7 @@ const DEFAULT_FULL_PACKAGE_BLACKLIST = new Set([
   'primeng/editor',
   '@onecx/angular-accelerator/testing',
   '@onecx/angular-accelerator/migrations.json',
-]);
+])
 
 /**
  * Removes the './' prefix from a string, typically used for export paths in package.json files.
@@ -76,9 +74,8 @@ const DEFAULT_FULL_PACKAGE_BLACKLIST = new Set([
  * @returns {string} The string without the './' prefix.
  */
 function removeExportPrefix(str: string) {
-  return str.replace('./', '');
+  return str.replace('./', '')
 }
-
 
 /**
  * onecxPackageFilter is the default OneCX package filter.
@@ -86,12 +83,11 @@ function removeExportPrefix(str: string) {
  * @returns {boolean} - Returns `true` if the package is on the default blacklist, `false` otherwise.
  */
 export function onecxPackageFilter(packageName: string): boolean {
-  if(isDependencyBlacklisted(packageName)){
-    return true;
+  if (isDependencyBlacklisted(packageName)) {
+    return true
   }
-  return DEFAULT_FULL_PACKAGE_BLACKLIST.has(packageName);
+  return DEFAULT_FULL_PACKAGE_BLACKLIST.has(packageName)
 }
-
 
 /**
  * Check whether a dependency matches any blacklist entry. Supports RegExp entries and exact string matches.
@@ -99,10 +95,10 @@ export function onecxPackageFilter(packageName: string): boolean {
 function isDependencyBlacklisted(dependency: string): boolean {
   return DEFAULT_DEPENDENCY_BLACKLIST.some((entry) => {
     if (entry instanceof RegExp) {
-      return entry.test(dependency);
+      return entry.test(dependency)
     }
-    return entry === dependency;
-  });
+    return entry === dependency
+  })
 }
 
 /**
@@ -113,24 +109,28 @@ function isDependencyBlacklisted(dependency: string): boolean {
  * @param {function} packageFilterCallback - Optional callback to filter out specific subpackages. Should return true to exclude a package, false to include it.
  * @returns {Array} Array of subpackage objects with name and version
  */
-function generateSubPackageConfig(dependency: string, version: string, packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback']) {
-  const subpackages : { name: string, requiredVersion: string }[] = [];
-  const dependencyPackage = readDependencyPackageJson(dependency);
+function generateSubPackageConfig(
+  dependency: string,
+  version: string,
+  packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback']
+) {
+  const subpackages: { name: string; requiredVersion: string }[] = []
+  const dependencyPackage = readDependencyPackageJson(dependency)
 
   if (!dependencyPackage?.exports) {
-    return subpackages;
+    return subpackages
   }
 
-  const exportKeys = Object.keys(dependencyPackage.exports);
+  const exportKeys = Object.keys(dependencyPackage.exports)
 
   for (const exportKey of exportKeys) {
-    if (EXPORTS_BLACKLIST.has(exportKey)) continue;
+    if (EXPORTS_BLACKLIST.has(exportKey)) continue
 
-    const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`;
-    if (packageFilterCallback?.(subpackageName)) continue;
-    subpackages.push({ name: subpackageName, requiredVersion: version });
+    const subpackageName = `${dependency}/${removeExportPrefix(exportKey)}`
+    if (packageFilterCallback?.(subpackageName)) continue
+    subpackages.push({ name: subpackageName, requiredVersion: version })
   }
-  return subpackages;
+  return subpackages
 }
 
 /**
@@ -139,25 +139,28 @@ function generateSubPackageConfig(dependency: string, version: string, packageFi
  * @param {Object} versionMap - Map of dependency names to versions
  * @param {string} dependency - Package name to generate packages for
  * @param {boolean} shouldGenerateSubDeps - Flag indicating whether to include subpackages based on exports
- * @param {function} packageFilterCallback - Optional callback to filter out specific packages. Should return true to exclude a package, false to include it. 
+ * @param {function} packageFilterCallback - Optional callback to filter out specific packages. Should return true to exclude a package, false to include it.
  * @returns {Array} Array of all packages (main + subpackages)
  */
-function generatePackageConfig(versionMap : Record<string, string>, dependency : string, shouldGenerateSubDeps : boolean, packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback'] = onecxPackageFilter
-): { name: string, requiredVersion: string }[] {
-  if(packageFilterCallback(dependency)){
-    return [];
+function generatePackageConfig(
+  versionMap: Record<string, string>,
+  dependency: string,
+  shouldGenerateSubDeps: boolean,
+  packageFilterCallback: SharedLibraryConfigOptions['packageFilterCallback'] = onecxPackageFilter
+): { name: string; requiredVersion: string }[] {
+  if (packageFilterCallback(dependency)) {
+    return []
   }
-  const allPackages = [];
-  const version = versionMap[dependency];
-  allPackages.push({ name: dependency, requiredVersion: version });
+  const allPackages = []
+  const version = versionMap[dependency]
+  allPackages.push({ name: dependency, requiredVersion: version })
 
   if (shouldGenerateSubDeps) {
-    const subpackages = generateSubPackageConfig(dependency, version, packageFilterCallback);
-    allPackages.push(...subpackages);
+    const subpackages = generateSubPackageConfig(dependency, version, packageFilterCallback)
+    allPackages.push(...subpackages)
   }
-  return allPackages;
+  return allPackages
 }
-
 
 /**
  * Generates a shared library configuration object for all dependencies (main + subpackages if needed).
@@ -169,7 +172,7 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  *   - packageFilterCallback: A function that takes a package name and returns a boolean. Return true to EXCLUDE the package, false to INCLUDE it.
  *      packageFilterCallback?: (packageName: string) => boolean | undefined;
  * @returns {Record<string, SharedLibraryConfig>} A map of package names to their shared library configuration
- * 
+ *
  * @example
  * **Recommended usage for @module-federation/enhanced:**
  * ```js
@@ -181,16 +184,16 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  *   shareScope: 'angular_21'
  * }
  * ```
- * 
+ *
  * **Recommended usage for @angular-architects/module-federation:**
  * The share function is from @angular-architects/module-federation.
  * ```js
  * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
  *   currentConfig[includeSecondaries]=true
- *   currentConfig[requiredVersion]='auto'  
+ *   currentConfig[requiredVersion]='auto'
  *   return currentConfig
  * }
- * 
+ *
  * const sharedEntries = getOneCXSharedLibraryConfig(dependencies, false, { configCallback: customConfigCallback });
  * const config = withModuleFederationPlugin({
  *   name: 'onecx-<%= remoteModuleFileName %>-ui',
@@ -210,7 +213,7 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  * });
  * ```
  * \
- * Following are some Custom Implementation: 
+ * Following are some Custom Implementation:
  * 1. Adding Custom Config or overiding default config
  *```js
  * function customConfigCallback(packageName: string, currentConfig: SharedLibraryConfig): SharedLibraryConfig {
@@ -226,42 +229,51 @@ function generatePackageConfig(versionMap : Record<string, string>, dependency :
  *   return false;
  * }
  * ```
- * 
+ *
  * 3. Custom Package using onecxPckageFilter as defaut:
  * ```js
  * function customPackageFilter(packageName: string): boolean {
  *   if (packageName.startsWith('@internal/')) return true;
  *   return onecxPackageFilter(packageName);
  * }
- *  
+ *
  * ```
- * 
+ *
  */
-export function getOneCXSharedLibraryConfig(dependencies: Record<string, string>, shouldGenerateSubDeps: boolean, options?: SharedLibraryConfigOptions): Record<string, SharedLibraryConfig> {
-  
+export function getOneCXSharedLibraryConfig(
+  dependencies: Record<string, string>,
+  shouldGenerateSubDeps: boolean,
+  options?: SharedLibraryConfigOptions
+): Record<string, SharedLibraryConfig> {
   const allDependencies = Object.keys(dependencies).flatMap((dependency) => {
-    return generatePackageConfig(dependencies, dependency, shouldGenerateSubDeps, options?.packageFilterCallback);
-  });
+    return generatePackageConfig(dependencies, dependency, shouldGenerateSubDeps, options?.packageFilterCallback)
+  })
   const sharedEntries: Record<string, SharedLibraryConfig> = allDependencies.reduce((acc, packageEntry) => {
     const sharedLibConfig: SharedLibraryConfig = {}
     sharedLibConfig['requiredVersion'] = packageEntry.requiredVersion
-    sharedLibConfig['shareScope'] = 'default';    
 
-    const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '');
-    if (angularCoreVersion && Number.parseInt(angularCoreVersion, 10) >= 21) {
-      const shareScope = ('angular_').concat(angularCoreVersion);
-      sharedLibConfig['shareScope'] = shareScope;
+    const reactVersion = (dependencies['react'] || '').split('.')[0].replace('^', '')
+    const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '')
+
+    if (packageEntry.name.startsWith('react') && reactVersion) {
+      sharedLibConfig['shareScope'] = 'react_'.concat(reactVersion)
+    } else if (angularCoreVersion && Number.parseInt(angularCoreVersion, 10) >= 21) {
+      sharedLibConfig['shareScope'] = 'angular_'.concat(angularCoreVersion)
+    } else {
+      sharedLibConfig['shareScope'] = 'default'
     }
 
-    const onecxRecommendation = getOneCXSharedRecommendations(packageEntry.name, sharedLibConfig);
+    const onecxRecommendation = getOneCXSharedRecommendations(packageEntry.name, sharedLibConfig)
     if (!onecxRecommendation) {
-      return acc;
+      return acc
     }
 
     // Apply configCallback if provided to current config overriding the recommendation
-    const configFromCallback = options?.configCallback ? options.configCallback(packageEntry.name, onecxRecommendation) : undefined;
+    const configFromCallback = options?.configCallback
+      ? options.configCallback(packageEntry.name, onecxRecommendation)
+      : undefined
     if (configFromCallback && typeof configFromCallback === 'object') {
-      Object.assign(onecxRecommendation, configFromCallback);
+      Object.assign(onecxRecommendation, configFromCallback)
     }
 
     return {
@@ -269,7 +281,7 @@ export function getOneCXSharedLibraryConfig(dependencies: Record<string, string>
       [packageEntry.name]: {
         ...onecxRecommendation,
       },
-    };
-  }, {});
-  return sharedEntries;
+    }
+  }, {})
+  return sharedEntries
 }
