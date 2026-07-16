@@ -223,15 +223,43 @@ export const invalidTextareaStyles = textareaBaseStyles
 
 export const textareaWithStates = z
   .object({
-    defaultState: (textareaStyles as typeof textareaStyles).optional(),
+    defaultState: z
+      .object({
+        defaultSeverity: (textareaStyles as typeof textareaStyles).optional(),
+      })
+      .optional(),
     state: z
       .object({
-        hover: (hoverTextareaStyles as typeof hoverTextareaStyles).optional(),
-        active: (activeTextareaStyles as typeof activeTextareaStyles).optional(),
-        selected: (selectedTextareaStyles as typeof selectedTextareaStyles).optional(),
-        focus: (focusTextareaStyles as typeof focusTextareaStyles).optional(),
-        disabled: (disabledTextareaStyles as typeof disabledTextareaStyles).optional(),
-        invalid: (invalidTextareaStyles as typeof invalidTextareaStyles).optional(),
+        hover: z
+          .object({
+            defaultSeverity: (hoverTextareaStyles as typeof hoverTextareaStyles).optional(),
+          })
+          .optional(),
+        active: z
+          .object({
+            defaultSeverity: (activeTextareaStyles as typeof activeTextareaStyles).optional(),
+          })
+          .optional(),
+        selected: z
+          .object({
+            defaultSeverity: (selectedTextareaStyles as typeof selectedTextareaStyles).optional(),
+          })
+          .optional(),
+        focus: z
+          .object({
+            defaultSeverity: (focusTextareaStyles as typeof focusTextareaStyles).optional(),
+          })
+          .optional(),
+        disabled: z
+          .object({
+            defaultSeverity: (disabledTextareaStyles as typeof disabledTextareaStyles).optional(),
+          })
+          .optional(),
+        invalid: z
+          .object({
+            defaultSeverity: (invalidTextareaStyles as typeof invalidTextareaStyles).optional(),
+          })
+          .optional(),
       })
       .optional()
   })
@@ -341,15 +369,43 @@ export const invalidFilledTextareaStyles = textareaBaseStyles
 
 export const filledTextareaStateWithStates = z
   .object({
-    defaultState: (filledTextareaStyles as typeof filledTextareaStyles).optional(),
+    defaultState: z
+      .object({
+        defaultSeverity: (filledTextareaStyles as typeof filledTextareaStyles).optional(),
+      })
+      .optional(),
     state: z
       .object({
-        hover: (hoverFilledTextareaStyles as typeof hoverFilledTextareaStyles).optional(),
-        active: (activeFilledTextareaStyles as typeof activeFilledTextareaStyles).optional(),
-        selected: (selectedFilledTextareaStyles as typeof selectedFilledTextareaStyles).optional(),
-        focus: (focusFilledTextareaStyles as typeof focusFilledTextareaStyles).optional(),
-        disabled: (disabledFilledTextareaStyles as typeof disabledFilledTextareaStyles).optional(),
-        invalid: (invalidFilledTextareaStyles as typeof invalidFilledTextareaStyles).optional(),
+        hover: z
+          .object({
+            defaultSeverity: (hoverFilledTextareaStyles as typeof hoverFilledTextareaStyles).optional(),
+          })
+          .optional(),
+        active: z
+          .object({
+            defaultSeverity: (activeFilledTextareaStyles as typeof activeFilledTextareaStyles).optional(),
+          })
+          .optional(),
+        selected: z
+          .object({
+            defaultSeverity: (selectedFilledTextareaStyles as typeof selectedFilledTextareaStyles).optional(),
+          })
+          .optional(),
+        focus: z
+          .object({
+            defaultSeverity: (focusFilledTextareaStyles as typeof focusFilledTextareaStyles).optional(),
+          })
+          .optional(),
+        disabled: z
+          .object({
+            defaultSeverity: (disabledFilledTextareaStyles as typeof disabledFilledTextareaStyles).optional(),
+          })
+          .optional(),
+        invalid: z
+          .object({
+            defaultSeverity: (invalidFilledTextareaStyles as typeof invalidFilledTextareaStyles).optional(),
+          })
+          .optional(),
       })
       .optional()
   })
