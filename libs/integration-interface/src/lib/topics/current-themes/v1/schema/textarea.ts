@@ -1,16 +1,19 @@
 import * as z from "zod";
-import { bg, color, withRef, borderWithShadow } from "./primitives";
+import { bg, color, withRef, borderWithShadow, font } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 
 export const textareaSettings = z
   .object({
-    autoResize: withRef(z.boolean()).optional(),
+    autoResizeX: withRef(z.boolean()).optional(),
+    autoResizeY: withRef(z.boolean()).optional(),
+    variant: withRef(z.enum(['filled', 'outlined'])).optional(),
+    fluid: withRef(z.boolean()).optional(),
   })
   .register(themeSchemaRegistry, { id: "textareaSettings" });
 
 export const textareaSize = z
   .object({
-    fontSize: withRef(z.string()).optional(),
+    font: (font as typeof font).optional(),
     paddingX: withRef(z.string()).optional(),
     paddingY: withRef(z.string()).optional(),
   })
@@ -27,6 +30,7 @@ export const textareaBaseStyles = z
         radius: withRef(z.string()).optional(),
       })
       .optional(),
+    font: (font as typeof font).optional(),
     shadow: withRef(z.string()).optional(),
     paddingX: withRef(z.string()).optional(),
     paddingY: withRef(z.string()).optional(),
@@ -54,6 +58,14 @@ export const textareaStyles = textareaBaseStyles
         color: '{{primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.color}}',
         radius: "{{primitives.radius.md}}",
       }),
+    font: textareaBaseStyles.shape.font.default({
+      family: '{{primitives.font.family}}',
+      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight}}',
+      lineHeight: '{{primitives.font.lineHeight}}',
+      letterSpacing: '{{primitives.font.letterSpacing}}',
+      style: '{{primitives.font.style}}',
+    }),
     shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
     paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
     paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
@@ -66,12 +78,16 @@ export const textareaStyles = textareaBaseStyles
       shadow: "{{primitives.focusRing.shadow}}",
     }),
     sm: textareaBaseStyles.shape.sm.default({
-      fontSize: "{{primitives.font.size}}",
+      font: {
+        size: "{{primitives.font.size}}",
+      },
       paddingX: "{{primitives.space.xs}}",
       paddingY: "{{primitives.space.xs}}",
     }),
     lg: textareaBaseStyles.shape.lg.default({
-      fontSize: "{{primitives.font.size}}",
+      font: {
+        size: "{{primitives.font.size}}",
+      },
       paddingX: "{{primitives.space.md}}",
       paddingY: "{{primitives.space.md}}",
     }),
@@ -95,6 +111,14 @@ export const filledTextareaStyles = textareaBaseStyles
         color: '{{primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.color}}',
         radius: "{{primitives.radius.md}}",
       }),
+    font: textareaBaseStyles.shape.font.default({
+      family: '{{primitives.font.family}}',
+      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight}}',
+      lineHeight: '{{primitives.font.lineHeight}}',
+      letterSpacing: '{{primitives.font.letterSpacing}}',
+      style: '{{primitives.font.style}}',
+    }),
     shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
     paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
     paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
@@ -107,12 +131,16 @@ export const filledTextareaStyles = textareaBaseStyles
       shadow: "{{primitives.focusRing.shadow}}",
     }),
     sm: textareaBaseStyles.shape.sm.default({
-      fontSize: "{{primitives.font.size}}",
+      font: {
+        size: "{{primitives.font.size}}",
+      },
       paddingX: "{{primitives.space.xs}}",
       paddingY: "{{primitives.space.xs}}",
     }),
     lg: textareaBaseStyles.shape.lg.default({
-      fontSize: "{{primitives.font.size}}",
+      font: {
+        size: "{{primitives.font.size}}",
+      },
       paddingX: "{{primitives.space.md}}",
       paddingY: "{{primitives.space.md}}",
     }),

@@ -149,13 +149,23 @@ export const colorVariants = z
 
 export const area = variantWithStates.extend({});
 
+type AreasShape = {
+  canvas: z.ZodOptional<typeof area>;
+  surface: z.ZodOptional<typeof area>;
+  onSurface: z.ZodOptional<typeof area>;
+  overlay: z.ZodOptional<typeof area>;
+}
+
+const areasShape: AreasShape = {
+  canvas: area.optional(),
+  surface: area.optional(),
+  onSurface: area.optional(),
+  overlay: area.optional(),
+};
+
+
 export const areas = z
-  .object({
-    canvas: area.optional(),
-    surface: area.optional(),
-    onSurface: area.optional(),
-    overlay: area.optional(),
-  })
+  .object(areasShape)
   .register(themeSchemaRegistry, { id: "areas" });
 
 // Named shadow tokens map to CSS box-shadow values at different elevation levels.
