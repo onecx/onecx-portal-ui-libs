@@ -8,12 +8,12 @@ const FIELDSET_CONTAINER: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.container.border.color',
+    from: 'usages.fieldset.container.borderColor',
     to: 'components.fieldset.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.container.border.radius',
+    from: 'usages.fieldset.container.borderRadius',
     to: 'components.fieldset.root.borderRadius',
   },
   {
@@ -31,103 +31,69 @@ const FIELDSET_CONTAINER: MappingRule[] = [
   },
 ]
 
-const FIELDSET_LEGEND_FOCUS_RING: MappingRule[] = [
-  {
-    from: 'usages.fieldset.legendFocusRing.width',
-    to: 'components.fieldset.legend.focusRing.width',
-  },
-  {
-    from: 'usages.fieldset.legendFocusRing.style',
-    to: 'components.fieldset.legend.focusRing.style',
-  },
-  {
-    from: 'usages.fieldset.legendFocusRing.color',
-    to: 'components.fieldset.legend.focusRing.color',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.fieldset.legendFocusRing.offset',
-    to: 'components.fieldset.legend.focusRing.offset',
-  },
-  {
-    from: 'usages.fieldset.legendFocusRing.shadow',
-    to: 'components.fieldset.legend.focusRing.shadow',
-  },
-]
-
 const FIELDSET_LEGEND: MappingRule[] = [
   {
-    from: 'usages.fieldset.legend.bg',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.bg',
     to: 'components.fieldset.legend.background',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legendHover.bg.color',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.states.hover.bg',
     to: 'components.fieldset.legend.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.contrast',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.contrast',
     to: 'components.fieldset.legend.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legendHover.contrast',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.states.hover.contrast',
     to: 'components.fieldset.legend.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.border.radius',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.border.radius',
     to: 'components.fieldset.legend.borderRadius',
   },
   {
-    from: 'usages.fieldset.legend.border.width',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.border.width',
     to: 'components.fieldset.legend.borderWidth',
   },
   {
-    from: 'usages.fieldset.legend.border.color',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.border.color',
     to: 'components.fieldset.legend.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.padding',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.padding',
     to: 'components.fieldset.legend.padding',
   },
   {
-    from: 'usages.fieldset.legend.layout.gap',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.gap',
     to: 'components.fieldset.legend.gap',
   },
   {
-    from: 'usages.fieldset.legend.font.weight',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.font.weight',
     to: 'components.fieldset.legend.fontWeight',
   },
-  ...FIELDSET_LEGEND_FOCUS_RING,
 ]
 
 const FIELDSET_TOGGLE_ICON: MappingRule[] = [
   {
-    from: 'usages.fieldset.toggleIcon.contrast',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.defaultState.color',
     to: 'components.fieldset.toggleIcon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.toggleIconHover.contrast',
+    from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.hover.color',
     to: 'components.fieldset.toggleIcon.hoverColor',
     transform: toColorString,
-  },
-]
-
-const FIELDSET_CONTENT: MappingRule[] = [
-  {
-    from: 'usages.fieldset.content.padding',
-    to: 'components.fieldset.content.padding',
   },
 ]
 
 export const fieldsetMappingRules: MappingRule[] = [
   ...FIELDSET_CONTAINER,
   ...FIELDSET_LEGEND,
-  ...FIELDSET_LEGEND_FOCUS_RING,
   ...FIELDSET_TOGGLE_ICON,
-  ...FIELDSET_CONTENT,
 ]
