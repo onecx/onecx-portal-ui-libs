@@ -2,6 +2,7 @@ import { getOneCXSharedRecommendations, SharedLibraryConfig } from './get-onecx-
 import { createLogger } from './logger.utils'
 
 const angularCore = '@angular/core'
+const react = 'react'
 const logger = createLogger('getOneCXSharedLibraryConfig')
 
 /**
@@ -279,10 +280,10 @@ export function getOneCXSharedLibraryConfig(
     const sharedLibConfig: SharedLibraryConfig = {}
     sharedLibConfig['requiredVersion'] = packageEntry.requiredVersion
 
-    const reactVersion = (dependencies['react'] || '').split('.')[0].replace('^', '')
+    const reactVersion = (dependencies[react] || '').split('.')[0].replace('^', '')
     const angularCoreVersion = (dependencies[angularCore] || '').split('.')[0].replace('^', '')
 
-    if (packageEntry.name.startsWith('react') && reactVersion) {
+    if (reactVersion && Number.parseInt(reactVersion, 10) >= 19) {
       sharedLibConfig['shareScope'] = 'react_'.concat(reactVersion)
     } else if (angularCoreVersion && parseInt(angularCoreVersion, 10) >= 21) {
       sharedLibConfig['shareScope'] = 'angular_'.concat(angularCoreVersion)
