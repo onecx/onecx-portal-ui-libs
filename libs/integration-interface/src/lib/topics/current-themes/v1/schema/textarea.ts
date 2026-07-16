@@ -221,45 +221,22 @@ export const invalidTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "invalidTextareaStyles" });
 
+const withDefaultSeverity = <T extends z.ZodTypeAny>(styleSchema: T) =>
+  z.object({
+    defaultSeverity: styleSchema.optional(),
+  }).optional();
+
 export const textareaWithStates = z
   .object({
-    defaultState: z
-      .object({
-        defaultSeverity: (textareaStyles as typeof textareaStyles).optional(),
-      })
-      .optional(),
+    defaultState: withDefaultSeverity(textareaStyles),
     state: z
       .object({
-        hover: z
-          .object({
-            defaultSeverity: (hoverTextareaStyles as typeof hoverTextareaStyles).optional(),
-          })
-          .optional(),
-        active: z
-          .object({
-            defaultSeverity: (activeTextareaStyles as typeof activeTextareaStyles).optional(),
-          })
-          .optional(),
-        selected: z
-          .object({
-            defaultSeverity: (selectedTextareaStyles as typeof selectedTextareaStyles).optional(),
-          })
-          .optional(),
-        focus: z
-          .object({
-            defaultSeverity: (focusTextareaStyles as typeof focusTextareaStyles).optional(),
-          })
-          .optional(),
-        disabled: z
-          .object({
-            defaultSeverity: (disabledTextareaStyles as typeof disabledTextareaStyles).optional(),
-          })
-          .optional(),
-        invalid: z
-          .object({
-            defaultSeverity: (invalidTextareaStyles as typeof invalidTextareaStyles).optional(),
-          })
-          .optional(),
+        hover: withDefaultSeverity(hoverTextareaStyles),
+        active: withDefaultSeverity(activeTextareaStyles),
+        selected: withDefaultSeverity(selectedTextareaStyles),
+        focus: withDefaultSeverity(focusTextareaStyles),
+        disabled: withDefaultSeverity(disabledTextareaStyles),
+        invalid: withDefaultSeverity(invalidTextareaStyles),
       })
       .optional()
   })
@@ -369,43 +346,15 @@ export const invalidFilledTextareaStyles = textareaBaseStyles
 
 export const filledTextareaStateWithStates = z
   .object({
-    defaultState: z
-      .object({
-        defaultSeverity: (filledTextareaStyles as typeof filledTextareaStyles).optional(),
-      })
-      .optional(),
+    defaultState: withDefaultSeverity(filledTextareaStyles),
     state: z
       .object({
-        hover: z
-          .object({
-            defaultSeverity: (hoverFilledTextareaStyles as typeof hoverFilledTextareaStyles).optional(),
-          })
-          .optional(),
-        active: z
-          .object({
-            defaultSeverity: (activeFilledTextareaStyles as typeof activeFilledTextareaStyles).optional(),
-          })
-          .optional(),
-        selected: z
-          .object({
-            defaultSeverity: (selectedFilledTextareaStyles as typeof selectedFilledTextareaStyles).optional(),
-          })
-          .optional(),
-        focus: z
-          .object({
-            defaultSeverity: (focusFilledTextareaStyles as typeof focusFilledTextareaStyles).optional(),
-          })
-          .optional(),
-        disabled: z
-          .object({
-            defaultSeverity: (disabledFilledTextareaStyles as typeof disabledFilledTextareaStyles).optional(),
-          })
-          .optional(),
-        invalid: z
-          .object({
-            defaultSeverity: (invalidFilledTextareaStyles as typeof invalidFilledTextareaStyles).optional(),
-          })
-          .optional(),
+        hover: withDefaultSeverity(hoverFilledTextareaStyles),
+        active: withDefaultSeverity(activeFilledTextareaStyles),
+        selected: withDefaultSeverity(selectedFilledTextareaStyles),
+        focus: withDefaultSeverity(focusFilledTextareaStyles),
+        disabled: withDefaultSeverity(disabledFilledTextareaStyles),
+        invalid: withDefaultSeverity(invalidFilledTextareaStyles),
       })
       .optional()
   })
