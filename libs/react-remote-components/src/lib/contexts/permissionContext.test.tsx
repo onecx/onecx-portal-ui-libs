@@ -12,6 +12,7 @@ jest.mock('@onecx/integration-interface', () => {
     publish: jest.fn(({ appId, productName }: any) => {
       subject.next({ appId, productName, permissions: [`${appId}-perm`] })
     }),
+    destroy: jest.fn(),
   }
 
   return {
@@ -21,12 +22,12 @@ jest.mock('@onecx/integration-interface', () => {
   }
 })
 
+jest.mock('@onecx/react-integration-interface', () => ({
+  useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => new TopicClass(),
+}))
+
 function getMockTopic() {
   return (jest.requireMock('@onecx/integration-interface') as any).__mockTopic
-}
-
-function getSubject() {
-  return (jest.requireMock('@onecx/integration-interface') as any).__subject
 }
 
 function renderAndCaptureContext() {
@@ -77,34 +78,11 @@ describe('PermissionProvider', () => {
     expect(getByTestId('child')).toBeDefined()
   })
 
-  it('should provide context with permissions array and getPermissions function', () => {
+  it('should provide context with getPermissions function', () => {
     const { getContext } = renderAndCaptureContext()
     const ctx = getContext()
     expect(ctx).toBeDefined()
-    expect(Array.isArray(ctx.permissions)).toBe(true)
     expect(typeof ctx.getPermissions).toBe('function')
-  })
-
-  it('should subscribe to permissionsTopic on mount', () => {
-    const topic = getMockTopic()
-    renderAndCaptureContext()
-    expect(topic.subscribe).toHaveBeenCalled()
-  })
-
-  it('should unsubscribe from permissionsTopic on unmount', () => {
-    const topic = getMockTopic()
-    const mockUnsubscribe = jest.fn()
-    topic.subscribe.mockReturnValueOnce({ unsubscribe: mockUnsubscribe })
-
-    const { unmount } = render(
-      <PermissionProvider>
-        <div />
-      </PermissionProvider>
-    )
-    act(() => {
-      unmount()
-    })
-    expect(mockUnsubscribe).toHaveBeenCalled()
   })
 
   it('should call publish when getPermissions is called', async () => {
@@ -131,15 +109,35 @@ describe('PermissionProvider', () => {
     expect(result).toEqual(['app-x-perm'])
   })
 
-  it('should update permissions state when topic emits a message', async () => {
-    const subject = getSubject()
+  it('should cache getPermissions results for same appId:productName', async () => {
+    const topic = getMockTopic()
     const { getContext } = renderAndCaptureContext()
+    const ctx = getContext()
 
     await act(async () => {
-      subject.next({ appId: 'a', productName: 'b', permissions: ['read'] })
+      await ctx.getPermissions('cached-app', 'cached-prod')
+    })
+    const initialPublishCount = topic.publish.mock.calls.length
+
+    await act(async () => {
+      await ctx.getPermissions('cached-app', 'cached-prod')
     })
 
+    expect(topic.publish.mock.calls.length).toBe(initialPublishCount)
+  })
+
+  it('should not cache different appId:productName combinations', async () => {
+    const topic = getMockTopic()
+    const { getContext } = renderAndCaptureContext()
     const ctx = getContext()
-    expect(ctx.permissions.length).toBeGreaterThan(0)
+
+    await act(async () => {
+      await ctx.getPermissions('app-a', 'prod-a')
+    })
+    await act(async () => {
+      await ctx.getPermissions('app-b', 'prod-b')
+    })
+
+    expect(topic.publish).toHaveBeenCalledTimes(2)
   })
 })
