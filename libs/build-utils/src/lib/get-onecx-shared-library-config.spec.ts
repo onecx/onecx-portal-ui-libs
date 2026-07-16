@@ -218,37 +218,45 @@ describe('get-onecx-shared-library-config', () => {
 
   describe('React support', () => {
     it.each(['react', 'react-dom', 'react_something'])('should include React library %s in shared config', (pkg) => {
-      const result = getOneCXSharedLibraryConfig({ [pkg]: '^18.0.0', react: '^18.0.0' }, false)
+      const result = getOneCXSharedLibraryConfig({ [pkg]: '^19.0.0', react: '^19.0.0' }, false)
       expect(result[pkg]).toBeDefined()
       expect(result[pkg].singleton).toBe(false)
       expect(result[pkg].strictVersion).toBe(false)
       expect(result[pkg].eager).toBe(false)
     })
 
-    it.each([
-      ['^18.0.0', 'react_18'],
-      ['^19.0.0', 'react_19'],
-      ['18.2.0', 'react_18'],
-    ])('should derive shareScope from react version %s → %s', (version, expectedScope) => {
-      const result = getOneCXSharedLibraryConfig({ react: version, 'react-dom': version }, false)
-      expect(result['react'].shareScope).toBe(expectedScope)
-      expect(result['react-dom'].shareScope).toBe(expectedScope)
+    it('should assign react_19 scope when react version is 19', () => {
+      const result = getOneCXSharedLibraryConfig({ react: '^19.0.0', 'react-dom': '^19.0.0' }, false)
+      expect(result['react'].shareScope).toBe('react_19')
+      expect(result['react-dom'].shareScope).toBe('react_19')
     })
 
-    it('should set shareScope to default for React packages when react is absent from dependencies', () => {
-      const result = getOneCXSharedLibraryConfig({ 'react-dom': '^18.0.0' }, false)
+    it('should set shareScope to default for react 18', () => {
+      const result = getOneCXSharedLibraryConfig({ react: '^18.0.0', 'react-dom': '^18.0.0' }, false)
+      expect(result['react'].shareScope).toBe('default')
       expect(result['react-dom'].shareScope).toBe('default')
     })
 
-    it('should assign react_XX scope to React packages and angular_XX scope to Angular packages in mixed deps', () => {
+    it('should assign react_20 scope for react 20+', () => {
+      const result = getOneCXSharedLibraryConfig({ react: '^20.0.0', 'react-dom': '^20.0.0' }, false)
+      expect(result['react'].shareScope).toBe('react_20')
+      expect(result['react-dom'].shareScope).toBe('react_20')
+    })
+
+    it('should set shareScope to default when react is absent from dependencies', () => {
+      const result = getOneCXSharedLibraryConfig({ 'react-dom': '^19.0.0' }, false)
+      expect(result['react-dom'].shareScope).toBe('default')
+    })
+
+    it('should apply react_19 scope to all shared packages when react 19 is present', () => {
       const result = getOneCXSharedLibraryConfig(
-        { '@angular/core': '^21.0.0', rxjs: '^7.8.0', react: '^18.0.0', 'react-dom': '^18.0.0' },
+        { '@angular/core': '^21.0.0', rxjs: '^7.8.0', react: '^19.0.0', 'react-dom': '^19.0.0' },
         false
       )
-      expect(result['@angular/core'].shareScope).toBe('angular_21')
-      expect(result['rxjs'].shareScope).toBe('angular_21')
-      expect(result['react'].shareScope).toBe('react_18')
-      expect(result['react-dom'].shareScope).toBe('react_18')
+      expect(result['react'].shareScope).toBe('react_19')
+      expect(result['react-dom'].shareScope).toBe('react_19')
+      expect(result['@angular/core'].shareScope).toBe('react_19')
+      expect(result['rxjs'].shareScope).toBe('react_19')
     })
   })
 
