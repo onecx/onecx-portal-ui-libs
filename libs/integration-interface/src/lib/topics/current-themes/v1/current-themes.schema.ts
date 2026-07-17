@@ -22,6 +22,7 @@ type UsagesInput = {
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldset>
   diagram?: z.input<typeof diagram>
+  dropdown?: z.input<typeof dropdown>
 }
 
 const usages: z.ZodType<UsagesInput> = z

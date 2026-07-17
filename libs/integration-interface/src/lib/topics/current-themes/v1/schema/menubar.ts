@@ -1,199 +1,166 @@
 import * as z from "zod";
-import { bg, border, color, withRef } from "./primitives";
+import { bg, border, color, withRef, transition, icon, borderWithShadow, layout } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
-import { max } from "rxjs";
+import { tooltip } from "./tooltip";
+
+const DEFAULT_MENUBAR_BORDER = {
+  color: "{{primitives.border.defaultVariant.color}}",
+  radius: "{{primitives.radius.md}}",
+};
+
+const DEFAULT_MENUBAR_BACKGROUND = {
+  color: "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+};
+
+const DEFAULT_MENUBAR_TRANSITION = {
+  duration: "{{primitives.transition.duration}}",
+};
+
+const DEFAULT_MENUBAR_FOCUS_RING = {
+  color: "{{primitives.border.defaultVariant.color}}",
+  width: "{{primitives.border.defaultVariant.width}}",
+  shadow: "{{primitives.shadow.md}}",
+};
+
+const DEFAULT_MENUBAR_COLOR = "{{primitives.area.surface.defaultState.defaultVariant.contrast}}";
+
+const DEFAULT_MENUBAR_ALIGN_ITEMS = "{{primitives.layout.alignItems}}";
+
+const DEFAULT_MENUBAR_PADDING = "{{primitives.layout.padding}}";
+
+const DEFAULT_MENUBAR_GAP = "{{primitives.layout.gap}}";
+
+const DEFAULT_MENUBAR_SHADOW = "{{primitives.shadow.md}}";
 
 export const menubarSettings = z
   .object({
     autoHide: withRef(z.boolean()).optional(),
     autoHideDelay: withRef(z.number()).optional(),
     autoDisplay: withRef(z.boolean()).optional(),
+    showDivider: withRef(z.boolean()).optional(),
+    showBackdrop: withRef(z.boolean()).optional(),
   })
   .register(themeSchemaRegistry, { id: "menubarSettings" });
 
-export const menubarItemIcon = z
-  .object({
-    color: color.default(
-      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-    ),
-  })
-  .register(themeSchemaRegistry, { id: "menubarItemIcon" });
-
-export const menubarFocusRing = z
-  .object({
-    width: withRef(z.string()).default("{{primitives.focusRing.width}}"),
-    style: withRef(z.string()).default("{{primitives.focusRing.style}}"),
-    color: color.default("{{primitives.focusRing.color}}"),
-    offset: withRef(z.string()).default("{{primitives.focusRing.offset}}"),
-    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow}}"),
-  })
-  .register(themeSchemaRegistry, { id: "menubarFocusRing" });
-
-export const menubarItemState = z
-  .object({
-    color: color.default(
-      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-    ),
-    icon: (menubarItemIcon as typeof menubarItemIcon).optional(),
-    border: border.default({
-      color: "{{primitives.border.defaultVariant.color}}",
-      radius: "{{primitives.radius.md}}",
-      width: "{{primitives.border.defaultVariant.width}}",
-    }),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.surface.state.hover.defaultVariant.bg}}"),
-  })
-  .register(themeSchemaRegistry, { id: "menubarItemState" });
-
-export const menubarInteractiveItemState = menubarItemState.register(themeSchemaRegistry, { id: "menubarInteractiveItemState" });
-
-export const menubarActiveItemState = menubarInteractiveItemState.register(themeSchemaRegistry, { id: "menubarActiveItemState" });
-
-export const menubarItemBase = z
-  .object({
-    padding: withRef(z.string()).default("{{primitives.space.md}}"),
-    borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
-  })
-  .register(themeSchemaRegistry, { id: "menubarItemBase" });
+export const menubarItemSeverity = z.object({
+  background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
+  color: color.default(DEFAULT_MENUBAR_COLOR),
+  border: border.default(DEFAULT_MENUBAR_BORDER),
+  transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
+  cursor: withRef(z.string()).default("pointer"),
+  icon: icon.optional(),
+}).register(themeSchemaRegistry, { id: "menubarItemSeverity" });
 
 export const menubarItem = z
   .object({
-    base: (menubarItemBase as typeof menubarItemBase).optional(),
-    defaultState: (menubarItemState as typeof menubarItemState).optional(),
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
+      }),
+      state: z.object({
+        focus: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
+        active: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
+      })
+    }),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
     gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-    cursor: withRef(z.string()).default("pointer"),
-    state: z
-      .object({
-        focus: (menubarInteractiveItemState as typeof menubarInteractiveItemState).optional(),
-        active: (menubarActiveItemState as typeof menubarActiveItemState).optional(),
-      })
-      .optional(),
-    focusRing: (menubarFocusRing as typeof menubarFocusRing).optional(),
+    focusRing: borderWithShadow.optional(),
+    tooltip: tooltip.optional(),
   })
   .register(themeSchemaRegistry, { id: "menubarItem" });
 
-export const menubarSubmenuIconState = z
-  .object({
-    color: color.default(
-      "{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"
-    ),
-  })
-  .register(themeSchemaRegistry, { id: "menubarSubmenuIconState" });
+export const menubarSubmenuSeverity = z.object({
+  background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
+  border: border.default(DEFAULT_MENUBAR_BORDER),
+  shadow: withRef(z.string()).default(DEFAULT_MENUBAR_SHADOW),
+  icon: icon.optional(),
+}).register(themeSchemaRegistry, { id: "menubarSubmenuSeverity" });
 
-export const menubarSubmenu = z
+export const menubarSubmenuScreenSettings = z
   .object({
-    padding: withRef(z.string()).default("{{primitives.space.md}}"),
-    gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
-    border: border.default({
-      color: "{{primitives.border.defaultVariant.color}}",
-      radius: "{{primitives.radius.md}}",
-    }),
-    shadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
-    minWidth: withRef(z.string()).default("10rem"),
-    maxWidth: withRef(z.string()).default("20rem"),
-    mobile: z
-      .object({
+    xs: layout.extend({
         indent: withRef(z.string()).default("{{primitives.space.md}}"),
       })
       .optional(),
-    icon: z
-      .object({
-        size: withRef(z.string()).default("1rem"),
-        color: withRef(z.string()).default("{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"),
-        state: z
-          .object({
-            focus: (menubarSubmenuIconState as typeof menubarSubmenuIconState).optional(),
-            active: (menubarSubmenuIconState as typeof menubarSubmenuIconState).optional(),
-          })
-          .optional(),
+  })
+  .register(themeSchemaRegistry, { id: "menubarSubmenuScreenSettings" });
+
+export const menubarSubmenu = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).optional(),
+      }),
+      state: z.object({
+        active: z.object({
+          defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).extend({
+            cursor: withRef(z.string()).default("pointer"),
+          }).optional(),
+        }),
+        focus: z.object({
+          defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).extend({
+            cursor: withRef(z.string()).default("pointer"),
+          }).optional(),
+        }),
       })
-      .optional(),
+    }),
+    padding: withRef(z.string()).default("{{primitives.space.md}}"),
+    gap: withRef(z.string()).default("{{primitives.space.sm}}"),
+    minWidth: withRef(z.string()).default("10rem"),
+    maxWidth: withRef(z.string()).default("20rem"),
+    screenSettings: (menubarSubmenuScreenSettings as typeof menubarSubmenuScreenSettings).optional(),
   })
   .register(themeSchemaRegistry, { id: "menubarSubmenu" });
 
-export const menubarSeparator = z
-  .object({
-    border: z
-      .object({
-        color: color.default("{{primitives.border.defaultVariant.color}}"),
-      })
-      .optional(),
-  })
-  .register(themeSchemaRegistry, { id: "menubarSeparator" });
+export const menubarSeparator = border.default(DEFAULT_MENUBAR_BORDER).register(themeSchemaRegistry, { id: "menubarSeparator" });
 
+export const menubarMobileButtonSeverity = z.object({
+  background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
+  color: color.default(DEFAULT_MENUBAR_COLOR),
+  icon: icon.optional(),
+  size: withRef(z.string()).default("2.5rem"),
+  border: border.default(DEFAULT_MENUBAR_BORDER),
+}).register(themeSchemaRegistry, { id: "menubarMobileButtonSeverity" });
+
+//todo: when p-button schema is added use it instead of menubarMobileButton schema
 export const menubarMobileButton = z
   .object({
-    size: withRef(z.string()).default("2.5rem"),
-    borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
-    border: z
-      .object({
-        color: color.default("{{primitives.border.defaultVariant.color}}"),
-      })
-      .optional(),
-    defaultState: z
-      .object({
-        color: color.default(
-          "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-        ),
-        background: z
-              .union([bg, withRef(z.string())])
-              .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-      })
-      .optional(),
-    state: z
-      .object({
-        hover: z
-          .object({
-            color: color.default(
-              "{{primitives.area.surface.state.hover.defaultVariant.contrast}}"
-            ),
-            background: z
-              .union([bg, withRef(z.string())])
-              .default("{{primitives.area.surface.state.hover.defaultVariant.bg}}"),
-          })
-          .optional(),
-      })
-      .optional(),
-    focusRing: (menubarFocusRing as typeof menubarFocusRing).optional(),
-    icon:  z
-      .object({
-        size: withRef(z.string()).default("1rem"),
-        name: withRef(z.string()).default("bars"),
-      })
-      .optional(),
-    cursor: withRef(z.string()).default("pointer"), 
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: (menubarMobileButtonSeverity as typeof menubarMobileButtonSeverity).optional(),
+      }),
+      state: z.object({
+        hover: z.object({
+          defaultSeverity: (menubarMobileButtonSeverity as typeof menubarMobileButtonSeverity).extend({
+            cursor: withRef(z.string()).default("pointer"),
+          }).optional(),
+        }),
+      }),
+    }),
+    focusRing: borderWithShadow.default(DEFAULT_MENUBAR_FOCUS_RING),
   })
   .register(themeSchemaRegistry, { id: "menubarMobileButton" });
+ 
 
 export const menubar = z
   .object({
     settings: (menubarSettings as typeof menubarSettings).optional(),
-    alignItems: withRef(z.string()).default("center"),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-    color: color.default(
-      "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-    ),
-    border: border.default({
-      color: "{{primitives.border.defaultVariant.color}}",
-      radius: "{{primitives.radius.md}}",
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: z.object({
+          alignItems: withRef(z.string()).default(DEFAULT_MENUBAR_ALIGN_ITEMS),
+          background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
+          color: color.default(DEFAULT_MENUBAR_COLOR),
+          border: border.default(DEFAULT_MENUBAR_BORDER),
+          transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
+          padding: withRef(z.string()).default(DEFAULT_MENUBAR_PADDING),
+          gap: withRef(z.string()).default(DEFAULT_MENUBAR_GAP),
+          item: (menubarItem as typeof menubarItem).optional(),
+          submenu: (menubarSubmenu as typeof menubarSubmenu).optional(),
+          separator: (menubarSeparator as typeof menubarSeparator).optional(),
+          mobileButton: (menubarMobileButton as typeof menubarMobileButton).optional(),
+        })
+      }), 
     }),
-    padding: withRef(z.string()).default("{{primitives.space.md}}"),
-    gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-    transition: z
-      .object({
-        duration: withRef(z.number()).default("{{primitives.transition.duration}}"),
-      })
-      .optional(),
-    item: (menubarItem as typeof menubarItem).optional(),
-    submenu: (menubarSubmenu as typeof menubarSubmenu).optional(),
-    separator: (menubarSeparator as typeof menubarSeparator).optional(),
-    mobileButton: (menubarMobileButton as typeof menubarMobileButton).optional(),
   })
   .register(themeSchemaRegistry, { id: "menubar" });
