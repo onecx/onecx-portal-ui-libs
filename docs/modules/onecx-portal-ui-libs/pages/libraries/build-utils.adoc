@@ -30,7 +30,7 @@ getOneCXSharedLibraryConfig(
 === Usage Example
 ==== @angular-architects/module-federation
 
-For projects using `@angular-architects/module-federation`, set `shouldGenerateSubDeps` to `false`. The `share()` function automatically handles subpackages when `includeSecondaries: true` is set.
+For projects using `@angular-architects/module-federation`, set `shouldGenerateSubDeps` to `false`. The `share()` function automatically handles subpackages when `includeSecondaries: true` is set through the xref:#configProperties[configCallback].
 
 .Example: Angular Architects Module Federation Configuration
 [source,js]
@@ -134,7 +134,7 @@ export default config
 === Customization Options
 [#custom-config-callback]
 ==== Custom Configuration Callback
-Modify the shared configuration for specific packages:
+Modify the xref:#configProperties[configuration properties] for packages:
 
 [source,js]
 ----
