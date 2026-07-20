@@ -64,6 +64,34 @@ export const componentBorders = z
   })
   .register(themeSchemaRegistry, { id: "componentBorders" });
 
+// Layout tokens control structural constraints like content max-width and section gaps.
+// Useful for theming applications that need different layout densities (compact vs. comfortable).
+export const layout = z
+  .object({
+    // Max-width of the main content container, e.g. '1280px'
+    contentMaxWidth: withRef(z.string()).optional(),
+    // Max-width of overlay components (tooltips, popovers), e.g. '12.5rem'
+    overlayMaxWidth: withRef(z.string()).optional(),
+    // Default gap between layout sections / grid columns
+    gap: withRef(z.string()).optional(),
+    // Default padding inside layout sections / grid columns
+    padding: withRef(z.string()).optional(),
+    // Default alignment of content inside layout sections / grid columns
+    alignItems: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "layout" });
+
+// screen variants scale used for padding, margin, and gap tokens across components on different specific device sizes.
+// Defining it here allows components to reference e.g. screenVariants.md instead of a hard-coded value.
+export const screenSettings = z
+  .object({
+    xs: layout.optional(),
+    sm: layout.optional(),
+    md: layout.optional(),
+    lg: layout.optional(),
+  })
+  .register(themeSchemaRegistry, { id: "screenSettings" });
+
 export const borderWithVariants = z
   .object({
     defaultVariant: border.optional(),
@@ -86,6 +114,7 @@ export const severityStyles = bgContrast
   .extend({
     border: borderWithVariants.optional(),
     focusRing: borderWithShadow.optional(),
+    cursor: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "severityStyles" });
 
@@ -194,19 +223,6 @@ export const space = z
   })
   .register(themeSchemaRegistry, { id: "space" });
 
-// Layout tokens control structural constraints like content max-width and section gaps.
-// Useful for theming applications that need different layout densities (compact vs. comfortable).
-export const layout = z
-  .object({
-    // Max-width of the main content container, e.g. '1280px'
-    contentMaxWidth: withRef(z.string()).optional(),
-    // Max-width of overlay components (tooltips, popovers), e.g. '12.5rem'
-    overlayMaxWidth: withRef(z.string()).optional(),
-    // Default gap between layout sections / grid columns
-    gap: withRef(z.string()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: "layout" });
-
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
 export const font = z
@@ -226,9 +242,18 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: "transition" });
 
+export const icon = z.object({
+  size: withRef(z.string()).optional(),
+  color: color.optional(),
+  content: z.string().optional(),
+  font: font.optional(),
+  url: z.string().optional(),
+}).register(themeSchemaRegistry, { id: "icon" });
+
 type PrimitivesShape = {
   defaultVariant: z.ZodOptional<typeof variantWithStates>;
-  variant: typeof colorVariants;
+  variant: z.ZodOptional<typeof colorVariants>;
+  screenSettings: z.ZodOptional<typeof screenSettings>;
   area: z.ZodOptional<typeof areas>;
   shadow: z.ZodOptional<typeof shadow>;
   font: z.ZodOptional<typeof font>;
@@ -242,7 +267,8 @@ type PrimitivesShape = {
 
 const primitivesShape: PrimitivesShape = {
   defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
-  variant: colorVariants as typeof colorVariants,
+  variant: (colorVariants as typeof colorVariants).optional(),
+  screenSettings: (screenSettings as typeof screenSettings).optional(),
   area: (areas as typeof areas).optional(),
   shadow: (shadow as typeof shadow).optional(),
   // Global typography baseline applied to all text unless overridden at a more specific level

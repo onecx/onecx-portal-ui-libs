@@ -109,6 +109,7 @@ export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
+  | `usages.menubar.${LeafPaths<NonNullable<Usages['menubar']>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
   | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
@@ -116,7 +117,7 @@ export type ThemePath =
   | `usages.tabs.${LeafPaths<NonNullable<Usages['tabs']>>}`
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
   | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
-  | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`;
+  | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
