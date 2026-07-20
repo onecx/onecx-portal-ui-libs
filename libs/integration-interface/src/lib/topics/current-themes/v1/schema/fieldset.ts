@@ -1,17 +1,18 @@
 import z from 'zod'
-import { themeSchemaRegistry } from './registry'
-import { bgContrast, border, color, font, withRef } from './primitives'
+import { bg, bgContrast, border, borderWithShadow, color, font, space, transition, withRef } from './primitives'
 
-const DEFAULT_SPACE = '{{primitives.space.md}}'
-const DEFAULT_LEGEND_BG = '{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}'
-const DEFAULT_LEGEND_CONTRAST = '{{primitives.variant.primary.defaultState.defaultVariant.contrast}}'
-const HOVER_LEGEND_BG = '{{primitives.variant.primary.state.hover.defaultVariant.bg.color}}'
-const HOVER_LEGEND_CONTRAST = '{{primitives.variant.primary.state.hover.defaultVariant.contrast}}'
-const ACTIVE_LEGEND_BG = '{{primitives.variant.primary.state.active.defaultVariant.bg.color}}'
-const ACTIVE_LEGEND_CONTRAST = '{{primitives.variant.primary.state.active.defaultVariant.contrast}}'
-const FOCUS_LEGEND_BG = '{{primitives.variant.primary.state.focus.defaultVariant.bg.color}}'
-const FOCUS_LEGEND_CONTRAST = '{{primitives.variant.primary.state.focus.defaultVariant.contrast}}'
-const DEFAULT_FONT = {
+const DEFAULT_PADDING = '{{primitives.space.md}}'
+const CONTAINER_DEFAULT = {
+  bg: '{{primitives.area.surface.defaultState.defaultVariant.bg}}',
+  contrast: '{{primitives.area.surface.defaultState.defaultVariant.contrast}}',
+  padding: {
+    md: '{{primitives.space.md}}',
+  },
+  transition: {
+    duration: '{{primitives.transition.duration}}',
+  },
+}
+const FONT_DEFAULT = {
   family: '{{primitives.font.family}}',
   size: '{{primitives.font.size}}',
   weight: '{{primitives.font.weight}}',
@@ -19,118 +20,125 @@ const DEFAULT_FONT = {
   letterSpacing: '{{primitives.font.letterSpacing}}',
   style: '{{primitives.font.style}}',
 }
-
-const LEGEND_SHARED_DEFAULTS = {
-  font: DEFAULT_FONT,
-  gap: DEFAULT_SPACE,
-  padding: DEFAULT_SPACE,
+const BORDER_DEFAULT = {
+  color: '{{primitives.border.defaultVariant.color}}',
+  width: '{{primitives.border.defaultVariant.width}}',
+  style: '{{primitives.border.defaultVariant.style}}',
+  radius: '{{primitives.border.defaultVariant.radius}}',
 }
-
-const DEFAULT_LEGEND = {
-  bg: DEFAULT_LEGEND_BG,
-  contrast: DEFAULT_LEGEND_CONTRAST,
-  ...LEGEND_SHARED_DEFAULTS,
-}
-
-const HOVER_LEGEND = {
-  bg: HOVER_LEGEND_BG,
-  contrast: HOVER_LEGEND_CONTRAST,
-  ...LEGEND_SHARED_DEFAULTS,
-}
-
-const ACTIVE_LEGEND = {
-  bg: ACTIVE_LEGEND_BG,
-  contrast: ACTIVE_LEGEND_CONTRAST,
-  ...LEGEND_SHARED_DEFAULTS,
-}
-
-const FOCUS_LEGEND = {
-  bg: FOCUS_LEGEND_BG,
-  contrast: FOCUS_LEGEND_CONTRAST,
-  ...LEGEND_SHARED_DEFAULTS,
-}
-
-const iconState = z.object({
-  color: color.optional(),
-  bg: color.optional(),
-})
-
-const iconBase = z.object({
-  iconName: withRef(z.string()).optional(),
-  size: withRef(z.enum(['x', 'sm', 'md', 'lg'])).optional(),
-  defaultState: iconState.optional(),
-  hover: iconState.optional(),
-})
 
 const settings = z.object({
-  toggleable: z.boolean().default(true),
-  collapsed: z.boolean().default(false),
+  toggleable: z.boolean(),
 })
 
-const container = bgContrast
-  .extend({
-    borderRadius: withRef(z.string()).default('{{primitives.radius.sm}}'),
-    borderColor: color.default('{{primitives.border.defaultVariant.color}}'),
-    transition: z.object({
-      duration: withRef(z.number()).default('{{primitives.transition.duration}}'),
-    }),
-    gap: withRef(z.string()).default(DEFAULT_SPACE),
-    padding: z.string().default(DEFAULT_SPACE),
-    font: font.default(DEFAULT_FONT),
-  })
-  .optional()
-
-const legendBaseStyles = z.object({
-  bg: z.string().default(DEFAULT_LEGEND_BG),
-  contrast: color.default(DEFAULT_LEGEND_CONTRAST),
-  border: border.optional(), // sometimes we don't want border just plain legend
-  font: font.default(DEFAULT_FONT),
-  gap: withRef(z.string()).default(DEFAULT_SPACE),
-  padding: z.string().default(DEFAULT_SPACE),
+const transitionStyles = transition.extend({
+  duration: withRef(z.number()),
 })
 
-const legendStates = z.object({
-  defaultState: legendBaseStyles
-    .default(DEFAULT_LEGEND)
+const icon = z.object({
+  name: withRef(z.string()).optional(),
+  url: withRef(z.string()).optional(),
+  size: withRef(z.string()),
+  color: withRef(z.string()),
+  bg: withRef(z.string()),
+})
+
+const textBaseStyles = z.object({
+  font: font.optional().default(FONT_DEFAULT),
+  padding: withRef(z.string()).default(DEFAULT_PADDING),
+  color: color.optional().default(CONTAINER_DEFAULT.contrast),
+  border: border.optional().default(BORDER_DEFAULT),
+})
+
+const textBaseStyleWithButton = textBaseStyles.extend({
+  icon: icon.optional(),
+  bg: withRef(z.string()).optional().default(CONTAINER_DEFAULT.bg),
+  gap: space.optional(),
+})
+
+const containerBaseStyle = bgContrast.extend({
+  bg: withRef(z.string()).default(CONTAINER_DEFAULT.bg),
+  contrast: color.default(CONTAINER_DEFAULT.contrast),
+  font: font.optional().default(FONT_DEFAULT),
+  border: border.optional().default(BORDER_DEFAULT),
+  padding: space.optional().default(CONTAINER_DEFAULT.padding),
+  transition: transitionStyles.optional().default(CONTAINER_DEFAULT.transition),
+})
+
+const defaultLegendVariant = textBaseStyles.extend({
+  padding: withRef(z.string()).default(DEFAULT_PADDING),
+})
+
+const withIcon = textBaseStyles.extend({
+  icon: icon.optional(),
+  bg: bg.default({color: CONTAINER_DEFAULT.bg}).optional(),
+})
+
+const withImage = z.object({
+  url: withRef(z.string()).optional(),
+  objectFit: withRef(
+    z.union([z.literal('contain'), z.literal('cover'), z.literal('fill'), z.literal('none'), z.literal('scale-down')])
+  ).default('cover'),
+})
+
+const legend = z.object({
+  defaultVariant: defaultLegendVariant.optional(),
+  variant: z
+    .object({
+      withIcon: withIcon.optional(),
+      withImage: withImage.optional(),
+    })
     .optional(),
-  hover: legendBaseStyles
-    .default(HOVER_LEGEND)
-    .optional(),
-  active: legendBaseStyles
-    .default(ACTIVE_LEGEND)
-    .optional(),
-  focus: legendBaseStyles
-    .default(FOCUS_LEGEND)
-    .optional(),
-  disabled: legendBaseStyles.extend({
-    opacity: withRef(z.number()).default(0.5),
-  }),
 })
 
-const legendBaseStylesWithIcon = legendBaseStyles.extend({
-  icon: iconBase.optional(),
-  states: legendStates.optional(),
+const defaultSeverity = z.object({
+  container: containerBaseStyle.optional(),
+  legend: legend.optional(),
+  content: textBaseStyles.optional(),
 })
 
-const legendsWithToggle = z.object({
-  defaultStateWithToggle: legendBaseStylesWithIcon.optional(),
-  expandedStateWithToggle: legendBaseStylesWithIcon.optional(),
-  collapseStateWithToggle: legendBaseStylesWithIcon.optional(),
+const defaultState = z.object({
+  defaultSeverity: defaultSeverity.optional(),
 })
 
-const legendsWithoutToggle = legendBaseStyles.optional()
+const defaultVariant = z.object({
+  defaultState: defaultState.optional(),
+})
 
-const legend = z
-  .object({
-    withToggle: legendsWithToggle.optional(),
-    withoutToggle: legendsWithoutToggle.optional(),
-  })
-  .optional()
+const baseState = z.object({
+  container: containerBaseStyle.optional(),
+  legend: textBaseStyleWithButton.optional(),
+  content: textBaseStyles.optional(),
+})
 
-export const fieldset = z
-  .object({
-    settings,
-    container,
-    legend,
-  })
-  .register(themeSchemaRegistry, { id: 'fieldset' })
+const focusState = baseState.extend({
+  focusRing: borderWithShadow.optional(),
+})
+
+const activeState = baseState.extend({
+  focusRing: borderWithShadow.optional(),
+})
+
+const hoverState = baseState.extend({
+  focusRing: borderWithShadow.optional(),
+})
+
+const withToggle = z.object({
+  defaultState: baseState.optional(),
+  hover: hoverState.optional(),
+  focus: focusState.optional(),
+  active: activeState.optional(),
+  disabled: baseState.extend({opacity: withRef(z.number())}).optional(),
+  expanded: baseState.optional(),
+  collapsed: baseState.optional(),
+})
+
+export const fieldset = z.object({
+  settings: settings.optional(),
+  defaultVariant: defaultVariant.optional(),
+  variant: z
+    .object({
+      withToggle: withToggle.optional(),
+    })
+    .optional(),
+})

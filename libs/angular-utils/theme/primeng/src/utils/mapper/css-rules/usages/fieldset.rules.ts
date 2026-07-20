@@ -6,19 +6,19 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
         declarations: [
             {
                 property: 'color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.defaultState.color',
+                from: 'usages.fieldset.variant.withToggle.defaultState.legend.icon.color',
             },
             {
                 property: 'background-color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.defaultState.bg',
+                from: 'usages.fieldset.variant.withToggle.defaultState.legend.icon.bg',
             },
             {
                 property: 'width',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.size',
+                from: 'usages.fieldset.variant.withToggle.defaultState.legend.icon.size',
             },
             {
                 property: 'height',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.size',
+                from: 'usages.fieldset.variant.withToggle.defaultState.legend.icon.size',
             },
         ],
     },
@@ -27,11 +27,11 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
         declarations: [
             {
                 property: 'color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.hover.color',
+                from: 'usages.fieldset.variant.withToggle.hover.legend.icon.color',
             },
             {
                 property: 'background-color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.icon.hover.bg',
+                from: 'usages.fieldset.variant.withToggle.hover.legend.icon.bg',
             },
         ],
     },
@@ -43,7 +43,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
         declarations: [
             {
                 property: 'color',
-                from: 'usages.fieldset.legend.withoutToggle.contrast',
+                from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.contrast',
             },
         ],
     },
@@ -52,7 +52,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
         declarations: [
             {
                 property: 'color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.contrast',
+                from: 'usages.fieldset.variant.withToggle.defaultState.legend.color',
             },
         ],
     },
@@ -61,7 +61,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
         declarations: [
             {
                 property: 'color',
-                from: 'usages.fieldset.legend.withToggle.defaultStateWithToggle.states.hover.contrast',
+                from: 'usages.fieldset.variant.withToggle.hover.legend.color',
             },
         ],
     },
