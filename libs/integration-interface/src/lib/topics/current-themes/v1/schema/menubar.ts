@@ -42,24 +42,36 @@ export const menubarSettings = z
   })
   .register(themeSchemaRegistry, { id: "menubarSettings" });
 
-export const menubarItemSeverity = z.object({
+export const menubarBaseSeverityStyles = z.object({
   background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
   color: color.default(DEFAULT_MENUBAR_COLOR),
   border: border.default(DEFAULT_MENUBAR_BORDER),
   transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
-  cursor: withRef(z.string()).default("pointer"),
+  shadow: withRef(z.string()).default(DEFAULT_MENUBAR_SHADOW),
   icon: icon.optional(),
-}).register(themeSchemaRegistry, { id: "menubarItemSeverity" });
+}).register(themeSchemaRegistry, { id: "menubarBaseSeverityStyles" });
+
+export const menubarSeverityWithCursor = menubarBaseSeverityStyles.extend({
+  cursor: withRef(z.string()).default("pointer"),
+}).register(themeSchemaRegistry, { id: "menubarSeverityWithCursor" });
+
+export const menubarSeverityWithSize = menubarBaseSeverityStyles.extend({
+  size: withRef(z.string()).default("2.5rem"),
+}).register(themeSchemaRegistry, { id: "menubarSeverityWithSize" });
 
 export const menubarItem = z
   .object({
     defaultVariant: z.object({
       defaultState: z.object({
-        defaultSeverity: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
+        defaultSeverity: (menubarSeverityWithCursor as typeof menubarSeverityWithCursor).optional(),
       }),
       state: z.object({
-        focus: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
-        active: (menubarItemSeverity as typeof menubarItemSeverity).optional(),
+        focus: z.object({
+          defaultSeverity: (menubarSeverityWithCursor as typeof menubarSeverityWithCursor).optional(),
+        }).optional(),
+        active: z.object({
+          defaultSeverity: (menubarSeverityWithCursor as typeof menubarSeverityWithCursor).optional(),
+        }).optional(),
       })
     }),
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
@@ -68,13 +80,6 @@ export const menubarItem = z
     tooltip: tooltip.optional(),
   })
   .register(themeSchemaRegistry, { id: "menubarItem" });
-
-export const menubarSubmenuSeverity = z.object({
-  background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
-  border: border.default(DEFAULT_MENUBAR_BORDER),
-  shadow: withRef(z.string()).default(DEFAULT_MENUBAR_SHADOW),
-  icon: icon.optional(),
-}).register(themeSchemaRegistry, { id: "menubarSubmenuSeverity" });
 
 export const menubarSubmenuScreenSettings = z
   .object({
@@ -89,18 +94,14 @@ export const menubarSubmenu = z
   .object({
     defaultVariant: z.object({
       defaultState: z.object({
-        defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).optional(),
+        defaultSeverity: (menubarBaseSeverityStyles as typeof menubarBaseSeverityStyles).optional(),
       }),
       state: z.object({
         active: z.object({
-          defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).extend({
-            cursor: withRef(z.string()).default("pointer"),
-          }).optional(),
+          defaultSeverity: (menubarSeverityWithCursor as typeof menubarSeverityWithCursor).optional(),
         }),
         focus: z.object({
-          defaultSeverity: (menubarSubmenuSeverity as typeof menubarSubmenuSeverity).extend({
-            cursor: withRef(z.string()).default("pointer"),
-          }).optional(),
+          defaultSeverity: (menubarSeverityWithCursor as typeof menubarSeverityWithCursor).optional(),
         }),
       })
     }),
@@ -114,24 +115,16 @@ export const menubarSubmenu = z
 
 export const menubarSeparator = border.default(DEFAULT_MENUBAR_BORDER).register(themeSchemaRegistry, { id: "menubarSeparator" });
 
-export const menubarMobileButtonSeverity = z.object({
-  background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
-  color: color.default(DEFAULT_MENUBAR_COLOR),
-  icon: icon.optional(),
-  size: withRef(z.string()).default("2.5rem"),
-  border: border.default(DEFAULT_MENUBAR_BORDER),
-}).register(themeSchemaRegistry, { id: "menubarMobileButtonSeverity" });
-
 //todo: when p-button schema is added use it instead of menubarMobileButton schema
 export const menubarMobileButton = z
   .object({
     defaultVariant: z.object({
       defaultState: z.object({
-        defaultSeverity: (menubarMobileButtonSeverity as typeof menubarMobileButtonSeverity).optional(),
+        defaultSeverity: (menubarSeverityWithSize as typeof menubarSeverityWithSize).optional(),
       }),
       state: z.object({
         hover: z.object({
-          defaultSeverity: (menubarMobileButtonSeverity as typeof menubarMobileButtonSeverity).extend({
+          defaultSeverity: (menubarSeverityWithSize as typeof menubarSeverityWithSize).extend({
             cursor: withRef(z.string()).default("pointer"),
           }).optional(),
         }),
@@ -150,6 +143,7 @@ export const menubar = z
         defaultSeverity: z.object({
           alignItems: withRef(z.string()).default(DEFAULT_MENUBAR_ALIGN_ITEMS),
           background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
+          backdrop: bg.optional(),
           color: color.default(DEFAULT_MENUBAR_COLOR),
           border: border.default(DEFAULT_MENUBAR_BORDER),
           transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
