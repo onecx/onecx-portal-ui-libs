@@ -25,6 +25,8 @@ type UsagesInput = {
   fieldset?: z.input<typeof fieldset>
   diagram?: z.input<typeof diagram>
   dropdown?: z.input<typeof dropdown>
+  tabs?: z.input<typeof tabs>
+  toggleswitch?: z.input<typeof toggleswitch>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -42,7 +44,7 @@ const usages: z.ZodType<UsagesInput> = z
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),    
   })
-  .register(themeSchemaRegistry, { id: "usages" }) as any;
+  .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
 
