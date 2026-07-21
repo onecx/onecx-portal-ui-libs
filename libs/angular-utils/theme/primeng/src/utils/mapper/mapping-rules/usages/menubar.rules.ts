@@ -56,32 +56,32 @@ export const menubarMappingRules: MappingRule[] = [
     to: 'components.menubar.item.gap',
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.background.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.defaultSeverity.background.color',
     to: 'components.menubar.colorScheme.{mode}.item.focusBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.defaultSeverity.color',
     to: 'components.menubar.colorScheme.{mode}.item.focusColor',
     transform: toColorString,
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.icon.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.focus.defaultSeverity.icon.color',
     to: 'components.menubar.colorScheme.{mode}.item.icon.focusColor',
     transform: toColorString,
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.background.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.defaultSeverity.background.color',
     to: 'components.menubar.colorScheme.{mode}.item.activeBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.defaultSeverity.color',
     to: 'components.menubar.colorScheme.{mode}.item.activeColor',
     transform: toColorString,
   },
   {
-    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.icon.color',
+    from: 'usages.menubar.defaultVariant.defaultState.defaultSeverity.item.defaultVariant.state.active.defaultSeverity.icon.color',
     to: 'components.menubar.colorScheme.{mode}.item.icon.activeColor',
     transform: toColorString,
   },
