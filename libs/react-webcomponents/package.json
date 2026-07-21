@@ -21,14 +21,16 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@r2wc/react-to-web-component": "^2.1.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "@onecx/accelerator": "^9.0.0-rc.13",
     "@onecx/react-integration-interface": "^9.0.0-rc.13",
     "@onecx/integration-interface": "^9.0.0-rc.13",
     "react-router": "^7.13.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@r2wc/react-to-web-component": "^2.1.0"
+  },
   "publishConfig": {
     "access": "public"
   }

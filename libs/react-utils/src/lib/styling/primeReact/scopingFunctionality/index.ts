@@ -174,14 +174,14 @@ export function attachPrimeReactScoper({
 
   if (bootstrapExisting) {
     const appAttrName = 'data-app-styles'
-    const expectedAppIds = getCandidateIds(id, appPrefix)
+    const expectedAppIds = new Set(getCandidateIds(id, appPrefix))
 
     document.head
       .querySelectorAll(`style[${appAttrName}], style[id^="${productName}|${productName}"]`)
       .forEach((el) => {
         const styleEl = el as HTMLStyleElement
         const appStylesValue = styleEl.getAttribute(appAttrName) || ''
-        const isExpectedAppStyle = expectedAppIds.includes(appStylesValue)
+        const isExpectedAppStyle = expectedAppIds.has(appStylesValue)
         const isPrefixedThemeStyle = !!appPrefix && styleEl.id.startsWith(appPrefix)
 
         if (isExpectedAppStyle) {
