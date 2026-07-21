@@ -151,9 +151,8 @@ export const inputStyleVariant = z
   })
   .register(themeSchemaRegistry, { id: "inputStyleVariant" });
 
-export const calendar = z
+export const calendarStyles = z
   .object({
-    settings: (calendarSettings as typeof calendarSettings).optional(),
     root: z
       .object({
         transitionDuration: withRef(z.string()).default("{{primitives.transition.duration}}"),
@@ -419,5 +418,23 @@ export const calendar = z
         clearButton: (panelButton as typeof panelButton).optional(),
       })
       .optional(),
+  })
+  .register(themeSchemaRegistry, { id: "calendarStyles" });
+
+const withDefaultSeverity = <T extends z.ZodTypeAny>(styleSchema: T) =>
+  z.object({
+    defaultSeverity: styleSchema.optional(),
+  }).optional();
+
+export const calendarWithStates = z
+  .object({
+    defaultState: withDefaultSeverity(calendarStyles),
+  })
+  .register(themeSchemaRegistry, { id: "calendarWithStates" });
+
+export const calendar = z
+  .object({
+    settings: (calendarSettings as typeof calendarSettings).optional(),
+    defaultVariant: (calendarWithStates as typeof calendarWithStates).optional(),
   })
   .register(themeSchemaRegistry, { id: "calendar" });
