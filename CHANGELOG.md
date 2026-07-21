@@ -1,3 +1,16 @@
+## [8.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.9.0...v8.10.0) (2026-07-21)
+
+### Features
+
+* add React shared library support with react_XX share scope ([#1606](https://github.com/onecx/onecx-portal-ui-libs/issues/1606)) ([2fc21c9](https://github.com/onecx/onecx-portal-ui-libs/commit/2fc21c980e73fb6b3ffd4d141846e728893ac81e))
+* Added AiContextGatherer ([#1589](https://github.com/onecx/onecx-portal-ui-libs/issues/1589)) ([#1591](https://github.com/onecx/onecx-portal-ui-libs/issues/1591)) ([d4028ec](https://github.com/onecx/onecx-portal-ui-libs/commit/d4028ecd9578892ca875fc1994899ac839bc2489))
+
+### Bug Fixes
+
+* chart legends in high contrast mode - v8 ([#1580](https://github.com/onecx/onecx-portal-ui-libs/issues/1580)) ([00bb239](https://github.com/onecx/onecx-portal-ui-libs/commit/00bb239a77d0af0b3d766a69e353e41094bd3c64))
+* **react:** improve permission provider performance and i18n initiali… ([#1586](https://github.com/onecx/onecx-portal-ui-libs/issues/1586)) ([d8cb775](https://github.com/onecx/onecx-portal-ui-libs/commit/d8cb7757b190160bb62a4b62b9b098ff02cc8b49))
+* v9 filter duplicates ([#1577](https://github.com/onecx/onecx-portal-ui-libs/issues/1577)) ([#1582](https://github.com/onecx/onecx-portal-ui-libs/issues/1582)) ([ed80eb1](https://github.com/onecx/onecx-portal-ui-libs/commit/ed80eb18168f062e4bf4204cdfa1843280daf0f5))
+
 ## [8.9.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.8.0...v8.9.0) (2026-07-01)
 
 ### Features

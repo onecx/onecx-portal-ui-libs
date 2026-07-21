@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-remote-components",
-  "version": "8.9.0",
+  "version": "8.10.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -21,10 +21,10 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@onecx/accelerator": "^8.9.0",
+    "@onecx/accelerator": "^8.10.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "@onecx/react-integration-interface": "^8.9.0"
+    "@onecx/react-integration-interface": "^8.10.0"
   },
   "dependencies": {},
   "publishConfig": {

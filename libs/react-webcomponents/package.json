@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-webcomponents",
-  "version": "8.9.0",
+  "version": "8.10.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -23,9 +23,9 @@
   "peerDependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "@onecx/accelerator": "^8.9.0",
-    "@onecx/react-integration-interface": "^8.9.0",
-    "@onecx/integration-interface": "^8.9.0",
+    "@onecx/accelerator": "^8.10.0",
+    "@onecx/react-integration-interface": "^8.10.0",
+    "@onecx/integration-interface": "^8.10.0",
     "react-router": "^7.13.0"
   },
   "dependencies": {
