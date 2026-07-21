@@ -2,6 +2,39 @@ import * as z from "zod";
 import { bg, color, withRef, borderWithShadow, font } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 
+const defaultFocusRing = {
+  width: "{{primitives.focusRing.width}}",
+  style: "{{primitives.focusRing.style}}",
+  color: "{{primitives.focusRing.color}}",
+  offset: "{{primitives.focusRing.offset}}",
+  shadow: "{{primitives.focusRing.shadow}}",
+};
+
+const defaultFont = {
+  family: '{{primitives.font.family}}',
+  size: '{{primitives.font.size}}',
+  weight: '{{primitives.font.weight}}',
+  lineHeight: '{{primitives.font.lineHeight}}',
+  letterSpacing: '{{primitives.font.letterSpacing}}',
+  style: '{{primitives.font.style}}',
+};
+
+const defaultSmSize = {
+  font: {
+    size: "{{primitives.font.size}}",
+  },
+  paddingX: "{{primitives.space.xs}}",
+  paddingY: "{{primitives.space.xs}}",
+};
+
+const defaultLgSize = {
+  font: {
+    size: "{{primitives.font.size}}",
+  },
+  paddingX: "{{primitives.space.md}}",
+  paddingY: "{{primitives.space.md}}",
+};
+
 export const textareaSettings = z
   .object({
     autoResizeX: withRef(z.boolean()).optional(),
@@ -58,39 +91,13 @@ export const textareaStyles = textareaBaseStyles
         color: '{{primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.color}}',
         radius: "{{primitives.radius.md}}",
       }),
-    font: textareaBaseStyles.shape.font.default({
-      family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
-      lineHeight: '{{primitives.font.lineHeight}}',
-      letterSpacing: '{{primitives.font.letterSpacing}}',
-      style: '{{primitives.font.style}}',
-    }),
+    font: textareaBaseStyles.shape.font.default(defaultFont),
     shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
     paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
     paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
     transitionDuration: textareaBaseStyles.shape.transitionDuration.default("{{primitives.transition.duration}}"),
-    focusRing: textareaBaseStyles.shape.focusRing.default({
-      width: "{{primitives.focusRing.width}}",
-      style: "{{primitives.focusRing.style}}",
-      color: "{{primitives.focusRing.color}}",
-      offset: "{{primitives.focusRing.offset}}",
-      shadow: "{{primitives.focusRing.shadow}}",
-    }),
-    sm: textareaBaseStyles.shape.sm.default({
-      font: {
-        size: "{{primitives.font.size}}",
-      },
-      paddingX: "{{primitives.space.xs}}",
-      paddingY: "{{primitives.space.xs}}",
-    }),
-    lg: textareaBaseStyles.shape.lg.default({
-      font: {
-        size: "{{primitives.font.size}}",
-      },
-      paddingX: "{{primitives.space.md}}",
-      paddingY: "{{primitives.space.md}}",
-    }),
+    sm: textareaBaseStyles.shape.sm.default(defaultSmSize),
+    lg: textareaBaseStyles.shape.lg.default(defaultLgSize),
   })
   .register(themeSchemaRegistry, { id: "textareaStyles" });
 
@@ -111,39 +118,13 @@ export const filledTextareaStyles = textareaBaseStyles
         color: '{{primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.color}}',
         radius: "{{primitives.radius.md}}",
       }),
-    font: textareaBaseStyles.shape.font.default({
-      family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
-      lineHeight: '{{primitives.font.lineHeight}}',
-      letterSpacing: '{{primitives.font.letterSpacing}}',
-      style: '{{primitives.font.style}}',
-    }),
+    font: textareaBaseStyles.shape.font.default(defaultFont),
     shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
     paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
     paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
     transitionDuration: textareaBaseStyles.shape.transitionDuration.default("{{primitives.transition.duration}}"),
-    focusRing: textareaBaseStyles.shape.focusRing.default({
-      width: "{{primitives.focusRing.width}}",
-      style: "{{primitives.focusRing.style}}",
-      color: "{{primitives.focusRing.color}}",
-      offset: "{{primitives.focusRing.offset}}",
-      shadow: "{{primitives.focusRing.shadow}}",
-    }),
-    sm: textareaBaseStyles.shape.sm.default({
-      font: {
-        size: "{{primitives.font.size}}",
-      },
-      paddingX: "{{primitives.space.xs}}",
-      paddingY: "{{primitives.space.xs}}",
-    }),
-    lg: textareaBaseStyles.shape.lg.default({
-      font: {
-        size: "{{primitives.font.size}}",
-      },
-      paddingX: "{{primitives.space.md}}",
-      paddingY: "{{primitives.space.md}}",
-    }),
+    sm: textareaBaseStyles.shape.sm.default(defaultSmSize),
+    lg: textareaBaseStyles.shape.lg.default(defaultLgSize),
   })
   .register(themeSchemaRegistry, { id: "filledTextareaStyles" });
 
@@ -176,6 +157,7 @@ export const activeTextareaStyles = textareaBaseStyles
       .default({
         color: "{{primitives.defaultVariant.state.active.defaultVariant.border.defaultVariant.color}}",
       }),
+    focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeTextareaStyles" });
 
@@ -208,13 +190,7 @@ export const focusTextareaStyles = textareaBaseStyles
       .default({
         color: "{{primitives.defaultVariant.state.focus.defaultVariant.border.defaultVariant.color}}",
       }),
-    focusRing: borderWithShadow.optional().default({
-      width: "{{primitives.focusRing.width}}",
-      style: "{{primitives.focusRing.style}}",
-      color: "{{primitives.focusRing.color}}",
-      offset: "{{primitives.focusRing.offset}}",
-      shadow: "{{primitives.focusRing.shadow}}",
-    }),
+    focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusTextareaStyles" });
 
@@ -299,6 +275,7 @@ export const activeFilledTextareaStyles = textareaBaseStyles
       .default({
         color: "{{primitives.variant.primary.state.active.defaultVariant.border.defaultVariant.color}}",
       }),
+    focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeFilledTextareaStyles" });
 
@@ -331,13 +308,7 @@ export const focusFilledTextareaStyles = textareaBaseStyles
       .default({
         color: "{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}",
       }),
-    focusRing: borderWithShadow.optional().default({
-      width: "{{primitives.focusRing.width}}",
-      style: "{{primitives.focusRing.style}}",
-      color: "{{primitives.focusRing.color}}",
-      offset: "{{primitives.focusRing.offset}}",
-      shadow: "{{primitives.focusRing.shadow}}",
-    }),
+    focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusFilledTextareaStyles" });
 
