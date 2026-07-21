@@ -42,6 +42,43 @@ const viewContainers$ = new BehaviorSubject<ViewContainersRef[]>([])
 const _assignedComponents$ = new BehaviorSubject<(ComponentPropsWithRef<any> | HTMLElement)[]>([])
 
 /**
+ * Apply props to a React element or custom element instance.
+ * @param component - Target component element.
+ * @param props - Props to apply.
+ */
+const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
+  if (!component) return
+
+  Object.entries(props).forEach(([name, value]) => {
+    if (component instanceof HTMLElement) {
+      ;(component as any)[name] = value
+    } else {
+      component.props = {
+        ...(component.props as object),
+        [name]: value,
+      }
+    }
+  })
+}
+
+/**
+ * Attach style scoping attributes to a component element.
+ * @param element - Target element.
+ * @param rcInfo - Remote component info for scoping.
+ */
+const addDataStyleId = (element: HTMLElement, rcInfo: RemoteComponentInfo) => {
+  element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
+}
+
+/**
+ * Attach style isolation attribute to a component element.
+ * @param element - Target element.
+ */
+const addDataStyleIsolation = (element: HTMLElement) => {
+  element.dataset['styleIsolation'] = ''
+}
+
+/**
  * Renders remote components registered for a slot and manages their inputs/outputs.
  * @param name - slot name used to resolve remote components.
  * @param inputs - input props passed to loaded components.
@@ -72,25 +109,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     }
   }
   /**
-   * Apply props to a React element or custom element instance.
-   * @param component - Target component element.
-   * @param props - Props to apply.
-   */
-  const setProps = (component: ReactElement | HTMLElement, props: Record<string, unknown>) => {
-    if (!component) return
-
-    Object.entries(props).forEach(([name, value]) => {
-      if (component instanceof HTMLElement) {
-        ;(component as any)[name] = value
-      } else {
-        component.props = {
-          ...(component.props as object),
-          [name]: value,
-        }
-      }
-    })
-  }
-  /**
    * Update component inputs and outputs.
    * @param component - Component instance to update.
    * @param inputs - Input props to apply.
@@ -104,22 +122,6 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
     []
   )
   /**
-   * Attach style scoping attributes to a component element.
-   * @param element - Target element.
-   * @param rcInfo - Remote component info for scoping.
-   */
-  const addDataStyleId = (element: HTMLElement, rcInfo: RemoteComponentInfo) => {
-    element.dataset['styleId'] = `${rcInfo.productName}|${rcInfo.appId}`
-  }
-
-  /**
-   * Attach style isolation attribute to a component element.
-   * @param element - Target element.
-   */
-  const addDataStyleIsolation = (element: HTMLElement) => {
-    element.dataset['styleIsolation'] = ''
-  }
-  /**
    * Create and mount a remote component element.
    * @param componentType - Loaded component type (module federation).
    * @param componentInfo - Slot configuration data.
@@ -128,42 +130,45 @@ export const SlotComponent: FC<SlotProps> = ({ name, inputs = {}, outputs = {}, 
    * @param index - Index of component in slot.
    * @returns Created element or null when not created.
    */
-  const createComponent = ({
-    componentType,
-    componentInfo,
-    viewContainer,
-    permissions,
-  }: CreateComponentProps): ReactElement | HTMLElement | null => {
-    if (!viewContainer) return null
+  const createComponent = useCallback(
+    ({
+      componentType,
+      componentInfo,
+      viewContainer,
+      permissions,
+    }: CreateComponentProps): ReactElement | HTMLElement | null => {
+      if (!viewContainer) return null
 
-    const elementName = componentInfo.remoteComponent.elementName || ''
-    const existingElement = elementName ? viewContainer.querySelector(elementName) : null
-    if (existingElement) {
-      return existingElement as HTMLElement
-    }
+      const elementName = componentInfo.remoteComponent.elementName || ''
+      const existingElement = elementName ? viewContainer.querySelector(elementName) : null
+      if (existingElement) {
+        return existingElement as HTMLElement
+      }
 
-    const rcConfig = {
-      appId: componentInfo.remoteComponent.appId,
-      productName: componentInfo.remoteComponent.productName,
-      baseUrl: componentInfo.remoteComponent.baseUrl,
-      permissions: permissions,
-    } satisfies RemoteComponentConfig
+      const rcConfig = {
+        appId: componentInfo.remoteComponent.appId,
+        productName: componentInfo.remoteComponent.productName,
+        baseUrl: componentInfo.remoteComponent.baseUrl,
+        permissions: permissions,
+      } satisfies RemoteComponentConfig
 
-    if (componentType) {
-      const element = document.createElement(elementName)
-      ;(element as any)['ocxRemoteComponentConfig'] = rcConfig
+      if (componentType) {
+        const element = document.createElement(elementName)
+        ;(element as any)['ocxRemoteComponentConfig'] = rcConfig
 
-      addDataStyleId(element, componentInfo.remoteComponent)
-      addDataStyleIsolation(element)
+        addDataStyleId(element, componentInfo.remoteComponent)
+        addDataStyleIsolation(element)
 
-      viewContainer.appendChild(element)
-      assignedElementsRef.current.add(element)
+        viewContainer.appendChild(element)
+        assignedElementsRef.current.add(element)
 
-      return element
-    }
+        return element
+      }
 
-    return null
-  }
+      return null
+    },
+    []
+  )
   useEffect(() => {
     return () => {
       if (viewContainersRef.current.size > 0) {
