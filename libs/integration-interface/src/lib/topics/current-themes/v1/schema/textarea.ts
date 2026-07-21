@@ -54,6 +54,18 @@ export const textareaSize = z
 
 export const textareaBaseStyles = z
   .object({
+    font: (font as typeof font).optional(),
+    shadow: withRef(z.string()).optional(),
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    transitionDuration: withRef(z.number()).optional(),
+    sm: (textareaSize as typeof textareaSize).optional(),
+    lg: (textareaSize as typeof textareaSize).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "textareaBaseStyles" });
+
+export const textareaChangeableStyles = z
+  .object({
     background: z.union([bg, withRef(z.string())]).optional(),
     color: color.optional(),
     placeholderColor: color.optional(),
@@ -63,18 +75,12 @@ export const textareaBaseStyles = z
         radius: withRef(z.string()).optional(),
       })
       .optional(),
-    font: (font as typeof font).optional(),
-    shadow: withRef(z.string()).optional(),
-    paddingX: withRef(z.string()).optional(),
-    paddingY: withRef(z.string()).optional(),
-    transitionDuration: withRef(z.number()).optional(),
     focusRing: borderWithShadow.optional(),
-    sm: (textareaSize as typeof textareaSize).optional(),
-    lg: (textareaSize as typeof textareaSize).optional(),
   })
-  .register(themeSchemaRegistry, { id: "textareaBaseStyles" });
+  .register(themeSchemaRegistry, { id: "textareaChangeableStyles" });
 
 export const textareaStyles = textareaBaseStyles
+  .extend(textareaChangeableStyles.shape)
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -102,6 +108,7 @@ export const textareaStyles = textareaBaseStyles
   .register(themeSchemaRegistry, { id: "textareaStyles" });
 
 export const filledTextareaStyles = textareaBaseStyles
+  .extend(textareaChangeableStyles.shape)
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -128,7 +135,7 @@ export const filledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "filledTextareaStyles" });
 
-export const hoverTextareaStyles = textareaBaseStyles
+export const hoverTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -144,7 +151,7 @@ export const hoverTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "hoverTextareaStyles" });
 
-export const activeTextareaStyles = textareaBaseStyles
+export const activeTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -161,7 +168,7 @@ export const activeTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "activeTextareaStyles" });
 
-export const selectedTextareaStyles = textareaBaseStyles
+export const selectedTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -177,7 +184,7 @@ export const selectedTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "selectedTextareaStyles" });
 
-export const focusTextareaStyles = textareaBaseStyles
+export const focusTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -194,7 +201,7 @@ export const focusTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "focusTextareaStyles" });
 
-export const disabledTextareaStyles = textareaBaseStyles
+export const disabledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -211,7 +218,7 @@ export const disabledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "disabledTextareaStyles" });
 
-export const invalidTextareaStyles = textareaBaseStyles
+export const invalidTextareaStyles = textareaChangeableStyles
   .extend({
     placeholderColor: color.default("{{primitives.defaultVariant.state.invalid.defaultVariant.contrast}}"),
     border: z
@@ -246,7 +253,7 @@ export const textareaWithStates = z
   })
   .register(themeSchemaRegistry, { id: "textareaWithStates" });
 
-export const hoverFilledTextareaStyles = textareaBaseStyles
+export const hoverFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -262,7 +269,7 @@ export const hoverFilledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "hoverFilledTextareaStyles" });
 
-export const activeFilledTextareaStyles = textareaBaseStyles
+export const activeFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -279,7 +286,7 @@ export const activeFilledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "activeFilledTextareaStyles" });
 
-export const selectedFilledTextareaStyles = textareaBaseStyles
+export const selectedFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -295,7 +302,7 @@ export const selectedFilledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "selectedFilledTextareaStyles" });
 
-export const focusFilledTextareaStyles = textareaBaseStyles
+export const focusFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -312,7 +319,7 @@ export const focusFilledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "focusFilledTextareaStyles" });
 
-export const disabledFilledTextareaStyles = textareaBaseStyles
+export const disabledFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -329,7 +336,7 @@ export const disabledFilledTextareaStyles = textareaBaseStyles
   })
   .register(themeSchemaRegistry, { id: "disabledFilledTextareaStyles" });
 
-export const invalidFilledTextareaStyles = textareaBaseStyles
+export const invalidFilledTextareaStyles = textareaChangeableStyles
   .extend({
     placeholderColor: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}"),
     border: z
