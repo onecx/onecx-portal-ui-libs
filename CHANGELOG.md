@@ -1,3 +1,9 @@
+## [6.27.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.0...v6.27.1) (2026-07-21)
+
+### Bug Fixes
+
+* primng class changes adapted ([#1604](https://github.com/onecx/onecx-portal-ui-libs/issues/1604)) ([8f76068](https://github.com/onecx/onecx-portal-ui-libs/commit/8f76068119b1770dd29ecc17af4c0673d795eab8))
+
 ## [6.27.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.26.0...v6.27.0) (2026-07-08)
 
 ### Features
