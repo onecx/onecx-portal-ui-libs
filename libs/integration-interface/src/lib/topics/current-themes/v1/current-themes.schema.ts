@@ -13,6 +13,7 @@ import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
+import { textarea } from "./schema/textarea";
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -43,6 +44,7 @@ const usages: z.ZodType<UsagesInput> = z
     diagram: (diagram as typeof diagram).optional(),    
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),    
+    textarea: (textarea as typeof textarea).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 

@@ -118,7 +118,8 @@ export type ThemePath =
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
   | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
   | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`
-  | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`;
+  | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
+  | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
