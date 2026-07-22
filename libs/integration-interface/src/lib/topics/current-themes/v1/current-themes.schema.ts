@@ -1,34 +1,54 @@
 import * as z from "zod";
 import { dialog } from "./schema/dialog";
+import { menubar } from "./schema/menubar";
 import { primitives } from "./schema/primitives";
 import { badge } from "./schema/badge";
 import { region } from "./schema/region";
 import { table } from "./schema/table";
 import { tooltip } from "./schema/tooltip";
 import { carousel } from "./schema/carousel";
+import { toggleswitch } from "./schema/toggleswitch";
+import { tabs } from "./schema/tabs";
 import { themeSchemaRegistry } from "./schema/registry";
 import { fieldset } from "./schema/fieldset";
 import { diagram } from "./schema/diagram";
 import { dropdown } from "./schema/dropdown";
 import { textarea } from "./schema/textarea";
 
-const usages = z
+type UsagesInput = {
+  dialog?: z.input<typeof dialog>
+  badge?: z.input<typeof badge>
+  menubar?: z.input<typeof menubar>
+  region?: z.input<typeof region>
+  table?: z.input<typeof table>
+  tooltip?: z.input<typeof tooltip>
+  carousel?: z.input<typeof carousel>
+  fieldset?: z.input<typeof fieldset>
+  diagram?: z.input<typeof diagram>
+  dropdown?: z.input<typeof dropdown>
+  tabs?: z.input<typeof tabs>
+  toggleswitch?: z.input<typeof toggleswitch>
+}
+
+const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
     badge: (badge as typeof badge).optional(),
+    menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
+    tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),
+    diagram: (diagram as typeof diagram).optional(),    
+    toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),    
     textarea: (textarea as typeof textarea).optional(),
   })
   .register(themeSchemaRegistry, { id: "usages" });
 
 type PrimitivesInput = z.input<typeof primitives>
-type UsagesInput = z.input<typeof usages>
 
 type RegionOverrideInput = {
   primitives?: PrimitivesInput
