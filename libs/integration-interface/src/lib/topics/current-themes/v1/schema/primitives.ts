@@ -107,15 +107,6 @@ export const focusRing = z
   })
   .register(themeSchemaRegistry, { id: "focusRing" });
 
-export const componentBorders = z
-  .object({
-    button: border.optional(),
-    input: border.optional(),
-    card: border.optional(),
-    dialog: border.optional(),
-  })
-  .register(themeSchemaRegistry, { id: "componentBorders" });
-
 // Layout tokens control structural constraints like content max-width and section gaps.
 // Useful for theming applications that need different layout densities (compact vs. comfortable).
 export const layout = z
