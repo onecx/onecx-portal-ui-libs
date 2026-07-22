@@ -27,6 +27,14 @@ const defaultSmSize = {
   paddingY: "{{primitives.space.xs}}",
 };
 
+const defaultMdSize = {
+  font: {
+    size: "{{primitives.font.size}}",
+  },
+  paddingX: "{{primitives.space.md}}",
+  paddingY: "{{primitives.space.md}}",
+};
+
 const defaultLgSize = {
   font: {
     size: "{{primitives.font.size}}",
@@ -60,6 +68,7 @@ export const textareaBaseStyles = z
     paddingY: withRef(z.string()).optional(),
     transitionDuration: withRef(z.number()).optional(),
     sm: (textareaSize as typeof textareaSize).optional(),
+    md: (textareaSize as typeof textareaSize).optional(),
     lg: (textareaSize as typeof textareaSize).optional(),
   })
   .register(themeSchemaRegistry, { id: "textareaBaseStyles" });
@@ -79,59 +88,48 @@ export const textareaChangeableStyles = z
   })
   .register(themeSchemaRegistry, { id: "textareaChangeableStyles" });
 
-export const textareaStyles = textareaBaseStyles
+export const textareaCommonStylesWithDefaults = textareaBaseStyles
   .extend(textareaChangeableStyles.shape)
   .extend({
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultVariant.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultVariant.contrast}}'),
-    placeholderColor: color.default('{{primitives.defaultVariant.defaultState.defaultVariant.contrast}}'),
-    border: z
-      .object({
-        color: color.optional().default('{{primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.color}}'),
-        radius: withRef(z.string()).optional().default("{{primitives.radius.md}}"),
-      })
-      .optional()
-      .default({
-        color: '{{primitives.defaultVariant.defaultState.defaultVariant.border.defaultVariant.color}}',
-        radius: "{{primitives.radius.md}}",
-      }),
     font: textareaBaseStyles.shape.font.default(defaultFont),
     shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
     paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
     paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
     transitionDuration: textareaBaseStyles.shape.transitionDuration.default("{{primitives.transition.duration}}"),
     sm: textareaBaseStyles.shape.sm.default(defaultSmSize),
+    md: textareaBaseStyles.shape.md.default(defaultMdSize),
     lg: textareaBaseStyles.shape.lg.default(defaultLgSize),
+  });
+
+export const textareaStyles = textareaCommonStylesWithDefaults
+  .extend({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    placeholderColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    border: z
+      .object({
+        color: color.optional().default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.defaultVariant.color}}'),
+        radius: withRef(z.string()).optional().default("{{primitives.radius.md}}"),
+      })
+      .optional(),
   })
   .register(themeSchemaRegistry, { id: "textareaStyles" });
 
-export const filledTextareaStyles = textareaBaseStyles
-  .extend(textareaChangeableStyles.shape)
+export const filledTextareaStyles = textareaCommonStylesWithDefaults
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultState.defaultVariant.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultState.defaultVariant.contrast}}'),
-    placeholderColor: color.default('{{primitives.variant.primary.defaultState.defaultVariant.contrast}}'),
+      .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
+    placeholderColor: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
     border: z
       .object({
-        color: color.optional().default('{{primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.color}}'),
+        color: color.optional().default('{{primitives.variant.primary.defaultState.defaultSeverity.border.defaultVariant.color}}'),
         radius: withRef(z.string()).optional().default("{{primitives.radius.md}}"),
       })
-      .optional()
-      .default({
-        color: '{{primitives.variant.primary.defaultState.defaultVariant.border.defaultVariant.color}}',
-        radius: "{{primitives.radius.md}}",
-      }),
-    font: textareaBaseStyles.shape.font.default(defaultFont),
-    shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
-    paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
-    paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
-    transitionDuration: textareaBaseStyles.shape.transitionDuration.default("{{primitives.transition.duration}}"),
-    sm: textareaBaseStyles.shape.sm.default(defaultSmSize),
-    lg: textareaBaseStyles.shape.lg.default(defaultLgSize),
+      .optional(),
   })
   .register(themeSchemaRegistry, { id: "filledTextareaStyles" });
 
@@ -139,15 +137,12 @@ export const hoverTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.defaultVariant.state.hover.defaultVariant.bg}}"),
+      .default("{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.hover.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.hover.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.hover.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "hoverTextareaStyles" });
 
@@ -155,15 +150,12 @@ export const activeTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.defaultVariant.state.active.defaultVariant.bg}}"),
+      .default("{{primitives.defaultVariant.state.active.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.active.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.active.defaultSeverity.border.defaultVariant.color}}"),
       })
-      .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.active.defaultVariant.border.defaultVariant.color}}",
-      }),
+      .optional(),
     focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeTextareaStyles" });
@@ -172,15 +164,12 @@ export const selectedTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.defaultVariant.state.selected.defaultVariant.bg}}"),
+      .default("{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.selected.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.selected.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.selected.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "selectedTextareaStyles" });
 
@@ -188,15 +177,12 @@ export const focusTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.defaultVariant.state.focus.defaultVariant.bg}}"),
+      .default("{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.focus.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.focus.defaultSeverity.border.defaultVariant.color}}"),
       })
-      .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.focus.defaultVariant.border.defaultVariant.color}}",
-      }),
+      .optional(),
     focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusTextareaStyles" });
@@ -205,30 +191,24 @@ export const disabledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.defaultVariant.state.disabled.defaultVariant.bg}}"),
-    color: color.default("{{primitives.defaultVariant.state.disabled.defaultVariant.contrast}}"),
+      .default("{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}"),
+    color: color.default("{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.disabled.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.disabled.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.disabled.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "disabledTextareaStyles" });
 
 export const invalidTextareaStyles = textareaChangeableStyles
   .extend({
-    placeholderColor: color.default("{{primitives.defaultVariant.state.invalid.defaultVariant.contrast}}"),
+    placeholderColor: color.default("{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.defaultVariant.state.invalid.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.defaultVariant.state.invalid.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.defaultVariant.state.invalid.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "invalidTextareaStyles" });
 
@@ -257,15 +237,12 @@ export const hoverFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.state.hover.defaultVariant.bg}}"),
+      .default("{{primitives.variant.primary.state.hover.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.hover.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.hover.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.hover.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "hoverFilledTextareaStyles" });
 
@@ -273,15 +250,12 @@ export const activeFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.state.active.defaultVariant.bg}}"),
+      .default("{{primitives.variant.primary.state.active.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.active.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.active.defaultSeverity.border.defaultVariant.color}}"),
       })
-      .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.active.defaultVariant.border.defaultVariant.color}}",
-      }),
+      .optional(),
     focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeFilledTextareaStyles" });
@@ -290,15 +264,11 @@ export const selectedFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.state.selected.defaultVariant.bg}}"),
+      .default("{{primitives.variant.primary.state.selected.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.selected.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.selected.defaultSeverity.border.defaultVariant.color}}"),
       })
-      .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.selected.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "selectedFilledTextareaStyles" });
 
@@ -306,15 +276,12 @@ export const focusFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.state.focus.defaultVariant.bg}}"),
+      .default("{{primitives.variant.primary.state.focus.defaultSeverity.bg}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.focus.defaultSeverity.border.defaultVariant.color}}"),
       })
-      .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}",
-      }),
+      .optional(),
     focusRing: borderWithShadow.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusFilledTextareaStyles" });
@@ -323,30 +290,24 @@ export const disabledFilledTextareaStyles = textareaChangeableStyles
   .extend({
     background: z
       .union([bg, withRef(z.string())])
-      .default("{{primitives.variant.primary.state.disabled.defaultVariant.bg}}"),
-    color: color.default("{{primitives.variant.primary.state.disabled.defaultVariant.contrast}}"),
+      .default("{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}"),
+    color: color.default("{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.disabled.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.disabled.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.disabled.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "disabledFilledTextareaStyles" });
 
 export const invalidFilledTextareaStyles = textareaChangeableStyles
   .extend({
-    placeholderColor: color.default("{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}"),
+    placeholderColor: color.default("{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}"),
     border: z
       .object({
-        color: color.optional().default("{{primitives.variant.primary.state.invalid.defaultVariant.border.defaultVariant.color}}"),
+        color: color.optional().default("{{primitives.variant.primary.state.invalid.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional()
-      .default({
-        color: "{{primitives.variant.primary.state.invalid.defaultVariant.border.defaultVariant.color}}",
-      }),
   })
   .register(themeSchemaRegistry, { id: "invalidFilledTextareaStyles" });
 

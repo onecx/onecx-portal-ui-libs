@@ -84,7 +84,7 @@ export const bgContrast = z.object({
 
 export const severityStyles = bgContrast
   .extend({
-    border: borderWithVariants.optional(),
+    border: border.optional(),
     focusRing: borderWithShadow.optional(),
   })
   .register(themeSchemaRegistry, { id: "severityStyles" });
@@ -105,8 +105,8 @@ export const severityVariants = z
 // Used as the type for variantWithStates.defaultState and each state entry.
 export const severityVariantGroup = z
   .object({
-    defaultVariant: severityStyles.optional(),
-    variant: severityVariants.optional(),
+    defaultSeverity: severityStyles.optional(),
+    severity: severityVariants.optional(),
   })
   .register(themeSchemaRegistry, { id: "severityVariantGroup" });
 
@@ -152,14 +152,12 @@ export const area = variantWithStates.extend({});
 type AreasShape = {
   canvas: z.ZodOptional<typeof area>;
   surface: z.ZodOptional<typeof area>;
-  onSurface: z.ZodOptional<typeof area>;
   overlay: z.ZodOptional<typeof area>;
 }
 
 const areasShape: AreasShape = {
   canvas: area.optional(),
   surface: area.optional(),
-  onSurface: area.optional(),
   overlay: area.optional(),
 };
 
@@ -247,7 +245,7 @@ type PrimitivesShape = {
   space: z.ZodOptional<typeof space>;
   layout: z.ZodOptional<typeof layout>;
   radius: z.ZodOptional<typeof radius>;
-  border: z.ZodOptional<typeof borderWithVariants>;
+  border: z.ZodOptional<typeof border>;
   focusRing: z.ZodOptional<typeof borderWithShadow>;
   transition: z.ZodOptional<typeof transition>;
 };
@@ -263,7 +261,7 @@ const primitivesShape: PrimitivesShape = {
   layout: (layout as typeof layout).optional(),
   radius: (radius as typeof radius).optional(),
   // Global default border style applied to components that don't define their own border token
-  border: (borderWithVariants as typeof borderWithVariants).optional(),
+  border: (border as typeof border).optional(),
   focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
   transition: (transition as typeof transition).optional(),
 };
