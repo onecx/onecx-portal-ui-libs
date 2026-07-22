@@ -62,14 +62,14 @@ export const textareaSize = z
 
 export const textareaBaseStyles = z
   .object({
-    font: (font as typeof font).optional(),
-    shadow: withRef(z.string()).optional(),
-    paddingX: withRef(z.string()).optional(),
-    paddingY: withRef(z.string()).optional(),
-    transitionDuration: withRef(z.number()).optional(),
-    sm: (textareaSize as typeof textareaSize).optional(),
-    md: (textareaSize as typeof textareaSize).optional(),
-    lg: (textareaSize as typeof textareaSize).optional(),
+    font: (font as typeof font).optional().default(defaultFont),
+    shadow: withRef(z.string()).optional().default("{{primitives.shadow.none}}"),
+    paddingX: withRef(z.string()).optional().default("{{primitives.space.sm}}"),
+    paddingY: withRef(z.string()).optional().default("{{primitives.space.sm}}"),
+    transitionDuration: withRef(z.number()).optional().default("{{primitives.transition.duration}}"),
+    sm: (textareaSize as typeof textareaSize).optional().default(defaultSmSize),
+    md: (textareaSize as typeof textareaSize).optional().default(defaultMdSize),
+    lg: (textareaSize as typeof textareaSize).optional().default(defaultLgSize),
   })
   .register(themeSchemaRegistry, { id: "textareaBaseStyles" });
 
@@ -88,20 +88,8 @@ export const textareaChangeableStyles = z
   })
   .register(themeSchemaRegistry, { id: "textareaChangeableStyles" });
 
-export const textareaCommonStylesWithDefaults = textareaBaseStyles
+export const textareaStyles = textareaBaseStyles
   .extend(textareaChangeableStyles.shape)
-  .extend({
-    font: textareaBaseStyles.shape.font.default(defaultFont),
-    shadow: textareaBaseStyles.shape.shadow.default("{{primitives.shadow.none}}"),
-    paddingX: textareaBaseStyles.shape.paddingX.default("{{primitives.space.sm}}"),
-    paddingY: textareaBaseStyles.shape.paddingY.default("{{primitives.space.sm}}"),
-    transitionDuration: textareaBaseStyles.shape.transitionDuration.default("{{primitives.transition.duration}}"),
-    sm: textareaBaseStyles.shape.sm.default(defaultSmSize),
-    md: textareaBaseStyles.shape.md.default(defaultMdSize),
-    lg: textareaBaseStyles.shape.lg.default(defaultLgSize),
-  });
-
-export const textareaStyles = textareaCommonStylesWithDefaults
   .extend({
     background: z
       .union([bg, withRef(z.string())])
@@ -117,7 +105,8 @@ export const textareaStyles = textareaCommonStylesWithDefaults
   })
   .register(themeSchemaRegistry, { id: "textareaStyles" });
 
-export const filledTextareaStyles = textareaCommonStylesWithDefaults
+export const filledTextareaStyles = textareaBaseStyles
+  .extend(textareaChangeableStyles.shape)
   .extend({
     background: z
       .union([bg, withRef(z.string())])
