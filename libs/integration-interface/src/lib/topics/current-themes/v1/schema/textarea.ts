@@ -1,13 +1,19 @@
 import * as z from "zod";
-import { bg, color, withRef, borderWithShadow, font } from "./primitives";
+import { bg, color, withRef, borderWithShadow, font, focusRing } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 
 const defaultFocusRing = {
-  width: "{{primitives.focusRing.width}}",
+  width: {
+    md: "{{primitives.focusRing.width.md}}",
+  },
   style: "{{primitives.focusRing.style}}",
   color: "{{primitives.focusRing.color}}",
-  offset: "{{primitives.focusRing.offset}}",
-  shadow: "{{primitives.focusRing.shadow}}",
+  offset: {
+    md: "{{primitives.focusRing.offset.md}}",
+  },
+  shadow: {
+    none: "{{primitives.focusRing.shadow.none}}",
+  },
 };
 
 const defaultFont = {
@@ -84,7 +90,7 @@ export const textareaChangeableStyles = z
         radius: withRef(z.string()).optional(),
       })
       .optional(),
-    focusRing: borderWithShadow.optional(),
+    focusRing: focusRing.optional(),
   })
   .register(themeSchemaRegistry, { id: "textareaChangeableStyles" });
 
@@ -145,7 +151,7 @@ export const activeTextareaStyles = textareaChangeableStyles
         color: color.optional().default("{{primitives.defaultVariant.state.active.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional(),
-    focusRing: borderWithShadow.optional().default(defaultFocusRing),
+    focusRing: focusRing.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeTextareaStyles" });
 
@@ -172,7 +178,7 @@ export const focusTextareaStyles = textareaChangeableStyles
         color: color.optional().default("{{primitives.defaultVariant.state.focus.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional(),
-    focusRing: borderWithShadow.optional().default(defaultFocusRing),
+    focusRing: focusRing.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusTextareaStyles" });
 
@@ -245,7 +251,7 @@ export const activeFilledTextareaStyles = textareaChangeableStyles
         color: color.optional().default("{{primitives.variant.primary.state.active.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional(),
-    focusRing: borderWithShadow.optional().default(defaultFocusRing),
+    focusRing: focusRing.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "activeFilledTextareaStyles" });
 
@@ -271,7 +277,7 @@ export const focusFilledTextareaStyles = textareaChangeableStyles
         color: color.optional().default("{{primitives.variant.primary.state.focus.defaultSeverity.border.defaultVariant.color}}"),
       })
       .optional(),
-    focusRing: borderWithShadow.optional().default(defaultFocusRing),
+    focusRing: focusRing.optional().default(defaultFocusRing),
   })
   .register(themeSchemaRegistry, { id: "focusFilledTextareaStyles" });
 

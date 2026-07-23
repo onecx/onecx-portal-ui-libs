@@ -70,40 +70,40 @@ const borderWidthSizes = z
   .register(themeSchemaRegistry, { id: "borderWidthSizes" });
 
 export const borderCommonShape = {
-    color: color.optional(),
-    width: z
-      .union([
-        borderWidthSizes,
-        z.object({
-          top: borderWidthSizes.optional(),
-          right: borderWidthSizes.optional(),
-          bottom: borderWidthSizes.optional(),
-          left: borderWidthSizes.optional(),
-        }),
-      ])
-      .optional(),
-    style: withRef(z.string()).optional(),
-    offset: z
-      .object({
-        none: withRef(z.string()).optional(),
-        sm: withRef(z.string()).optional(),
-        md: withRef(z.string()).optional(),
-        lg: withRef(z.string()).optional(),
-      })
-      .optional(),
-  };
+  color: color.optional(),
+  width: z
+    .union([
+      withRef(borderWidthSizes),
+      z.object({
+        top: borderWidthSizes.optional(),
+        right: borderWidthSizes.optional(),
+        bottom: borderWidthSizes.optional(),
+        left: borderWidthSizes.optional(),
+      }),
+    ])
+    .optional(),
+  style: withRef(z.string()).optional(),
+  offset: withRef(
+    z.object({
+      none: withRef(z.string()).optional(),
+      sm: withRef(z.string()).optional(),
+      md: withRef(z.string()).optional(),
+      lg: withRef(z.string()).optional(),
+    })
+  ).optional(),
+};
 
 export const border = z
   .object({
     ...borderCommonShape,
-    radius: (radius as typeof radius).optional(),
+    radius: withRef(radius).optional(),
   })
   .register(themeSchemaRegistry, { id: "border" });
 
 export const focusRing = z
   .object({
     ...borderCommonShape,
-    shadow: (shadow as typeof shadow).optional(),
+    shadow: withRef(shadow).optional(),
   })
   .register(themeSchemaRegistry, { id: "focusRing" });
 
