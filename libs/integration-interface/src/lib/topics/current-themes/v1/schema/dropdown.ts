@@ -18,7 +18,7 @@ const icon = z
     url: z.string().optional(),
     content: z.string().optional(),
   })
-  .register(themeSchemaRegistry, { id: 'icon' })
+  .register(themeSchemaRegistry, { id: 'dropdownIcon' })
 
 export const settings = z
   .object({

@@ -5,9 +5,11 @@ import { datatableCssRules } from './usages/datatable.rules';
 import { fieldsetCssRules } from './usages/fieldset.rules';
 import { diagramCssRules } from './usages/diagram.rules';
 import { dialogCssRules } from './usages/dialog.rules';
+import { menubarCssRules } from './usages/menubar.rules';
 import { toggleswitchCssRules } from './usages/toggleswitch.rules';
 import { tabsCssRules } from './usages/tabs.rules';
 import { dropdownCssRules } from './usages/dropdown.rules';
+import { textareaCssRules } from './usages/textarea.rules';
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -18,5 +20,7 @@ export const usageCssRules: CssRule[] = [
   ...tabsCssRules,
   ...dropdownCssRules,
   ...badgeCssRules,
+  ...menubarCssRules,
   ...toggleswitchCssRules,
+  ...textareaCssRules,
 ];

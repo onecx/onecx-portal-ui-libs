@@ -35,41 +35,105 @@ export const bg = z
   })
   .register(themeSchemaRegistry, { id: "bg" });
 
-export const border = z
+// Named shadow tokens map to CSS box-shadow values at different elevation levels.
+// Components reference these tokens for consistent elevation (e.g. cards, dialogs, dropdowns).
+export const shadow = z
   .object({
+    none: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "shadow" });
+
+// Named border-radius tokens. Components reference these via semantic size names
+// rather than hard-coded pixel values, enabling global shape changes from one place.
+export const radius = z
+  .object({
+    none: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+    full: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "radius" });
+
+const borderWidthSizes = z
+  .object({
+    none: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: "borderWidthSizes" });
+
+export const borderCommonShape = {
     color: color.optional(),
     width: z
       .union([
-        withRef(z.string()),
+        borderWidthSizes,
         z.object({
-          top: withRef(z.string()).optional(),
-          right: withRef(z.string()).optional(),
-          bottom: withRef(z.string()).optional(),
-          left: withRef(z.string()).optional(),
+          top: borderWidthSizes.optional(),
+          right: borderWidthSizes.optional(),
+          bottom: borderWidthSizes.optional(),
+          left: borderWidthSizes.optional(),
         }),
       ])
       .optional(),
     style: withRef(z.string()).optional(),
-    radius: withRef(z.string()).optional(),
-    offset: withRef(z.string()).optional(),
+    offset: z
+      .object({
+        none: withRef(z.string()).optional(),
+        sm: withRef(z.string()).optional(),
+        md: withRef(z.string()).optional(),
+        lg: withRef(z.string()).optional(),
+      })
+      .optional(),
+  };
+
+export const border = z
+  .object({
+    ...borderCommonShape,
+    radius: (radius as typeof radius).optional(),
   })
   .register(themeSchemaRegistry, { id: "border" });
 
-export const componentBorders = z
+export const focusRing = z
   .object({
-    button: border.optional(),
-    input: border.optional(),
-    card: border.optional(),
-    dialog: border.optional(),
+    ...borderCommonShape,
+    shadow: (shadow as typeof shadow).optional(),
   })
-  .register(themeSchemaRegistry, { id: "componentBorders" });
+  .register(themeSchemaRegistry, { id: "focusRing" });
 
-export const borderWithVariants = z
+// Layout tokens control structural constraints like content max-width and section gaps.
+// Useful for theming applications that need different layout densities (compact vs. comfortable).
+export const layout = z
   .object({
-    defaultVariant: border.optional(),
-    variant: componentBorders.optional(),
+    // Max-width of the main content container, e.g. '1280px'
+    contentMaxWidth: withRef(z.string()).optional(),
+    // Max-width of overlay components (tooltips, popovers), e.g. '12.5rem'
+    overlayMaxWidth: withRef(z.string()).optional(),
+    // Default gap between layout sections / grid columns
+    gap: withRef(z.string()).optional(),
+    // Default padding inside layout sections / grid columns
+    padding: withRef(z.string()).optional(),
+    // Default alignment of content inside layout sections / grid columns
+    alignItems: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: "borderWithVariants" });
+  .register(themeSchemaRegistry, { id: "layout" });
+
+// screen variants scale used for padding, margin, and gap tokens across components on different specific device sizes.
+// Defining it here allows components to reference e.g. screenVariants.md instead of a hard-coded value.
+export const screenSettings = z
+  .object({
+    xs: layout.optional(),
+    sm: layout.optional(),
+    md: layout.optional(),
+    lg: layout.optional(),
+  })
+  .register(themeSchemaRegistry, { id: "screenSettings" });
 
 export const borderWithShadow = border
   .extend({
@@ -84,8 +148,9 @@ export const bgContrast = z.object({
 
 export const severityStyles = bgContrast
   .extend({
-    border: borderWithVariants.optional(),
+    border: border.optional(),
     focusRing: borderWithShadow.optional(),
+    cursor: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "severityStyles" });
 
@@ -105,8 +170,8 @@ export const severityVariants = z
 // Used as the type for variantWithStates.defaultState and each state entry.
 export const severityVariantGroup = z
   .object({
-    defaultVariant: severityStyles.optional(),
-    variant: severityVariants.optional(),
+    defaultSeverity: severityStyles.optional(),
+    severity: severityVariants.optional(),
   })
   .register(themeSchemaRegistry, { id: "severityVariantGroup" });
 
@@ -119,6 +184,8 @@ export const variantWithStates = bgContrast
         active: severityVariantGroup.optional(),
         selected: severityVariantGroup.optional(),
         focus: severityVariantGroup.optional(),
+        invalid: severityVariantGroup.optional(),
+        disabled: severityVariantGroup.optional(),
       })
       .optional(),
   })
@@ -147,39 +214,22 @@ export const colorVariants = z
 
 export const area = variantWithStates.extend({});
 
+type AreasShape = {
+  canvas: z.ZodOptional<typeof area>;
+  surface: z.ZodOptional<typeof area>;
+  overlay: z.ZodOptional<typeof area>;
+}
+
+const areasShape: AreasShape = {
+  canvas: area.optional(),
+  surface: area.optional(),
+  overlay: area.optional(),
+};
+
+
 export const areas = z
-  .object({
-    canvas: area.optional(),
-    surface: area.optional(),
-    onSurface: area.optional(),
-    overlay: area.optional(),
-  })
+  .object(areasShape)
   .register(themeSchemaRegistry, { id: "areas" });
-
-// Named shadow tokens map to CSS box-shadow values at different elevation levels.
-// Components reference these tokens for consistent elevation (e.g. cards, dialogs, dropdowns).
-export const shadow = z
-  .object({
-    none: withRef(z.string()).optional(),
-    sm: withRef(z.string()).optional(),
-    md: withRef(z.string()).optional(),
-    lg: withRef(z.string()).optional(),
-    xl: withRef(z.string()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: "shadow" });
-
-// Named border-radius tokens. Components reference these via semantic size names
-// rather than hard-coded pixel values, enabling global shape changes from one place.
-export const radius = z
-  .object({
-    none: withRef(z.string()).optional(),
-    sm: withRef(z.string()).optional(),
-    md: withRef(z.string()).optional(),
-    lg: withRef(z.string()).optional(),
-    xl: withRef(z.string()).optional(),
-    full: withRef(z.string()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: "radius" });
 
 // Spacing scale used for padding, margin, and gap tokens across components.
 // Defining it here allows components to reference e.g. space.md instead of a hard-coded value.
@@ -193,19 +243,6 @@ export const space = z
     xxl: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "space" });
-
-// Layout tokens control structural constraints like content max-width and section gaps.
-// Useful for theming applications that need different layout densities (compact vs. comfortable).
-export const layout = z
-  .object({
-    // Max-width of the main content container, e.g. '1280px'
-    contentMaxWidth: withRef(z.string()).optional(),
-    // Max-width of overlay components (tooltips, popovers), e.g. '12.5rem'
-    overlayMaxWidth: withRef(z.string()).optional(),
-    // Default gap between layout sections / grid columns
-    gap: withRef(z.string()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: "layout" });
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
@@ -226,23 +263,33 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: "transition" });
 
+export const icon = z.object({
+  size: withRef(z.string()).optional(),
+  color: color.optional(),
+  content: z.string().optional(),
+  font: font.optional(),
+  url: z.string().optional(),
+}).register(themeSchemaRegistry, { id: "icon" });
+
 type PrimitivesShape = {
   defaultVariant: z.ZodOptional<typeof variantWithStates>;
-  variant: typeof colorVariants;
+  variant: z.ZodOptional<typeof colorVariants>;
+  screenSettings: z.ZodOptional<typeof screenSettings>;
   area: z.ZodOptional<typeof areas>;
   shadow: z.ZodOptional<typeof shadow>;
   font: z.ZodOptional<typeof font>;
   space: z.ZodOptional<typeof space>;
   layout: z.ZodOptional<typeof layout>;
   radius: z.ZodOptional<typeof radius>;
-  border: z.ZodOptional<typeof borderWithVariants>;
-  focusRing: z.ZodOptional<typeof borderWithShadow>;
+  border: z.ZodOptional<typeof border>;
+  focusRing: z.ZodOptional<typeof focusRing>;
   transition: z.ZodOptional<typeof transition>;
 };
 
 const primitivesShape: PrimitivesShape = {
   defaultVariant: (variantWithStates as typeof variantWithStates).optional(),
-  variant: colorVariants as typeof colorVariants,
+  variant: (colorVariants as typeof colorVariants).optional(),
+  screenSettings: (screenSettings as typeof screenSettings).optional(),
   area: (areas as typeof areas).optional(),
   shadow: (shadow as typeof shadow).optional(),
   // Global typography baseline applied to all text unless overridden at a more specific level
@@ -251,8 +298,8 @@ const primitivesShape: PrimitivesShape = {
   layout: (layout as typeof layout).optional(),
   radius: (radius as typeof radius).optional(),
   // Global default border style applied to components that don't define their own border token
-  border: (borderWithVariants as typeof borderWithVariants).optional(),
-  focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+  border: (border as typeof border).optional(),
+  focusRing: (focusRing as typeof focusRing).optional(),
   transition: (transition as typeof transition).optional(),
 };
 
