@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { bg, border, borderWithShadow, color, focusRing, font, icon, severityStyles, shadow, shadow, transition, withRef } from "./primitives";
+import { bg, border, borderWithShadow, color, focusRing, font, icon, severityStyles, transition, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 import { tooltip } from "./tooltip";
 
@@ -44,37 +44,62 @@ const DEFAULT_TABS_TRANSITION = transition.default({
   duration: "{{primitives.transition.duration}}",
 }).register(themeSchemaRegistry, { id: "tabsDefaultTransition" });
 
+const DEFAULT_TABS_ICON = icon.default({
+  color: "{{primitives.defaultVariant.defaultState.defaultSeverity.icon.color}}",
+  size: "20px",
+}).register(themeSchemaRegistry, { id: "tabsDefaultIcon" });
+
 const DEFAULT_TABS_STYLES = severityStyles.extend({
   border: DEFAULT_TABS_BORDER.prefault({}),
-  cursor: "{{primitives.defaultVariant.defaultState.defaultSeverity.cursor}}",
-  bg: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-  contrast: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+  cursor: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.cursor}}"),
+  contrast: withRef(color).default("{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}"),
   font: DEFAULT_TABS_FONT.prefault({}),
   focusRing: DEFAULT_TABS_FOCUS_RING.prefault({}),
-  shadow: "{{primitives.shadow.sm}}",
+  shadow: withRef(z.string()).default("{{primitives.shadow.sm}}"),
+  icon: DEFAULT_TABS_ICON.prefault({}),
 }).register(themeSchemaRegistry, { id: "tabsDefaultStyles" });
+
+const TABS_HOVER_STYLES = severityStyles.extend({
+  border: DEFAULT_TABS_BORDER.prefault({}),
+  cursor: withRef(z.string()).default("{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}"),
+  contrast: withRef(color).default("{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}"),
+  shadow: withRef(z.string()).default("{{primitives.shadow.sm}}"),
+  icon: DEFAULT_TABS_ICON.prefault({}),
+}).register(themeSchemaRegistry, { id: "tabsHoverStyles" });
+
+const TABS_FOCUS_STYLES = severityStyles.extend({
+  border: DEFAULT_TABS_BORDER.prefault({}),
+  cursor: withRef(z.string()).default("{{primitives.defaultVariant.state.focus.defaultSeverity.cursor}}"),
+  contrast: withRef(color).default("{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}"),
+  shadow: withRef(z.string()).default("{{primitives.shadow.sm}}"),
+  icon: DEFAULT_TABS_ICON.prefault({}),
+}).register(themeSchemaRegistry, { id: "tabsFocusStyles" });
+
+const TABS_DISABLED_STYLES = severityStyles.extend({
+  border: DEFAULT_TABS_BORDER.prefault({}),
+  cursor: withRef(z.string()).default("{{primitives.defaultVariant.state.disabled.defaultSeverity.cursor}}"),
+  contrast: withRef(color).default("{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}"),
+  shadow: withRef(z.string()).default("{{primitives.shadow.sm}}"),
+  icon: DEFAULT_TABS_ICON.prefault({}),
+}).register(themeSchemaRegistry, { id: "tabsDisabledStyles" });
 
 //use p-button usage instead when it is released
 export const tabsNavButton = DEFAULT_TABS_STYLES.extend({
-    hover: DEFAULT_TABS_STYLES.extend({
-      border: "{{primitives.defaultVariant.hoverState.defaultSeverity.border}}",
-      bg: "{{primitives.defaultVariant.hoverState.defaultSeverity.bg}}",
-      contrast: "{{primitives.defaultVariant.hoverState.defaultSeverity.contrast}}",
-    }).prefault({}),
-    focus: DEFAULT_TABS_STYLES.prefault({}),
-    disabled: DEFAULT_TABS_STYLES.prefault({}),
+    hover: TABS_HOVER_STYLES.prefault({}),
+    focus: TABS_FOCUS_STYLES.prefault({}),
+    disabled: TABS_DISABLED_STYLES.prefault({}),
     width: withRef(z.string()).default("2.5rem"),
     height: withRef(z.string()).default("100%"),
     tooltip: tooltip.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsNavButton" });
 
-export const tabsTabList = tabsBaseStyles.extend({
-    padding: withRef(z.string()).default("0"),
-    gap: withRef(z.string()).default("0"),
+export const tabsTabList = DEFAULT_TABS_STYLES.extend({
+    padding: withRef(z.string()).default("{{primitives.layout.padding}}"),
+    gap: withRef(z.string()).default("{{primitives.layout.gap}}"),
     leftNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
     rightNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
-    content: tabsBaseStyles.prefault({}),
+    content: DEFAULT_TABS_STYLES.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsTabList" });
 
@@ -87,44 +112,49 @@ export const tabsViewport = z
   })
   .register(themeSchemaRegistry, { id: "tabsViewport" });
 
-export const tabsActiveBar = tabsSeverityWithCursor
-  .extend({
+export const tabsActiveBar = DEFAULT_TABS_STYLES.extend({
     size: withRef(z.string()).default("2.5rem"),
     bottom: withRef(z.string()).default("0"),
-    transition: withRef(z.string()).default(DEFAULT_TABS_TRANSITION.duration),
+    transition: DEFAULT_TABS_TRANSITION.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsActiveBar" });
 
-export const tabsTabDefaultSeverity = tabsSeverityWithCursor.extend({
-  padding: withRef(z.string()).default("{{primitives.space.md}}"),
-  margin: withRef(z.string()).default("0"),
-  gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-  icon: icon.prefault({}),
-  alignItems: withRef(z.string()).default("center"),
-  justifyContent: withRef(z.string()).default("center"),
+export const tabsTabDefaultSeverity = z.object({
+  padding: withRef(z.string()).default("{{primitives.layout.padding}}"),
+  margin: withRef(z.string()).default("{{primitives.layout.margin}}"),
+  gap: withRef(z.string()).default("{{primitives.layout.gap}}"),
+  icon: DEFAULT_TABS_ICON.prefault({}),
+  alignItems: withRef(z.string()).default("{{primitives.layout.alignItems}}"),
+  justifyContent: withRef(z.string()).default("{{primitives.layout.justifyContent}}"),
   activeBar: (tabsActiveBar as typeof tabsActiveBar).prefault({}),
   tooltip: tooltip.prefault({}),
 }).register(themeSchemaRegistry, { id: "tabsTabDefaultSeverity" });
 
-export const tabsTab = tabsTabDefaultSeverity
+const tabsTabBase = DEFAULT_TABS_STYLES.extend(tabsTabDefaultSeverity.shape);
+const tabsTabHover = TABS_HOVER_STYLES.extend(tabsTabDefaultSeverity.shape);
+const tabsTabFocus = TABS_FOCUS_STYLES.extend(tabsTabDefaultSeverity.shape);
+const tabsTabDisabled = TABS_DISABLED_STYLES.extend(tabsTabDefaultSeverity.shape);
+
+export const tabsTab = DEFAULT_TABS_STYLES
   .extend({
-    hover: tabsTabDefaultSeverity.prefault({}),
-    focus: tabsTabDefaultSeverity.prefault({}),
-    active: tabsTabDefaultSeverity.prefault({}),
-    disabled: tabsTabDefaultSeverity.prefault({}),
+    ...tabsTabDefaultSeverity.shape,
+    hover: tabsTabHover.prefault({}),
+    focus: tabsTabFocus.prefault({}),
+    active: tabsTabBase.prefault({}),
+    disabled: tabsTabDisabled.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsTab" });
 
-export const tabsTabPanel = tabsBaseStyles
+export const tabsTabPanel = DEFAULT_TABS_STYLES
   .extend({
-    padding: withRef(z.string()).default("{{primitives.space.md}}"),
-    gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-    alignItems: withRef(z.string()).default("flex-start"),
-    justifyContent: withRef(z.string()).default("flex-start"),
+    padding: withRef(z.string()).default("{{primitives.layout.padding}}"),
+    gap: withRef(z.string()).default("{{primitives.layout.gap}}"),
+    alignItems: withRef(z.string()).default("{{primitives.layout.alignItems}}"),
+    justifyContent: withRef(z.string()).default("{{primitives.layout.justifyContent}}"),
   })
   .register(themeSchemaRegistry, { id: "tabsTabPanel" });
 
-export const tabs = tabsSeverityWithTransition.extend({
+export const tabs = DEFAULT_TABS_STYLES.extend({
     settings: (tabsSettings as typeof tabsSettings).prefault({}),
     tablist: (tabsTabList as typeof tabsTabList).prefault({}),
     viewport: (tabsViewport as typeof tabsViewport).prefault({}),
