@@ -1,6 +1,7 @@
 import * as z from "zod";
-import { bg, borderWithShadow, color, font, withRef } from "./primitives";
+import { bg, borderWithShadow, color, font, icon, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
+import { tooltip } from "./tooltip";
 
 export const tabsSettings = z
   .object({
@@ -14,159 +15,196 @@ export const tabsSettings = z
   })
   .register(themeSchemaRegistry, { id: 'tabsSettings' })
 
-export const tabsFocusRing = borderWithShadow
-  .omit({ radius: true })
-  .extend({
-    width: withRef(z.string()).default("{{primitives.focusRing.width}}"),
-    style: withRef(z.string()).default("{{primitives.focusRing.style}}"),
-    color: color.default("{{primitives.focusRing.color}}"),
-    offset: withRef(z.string()).default("{{primitives.focusRing.offset}}"),
-    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow}}"),
-  })
-  .register(themeSchemaRegistry, { id: "tabsFocusRing" });
+const DEFAULT_TABS_BACKGROUND = {
+  color: "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+};
 
-export const tabsTabState = z
+const DEFAULT_TABS_COLOR = "{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}";
+
+const DEFAULT_TABS_BORDER = {
+  color: "{{primitives.border.defaultVariant.color}}",
+  radius: "{{primitives.radius.md}}",
+  width: "1px",
+};
+
+const DEFAULT_TABS_FONT = {
+  weight: "{{primitives.font.weight}}",
+  size: "{{primitives.font.size}}",
+};
+
+const DEFAULT_TABS_FOCUS_RING = {
+  color: "{{primitives.focusRing.color}}",
+  width: "{{primitives.focusRing.width}}",
+  style: "{{primitives.focusRing.style}}",
+  offset: "{{primitives.focusRing.offset}}",
+  shadow: "{{primitives.focusRing.shadow}}",
+};
+
+const DEFAULT_TABS_TRANSITION = {
+  duration: "{{primitives.transition.duration}}",
+};
+
+export const tabsSeverityBaseStyles = z.object({
+  background: bg.default(DEFAULT_TABS_BACKGROUND),
+  color: color.default(DEFAULT_TABS_COLOR),
+  border: borderWithShadow.default(DEFAULT_TABS_BORDER),
+  font: font.default(DEFAULT_TABS_FONT),
+  focusRing: borderWithShadow.default(DEFAULT_TABS_FOCUS_RING),
+  shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
+}).register(themeSchemaRegistry, { id: "tabsSeverityBaseStyles" });
+
+export const tabsSeverityWithCursor = tabsSeverityBaseStyles.extend({
+  cursor: withRef(z.string()).default("pointer"),
+}).register(themeSchemaRegistry, { id: "tabsSeverityWithCursor" });
+
+export const tabsSeverityWithTransition = tabsSeverityBaseStyles.extend({
+  transition: withRef(z.string()).default(DEFAULT_TABS_TRANSITION.duration),
+}).register(themeSchemaRegistry, { id: "tabsSeverityWithTransition" });
+
+//use p-button usage instead when it is released
+export const tabsNavButton = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
       .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-    borderColor: color.default("{{primitives.border.defaultVariant.color}}"),
     color: color.default(
       "{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"
     ),
+    hoverColor: color.default(
+      "{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"
+    ),
+    width: withRef(z.string()).default("2.5rem"),
+    height: withRef(z.string()).default("100%"),
+    cursor: withRef(z.string()).default("pointer"),
+    focusBackground: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.area.surface.state.selected.defaultVariant.bg}}"),
+    focusRing: borderWithShadow.default(DEFAULT_TABS_FOCUS_RING),
+    shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
+    tooltip: tooltip.optional()
   })
-  .register(themeSchemaRegistry, { id: "tabsTabState" });
+  .register(themeSchemaRegistry, { id: "tabsNavButton" });
 
-export const tabsTabFocusState = tabsTabState
-  .extend({
-    focusRing: (tabsFocusRing as typeof tabsFocusRing).optional(),
+//container with tabs inside tabList, required to implement scroll in tabList
+export const tabsTabListContent = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: tabsSeverityBaseStyles.optional()
+      }),
+    }),
   })
-  .register(themeSchemaRegistry, { id: "tabsTabFocusState" });
+  .register(themeSchemaRegistry, { id: "tabsTabListContent" });
 
-export const tabsTabDisabledState = tabsTabState
-  .extend({
-    cursor: withRef(z.string()).default("not-allowed"),
+export const tabsTabList = z
+  .object({
+    defaultVariant: ({
+      defaultState: z.object({
+        defaultSeverity: tabsSeverityBaseStyles.extend({
+          padding: withRef(z.string()).default("0"),
+          gap: withRef(z.string()).default("0"),
+          navButtons: (tabsNavButton as typeof tabsNavButton).optional(),
+          content: (tabsTabListContent as typeof tabsTabListContent).optional(),
+        })
+      }),
+    }),  
   })
-  .register(themeSchemaRegistry, { id: "tabsTabDisabledState" });
+  .register(themeSchemaRegistry, { id: "tabsTabList" });
 
-export const tabsTabFont = font
-  .pick({ weight: true, size: true })
-  .extend({
-    weight: withRef(z.string()).default("{{primitives.font.weight}}"),
-    size: withRef(z.string()).default("{{primitives.font.size}}"),
+export const tabsViewport = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: z.object({
+          scrollBehavior: withRef(z.string()).default("smooth"),
+          overscrollBehavior: withRef(z.string()).default("contain auto"),
+          scrollbarWidth: withRef(z.string()).default("none"),
+          webkitScrollbarDisplay: withRef(z.string()).default("none"),
+        })
+      })
+    }),
   })
-  .register(themeSchemaRegistry, { id: "tabsTabFont" });
+  .register(themeSchemaRegistry, { id: "tabsViewport" });
+
+export const tabsActiveBar = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: tabsSeverityWithCursor.extend({
+          size: withRef(z.string()).default("2.5rem"),
+          bottom: withRef(z.string()).default("0"),
+          transition: withRef(z.string()).default(DEFAULT_TABS_TRANSITION.duration),
+        }).optional(),
+      }),
+    }),
+  })
+  .register(themeSchemaRegistry, { id: "tabsActiveBar" });
+
+export const tabsTabDefaultSeverity = tabsSeverityWithCursor.extend({
+  padding: withRef(z.string()).default("{{primitives.space.md}}"),
+  margin: withRef(z.string()).default("0"),
+  gap: withRef(z.string()).default("{{primitives.space.sm}}"),
+  icon: icon.optional(),
+  alignItems: withRef(z.string()).default("center"),
+  justifyContent: withRef(z.string()).default("center"),
+  activeBar: (tabsActiveBar as typeof tabsActiveBar).optional(),
+  tooltip: tooltip.optional(),
+}).register(themeSchemaRegistry, { id: "tabsTabDefaultSeverity" });
+
+export const tabsTab = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: tabsTabDefaultSeverity.optional(),
+      }),
+      state: z.object({
+        hover: z.object({
+          defaultSeverity: tabsTabDefaultSeverity.optional(),
+        }),
+        active: z.object({
+          defaultSeverity: tabsTabDefaultSeverity.optional(),
+        }),
+        focus: z.object({
+          defaultSeverity: tabsTabDefaultSeverity.optional(),
+        }),
+        disabled: z.object({
+          defaultSeverity: tabsTabDefaultSeverity.optional(),
+        }),
+      }).optional(),
+    }),
+  })
+  .register(themeSchemaRegistry, { id: "tabsTab" });
+
+export const tabsTabPanel = z
+  .object({
+    defaultVariant: z.object({
+      defaultState: z.object({
+        defaultSeverity: tabsSeverityBaseStyles.extend({
+          padding: withRef(z.string()).default("{{primitives.space.md}}"),
+          gap: withRef(z.string()).default("{{primitives.space.sm}}"),
+          alignItems: withRef(z.string()).default("flex-start"),
+          justifyContent: withRef(z.string()).default("flex-start"),
+        }).optional(),
+      })
+    }),
+  })
+  .register(themeSchemaRegistry, { id: "tabsTabPanel" });
 
 export const tabs = z
   .object({
     settings: (tabsSettings as typeof tabsSettings).optional(),
-    transition: z
+    defaultVariant: z
       .object({
-        duration: withRef(z.number()).default("{{primitives.transition.duration}}"),
-      })
-      .optional(),
-    tablist: z
-      .object({
-        border: z
+        defaultState: z
           .object({
-            width: withRef(z.string()).default("1px"),
-            color: color.default("{{primitives.border.defaultVariant.color}}"),
+            defaultSeverity: tabsSeverityWithTransition.extend({
+              tablist: (tabsTabList as typeof tabsTabList).optional(),
+              viewport: (tabsViewport as typeof tabsViewport).optional(),
+              tab: (tabsTab as typeof tabsTab).optional(),
+              tabpanel: (tabsTabPanel as typeof tabsTabPanel).optional(),       
+            }).optional(),
           })
           .optional(),
-        contentFlexGrow: withRef(z.string()).default("1"),
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-      })
-      .optional(),
-    viewport: z
-      .object({
-        scrollBehavior: withRef(z.string()).default("smooth"),
-        overscrollBehavior: withRef(z.string()).default("contain auto"),
-        scrollbarWidth: withRef(z.string()).default("none"),
-        webkitScrollbarDisplay: withRef(z.string()).default("none"),
-      })
-      .optional(),
-    tab: z
-      .object({
-        defaultState: (tabsTabState as typeof tabsTabState).optional(),
-        state: z
-          .object({
-            hover: tabsTabState.default({
-              background: "{{primitives.area.surface.state.hover.defaultVariant.bg}}",
-              borderColor: "{{primitives.border.defaultVariant.color}}",
-              color: "{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}",
-            }),
-            active: tabsTabState.default({
-              background: "{{primitives.area.surface.state.selected.defaultVariant.bg}}",
-              borderColor:
-                "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}",
-              color:
-                "{{primitives.variant.primary.defaultState.defaultVariant.bg.color}}",
-            }),
-            focus: (tabsTabFocusState as typeof tabsTabFocusState).optional(),
-            disabled: (tabsTabDisabledState as typeof tabsTabDisabledState).optional(),
-          })
-          .optional(),
-        border: z
-          .object({
-            width: withRef(z.string()).default("1px"),
-          })
-          .optional(),
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-        font: (tabsTabFont as typeof tabsTabFont).optional(),
-        margin: withRef(z.string()).default("0"),
-        gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-        cursor: withRef(z.string()).default("pointer"),
-        userSelect: withRef(z.string()).default("none"),
-        whiteSpace: withRef(z.string()).default("nowrap"),
-        scrollableFlexGrow: withRef(z.string()).default("0"),
-      })
-      .optional(),
-    tabpanel: z
-      .object({
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-        color: color.default(
-          "{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"
-        ),
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-        focusRing: (tabsFocusRing as typeof tabsFocusRing).optional(),
-      })
-      .optional(),
-    navButton: z
-      .object({
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
-        color: color.default(
-          "{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}"
-        ),
-        hoverColor: color.default(
-          "{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}"
-        ),
-        width: withRef(z.string()).default("2.5rem"),
-        height: withRef(z.string()).default("100%"),
-        cursor: withRef(z.string()).default("pointer"),
-        focusBackground: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.surface.state.selected.defaultVariant.bg}}"),
-        focusRing: (tabsFocusRing as typeof tabsFocusRing).optional(),
-        shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
-      })
-      .optional(),
-    activeBar: z
-      .object({
-        size: withRef(z.string()).default("2px"),
-        bottom: withRef(z.string()).default("0"),
-        borderRadius: withRef(z.string()).default("{{primitives.radius.sm}}"),
-        transition: withRef(z.string()).default(
-          "250ms cubic-bezier(0.35, 0, 0.25, 1)"
-        ),
-        background: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.variant.primary.defaultState.defaultVariant.bg}}"),
       })
       .optional(),
   })
