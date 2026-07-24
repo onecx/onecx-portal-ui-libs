@@ -75,15 +75,15 @@ export const tabsCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'background',
-				from: 'usages.tabs.tab.state.focus.background',
+				from: 'usages.tabs.tab.focus.bg',
 			},
 			{
 				property: 'border-color',
-				from: 'usages.tabs.tab.state.focus.borderColor',
+				from: 'usages.tabs.tab.focus.border.color',
 			},
 			{
 				property: 'color',
-				from: 'usages.tabs.tab.state.focus.color',
+				from: 'usages.tabs.tab.focus.contrast',
 			},
 		],
 	},
@@ -92,19 +92,19 @@ export const tabsCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'background',
-				from: 'usages.tabs.tab.state.disabled.background',
+				from: 'usages.tabs.tab.disabled.bg',
 			},
 			{
 				property: 'border-color',
-				from: 'usages.tabs.tab.state.disabled.borderColor',
+				from: 'usages.tabs.tab.disabled.border.color',
 			},
 			{
 				property: 'color',
-				from: 'usages.tabs.tab.state.disabled.color',
+				from: 'usages.tabs.tab.disabled.contrast',
 			},
 			{
 				property: 'cursor',
-				from: 'usages.tabs.tab.state.disabled.cursor',
+				from: 'usages.tabs.tab.disabled.cursor',
 			},
 		],
 	},
@@ -113,11 +113,11 @@ export const tabsCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'height',
-				from: 'usages.tabs.navButton.height',
+				from: 'usages.tabs.tablist.leftNavButton.height',
 			},
 			{
 				property: 'cursor',
-				from: 'usages.tabs.navButton.cursor',
+				from: 'usages.tabs.tablist.leftNavButton.cursor',
 			},
 		],
 	},
@@ -126,7 +126,7 @@ export const tabsCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'background',
-				from: 'usages.tabs.navButton.focusBackground',
+				from: 'usages.tabs.tablist.leftNavButton.focus.bg',
 			},
 		],
 	},
@@ -135,11 +135,11 @@ export const tabsCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'border-radius',
-				from: 'usages.tabs.activeBar.borderRadius',
+				from: 'usages.tabs.tab.activeBar.border.radius',
 			},
 			{
-				property: 'transition',
-				from: 'usages.tabs.activeBar.transition',
+				property: 'transition-duration',
+				from: 'usages.tabs.tab.activeBar.transition.duration',
 			},
 		],
 	},

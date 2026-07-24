@@ -119,8 +119,12 @@ export const layout = z
     gap: withRef(z.string()).optional(),
     // Default padding inside layout sections / grid columns
     padding: withRef(z.string()).optional(),
+    // Default margin outside layout sections / grid columns
+    margin: withRef(z.string()).optional(),
     // Default alignment of content inside layout sections / grid columns
     alignItems: withRef(z.string()).optional(),
+    // Default justification of content inside layout sections / grid columns
+    justifyContent: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: "layout" });
 
