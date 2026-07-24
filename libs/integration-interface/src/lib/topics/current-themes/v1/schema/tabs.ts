@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { bg, borderWithShadow, color, font, icon, withRef } from "./primitives";
+import { bg, border, borderWithShadow, color, focusRing, font, icon, severityStyles, shadow, shadow, transition, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 import { tooltip } from "./tooltip";
 
@@ -15,68 +15,66 @@ export const tabsSettings = z
   })
   .register(themeSchemaRegistry, { id: 'tabsSettings' })
 
-const DEFAULT_TABS_BACKGROUND = {
-  color: "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-};
+const DEFAULT_TABS_BORDER = border.default({
+  color: "{{primitives.border.color}}",
+  radius: "{{primitives.border.radius}}",
+  width: "{{primitives.border.width.sm}}",
+  style: "{{primitives.border.style}}",
+  offset: "{{primitives.border.offset}}",
+}).register(themeSchemaRegistry, { id: "tabsDefaultBorder" });
 
-const DEFAULT_TABS_COLOR = "{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}";
-
-const DEFAULT_TABS_BORDER = {
-  color: "{{primitives.border.defaultVariant.color}}",
-  radius: "{{primitives.radius.md}}",
-  width: "1px",
-};
-
-const DEFAULT_TABS_FONT = {
+const DEFAULT_TABS_FONT = font.default({
+  family: "{{primitives.font.family}}",
   weight: "{{primitives.font.weight}}",
   size: "{{primitives.font.size}}",
-};
+  lineHeight: "{{primitives.font.lineHeight}}",
+  letterSpacing: "{{primitives.font.letterSpacing}}",
+  style: "{{primitives.font.style}}",
+}).register(themeSchemaRegistry, { id: "tabsDefaultFont" });
 
-const DEFAULT_TABS_FOCUS_RING = {
+const DEFAULT_TABS_FOCUS_RING = focusRing.default({
   color: "{{primitives.focusRing.color}}",
   width: "{{primitives.focusRing.width}}",
   style: "{{primitives.focusRing.style}}",
   offset: "{{primitives.focusRing.offset}}",
   shadow: "{{primitives.focusRing.shadow}}",
-};
+}).register(themeSchemaRegistry, { id: "tabsDefaultFocusRing" });
 
-const DEFAULT_TABS_TRANSITION = {
+const DEFAULT_TABS_TRANSITION = transition.default({
   duration: "{{primitives.transition.duration}}",
-};
+}).register(themeSchemaRegistry, { id: "tabsDefaultTransition" });
 
-export const tabsSeverityBaseStyles = z.object({
-  background: bg.default(DEFAULT_TABS_BACKGROUND),
-  color: color.default(DEFAULT_TABS_COLOR),
-  border: borderWithShadow.default(DEFAULT_TABS_BORDER),
-  font: font.default(DEFAULT_TABS_FONT),
-  focusRing: borderWithShadow.default(DEFAULT_TABS_FOCUS_RING),
-  shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
-}).register(themeSchemaRegistry, { id: "tabsSeverityBaseStyles" });
-
-export const tabsSeverityWithCursor = tabsSeverityBaseStyles.extend({
-  cursor: withRef(z.string()).default("pointer"),
-}).register(themeSchemaRegistry, { id: "tabsSeverityWithCursor" });
-
-export const tabsSeverityWithTransition = tabsSeverityBaseStyles.extend({
-  transition: withRef(z.string()).default(DEFAULT_TABS_TRANSITION.duration),
-}).register(themeSchemaRegistry, { id: "tabsSeverityWithTransition" });
+const DEFAULT_TABS_STYLES = severityStyles.extend({
+  border: DEFAULT_TABS_BORDER.prefault({}),
+  cursor: "{{primitives.defaultVariant.defaultState.defaultSeverity.cursor}}",
+  bg: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+  contrast: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+  font: DEFAULT_TABS_FONT.prefault({}),
+  focusRing: DEFAULT_TABS_FOCUS_RING.prefault({}),
+  shadow: "{{primitives.shadow.sm}}",
+}).register(themeSchemaRegistry, { id: "tabsDefaultStyles" });
 
 //use p-button usage instead when it is released
-export const tabsNavButton = tabsSeverityWithCursor.extend({
-    hover: tabsSeverityWithCursor.prefault({}),
-    focus: tabsSeverityWithCursor.prefault({}),
-    disabled: tabsSeverityWithCursor.prefault({}),
+export const tabsNavButton = DEFAULT_TABS_STYLES.extend({
+    hover: DEFAULT_TABS_STYLES.extend({
+      border: "{{primitives.defaultVariant.hoverState.defaultSeverity.border}}",
+      bg: "{{primitives.defaultVariant.hoverState.defaultSeverity.bg}}",
+      contrast: "{{primitives.defaultVariant.hoverState.defaultSeverity.contrast}}",
+    }).prefault({}),
+    focus: DEFAULT_TABS_STYLES.prefault({}),
+    disabled: DEFAULT_TABS_STYLES.prefault({}),
     width: withRef(z.string()).default("2.5rem"),
     height: withRef(z.string()).default("100%"),
     tooltip: tooltip.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsNavButton" });
 
-export const tabsTabList = tabsSeverityBaseStyles.extend({
+export const tabsTabList = tabsBaseStyles.extend({
     padding: withRef(z.string()).default("0"),
     gap: withRef(z.string()).default("0"),
-    navButtons: (tabsNavButton as typeof tabsNavButton).prefault({}),
-    content: tabsSeverityBaseStyles.prefault({}),
+    leftNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
+    rightNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
+    content: tabsBaseStyles.prefault({}),
   })
   .register(themeSchemaRegistry, { id: "tabsTabList" });
 
@@ -117,7 +115,7 @@ export const tabsTab = tabsTabDefaultSeverity
   })
   .register(themeSchemaRegistry, { id: "tabsTab" });
 
-export const tabsTabPanel = tabsSeverityBaseStyles
+export const tabsTabPanel = tabsBaseStyles
   .extend({
     padding: withRef(z.string()).default("{{primitives.space.md}}"),
     gap: withRef(z.string()).default("{{primitives.space.sm}}"),
