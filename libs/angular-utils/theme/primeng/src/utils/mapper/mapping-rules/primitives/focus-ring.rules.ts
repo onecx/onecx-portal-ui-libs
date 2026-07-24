@@ -19,4 +19,8 @@ export const focusRingRules: MappingRule[] = [
     from: 'primitives.focusRing.offset',
     to: 'semantic.focusRing.offset',
   },
+  {
+    from: 'primitives.focusRing.shadow',
+    to: 'semantic.focusRing.shadow',
+  },
 ];

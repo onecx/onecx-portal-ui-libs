@@ -1,49 +1,55 @@
-import * as z from "zod";
-import { calendar } from "./schema/calendar";
-import { dialog } from "./schema/dialog";
-import { primitives } from "./schema/primitives";
-import { badge } from "./schema/badge";
-import { region } from "./schema/region";
-import { table } from "./schema/table";
-import { tooltip } from "./schema/tooltip";
-import { carousel } from "./schema/carousel";
-import { themeSchemaRegistry } from "./schema/registry";
-import { fieldset } from "./schema/fieldset";
-import { diagram } from "./schema/diagram";
-import { dropdown } from "./schema/dropdown";
+import * as z from 'zod'
+import { calendar } from './schema/calendar'
+import { dialog } from './schema/dialog'
+import { menubar } from './schema/menubar'
+import { primitives } from './schema/primitives'
+import { badge } from './schema/badge'
+import { region } from './schema/region'
+import { table } from './schema/table'
+import { tooltip } from './schema/tooltip'
+import { carousel } from './schema/carousel'
+import { toggleswitch } from './schema/toggleswitch'
+import { tabs } from './schema/tabs'
+import { themeSchemaRegistry } from './schema/registry'
+import { fieldset } from './schema/fieldset'
+import { diagram } from './schema/diagram'
+import { dropdown } from './schema/dropdown'
+import { textarea } from './schema/textarea'
 
-type UsagesShape = {
-  calendar: z.ZodOptional<typeof calendar>;
-  dialog: z.ZodOptional<typeof dialog>;
-  badge: z.ZodOptional<typeof badge>;
-  region: z.ZodOptional<typeof region>;
-  table: z.ZodOptional<typeof table>;
-  tooltip: z.ZodOptional<typeof tooltip>;
-  carousel: z.ZodOptional<typeof carousel>;
-  fieldset: z.ZodOptional<typeof fieldset>;
-  diagram: z.ZodOptional<typeof diagram>;
-  dropdown: z.ZodOptional<typeof dropdown>;
+type UsagesInput = {
+  dialog?: z.input<typeof dialog>
+  badge?: z.input<typeof badge>
+  menubar?: z.input<typeof menubar>
+  region?: z.input<typeof region>
+  table?: z.input<typeof table>
+  tooltip?: z.input<typeof tooltip>
+  carousel?: z.input<typeof carousel>
+  fieldset?: z.input<typeof fieldset>
+  diagram?: z.input<typeof diagram>
+  dropdown?: z.input<typeof dropdown>
+  tabs?: z.input<typeof tabs>
+  toggleswitch?: z.input<typeof toggleswitch>
 }
 
-const usagesShape: UsagesShape = {
-  calendar: calendar.optional(),
-  dialog: dialog.optional(),
-  badge: badge.optional(),
-  region: region.optional(),
-  table: table.optional(),
-  tooltip: tooltip.optional(),
-  carousel: carousel.optional(),
-  fieldset: fieldset.optional(),
-  diagram: diagram.optional(),
-  dropdown: dropdown.optional(),
-};
-
-export const usages = z
-  .object(usagesShape)
-  .register(themeSchemaRegistry, { id: "usages" });
+const usages: z.ZodType<UsagesInput> = z
+  .object({
+    dialog: (dialog as typeof dialog).optional(),
+    badge: (badge as typeof badge).optional(),
+    menubar: (menubar as typeof menubar).optional(),
+    region: (region as typeof region).optional(),
+    table: (table as typeof table).optional(),
+    tooltip: (tooltip as typeof tooltip).optional(),
+    carousel: (carousel as typeof carousel).optional(),
+    tabs: (tabs as typeof tabs).optional(),
+    fieldset: (fieldset as typeof fieldset).optional(),
+    diagram: (diagram as typeof diagram).optional(),
+    toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
+    dropdown: (dropdown as typeof dropdown).optional(),
+    textarea: (textarea as typeof textarea).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'usages' })
 
 type PrimitivesInput = z.input<typeof primitives>
-type UsagesInput = z.input<typeof usages>
 
 type RegionOverrideInput = {
   primitives?: PrimitivesInput
@@ -56,8 +62,9 @@ const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
   .object({
     primitives: primitives.optional(),
     usages: usages.optional(),
-  }).optional()
-  .register(themeSchemaRegistry, { id: "regionOverride" }) as any;
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'regionOverride' }) as any
 
 const regionOverrides = z
   .object({
@@ -68,8 +75,9 @@ const regionOverrides = z
     bodyFooter: regionOverride as typeof regionOverride,
     bodyEnd: regionOverride as typeof regionOverride,
     footer: regionOverride as typeof regionOverride,
-  }).optional()
-  .register(themeSchemaRegistry, { id: "regionOverrides" });
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'regionOverrides' })
 
 export const themePropertiesV2 = z
   .object({
@@ -86,8 +94,8 @@ export const theme = z
   })
   .register(themeSchemaRegistry, { id: 'theme' })
 
-export const regionKeys = ["header", "subHeader", "bodyStart", "bodyHeader", "bodyFooter", "bodyEnd", "footer"] as const
-export type RegionOverridesInput = Partial<Record<typeof regionKeys[number], RegionOverrideInput>>
+export const regionKeys = ['header', 'subHeader', 'bodyStart', 'bodyHeader', 'bodyFooter', 'bodyEnd', 'footer'] as const
+export type RegionOverridesInput = Partial<Record<(typeof regionKeys)[number], RegionOverrideInput>>
 
 export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
@@ -98,4 +106,4 @@ export type ThemePropertiesV2 = {
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
-};
+}
