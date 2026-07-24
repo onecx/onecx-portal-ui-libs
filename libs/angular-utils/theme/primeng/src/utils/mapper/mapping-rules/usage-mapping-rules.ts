@@ -10,11 +10,11 @@ import { carouselMappingRules } from './usages/carousel.rules';
 import { toggleswitchMappingRules } from './usages/toggleswitch.rules';
 import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
+import { textareaMappingRules } from './usages/textarea.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
   ...datatableMappingRules,
-  ...tooltipMappingRules,  
   ...dialogMappingRules,
   ...menubarMappingRules,
   ...tooltipMappingRules,
@@ -24,4 +24,5 @@ export const usageMappingRules: MappingRule[] = [
   ...fieldsetMappingRules,
   ...diagramMappingRules,
   ...dropdownMappingRules,
+  ...textareaMappingRules,
 ];
