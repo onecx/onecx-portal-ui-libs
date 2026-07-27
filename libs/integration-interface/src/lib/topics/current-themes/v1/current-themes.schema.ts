@@ -14,6 +14,7 @@ import { fieldset } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
+import { picklist } from './schema/picklist'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -29,6 +30,7 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
+  picklist?: z.input<typeof picklist>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -46,6 +48,7 @@ const usages: z.ZodType<UsagesInput> = z
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     textarea: (textarea as typeof textarea).optional(),
+    picklist: (picklist as typeof picklist).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
