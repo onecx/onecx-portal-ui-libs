@@ -10,6 +10,7 @@ import { toggleswitchCssRules } from './usages/toggleswitch.rules';
 import { tabsCssRules } from './usages/tabs.rules';
 import { dropdownCssRules } from './usages/dropdown.rules';
 import { textareaCssRules } from './usages/textarea.rules';
+import { togglebuttonCssRules } from './usages/togglebutton.rules';
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -23,4 +24,5 @@ export const usageCssRules: CssRule[] = [
   ...menubarCssRules,
   ...toggleswitchCssRules,
   ...textareaCssRules,
+  ...togglebuttonCssRules,
 ];

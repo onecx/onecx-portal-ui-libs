@@ -11,6 +11,7 @@ import { toggleswitchMappingRules } from './usages/toggleswitch.rules';
 import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
 import { textareaMappingRules } from './usages/textarea.rules';
+import { togglebuttonMappingRules } from './usages/togglebutton.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -25,4 +26,5 @@ export const usageMappingRules: MappingRule[] = [
   ...diagramMappingRules,
   ...dropdownMappingRules,
   ...textareaMappingRules,
+  ...togglebuttonMappingRules,
 ];
