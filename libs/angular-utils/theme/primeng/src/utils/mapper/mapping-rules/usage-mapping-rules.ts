@@ -3,21 +3,28 @@ import { buttonMappingRules } from './usages/button.rules';
 import { badgeMappingRules } from './usages/badge.rules';
 import { datatableMappingRules } from './usages/datatable.rules';
 import { dialogMappingRules } from './usages/dialog.rules';
+import { menubarMappingRules } from './usages/menubar.rules';
 import { tooltipMappingRules } from './usages/tooltip.rules';
 import { fieldsetMappingRules } from './usages/fieldset.rules';
 import { diagramMappingRules } from './usages/diagram.rules';
 import { carouselMappingRules } from './usages/carousel.rules';
+import { toggleswitchMappingRules } from './usages/toggleswitch.rules';
+import { tabsMappingRules } from './usages/tabs.rules';
 import { dropdownMappingRules } from './usages/dropdown.rules';
+import { textareaMappingRules } from './usages/textarea.rules';
 
 export const usageMappingRules: MappingRule[] = [
   ...buttonMappingRules,
   ...badgeMappingRules,
   ...datatableMappingRules,
-  ...tooltipMappingRules,
   ...dialogMappingRules,
+  ...menubarMappingRules,
   ...tooltipMappingRules,
   ...carouselMappingRules,
+  ...toggleswitchMappingRules,
+  ...tabsMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
   ...dropdownMappingRules,
+  ...textareaMappingRules,
 ];
