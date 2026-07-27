@@ -49,8 +49,10 @@ const inputVariant = z.object({
 
   border: border
     .default({
-      color: "{{primitives.border.defaultVariant.color}}",
-      radius: "{{primitives.radius.md}}",
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.sm}}',
     })
     .optional(),
 
@@ -58,20 +60,25 @@ const inputVariant = z.object({
 
   defaultState: inputState
     .default({
-      background: "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-      color: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+      background: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       placeholder: {
-        color: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+        color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       },
     })
     .optional(),
 
   hover: inputState
     .default({
-      background: "{{primitives.area.surface.hover.defaultVariant.bg}}",
-      color: "{{primitives.area.surface.hover.defaultVariant.contrast}}",
+      background: "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+      color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+      placeholder: {
+        color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+      },
       border: {
-        color: "{{primitives.border.defaultVariant.color}}",
+        color: "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+        style: "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+        width: "{{primitives.border.width.sm}}",
       },
     })
     .optional(),
@@ -81,10 +88,12 @@ const inputVariant = z.object({
       ring: inputFocusRing.optional(),
     })
     .default({
-      background: "{{primitives.area.surface.focus.defaultVariant.bg}}",
-      color: "{{primitives.area.surface.focus.defaultVariant.contrast}}",
+      background: "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+      color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.border.defaultVariant.color}}",
+        color: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+        style: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+        width: "{{primitives.border.width.sm}}",
       },
       ring: {
         width: "{{primitives.focusRing.width}}",
@@ -98,23 +107,25 @@ const inputVariant = z.object({
 
   disabled: inputState
     .default({
-      background: "{{primitives.area.surface.disabled.defaultVariant.bg}}",
-      color: "{{primitives.area.surface.disabled.defaultVariant.contrast}}",
+      background: "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+      color: "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
       placeholder: {
-        color: "{{primitives.area.surface.disabled.defaultVariant.contrast}}",
+        color: "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
       },
     })
     .optional(),
 
   invalid: inputState
     .default({
-      background: "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-      color: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+      background: "{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}",
+      color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.variant.danger.defaultState.defaultVariant.bg}}",
+        color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+        style: "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}",
+        width: "{{primitives.border.width.sm}}",
       },
       placeholder: {
-        color: "{{primitives.variant.danger.defaultState.defaultVariant.bg}}",
+        color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
       },
     })
     .optional(),
@@ -122,14 +133,14 @@ const inputVariant = z.object({
   sizes: z
     .object({
       sm: inputSize.default({
-        fontSize: "{{primitives.font.size.sm}}",
+        fontSize: "{{primitives.font.size}}",
         padding: {
           x: "{{primitives.space.sm}}",
           y: "{{primitives.space.xs}}",
         },
       }),
       lg: inputSize.default({
-        fontSize: "{{primitives.font.size.lg}}",
+        fontSize: "{{primitives.font.size}}",
         padding: {
           x: "{{primitives.space.lg}}",
           y: "{{primitives.space.md}}",
@@ -152,32 +163,22 @@ export const input = z
       })
       .optional(),
 
-    defaultVariant: inputVariant.default({
-      font: {
-        weight: "{{primitives.font.weight}}",
-        size: "{{primitives.font.size}}",
-      },
-      padding: {
-        x: "{{primitives.space.md}}",
-        y: "{{primitives.space.sm}}",
-      },
-    }),
-
+    defaultVariant: inputVariant,
     variants: z
       .object({
         filled: inputVariant
           .default({
             defaultState: {
-              background: "{{primitives.area.subtle.defaultState.defaultVariant.bg}}",
-              color: "{{primitives.area.subtle.defaultState.defaultVariant.contrast}}",
+              background: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+              color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
             },
             hover: {
-              background: "{{primitives.area.subtle.hover.defaultVariant.bg}}",
-              color: "{{primitives.area.subtle.hover.defaultVariant.contrast}}",
+              background: "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+              color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
             },
             focus: {
-              background: "{{primitives.area.subtle.focus.defaultVariant.bg}}",
-              color: "{{primitives.area.subtle.focus.defaultVariant.contrast}}",
+              background: "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+              color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
             },
           })
           .optional(),

@@ -30,6 +30,7 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
+  input?: z.input<typeof input>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -47,7 +48,6 @@ const usages: z.ZodType<UsagesInput> = z
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
-    dropdown: (dropdown as typeof dropdown).optional(),
     textarea: (textarea as typeof textarea).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })

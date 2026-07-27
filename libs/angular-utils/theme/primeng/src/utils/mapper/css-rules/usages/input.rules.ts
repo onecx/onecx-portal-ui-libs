@@ -6,23 +6,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.default.hover.background',
+        from: 'usages.input.defaultVariant.hover.background'
       },
       {
         property: 'color',
-        from: 'usages.input.default.hover.color',
+        from: 'usages.input.defaultVariant.hover.color'
+      },
+      {
+        property: 'border-color',
+        from: 'usages.input.defaultVariant.hover.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.default.hover.shadow',
+        from: 'usages.input.defaultVariant.hover.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.default.hover.padding.x',
+        from: 'usages.input.defaultVariant.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.default.hover.padding.y',
+        from: 'usages.input.defaultVariant.padding.y'
       },
     ],
   },
@@ -31,7 +35,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.default.hover.placeholder.color',
+        from: 'usages.input.defaultVariant.hover.placeholder.color'
       },
     ],
   },
@@ -40,23 +44,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.default.focus.background',
+        from: 'usages.input.defaultVariant.focus.background'
       },
       {
         property: 'color',
-        from: 'usages.input.default.focus.color',
+        from: 'usages.input.defaultVariant.focus.color'
+      },
+      {
+        property: 'border-color',
+        from: 'usages.input.defaultVariant.focus.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.default.focus.shadow',
+        from: 'usages.input.defaultVariant.focus.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.default.focus.padding.x',
+        from: 'usages.input.defaultVariant.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.default.focus.padding.y',
+        from: 'usages.input.defaultVariant.padding.y'
       },
     ],
   },
@@ -65,7 +73,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.default.focus.placeholder.color',
+        from: 'usages.input.defaultVariant.focus.placeholder.color'
       },
     ],
   },
@@ -73,20 +81,28 @@ export const inputCssRules: CssRule[] = [
     selector: '.p-inputtext:disabled',
     declarations: [
       {
+        property: 'background',
+        from: 'usages.input.defaultVariant.disabled.background'
+      },
+      {
+        property: 'color',
+        from: 'usages.input.defaultVariant.disabled.color'
+      },
+      {
         property: 'border-color',
-        from: 'usages.input.default.disabled.border.color',
+        from: 'usages.input.defaultVariant.disabled.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.default.disabled.shadow',
+        from: 'usages.input.defaultVariant.disabled.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.default.disabled.padding.x',
+        from: 'usages.input.defaultVariant.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.default.disabled.padding.y',
+        from: 'usages.input.defaultVariant.padding.y'
       },
     ],
   },
@@ -95,7 +111,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.default.disabled.placeholder.color',
+        from: 'usages.input.defaultVariant.disabled.placeholder.color'
       },
     ],
   },
@@ -104,48 +120,66 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.default.invalid.background',
+        from: 'usages.input.defaultVariant.invalid.background'
       },
       {
         property: 'color',
-        from: 'usages.input.default.invalid.color',
+        from: 'usages.input.defaultVariant.invalid.color'
+      },
+      {
+        property: 'border-color',
+        from: 'usages.input.defaultVariant.invalid.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.default.invalid.shadow',
+        from: 'usages.input.defaultVariant.invalid.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.default.invalid.padding.x',
+        from: 'usages.input.defaultVariant.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.default.invalid.padding.y',
+        from: 'usages.input.defaultVariant.padding.y'
       },
     ],
   },
   {
-    selector: '.p-variant-filled .p-inputtext',
+    selector: '.p-inputtext.p-invalid::placeholder',
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.defaultState.color',
+        from: 'usages.input.defaultVariant.invalid.placeholder.color'
+      },
+    ],
+  },
+
+  {
+    selector: '.p-variant-filled .p-inputtext',
+    declarations: [
+      {
+        property: 'background',
+        from: 'usages.input.variants.filled.defaultState.background'
+      },
+      {
+        property: 'color',
+        from: 'usages.input.variants.filled.defaultState.color'
       },
       {
         property: 'border-color',
-        from: 'usages.input.filled.defaultState.border.color',
+        from: 'usages.input.variants.filled.defaultState.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.filled.defaultState.shadow',
+        from: 'usages.input.variants.filled.defaultState.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.filled.defaultState.padding.x',
+        from: 'usages.input.variants.filled.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.filled.defaultState.padding.y',
+        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -154,7 +188,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.defaultState.placeholder.color',
+        from: 'usages.input.variants.filled.defaultState.placeholder.color'
       },
     ],
   },
@@ -162,24 +196,28 @@ export const inputCssRules: CssRule[] = [
     selector: '.p-variant-filled .p-inputtext:not(:disabled):hover',
     declarations: [
       {
+        property: 'background',
+        from: 'usages.input.variants.filled.hover.background'
+      },
+      {
         property: 'color',
-        from: 'usages.input.filled.hover.color',
+        from: 'usages.input.variants.filled.hover.color'
       },
       {
         property: 'border-color',
-        from: 'usages.input.filled.hover.border.color',
+        from: 'usages.input.variants.filled.hover.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.filled.hover.shadow',
+        from: 'usages.input.variants.filled.hover.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.filled.hover.padding.x',
+        from: 'usages.input.variants.filled.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.filled.hover.padding.y',
+        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -188,7 +226,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.hover.placeholder.color',
+        from: 'usages.input.variants.filled.hover.placeholder.color'
       },
     ],
   },
@@ -196,24 +234,28 @@ export const inputCssRules: CssRule[] = [
     selector: '.p-variant-filled .p-inputtext:not(:disabled):focus',
     declarations: [
       {
+        property: 'background',
+        from: 'usages.input.variants.filled.focus.background'
+      },
+      {
         property: 'color',
-        from: 'usages.input.filled.focus.color',
+        from: 'usages.input.variants.filled.focus.color'
       },
       {
         property: 'border-color',
-        from: 'usages.input.filled.focus.border.color',
+        from: 'usages.input.variants.filled.focus.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.filled.focus.shadow',
+        from: 'usages.input.variants.filled.focus.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.filled.focus.padding.x',
+        from: 'usages.input.variants.filled.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.filled.focus.padding.y',
+        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -222,7 +264,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.focus.placeholder.color',
+        from: 'usages.input.variants.filled.focus.placeholder.color'
       },
     ],
   },
@@ -231,27 +273,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.disabled.background',
+        from: 'usages.input.variants.filled.disabled.background'
       },
       {
         property: 'color',
-        from: 'usages.input.filled.disabled.color',
+        from: 'usages.input.variants.filled.disabled.color'
       },
       {
         property: 'border-color',
-        from: 'usages.input.filled.disabled.border.color',
+        from: 'usages.input.variants.filled.disabled.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.filled.disabled.shadow',
+        from: 'usages.input.variants.filled.disabled.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.filled.disabled.padding.x',
+        from: 'usages.input.variants.filled.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.filled.disabled.padding.y',
+        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -260,7 +302,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.disabled.placeholder.color',
+        from: 'usages.input.variants.filled.disabled.placeholder.color'
       },
     ],
   },
@@ -269,27 +311,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.invalid.background',
+        from: 'usages.input.variants.filled.invalid.background'
       },
       {
         property: 'color',
-        from: 'usages.input.filled.invalid.color',
+        from: 'usages.input.variants.filled.invalid.color'
       },
       {
         property: 'border-color',
-        from: 'usages.input.filled.invalid.border.color',
+        from: 'usages.input.variants.filled.invalid.border.color'
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.filled.invalid.shadow',
+        from: 'usages.input.variants.filled.invalid.shadow'
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.filled.invalid.padding.x',
+        from: 'usages.input.variants.filled.padding.x'
       },
       {
         property: 'padding-block',
-        from: 'usages.input.filled.invalid.padding.y',
+        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -298,7 +340,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.invalid.placeholder.color',
+        from: 'usages.input.variants.filled.invalid.placeholder.color'
       },
     ],
   },
