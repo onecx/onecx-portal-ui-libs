@@ -6,6 +6,7 @@ import { fieldsetCssRules } from './usages/fieldset.rules';
 import { diagramCssRules } from './usages/diagram.rules';
 import { dialogCssRules } from './usages/dialog.rules';
 import { dropdownCssRules } from './usages/dropdown.rules';
+import { inputCssRules } from './usages/input.rules';
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -15,4 +16,5 @@ export const usageCssRules: CssRule[] = [
   ...dialogCssRules,
   ...dropdownCssRules,
   ...badgeCssRules,
+  ...inputCssRules,
 ];

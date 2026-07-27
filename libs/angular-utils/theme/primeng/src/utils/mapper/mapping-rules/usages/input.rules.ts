@@ -3,27 +3,27 @@ import { toColorString } from '../../mapper.utils';
 
 export const inputMappingRules: MappingRule[] = [
   {
-    from: 'usages.input.background',
+    from: 'usages.input.default.defaultState.background',
     to: 'components.inputtext.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.input.color',
+    from: 'usages.input.default.defaultState.color',
     to: 'components.inputtext.root.color',
     transform: toColorString,
   },
   {
-    from: 'usages.input.disabled.background',
+    from: 'usages.input.default.disabled.background',
     to: 'components.inputtext.root.disabledBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.input.disabled.color',
+    from: 'usages.input.default.disabled.color',
     to: 'components.inputtext.root.disabledColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.filled.background',
+    from: 'usages.input.filled.defaultState.background',
     to: 'components.inputtext.root.filledBackground',
     transform: toColorString,
   },
@@ -38,74 +38,74 @@ export const inputMappingRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.input.border.color',
+    from: 'usages.input.default.defaultState.border.color',
     to: 'components.inputtext.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.hover.border.color',
+    from: 'usages.input.default.hover.border.color',
     to: 'components.inputtext.root.hoverBorderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.focus.border.color',
+    from: 'usages.input.default.focus.border.color',
     to: 'components.inputtext.root.focusBorderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.invalid.border.color',
+    from: 'usages.input.default.invalid.border.color',
     to: 'components.inputtext.root.invalidBorderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.focus.ring.width',
+    from: 'usages.input.default.focus.ring.width',
     to: 'components.inputtext.root.focusRing.width',
   },
   {
-    from: 'usages.input.focus.ring.style',
+    from: 'usages.input.default.focus.ring.style',
     to: 'components.inputtext.root.focusRing.style',
   },
   {
-    from: 'usages.input.focus.ring.color',
+    from: 'usages.input.default.focus.ring.color',
     to: 'components.inputtext.root.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.input.focus.ring.offset',
+    from: 'usages.input.default.focus.ring.offset',
     to: 'components.inputtext.root.focusRing.offset',
   },
   {
-    from: 'usages.input.focus.ring.shadow',
+    from: 'usages.input.default.focus.ring.shadow',
     to: 'components.inputtext.root.focusRing.shadow',
   },
   {
-    from: 'usages.input.placeholder.color',
+    from: 'usages.input.default.defaultState.placeholder.color',
     to: 'components.inputtext.root.placeholderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.invalid.placeholder.color',
+    from: 'usages.input.default.invalid.placeholder.color',
     to: 'components.inputtext.root.invalidPlaceholderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.shadow',
+    from: 'usages.input.default.defaultState.shadow',
     to: 'components.inputtext.root.shadow',
   },
   {
-    from: 'usages.input.padding.x',
+    from: 'usages.input.default.defaultState.padding.x',
     to: 'components.inputtext.root.paddingX',
   },
   {
-    from: 'usages.input.padding.y',
+    from: 'usages.input.default.defaultState.padding.y',
     to: 'components.inputtext.root.paddingY',
   },
   {
-    from: 'usages.input.borderRadius',
+    from: 'usages.input.default.defaultState.border.radius',
     to: 'components.inputtext.root.borderRadius',
   },
   {
-    from: 'usages.input.transitionDuration',
+    from: 'usages.input.transition.duration',
     to: 'components.inputtext.root.transitionDuration',
   },
   {
@@ -131,5 +131,13 @@ export const inputMappingRules: MappingRule[] = [
   {
     from: 'usages.input.lg.padding.y',
     to: 'components.inputtext.root.lg.paddingY',
+  },
+  {
+    from: 'usages.input.font.weight',
+    to: 'components.inputtext.root.fontWeight',
+  },
+  {
+    from: 'usages.input.font.size',
+    to: 'components.inputtext.root.fontSize',
   },
 ];
