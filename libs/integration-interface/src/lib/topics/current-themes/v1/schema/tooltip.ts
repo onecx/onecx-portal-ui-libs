@@ -2,7 +2,7 @@
  * This file defines the schema for tooltip theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
-import { bg, newBorder, color, withRef } from './primitives'
+import { bg, border, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const tooltipSettings = z
@@ -20,7 +20,7 @@ export const tooltip = z
     gutter: withRef(z.string()).default('{{primitives.space.sm}}'),
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    border: newBorder.default({
+    border: border.default({
       radius: '{{primitives.radius.md}}',
     }),
     background: z

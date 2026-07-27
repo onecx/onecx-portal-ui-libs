@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { bg, newBorder, color, withRef, transition, icon, borderWithShadow, layout } from './primitives'
+import { bg, border, color, withRef, transition, icon, borderWithShadow, layout } from './primitives'
 import { themeSchemaRegistry } from './registry'
 import { tooltip } from './tooltip'
 
@@ -46,7 +46,7 @@ export const menubarBaseSeverityStyles = z
   .object({
     background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
     color: color.default(DEFAULT_MENUBAR_COLOR),
-    border: newBorder.default(DEFAULT_MENUBAR_BORDER),
+    border: border.default(DEFAULT_MENUBAR_BORDER),
     transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
     shadow: withRef(z.string()).default(DEFAULT_MENUBAR_SHADOW),
     icon: icon.optional(),
@@ -124,7 +124,7 @@ export const menubarSubmenu = z
   })
   .register(themeSchemaRegistry, { id: 'menubarSubmenu' })
 
-export const menubarSeparator = newBorder
+export const menubarSeparator = border
   .default(DEFAULT_MENUBAR_BORDER)
   .register(themeSchemaRegistry, { id: 'menubarSeparator' })
 
@@ -159,7 +159,7 @@ export const menubar = z
           background: bg.default(DEFAULT_MENUBAR_BACKGROUND),
           backdrop: bg.optional(),
           color: color.default(DEFAULT_MENUBAR_COLOR),
-          border: newBorder.default(DEFAULT_MENUBAR_BORDER),
+          border: border.default(DEFAULT_MENUBAR_BORDER),
           transition: transition.default(DEFAULT_MENUBAR_TRANSITION),
           padding: withRef(z.string()).default(DEFAULT_MENUBAR_PADDING),
           gap: withRef(z.string()).default(DEFAULT_MENUBAR_GAP),

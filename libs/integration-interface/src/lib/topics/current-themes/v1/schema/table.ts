@@ -2,12 +2,12 @@
  * This file defines the schema for table theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
-import { bg, bgContrast, newBorder, color, font, withRef } from './primitives'
+import { bg, bgContrast, border, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const blockStyles = bgContrast
   .extend({
-    border: newBorder.default({
+    border: border.default({
       color: '{{primitives.border.defaultVariant.color}}',
       width: '{{primitives.border.defaultVariant.width}}',
       style: '{{primitives.border.defaultVariant.style}}',

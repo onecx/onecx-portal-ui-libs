@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { bgContrast, newBorder, borderWithShadow, color, font, space, transition, withRef } from './primitives'
+import { bgContrast, border, borderWithShadow, color, font, space, transition, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 // Todo - remove when page header pr is merged which contains icon primitives
 const icon = z
@@ -34,7 +34,7 @@ export const settings = z
 
 export const stateVariant = bgContrast
   .extend({
-    border: newBorder.optional(),
+    border: border.optional(),
     triggerIcon: icon.optional(),
   })
   .register(themeSchemaRegistry, { id: 'dropdownStateVariant' })
@@ -84,7 +84,7 @@ const tokenString = withRef(z.string()).optional()
 
 const optionTone = bgContrast.optional()
 
-const optionBorder = newBorder.optional()
+const optionBorder = border.optional()
 
 const optionFont = font.optional()
 

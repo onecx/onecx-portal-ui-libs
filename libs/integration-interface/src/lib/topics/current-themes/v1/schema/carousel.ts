@@ -2,7 +2,7 @@
  * This file defines the schema for carousel theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
-import { bg, bgContrast, newBorder, borderWithShadow, color, withRef } from './primitives'
+import { bg, bgContrast, border, borderWithShadow, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const carouselSettings = z
@@ -21,7 +21,7 @@ export const indicatorStyles = bgContrast
     contrast: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
     width: withRef(z.string()).default('1rem'),
     height: withRef(z.string()).default('1rem'),
-    border: newBorder.default({
+    border: border.default({
       radius: '{{primitives.radius.md}}',
     }),
     focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
@@ -52,7 +52,7 @@ export const carousel = z
     container: bgContrast
       .extend({
         padding: withRef(z.string()).default('{{primitives.space.md}}'),
-        border: newBorder.optional(),
+        border: border.optional(),
       })
       .optional(),
     content: z

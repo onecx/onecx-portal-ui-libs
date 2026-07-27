@@ -142,7 +142,7 @@ export const bg = z
   })
   .register(themeSchemaRegistry, { id: 'bg' })
 
-export const newBorder = z
+export const border = z
   .object({
     color: color.optional(),
     style: withRef(z.string()).optional(),
@@ -160,9 +160,9 @@ export const newBorder = z
     offset: withRef(z.string()).optional(),
     radius: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'newBorder' })
+  .register(themeSchemaRegistry, { id: 'border' })
 
-export const borderWithShadow = newBorder
+export const borderWithShadow = border
   .extend({
     shadow: withRef(z.string()).optional(),
   })
@@ -175,7 +175,7 @@ export const bgContrast = z.object({
 
 export const severityStyles = bgContrast
   .extend({
-    border: newBorder.optional(),
+    border: border.optional(),
     focusRing: borderWithShadow.optional(),
     cursor: withRef(z.string()).optional(),
   })

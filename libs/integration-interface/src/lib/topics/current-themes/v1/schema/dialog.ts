@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { bg, bgContrast, newBorder, color, withRef } from './primitives'
+import { bg, bgContrast, border, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const dialogSettings = z
@@ -32,7 +32,7 @@ export const dialog = z
       .extend({
         bg: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
         contrast: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
-        border: newBorder.default({
+        border: border.default({
           color: '{{primitives.border.defaultVariant.color}}',
         }),
         radius: withRef(z.string()).default('{{primitives.radius.md}}'),

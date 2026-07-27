@@ -2,7 +2,7 @@
  * This file defines the schema for badge theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
-import { bg, newBorder, color, font, withRef } from './primitives'
+import { bg, border, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const badgeSettings = z
@@ -26,7 +26,7 @@ export const badgeStyleWithSizeVariants = z
   .object({
     background: z.union([bg, withRef(z.string())]).optional(),
     color: color.optional(),
-    border: newBorder.optional(),
+    border: border.optional(),
     font: font.optional(),
     padding: withRef(z.string()).optional(),
     // Default size
