@@ -1,30 +1,30 @@
-import type { MappingRule } from '../../mapper.types';
-import { toColorString } from '../../mapper.utils';
+import type { MappingRule } from '../../mapper.types'
+import { toColorString } from '../../mapper.utils'
 
 export const variantRules: MappingRule[] = [
   {
-    from: 'primitives.variant.primary.defaultState.defaultVariant.bg',
+    from: 'primitives.variant.primary.defaultState.defaultSeverity.bg',
     to: 'semantic.primary.color',
     transform: toColorString,
   },
   {
-    from: 'primitives.variant.primary.defaultState.defaultVariant.contrast',
+    from: 'primitives.variant.primary.defaultState.defaultSeverity.contrast',
     to: 'semantic.primary.contrastColor',
     transform: toColorString,
   },
   {
-    from: 'primitives.variant.primary.state.hover.defaultVariant.bg',
+    from: 'primitives.variant.primary.state.hover.defaultSeverity.bg',
     to: 'semantic.colorScheme.{mode}.primary.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'primitives.variant.secondary.defaultState.defaultVariant.bg',
+    from: 'primitives.variant.secondary.defaultState.defaultSeverity.bg',
     to: 'semantic.colorScheme.{mode}.secondary.color',
     transform: toColorString,
   },
   {
-    from: 'primitives.variant.secondary.defaultState.defaultVariant.contrast',
+    from: 'primitives.variant.secondary.defaultState.defaultSeverity.contrast',
     to: 'semantic.colorScheme.{mode}.secondary.contrastColor',
     transform: toColorString,
   },
-];
+]
