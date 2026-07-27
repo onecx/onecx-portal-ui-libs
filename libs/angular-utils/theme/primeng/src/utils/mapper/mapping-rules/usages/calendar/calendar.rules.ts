@@ -25,17 +25,17 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Date ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.hoverBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.hover.background',
     to: 'components.datepicker.date.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.selectedBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.selected.background',
     to: 'components.datepicker.date.selectedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelectedBackground',
+    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelected.background',
     to: 'components.datepicker.date.rangeSelectedBackground',
     transform: toColorString,
   },
@@ -45,17 +45,17 @@ export const calendarRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.hoverColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.hover.color',
     to: 'components.datepicker.date.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.selectedColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.selected.color',
     to: 'components.datepicker.date.selectedColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelectedColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelected.color',
     to: 'components.datepicker.date.rangeSelectedColor',
     transform: toColorString,
   },

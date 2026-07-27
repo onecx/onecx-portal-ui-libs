@@ -11,7 +11,7 @@ export const calendarCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'gap',
-				from: 'usages.calendar.panel.headerPanel.yearMonthNav.gap',
+				from: 'usages.calendar.panel.header.yearMonthNav.gap',
 			},
 		],
 	},
@@ -35,7 +35,7 @@ export const calendarCssRules: CssRule[] = [
 		declarations: [
 			{
 				property: 'background',
-				from: 'usages.calendar.panel.datePanel.date.inRangeBackground',
+				from: 'usages.calendar.panel.datePanel.dateCell.inRange.background',
 			},
 		],
 	},

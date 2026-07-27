@@ -5,7 +5,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
-import { input } from '@angular/core'
 
 export const calendarSettings = z
   .object({
@@ -151,7 +150,7 @@ export const inputStyleVariant = z
   })
   .register(themeSchemaRegistry, { id: 'inputStyleVariant' })
 
-export const calendarStyles = z
+export const oldcalendarStyles = z
   .object({
     root: z
       .object({
@@ -469,28 +468,233 @@ export const dayViewPanel = z
   })
   .register(themeSchemaRegistry, { id: 'dayViewPanel' })
 
-export const calendar = z
+export const headerPenal = z
   .object({
-    settings: (calendarSettings as typeof calendarSettings).optional(),
     background: z
       .union([bg, withRef(z.string())])
       .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
     color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
     border: border.default({
       color: '{{primitives.border.defaultVariant.color}}',
+    }),
+    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    margin: withRef(z.string()).default('{{primitives.space.md}}'),
+
+    // navigation selector buttons in header panel (including e.g. selectMonth, selectYear)
+    yearMonthNav: z
+      .object({
+        gap: withRef(z.string()).default('{{primitives.space.sm}}'),
+        fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
+        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+      })
+      .optional(),
+
+    selectMonth: (navigationSelector as typeof navigationSelector).optional(),
+    selectYear: (navigationSelector as typeof navigationSelector).optional(),
+
+    navButton: (panelButton as typeof panelButton).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'headerPenal' })
+
+export const calendarStyles = z
+  .object({
+    transitionDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    border: border.default({
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.defaultVariant.color}}',
+      radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.defaultVariant.radius.md}}',
+    }),
+    shadow: withRef(z.string()).default(
+      '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.shadow.none}}'
+    ),
+    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    headerGap: withRef(z.string()).default('{{primitives.space.sm}}'),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarStyles' })
+
+// export const datePanelStyles = z.object({
+//   background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
+//   color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
+//   border: border.default({
+//     color: '{{primitives.border.defaultVariant.color}}',
+//   }),
+//   padding: withRef(z.string()).default('{{primitives.space.md}}'),
+//   margin: withRef(z.string()).default('{{primitives.space.md}}'),
+
+//   //dayViewPanel
+//   dayView: (viewMargin as typeof viewMargin).optional(),
+//   weekDayLabel: z
+//     .object({
+//       padding: withRef(z.string()).default('{{primitives.space.xs}}'),
+//       fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
+//       color: color.default('{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}'),
+//     })
+//     .optional(),
+//   dateCell: z
+//     .object({
+//       hoverBackground: z
+//         .union([bg, withRef(z.string())])
+//         .default('{{primitives.area.onSurface.state.hover.defaultVariant.bg}}'),
+//       selectedBackground: z
+//         .union([bg, withRef(z.string())])
+//         .default('{{primitives.area.onSurface.state.active.defaultVariant.bg}}'),
+//       // endpoints of the selected range
+//       rangeSelectedBackground: z
+//         .union([bg, withRef(z.string())])
+//         .default('{{primitives.area.onSurface.state.active.defaultVariant.bg}}'),
+//       // dates between selected endpoints of the range
+//       inRangeBackground: z
+//         .union([bg, withRef(z.string())])
+//         .default('{{primitives.variant.primary.defaultState.defaultVariant.bg}}'),
+//       color: color.default('{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}'),
+//       hoverColor: color.default('{{primitives.area.onSurface.state.hover.defaultVariant.contrast}}'),
+//       selectedColor: color.default('{{primitives.area.onSurface.state.active.defaultVariant.contrast}}'),
+//       rangeSelectedColor: color.default('{{primitives.area.onSurface.state.active.defaultVariant.contrast}}'),
+//       width: withRef(z.string()).default('2.5rem'),
+//       height: withRef(z.string()).default('2.5rem'),
+//       border: border.default({
+//         radius: '{{primitives.radius.md}}',
+//       }),
+//       padding: withRef(z.string()).default('{{primitives.space.xs}}'),
+//       focusRing: (borderWithShadow as typeof borderWithShadow).optional(),
+//     })
+//     .optional(),
+//   //monthViewPanel
+//   monthView: (viewMargin as typeof viewMargin).optional(),
+//   month: (pickerCell as typeof pickerCell).optional(),
+
+//   //yearViewPanel
+//   yearView: (viewMargin as typeof viewMargin).optional(),
+//   year: (pickerCell as typeof pickerCell).optional(),
+
+//   today: z
+//     .object({
+//       background: z
+//         .union([bg, withRef(z.string())])
+//         .default('{{primitives.variant.primary.defaultState.defaultVariant.bg}}'),
+//       color: color.default('{{primitives.variant.primary.defaultState.defaultVariant.contrast}}'),
+//     })
+//     .optional(),
+// }).optional()
+
+export const datePanelStates = z
+  .object({
+    // default
+    hover: (datePanelStyles as typeof datePanelStyles).optional(),
+    active: (datePanelStyles as typeof datePanelStyles).optional(),
+    selected: (datePanelStyles as typeof datePanelStyles).optional(),
+    focus: (datePanelStyles as typeof datePanelStyles).optional(),
+    disabled: (datePanelStyles as typeof datePanelStyles).optional(),
+    invalid: (datePanelStyles as typeof datePanelStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'datePanelStates' })
+
+export const inputStyles = z
+  .object({
+    fontFamily: withRef(z.string()).default('{{primitives.font.family}}'),
+    fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+    fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
+    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
+    variant: z
+      .object({
+        outlined: (inputStyleVariant as typeof inputStyleVariant).optional(),
+        filled: (inputStyleVariant as typeof inputStyleVariant).optional(),
+      })
+      .optional(),
+    color: color.default('{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}'),
+    placeholderColor: color.default('{{primitives.area.onSurface.defaultState.defaultVariant.contrast}}'),
+    border: border.default({
+      color: '{{primitives.border.defaultVariant.color}}',
+      width: '{{primitives.border.defaultVariant.width}}',
+      style: '{{primitives.border.defaultVariant.style}}',
       radius: '{{primitives.radius.md}}',
     }),
-    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    hover: z
+      .object({
+        color: color.default('{{primitives.variant.primary.state.hover.defaultVariant.contrast}}'),
+        borderColor: color.default(
+          '{{primitives.variant.primary.state.hover.defaultVariant.border.defaultVariant.color}}'
+        ),
+      })
+      .optional(),
+    focus: z
+      .object({
+        color: color.default('{{primitives.variant.primary.state.focus.defaultVariant.contrast}}'),
+        borderColor: color.default(
+          '{{primitives.variant.primary.state.focus.defaultVariant.border.defaultVariant.color}}'
+        ),
+        ring: (borderWithShadow as typeof borderWithShadow).optional(),
+      })
+      .optional(),
+    disabled: z
+      .object({
+        color: color.default('{{primitives.variant.primary.state.disabled.defaultVariant.contrast}}'),
+        borderColor: color.default(
+          '{{primitives.variant.primary.state.disabled.defaultVariant.border.defaultVariant.color}}'
+        ),
+        background: z
+          .union([bg, withRef(z.string())])
+          .default('{{primitives.variant.primary.state.disabled.defaultVariant.bg}}'),
+      })
+      .optional(),
+    invalid: z
+      .object({
+        color: color.default('{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}'),
+        borderColor: color.default(
+          '{{primitives.variant.primary.state.invalid.defaultVariant.border.defaultVariant.color}}'
+        ),
+        placeHolderColor: color.default('{{primitives.variant.primary.state.invalid.defaultVariant.contrast}}'),
+        focusRing: color.default('{{primitives.variant.primary.state.invalid.defaultVariant.focusRing.color}}'),
+      })
+      .optional(),
+    sm: z
+      .object({
+        padding: withRef(z.string()).default('{{primitives.space.sm}}'),
+        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+      })
+      .optional(),
+    lg: z
+      .object({
+        padding: withRef(z.string()).default('{{primitives.space.lg}}'),
+        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+      })
+      .optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'inputStyles' })
 
-    headerGap: withRef(z.string()).default('{{primitives.space.sm}}'),
+export const calendar = z
+  .object({
+    settings: (calendarSettings as typeof calendarSettings).optional(),
+    root: (calendarStyles as typeof calendarStyles).optional(),
+    //TODO: use input schema defaults instead
+    input: (inputStyles as typeof inputStyles).optional(),
     panel: {
-      defaultVariant: (panelStyles as typeof panelStyles).optional(),
-      header: (headerPanel as typeof headerPanel).optional(),
+      root: (panelStyles as typeof panelStyles).optional(),
+      header: (headerPenal as typeof headerPenal).prefault({}),
       datePanel: {
-        defaultVariant: (datePanel as typeof datePanel).optional(),
-        dayView: (dayViewPanel as typeof dayViewPanel).optional(),
+        root: (datePanelStates as typeof datePanelStates).prefault({}),
+        dayView: (dayViewPanel as typeof dayViewPanel).prefault({}),
+        dateCell: (dateCell as typeof dateCell).prefault({}),
+        monthView: (viewMargin as typeof viewMargin).optional(),
+        month: (pickerCell as typeof pickerCell).optional(),
+        yearView: (viewMargin as typeof viewMargin).optional(),
+        year: (pickerCell as typeof pickerCell).optional()
+        today: (today as typeof today).prefault({}),
       },
+    // Seperate button with calendar icon to open the panel
+    calendarIconButton: (panelButton as typeof panelButton).optional(),
+    // Calendar icon inside the input field
+    inputCalendarIcon: (iconStyles as typeof iconStyles).optional(),
+    timePicker: (timePicker as typeof timePicker).optional(),
+    timePickerButton: (panelButton as typeof panelButton).optional(),
+    timeInput: (timeInput as typeof timeInput).optional(),
+    timeSeparator: (timeSeparator as typeof timeSeparator).optional(),
+    multiMonthDivider: (multiMonthDivider as typeof multiMonthDivider).optional(),
+    footerButtonBar: (footerButtonBar as typeof footerButtonBar).optional(),
     },
   })
   .register(themeSchemaRegistry, { id: 'calendar' })

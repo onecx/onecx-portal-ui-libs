@@ -1,5 +1,4 @@
 import * as z from 'zod'
-import { calendar } from './schema/calendar'
 import { dialog } from './schema/dialog'
 import { menubar } from './schema/menubar'
 import { primitives } from './schema/primitives'
@@ -15,6 +14,7 @@ import { fieldset } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
+import { calendar } from './schema/calendar'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -29,6 +29,8 @@ type UsagesInput = {
   dropdown?: z.input<typeof dropdown>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
+  textarea?: z.input<typeof textarea>
+  calendar?: z.input<typeof calendar>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -46,6 +48,7 @@ const usages: z.ZodType<UsagesInput> = z
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     textarea: (textarea as typeof textarea).optional(),
+    calendar: (calendar as typeof calendar).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
