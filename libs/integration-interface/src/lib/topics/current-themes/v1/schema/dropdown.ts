@@ -1,14 +1,5 @@
 import * as z from 'zod'
-import {
-  bgContrast,
-  border,
-  borderWithShadow,
-  color,
-  font,
-  space,
-  transition,
-  withRef,
-} from './primitives'
+import { bgContrast, border, borderWithShadow, color, font, space, transition, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 // Todo - remove when page header pr is merged which contains icon primitives
 const icon = z
@@ -93,7 +84,7 @@ const tokenString = withRef(z.string()).optional()
 
 const optionTone = bgContrast.optional()
 
-const optionBorder = borderWithShadow.optional()
+const optionBorder = border.optional()
 
 const optionFont = font.optional()
 
@@ -152,16 +143,18 @@ export const clear = z
 export const checkmark = z
   .object({
     color: tokenString,
-    space: space.optional()
+    space: space.optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownCheckmark' })
 
 export const empty = z
   .object({
-    message: space.extend({
-      font: font.optional(),
-    }).optional(),
+    message: space
+      .extend({
+        font: font.optional(),
+      })
+      .optional(),
   })
   .optional()
   .register(themeSchemaRegistry, { id: 'dropdownEmpty' })
