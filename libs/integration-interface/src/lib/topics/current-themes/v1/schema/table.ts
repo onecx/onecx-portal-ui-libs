@@ -2,12 +2,12 @@
  * This file defines the schema for table theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
-import { bg, bgContrast, border, color, font, withRef } from './primitives'
+import { bg, bgContrast, newBorder, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
 export const blockStyles = bgContrast
   .extend({
-    border: border.default({
+    border: newBorder.default({
       color: '{{primitives.border.defaultVariant.color}}',
       width: '{{primitives.border.defaultVariant.width}}',
       style: '{{primitives.border.defaultVariant.style}}',
@@ -98,10 +98,7 @@ export const rowWithStates = z
 export const iconBaseStyles = z
   .object({
     size: withRef(
-      z.union([
-        z.string(),
-        z.object({ width: z.string().optional(), height: z.string().optional() }),
-      ])
+      z.union([z.string(), z.object({ width: z.string().optional(), height: z.string().optional() })])
     ).default('16px'),
     color: color.default('{{primitives.icon.defaultVariant.color}}'),
     backgroundColor: color.default('{{primitives.icon.defaultVariant.bg}}'),
@@ -215,7 +212,7 @@ const tableRowShape: TableRowShape = {
     .optional(),
 }
 
-export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow' });
+export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow' })
 
 type TableShape = {
   settings: z.ZodOptional<typeof tableSettings>
@@ -231,8 +228,6 @@ const tableShape: TableShape = {
   header: (headerRowWithStates as typeof headerRowWithStates).optional(),
   footer: (rowWithStates as typeof rowWithStates).optional(),
   row: (tableRow as typeof tableRow).optional(),
-};
+}
 
-export const table = z
-  .object(tableShape)
-  .register(themeSchemaRegistry, { id: 'table' })
+export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table' })

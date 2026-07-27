@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from './registry'
-import { bgContrast, border, font, layout, transition, withRef } from './primitives'
+import { bgContrast, newBorder, font, layout, transition, withRef } from './primitives'
 
 export const settings = z
   .object({
@@ -11,7 +11,7 @@ export const settings = z
 
 export const container = bgContrast
   .extend({
-    border: border.optional(),
+    border: newBorder.optional(),
     padding: withRef(z.string()).optional(),
     transition: transition.optional(),
   })
@@ -19,7 +19,7 @@ export const container = bgContrast
 
 export const legend = bgContrast
   .extend({
-    border: border.optional(),
+    border: newBorder.optional(),
     padding: withRef(z.string()).optional(),
     layout: layout.optional(),
     font: font.optional(),
@@ -28,7 +28,7 @@ export const legend = bgContrast
 
 export const legendHover = bgContrast.register(themeSchemaRegistry, { id: 'fieldSetLegendHover' })
 
-export const legendFocusRing = border
+export const legendFocusRing = newBorder
   .extend({
     shadow: withRef(z.string()).default('{{primitives.shadow.none}}'),
   })

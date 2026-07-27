@@ -1,6 +1,6 @@
-import * as z from "zod";
-import { bg, bgContrast, border, color, withRef } from "./primitives";
-import { themeSchemaRegistry } from "./registry";
+import * as z from 'zod'
+import { bg, bgContrast, newBorder, color, withRef } from './primitives'
+import { themeSchemaRegistry } from './registry'
 
 export const dialogSettings = z
   .object({
@@ -23,51 +23,47 @@ export const dialogSettings = z
     maximizable: withRef(z.boolean()).optional(),
     resizable: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: "dialogSettings" });
+  .register(themeSchemaRegistry, { id: 'dialogSettings' })
 
 export const dialog = z
   .object({
     settings: (dialogSettings as typeof dialogSettings).optional(),
     root: bgContrast
       .extend({
-        bg: z
-          .union([bg, withRef(z.string())])
-          .default("{{primitives.area.overlay.defaultState.defaultVariant.bg}}"),
-        contrast: color.default(
-          "{{primitives.area.overlay.defaultState.defaultVariant.contrast}}"
-        ),
-        border: border.default({
-          color: "{{primitives.border.defaultVariant.color}}",
+        bg: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
+        contrast: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
+        border: newBorder.default({
+          color: '{{primitives.border.defaultVariant.color}}',
         }),
-        radius: withRef(z.string()).default("{{primitives.radius.md}}"),
-        shadow: withRef(z.string()).default("{{primitives.shadow.md}}"),
+        radius: withRef(z.string()).default('{{primitives.radius.md}}'),
+        shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
       })
       .optional(),
     header: z
       .object({
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-        gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-        alignItems: withRef(z.string()).default("center"),
-        justifyContent: withRef(z.string()).default("space-between"),
+        padding: withRef(z.string()).default('{{primitives.space.md}}'),
+        gap: withRef(z.string()).default('{{primitives.space.sm}}'),
+        alignItems: withRef(z.string()).default('center'),
+        justifyContent: withRef(z.string()).default('space-between'),
       })
       .optional(),
     title: z
       .object({
-        fontSize: withRef(z.string()).default("{{primitives.font.size}}"),
-        fontWeight: withRef(z.string()).default("{{primitives.font.weight}}"),
+        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+        fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
       })
       .optional(),
     content: z
       .object({
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
+        padding: withRef(z.string()).default('{{primitives.space.md}}'),
       })
       .optional(),
     footer: z
       .object({
-        padding: withRef(z.string()).default("{{primitives.space.md}}"),
-        gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-        justifyContent: withRef(z.string()).default("flex-end"),
+        padding: withRef(z.string()).default('{{primitives.space.md}}'),
+        gap: withRef(z.string()).default('{{primitives.space.sm}}'),
+        justifyContent: withRef(z.string()).default('flex-end'),
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: "dialog" });
+  .register(themeSchemaRegistry, { id: 'dialog' })
