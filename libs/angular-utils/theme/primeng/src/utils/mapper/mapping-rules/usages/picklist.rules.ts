@@ -6,7 +6,7 @@ export const picklistMappingRules: MappingRule[] = [
     to: 'components.picklist.root.gap',
   },
   {
-    from: '',
+    from: 'usages.picklist.transferControlButtons.gap',
     to: 'components.picklist.controls.gap',
   },
 ]

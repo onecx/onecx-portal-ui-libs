@@ -1,7 +1,6 @@
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, color, font, newBorder, withRef } from '../primitives'
-import { PicklistSettingsSchema } from './settings'
+import { bg, color, font, border, withRef } from '../primitives'
 
 /**
  * Top section of the picklist panel that typically contains the title or label of the panel schema.
@@ -15,7 +14,7 @@ export class PicklistPanelHeaderSchema {
       color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
       paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
       paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-      border: newBorder.default({
+      border: border.default({
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
         width: '{{primitives.border.width.sm}}',
