@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { bg, border, borderWithShadow, color, focusRing, font, icon, severityStyles, transition, withRef } from "./primitives";
+import { bg, border, borderWithShadow, color, font, icon, severityStyles, transition, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
 import { tooltip } from "./tooltip";
 
@@ -9,9 +9,7 @@ export const tabsSettings = z
     lazy: withRef(z.boolean()).default(false),
     selectOnFocus: withRef(z.boolean()).default(false),
     showNavigators: withRef(z.boolean()).default(true),
-    scrollStrategy: withRef(
-      z.union([z.enum(["nearest", "center"]), z.literal(false)])
-    ).default("nearest"),
+    scrollStrategy: withRef(z.union([z.enum(['nearest', 'center']), z.literal(false)])).default('nearest'),
   })
   .register(themeSchemaRegistry, { id: 'tabsSettings' })
 
@@ -32,7 +30,7 @@ const DEFAULT_TABS_FONT = font.default({
   style: "{{primitives.font.style}}",
 }).register(themeSchemaRegistry, { id: "tabsDefaultFont" });
 
-const DEFAULT_TABS_FOCUS_RING = focusRing.default({
+const DEFAULT_TABS_FOCUS_RING = borderWithShadow.default({
   color: "{{primitives.focusRing.color}}",
   width: "{{primitives.focusRing.width}}",
   style: "{{primitives.focusRing.style}}",
@@ -97,6 +95,7 @@ export const tabsNavButton = DEFAULT_TABS_STYLES.extend({
 export const tabsTabList = DEFAULT_TABS_STYLES.extend({
     padding: withRef(z.string()).default("{{primitives.layout.padding}}"),
     gap: withRef(z.string()).default("{{primitives.layout.gap}}"),
+  contentFlexGrow: withRef(z.string()).default("1"),
     leftNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
     rightNavButton: (tabsNavButton as typeof tabsNavButton).prefault({}),
     content: DEFAULT_TABS_STYLES.prefault({}),
@@ -123,6 +122,9 @@ export const tabsTabDefaultSeverity = z.object({
   padding: withRef(z.string()).default("{{primitives.layout.padding}}"),
   margin: withRef(z.string()).default("{{primitives.layout.margin}}"),
   gap: withRef(z.string()).default("{{primitives.layout.gap}}"),
+  userSelect: withRef(z.string()).default("none"),
+  whiteSpace: withRef(z.string()).default("nowrap"),
+  scrollableFlexGrow: withRef(z.string()).default("0"),
   icon: DEFAULT_TABS_ICON.prefault({}),
   alignItems: withRef(z.string()).default("{{primitives.layout.alignItems}}"),
   justifyContent: withRef(z.string()).default("{{primitives.layout.justifyContent}}"),
@@ -161,4 +163,4 @@ export const tabs = DEFAULT_TABS_STYLES.extend({
     tab: (tabsTab as typeof tabsTab).prefault({}),
     tabpanel: (tabsTabPanel as typeof tabsTabPanel).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: "tabs" });
+  .register(themeSchemaRegistry, { id: 'tabs' })
