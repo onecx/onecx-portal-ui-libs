@@ -135,7 +135,7 @@ describe('picklist schema', () => {
             },
             hover: expect.any(Object),
             selected: expect.any(Object),
-            focused: expect.any(Object),
+            focus: expect.any(Object),
             disabled: expect.any(Object),
           })
         })
@@ -182,20 +182,20 @@ describe('picklist schema', () => {
           })
         })
 
-        it('should apply defaults for focused state', () => {
+        it('should apply defaults for focus state', () => {
           const result = picklist.safeParse({})
 
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactTokens(value?.panel?.items?.item?.focused, {
-            background: '{{primitives.defaultVariant.state.focused.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.state.focused.defaultSeverity.contrast}}',
+          expectExactTokens(value?.panel?.items?.item?.focus, {
+            background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
             paddingX: '{{primitives.space.sm}}',
             paddingY: '{{primitives.space.sm}}',
             border: {
-              color: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.style}}',
+              color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+              style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
               width: '{{primitives.border.width.none}}',
               offset: '{{primitives.border.offset.none}}',
               radius: '{{primitives.border.radius.none}}',

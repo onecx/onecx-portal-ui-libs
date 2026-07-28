@@ -56,14 +56,14 @@ export class PicklistPanelItemSchema {
 
   private static readonly focusTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.focused.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focused.defaultSeverity.bg}}'),
+      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.style}}',
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
     }),
   })
 
@@ -85,7 +85,7 @@ export class PicklistPanelItemSchema {
       ...this.defaultStateTokens,
       hover: this.hoverTokens.prefault({}),
       selected: this.selectedTokens.prefault({}),
-      focused: this.focusTokens.prefault({}),
+      focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'picklistPanelItem' })
