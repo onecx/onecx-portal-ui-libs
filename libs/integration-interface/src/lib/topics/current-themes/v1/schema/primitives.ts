@@ -42,6 +42,17 @@ export const shadowSizes = z
   })
   .register(themeSchemaRegistry, { id: 'shadowSizes' })
 
+// Named icon size tokens map to CSS width/height values for icons at different sizes.
+// Components reference these tokens for consistent icon sizing (e.g. buttons, inputs, menus).
+export const iconSizes = z
+  .object({
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'iconSizes' })
+
 // Named border-radius tokens. Components reference these via semantic size names
 // rather than hard-coded pixel values, enabling global shape changes from one place.
 export const radiusSizes = z
@@ -177,11 +188,36 @@ export const bgContrast = z.object({
   contrast: color.optional(),
 })
 
+// Defined here (before primitives) so it can be referenced in the primitives object.
+// Also used further below in usages/blockStyles for per-component typography overrides.
+export const font = z
+  .object({
+    family: withRef(z.string()).optional(),
+    size: withRef(z.string()).optional(),
+    weight: withRef(z.string()).optional(),
+    lineHeight: withRef(z.string()).optional(),
+    letterSpacing: withRef(z.string()).optional(),
+    style: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'font' })
+
+export const icon = z
+  .object({
+    size: withRef(iconSizes).optional(),
+    color: color.optional(),
+    content: z.string().optional(),
+    font: font.optional(),
+    url: z.string().optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'icon' })
+
 export const severityStyles = bgContrast
   .extend({
     border: border.optional(),
     focusRing: borderWithShadow.optional(),
     cursor: withRef(z.string()).optional(),
+    icon: icon.optional(),
+    font: font.optional(),
   })
   .register(themeSchemaRegistry, { id: 'severityStyles' })
 
@@ -257,34 +293,11 @@ const areasShape: AreasShape = {
 
 export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'areas' })
 
-// Defined here (before primitives) so it can be referenced in the primitives object.
-// Also used further below in usages/blockStyles for per-component typography overrides.
-export const font = z
-  .object({
-    family: withRef(z.string()).optional(),
-    size: withRef(z.string()).optional(),
-    weight: withRef(z.string()).optional(),
-    lineHeight: withRef(z.string()).optional(),
-    letterSpacing: withRef(z.string()).optional(),
-    style: withRef(z.string()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'font' })
-
 export const transition = z
   .object({
     duration: withRef(z.number()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'transition' })
-
-export const icon = z
-  .object({
-    size: withRef(z.string()).optional(),
-    color: color.optional(),
-    content: z.string().optional(),
-    font: font.optional(),
-    url: z.string().optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'icon' })
 
 type PrimitivesShape = {
   defaultVariant: z.ZodOptional<typeof variantWithStates>
