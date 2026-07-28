@@ -1,5 +1,5 @@
-import type { MappingRule } from '../../../mapper.types';
-import { toColorString } from '../../../mapper.utils';
+import type { MappingRule } from '../../../mapper.types'
+import { toColorString } from '../../../mapper.utils'
 
 export const calendarRules: MappingRule[] = [
   // ─── Day View ─────────────────────────────────────────────────────────────
@@ -25,23 +25,13 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Date ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.hover.background',
-    to: 'components.datepicker.date.hoverBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.calendar.panel.datePanel.dateCell.selected.background',
-    to: 'components.datepicker.date.selectedBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelected.background',
-    to: 'components.datepicker.date.rangeSelectedBackground',
-    transform: toColorString,
-  },
-  {
     from: 'usages.calendar.panel.datePanel.dateCell.color',
     to: 'components.datepicker.date.color',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.calendar.panel.datePanel.dateCell.hover.background',
+    to: 'components.datepicker.date.hoverBackground',
     transform: toColorString,
   },
   {
@@ -50,13 +40,8 @@ export const calendarRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.selected.color',
-    to: 'components.datepicker.date.selectedColor',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.calendar.panel.datePanel.dateCell.rangeSelected.color',
-    to: 'components.datepicker.date.rangeSelectedColor',
+    from: 'usages.calendar.panel.datePanel.dateCell.selected.rangeSelectedBackground',
+    to: 'components.datepicker.date.rangeSelectedBackground',
     transform: toColorString,
   },
   {
@@ -76,25 +61,21 @@ export const calendarRules: MappingRule[] = [
     to: 'components.datepicker.date.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.width',
+    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.width',
     to: 'components.datepicker.date.focusRing.width',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.style',
+    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.style',
     to: 'components.datepicker.date.focusRing.style',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.color',
+    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.color',
     to: 'components.datepicker.date.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.offset',
+    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.offset',
     to: 'components.datepicker.date.focusRing.offset',
-  },
-  {
-    from: 'usages.calendar.panel.datePanel.dateCell.focusRing.shadow',
-    to: 'components.datepicker.date.focusRing.shadow',
   },
 
   // ─── Month View ───────────────────────────────────────────────────────────
@@ -105,11 +86,11 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Month ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.month.padding',
+    from: 'usages.calendar.panel.datePanel.monthCell.padding',
     to: 'components.datepicker.month.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.month.border.radius',
+    from: 'usages.calendar.panel.datePanel.monthCell.border.radius',
     to: 'components.datepicker.month.borderRadius',
   },
 
@@ -121,11 +102,11 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Year ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.year.padding',
+    from: 'usages.calendar.panel.datePanel.yearCell.padding',
     to: 'components.datepicker.year.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.year.border.radius',
+    from: 'usages.calendar.panel.datePanel.yearCell.border.radius',
     to: 'components.datepicker.year.borderRadius',
   },
-];
+]

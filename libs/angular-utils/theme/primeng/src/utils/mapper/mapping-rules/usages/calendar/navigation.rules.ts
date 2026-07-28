@@ -1,5 +1,5 @@
-import type { MappingRule } from '../../../mapper.types';
-import { toColorString } from '../../../mapper.utils';
+import type { MappingRule } from '../../../mapper.types'
+import { toColorString } from '../../../mapper.utils'
 
 export const navigationRules: MappingRule[] = [
   // ─── Select Month ─────────────────────────────────────────────────────────
@@ -62,4 +62,4 @@ export const navigationRules: MappingRule[] = [
     from: 'usages.calendar.multiMonthDivider.gap',
     to: 'components.datepicker.group.gap',
   },
-];
+]

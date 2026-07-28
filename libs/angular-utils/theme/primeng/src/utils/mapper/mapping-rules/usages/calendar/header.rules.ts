@@ -1,5 +1,5 @@
-import type { MappingRule } from '../../../mapper.types';
-import { toColorString } from '../../../mapper.utils';
+import type { MappingRule } from '../../../mapper.types'
+import { toColorString } from '../../../mapper.utils'
 
 export const headerRules: MappingRule[] = [
   // ─── Header ───────────────────────────────────────────────────────────────
@@ -32,4 +32,4 @@ export const headerRules: MappingRule[] = [
     from: 'usages.calendar.panel.header.yearMonthNav.fontWeight',
     to: 'components.datepicker.title.fontWeight',
   },
-];
+]
