@@ -1,9 +1,9 @@
-import type { MappingRule } from '../../mapper.types';
-import { toColorString } from '../../mapper.utils';
+import type { MappingRule } from '../../mapper.types'
+import { toColorString } from '../../mapper.utils'
 
 export const focusRingRules: MappingRule[] = [
   {
-    from: 'primitives.focusRing.color',
+    from: 'primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color',
     to: 'semantic.focusRing.color',
     transform: toColorString,
   },
@@ -12,7 +12,7 @@ export const focusRingRules: MappingRule[] = [
     to: 'semantic.focusRing.width',
   },
   {
-    from: 'primitives.focusRing.style',
+    from: 'primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style',
     to: 'semantic.focusRing.style',
   },
   {
@@ -23,4 +23,4 @@ export const focusRingRules: MappingRule[] = [
     from: 'primitives.focusRing.shadow',
     to: 'semantic.focusRing.shadow',
   },
-];
+]

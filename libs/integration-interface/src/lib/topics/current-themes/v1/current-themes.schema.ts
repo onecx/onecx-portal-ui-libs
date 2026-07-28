@@ -1,19 +1,20 @@
-import * as z from "zod";
-import { dialog } from "./schema/dialog";
-import { menubar } from "./schema/menubar";
-import { primitives } from "./schema/primitives";
-import { badge } from "./schema/badge";
-import { region } from "./schema/region";
-import { table } from "./schema/table";
-import { tooltip } from "./schema/tooltip";
-import { carousel } from "./schema/carousel";
-import { toggleswitch } from "./schema/toggleswitch";
-import { tabs } from "./schema/tabs";
-import { themeSchemaRegistry } from "./schema/registry";
-import { fieldset } from "./schema/fieldset";
-import { diagram } from "./schema/diagram";
-import { dropdown } from "./schema/dropdown";
-import { textarea } from "./schema/textarea";
+import * as z from 'zod'
+import { dialog } from './schema/dialog'
+import { menubar } from './schema/menubar'
+import { primitives } from './schema/primitives'
+import { badge } from './schema/badge'
+import { region } from './schema/region'
+import { table } from './schema/table'
+import { tooltip } from './schema/tooltip'
+import { carousel } from './schema/carousel'
+import { toggleswitch } from './schema/toggleswitch'
+import { tabs } from './schema/tabs'
+import { themeSchemaRegistry } from './schema/registry'
+import { fieldset } from './schema/fieldset'
+import { diagram } from './schema/diagram'
+import { dropdown } from './schema/dropdown'
+import { textarea } from './schema/textarea'
+import { picklist } from './schema/picklist'
 import { togglebutton } from "./schema/togglebutton";
 
 type UsagesInput = {
@@ -30,7 +31,8 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
-  togglebutton?: z.input<typeof togglebutton>;
+  picklist?: z.input<typeof picklist>
+  togglebutton?: z.input<typeof togglebutton>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -44,13 +46,14 @@ const usages: z.ZodType<UsagesInput> = z
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
-    diagram: (diagram as typeof diagram).optional(),    
+    diagram: (diagram as typeof diagram).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
-    dropdown: (dropdown as typeof dropdown).optional(),    
+    dropdown: (dropdown as typeof dropdown).optional(),
     textarea: (textarea as typeof textarea).optional(),
+    picklist: (picklist as typeof picklist).optional(),
     togglebutton: (togglebutton as typeof togglebutton).optional(),
   })
-  .register(themeSchemaRegistry, { id: "usages" });
+  .register(themeSchemaRegistry, { id: 'usages' })
 
 type PrimitivesInput = z.input<typeof primitives>
 
@@ -65,8 +68,9 @@ const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
   .object({
     primitives: primitives.optional(),
     usages: usages.optional(),
-  }).optional()
-  .register(themeSchemaRegistry, { id: "regionOverride" }) as any;
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'regionOverride' }) as any
 
 const regionOverrides = z
   .object({
@@ -77,8 +81,9 @@ const regionOverrides = z
     bodyFooter: regionOverride as typeof regionOverride,
     bodyEnd: regionOverride as typeof regionOverride,
     footer: regionOverride as typeof regionOverride,
-  }).optional()
-  .register(themeSchemaRegistry, { id: "regionOverrides" });
+  })
+  .optional()
+  .register(themeSchemaRegistry, { id: 'regionOverrides' })
 
 export const themePropertiesV2 = z
   .object({
@@ -95,8 +100,8 @@ export const theme = z
   })
   .register(themeSchemaRegistry, { id: 'theme' })
 
-export const regionKeys = ["header", "subHeader", "bodyStart", "bodyHeader", "bodyFooter", "bodyEnd", "footer"] as const
-export type RegionOverridesInput = Partial<Record<typeof regionKeys[number], RegionOverrideInput>>
+export const regionKeys = ['header', 'subHeader', 'bodyStart', 'bodyHeader', 'bodyFooter', 'bodyEnd', 'footer'] as const
+export type RegionOverridesInput = Partial<Record<(typeof regionKeys)[number], RegionOverrideInput>>
 
 export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
@@ -107,4 +112,4 @@ export type ThemePropertiesV2 = {
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
   v1?: Record<string, Record<string, string>>
-};
+}

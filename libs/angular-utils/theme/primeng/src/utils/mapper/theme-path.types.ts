@@ -106,6 +106,7 @@ export type ThemePath =
   | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
   | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`
+  | `usages.picklist.${LeafPaths<NonNullable<Usages['picklist']>>}`
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
