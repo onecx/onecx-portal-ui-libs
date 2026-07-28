@@ -11,6 +11,7 @@ import { tabsCssRules } from './usages/tabs.rules'
 import { dropdownCssRules } from './usages/dropdown.rules'
 import { textareaCssRules } from './usages/textarea.rules'
 import { picklistCssRules } from './usages/picklist.rules'
+import { messageCssRules } from './usages/message.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -25,4 +26,5 @@ export const usageCssRules: CssRule[] = [
   ...toggleswitchCssRules,
   ...textareaCssRules,
   ...picklistCssRules,
+  ...messageCssRules,
 ]
