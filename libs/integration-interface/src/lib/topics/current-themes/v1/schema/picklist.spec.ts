@@ -1,3 +1,4 @@
+import { ZodObject } from 'zod'
 import { picklist } from './picklist'
 
 export function expectTokenAmount(o: Object | undefined, numberOfTokens: number, keysToUnpack?: string[]) {
@@ -32,6 +33,23 @@ export function expectExactTokens(o: Object | undefined, expectedTokens: Record<
   expectTokens(o, expectedTokens)
 }
 
+export function expectExactUndefinedTokens(
+  o: Object | undefined,
+  schema: ZodObject<any>,
+  expectedUndefinedTokens: string[]
+) {
+  const undefinedTokens = Object.keys(schema.shape).filter((key) => (o as any)[key] === undefined)
+  expect(undefinedTokens.length).toEqual(expectedUndefinedTokens.length)
+  expectUndefinedTokens(o, expectedUndefinedTokens)
+}
+
+export function expectUndefinedTokens(o: Object | undefined, expectedUndefinedTokens: string[]) {
+  for (const key of expectedUndefinedTokens) {
+    const actual = (o as any)[key]
+    expect(actual).toBeUndefined()
+  }
+}
+
 describe('picklist schema', () => {
   it('parses an empty object', () => {
     const result = picklist.safeParse({})
@@ -46,7 +64,7 @@ describe('picklist schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
-      expect(value?.settings).toBeUndefined()
+      expectExactUndefinedTokens(value, picklist, ['settings'])
       expectExactTokens(value, {
         background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
