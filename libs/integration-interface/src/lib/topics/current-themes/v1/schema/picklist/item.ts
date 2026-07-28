@@ -32,45 +32,51 @@ export class PicklistPanelItemSchema {
 
   private static readonly hoverTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.hover.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
     }),
   })
 
   private static readonly selectedTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.primary.selected.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.primary.selected.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.primary.state.selected.defaultSeverity.contrast}}'),
+    background: z.union([bg, withRef(z.string())]).default('{{primitives.primary.state.selected.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.primary.selected.defaultSeverity.border.color}}',
-      style: '{{primitives.primary.selected.defaultSeverity.border.style}}',
+      color: '{{primitives.primary.state.selected.defaultSeverity.border.color}}',
+      style: '{{primitives.primary.state.selected.defaultSeverity.border.style}}',
     }),
   })
 
   private static readonly focusTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.focused.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.focused.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.state.focused.defaultSeverity.contrast}}'),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.state.focused.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.focused.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.focused.defaultSeverity.border.style}}',
+      color: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.style}}',
     }),
   })
 
   private static readonly disabledTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.disabled.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
   })
 
