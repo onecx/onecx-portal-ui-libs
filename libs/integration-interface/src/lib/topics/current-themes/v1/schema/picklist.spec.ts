@@ -1,5 +1,37 @@
 import { picklist } from './picklist'
 
+export function expectTokenAmount(o: Object | undefined, numberOfTokens: number, keysToUnpack?: string[]) {
+  let tokens = 0
+  let objectsToProcess: object[] = [o ?? {}]
+  while (objectsToProcess.length > 0) {
+    const currentObject = objectsToProcess.pop() as object
+    const objectKeys = Object.keys(currentObject)
+    tokens += objectKeys.length
+    for (const keyToUnpack of keysToUnpack ?? []) {
+      if (objectKeys.includes(keyToUnpack)) {
+        const value = (currentObject as any)[keyToUnpack]
+        if (typeof value === 'object' && value !== null) {
+          objectsToProcess.push(value)
+        }
+      }
+    }
+  }
+
+  expect(tokens).toBe(numberOfTokens)
+}
+
+export function expectTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
+  for (const [key, expected] of Object.entries(expectedTokens)) {
+    const actual = (o as any)[key]
+    expect(actual).toStrictEqual(expected)
+  }
+}
+
+export function expectExactTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
+  expect(Object.keys(o ?? {}).length).toEqual(Object.keys(expectedTokens).length)
+  expectTokens(o, expectedTokens)
+}
+
 describe('picklist schema', () => {
   it('parses an empty object', () => {
     const result = picklist.safeParse({})
@@ -14,14 +46,16 @@ describe('picklist schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
-      expect(value?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-      expect(value?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-      expect(value?.gap).toBe('{{primitives.space.md}}')
       expect(value?.settings).toBeUndefined()
-      expect(value?.panel).toBeDefined()
-      expect(value?.sourceControlButtons).toBeDefined()
-      expect(value?.transferControlButtons).toBeDefined()
-      expect(value?.targetControlButtons).toBeDefined()
+      expectExactTokens(value, {
+        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        gap: '{{primitives.space.md}}',
+        panel: expect.any(Object),
+        sourceControlButtons: expect.any(Object),
+        transferControlButtons: expect.any(Object),
+        targetControlButtons: expect.any(Object),
+      })
     })
   })
 
@@ -32,9 +66,10 @@ describe('picklist schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
-      expect(value?.panel).toBeDefined()
-      expect(value?.panel?.header).toBeDefined()
-      expect(value?.panel?.items).toBeDefined()
+      expectExactTokens(value?.panel, {
+        header: expect.any(Object),
+        items: expect.any(Object),
+      })
     })
 
     describe('picklist panel header', () => {
@@ -44,22 +79,21 @@ describe('picklist schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expect(value?.panel?.header).toBeDefined()
-        expect(value?.panel?.header?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-        expect(value?.panel?.header?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-        expect(value?.panel?.header?.paddingX).toBe('{{primitives.space.md}}')
-        expect(value?.panel?.header?.paddingY).toBe('{{primitives.space.sm}}')
-        expect(value?.panel?.header?.border.color).toBe(
-          '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'
-        )
-        expect(value?.panel?.header?.border.style).toBe(
-          '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}'
-        )
-        expect(value?.panel?.header?.border.width).toBe('{{primitives.border.width.sm}}')
-        expect(value?.panel?.header?.border.offset).toBe('{{primitives.border.offset.sm}}')
-        expect(value?.panel?.header?.border.radius).toBe('{{primitives.border.radius.none}}')
-        expect(value?.panel?.header?.font).toStrictEqual({
-          weight: '{{primitives.font.weight}}',
+        expectExactTokens(value?.panel?.header, {
+          background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+          paddingX: '{{primitives.space.md}}',
+          paddingY: '{{primitives.space.sm}}',
+          border: {
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            offset: '{{primitives.border.offset.sm}}',
+            radius: '{{primitives.border.radius.none}}',
+          },
+          font: {
+            weight: '{{primitives.font.weight}}',
+          },
         })
       })
     })
@@ -71,12 +105,13 @@ describe('picklist schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expect(value?.panel?.items).toBeDefined()
-        expect(value?.panel?.items?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-        expect(value?.panel?.items?.paddingX).toBe('{{primitives.space.sm}}')
-        expect(value?.panel?.items?.paddingY).toBe('{{primitives.space.sm}}')
-        expect(value?.panel?.items?.gap).toBe('{{primitives.space.none}}')
-        expect(value?.panel?.items?.item).toBeDefined()
+        expectExactTokens(value?.panel?.items, {
+          background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+          paddingX: '{{primitives.space.sm}}',
+          paddingY: '{{primitives.space.sm}}',
+          gap: '{{primitives.space.none}}',
+          item: expect.any(Object),
+        })
       })
 
       describe('picklist panel item', () => {
@@ -86,21 +121,22 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expect(value?.panel?.items?.item).toBeDefined()
-          expect(value?.panel?.items?.item?.background).toBe(
-            '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'
-          )
-          expect(value?.panel?.items?.item?.color).toBe(
-            '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'
-          )
-          expect(value?.panel?.items?.item?.paddingX).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.paddingY).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.border).toStrictEqual({
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.none}}',
+          expectExactTokens(value?.panel?.items?.item, {
+            background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+            paddingX: '{{primitives.space.sm}}',
+            paddingY: '{{primitives.space.sm}}',
+            border: {
+              color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+              style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+              width: '{{primitives.border.width.none}}',
+              offset: '{{primitives.border.offset.none}}',
+              radius: '{{primitives.border.radius.none}}',
+            },
+            hover: expect.any(Object),
+            selected: expect.any(Object),
+            focused: expect.any(Object),
+            disabled: expect.any(Object),
           })
         })
 
@@ -110,21 +146,18 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expect(value?.panel?.items?.item?.hover).toBeDefined()
-          expect(value?.panel?.items?.item?.hover?.background).toBe(
-            '{{primitives.defaultVariant.hover.defaultSeverity.bg}}'
-          )
-          expect(value?.panel?.items?.item?.hover?.color).toBe(
-            '{{primitives.defaultVariant.hover.defaultSeverity.contrast}}'
-          )
-          expect(value?.panel?.items?.item?.hover?.paddingX).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.hover?.paddingY).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.hover?.border).toStrictEqual({
-            color: '{{primitives.defaultVariant.hover.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.hover.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.none}}',
+          expectExactTokens(value?.panel?.items?.item?.hover, {
+            background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+            paddingX: '{{primitives.space.sm}}',
+            paddingY: '{{primitives.space.sm}}',
+            border: {
+              color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+              style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+              width: '{{primitives.border.width.none}}',
+              offset: '{{primitives.border.offset.none}}',
+              radius: '{{primitives.border.radius.none}}',
+            },
           })
         })
 
@@ -134,21 +167,18 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expect(value?.panel?.items?.item?.selected).toBeDefined()
-          expect(value?.panel?.items?.item?.selected?.background).toBe(
-            '{{primitives.primary.selected.defaultSeverity.bg}}'
-          )
-          expect(value?.panel?.items?.item?.selected?.color).toBe(
-            '{{primitives.primary.selected.defaultSeverity.contrast}}'
-          )
-          expect(value?.panel?.items?.item?.selected?.paddingX).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.selected?.paddingY).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.selected?.border).toStrictEqual({
-            color: '{{primitives.primary.selected.defaultSeverity.border.color}}',
-            style: '{{primitives.primary.selected.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.none}}',
+          expectExactTokens(value?.panel?.items?.item?.selected, {
+            background: '{{primitives.primary.state.selected.defaultSeverity.bg}}',
+            color: '{{primitives.primary.state.selected.defaultSeverity.contrast}}',
+            paddingX: '{{primitives.space.sm}}',
+            paddingY: '{{primitives.space.sm}}',
+            border: {
+              color: '{{primitives.primary.state.selected.defaultSeverity.border.color}}',
+              style: '{{primitives.primary.state.selected.defaultSeverity.border.style}}',
+              width: '{{primitives.border.width.none}}',
+              offset: '{{primitives.border.offset.none}}',
+              radius: '{{primitives.border.radius.none}}',
+            },
           })
         })
 
@@ -158,21 +188,18 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expect(value?.panel?.items?.item?.focused).toBeDefined()
-          expect(value?.panel?.items?.item?.focused?.background).toBe(
-            '{{primitives.defaultVariant.focused.defaultSeverity.bg}}'
-          )
-          expect(value?.panel?.items?.item?.focused?.color).toBe(
-            '{{primitives.defaultVariant.focused.defaultSeverity.contrast}}'
-          )
-          expect(value?.panel?.items?.item?.focused?.paddingX).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.focused?.paddingY).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.focused?.border).toStrictEqual({
-            color: '{{primitives.defaultVariant.focused.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.focused.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.none}}',
+          expectExactTokens(value?.panel?.items?.item?.focused, {
+            background: '{{primitives.defaultVariant.state.focused.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.state.focused.defaultSeverity.contrast}}',
+            paddingX: '{{primitives.space.sm}}',
+            paddingY: '{{primitives.space.sm}}',
+            border: {
+              color: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.color}}',
+              style: '{{primitives.defaultVariant.state.focused.defaultSeverity.border.style}}',
+              width: '{{primitives.border.width.none}}',
+              offset: '{{primitives.border.offset.none}}',
+              radius: '{{primitives.border.radius.none}}',
+            },
           })
         })
 
@@ -182,21 +209,18 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expect(value?.panel?.items?.item?.disabled).toBeDefined()
-          expect(value?.panel?.items?.item?.disabled?.background).toBe(
-            '{{primitives.defaultVariant.disabled.defaultSeverity.bg}}'
-          )
-          expect(value?.panel?.items?.item?.disabled?.color).toBe(
-            '{{primitives.defaultVariant.disabled.defaultSeverity.contrast}}'
-          )
-          expect(value?.panel?.items?.item?.disabled?.paddingX).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.disabled?.paddingY).toBe('{{primitives.space.sm}}')
-          expect(value?.panel?.items?.item?.disabled?.border).toStrictEqual({
-            color: '{{primitives.defaultVariant.disabled.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.disabled.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.none}}',
+          expectExactTokens(value?.panel?.items?.item?.disabled, {
+            background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+            paddingX: '{{primitives.space.sm}}',
+            paddingY: '{{primitives.space.sm}}',
+            border: {
+              color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+              style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
+              width: '{{primitives.border.width.none}}',
+              offset: '{{primitives.border.offset.none}}',
+              radius: '{{primitives.border.radius.none}}',
+            },
           })
         })
       })
@@ -211,9 +235,11 @@ describe('picklist control buttons', () => {
     expect(result.success).toBe(true)
 
     const value = result.data
-    expect(value?.sourceControlButtons).toBeDefined()
-    expect(value?.transferControlButtons).toBeDefined()
-    expect(value?.targetControlButtons).toBeDefined()
+    expectTokens(value, {
+      sourceControlButtons: expect.any(Object),
+      transferControlButtons: expect.any(Object),
+      targetControlButtons: expect.any(Object),
+    })
   })
 
   describe('picklist control button', () => {
