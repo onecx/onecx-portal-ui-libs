@@ -1,4 +1,11 @@
+import { ZodObject } from 'zod'
 import { picklist } from './picklist'
+import { PicklistPanelSchema } from './picklist/panel'
+import { PicklistPanelHeaderSchema } from './picklist/header'
+import { PicklistPanelItemsSchema } from './picklist/items'
+import { PicklistPanelItemSchema } from './picklist/item'
+import { PicklistSchema } from './picklist/picklist'
+import { PicklistControlButtonsSchema } from './picklist/controlbuttons'
 
 export function expectTokenAmount(o: Object | undefined, numberOfTokens: number, keysToUnpack?: string[]) {
   let tokens = 0
@@ -32,6 +39,22 @@ export function expectExactTokens(o: Object | undefined, expectedTokens: Record<
   expectTokens(o, expectedTokens)
 }
 
+export function expectExactUndefinedTokens(o: Object | undefined, schemaShape: any, expectedUndefinedTokens: string[]) {
+  const undefinedTokens = Object.keys(schemaShape).filter((key) => (o as any)[key] === undefined)
+  for (const key of undefinedTokens) {
+    expect(expectedUndefinedTokens).toContain(key)
+  }
+  expect(undefinedTokens.length).toEqual(expectedUndefinedTokens.length)
+  expectUndefinedTokens(o, expectedUndefinedTokens)
+}
+
+export function expectUndefinedTokens(o: Object | undefined, expectedUndefinedTokens: string[]) {
+  for (const key of expectedUndefinedTokens) {
+    const actual = (o as any)[key]
+    expect(actual).toBeUndefined()
+  }
+}
+
 describe('picklist schema', () => {
   it('parses an empty object', () => {
     const result = picklist.safeParse({})
@@ -46,7 +69,7 @@ describe('picklist schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
-      expect(value?.settings).toBeUndefined()
+      expectExactUndefinedTokens(value, picklist.shape, ['settings'])
       expectExactTokens(value, {
         background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -66,6 +89,7 @@ describe('picklist schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
+      expectExactUndefinedTokens(value?.panel, PicklistPanelSchema.schema.shape, [])
       expectExactTokens(value?.panel, {
         header: expect.any(Object),
         items: expect.any(Object),
@@ -79,6 +103,7 @@ describe('picklist schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
+        expectExactUndefinedTokens(value?.panel.header, PicklistPanelHeaderSchema.schema.shape, [])
         expectExactTokens(value?.panel?.header, {
           background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -105,6 +130,7 @@ describe('picklist schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
+        expectExactUndefinedTokens(value?.panel.items, PicklistPanelItemsSchema.schema.shape, [])
         expectExactTokens(value?.panel?.items, {
           background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
           paddingX: '{{primitives.space.sm}}',
@@ -121,6 +147,7 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
+          expectExactUndefinedTokens(value?.panel.items.item, PicklistPanelItemSchema.schema.shape, [])
           expectExactTokens(value?.panel?.items?.item, {
             background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
             color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -146,6 +173,7 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
+          expectExactUndefinedTokens(value?.panel.items.item.hover, PicklistPanelItemSchema.hoverTokens.shape, [])
           expectExactTokens(value?.panel?.items?.item?.hover, {
             background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
             color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
@@ -167,6 +195,7 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
+          expectExactUndefinedTokens(value?.panel.items.item.selected, PicklistPanelItemSchema.selectedTokens.shape, [])
           expectExactTokens(value?.panel?.items?.item?.selected, {
             background: '{{primitives.primary.state.selected.defaultSeverity.bg}}',
             color: '{{primitives.primary.state.selected.defaultSeverity.contrast}}',
@@ -188,6 +217,7 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
+          expectExactUndefinedTokens(value?.panel.items.item.focus, PicklistPanelItemSchema.focusTokens.shape, [])
           expectExactTokens(value?.panel?.items?.item?.focus, {
             background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
             color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
@@ -209,6 +239,7 @@ describe('picklist schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
+          expectExactUndefinedTokens(value?.panel.items.item.disabled, PicklistPanelItemSchema.disabledTokens.shape, [])
           expectExactTokens(value?.panel?.items?.item?.disabled, {
             background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
             color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
@@ -235,6 +266,7 @@ describe('picklist control buttons', () => {
     expect(result.success).toBe(true)
 
     const value = result.data
+    expectExactUndefinedTokens(value, PicklistSchema.schema.shape, ['settings'])
     expectTokens(value, {
       sourceControlButtons: expect.any(Object),
       transferControlButtons: expect.any(Object),
@@ -249,6 +281,7 @@ describe('picklist control buttons', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
+      expectExactUndefinedTokens(value?.sourceControlButtons, PicklistControlButtonsSchema.schema.shape, [])
       expect(value?.sourceControlButtons).toBeDefined()
     })
 
@@ -258,6 +291,7 @@ describe('picklist control buttons', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
+      expectExactUndefinedTokens(value?.sourceControlButtons, PicklistControlButtonsSchema.schema.shape, [])
       expect(value?.transferControlButtons).toBeDefined()
     })
 
@@ -267,6 +301,7 @@ describe('picklist control buttons', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
+      expectExactUndefinedTokens(value?.sourceControlButtons, PicklistControlButtonsSchema.schema.shape, [])
       expect(value?.targetControlButtons).toBeDefined()
     })
   })
