@@ -1,5 +1,5 @@
 import z from 'zod'
-import { withRef, color } from '../primitives'
+import { withRef, color, font } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 /**
@@ -9,7 +9,10 @@ export class CalendarWeekDayLabelSchema {
   static readonly schema = z
     .object({
       padding: withRef(z.string()).default('{{primitives.space.xs}}'),
-      fontWeight: withRef(z.string()).default('{{primitives.font.weight.bold}}'),
+      font: font.pick({ weight: true, size: true }).default({
+        weight: '{{primitives.font.weight.bold}}',
+        size: '{{primitives.font.size}}',
+      }),
       color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     })
     .register(themeSchemaRegistry, { id: 'calendarWeekDayLabel' })

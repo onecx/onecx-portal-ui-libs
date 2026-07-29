@@ -1,11 +1,11 @@
 import z from 'zod'
-import { bg, color, withRef } from '../primitives'
+import { bg, borderWithShadow, color, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 /**
- * Shared schema for icon styling (calendar icon)
+ * Schema for icon styles used in the calendar input field.
  */
-export class CalendarIconStylesSchema {
+export class CalendarInputIconSchema {
   private static readonly commonTokens = {
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     width: withRef(z.string()).default('2.5rem'),
@@ -42,6 +42,14 @@ export class CalendarIconStylesSchema {
     background: z
       .union([bg, withRef(z.string())])
       .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
+      offset: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.offset}}',
+      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
+      radius: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.radius}}',
+    }),
   })
 
   static readonly schema = z
@@ -51,5 +59,5 @@ export class CalendarIconStylesSchema {
       active: this.activeTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'calendarIconStyles' })
+    .register(themeSchemaRegistry, { id: 'calendarInputIcon' })
 }

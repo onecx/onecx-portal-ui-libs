@@ -2,6 +2,9 @@ import z from 'zod'
 import { withRef, border } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
+/**
+ *  Calendar schema for the time picker.
+ */
 export class CalendarTimePickerSchema {
   static readonly schema = z
     .object({
@@ -9,6 +12,9 @@ export class CalendarTimePickerSchema {
       border: border.default({
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.md}}',
+        radius: '{{primitives.border.radius.md}}',
+        offset: '{{primitives.border.offset.none}}',
       }),
       gap: withRef(z.string()).default('{{primitives.space.md}}'),
       buttonGap: withRef(z.string()).default('{{primitives.space.xs}}'),

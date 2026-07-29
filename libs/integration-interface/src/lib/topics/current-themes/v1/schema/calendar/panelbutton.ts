@@ -1,5 +1,5 @@
 import z from 'zod'
-import { bg, withRef, color, border } from '../primitives'
+import { bg, withRef, color, border, borderWithShadow } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 // TODO: Refactor to relevant tokens from button usage tokens
@@ -50,6 +50,14 @@ export class CalendarPanelButtonSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+    }),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
+      offset: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.offset}}',
+      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
+      radius: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.radius}}',
     }),
   })
 

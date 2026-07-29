@@ -4,6 +4,9 @@ import { bg, color, borderWithShadow, withRef } from '../primitives'
 import { CalendarPanelHeaderSchema } from './panelheader'
 import { CalendarDatePanelSchema } from './datepanel'
 
+/**
+ * Calendar panel schema including header and date panel.
+ */
 export class CalendarPanelSchema {
   private static readonly tokens = {
     background: z

@@ -1,5 +1,5 @@
 import z from 'zod'
-import { bg, withRef, color, border, font } from '../primitives'
+import { bg, withRef, color, border, font, borderWithShadow } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 // TODO: Refactor to relevant tokens from input usage tokens
@@ -32,6 +32,7 @@ export class CalendarInputSchema {
   private static readonly commonBorder = {
     width: '{{primitives.border.width.md}}',
     radius: '{{primitives.border.radius.md}}',
+    offset: '{{primitives.border.offset.none}}',
   }
 
   private static readonly defaultStateTokens = {
@@ -74,6 +75,14 @@ export class CalendarInputSchema {
       style: '{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}',
     }),
     placeholderColor: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.width}}',
+      offset: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.offset}}',
+      shadow: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.shadow}}',
+      radius: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.radius}}',
+    }),
   })
 
   private static readonly disabledTokens = z.object({

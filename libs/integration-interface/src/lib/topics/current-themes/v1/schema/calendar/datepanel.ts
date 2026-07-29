@@ -1,11 +1,14 @@
 import z from 'zod'
 import { bg, withRef, color } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
-import { CalendarViewMarginSchema } from './viewmargin'
+import { CalendarViewSchema } from './view'
 import { CalendarWeekDayLabelSchema } from './weekdaylabel'
 import { CalendarPickerCellSchema } from './pickercell'
 import { CalendarTodaySchema } from './today'
 
+/**
+ * Calendar date panel schema.
+ */
 export class CalendarDatePanelSchema {
   private static readonly tokens = {
     background: z
@@ -19,11 +22,11 @@ export class CalendarDatePanelSchema {
   static readonly schema = z
     .object({
       weekDayLabel: (CalendarWeekDayLabelSchema.schema as typeof CalendarWeekDayLabelSchema.schema).prefault({}),
-      dayView: (CalendarViewMarginSchema.schema as typeof CalendarViewMarginSchema.schema).prefault({}),
+      dayView: (CalendarViewSchema.schema as typeof CalendarViewSchema.schema).prefault({}),
       dateCell: (CalendarPickerCellSchema.schema as typeof CalendarPickerCellSchema.schema).prefault({}),
-      monthView: (CalendarViewMarginSchema.schema as typeof CalendarViewMarginSchema.schema).prefault({}),
+      monthView: (CalendarViewSchema.schema as typeof CalendarViewSchema.schema).prefault({}),
       monthCell: (CalendarPickerCellSchema.schema as typeof CalendarPickerCellSchema.schema).prefault({}),
-      yearView: (CalendarViewMarginSchema.schema as typeof CalendarViewMarginSchema.schema).prefault({}),
+      yearView: (CalendarViewSchema.schema as typeof CalendarViewSchema.schema).prefault({}),
       yearCell: (CalendarPickerCellSchema.schema as typeof CalendarPickerCellSchema.schema).prefault({}),
       today: (CalendarTodaySchema.schema as typeof CalendarTodaySchema.schema).prefault({}),
       ...this.tokens,

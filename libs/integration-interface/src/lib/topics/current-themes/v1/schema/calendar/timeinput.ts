@@ -1,7 +1,10 @@
 import z from 'zod'
-import { bg, border, color, font, withRef } from '../primitives'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
+/**
+ * Calendar schema for the time input field used in the calendar time picker.
+ */
 export class CalendarTimeInputSchema {
   private static readonly commonTokens = {
     width: withRef(z.string()).default('3rem'),
@@ -55,6 +58,14 @@ export class CalendarTimeInputSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+    }),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
+      offset: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.offset}}',
+      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
+      radius: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.radius}}',
     }),
   })
 

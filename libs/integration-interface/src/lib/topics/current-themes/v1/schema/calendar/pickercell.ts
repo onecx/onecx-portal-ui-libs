@@ -3,7 +3,7 @@ import { bg, color, font, border, withRef } from '../primitives'
 import z from 'zod'
 
 /**
- * Top section of the picklist panel that typically contains the title or label of the panel schema.
+ * Shared schema for calendar picker cells (dateCell, monthCell, yearCell)
  */
 export class CalendarPickerCellSchema {
   private static readonly commonTokens = {

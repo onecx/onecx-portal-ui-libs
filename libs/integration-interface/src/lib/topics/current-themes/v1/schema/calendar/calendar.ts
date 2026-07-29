@@ -4,12 +4,12 @@ import { themeSchemaRegistry } from '../registry'
 import { CalendarSettingsSchema } from './settings'
 import { CalendarPanelSchema } from './panel'
 import { CalendarPanelButtonSchema } from './panelbutton'
-import { CalendarIconStylesSchema } from './iconStyles'
+import { CalendarInputIconSchema } from './inputicon'
 import { CalendarTimePickerSchema } from './timepicker'
 import { CalendarTimeInputSchema } from './timeinput'
 import { CalendarTimeSeperatorSchema } from './timeseperator'
 import { CalendarMultiMonthDividerSchema } from './multimonthdivider'
-import { CalendarFooterButtonBarSchema } from './footerButtonBar'
+import { CalendarFooterButtonBarSchema } from './footerbuttonbar'
 import { CalendarInputSchema } from './input'
 
 export class CalendarSchema {
@@ -25,7 +25,7 @@ export class CalendarSchema {
       // Seperate button with calendar icon to open the panel
       calendarIconButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
       // Calendar icon inside the input field
-      inputCalendarIcon: (CalendarIconStylesSchema.schema as typeof CalendarIconStylesSchema.schema).prefault({}),
+      inputCalendarIcon: (CalendarInputIconSchema.schema as typeof CalendarInputIconSchema.schema).prefault({}),
       timePicker: (CalendarTimePickerSchema.schema as typeof CalendarTimePickerSchema.schema).optional(),
       timePickerButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
       timeInput: (CalendarTimeInputSchema.schema as typeof CalendarTimeInputSchema.schema).prefault({}),

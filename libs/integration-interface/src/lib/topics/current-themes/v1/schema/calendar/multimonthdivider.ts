@@ -2,6 +2,9 @@ import z from 'zod'
 import { withRef, border } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
+/**
+ * Schema for the divider between multiple months in a calendar view.
+ */
 export class CalendarMultiMonthDividerSchema {
   static readonly schema = z
     .object({

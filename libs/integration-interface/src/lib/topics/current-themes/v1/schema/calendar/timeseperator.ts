@@ -2,6 +2,9 @@ import z from 'zod'
 import { withRef, color, font } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
+/**
+ * Calendar schema for the time separator used in the calendar time picker.
+ */
 export class CalendarTimeSeperatorSchema {
   static readonly schema = z
     .object({

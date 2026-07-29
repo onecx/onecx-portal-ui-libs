@@ -4,6 +4,9 @@ import { bg, color, withRef } from '../primitives'
 import { CalendarNavigationSelectorSchema } from './navigationselector'
 import { CalendarPanelButtonSchema } from './panelbutton'
 
+/**
+ * Header of the calendar panel schema including year/month navigation selector and panel buttons.
+ */
 export class CalendarPanelHeaderSchema {
   private static readonly tokens = {
     background: z

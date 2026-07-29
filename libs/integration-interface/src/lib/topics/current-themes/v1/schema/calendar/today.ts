@@ -2,6 +2,9 @@ import z from 'zod'
 import { bg, withRef, color } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
+/**
+ * Calendar schema for the today cell in the calendar date panel.
+ */
 export class CalendarTodaySchema {
   static readonly schema = z
     .object({

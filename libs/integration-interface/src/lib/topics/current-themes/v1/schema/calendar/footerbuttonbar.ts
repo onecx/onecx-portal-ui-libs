@@ -9,6 +9,9 @@ export class CalendarFooterButtonBarSchema {
     border: border.default({
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.md}}',
+      radius: '{{primitives.border.radius.md}}',
+      offset: '{{primitives.border.offset.none}}',
     }),
     gap: withRef(z.string()).default('{{primitives.space.md}}'),
   }

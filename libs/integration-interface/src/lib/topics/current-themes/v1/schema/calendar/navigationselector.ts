@@ -1,5 +1,5 @@
 import z from 'zod'
-import { bg, withRef, color, border, font } from '../primitives'
+import { bg, withRef, color, border, font, borderWithShadow } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 // TODO: Refactor to relevant tokens from button usage tokens
@@ -36,6 +36,14 @@ export class CalendarNavigationSelectorSchema {
     ...this.commonTokens,
     background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.focus.defaultSeverity.bg}}'),
     color: color.default('{{primitives.defaultVariant.focus.defaultSeverity.contrast}}'),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.width}}',
+      offset: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.offset}}',
+      shadow: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.shadow}}',
+      radius: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.radius}}',
+    }),
   })
 
   static readonly schema = z
