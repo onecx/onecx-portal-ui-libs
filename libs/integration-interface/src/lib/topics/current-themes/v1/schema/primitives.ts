@@ -216,8 +216,6 @@ export const severityStyles = bgContrast
     border: border.optional(),
     focusRing: borderWithShadow.optional(),
     cursor: withRef(z.string()).optional(),
-    icon: icon.optional(),
-    font: font.optional(),
   })
   .register(themeSchemaRegistry, { id: 'severityStyles' })
 
@@ -309,6 +307,7 @@ type PrimitivesShape = {
   space: z.ZodOptional<typeof space>
   layout: z.ZodOptional<typeof layout>
   radius: z.ZodOptional<typeof radiusSizes>
+  icon: z.ZodOptional<typeof iconSizes>
   border: z.ZodOptional<typeof borderShape>
   focusRing: z.ZodOptional<typeof focusRingShape>
   transition: z.ZodOptional<typeof transition>
@@ -325,6 +324,7 @@ const primitivesShape: PrimitivesShape = {
   space: (space as typeof space).optional(),
   layout: (layout as typeof layout).optional(),
   radius: (radiusSizes as typeof radiusSizes).optional(),
+  icon: (iconSizes as typeof iconSizes).optional(),
   // Global default border style applied to components that don't define their own border token
   border: (borderShape as typeof borderShape).optional(),
   focusRing: (focusRingShape as typeof focusRingShape).optional(),
