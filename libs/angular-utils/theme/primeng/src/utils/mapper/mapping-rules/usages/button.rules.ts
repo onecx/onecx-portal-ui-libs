@@ -2,120 +2,58 @@ import type { MappingRule } from '../../mapper.types';
 import { toColorString } from '../../mapper.utils';
 
 export const buttonMappingRules: MappingRule[] = [
-    {
-        from: 'usages.button.borderRadius',
-        to: 'components.button.root.borderRadius',
-    },
+    // Root properties
     {
         from: 'usages.button.roundedBorderRadius',
         to: 'components.button.root.roundedBorderRadius',
-    },
-    {
-        from: 'usages.button.gap',
-        to: 'components.button.root.gap',
-    },
-    {
-        from: 'usages.button.paddingX',
-        to: 'components.button.root.paddingX',
-    },
-    {
-        from: 'usages.button.paddingY',
-        to: 'components.button.root.paddingY',
-    },
-    {
-        from: 'usages.button.iconOnlyWidth',
-        to: 'components.button.root.iconOnlyWidth',
-    },
-    {
-        from: 'usages.button.label.fontWeight',
-        to: 'components.button.root.label.fontWeight',
     },
     {
         from: 'usages.button.raisedShadow',
         to: 'components.button.root.raisedShadow',
     },
     {
-        from: 'usages.button.focusRing.color',
+        from: 'usages.button.badgeSize',
+        to: 'components.button.root.badgeSize',
+    },
+
+    // Default display variant - layout
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.border.radius',
+        to: 'components.button.root.borderRadius',
+    },
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.layout.gap',
+        to: 'components.button.root.gap',
+    },
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.layout.paddingX',
+        to: 'components.button.root.paddingX',
+    },
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.layout.paddingY',
+        to: 'components.button.root.paddingY',
+    },
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.layout.iconOnlyWidth',
+        to: 'components.button.root.iconOnlyWidth',
+    },
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.text.fontWeight',
+        to: 'components.button.root.label.fontWeight',
+    },
+
+    // Default display variant - focusRing
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.focusRing.color',
         to: 'components.button.colorScheme.{mode}.root.primary.focusRing.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.focusRing.shadow',
+        from: 'usages.button.defaultVariant.defaultVariant.focusRing.shadow',
         to: 'components.button.colorScheme.{mode}.root.primary.focusRing.shadow',
     },
-    {
-        from: 'usages.button.badgeSize',
-        to: 'components.button.root.badgeSize',
-    },
-    {
-        from: 'usages.button.transitionDuration',
-        to: 'components.button.root.transitionDuration',
-    },
-    {
-        from: 'usages.button.disabledOpacity',
-        to: 'semantic.disabledOpacity',
-    },
-    {
-        from: 'usages.button.defaultState.background',
-        to: 'components.button.colorScheme.{mode}.root.primary.background',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultState.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultState.color',
-        to: 'components.button.colorScheme.{mode}.root.primary.color',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.hover.background',
-        to: 'components.button.colorScheme.{mode}.root.primary.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.hover.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.hover.color',
-        to: 'components.button.colorScheme.{mode}.root.primary.hoverColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.active.background',
-        to: 'components.button.colorScheme.{mode}.root.primary.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.active.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.active.color',
-        to: 'components.button.colorScheme.{mode}.root.primary.activeColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.focus.background',
-        to: 'components.button.colorScheme.{mode}.root.primary.background',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.focus.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.state.focus.color',
-        to: 'components.button.colorScheme.{mode}.root.primary.color',
-        transform: toColorString,
-    },
 
+    // Sizes - sm
     {
         from: 'usages.button.sizes.sm.fontSize',
         to: 'components.button.root.sm.fontSize',
@@ -132,6 +70,8 @@ export const buttonMappingRules: MappingRule[] = [
         from: 'usages.button.sizes.sm.iconOnlyWidth',
         to: 'components.button.root.sm.iconOnlyWidth',
     },
+
+    // Sizes - lg
     {
         from: 'usages.button.sizes.lg.fontSize',
         to: 'components.button.root.lg.fontSize',
@@ -149,700 +89,653 @@ export const buttonMappingRules: MappingRule[] = [
         to: 'components.button.root.lg.iconOnlyWidth',
     },
 
+    // Primary severity - default state
     {
-        from: 'usages.button.defaultVariant.border.radius',
-        to: 'components.button.root.borderRadius',
-    },
-    {
-        from: 'usages.button.defaultVariant.layout.gap',
-        to: 'components.button.root.gap',
-    },
-    {
-        from: 'usages.button.defaultVariant.layout.paddingX',
-        to: 'components.button.root.paddingX',
-    },
-    {
-        from: 'usages.button.defaultVariant.layout.paddingY',
-        to: 'components.button.root.paddingY',
-    },
-    {
-        from: 'usages.button.defaultVariant.layout.iconOnlyWidth',
-        to: 'components.button.root.iconOnlyWidth',
-    },
-    {
-        from: 'usages.button.defaultVariant.text.fontWeight',
-        to: 'components.button.root.label.fontWeight',
-    },
-    {
-        from: 'usages.button.defaultVariant.focusRing.color',
-        to: 'components.button.colorScheme.{mode}.root.primary.focusRing.color',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultVariant.focusRing.shadow',
-        to: 'components.button.colorScheme.{mode}.root.primary.focusRing.shadow',
-    },
-    {
-        from: 'usages.button.defaultVariant.severities.primary.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.background',
         to: 'components.button.colorScheme.{mode}.root.primary.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.defaultVariant.severities.primary.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultVariant.severities.primary.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.color',
         to: 'components.button.colorScheme.{mode}.root.primary.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.defaultVariant.severities.primary.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.border.color',
+        to: 'components.button.colorScheme.{mode}.root.primary.borderColor',
+        transform: toColorString,
+    },
+
+    // Primary severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.defaultSeverity.background',
         to: 'components.button.colorScheme.{mode}.root.primary.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.defaultVariant.severities.primary.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultVariant.severities.primary.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.defaultSeverity.color',
         to: 'components.button.colorScheme.{mode}.root.primary.hoverColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.defaultVariant.severities.primary.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.defaultSeverity.border.color',
+        to: 'components.button.colorScheme.{mode}.root.primary.hoverBorderColor',
+        transform: toColorString,
+    },
+
+    // Primary severity - active state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.defaultSeverity.background',
         to: 'components.button.colorScheme.{mode}.root.primary.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.defaultVariant.severities.primary.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.primary.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.defaultVariant.severities.primary.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.defaultSeverity.color',
         to: 'components.button.colorScheme.{mode}.root.primary.activeColor',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.severities.secondary.background',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.defaultSeverity.border.color',
+        to: 'components.button.colorScheme.{mode}.root.primary.activeBorderColor',
+        transform: toColorString,
+    },
+
+    // Secondary severity - default state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.secondary.background',
         to: 'components.button.colorScheme.{mode}.root.secondary.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.secondary.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.secondary.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.secondary.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.secondary.color',
         to: 'components.button.colorScheme.{mode}.root.secondary.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.secondary.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.secondary.border.color',
+        to: 'components.button.colorScheme.{mode}.root.secondary.borderColor',
+        transform: toColorString,
+    },
+
+    // Secondary severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.secondary.background',
         to: 'components.button.colorScheme.{mode}.root.secondary.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.secondary.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.secondary.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.secondary.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.secondary.color',
         to: 'components.button.colorScheme.{mode}.root.secondary.hoverColor',
         transform: toColorString,
     },
+
+    // Secondary severity - active state
     {
-        from: 'usages.button.severities.secondary.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.secondary.background',
         to: 'components.button.colorScheme.{mode}.root.secondary.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.secondary.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.secondary.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.secondary.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.secondary.color',
         to: 'components.button.colorScheme.{mode}.root.secondary.activeColor',
         transform: toColorString,
     },
 
+    // Success severity - default state
     {
-        from: 'usages.button.severities.success.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.success.background',
         to: 'components.button.colorScheme.{mode}.root.success.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.success.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.success.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.success.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.success.color',
         to: 'components.button.colorScheme.{mode}.root.success.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.success.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.success.border.color',
+        to: 'components.button.colorScheme.{mode}.root.success.borderColor',
+        transform: toColorString,
+    },
+
+    // Success severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.success.background',
         to: 'components.button.colorScheme.{mode}.root.success.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.success.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.success.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.success.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.success.color',
         to: 'components.button.colorScheme.{mode}.root.success.hoverColor',
         transform: toColorString,
     },
+
+    // Success severity - active state
     {
-        from: 'usages.button.severities.success.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.success.background',
         to: 'components.button.colorScheme.{mode}.root.success.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.success.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.success.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.success.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.success.color',
         to: 'components.button.colorScheme.{mode}.root.success.activeColor',
         transform: toColorString,
     },
 
+    // Info severity - default state
     {
-        from: 'usages.button.severities.info.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.info.background',
         to: 'components.button.colorScheme.{mode}.root.info.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.info.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.info.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.info.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.info.color',
         to: 'components.button.colorScheme.{mode}.root.info.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.info.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.info.border.color',
+        to: 'components.button.colorScheme.{mode}.root.info.borderColor',
+        transform: toColorString,
+    },
+
+    // Info severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.info.background',
         to: 'components.button.colorScheme.{mode}.root.info.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.info.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.info.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.info.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.info.color',
         to: 'components.button.colorScheme.{mode}.root.info.hoverColor',
         transform: toColorString,
     },
+
+    // Info severity - active state
     {
-        from: 'usages.button.severities.info.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.info.background',
         to: 'components.button.colorScheme.{mode}.root.info.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.info.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.info.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.info.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.info.color',
         to: 'components.button.colorScheme.{mode}.root.info.activeColor',
         transform: toColorString,
     },
 
+    // Warning severity - default state (maps to PrimeNG "warn")
     {
-        from: 'usages.button.severities.warning.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.warning.background',
         to: 'components.button.colorScheme.{mode}.root.warn.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.warning.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.warn.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.warning.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.warning.color',
         to: 'components.button.colorScheme.{mode}.root.warn.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.warning.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.warning.border.color',
+        to: 'components.button.colorScheme.{mode}.root.warn.borderColor',
+        transform: toColorString,
+    },
+
+    // Warning severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.warning.background',
         to: 'components.button.colorScheme.{mode}.root.warn.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.warning.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.warn.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.warning.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.warning.color',
         to: 'components.button.colorScheme.{mode}.root.warn.hoverColor',
         transform: toColorString,
     },
+
+    // Warning severity - active state
     {
-        from: 'usages.button.severities.warning.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.warning.background',
         to: 'components.button.colorScheme.{mode}.root.warn.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.warning.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.warn.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.warning.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.warning.color',
         to: 'components.button.colorScheme.{mode}.root.warn.activeColor',
         transform: toColorString,
     },
 
+    // Danger severity - default state
     {
-        from: 'usages.button.severities.danger.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.danger.background',
         to: 'components.button.colorScheme.{mode}.root.danger.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.danger.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.danger.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.danger.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.danger.color',
         to: 'components.button.colorScheme.{mode}.root.danger.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.danger.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.danger.border.color',
+        to: 'components.button.colorScheme.{mode}.root.danger.borderColor',
+        transform: toColorString,
+    },
+
+    // Danger severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.danger.background',
         to: 'components.button.colorScheme.{mode}.root.danger.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.danger.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.danger.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.danger.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.danger.color',
         to: 'components.button.colorScheme.{mode}.root.danger.hoverColor',
         transform: toColorString,
     },
+
+    // Danger severity - active state
     {
-        from: 'usages.button.severities.danger.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.danger.background',
         to: 'components.button.colorScheme.{mode}.root.danger.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.danger.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.danger.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.danger.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.danger.color',
         to: 'components.button.colorScheme.{mode}.root.danger.activeColor',
         transform: toColorString,
     },
 
+    // Contrast severity - default state
     {
-        from: 'usages.button.severities.contrast.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.contrast.background',
         to: 'components.button.colorScheme.{mode}.root.contrast.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.contrast.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.contrast.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.contrast.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.contrast.color',
         to: 'components.button.colorScheme.{mode}.root.contrast.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.contrast.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.contrast.border.color',
+        to: 'components.button.colorScheme.{mode}.root.contrast.borderColor',
+        transform: toColorString,
+    },
+
+    // Contrast severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.contrast.background',
         to: 'components.button.colorScheme.{mode}.root.contrast.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.contrast.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.contrast.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.contrast.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.contrast.color',
         to: 'components.button.colorScheme.{mode}.root.contrast.hoverColor',
         transform: toColorString,
     },
+
+    // Contrast severity - active state
     {
-        from: 'usages.button.severities.contrast.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.contrast.background',
         to: 'components.button.colorScheme.{mode}.root.contrast.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.contrast.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.contrast.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.contrast.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.contrast.color',
         to: 'components.button.colorScheme.{mode}.root.contrast.activeColor',
         transform: toColorString,
     },
 
+    // Help severity - default state
     {
-        from: 'usages.button.severities.help.background',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.help.background',
         to: 'components.button.colorScheme.{mode}.root.help.background',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.help.borderColor',
-        to: 'components.button.colorScheme.{mode}.root.help.borderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.help.color',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.help.color',
         to: 'components.button.colorScheme.{mode}.root.help.color',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.help.hoverBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.defaultState.severity.help.border.color',
+        to: 'components.button.colorScheme.{mode}.root.help.borderColor',
+        transform: toColorString,
+    },
+
+    // Help severity - hover state
+    {
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.help.background',
         to: 'components.button.colorScheme.{mode}.root.help.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.help.hoverBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.help.hoverBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.help.hoverColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.hover.severity.help.color',
         to: 'components.button.colorScheme.{mode}.root.help.hoverColor',
         transform: toColorString,
     },
+
+    // Help severity - active state
     {
-        from: 'usages.button.severities.help.activeBackground',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.help.background',
         to: 'components.button.colorScheme.{mode}.root.help.activeBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.severities.help.activeBorderColor',
-        to: 'components.button.colorScheme.{mode}.root.help.activeBorderColor',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.severities.help.activeColor',
+        from: 'usages.button.defaultVariant.defaultVariant.state.active.severity.help.color',
         to: 'components.button.colorScheme.{mode}.root.help.activeColor',
         transform: toColorString,
     },
 
+    // Outlined variant - primary severity
     {
-        from: 'usages.button.variants.outlined.severities.primary.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.primary.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.primary.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.primary.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.primary.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.defaultSeverity.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.primary.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.primary.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.defaultSeverity.color',
         to: 'components.button.colorScheme.{mode}.outlined.primary.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.defaultSeverity.background',
+        to: 'components.button.colorScheme.{mode}.outlined.primary.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.defaultSeverity.background',
+        to: 'components.button.colorScheme.{mode}.outlined.primary.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - secondary severity
     {
-        from: 'usages.button.variants.outlined.severities.secondary.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.secondary.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.secondary.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.secondary.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.secondary.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.secondary.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.secondary.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.secondary.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.secondary.color',
         to: 'components.button.colorScheme.{mode}.outlined.secondary.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.secondary.background',
+        to: 'components.button.colorScheme.{mode}.outlined.secondary.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.secondary.background',
+        to: 'components.button.colorScheme.{mode}.outlined.secondary.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - success severity
     {
-        from: 'usages.button.variants.outlined.severities.success.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.success.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.success.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.success.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.success.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.success.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.success.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.success.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.success.color',
         to: 'components.button.colorScheme.{mode}.outlined.success.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.success.background',
+        to: 'components.button.colorScheme.{mode}.outlined.success.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.success.background',
+        to: 'components.button.colorScheme.{mode}.outlined.success.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - info severity
     {
-        from: 'usages.button.variants.outlined.severities.info.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.info.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.info.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.info.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.info.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.info.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.info.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.info.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.info.color',
         to: 'components.button.colorScheme.{mode}.outlined.info.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.info.background',
+        to: 'components.button.colorScheme.{mode}.outlined.info.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.info.background',
+        to: 'components.button.colorScheme.{mode}.outlined.info.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - warning severity (maps to PrimeNG "warn")
     {
-        from: 'usages.button.variants.outlined.severities.warning.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.warn.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.warning.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.warn.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.warning.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.warning.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.warn.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.warning.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.warning.color',
         to: 'components.button.colorScheme.{mode}.outlined.warn.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.warning.background',
+        to: 'components.button.colorScheme.{mode}.outlined.warn.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.warning.background',
+        to: 'components.button.colorScheme.{mode}.outlined.warn.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - danger severity
     {
-        from: 'usages.button.variants.outlined.severities.danger.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.danger.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.danger.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.danger.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.danger.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.danger.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.danger.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.danger.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.danger.color',
         to: 'components.button.colorScheme.{mode}.outlined.danger.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.danger.background',
+        to: 'components.button.colorScheme.{mode}.outlined.danger.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.danger.background',
+        to: 'components.button.colorScheme.{mode}.outlined.danger.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - contrast severity
     {
-        from: 'usages.button.variants.outlined.severities.contrast.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.contrast.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.contrast.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.contrast.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.contrast.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.contrast.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.contrast.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.contrast.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.contrast.color',
         to: 'components.button.colorScheme.{mode}.outlined.contrast.color',
         transform: toColorString,
     },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.contrast.background',
+        to: 'components.button.colorScheme.{mode}.outlined.contrast.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.contrast.background',
+        to: 'components.button.colorScheme.{mode}.outlined.contrast.activeBackground',
+        transform: toColorString,
+    },
 
+    // Outlined variant - help severity
     {
-        from: 'usages.button.variants.outlined.severities.help.hoverBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.help.hoverBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.help.activeBackground',
-        to: 'components.button.colorScheme.{mode}.outlined.help.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.outlined.severities.help.borderColor',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.help.borderColor',
         to: 'components.button.colorScheme.{mode}.outlined.help.borderColor',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.outlined.severities.help.color',
+        from: 'usages.button.defaultVariant.variants.outlined.defaultState.severity.help.color',
         to: 'components.button.colorScheme.{mode}.outlined.help.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.primary.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.outlined.state.hover.severity.help.background',
+        to: 'components.button.colorScheme.{mode}.outlined.help.hoverBackground',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.outlined.state.active.severity.help.background',
+        to: 'components.button.colorScheme.{mode}.outlined.help.activeBackground',
+        transform: toColorString,
+    },
+
+    // Text variant - primary severity
+    {
+        from: 'usages.button.defaultVariant.variants.text.defaultState.defaultSeverity.color',
+        to: 'components.button.colorScheme.{mode}.text.primary.color',
+        transform: toColorString,
+    },
+    {
+        from: 'usages.button.defaultVariant.variants.text.state.hover.defaultSeverity.background',
         to: 'components.button.colorScheme.{mode}.text.primary.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.primary.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.defaultSeverity.background',
         to: 'components.button.colorScheme.{mode}.text.primary.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - secondary severity
     {
-        from: 'usages.button.variants.text.severities.primary.color',
-        to: 'components.button.colorScheme.{mode}.text.primary.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.secondary.color',
+        to: 'components.button.colorScheme.{mode}.text.secondary.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.secondary.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.secondary.background',
         to: 'components.button.colorScheme.{mode}.text.secondary.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.secondary.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.secondary.background',
         to: 'components.button.colorScheme.{mode}.text.secondary.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - success severity
     {
-        from: 'usages.button.variants.text.severities.secondary.color',
-        to: 'components.button.colorScheme.{mode}.text.secondary.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.success.color',
+        to: 'components.button.colorScheme.{mode}.text.success.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.success.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.success.background',
         to: 'components.button.colorScheme.{mode}.text.success.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.success.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.success.background',
         to: 'components.button.colorScheme.{mode}.text.success.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - info severity
     {
-        from: 'usages.button.variants.text.severities.success.color',
-        to: 'components.button.colorScheme.{mode}.text.success.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.info.color',
+        to: 'components.button.colorScheme.{mode}.text.info.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.info.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.info.background',
         to: 'components.button.colorScheme.{mode}.text.info.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.info.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.info.background',
         to: 'components.button.colorScheme.{mode}.text.info.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - warning severity (maps to PrimeNG "warn")
     {
-        from: 'usages.button.variants.text.severities.info.color',
-        to: 'components.button.colorScheme.{mode}.text.info.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.warning.color',
+        to: 'components.button.colorScheme.{mode}.text.warn.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.warning.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.warning.background',
         to: 'components.button.colorScheme.{mode}.text.warn.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.warning.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.warning.background',
         to: 'components.button.colorScheme.{mode}.text.warn.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - danger severity
     {
-        from: 'usages.button.variants.text.severities.warning.color',
-        to: 'components.button.colorScheme.{mode}.text.warn.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.danger.color',
+        to: 'components.button.colorScheme.{mode}.text.danger.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.danger.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.danger.background',
         to: 'components.button.colorScheme.{mode}.text.danger.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.danger.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.danger.background',
         to: 'components.button.colorScheme.{mode}.text.danger.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - contrast severity
     {
-        from: 'usages.button.variants.text.severities.danger.color',
-        to: 'components.button.colorScheme.{mode}.text.danger.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.contrast.color',
+        to: 'components.button.colorScheme.{mode}.text.contrast.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.contrast.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.contrast.background',
         to: 'components.button.colorScheme.{mode}.text.contrast.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.contrast.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.contrast.background',
         to: 'components.button.colorScheme.{mode}.text.contrast.activeBackground',
         transform: toColorString,
     },
+
+    // Text variant - help severity
     {
-        from: 'usages.button.variants.text.severities.contrast.color',
-        to: 'components.button.colorScheme.{mode}.text.contrast.color',
+        from: 'usages.button.defaultVariant.variants.text.defaultState.severity.help.color',
+        to: 'components.button.colorScheme.{mode}.text.help.color',
         transform: toColorString,
     },
-
     {
-        from: 'usages.button.variants.text.severities.help.hoverBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.hover.severity.help.background',
         to: 'components.button.colorScheme.{mode}.text.help.hoverBackground',
         transform: toColorString,
     },
     {
-        from: 'usages.button.variants.text.severities.help.activeBackground',
+        from: 'usages.button.defaultVariant.variants.text.state.active.severity.help.background',
         to: 'components.button.colorScheme.{mode}.text.help.activeBackground',
-        transform: toColorString,
-    },
-    {
-        from: 'usages.button.variants.text.severities.help.color',
-        to: 'components.button.colorScheme.{mode}.text.help.color',
         transform: toColorString,
     },
 ];

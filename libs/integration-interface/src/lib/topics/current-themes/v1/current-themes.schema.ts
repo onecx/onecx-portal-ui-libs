@@ -30,6 +30,7 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
+  button?: z.input<typeof button>
 }
 
 const usages: z.ZodType<UsagesInput> = z
