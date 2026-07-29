@@ -97,6 +97,7 @@ export class MultiselectLabelContainerSchema {
     .object({
       chip: (MultiselectChipSchema.schema as typeof MultiselectChipSchema.schema).prefault({}),
       dropdownIcon: (MultiselectIconSchema.schema as typeof MultiselectIconSchema.schema).prefault({}),
+      clearIcon: (MultiselectIconSchema.schema as typeof MultiselectIconSchema.schema).prefault({}),
       ...this.defaultStateTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),

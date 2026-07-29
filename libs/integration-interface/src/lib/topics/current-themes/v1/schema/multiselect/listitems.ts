@@ -3,6 +3,7 @@ import { themeSchemaRegistry } from '../registry'
 import { MultiselectListItemSchema } from './listitem'
 import { withRef } from '../primitives'
 import { MultiselectGroupHeaderSchema } from './groupheader'
+import { MultiselectEmptyMessageSchema } from './emptymessage'
 
 /**
  * Multiselect listItems schema.
@@ -16,6 +17,7 @@ export class MultiselectListItemsSchema {
     .object({
       item: (MultiselectListItemSchema.schema as typeof MultiselectListItemSchema.schema).prefault({}),
       groupHeader: (MultiselectGroupHeaderSchema.schema as typeof MultiselectGroupHeaderSchema.schema).prefault({}),
+      emptyMessage: (MultiselectEmptyMessageSchema.schema as typeof MultiselectEmptyMessageSchema.schema).prefault({}),
       ...this.tokens,
     })
     .register(themeSchemaRegistry, { id: 'multiselectListItems' })
