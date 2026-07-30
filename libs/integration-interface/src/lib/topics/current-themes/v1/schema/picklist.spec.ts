@@ -1,4 +1,9 @@
 import { ZodObject } from 'zod'
+import {
+  expectExactTokens,
+  expectExactUndefinedTokens,
+  expectTokens,
+} from './test-utils'
 import { picklist } from './picklist'
 import { PicklistPanelSchema } from './picklist/panel'
 import { PicklistPanelHeaderSchema } from './picklist/header'
@@ -6,54 +11,6 @@ import { PicklistPanelItemsSchema } from './picklist/items'
 import { PicklistPanelItemSchema } from './picklist/item'
 import { PicklistSchema } from './picklist/picklist'
 import { PicklistControlButtonsSchema } from './picklist/controlbuttons'
-
-export function expectTokenAmount(o: Object | undefined, numberOfTokens: number, keysToUnpack?: string[]) {
-  let tokens = 0
-  let objectsToProcess: object[] = [o ?? {}]
-  while (objectsToProcess.length > 0) {
-    const currentObject = objectsToProcess.pop() as object
-    const objectKeys = Object.keys(currentObject)
-    tokens += objectKeys.length
-    for (const keyToUnpack of keysToUnpack ?? []) {
-      if (objectKeys.includes(keyToUnpack)) {
-        const value = (currentObject as any)[keyToUnpack]
-        if (typeof value === 'object' && value !== null) {
-          objectsToProcess.push(value)
-        }
-      }
-    }
-  }
-
-  expect(tokens).toBe(numberOfTokens)
-}
-
-export function expectTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
-  for (const [key, expected] of Object.entries(expectedTokens)) {
-    const actual = (o as any)[key]
-    expect(actual).toStrictEqual(expected)
-  }
-}
-
-export function expectExactTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
-  expect(Object.keys(o ?? {}).length).toEqual(Object.keys(expectedTokens).length)
-  expectTokens(o, expectedTokens)
-}
-
-export function expectExactUndefinedTokens(o: Object | undefined, schemaShape: any, expectedUndefinedTokens: string[]) {
-  const undefinedTokens = Object.keys(schemaShape).filter((key) => (o as any)[key] === undefined)
-  for (const key of undefinedTokens) {
-    expect(expectedUndefinedTokens).toContain(key)
-  }
-  expect(undefinedTokens.length).toEqual(expectedUndefinedTokens.length)
-  expectUndefinedTokens(o, expectedUndefinedTokens)
-}
-
-export function expectUndefinedTokens(o: Object | undefined, expectedUndefinedTokens: string[]) {
-  for (const key of expectedUndefinedTokens) {
-    const actual = (o as any)[key]
-    expect(actual).toBeUndefined()
-  }
-}
 
 describe('picklist schema', () => {
   it('parses an empty object', () => {
