@@ -24,6 +24,7 @@
 *** xref:onecx-portal-ui-libs:service/workspace-service.adoc[WorkspaceService]
 
 ** Components
+*** xref:onecx-portal-ui-libs:components/content.adoc[Content]
 *** xref:onecx-portal-ui-libs:components/page-header.adoc[PageHeader]
 *** xref:onecx-portal-ui-libs:components/group-by-count-diagram.adoc[GroupByCountDiagram]
 *** xref:onecx-portal-ui-libs:components/search-header.adoc[SearchHeader]
