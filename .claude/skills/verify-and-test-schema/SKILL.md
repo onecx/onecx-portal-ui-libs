@@ -96,7 +96,13 @@ const hoverTextareaStyles = z.object({
     radius: '{{primitives.border.radius.md}}',
     offset: '{{primitives.border.offset.none}}',
   }),
-  focusRing: primitives.focusRing,
+  focusRing: borderWithShadow.default({
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    width: '{{primitives.focusRing.width.md}}',
+    offset: '{{primitives.focusRing.offset.md}}',
+    radius: '{{primitives.focusRing.radius.md}}',
+    shadow: '{{primitives.focusRing.shadow.md}}',
+  }),
 })
 ```
 
@@ -106,28 +112,10 @@ If only a subset of the type should be used as a token (e.g., only font size), u
 
 Create a `.spec.ts` file in the same directory as the schema. Import the root schema and all exported state/variant schemas.
 
-**Use these test utilities** (define them in the spec file):
+**Use these test utilities** from `/home/markuczy/libs/onecx-portal-ui-libs/libs/integration-interface/src/lib/topics/current-themes/v1/schema/test-utils.ts`:
 
-```typescript
-export function expectExactTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
-  expect(Object.keys(o ?? {}).length).toEqual(Object.keys(expectedTokens).length)
-  expectTokens(o, expectedTokens)
-}
-
-export function expectExactUndefinedTokens(o: Object | undefined, schemaShape: any, expectedUndefinedTokens: string[]) {
-  const undefinedTokens = Object.keys(schemaShape).filter((key) => (o as any)[key] === undefined)
-  for (const key of undefinedTokens) {
-    expect(expectedUndefinedTokens).toContain(key)
-  }
-  expect(undefinedTokens.length).toEqual(expectedUndefinedTokens.length)
-}
-
-export function expectTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
-  for (const [key, expected] of Object.entries(expectedTokens)) {
-    expect((o as any)[key]).toStrictEqual(expected)
-  }
-}
-```
+- expectExactTokens — checks that the object has exactly the expected keys and values
+- expectExactUndefinedTokens — checks that the object has exactly the expected undefined keys (for optional tokens)
 
 **Test structure — one test per section:**
 

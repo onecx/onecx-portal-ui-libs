@@ -183,23 +183,6 @@ export const invalidTextareaStyles = z
   })
   .register(themeSchemaRegistry, { id: 'invalidTextareaStyles' })
 
-// Default variant (outlined) with all states
-export const textareaWithStates = z
-  .object({
-    ...baseTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    placeholderColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    hover: (hoverTextareaStyles as typeof hoverTextareaStyles).prefault({}),
-    active: (activeTextareaStyles as typeof activeTextareaStyles).prefault({}),
-    focus: (focusTextareaStyles as typeof focusTextareaStyles).prefault({}),
-    disabled: (disabledTextareaStyles as typeof disabledTextareaStyles).prefault({}),
-    invalid: (invalidTextareaStyles as typeof invalidTextareaStyles).prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'textareaWithStates' })
-
 // Filled variant default styles
 export const filledTextareaStyles = z
   .object({
