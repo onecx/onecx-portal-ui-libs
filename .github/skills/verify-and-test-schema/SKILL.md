@@ -112,7 +112,7 @@ If only a subset of the type should be used as a token (e.g., only font size), u
 
 Create a `.spec.ts` file in the same directory as the schema. Import the root schema and all exported state/variant schemas.
 
-**Use these test utilities** from `/home/markuczy/libs/onecx-portal-ui-libs/libs/integration-interface/src/lib/topics/current-themes/v1/schema/test-utils.ts`:
+**Use these test utilities** from `libs/integration-interface/src/lib/topics/current-themes/v1/schema/test-utils.ts`:
 
 - expectExactTokens — checks that the object has exactly the expected keys and values
 - expectExactUndefinedTokens — checks that the object has exactly the expected undefined keys (for optional tokens)
