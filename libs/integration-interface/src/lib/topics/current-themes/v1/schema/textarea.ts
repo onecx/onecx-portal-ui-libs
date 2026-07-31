@@ -4,11 +4,12 @@ import { themeSchemaRegistry } from './registry'
 
 // FocusRing is a standalone concept — not bounded to border
 const focusRingDefaults = {
-  width: '{{primitives.focusRing.width.md}}',
-  color: '{{primitives.defaultVariant.contrast}}',
-  offset: '{{primitives.focusRing.offset.md}}',
-  radius: '{{primitives.focusRing.radius.md}}',
-  shadow: '{{primitives.focusRing.shadow.none}}',
+  width: '{{primitives.border.width.md}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  offset: '{{primitives.border.offset.none}}',
+  radius: '{{primitives.radius.md}}',
+  shadow: '{{primitives.shadow.none}}',
 }
 
 // Font for textarea component — excludes family (set globally, not at component level)

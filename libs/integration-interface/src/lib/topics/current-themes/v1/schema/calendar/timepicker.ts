@@ -10,8 +10,8 @@ export class CalendarTimePickerSchema {
     .object({
       padding: withRef(z.string()).default('{{primitives.space.md}}'),
       border: border.default({
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-        style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
         width: '{{primitives.border.width.md}}',
         radius: '{{primitives.border.radius.md}}',
         offset: '{{primitives.border.offset.none}}',

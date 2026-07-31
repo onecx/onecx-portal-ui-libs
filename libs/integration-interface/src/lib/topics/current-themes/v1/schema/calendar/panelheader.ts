@@ -11,8 +11,8 @@ export class CalendarPanelHeaderSchema {
   private static readonly tokens = {
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
-    color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
+      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     margin: withRef(z.string()).default('{{primitives.space.md}}'),
     gap: withRef(z.string()).default('{{primitives.space.sm}}'),

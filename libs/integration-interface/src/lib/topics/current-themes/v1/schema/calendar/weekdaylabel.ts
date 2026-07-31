@@ -13,7 +13,7 @@ export class CalendarWeekDayLabelSchema {
         weight: '{{primitives.font.weight.bold}}',
         size: '{{primitives.font.size}}',
       }),
-      color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+      color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
     })
     .register(themeSchemaRegistry, { id: 'calendarWeekDayLabel' })
 }

@@ -1,7 +1,7 @@
 ---
 name: verify-and-test-schema
 description: Verification agent that writes and executes tests to validate theme token schemas.
-version: 2.0.0
+version: 3.0.0
 ---
 
 You are a **verification agent** whose job is to write tests for theme token schemas and ensure they pass.
@@ -22,13 +22,7 @@ Read the schema file thoroughly. Identify:
 
 ### 2. Validate primitives references
 
-**Before writing any test assertions**, read `primitives.ts` and verify every ref used in schema defaults exists. Invalid refs will cause runtime resolution failures. Common patterns:
-
-- `{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}` — default variant, default state, defaultSeverity
-- `{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}` — default variant, hover state, defaultSeverity
-- `{{primitives.variant.primary.defaultState.defaultSeverity.bg}}` — filled/primary variant, default state, defaultSeverity
-- `{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}` — filled/primary variant, disabled state, defaultSeverity
-- `{{primitives.font.weight}}`, `{{primitives.space.md}}`, etc. — global primitives
+**Before writing any test assertions**, read `primitives.ts` and verify every ref used in schema defaults exists. Invalid refs will cause runtime resolution failures.
 
 **Key primitive structure** (from `primitives.ts`):
 
@@ -36,19 +30,46 @@ Read the schema file thoroughly. Identify:
 primitives
   defaultVariant  -> variantWithStates (defaultState + state.hover/active/focus/invalid/disabled)
   variant         -> colorVariants (primary, secondary, tertiary, quaternary, quinary)
+  area            -> areas (canvas, surface, overlay) — each is variantWithStates
   font            -> { family, size, weight, lineHeight, letterSpacing, style }
   space           -> { xs, sm, md, lg, xl, xxl }
-  border          -> { width, offset, radius, color, style }
-  focusRing       -> { width, offset, radius, shadow } (focusRingShape)
-  shadow          -> { none, sm, md, lg, xl }
+  border          -> { width, offset, radius } (borderShape, from borderCommonShape)
+  focusRing       -> { width, offset, radius, shadow } (focusRingShape, from borderCommonShape + shadow)
+  shadow          -> { none, sm, md, lg, xl } (shadowSizes)
+  radius          -> { none, sm, md, lg, xl, full } (radiusSizes)
   transition      -> { duration }
 ```
+
+Common reference patterns:
+
+- `{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}` — default variant, default state
+- `{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}` — default variant, hover state
+- `{{primitives.variant.primary.defaultState.defaultSeverity.bg}}` — filled/primary variant, default state
+- `{{primitives.area.overlay.defaultState.defaultSeverity.bg}}` — overlay area (panels, popups, dropdowns)
+- `{{primitives.font.weight}}`, `{{primitives.space.md}}`, etc. — global primitives
+- `{{primitives.border.width.md}}`, `{{primitives.border.radius.md}}` — structural border tokens
+- `{{primitives.shadow.none}}`, `{{primitives.radius.md}}` — shadow/radius tokens
 
 If a ref in the schema doesn't match this structure, flag it to the user.
 
 The primitives referenced by the schema must exist in `primitives.ts` and the matching should make sense. For example, if usage has hover state, the schema should reference `primitives.[variant].state.hover.[severity].[token]` instead of `primitives.[variant].defaultState.[severity].[token]` (where variant, state, and severity are optional keys in the path).
 
-### 3. Verify token hierarchy rules
+### 3. Apply area tokens for overlay components
+
+**`primitives.area.overlay` exists for a reason.** When a component renders as an overlay (panel, dropdown, popup, tooltip, dialog, etc.), all its children should reference `primitives.area.overlay.*` instead of `primitives.defaultVariant.*`. This ensures that when a primitive changes (e.g., overlay background), the value reflects in all overlay children automatically.
+
+**Rules for overlay areas:**
+
+- The **panel/overlay root** and **all its children** use `primitives.area.overlay.defaultState.defaultSeverity.*` for: `bg` (background), `contrast` (color), `border.color`, `border.style`
+- States (hover, active, focus, etc.) use `primitives.area.overlay.state.[state].defaultSeverity.*`
+- This applies to: color, background, border color/style, and focusRing color/background of overlay children
+- The overlay root itself (e.g., `panel`) uses `primitives.area.overlay.*` for its border properties too
+
+**Do NOT use `primitives.defaultVariant.*` or `primitives.variant.*` for overlay children** — use `primitives.area.overlay.*` instead. The `area.overlay` type is `variantWithStates` (same shape as `defaultVariant` and variant colors), so the same `defaultState`/`state`/`defaultSeverity` paths apply.
+
+**Components that are NOT inside the overlay** (e.g., an icon that sits in the input field, not the panel) should still use `primitives.defaultVariant.*` for their color/background but may use appropriate area tokens for focusRing.
+
+### 4. Verify token hierarchy rules
 
 The schema must produce tokens that follow this hierarchy when flattened:
 
@@ -68,21 +89,71 @@ Before proceeding to the next step, ensure the schema adheres to these rules. If
 You _MUST NEVER_ write tests for a schema that violates these rules. Fix the schema first.
 You _ALWAYS HAVE TO_ present the user with a summary of any violations and ask for feedback on how to fix them before implementing changes.
 
-### 4. Verify types used in schema
+### 5. Verify types used in schema
 
-The schema should re-use types from `primitives.ts` for tokens that makes sense. For example:
+The schema should re-use types from `primitives.ts` for tokens that make sense. Use the pre-defined schema types instead of reinventing shapes:
 
-- `background` -> `bg` from `primitives.ts` file
-- `color` -> `color` from `primitives.ts` file
-- `border` -> `border` from `primitives.ts` file
-- `font` -> `font` from `primitives.ts` file
-- `bgContrast` -> `bgContrast` from `primitives.ts` file
+| Token property | Re-use type from primitives |
+|---|---|
+| `background` | `bg` (or `withRef(z.string())` wrapped in `bg`) |
+| `color` | `color` |
+| `border` | `border` (full object with color, style, width, offset, radius) |
+| `font` | `font` (or `font.pick({ size: true })` for partial) |
+| `bgContrast` | `bgContrast` (bg + contrast) |
+| `focusRing` | `borderWithShadow` (border + shadow = color, style, width, offset, radius, shadow) |
+
+**When using `border` type:** provide **all** default values — color, style, width, offset, radius. Don't provide only a subset:
+
+```typescript
+// GOOD — all values present
+border.default({
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+  style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+  width: '{{primitives.border.width.none}}',
+  radius: '{{primitives.border.radius.md}}',
+  offset: '{{primitives.border.offset.none}}',
+})
+
+// BAD — missing style, radius, offset
+border.default({
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+  width: '{{primitives.border.width.none}}',
+})
+```
+
+**When using `borderWithShadow` for focusRing:** provide all values with the correct token sources:
+
+```typescript
+borderWithShadow.default({
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  width: '{{primitives.border.width.md}}',
+  offset: '{{primitives.border.offset.none}}',
+  radius: '{{primitives.radius.md}}',
+  shadow: '{{primitives.shadow.none}}',
+})
+```
+
+**FocusRing token sources (IMPORTANT):**
+
+| Property | Token source | Example |
+|---|---|---|
+| `color` | `primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color` | `{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}` |
+| `style` | `primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style` | `{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}` |
+| `width` | `primitives.border.width.*` | `{{primitives.border.width.md}}` |
+| `offset` | `primitives.border.offset.none` | `{{primitives.border.offset.none}}` |
+| `radius` | `primitives.radius.*` | `{{primitives.radius.md}}` |
+| `shadow` | `primitives.shadow.*` | `{{primitives.shadow.none}}` |
+
+**Never use invalid paths** like `{{primitives.defaultVariant.contrast}}` for focusRing color, or `{{primitives.focusRing.width.md}}` when the actual path is `{{primitives.border.width.md}}`. The `focusRing` and `border` shapes in primitives inherit from `borderCommonShape` which uses `borderWidthSizes` (from `border`), not separate `focusRing.*` tokens for structural values.
+
+If only a subset of the type should be used as a token (e.g., only font size), use `font.pick({ size: true })` instead of the full font type. If a token is not a primitive, use `z.string()` or `z.number()`, `z.object()` as appropriate.
 
 Example of re-using types in schema:
 
 ```typescript
 import { z } from 'zod'
-import { bg, color, border, font } from 'primitives'
+import { bg, color, border, font, borderWithShadow } from 'primitives'
 
 const hoverTextareaStyles = z.object({
   background: z
@@ -91,31 +162,39 @@ const hoverTextareaStyles = z.object({
   color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
   border: border.default({
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-    width: '{{primitives.border.width.sm}}',
+    width: '{{primitives.border.width.md}}',
     style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
     radius: '{{primitives.border.radius.md}}',
     offset: '{{primitives.border.offset.none}}',
   }),
   focusRing: borderWithShadow.default({
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-    width: '{{primitives.focusRing.width.md}}',
-    offset: '{{primitives.focusRing.offset.md}}',
-    radius: '{{primitives.focusRing.radius.md}}',
-    shadow: '{{primitives.focusRing.shadow.md}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    radius: '{{primitives.radius.md}}',
+    shadow: '{{primitives.shadow.none}}',
   }),
 })
 ```
 
-If only a subset of the type should be used as a token (e.g., only font size), use font.pick({ size: true }) instead of the full font type. If a token is not a primitive, use `z.string()` or `z.number()`, `z.object()` as appropriate.
-
-### 5. Write the test file
+### 6. Write the test file
 
 Create a `.spec.ts` file in the same directory as the schema. Import the root schema and all exported state/variant schemas.
 
 **Use these test utilities** from `libs/integration-interface/src/lib/topics/current-themes/v1/schema/test-utils.ts`:
 
-- expectExactTokens — checks that the object has exactly the expected keys and values
-- expectExactUndefinedTokens — checks that the object has exactly the expected undefined keys (for optional tokens)
+- `expectExactTokens` — checks that the object has exactly the expected keys and values
+- `expectExactUndefinedTokens` — checks that the object has exactly the expected undefined keys (for optional tokens)
+
+**IMPORTANT:** Always import from the shared `test-utils.ts`. Do NOT redefine these utilities locally in the test file.
+
+```typescript
+import {
+  expectExactTokens,
+  expectExactUndefinedTokens,
+} from './test-utils'
+```
 
 **Test structure — one test per section:**
 
@@ -191,8 +270,9 @@ describe('textarea schema', () => {
 - Use `expectExactUndefinedTokens(obj, schema.shape, ['settings'])` for root schemas with optional settings
 - Nested objects referenced at parent level use `expect.any(Object)`, then tested in their own describe block
 - Different variants can have different structures for the same state (e.g., default `invalid` may have 4 keys while filled `invalid` has only 2)
+- For components that use a shared schema (e.g., `clearButton` and `todayButton` both use `CalendarPanelButtonSchema`), test both to ensure they resolve identically — use the shared schema's `.shape` in `expectExactUndefinedTokens`
 
-### 6. Execute tests
+### 7. Execute tests
 
 Run tests using this command:
 
@@ -202,7 +282,7 @@ npx nx run integration-interface:test --testFile="{{TEST_FILE_PATH}}"
 
 Where `TEST_FILE_PATH` is the path to the created test file (e.g., `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.spec.ts`).
 
-### 7. Fix failures and re-run
+### 8. Fix failures and re-run
 
 If tests fail:
 
@@ -212,7 +292,7 @@ If tests fail:
 
 **Do not declare the task complete until all tests pass.**
 
-### 8. Report results
+### 9. Report results
 
 Once all tests pass, provide a summary of:
 
@@ -223,4 +303,4 @@ Once all tests pass, provide a summary of:
 
 ## Example
 
-See `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.spec.ts` and `libs/integration-interface/src/lib/topics/current-themes/v1/schema/picklist.spec.ts` for reference implementations.
+See `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.spec.ts`, `libs/integration-interface/src/lib/topics/current-themes/v1/schema/picklist.spec.ts`, and `libs/integration-interface/src/lib/topics/current-themes/v1/schema/calendar.spec.ts` for reference implementations.
