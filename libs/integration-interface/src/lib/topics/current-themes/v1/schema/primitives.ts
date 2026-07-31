@@ -132,6 +132,17 @@ export const space = z
   })
   .register(themeSchemaRegistry, { id: 'space' })
 
+export const fontSizes = z
+  .object({
+    xs: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+    xxl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'fontSizes' })
+
 export const bg = z
   .object({
     color: color.optional(),
@@ -255,14 +266,26 @@ export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'a
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
+
+const fontSizeScale = z
+  .object({
+    xs: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'fontSizeScale' })
+
 export const font = z
   .object({
     family: withRef(z.string()).optional(),
-    size: withRef(z.string()).optional(),
+    size: z.union([withRef(z.string()), withRef(fontSizeScale)]).optional(),
     weight: withRef(z.string()).optional(),
     lineHeight: withRef(z.string()).optional(),
     letterSpacing: withRef(z.string()).optional(),
     style: withRef(z.string()).optional(),
+    sizes: withRef(fontSizes).optional(),
   })
   .register(themeSchemaRegistry, { id: 'font' })
 
@@ -272,9 +295,24 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: 'transition' })
 
+export const iconSizeScale = z
+  .object({
+    xs: withRef(z.string()).optional(),
+    sm: withRef(z.string()).optional(),
+    md: withRef(z.string()).optional(),
+    lg: withRef(z.string()).optional(),
+    xl: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'iconSizeScale' })
+
 export const icon = z
   .object({
-    size: withRef(z.string()).optional(),
+    size: withRef(
+      z.union([
+        z.string(),
+        iconSizeScale,
+      ])
+    ).optional(),
     color: color.optional(),
     content: z.string().optional(),
     font: font.optional(),
@@ -295,6 +333,7 @@ type PrimitivesShape = {
   border: z.ZodOptional<typeof borderShape>
   focusRing: z.ZodOptional<typeof focusRingShape>
   transition: z.ZodOptional<typeof transition>
+  icon: z.ZodOptional<typeof icon>
 }
 
 const primitivesShape: PrimitivesShape = {
@@ -312,6 +351,7 @@ const primitivesShape: PrimitivesShape = {
   border: (borderShape as typeof borderShape).optional(),
   focusRing: (focusRingShape as typeof focusRingShape).optional(),
   transition: (transition as typeof transition).optional(),
+  icon: (icon as typeof icon).optional(),
 }
 
 export const primitives = z.object(primitivesShape).optional().register(themeSchemaRegistry, { id: 'primitives' })
