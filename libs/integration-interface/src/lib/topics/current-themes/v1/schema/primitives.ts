@@ -193,9 +193,36 @@ export const bgContrast = z.object({
 export const font = z
   .object({
     family: withRef(z.string()).optional(),
-    size: withRef(z.string()).optional(),
-    weight: withRef(z.string()).optional(),
-    lineHeight: withRef(z.string()).optional(),
+    size: z.union([
+      withRef(z.string()),
+      z.object({
+        xs: withRef(z.string()).optional(),
+        sm: withRef(z.string()).optional(),
+        md: withRef(z.string()).optional(),
+        lg: withRef(z.string()).optional(),
+        xl: withRef(z.string()).optional(),
+      }),
+    ]).optional(),
+    weight: z.union([
+      withRef(z.string()),
+      z.object({
+        light: withRef(z.string()).optional(),
+        normal: withRef(z.string()).optional(),
+        medium: withRef(z.string()).optional(),
+        semibold: withRef(z.string()).optional(),
+        bold: withRef(z.string()).optional(),
+      }),
+    ]).optional(),
+    lineHeight: z.union([
+      withRef(z.string()).optional(),
+      z.object({
+        xs: withRef(z.string()).optional(),
+        sm: withRef(z.string()).optional(),
+        md: withRef(z.string()).optional(),
+        lg: withRef(z.string()).optional(),
+        xl: withRef(z.string()).optional(),
+      }),
+    ]).optional(),
     letterSpacing: withRef(z.string()).optional(),
     style: withRef(z.string()).optional(),
   })
@@ -307,7 +334,7 @@ type PrimitivesShape = {
   space: z.ZodOptional<typeof space>
   layout: z.ZodOptional<typeof layout>
   radius: z.ZodOptional<typeof radiusSizes>
-  icon: z.ZodOptional<typeof iconSizes>
+  icon: z.ZodOptional<typeof icon>
   border: z.ZodOptional<typeof borderShape>
   focusRing: z.ZodOptional<typeof focusRingShape>
   transition: z.ZodOptional<typeof transition>
@@ -324,7 +351,7 @@ const primitivesShape: PrimitivesShape = {
   space: (space as typeof space).optional(),
   layout: (layout as typeof layout).optional(),
   radius: (radiusSizes as typeof radiusSizes).optional(),
-  icon: (iconSizes as typeof iconSizes).optional(),
+  icon: (icon as typeof icon).optional(),
   // Global default border style applied to components that don't define their own border token
   border: (borderShape as typeof borderShape).optional(),
   focusRing: (focusRingShape as typeof focusRingShape).optional(),
