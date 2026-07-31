@@ -24,7 +24,6 @@ export const tabRules: CssRule[] = [
     selector: '.p-tab.p-disabled, .p-tab[aria-disabled="true"]',
     declarations: [
       { property: 'background', from: 'usages.tabs.tab.disabled.background' },
-      { property: 'border-color', from: 'usages.tabs.tab.disabled.border.color' },
       { property: 'color', from: 'usages.tabs.tab.disabled.color' },
       { property: 'cursor', from: 'usages.tabs.tab.disabled.cursor' },
     ],

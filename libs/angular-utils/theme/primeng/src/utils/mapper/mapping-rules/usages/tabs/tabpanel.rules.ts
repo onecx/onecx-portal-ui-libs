@@ -27,12 +27,7 @@ export const tabpanelRules: MappingRule[] = [
     from: 'usages.tabs.focusRing.shadow',
     to: 'components.tabs.tabpanel.focusRing.shadow',
   },
-  {
-    from: 'usages.tabs.focusRing.color',
-    to: 'components.tabs.tabpanel.focusRing.color',
-    transform: toColorString,
-  },
-  {
+    {
     from: 'usages.tabs.focusRing.offset',
     to: 'components.tabs.tabpanel.focusRing.offset',
   },
