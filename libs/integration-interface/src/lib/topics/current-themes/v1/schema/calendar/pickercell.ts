@@ -17,63 +17,63 @@ export class CalendarPickerCellSchema {
   }
 
   private static readonly commonBorder = {
-    width: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.width.sm}}',
-    offset: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.offset.none}}',
-    radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius.md}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.none}}',
+    radius: '{{primitives.border.radius.md}}',
   }
 
   private static readonly defaultStateTokens = {
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
     }),
   }
-  private static readonly selectedTokens = z.object({
+  static readonly selectedTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.state.selected.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.selected.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.selected.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.state.selected.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.state.selected.defaultSeverity.border.style}}',
     }),
     inRangeBackground: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultState.defaultVariant.bg}}'),
-    rangeSelectedBackground: color.default('{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}'),
+      .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
+    rangeSelectedBackground: color.default('{{primitives.area.overlay.state.selected.defaultSeverity.bg}}'),
   })
 
-  private static readonly focusTokens = z.object({
+  static readonly focusTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
     }),
   })
 
-  private static readonly hoverTokens = z.object({
+  static readonly hoverTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
     }),
   })
 
