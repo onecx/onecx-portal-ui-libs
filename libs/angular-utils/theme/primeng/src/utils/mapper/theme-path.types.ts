@@ -93,6 +93,7 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  */
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
+  | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
   | `usages.menubar.${LeafPaths<NonNullable<Usages['menubar']>>}`

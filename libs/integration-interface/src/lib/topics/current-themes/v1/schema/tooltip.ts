@@ -21,7 +21,11 @@ export const tooltip = z
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     border: border.default({
-      radius: '{{primitives.radius.md}}',
+      color: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}',
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.sm}}',
+      radius: '{{primitives.border.radius.md}}',
     }),
     background: z
       .union([bg, withRef(z.string())])
