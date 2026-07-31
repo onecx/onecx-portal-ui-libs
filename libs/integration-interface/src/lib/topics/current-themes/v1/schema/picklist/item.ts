@@ -30,7 +30,7 @@ export class PicklistPanelItemSchema {
     }),
   }
 
-  private static readonly hoverTokens = z.object({
+  static readonly hoverTokens = z.object({
     ...this.commonTokens,
     color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
     background: z
@@ -43,7 +43,7 @@ export class PicklistPanelItemSchema {
     }),
   })
 
-  private static readonly selectedTokens = z.object({
+  static readonly selectedTokens = z.object({
     ...this.commonTokens,
     color: color.default('{{primitives.primary.state.selected.defaultSeverity.contrast}}'),
     background: z.union([bg, withRef(z.string())]).default('{{primitives.primary.state.selected.defaultSeverity.bg}}'),
@@ -54,7 +54,7 @@ export class PicklistPanelItemSchema {
     }),
   })
 
-  private static readonly focusTokens = z.object({
+  static readonly focusTokens = z.object({
     ...this.commonTokens,
     color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
     background: z
@@ -67,7 +67,7 @@ export class PicklistPanelItemSchema {
     }),
   })
 
-  private static readonly disabledTokens = z.object({
+  static readonly disabledTokens = z.object({
     ...this.commonTokens,
     color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
     background: z

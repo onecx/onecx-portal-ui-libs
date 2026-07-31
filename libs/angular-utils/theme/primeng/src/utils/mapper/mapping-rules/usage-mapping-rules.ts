@@ -1,5 +1,6 @@
 import type { MappingRule } from '../mapper.types'
 import { badgeMappingRules } from './usages/badge.rules'
+import { calendarMappingRules } from './usages/calendar.rules'
 import { datatableMappingRules } from './usages/datatable.rules'
 import { dialogMappingRules } from './usages/dialog.rules'
 import { menubarMappingRules } from './usages/menubar.rules'
@@ -16,6 +17,7 @@ import { messageMappingRules } from './usages/message.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
+  ...calendarMappingRules,
   ...datatableMappingRules,
   ...dialogMappingRules,
   ...menubarMappingRules,
