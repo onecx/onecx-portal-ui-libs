@@ -1,4 +1,9 @@
 import { tabs } from './tabs'
+import {
+  expectExactTokens,
+  expectExactUndefinedTokens,
+  expectTokens,
+} from './test-utils'
 
 describe('tabs schema', () => {
     it('parses an empty object', () => {
@@ -14,22 +19,24 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-            expect(value?.gap).toBe('{{primitives.space.md}}')
-            expect(value?.focusRing).toStrictEqual({
-                radius: '{{primitives.focusRing.radius}}',
-                offset: '{{primitives.focusRing.offset}}',
-                width: '{{primitives.focusRing.width}}',
-                shadow: '{{primitives.focusRing.shadow}}',
+            expectExactTokens(value, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+                gap: '{{primitives.space.md}}',
+                focusRing: {
+                    radius: '{{primitives.focusRing.radius}}',
+                    offset: '{{primitives.focusRing.offset}}',
+                    width: '{{primitives.focusRing.width}}',
+                    shadow: '{{primitives.focusRing.shadow}}',
+                },
+                shadow: '{{primitives.shadow.none}}',
+                settings: expect.any(Object),
+                tablist: expect.any(Object),
+                tabpanel: expect.any(Object),
+                navButtons: expect.any(Object),
+                tab: expect.any(Object),
+                viewport: expect.any(Object),
             })
-            expect(value?.shadow).toBe('{{primitives.shadow.none}}')
-            expect(value?.settings).toBeDefined()
-            expect(value?.tablist).toBeDefined()
-            expect(value?.tabpanel).toBeDefined()
-            expect(value?.navButtons).toBeDefined()
-            expect(value?.tab).toBeDefined()
-            expect(value?.viewport).toBeDefined()
         })
     })
 
@@ -40,9 +47,10 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.navButtons).toBeDefined()
-            expect(value?.navButtons?.nextIcon).toBeDefined()
-            expect(value?.navButtons?.prevIcon).toBeDefined()
+            expectExactTokens(value?.navButtons, {
+                nextIcon: '{{primitives.icon.arrowRight}}',
+                prevIcon: '{{primitives.icon.arrowLeft}}',
+            })
         })
     })
 
@@ -53,11 +61,12 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.viewport).toBeDefined()
-            expect(value?.viewport?.overscrollBehavior).toBe('contain auto')
-            expect(value?.viewport?.scrollBehavior).toBe('smooth')
-            expect(value?.viewport?.scrollbarWidth).toBe('none')
-            expect(value?.viewport?.webkitScrollbarDisplay).toBe('none')
+            expectExactTokens(value?.viewport, {
+                overscrollBehavior: 'contain auto',
+                scrollBehavior: 'smooth',
+                scrollbarWidth: 'none',
+                webkitScrollbarDisplay: 'none',
+            })
         })
     })
 
@@ -68,13 +77,15 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tab?.activeBar).toBeDefined()
-            expect(value?.tab?.activeBar?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.tab?.activeBar?.size).toBe('{{primitives.border.width.sm}}')
-            expect(value?.tab?.activeBar?.bottom).toBe('{{primitives.space.none}}')
-            expect(value?.tab?.activeBar?.transition).toBeDefined()
-            expect(value?.tab?.activeBar?.transition?.duration).toBe('{{primitives.transition.duration}}')
-            expect(value?.tab?.activeBar?.shadow).toBe('{{primitives.shadow.none}}')
+            expectExactTokens(value?.tab?.activeBar, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                size: '{{primitives.border.width.sm}}',
+                bottom: '{{primitives.space.none}}',
+                transition: {
+                    duration: '{{primitives.transition.duration}}',
+                },
+                shadow: '{{primitives.shadow.none}}',
+            })
         })
     })
 
@@ -85,18 +96,21 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tablist).toBeDefined()
-            expect(value?.tablist?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.tablist?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-            expect(value?.tablist?.gap).toBe('{{primitives.space.md}}')
-            expect(value?.tablist?.paddingX).toBe('{{primitives.space.md}}')
-            expect(value?.tablist?.paddingY).toBe('{{primitives.space.md}}')
-            expect(value?.tablist?.border).toBeDefined()
-            expect(value?.tablist?.border?.width).toBe('{{primitives.border.width.none}}')
-            expect(value?.tablist?.border?.radius).toBe('{{primitives.border.radius.none}}')
-            expect(value?.tablist?.border?.offset).toBe('{{primitives.border.offset.none}}')
-            expect(value?.tablist?.border?.style).toBe('{{primitives.border.style}}')
-            expect(value?.tablist?.border?.color).toBe('{{primitives.border.color}}')
+            expectExactTokens(value?.tablist, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+                gap: '{{primitives.space.md}}',
+                paddingX: '{{primitives.space.md}}',
+                paddingY: '{{primitives.space.md}}',
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.none}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.border.style}}',
+                    color: '{{primitives.border.color}}',
+                },
+                content: expect.any(Object),
+            })
         })
     })
 
@@ -107,15 +121,17 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tablist?.content).toBeDefined()
-            expect(value?.tablist?.content?.gap).toBe('{{primitives.space.md}}')
-            expect(value?.tablist?.content?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.tablist?.content?.border).toBeDefined()
-            expect(value?.tablist?.content?.border?.width).toBe('{{primitives.border.width.none}}')
-            expect(value?.tablist?.content?.border?.radius).toBe('{{primitives.border.radius.sm}}')
-            expect(value?.tablist?.content?.border?.offset).toBe('{{primitives.border.offset.none}}')
-            expect(value?.tablist?.content?.border?.style).toBe('{{primitives.border.style.solid}}')
-            expect(value?.tablist?.content?.border?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.border}}')
+            expectExactTokens(value?.tablist?.content, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                gap: '{{primitives.space.md}}',
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.sm}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.border.style.solid}}',
+                    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border}}',
+                },
+            })
         })
     })
 
@@ -126,22 +142,28 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tab).toBeDefined()
-            expect(value?.tab?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.tab?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-            expect(value?.tab?.paddingX).toBe('{{primitives.space.md}}')
-            expect(value?.tab?.paddingY).toBe('{{primitives.space.md}}')
-            expect(value?.tab?.alignItems).toBe('{{primitives.layout.alignItems}}')
-            expect(value?.tab?.gap).toBe('{{primitives.space.md}}')
-            expect(value?.tab?.icon).toBeDefined()
-            expect(value?.tab?.activeBar).toBeDefined()
-            expect(value?.tab?.tooltip).toBeDefined()
-            expect(value?.tab?.border).toBeDefined()
-            expect(value?.tab?.border?.width).toBe('{{primitives.border.width.none}}')
-            expect(value?.tab?.border?.radius).toBe('{{primitives.border.radius.none}}')
-            expect(value?.tab?.border?.offset).toBe('{{primitives.border.offset.none}}')
-            expect(value?.tab?.border?.style).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}')
-            expect(value?.tab?.border?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}')
+            expectExactTokens(value?.tab, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+                paddingX: '{{primitives.space.md}}',
+                paddingY: '{{primitives.space.md}}',
+                alignItems: '{{primitives.layout.alignItems}}',
+                gap: '{{primitives.space.md}}',
+                icon: expect.any(Object),
+                activeBar: expect.any(Object),
+                tooltip: expect.any(Object),
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.none}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+                    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+                },
+                hover: expect.any(Object),
+                focus: expect.any(Object),
+                active: expect.any(Object),
+                disabled: expect.any(Object),
+            })
         })
 
         it('should apply defaults for hover state', () => {
@@ -150,18 +172,43 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tab?.hover).toBeDefined()
-            expect(value?.tab?.hover?.background).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}')
-            expect(value?.tab?.hover?.color).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}')
-            expect(value?.tab?.hover?.cursor).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}')
-            expect(value?.tab?.hover?.border).toBeDefined()
-            expect(value?.tab?.hover?.border?.width).toBe('{{primitives.border.width.none}}')
-            expect(value?.tab?.hover?.border?.radius).toBe('{{primitives.border.radius.none}}')
-            expect(value?.tab?.hover?.border?.offset).toBe('{{primitives.border.offset.none}}')
-            expect(value?.tab?.hover?.border?.style).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}')
-            expect(value?.tab?.hover?.border?.color).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}')
-            expect(value?.tab?.hover?.font).toBeDefined()
-            expect(value?.tab?.hover?.font?.weight).toBe('{{primitives.defaultVariant.state.hover.defaultSeverity.font.weight}}')
+            expectExactTokens(value?.tab?.hover, {
+                background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+                cursor: '{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}',
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.none}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+                    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+                },
+                font: {
+                    weight: '{{primitives.defaultVariant.state.hover.defaultSeverity.font.weight}}',
+                },
+            })
+        })
+
+        it('should apply defaults for active state', () => {
+            const result = tabs.safeParse({})
+
+            expect(result.success).toBe(true)
+
+            const value = result.data
+            expectExactTokens(value?.tab?.active, {
+                background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.none}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
+                    color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
+                },
+                font: {
+                    weight: '{{primitives.defaultVariant.state.active.defaultSeverity.font.weight}}',
+                },
+            })
         })
 
         it('should apply defaults for focus state', () => {
@@ -170,17 +217,20 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tab?.focus).toBeDefined()
-            expect(value?.tab?.focus?.background).toBe('{{primitives.defaultVariant.focusedState.defaultSeverity.bg}}')
-            expect(value?.tab?.focus?.color).toBe('{{primitives.defaultVariant.focusedState.defaultSeverity.contrast}}')
-            expect(value?.tab?.focus?.border).toBeDefined()
-            expect(value?.tab?.focus?.border?.width).toBe('{{primitives.border.width.none}}')
-            expect(value?.tab?.focus?.border?.radius).toBe('{{primitives.border.radius.none}}')
-            expect(value?.tab?.focus?.border?.offset).toBe('{{primitives.border.offset.none}}')
-            expect(value?.tab?.focus?.border?.style).toBe('{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}')
-            expect(value?.tab?.focus?.border?.color).toBe('{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}')
-            expect(value?.tab?.focus?.font).toBeDefined()
-            expect(value?.tab?.focus?.font?.weight).toBe('{{primitives.defaultVariant.state.focus.defaultSeverity.font.weight}}')
+            expectExactTokens(value?.tab?.focus, {
+                background: '{{primitives.defaultVariant.focusedState.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.focusedState.defaultSeverity.contrast}}',
+                border: {
+                    width: '{{primitives.border.width.none}}',
+                    radius: '{{primitives.border.radius.none}}',
+                    offset: '{{primitives.border.offset.none}}',
+                    style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+                    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+                },
+                font: {
+                    weight: '{{primitives.defaultVariant.state.focus.defaultSeverity.font.weight}}',
+                },
+            })
         })
 
         it('should apply defaults for disabled state', () => {
@@ -189,13 +239,13 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
             
             const value = result.data
-            expect(value?.tab?.disabled).toBeDefined()
-            expect(value?.tab?.disabled?.background).toBe('{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}')
-            expect(value?.tab?.disabled?.color).toBe('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}')
-            expect(value?.tab?.disabled?.cursor).toBe('{{primitives.defaultVariant.state.disabled.defaultSeverity.cursor}}')
+            expectExactTokens(value?.tab?.disabled, {
+                background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+                cursor: '{{primitives.defaultVariant.state.disabled.defaultSeverity.cursor}}',
+            })
         })
     })
-
 
     describe('tabs panel', () => {
         it('should apply defaults', () => {
@@ -204,17 +254,19 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
-            expect(value?.tabpanel).toBeDefined()
-            expect(value?.tabpanel?.background).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-            expect(value?.tabpanel?.color).toBe('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}')
-            expect(value?.tabpanel?.paddingX).toBe('{{primitives.space.md}}')
-            expect(value?.tabpanel?.paddingY).toBe('{{primitives.space.md}}')
-            expect(value?.tabpanel?.alignItems).toBe('{{primitives.layout.alignItems}}')
-            expect(value?.tabpanel?.justifyContent).toBe('{{primitives.layout.justifyContent}}')
-            expect(value?.tabpanel?.font).toBeDefined()
-            expect(value?.tabpanel?.font?.size).toBe('{{primitives.font.size.md}}')
-            expect(value?.tabpanel?.font?.weight).toBe('{{primitives.font.weight.normal}}')
-            expect(value?.tabpanel?.font?.lineHeight).toBe('{{primitives.font.lineHeight.md}}')
-        }) 
+            expectExactTokens(value?.tabpanel, {
+                background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+                paddingX: '{{primitives.space.md}}',
+                paddingY: '{{primitives.space.md}}',
+                alignItems: '{{primitives.layout.alignItems}}',
+                justifyContent: '{{primitives.layout.justifyContent}}',
+                font: {
+                    size: '{{primitives.font.size.md}}',
+                    weight: '{{primitives.font.weight.normal}}',
+                    lineHeight: '{{primitives.font.lineHeight.md}}',
+                },
+            })
+        })
     })
 })

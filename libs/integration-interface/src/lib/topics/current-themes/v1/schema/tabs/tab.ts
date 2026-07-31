@@ -66,12 +66,12 @@ export class TabsTabSchema {
     });
 
     private static readonly tabActiveStateTokens = z.object({
-        background: z.union([bg, withRef(z.string())]).default("{{primitives.primary.activeState.defaultSeverity.bg}}"),
-        color: color.default("{{primitives.primary.activeState.defaultSeverity.contrast}}"),
+        background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.state.active.defaultSeverity.bg}}"),
+        color: color.default("{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}"),
         border: border.default({
             ...this.tabBorderCommonTokens,
-            color: "{{primitives.primary.state.active.defaultSeverity.border.color}}",
-            style: "{{primitives.primary.state.active.defaultSeverity.border.style}}",
+            color: "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
+            style: "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
         }),
         font: font.pick({weight: true}).default({
             weight: "{{primitives.defaultVariant.state.active.defaultSeverity.font.weight}}",
