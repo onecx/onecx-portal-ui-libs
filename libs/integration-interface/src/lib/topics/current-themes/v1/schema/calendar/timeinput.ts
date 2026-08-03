@@ -24,54 +24,58 @@ export class CalendarTimeInputSchema {
 
   private static readonly defaultStateTokens = {
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
     }),
   }
 
-  private static readonly hoverTokens = z.object({
+  static readonly hoverTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
     }),
   })
 
-  private static readonly focusTokens = z.object({
+  static readonly focusTokens = z.object({
     ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
+    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
+      .default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
     border: border.default({
       ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-    }),
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
-      offset: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.offset}}',
-      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
-      radius: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.radius}}',
+      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
     }),
   })
+
+  private static readonly focusRingTokens = {
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.border.width.md}}',
+      offset: '{{primitives.border.offset.none}}',
+      shadow: '{{primitives.shadow.none}}',
+      radius: '{{primitives.radius.md}}',
+    }),
+  }
 
   static readonly schema = z
     .object({
       ...this.defaultStateTokens,
+      ...this.focusRingTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
     })

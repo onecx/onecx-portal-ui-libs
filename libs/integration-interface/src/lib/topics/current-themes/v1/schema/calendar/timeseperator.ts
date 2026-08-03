@@ -8,7 +8,7 @@ import { themeSchemaRegistry } from '../registry'
 export class CalendarTimeSeperatorSchema {
   static readonly schema = z
     .object({
-      color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+      color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
       padding: withRef(z.string()).default('{{primitives.space.xs}}'),
       font: font.pick({ family: true, size: true, weight: true }).default({
         family: '{{primitives.font.family}}',
