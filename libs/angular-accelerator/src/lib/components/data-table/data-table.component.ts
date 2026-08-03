@@ -405,23 +405,41 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         })
       }
 
-      const translateObservable =
+      const isTranslationKeyColumn =
         columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
-          ? this.translateColumnValues(columnValues as string[])
-          : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+      const translateObservable = isTranslationKeyColumn
+        ? this.translateColumnValues(columnValues as string[])
+        : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+      // This creates dropown object with text as label and key as value sp when event is fired for filter change.
+      // Key is being passed down and stored in local storage
       return translateObservable.pipe(
         map((translatedValues) => {
-          return Object.values(translatedValues)
-            .concat(currentFilters)
-            .filter((value, index, self) => self.indexOf(value) === index && value !== null && value !== '')
-            .map(
-              (filterOption) =>
-                ({
-                  label: filterOption,
-                  value: filterOption,
-                  toFilterBy: filterOption,
-                }) as SelectItem
-            )
+          return (
+            Object.entries(translatedValues)
+              .map(
+                ([key, translatedValue]) =>
+                  ({
+                    label: translatedValue,
+                    value: key,
+                    toFilterBy: translatedValue,
+                  }) as SelectItem
+              )
+              // Concat existing user selected filters that are not in the current column values to ensure they remain visible in the dropdown.
+              .concat(
+                currentFilters
+                  .filter((filterValue) => !columnValues.includes(filterValue as string))
+                  .map(
+                    (filterValue) =>
+                      ({
+                        label: translatedValues[filterValue as string] || filterValue,
+                        value: filterValue,
+                        toFilterBy: translatedValues[filterValue as string] || filterValue,
+                      }) as SelectItem
+                  )
+              )
+              // Remove duplicates
+              .filter((item, index, self) => self.findIndex((i) => i.value === item.value) === index)
+          )
         }),
         map((options) => {
           return {
