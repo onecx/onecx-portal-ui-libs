@@ -1,188 +1,310 @@
-import * as z from "zod";
-import { bg, border, color, withRef } from "./primitives";
-import { themeSchemaRegistry } from "./registry";
+import * as z from 'zod'
+import { bg, borderWithShadow, color, withRef } from './primitives'
+import { themeSchemaRegistry } from './registry'
 
-const inputPadding = z.object({
-  x: withRef(z.string()),
-  y: withRef(z.string()),
-});
+const defaultSmSize = {
+  fontSize: '{{primitives.font.size}}',
+  padding: {
+    x: '{{primitives.space.sm}}',
+    y: '{{primitives.space.xs}}',
+  },
+}
 
-const inputSize = z.object({
-  fontSize: withRef(z.string()),
-  padding: inputPadding,
-});
+const defaultLgSize = {
+  fontSize: '{{primitives.font.size}}',
+  padding: {
+    x: '{{primitives.space.lg}}',
+    y: '{{primitives.space.md}}',
+  },
+}
 
-const inputFocusRing = z.object({
-  width: withRef(z.string()).default("{{primitives.focusRing.width}}"),
-  style: withRef(z.string()).default("{{primitives.focusRing.style}}"),
-  color: color.default("{{primitives.focusRing.color}}"),
-  offset: withRef(z.string()).default("{{primitives.focusRing.offset}}"),
-  shadow: withRef(z.string()).default("{{primitives.focusRing.shadow}}"),
-});
+const defaultInputVariantState = {
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  placeholder: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  },
+}
 
-const inputState = z.object({
+const hoverInputVariantState = {
+  background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  placeholder: {
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+  },
+}
+
+const focusInputVariantState = {
+  background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  placeholder: {
+    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+  },
+}
+
+const disabledInputVariantState = {
+  background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  placeholder: {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+  },
+}
+
+const invalidInputVariantState = {
+  background: '{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  placeholder: {
+    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+  },
+}
+
+const defaultInputVariant = {
+  font: {
+    weight: '{{primitives.font.weight}}',
+    size: '{{primitives.font.size}}',
+  },
+  padding: {
+    x: '{{primitives.space.md}}',
+    y: '{{primitives.space.sm}}',
+  },
+  border: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  },
+  focusRing: {
+    width: '{{primitives.focusRing.width}}',
+    style: '{{primitives.focusRing.style}}',
+    color: '{{primitives.focusRing.color}}',
+    offset: '{{primitives.focusRing.offset}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.focusRing.shadow}}',
+  },
+  defaultState: defaultInputVariantState,
+  hover: hoverInputVariantState,
+  focus: focusInputVariantState,
+  disabled: disabledInputVariantState,
+  invalid: invalidInputVariantState,
+  sizes: {
+    sm: defaultSmSize,
+    lg: defaultLgSize,
+  },
+}
+
+export const inputPadding = z.object({
+  x: withRef(z.string()).optional(),
+  y: withRef(z.string()).optional(),
+})
+
+export const inputSize = z.object({
+  fontSize: withRef(z.string()).optional(),
+  padding: inputPadding.optional(),
+})
+
+export const inputTransition = z
+  .object({
+    duration: withRef(z.string()).default('{{primitives.transition.duration}}'),
+  })
+  .register(themeSchemaRegistry, { id: 'inputTransition' })
+
+export const inputFocusRingSchema = borderWithShadow
+
+export const inputFocusRing = inputFocusRingSchema
+  .optional()
+  .default({
+    width: '{{primitives.focusRing.width}}',
+    style: '{{primitives.focusRing.style}}',
+    color: '{{primitives.focusRing.color}}',
+    offset: '{{primitives.focusRing.offset}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.focusRing.shadow}}',
+  })
+
+export const inputState = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
   color: color.optional(),
-  border: border.optional(),
+  border: borderWithShadow.optional(),
   placeholder: z
     .object({
-      color: color,
+      color: color.optional(),
     })
     .optional(),
-  shadow: withRef(z.string()).optional(),
-});
+})
 
-const inputVariant = z.object({
+export const inputFilledVariantState = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  placeholder: z
+    .object({
+      color: color.optional(),
+    })
+    .optional(),
+})
+
+export const inputFilledVariant = z.object({
+  defaultState: inputFilledVariantState.optional(),
+  hover: inputFilledVariantState.optional(),
+  focus: inputFilledVariantState.optional(),
+  disabled: inputFilledVariantState.optional(),
+  invalid: inputFilledVariantState.optional(),
+})
+
+export const inputVariant = z.object({
   font: z
     .object({
-      weight: withRef(z.string()).default("{{primitives.font.weight}}"),
-      size: withRef(z.string()).default("{{primitives.font.size}}"),
+      weight: withRef(z.string()).optional(),
+      size: withRef(z.string()).optional(),
     })
-    .optional(),
+    .optional()
+    .default({
+      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size}}',
+    }),
 
   padding: inputPadding
+    .optional()
     .default({
-      x: "{{primitives.space.md}}",
-      y: "{{primitives.space.sm}}",
-    })
-    .optional(),
+      x: '{{primitives.space.md}}',
+      y: '{{primitives.space.sm}}',
+    }),
 
-  border: border
-    .default({
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.sm}}',
-      offset: '{{primitives.border.offset.sm}}',
-    })
-    .optional(),
+  border: borderWithShadow.optional().default({
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+    shadow: '{{primitives.shadow.sm}}',
+  }),
 
-  shadow: withRef(z.string()).default("{{primitives.shadow.sm}}").optional(),
+  focusRing: inputFocusRing,
 
   defaultState: inputState
-    .default({
-      background: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      placeholder: {
-        color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      },
-    })
-    .optional(),
+    .optional()
+    .default(defaultInputVariantState),
 
   hover: inputState
-    .default({
-      background: "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-      placeholder: {
-        color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-      },
-      border: {
-        color: "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-        width: "{{primitives.border.width.sm}}",
-      },
-    })
-    .optional(),
+    .optional()
+    .default(hoverInputVariantState),
 
   focus: inputState
-    .extend({
-      ring: inputFocusRing.optional(),
-    })
-    .default({
-      background: "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
-      border: {
-        color: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-        width: "{{primitives.border.width.sm}}",
-      },
-      ring: {
-        width: "{{primitives.focusRing.width}}",
-        style: "{{primitives.focusRing.style}}",
-        color: "{{primitives.focusRing.color}}",
-        offset: "{{primitives.focusRing.offset}}",
-        shadow: "{{primitives.focusRing.shadow}}",
-      },
-    })
-    .optional(),
+    .optional()
+    .default(focusInputVariantState),
 
   disabled: inputState
-    .default({
-      background: "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-      placeholder: {
-        color: "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-      },
-    })
-    .optional(),
+    .optional()
+    .default(disabledInputVariantState),
 
   invalid: inputState
-    .default({
-      background: "{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
-      border: {
-        color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}",
-        width: "{{primitives.border.width.sm}}",
-      },
-      placeholder: {
-        color: "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
-      },
-    })
-    .optional(),
+    .optional()
+    .default(invalidInputVariantState),
 
   sizes: z
     .object({
-      sm: inputSize.default({
-        fontSize: "{{primitives.font.size}}",
-        padding: {
-          x: "{{primitives.space.sm}}",
-          y: "{{primitives.space.xs}}",
-        },
-      }),
-      lg: inputSize.default({
-        fontSize: "{{primitives.font.size}}",
-        padding: {
-          x: "{{primitives.space.lg}}",
-          y: "{{primitives.space.md}}",
-        },
-      }),
+      sm: inputSize
+        .optional()
+        .default(defaultSmSize),
+      lg: inputSize
+        .optional()
+        .default(defaultLgSize),
     })
-    .optional(),
-});
+    .optional()
+    .default({
+      sm: defaultSmSize,
+      lg: defaultLgSize,
+    }),
+})
 
 export const input = z
   .object({
-    settings: z
-      .object({
-        transition: z
-          .object({
-            duration: withRef(z.string()).default("{{primitives.transition.duration}}"),
-          })
-          .optional(),
-        defaultVariant: withRef(z.string()).default("defaultVariant"),
-      })
-      .optional(),
-
-    defaultVariant: inputVariant,
+    transition: (inputTransition as typeof inputTransition).prefault({}),
+    defaultVariant: inputVariant.optional().default(defaultInputVariant),
     variants: z
       .object({
-        filled: inputVariant
+        filled: inputFilledVariant
+          .optional()
           .default({
             defaultState: {
-              background: "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-              color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+              background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+              color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+              placeholder: {
+                color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+              },
             },
             hover: {
-              background: "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
-              color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+              background: '{{primitives.variant.primary.state.hover.defaultSeverity.bg}}',
+              color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
+              placeholder: {
+                color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
+              },
             },
             focus: {
-              background: "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
-              color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+              background: '{{primitives.variant.primary.state.focus.defaultSeverity.bg}}',
+              color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
+              placeholder: {
+                color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
+              },
             },
-          })
-          .optional(),
+            disabled: {
+              background: '{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}',
+              color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
+              placeholder: {
+                color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
+              },
+            },
+            invalid: {
+              background: '{{primitives.variant.primary.state.invalid.defaultSeverity.bg}}',
+              color: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',
+              placeholder: {
+                color: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',
+              },
+            },
+          }),
       })
-      .optional(),
+      .optional()
+      .prefault({}),
   })
-  .register(themeSchemaRegistry, { id: "input" });
+  .register(themeSchemaRegistry, { id: 'input' })

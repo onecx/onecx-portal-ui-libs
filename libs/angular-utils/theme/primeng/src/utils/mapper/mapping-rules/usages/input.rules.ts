@@ -61,24 +61,24 @@ export const inputMappingRules: MappingRule[] = [
   },
 
   {
-    from: 'usages.input.defaultVariant.focus.ring.width',
+    from: 'usages.input.defaultVariant.focusRing.width',
     to: 'components.inputtext.root.focusRing.width',
   },
   {
-    from: 'usages.input.defaultVariant.focus.ring.style',
+    from: 'usages.input.defaultVariant.focusRing.style',
     to: 'components.inputtext.root.focusRing.style',
   },
   {
-    from: 'usages.input.defaultVariant.focus.ring.color',
+    from: 'usages.input.defaultVariant.focusRing.color',
     to: 'components.inputtext.root.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.input.defaultVariant.focus.ring.offset',
+    from: 'usages.input.defaultVariant.focusRing.offset',
     to: 'components.inputtext.root.focusRing.offset',
   },
   {
-    from: 'usages.input.defaultVariant.focus.ring.shadow',
+    from: 'usages.input.defaultVariant.focusRing.shadow',
     to: 'components.inputtext.root.focusRing.shadow',
   },
 
@@ -94,7 +94,7 @@ export const inputMappingRules: MappingRule[] = [
   },
 
   {
-    from: 'usages.input.defaultVariant.shadow',
+    from: 'usages.input.defaultVariant.border.shadow',
     to: 'components.inputtext.root.shadow',
   },
   {
@@ -111,7 +111,7 @@ export const inputMappingRules: MappingRule[] = [
   },
 
   {
-    from: 'usages.input.settings.transition.duration',
+    from: 'usages.input.transition.duration',
     to: 'components.inputtext.root.transitionDuration',
   },
 

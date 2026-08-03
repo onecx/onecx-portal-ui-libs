@@ -18,7 +18,7 @@ export const inputCssRules: CssRule[] = [
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.defaultVariant.hover.shadow'
+        from: 'usages.input.defaultVariant.hover.border.shadow'
       },
       {
         property: 'padding-inline',
@@ -56,7 +56,7 @@ export const inputCssRules: CssRule[] = [
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.defaultVariant.focus.shadow'
+        from: 'usages.input.defaultVariant.focus.border.shadow'
       },
       {
         property: 'padding-inline',
@@ -94,7 +94,7 @@ export const inputCssRules: CssRule[] = [
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.defaultVariant.disabled.shadow'
+        from: 'usages.input.defaultVariant.disabled.border.shadow'
       },
       {
         property: 'padding-inline',
@@ -132,7 +132,7 @@ export const inputCssRules: CssRule[] = [
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.defaultVariant.invalid.shadow'
+        from: 'usages.input.defaultVariant.invalid.border.shadow'
       },
       {
         property: 'padding-inline',
@@ -165,22 +165,6 @@ export const inputCssRules: CssRule[] = [
         property: 'color',
         from: 'usages.input.variants.filled.defaultState.color'
       },
-      {
-        property: 'border-color',
-        from: 'usages.input.variants.filled.defaultState.border.color'
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.input.variants.filled.defaultState.shadow'
-      },
-      {
-        property: 'padding-inline',
-        from: 'usages.input.variants.filled.padding.x'
-      },
-      {
-        property: 'padding-block',
-        from: 'usages.input.variants.filled.padding.y'
-      },
     ],
   },
   {
@@ -202,22 +186,6 @@ export const inputCssRules: CssRule[] = [
       {
         property: 'color',
         from: 'usages.input.variants.filled.hover.color'
-      },
-      {
-        property: 'border-color',
-        from: 'usages.input.variants.filled.hover.border.color'
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.input.variants.filled.hover.shadow'
-      },
-      {
-        property: 'padding-inline',
-        from: 'usages.input.variants.filled.padding.x'
-      },
-      {
-        property: 'padding-block',
-        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
@@ -241,22 +209,6 @@ export const inputCssRules: CssRule[] = [
         property: 'color',
         from: 'usages.input.variants.filled.focus.color'
       },
-      {
-        property: 'border-color',
-        from: 'usages.input.variants.filled.focus.border.color'
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.input.variants.filled.focus.shadow'
-      },
-      {
-        property: 'padding-inline',
-        from: 'usages.input.variants.filled.padding.x'
-      },
-      {
-        property: 'padding-block',
-        from: 'usages.input.variants.filled.padding.y'
-      },
     ],
   },
   {
@@ -279,22 +231,6 @@ export const inputCssRules: CssRule[] = [
         property: 'color',
         from: 'usages.input.variants.filled.disabled.color'
       },
-      {
-        property: 'border-color',
-        from: 'usages.input.variants.filled.disabled.border.color'
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.input.variants.filled.disabled.shadow'
-      },
-      {
-        property: 'padding-inline',
-        from: 'usages.input.variants.filled.padding.x'
-      },
-      {
-        property: 'padding-block',
-        from: 'usages.input.variants.filled.padding.y'
-      },
     ],
   },
   {
@@ -316,22 +252,6 @@ export const inputCssRules: CssRule[] = [
       {
         property: 'color',
         from: 'usages.input.variants.filled.invalid.color'
-      },
-      {
-        property: 'border-color',
-        from: 'usages.input.variants.filled.invalid.border.color'
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.input.variants.filled.invalid.shadow'
-      },
-      {
-        property: 'padding-inline',
-        from: 'usages.input.variants.filled.padding.x'
-      },
-      {
-        property: 'padding-block',
-        from: 'usages.input.variants.filled.padding.y'
       },
     ],
   },
