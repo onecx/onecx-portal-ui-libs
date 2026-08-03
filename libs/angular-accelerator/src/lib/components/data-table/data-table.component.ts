@@ -563,6 +563,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         const translateObservable = isTranslationKeyColumn
           ? this.translateColumnValues(columnValues as string[])
           : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+        // This creates dropown object with text as label and key as value sp when event is fired for filter change. 
+        // Key is being passed down and stored in local storage
         return translateObservable.pipe(
           map((translatedValues) => {
             return Object.entries(translatedValues)
@@ -571,6 +573,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                 value: key,
                 toFilterBy: translatedValue,
               }) as SelectItem)
+              // Concat existing user selected filters that are not in the current column values to ensure they remain visible in the dropdown.
               .concat(
                 currentFilters
                   .filter(filterValue => !columnValues.includes(filterValue as string))
@@ -580,6 +583,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
                     toFilterBy: translatedValues[filterValue as string] || filterValue,
                   }) as SelectItem)
               )
+              // Remove duplicates
               .filter((item, index, self) => 
                 self.findIndex(i => i.value === item.value) === index
               )
