@@ -37,23 +37,25 @@ Rules enforced by the schema and tests:
 
 In the Zod schema, the default variant's tokens live at the root of the usage object (no wrapper key). States (`hover`, `active`, `focus`, `disabled`, `invalid`) are sibling keys. Named variants (e.g., `filled`) are also sibling keys, with their own nested state objects.
 
-See `docs/theming.adoc` § Takeaways: we do **not** use `defaultX` (defaultState, defaultSeverity) in the usage token structure — only in `primitives` references.
-
 ## Reference implementations
 
-The repository contains two reference implementations:
+The repository contains three reference implementations for Schema and tests:
 
 - **Textarea** — simpler component, single file schema:
   - Schema: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.ts`
   - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.spec.ts`
-  - Mapping rules: `libs/angular-utils/theme/primeng/src/utils/mapper/mapping-rules/usages/textarea.rules.ts`
-  - CSS rules: `libs/angular-utils/theme/primeng/src/utils/mapper/css-rules/usages/textarea.rules.ts`
+
+- **Carousel** — simpler component, single file schema:
+  - Schema: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/carousel.ts`
+  - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/carousel.spec.ts`
 
 - **Picklist** — complex component, directory-based schema with child components:
   - Schema directory: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/picklist/`
   - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/picklist.spec.ts`
-  - Mapping rules: `libs/angular-utils/theme/primeng/src/utils/mapper/mapping-rules/usages/picklist.rules.ts`
-  - CSS rules: `libs/angular-utils/theme/primeng/src/utils/mapper/css-rules/usages/picklist.rules.ts`
+
+- **Calendar** - complex component, directory-based schema with child components:
+  - Schema directory: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/calendar/`
+  - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/calendar.spec.ts`
 
 Read these files when anything about the conventions below is unclear.
 
@@ -125,13 +127,15 @@ When a usage has severity variants (info, success, warn, error, etc.), **each se
 
 ```typescript
 // Define the shared severity shape once (leaves are .optional())
-const severityShape = z.object({
-  background: z.union([bg, withRef(z.string())]).optional(),
-  borderColor: color.optional(),
-  color: color.optional(),
-  shadow: withRef(z.string()).optional(),
-  closeButton: severityCloseButton.prefault({}),
-}).register(themeSchemaRegistry, { id: 'componentSeverity' })
+const severityShape = z
+  .object({
+    background: z.union([bg, withRef(z.string())]).optional(),
+    borderColor: color.optional(),
+    color: color.optional(),
+    shadow: withRef(z.string()).optional(),
+    closeButton: severityCloseButton.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'componentSeverity' })
 
 // Define per-severity default objects — each references DIFFERENT primitives
 const infoDefaults = {
@@ -139,7 +143,9 @@ const infoDefaults = {
   borderColor: '{{primitives.defaultVariant.defaultState.severity.info.bg}}',
   color: '{{primitives.defaultVariant.defaultState.severity.info.contrast}}',
   shadow: '{{primitives.shadow.none}}',
-  closeButton: { /* per-severity values */ },
+  closeButton: {
+    /* per-severity values */
+  },
 }
 
 const successDefaults = {
@@ -147,7 +153,9 @@ const successDefaults = {
   borderColor: '{{primitives.defaultVariant.defaultState.severity.success.bg}}',
   color: '{{primitives.defaultVariant.defaultState.severity.success.contrast}}',
   shadow: '{{primitives.shadow.none}}',
-  closeButton: { /* per-severity values */ },
+  closeButton: {
+    /* per-severity values */
+  },
 }
 
 // Apply in the usage schema — each severity gets its OWN .default()
