@@ -401,7 +401,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     ),
     map((params) => ({
       ...params,
-      data: this.filterItems([params.data, params.filters, params.translatedItems], params.clientSideFiltering),
+      data: this.filterItems([params.data, params.filters], params.clientSideFiltering),
     })),
     map((params) => ({
       ...params,
@@ -676,8 +676,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       deleteDisabled =
         !!actionFields.enabled.deleteAction && !this.fieldIsTruthy(selectedItem, actionFields.enabled.deleteAction)
 
-      viewVisible = !actionFields.visible.viewAction || this.fieldIsTruthy(selectedItem, actionFields.visible.viewAction)
-      editVisible = !actionFields.visible.editAction || this.fieldIsTruthy(selectedItem, actionFields.visible.editAction)
+      viewVisible =
+        !actionFields.visible.viewAction || this.fieldIsTruthy(selectedItem, actionFields.visible.viewAction)
+      editVisible =
+        !actionFields.visible.editAction || this.fieldIsTruthy(selectedItem, actionFields.visible.editAction)
       deleteVisible =
         !actionFields.visible.deleteAction || this.fieldIsTruthy(selectedItem, actionFields.visible.deleteAction)
     }

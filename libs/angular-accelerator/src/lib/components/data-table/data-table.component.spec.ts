@@ -1092,8 +1092,6 @@ describe('DataTableComponent', () => {
         expect(callbackSpy).not.toHaveBeenCalled()
       })
 
-
-
       it('should execute actionCallback when no routerLink is provided', async () => {
         const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
         const callbackSpy = jest.fn()
@@ -1239,7 +1237,9 @@ describe('DataTableComponent', () => {
     it('should return item id', () => {
       const item = { id: 'abc-123' } as Row
       const callRowTrackBy = (c: DataTableComponent, i: any) =>
-        (c.rowTrackByFunction as any).length >= 2 ? (c.rowTrackByFunction as any)(0, i) : (c.rowTrackByFunction as any)(i)
+        (c.rowTrackByFunction as any).length >= 2
+          ? (c.rowTrackByFunction as any)(0, i)
+          : (c.rowTrackByFunction as any)(i)
 
       const result = callRowTrackBy(component, item)
 
@@ -1596,7 +1596,7 @@ describe('DataTableComponent', () => {
       expect(result.options).toEqual([
         {
           label: 'T1',
-          value: 'T1',
+          value: 'k1',
           toFilterBy: 'T1',
         },
       ])
@@ -2326,8 +2326,8 @@ describe('DataTableComponent', () => {
   })
 
   it('should return row summary for object entries when getRowSummary is called', () => {
-      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
+    const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
 
-      expect(summary).toBe('id: 1,name: Alice,active: true')
+    expect(summary).toBe('id: 1,name: Alice,active: true')
   })
 })

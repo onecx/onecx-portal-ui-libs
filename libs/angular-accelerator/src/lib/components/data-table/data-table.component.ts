@@ -274,7 +274,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     ),
     map((params) => ({
       ...params,
-      rows: this.filterItems([params.rows, params.filters, params.translations], params.clientSideFiltering),
+      rows: this.filterItems([params.rows, params.filters], params.clientSideFiltering),
     })),
     map((params) => ({
       ...params,
