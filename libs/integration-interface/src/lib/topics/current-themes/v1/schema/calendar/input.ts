@@ -15,18 +15,23 @@ export class CalendarInputSchema {
       size: '{{primitives.font.size}}',
       weight: '{{primitives.font.weight}}',
     }),
-    sm: z
-      .object({
-        padding: withRef(z.string()).default('{{primitives.space.sm}}'),
-        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
-      })
-      .optional(),
-    lg: z
-      .object({
-        padding: withRef(z.string()).default('{{primitives.space.lg}}'),
-        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
-      })
-      .optional(),
+  }
+
+  private static readonly sizeTokens = {
+    sm: z.object({
+      padding: withRef(z.string()).default('{{primitives.space.sm}}'),
+      fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+    }).default({
+      padding: '{{primitives.space.sm}}',
+      fontSize: '{{primitives.font.size}}',
+    }),
+    lg: z.object({
+      padding: withRef(z.string()).default('{{primitives.space.lg}}'),
+      fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
+    }).default({
+      padding: '{{primitives.space.lg}}',
+      fontSize: '{{primitives.font.size}}',
+    }),
   }
 
   private static readonly commonBorder = {
@@ -49,7 +54,7 @@ export class CalendarInputSchema {
     placeholderColor: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
   }
 
-  private static readonly hoverTokens = z.object({
+  static readonly hoverTokens = z.object({
     ...this.commonTokens,
     background: z
       .union([bg, withRef(z.string())])
@@ -63,7 +68,7 @@ export class CalendarInputSchema {
     placeholderColor: color.default('{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}'),
   })
 
-  private static readonly focusTokens = z.object({
+  static readonly focusTokens = z.object({
     ...this.commonTokens,
     background: z
       .union([bg, withRef(z.string())])
@@ -75,17 +80,20 @@ export class CalendarInputSchema {
       style: '{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}',
     }),
     placeholderColor: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.width}}',
-      offset: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.offset}}',
-      shadow: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.shadow}}',
-      radius: '{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.radius}}',
-    }),
   })
 
-  private static readonly disabledTokens = z.object({
+  private static readonly focusRingTokens = {
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.border.width.md}}',
+      offset: '{{primitives.border.offset.none}}',
+      shadow: '{{primitives.shadow.none}}',
+      radius: '{{primitives.radius.md}}',
+    }),
+  }
+
+  static readonly disabledTokens = z.object({
     ...this.commonTokens,
     background: z
       .union([bg, withRef(z.string())])
@@ -99,7 +107,7 @@ export class CalendarInputSchema {
     placeholderColor: color.default('{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}'),
   })
 
-  private static readonly invalidTokens = z.object({
+  static readonly invalidTokens = z.object({
     ...this.commonTokens,
     background: z
       .union([bg, withRef(z.string())])
@@ -116,6 +124,8 @@ export class CalendarInputSchema {
   static readonly schema = z
     .object({
       ...this.defaultStateTokens,
+      ...this.sizeTokens,
+      ...this.focusRingTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),

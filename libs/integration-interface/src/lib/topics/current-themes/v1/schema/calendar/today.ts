@@ -10,8 +10,8 @@ export class CalendarTodaySchema {
     .object({
       background: z
         .union([bg, withRef(z.string())])
-        .default('{{primitives.variant.primary.defaultState.defaultVariant.bg}}'),
-      color: color.default('{{primitives.variant.primary.defaultState.defaultVariant.contrast}}'),
+        .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
+      color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
     })
     .register(themeSchemaRegistry, { id: 'calendarToday' })
 }

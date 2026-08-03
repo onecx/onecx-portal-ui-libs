@@ -14,7 +14,11 @@ export class CalendarNavigationSelectorSchema {
       size: '{{primitives.font.size}}',
     }),
     border: border.default({
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.none}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.md}}',
     }),
   }
 
@@ -22,33 +26,37 @@ export class CalendarNavigationSelectorSchema {
     ...this.commonTokens,
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
   }
 
-  private static readonly hoverTokens = z.object({
+  static readonly hoverTokens = z.object({
     ...this.commonTokens,
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.hover.defaultSeverity.contrast}}'),
+    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
   })
 
-  private static readonly focusTokens = z.object({
+  static readonly focusTokens = z.object({
     ...this.commonTokens,
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.focus.defaultSeverity.contrast}}'),
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.width}}',
-      offset: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.offset}}',
-      shadow: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.shadow}}',
-      radius: '{{primitives.defaultVariant.focus.defaultSeverity.focusRing.radius}}',
-    }),
+    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
   })
+
+  private static readonly focusRingTokens = {
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.border.width.md}}',
+      offset: '{{primitives.border.offset.none}}',
+      shadow: '{{primitives.shadow.none}}',
+      radius: '{{primitives.radius.md}}',
+    }),
+  }
 
   static readonly schema = z
     .object({
       ...this.defaultStateTokens,
+      ...this.focusRingTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
     })
