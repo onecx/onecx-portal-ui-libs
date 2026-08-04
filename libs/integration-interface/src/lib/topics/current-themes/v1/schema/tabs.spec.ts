@@ -4,6 +4,13 @@ import {
   expectExactUndefinedTokens,
   expectTokens,
 } from './test-utils'
+import { TabsNavButtonSchema } from './tabs/navButton'
+import { TabsViewportSchema } from './tabs/viewport'
+import { TabsActiveBarSchema } from './tabs/activeBar'
+import { TabsTabListSchema } from './tabs/list'
+import { TabsListContentSchema } from './tabs/listContent'
+import { TabsTabSchema } from './tabs/tab'
+import { TabsPanelSchema } from './tabs/panel'
 
 describe('tabs schema', () => {
     it('parses an empty object', () => {
@@ -19,16 +26,11 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value, tabs.shape, [])
             expectExactTokens(value, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
                 gap: '{{primitives.space.md}}',
-                focusRing: {
-                    radius: '{{primitives.focusRing.radius}}',
-                    offset: '{{primitives.focusRing.offset}}',
-                    width: '{{primitives.focusRing.width}}',
-                    shadow: '{{primitives.focusRing.shadow}}',
-                },
                 shadow: '{{primitives.shadow.none}}',
                 settings: expect.any(Object),
                 tablist: expect.any(Object),
@@ -47,6 +49,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.navButtons, TabsNavButtonSchema.schema.shape, [])
             expectExactTokens(value?.navButtons, {
                 nextIcon: '{{primitives.icon.arrowRight}}',
                 prevIcon: '{{primitives.icon.arrowLeft}}',
@@ -61,6 +64,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.viewport, TabsViewportSchema.schema.shape, [])
             expectExactTokens(value?.viewport, {
                 overscrollBehavior: 'contain auto',
                 scrollBehavior: 'smooth',
@@ -77,10 +81,12 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tab?.activeBar, TabsActiveBarSchema.schema.shape, [])
             expectExactTokens(value?.tab?.activeBar, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-                size: '{{primitives.border.width.sm}}',
-                bottom: '{{primitives.space.none}}',
+                height: '{{primitives.border.width.sm}}',
+                position: 'bottom',
+                positionOffset: '{{primitives.space.none}}',
                 transition: {
                     duration: '{{primitives.transition.duration}}',
                 },
@@ -96,6 +102,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tablist, TabsTabListSchema.schema.shape, [])
             expectExactTokens(value?.tablist, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -121,6 +128,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tablist?.content, TabsListContentSchema.schema.shape, [])
             expectExactTokens(value?.tablist?.content, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
                 gap: '{{primitives.space.md}}',
@@ -142,6 +150,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tab, TabsTabSchema.schema.shape, [])
             expectExactTokens(value?.tab, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -152,6 +161,12 @@ describe('tabs schema', () => {
                 icon: expect.any(Object),
                 activeBar: expect.any(Object),
                 tooltip: expect.any(Object),
+                focusRing: {
+                    radius: '{{primitives.focusRing.radius}}',
+                    offset: '{{primitives.focusRing.offset}}',
+                    width: '{{primitives.focusRing.width}}',
+                    shadow: '{{primitives.focusRing.shadow}}',
+                },
                 border: {
                     width: '{{primitives.border.width.none}}',
                     radius: '{{primitives.border.radius.none}}',
@@ -172,6 +187,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tab?.hover, TabsTabSchema.tabHoverStateTokens.shape, [])
             expectExactTokens(value?.tab?.hover, {
                 background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
@@ -195,6 +211,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tab?.active, TabsTabSchema.tabActiveStateTokens.shape, [])
             expectExactTokens(value?.tab?.active, {
                 background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
@@ -217,6 +234,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tab?.focus, TabsTabSchema.tabFocusStateTokens.shape, [])
             expectExactTokens(value?.tab?.focus, {
                 background: '{{primitives.defaultVariant.focusedState.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.focusedState.defaultSeverity.contrast}}',
@@ -237,8 +255,9 @@ describe('tabs schema', () => {
             const result = tabs.safeParse({})
 
             expect(result.success).toBe(true)
-            
+
             const value = result.data
+            expectExactUndefinedTokens(value?.tab?.disabled, TabsTabSchema.tabDisabledStateTokens.shape, [])
             expectExactTokens(value?.tab?.disabled, {
                 background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
@@ -254,6 +273,7 @@ describe('tabs schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data
+            expectExactUndefinedTokens(value?.tabpanel, TabsPanelSchema.schema.shape, [])
             expectExactTokens(value?.tabpanel, {
                 background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
                 color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -262,9 +282,9 @@ describe('tabs schema', () => {
                 alignItems: '{{primitives.layout.alignItems}}',
                 justifyContent: '{{primitives.layout.justifyContent}}',
                 font: {
-                    size: '{{primitives.font.size.md}}',
-                    weight: '{{primitives.font.weight.normal}}',
-                    lineHeight: '{{primitives.font.lineHeight.md}}',
+                    size: '{{primitives.font.size}}',
+                    weight: '{{primitives.font.weight}}',
+                    lineHeight: '{{primitives.font.lineHeight}}',
                 },
             })
         })

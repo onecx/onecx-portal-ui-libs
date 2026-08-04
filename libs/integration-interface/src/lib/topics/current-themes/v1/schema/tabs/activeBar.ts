@@ -14,8 +14,9 @@ export class TabsActiveBarSchema {
         background: z
             .union([bg, withRef(z.string())])
             .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-        size: withRef(z.string()).default("{{primitives.border.width.sm}}"),
-        bottom: withRef(z.string()).default("{{primitives.space.none}}"),
+        height: withRef(z.string()).default("{{primitives.border.width.sm}}"),
+        position: withRef(z.enum(['top', 'bottom', 'left', 'right'])).default('bottom'),
+        positionOffset: withRef(z.string()).default("{{primitives.space.none}}"),
         transition: transition.default(this.tabsActiveBarTransitionTokens),
         shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
     }

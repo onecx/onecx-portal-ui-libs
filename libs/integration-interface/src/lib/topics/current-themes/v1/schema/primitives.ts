@@ -188,9 +188,7 @@ export const bgContrast = z.object({
   contrast: color.optional(),
 })
 
-// Defined here (before primitives) so it can be referenced in the primitives object.
-// Also used further below in usages/blockStyles for per-component typography overrides.
-export const font = z
+export const fontShape = z
   .object({
     family: withRef(z.string()).optional(),
     size: z.union([
@@ -223,6 +221,17 @@ export const font = z
         xl: withRef(z.string()).optional(),
       }),
     ]).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'fontShape' })
+
+// Defined here (before primitives) so it can be referenced in the primitives object.
+// Also used further below in usages/blockStyles for per-component typography overrides.
+export const font = z
+  .object({
+    family: withRef(z.string()).optional(),
+    size: withRef(z.string()).optional(),
+    weight: withRef(z.string()).optional(),
+    lineHeight: withRef(z.string()).optional(),
     letterSpacing: withRef(z.string()).optional(),
     style: withRef(z.string()).optional(),
   })
@@ -334,7 +343,7 @@ type PrimitivesShape = {
   space: z.ZodOptional<typeof space>
   layout: z.ZodOptional<typeof layout>
   radius: z.ZodOptional<typeof radiusSizes>
-  icon: z.ZodOptional<typeof icon>
+  icon: z.ZodOptional<typeof iconSizes>
   border: z.ZodOptional<typeof borderShape>
   focusRing: z.ZodOptional<typeof focusRingShape>
   transition: z.ZodOptional<typeof transition>
@@ -351,7 +360,7 @@ const primitivesShape: PrimitivesShape = {
   space: (space as typeof space).optional(),
   layout: (layout as typeof layout).optional(),
   radius: (radiusSizes as typeof radiusSizes).optional(),
-  icon: (icon as typeof icon).optional(),
+  icon: (iconSizes as typeof iconSizes).optional(),
   // Global default border style applied to components that don't define their own border token
   border: (borderShape as typeof borderShape).optional(),
   focusRing: (focusRingShape as typeof focusRingShape).optional(),

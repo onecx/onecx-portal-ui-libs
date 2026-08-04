@@ -3,7 +3,7 @@
  */
 import z from "zod"
 import { themeSchemaRegistry } from "../registry"
-import { bg, border, color, font, icon, withRef } from "../primitives"
+import { bg, border, color, focusRingShape, font, icon, withRef } from "../primitives"
 import { tooltip } from "../tooltip"
 import { TabsActiveBarSchema } from "./activeBar"
 
@@ -15,6 +15,13 @@ export class TabsTabSchema {
         offset: "{{primitives.border.offset.none}}",
     }
 
+    private static readonly tabsFocusRingTokens = {
+        radius: "{{primitives.focusRing.radius}}",
+        offset: "{{primitives.focusRing.offset}}",
+        width: "{{primitives.focusRing.width}}",
+        shadow: "{{primitives.focusRing.shadow}}",
+    }
+
     private static readonly tabDefaultStateTokens = {
         background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}"),
         color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}"),
@@ -23,11 +30,11 @@ export class TabsTabSchema {
         alignItems: withRef(z.string()).default("{{primitives.layout.alignItems}}"),
         gap: withRef(z.string()).default("{{primitives.space.md}}"),
         icon: icon.default({
-            size: "{{primitives.icon.size.sm}}",
+            size: "{{icon.size.sm}}",
             color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-            content: "{{primitives.icon.content}}",
-            url: "{{primitives.icon.url}}",
-            font: {weight: "{{primitives.font.weight.normal}}"},
+            content: "{{icon.content}}",
+            url: "{{icon.url}}",
+            font: {weight: "{{primitives.font.weight}}"},
         }),
         activeBar: (TabsActiveBarSchema.schema as typeof TabsActiveBarSchema.schema).prefault({}),
         tooltip: tooltip.prefault({}),
@@ -36,9 +43,10 @@ export class TabsTabSchema {
             style: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
             color: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
         }),
+        focusRing: focusRingShape.default(this.tabsFocusRingTokens)
     }
 
-    private static readonly tabHoverStateTokens = z.object({
+    static readonly tabHoverStateTokens = z.object({
         background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}"),
         color: color.default("{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}"),
         cursor: withRef(z.string()).default("{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}"),
@@ -52,7 +60,7 @@ export class TabsTabSchema {
         }),
     });
 
-    private static readonly tabFocusStateTokens = z.object({
+    static readonly tabFocusStateTokens = z.object({
         background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.focusedState.defaultSeverity.bg}}"),
         color: color.default("{{primitives.defaultVariant.focusedState.defaultSeverity.contrast}}"),
         border: border.default({
@@ -65,7 +73,7 @@ export class TabsTabSchema {
         }),
     });
 
-    private static readonly tabActiveStateTokens = z.object({
+    static readonly tabActiveStateTokens = z.object({
         background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.state.active.defaultSeverity.bg}}"),
         color: color.default("{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}"),
         border: border.default({
@@ -78,7 +86,7 @@ export class TabsTabSchema {
         }),
     });
 
-    private static readonly tabDisabledStateTokens = z.object({
+    static readonly tabDisabledStateTokens = z.object({
         background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}"),
         color: color.default("{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}"),
         cursor: withRef(z.string()).default("{{primitives.defaultVariant.state.disabled.defaultSeverity.cursor}}"),

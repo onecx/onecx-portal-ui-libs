@@ -12,12 +12,6 @@ import { TabsTabSchema } from "./tab"
  * Tabs component schema definition
  */
 export class TabsSchema {
-  private static readonly tabsFocusRingTokens = {
-    radius: "{{primitives.focusRing.radius}}",
-    offset: "{{primitives.focusRing.offset}}",
-    width: "{{primitives.focusRing.width}}",
-    shadow: "{{primitives.focusRing.shadow}}",
-  }
 
   private static readonly tokens = {
     background: z
@@ -27,7 +21,6 @@ export class TabsSchema {
     // Gap between controls/lists elements.
     gap: withRef(z.string()).default('{{primitives.space.md}}'),
     shadow: withRef(z.string()).default('{{primitives.shadow.none}}'),
-    focusRing: focusRingShape.default(this.tabsFocusRingTokens),
   }
 
   static readonly schema = z

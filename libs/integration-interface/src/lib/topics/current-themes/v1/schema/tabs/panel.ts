@@ -8,9 +8,9 @@ import { bg, color, font, withRef } from "../primitives"
 
 export class TabsPanelSchema {
     private static readonly panelFontTokens = {
-        size: "{{primitives.font.size.md}}",
-        weight: "{{primitives.font.weight.normal}}",
-        lineHeight: "{{primitives.font.lineHeight.md}}",
+        size: "{{primitives.font.size}}",
+        weight: "{{primitives.font.weight}}",
+        lineHeight: "{{primitives.font.lineHeight}}",
     }
 
     private static readonly tokens = {
