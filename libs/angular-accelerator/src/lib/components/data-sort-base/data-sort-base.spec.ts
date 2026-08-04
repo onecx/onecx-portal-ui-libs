@@ -29,9 +29,7 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }]
       const columns: any[] = [{ id: 'status', columnType: ColumnType.TRANSLATION_KEY }]
 
-      const result = await firstValueFrom(
-        sut.translateItems(items as any, columns, false, false)
-      )
+      const result = await firstValueFrom(sut.translateItems(items as any, columns, false, false))
 
       expect(translateService.get).not.toHaveBeenCalled()
       expect(result).toEqual({})
@@ -46,9 +44,7 @@ describe('DataSortBase', () => {
         { id: 'name', columnType: ColumnType.STRING },
       ]
 
-      const result = await firstValueFrom(
-        sut.translateItems(items as any, columns, true, false)
-      )
+      const result = await firstValueFrom(sut.translateItems(items as any, columns, true, false))
 
       expect(translateService.get).toHaveBeenCalledWith(['A', 'B'])
       expect(result).toEqual({
@@ -67,7 +63,7 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: FilterType.EQUALS, value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, {}], false)
+      const result = sut.filterItems([items as any, filters as any], false)
 
       expect(result).toEqual(items)
     })
@@ -81,7 +77,7 @@ describe('DataSortBase', () => {
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true },
       ]
 
-      const result = sut.filterItems([items as any, filters as any, {}], true)
+      const result = sut.filterItems([items as any, filters as any], true)
 
       expect(result).toEqual([{ status: 'A' }])
     })
@@ -92,7 +88,7 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: 'SOMETHING_ELSE', value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, {}], true)
+      const result = sut.filterItems([items as any, filters as any], true)
 
       expect(result).toEqual(items)
     })
@@ -108,11 +104,7 @@ describe('DataSortBase', () => {
       const noSort = sut.sortItems([items as any, '', DataSortDirection.ASCENDING, {}], columns, true)
       expect(noSort).toEqual(items)
 
-      const disabled = sut.sortItems(
-        [items as any, 'name', DataSortDirection.ASCENDING, {}],
-        columns,
-        false
-      )
+      const disabled = sut.sortItems([items as any, 'name', DataSortDirection.ASCENDING, {}], columns, false)
       expect(disabled).toEqual(items)
     })
 
@@ -140,11 +132,7 @@ describe('DataSortBase', () => {
       const items = [{ created: d2 }, { created: d1 }]
       const columns: any[] = [{ id: 'created', columnType: ColumnType.DATE }]
 
-      const result = sut.sortItems(
-        [items as any, 'created', DataSortDirection.ASCENDING, {}],
-        columns,
-        true
-      )
+      const result = sut.sortItems([items as any, 'created', DataSortDirection.ASCENDING, {}], columns, true)
 
       expect(result).toEqual([{ created: d1 }, { created: d2 }])
     })
@@ -155,11 +143,7 @@ describe('DataSortBase', () => {
       const items = [{ name: 'a' }, { name: 'b' }]
       const columns: any[] = [{ id: 'name', columnType: ColumnType.STRING }]
 
-      const result = sut.sortItems(
-        [items as any, 'name', DataSortDirection.DESCENDING, {}],
-        columns,
-        true
-      )
+      const result = sut.sortItems([items as any, 'name', DataSortDirection.DESCENDING, {}], columns, true)
 
       expect(result).toEqual([{ name: 'b' }, { name: 'a' }])
     })
