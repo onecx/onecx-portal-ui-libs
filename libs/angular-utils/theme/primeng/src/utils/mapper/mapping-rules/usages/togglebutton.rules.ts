@@ -1,6 +1,5 @@
 import type { MappingRule } from '../../mapper.types'
 import { toColorString } from '../../mapper.utils'
-
 export const togglebuttonMappingRules: MappingRule[] = [
   // Root properties
   {
@@ -23,7 +22,7 @@ export const togglebuttonMappingRules: MappingRule[] = [
     from: 'usages.togglebutton.transitionDuration',
     to: 'components.togglebutton.root.transitionDuration',
   },
-
+  
   // Colors - default (unchecked)
   {
     from: 'usages.togglebutton.background',
@@ -40,7 +39,6 @@ export const togglebuttonMappingRules: MappingRule[] = [
     to: 'components.togglebutton.colorScheme.{mode}.root.borderColor',
     transform: toColorString,
   },
-
   // Colors - hover state
   {
     from: 'usages.togglebutton.hover.background',
@@ -50,6 +48,18 @@ export const togglebuttonMappingRules: MappingRule[] = [
   {
     from: 'usages.togglebutton.hover.color',
     to: 'components.togglebutton.colorScheme.{mode}.root.hoverColor',
+    transform: toColorString,
+  },
+
+  // Colors - focus state (handled via CSS rules)
+  {
+    from: 'usages.togglebutton.focus.background',
+    to: 'components.togglebutton.colorScheme.{mode}.root.background',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.focus.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.color',
     transform: toColorString,
   },
 
@@ -69,7 +79,6 @@ export const togglebuttonMappingRules: MappingRule[] = [
     to: 'components.togglebutton.colorScheme.{mode}.root.checkedBorderColor',
     transform: toColorString,
   },
-
   // Checked variant states - PrimeNG doesn't have separate tokens for these,
   // so we map them to the base checked properties or use CSS rules
   {
@@ -83,6 +92,26 @@ export const togglebuttonMappingRules: MappingRule[] = [
     transform: toColorString,
   },
   {
+    from: 'usages.togglebutton.checked.hover.border.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedBorderColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.focus.background',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedBackground',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.focus.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.focus.border.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedBorderColor',
+    transform: toColorString,
+  },
+  {
     from: 'usages.togglebutton.checked.disabled.background',
     to: 'components.togglebutton.colorScheme.{mode}.root.disabledBackground',
     transform: toColorString,
@@ -92,7 +121,26 @@ export const togglebuttonMappingRules: MappingRule[] = [
     to: 'components.togglebutton.colorScheme.{mode}.root.disabledColor',
     transform: toColorString,
   },
-
+  {
+    from: 'usages.togglebutton.checked.disabled.border.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.disabledBorderColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.invalid.background',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedBackground',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.invalid.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.checkedColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.togglebutton.checked.invalid.border.color',
+    to: 'components.togglebutton.colorScheme.{mode}.root.invalidBorderColor',
+    transform: toColorString,
+  },
   // Colors - disabled state
   {
     from: 'usages.togglebutton.disabled.background',
@@ -109,14 +157,12 @@ export const togglebuttonMappingRules: MappingRule[] = [
     to: 'components.togglebutton.colorScheme.{mode}.root.disabledBorderColor',
     transform: toColorString,
   },
-
   // Colors - invalid state
   {
     from: 'usages.togglebutton.invalid.border.color',
     to: 'components.togglebutton.colorScheme.{mode}.root.invalidBorderColor',
     transform: toColorString,
   },
-
   // Focus ring
   {
     from: 'usages.togglebutton.focusRing.width',
@@ -139,27 +185,24 @@ export const togglebuttonMappingRules: MappingRule[] = [
     from: 'usages.togglebutton.focusRing.shadow',
     to: 'components.togglebutton.root.focusRing.shadow',
   },
-
   // Size variants - sm
   {
-    from: 'usages.togglebutton.sm.fontSize',
+    from: 'usages.togglebutton.sm.font.size',
     to: 'components.togglebutton.root.sm.fontSize',
   },
   {
     from: 'usages.togglebutton.sm.padding',
     to: 'components.togglebutton.root.sm.padding',
   },
-
   // Size variants - lg
   {
-    from: 'usages.togglebutton.lg.fontSize',
+    from: 'usages.togglebutton.lg.font.size',
     to: 'components.togglebutton.root.lg.fontSize',
   },
   {
     from: 'usages.togglebutton.lg.padding',
     to: 'components.togglebutton.root.lg.padding',
   },
-
   // Icon colors (default/unchecked)
   {
     from: 'usages.togglebutton.icon.color',
@@ -176,20 +219,13 @@ export const togglebuttonMappingRules: MappingRule[] = [
     to: 'components.togglebutton.colorScheme.{mode}.icon.disabledColor',
     transform: toColorString,
   },
-
   // Icon colors (checked variant)
   {
-    from: 'usages.togglebutton.checked.icon.color',
+    from: 'usages.togglebutton.icon.checked.color',
     to: 'components.togglebutton.colorScheme.{mode}.icon.checkedColor',
     transform: toColorString,
   },
-  {
-    from: 'usages.togglebutton.checked.icon.hover.color',
-    to: 'components.togglebutton.colorScheme.{mode}.icon.checkedColor',
-    transform: toColorString,
-  },
-
-  // Content sub-element (default/unchecked)
+  // Content sub-element
   {
     from: 'usages.togglebutton.content.padding',
     to: 'components.togglebutton.content.padding',
@@ -197,24 +233,5 @@ export const togglebuttonMappingRules: MappingRule[] = [
   {
     from: 'usages.togglebutton.content.border.radius',
     to: 'components.togglebutton.content.borderRadius',
-  },
-  {
-    from: 'usages.togglebutton.content.sm.padding',
-    to: 'components.togglebutton.content.sm.padding',
-  },
-  {
-    from: 'usages.togglebutton.content.lg.padding',
-    to: 'components.togglebutton.content.lg.padding',
-  },
-
-  // Content (checked variant)
-  {
-    from: 'usages.togglebutton.checked.content.background',
-    to: 'components.togglebutton.colorScheme.{mode}.content.checkedBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.togglebutton.checked.content.shadow',
-    to: 'components.togglebutton.content.checkedShadow',
   },
 ]

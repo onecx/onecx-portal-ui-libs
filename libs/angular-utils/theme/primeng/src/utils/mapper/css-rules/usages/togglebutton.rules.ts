@@ -1,9 +1,4 @@
 import type { CssRule } from '../../mapper.types'
-
-// CSS rules for properties that have no PrimeNG preset equivalent.
-// Add a CssRule entry only when the property genuinely cannot be expressed
-// via a mapping rule. See dev-docs/theming/theme-v2.adoc § Adding a New CSS Rule.
-
 export const togglebuttonCssRules: CssRule[] = [
   // Font properties
   {
@@ -31,8 +26,19 @@ export const togglebuttonCssRules: CssRule[] = [
       },
     ],
   },
+  
+  // Hover border color
+  {
+    selector: '.p-togglebutton:not(:disabled):hover',
+    declarations: [
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.hover.border.color',
+      },
+    ],
+  },
 
-  // Checked hover state 
+  // Checked hover state
   {
     selector: '.p-togglebutton.p-togglebutton-checked:not(:disabled):hover',
     declarations: [
@@ -44,10 +50,33 @@ export const togglebuttonCssRules: CssRule[] = [
         property: 'color',
         from: 'usages.togglebutton.checked.hover.color',
       },
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.checked.hover.border.color',
+      },
     ],
   },
 
-  // Checked disabled state 
+  // Checked focus state
+  {
+    selector: '.p-togglebutton.p-togglebutton-checked:focus',
+    declarations: [
+      {
+        property: 'background',
+        from: 'usages.togglebutton.checked.focus.background',
+      },
+      {
+        property: 'color',
+        from: 'usages.togglebutton.checked.focus.color',
+      },
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.checked.focus.border.color',
+      },
+    ],
+  },
+
+  // Checked disabled state
   {
     selector: '.p-togglebutton.p-togglebutton-checked:disabled',
     declarations: [
@@ -59,6 +88,40 @@ export const togglebuttonCssRules: CssRule[] = [
         property: 'color',
         from: 'usages.togglebutton.checked.disabled.color',
       },
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.checked.disabled.border.color',
+      },
+    ],
+  },
+
+  // Checked invalid state
+  {
+    selector: '.p-togglebutton.p-togglebutton-checked.ng-invalid.ng-dirty',
+    declarations: [
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.checked.invalid.border.color',
+      },
+    ],
+  },
+
+  // Focus state (unchecked)
+  {
+    selector: '.p-togglebutton:focus',
+    declarations: [
+      {
+        property: 'background',
+        from: 'usages.togglebutton.focus.background',
+      },
+      {
+        property: 'color',
+        from: 'usages.togglebutton.focus.color',
+      },
+      {
+        property: 'border-color',
+        from: 'usages.togglebutton.focus.border.color',
+      },
     ],
   },
 
@@ -68,7 +131,39 @@ export const togglebuttonCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.togglebutton.checked.icon.hover.color',
+        from: 'usages.togglebutton.icon.checked.hover.color',
+      },
+    ],
+  },
+
+  // Checked icon focus state
+  {
+    selector: '.p-togglebutton.p-togglebutton-checked:focus .p-togglebutton-icon',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.togglebutton.icon.checked.focus.color',
+      },
+    ],
+  },
+  // Checked icon disabled state
+  {
+    selector: '.p-togglebutton.p-togglebutton-checked:disabled .p-togglebutton-icon',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.togglebutton.icon.checked.disabled.color',
+      },
+    ],
+  },
+
+  // Icon focus state (unchecked)
+  {
+    selector: '.p-togglebutton:focus .p-togglebutton-icon',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.togglebutton.icon.focus.color',
       },
     ],
   },
