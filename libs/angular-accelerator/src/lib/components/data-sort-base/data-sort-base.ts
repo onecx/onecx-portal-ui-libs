@@ -53,7 +53,7 @@ export class DataSortBase {
   }
 
   filterItems(
-    [items, filters, translations]: [RowListGridData[], Filter[], Record<string, Record<string, string>>],
+    [items, filters]: [RowListGridData[], Filter[]],
     clientSideFiltering: boolean
   ): RowListGridData[] {
     if (!clientSideFiltering) {
