@@ -448,7 +448,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     ),
     map((params) => ({
       ...params,
-      data: this.filterItems([params.data, params.filters, params.translatedItems], params.clientSideFiltering),
+      data: this.filterItems([params.data, params.filters], params.clientSideFiltering),
     })),
     map((params) => ({
       ...params,
