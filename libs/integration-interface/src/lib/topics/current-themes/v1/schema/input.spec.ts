@@ -1,5 +1,12 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
-import { input, inputFilledVariant, inputFilledVariantState, inputFocusRingSchema, inputSize, inputState, inputVariant } from './input'
+import {
+  input,
+  inputFilledVariant,
+  inputFilledVariantState,
+  inputFocusRingSchema,
+  inputSize,
+  inputState,
+} from './input'
 
 describe('input schema', () => {
   it('parses an empty object', () => {
@@ -20,50 +27,232 @@ describe('input schema', () => {
         transition: {
           duration: '{{primitives.transition.duration}}',
         },
-        defaultVariant: expect.any(Object),
-        variants: expect.any(Object),
+        font: {
+          weight: '{{primitives.font.weight}}',
+          size: '{{primitives.font.size}}',
+        },
+        padding: {
+          x: '{{primitives.space.md}}',
+          y: '{{primitives.space.sm}}',
+        },
+        border: {
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+          width: '{{primitives.border.width.sm}}',
+          offset: '{{primitives.border.offset.none}}',
+          radius: '{{primitives.border.radius.md}}',
+          shadow: '{{primitives.shadow.none}}',
+        },
+        focusRing: {
+          width: '{{primitives.border.width.md}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+          offset: '{{primitives.border.offset.none}}',
+          radius: '{{primitives.radius.md}}',
+          shadow: '{{primitives.shadow.none}}',
+        },
+        defaultState: expect.any(Object),
+        hover: expect.any(Object),
+        focus: expect.any(Object),
+        disabled: expect.any(Object),
+        invalid: expect.any(Object),
+        sizes: expect.any(Object),
+        filled: expect.any(Object),
       })
     })
 
-    describe('defaultVariant', () => {
+    describe('defaultState', () => {
       it('should apply defaults', () => {
         const result = input.safeParse({})
 
         expect(result.success).toBe(true)
 
         const value = result.data
-        expectExactUndefinedTokens(value?.defaultVariant, inputVariant.shape, [])
-        expectExactTokens(value?.defaultVariant, {
-          font: {
-            weight: '{{primitives.font.weight}}',
-            size: '{{primitives.font.size}}',
-          },
-          padding: {
-            x: '{{primitives.space.md}}',
-            y: '{{primitives.space.sm}}',
-          },
+        expectExactUndefinedTokens(value?.defaultState, inputState.shape, [])
+        expectExactTokens(value?.defaultState, {
+          background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
           border: {
             color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
             style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
             width: '{{primitives.border.width.sm}}',
-            offset: '{{primitives.border.offset.sm}}',
+            offset: '{{primitives.border.offset.none}}',
             radius: '{{primitives.border.radius.md}}',
-            shadow: '{{primitives.shadow.sm}}',
+            shadow: '{{primitives.shadow.none}}',
           },
-          focusRing: {
-            width: '{{primitives.focusRing.width}}',
-            style: '{{primitives.focusRing.style}}',
-            color: '{{primitives.focusRing.color}}',
-            offset: '{{primitives.focusRing.offset}}',
+          placeholder: {
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+          },
+        })
+      })
+    })
+
+    describe('hover state', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.hover, inputState.shape, [])
+        expectExactTokens(value?.hover, {
+          background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+          border: {
+            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            offset: '{{primitives.border.offset.none}}',
             radius: '{{primitives.border.radius.md}}',
-            shadow: '{{primitives.focusRing.shadow}}',
+            shadow: '{{primitives.shadow.none}}',
           },
+          placeholder: {
+            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+          },
+        })
+      })
+    })
+
+    describe('focus state', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.focus, inputState.shape, [])
+        expectExactTokens(value?.focus, {
+          background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+          border: {
+            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            offset: '{{primitives.border.offset.none}}',
+            radius: '{{primitives.border.radius.md}}',
+            shadow: '{{primitives.shadow.none}}',
+          },
+          placeholder: {
+            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+          },
+        })
+      })
+    })
+
+    describe('disabled state', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.disabled, inputState.shape, [])
+        expectExactTokens(value?.disabled, {
+          background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+          border: {
+            color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            offset: '{{primitives.border.offset.none}}',
+            radius: '{{primitives.border.radius.md}}',
+            shadow: '{{primitives.shadow.none}}',
+          },
+          placeholder: {
+            color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+          },
+        })
+      })
+    })
+
+    describe('invalid state', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.invalid, inputState.shape, [])
+        expectExactTokens(value?.invalid, {
+          background: '{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}',
+          color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+          border: {
+            color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            offset: '{{primitives.border.offset.none}}',
+            radius: '{{primitives.border.radius.md}}',
+            shadow: '{{primitives.shadow.none}}',
+          },
+          placeholder: {
+            color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+          },
+        })
+      })
+    })
+
+    describe('focusRing', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.focusRing, inputFocusRingSchema.shape, [])
+        expectExactTokens(value?.focusRing, {
+          width: '{{primitives.border.width.md}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+          offset: '{{primitives.border.offset.none}}',
+          radius: '{{primitives.radius.md}}',
+          shadow: '{{primitives.shadow.none}}',
+        })
+      })
+    })
+
+    describe('sizes', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactTokens(value?.sizes, {
+          sm: {
+            fontSize: '{{primitives.font.size}}',
+            padding: {
+              x: '{{primitives.space.sm}}',
+              y: '{{primitives.space.xs}}',
+            },
+          },
+          lg: {
+            fontSize: '{{primitives.font.size}}',
+            padding: {
+              x: '{{primitives.space.lg}}',
+              y: '{{primitives.space.md}}',
+            },
+          },
+        })
+
+        expectExactUndefinedTokens(value?.sizes?.sm, inputSize.shape, [])
+        expectExactUndefinedTokens(value?.sizes?.lg, inputSize.shape, [])
+      })
+    })
+
+    describe('filled variant', () => {
+      it('should apply defaults', () => {
+        const result = input.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.filled, inputFilledVariant.shape, [])
+        expectExactTokens(value?.filled, {
           defaultState: expect.any(Object),
           hover: expect.any(Object),
           focus: expect.any(Object),
           disabled: expect.any(Object),
           invalid: expect.any(Object),
-          sizes: expect.any(Object),
         })
       })
 
@@ -74,20 +263,12 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.defaultState, inputState.shape, [])
-          expectExactTokens(value?.defaultVariant?.defaultState, {
-            background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-            border: {
-              color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-              width: '{{primitives.border.width.sm}}',
-              offset: '{{primitives.border.offset.sm}}',
-              radius: '{{primitives.border.radius.md}}',
-              shadow: '{{primitives.shadow.sm}}',
-            },
+          expectExactUndefinedTokens(value?.filled?.defaultState, inputFilledVariantState.shape, [])
+          expectExactTokens(value?.filled?.defaultState, {
+            background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+            color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
             placeholder: {
-              color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+              color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
             },
           })
         })
@@ -100,20 +281,12 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.hover, inputState.shape, [])
-          expectExactTokens(value?.defaultVariant?.hover, {
-            background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-            border: {
-              color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-              width: '{{primitives.border.width.sm}}',
-              offset: '{{primitives.border.offset.sm}}',
-              radius: '{{primitives.border.radius.md}}',
-              shadow: '{{primitives.shadow.sm}}',
-            },
+          expectExactUndefinedTokens(value?.filled?.hover, inputFilledVariantState.shape, [])
+          expectExactTokens(value?.filled?.hover, {
+            background: '{{primitives.variant.primary.state.hover.defaultSeverity.bg}}',
+            color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
             placeholder: {
-              color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+              color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
             },
           })
         })
@@ -126,20 +299,12 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.focus, inputState.shape, [])
-          expectExactTokens(value?.defaultVariant?.focus, {
-            background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-            border: {
-              color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-              width: '{{primitives.border.width.sm}}',
-              offset: '{{primitives.border.offset.sm}}',
-              radius: '{{primitives.border.radius.md}}',
-              shadow: '{{primitives.shadow.sm}}',
-            },
+          expectExactUndefinedTokens(value?.filled?.focus, inputFilledVariantState.shape, [])
+          expectExactTokens(value?.filled?.focus, {
+            background: '{{primitives.variant.primary.state.focus.defaultSeverity.bg}}',
+            color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
             placeholder: {
-              color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+              color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
             },
           })
         })
@@ -152,20 +317,12 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.disabled, inputState.shape, [])
-          expectExactTokens(value?.defaultVariant?.disabled, {
-            background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-            border: {
-              color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
-              width: '{{primitives.border.width.sm}}',
-              offset: '{{primitives.border.offset.sm}}',
-              radius: '{{primitives.border.radius.md}}',
-              shadow: '{{primitives.shadow.sm}}',
-            },
+          expectExactUndefinedTokens(value?.filled?.disabled, inputFilledVariantState.shape, [])
+          expectExactTokens(value?.filled?.disabled, {
+            background: '{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}',
+            color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
             placeholder: {
-              color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+              color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
             },
           })
         })
@@ -178,129 +335,14 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.invalid, inputState.shape, [])
-          expectExactTokens(value?.defaultVariant?.invalid, {
-            background: '{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}',
-            color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
-            border: {
-              color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
-              style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
-              width: '{{primitives.border.width.sm}}',
-              offset: '{{primitives.border.offset.sm}}',
-              radius: '{{primitives.border.radius.md}}',
-              shadow: '{{primitives.shadow.sm}}',
-            },
-            placeholder: {
-              color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
-            },
-          })
-        })
-      })
-
-      describe('focusRing', () => {
-        it('should apply defaults', () => {
-          const result = input.safeParse({})
-
-          expect(result.success).toBe(true)
-
-          const value = result.data
-          expectExactUndefinedTokens(value?.defaultVariant?.focusRing, inputFocusRingSchema.shape, [])
-          expectExactTokens(value?.defaultVariant?.focusRing, {
-            width: '{{primitives.focusRing.width}}',
-            style: '{{primitives.focusRing.style}}',
-            color: '{{primitives.focusRing.color}}',
-            offset: '{{primitives.focusRing.offset}}',
-            radius: '{{primitives.border.radius.md}}',
-            shadow: '{{primitives.focusRing.shadow}}',
-          })
-        })
-      })
-
-      describe('sizes', () => {
-        it('should apply defaults', () => {
-          const result = input.safeParse({})
-
-          expect(result.success).toBe(true)
-
-          const value = result.data
-          expectExactTokens(value?.defaultVariant?.sizes, {
-            sm: {
-              fontSize: '{{primitives.font.size}}',
-              padding: {
-                x: '{{primitives.space.sm}}',
-                y: '{{primitives.space.xs}}',
-              },
-            },
-            lg: {
-              fontSize: '{{primitives.font.size}}',
-              padding: {
-                x: '{{primitives.space.lg}}',
-                y: '{{primitives.space.md}}',
-              },
-            },
-          })
-
-          expectExactUndefinedTokens(value?.defaultVariant?.sizes?.sm, inputSize.shape, [])
-          expectExactUndefinedTokens(value?.defaultVariant?.sizes?.lg, inputSize.shape, [])
-        })
-      })
-    })
-
-    describe('filled variant', () => {
-      it('should apply defaults', () => {
-        const result = input.safeParse({})
-
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactUndefinedTokens(value?.variants?.filled, inputFilledVariant.shape, [])
-        expectExactTokens(value?.variants?.filled, {
-          defaultState: {
-            background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
-            color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-            placeholder: {
-              color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-            },
-          },
-          hover: {
-            background: '{{primitives.variant.primary.state.hover.defaultSeverity.bg}}',
-            color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
-            placeholder: {
-              color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
-            },
-          },
-          focus: {
-            background: '{{primitives.variant.primary.state.focus.defaultSeverity.bg}}',
-            color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
-            placeholder: {
-              color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
-            },
-          },
-          disabled: {
-            background: '{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}',
-            color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
-            placeholder: {
-              color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
-            },
-          },
-          invalid: {
+          expectExactUndefinedTokens(value?.filled?.invalid, inputFilledVariantState.shape, [])
+          expectExactTokens(value?.filled?.invalid, {
             background: '{{primitives.variant.primary.state.invalid.defaultSeverity.bg}}',
             color: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',
             placeholder: {
               color: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',
             },
-          },
-        })
-      })
-
-      describe('defaultState', () => {
-        it('should apply defaults', () => {
-          const result = input.safeParse({})
-
-          expect(result.success).toBe(true)
-
-          const value = result.data
-          expectExactUndefinedTokens(value?.variants?.filled?.defaultState, inputFilledVariantState.shape, [])
+          })
         })
       })
     })
