@@ -41,10 +41,6 @@ In the Zod schema, the default variant's tokens live at the root of the usage ob
 
 The repository contains three reference implementations for Schema and tests:
 
-- **Textarea** — simpler component, single file schema:
-  - Schema: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.ts`
-  - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/textarea.spec.ts`
-
 - **Carousel** — simpler component, single file schema:
   - Schema: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/carousel.ts`
   - Tests: `libs/integration-interface/src/lib/topics/current-themes/v1/schema/carousel.spec.ts`
@@ -110,6 +106,8 @@ Common reference patterns:
 - `{{primitives.variant.primary.state.hover.severity.info.bg}}` — filled variant, hover state with info severity
 - `{{primitives.font.weight}}`, `{{primitives.space.md}}` — global primitives
 
+The primitives referenced by the schema must exist in `primitives.ts` and the matching should make sense. For example, if usage has hover state, the schema should reference `primitives.[variant].state.hover.[severity].[token]` instead of `primitives.[variant].defaultState.[severity].[token]` (where variant, state, and severity are optional keys in the path).
+
 **Key rules for primitive references:**
 
 - **Default fallback** → use `defaultSeverity` directly: `...defaultState.defaultSeverity.bg`
@@ -118,60 +116,6 @@ Common reference patterns:
 - **Color mapping to primitives**: `info` → `severity.info`, `success` → `severity.success`, `warn` → `severity.warning`, `error` → `severity.danger`, `secondary` → `variant.secondary`, `contrast` → `defaultSeverity` (swapped bg/contrast)
 
 **If a usage has hover state, reference `primitives.[variant].state.hover.severity.[severity].[token]`, not `primitives.[variant].defaultState.severity.[severity].[token]`.** The state in the primitive reference should match the semantic meaning.
-
-## Severity defaults — per-severity distinct primitive values
-
-When a usage has severity variants (info, success, warn, error, etc.), **each severity must have its own distinct `.default()` object** with unique primitive references. Do NOT use `.prefault({})` on severity variants — use `.default({...})` with per-severity values.
-
-**Schema pattern:**
-
-```typescript
-// Define the shared severity shape once (leaves are .optional())
-const severityShape = z
-  .object({
-    background: z.union([bg, withRef(z.string())]).optional(),
-    borderColor: color.optional(),
-    color: color.optional(),
-    shadow: withRef(z.string()).optional(),
-    closeButton: severityCloseButton.prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'componentSeverity' })
-
-// Define per-severity default objects — each references DIFFERENT primitives
-const infoDefaults = {
-  background: '{{primitives.defaultVariant.defaultState.severity.info.bg}}',
-  borderColor: '{{primitives.defaultVariant.defaultState.severity.info.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.severity.info.contrast}}',
-  shadow: '{{primitives.shadow.none}}',
-  closeButton: {
-    /* per-severity values */
-  },
-}
-
-const successDefaults = {
-  background: '{{primitives.defaultVariant.defaultState.severity.success.bg}}',
-  borderColor: '{{primitives.defaultVariant.defaultState.severity.success.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.severity.success.contrast}}',
-  shadow: '{{primitives.shadow.none}}',
-  closeButton: {
-    /* per-severity values */
-  },
-}
-
-// Apply in the usage schema — each severity gets its OWN .default()
-export const component = z.object({
-  // ... root tokens ...
-
-  // Default variant severity — at root level (no wrapper)
-  // Token path: usages.component.info.color
-  info: (severityShape as typeof severityShape).default(infoDefaults),
-  success: (severityShape as typeof severityShape).default(successDefaults),
-  warn: (severityShape as typeof severityShape).default(warnDefaults),
-  error: (severityShape as typeof severityShape).default(errorDefaults),
-})
-```
-
-**Nested sub-shapes in severity defaults:** When the severity shape has nested objects (e.g., `closeButton`), the default must include the full nested structure. Leaves inside nested objects that are `.optional()` can be omitted from the default if they don't apply, but the nested object itself must be present (e.g., `closeButton: { hoverBackground: '...' }`).
 
 ## Step 1 — Read the PrimeNG tokens
 
@@ -230,13 +174,65 @@ Create `libs/integration-interface/src/lib/topics/current-themes/v1/schema/<comp
 
 **Verify types used in schema**
 
-The schema should re-use types from `primitives.ts` for tokens that makes sense. For example:
+Verify types used in schema
 
-- `background` -> `bg` from `primitives.ts` file
-- `color` -> `color` from `primitives.ts` file
-- `border` -> `border` from `primitives.ts` file
-- `font` -> `font` from `primitives.ts` file
-- `bgContrast` -> `bgContrast` from `primitives.ts` file
+The schema should re-use types from `primitives.ts` for tokens that make sense. Use the pre-defined schema types instead of reinventing shapes:
+
+| Token property | Re-use type from primitives                                                        |
+| -------------- | ---------------------------------------------------------------------------------- |
+| `background`   | `bg` (or `withRef(z.string())` wrapped in `bg`)                                    |
+| `color`        | `color`                                                                            |
+| `border`       | `border` (full object with color, style, width, offset, radius)                    |
+| `font`         | `font` (or `font.pick({ size: true })` for partial)                                |
+| `bgContrast`   | `bgContrast` (bg + contrast)                                                       |
+| `focusRing`    | `borderWithShadow` (border + shadow = color, style, width, offset, radius, shadow) |
+
+**When using `border` type:** provide **all** default values — color, style, width, offset, radius. Don't provide only a subset:
+
+```typescript
+// GOOD — all values present
+border.default({
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+  style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+  width: '{{primitives.border.width.none}}',
+  radius: '{{primitives.border.radius.md}}',
+  offset: '{{primitives.border.offset.none}}',
+})
+
+// BAD — missing style, radius, offset
+border.default({
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+  width: '{{primitives.border.width.none}}',
+})
+```
+
+**When using `borderWithShadow` for focusRing:** provide all values with the correct token sources:
+
+```typescript
+borderWithShadow.default({
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  width: '{{primitives.border.width.md}}',
+  offset: '{{primitives.border.offset.none}}',
+  radius: '{{primitives.radius.md}}',
+  shadow: '{{primitives.shadow.none}}',
+})
+```
+
+**FocusRing token sources (IMPORTANT):**
+
+| Property | Token source                                                             | Example                                                                      |
+| -------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| `color`  | `primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color` | `{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}` |
+| `style`  | `primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style` | `{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}` |
+| `width`  | `primitives.border.width.*`                                              | `{{primitives.border.width.md}}`                                             |
+| `offset` | `primitives.border.offset.none`                                          | `{{primitives.border.offset.none}}`                                          |
+| `radius` | `primitives.radius.*`                                                    | `{{primitives.radius.md}}`                                                   |
+| `shadow` | `primitives.shadow.*`                                                    | `{{primitives.shadow.none}}`                                                 |
+
+**Never use invalid paths** like `{{primitives.defaultVariant.contrast}}` for focusRing color, or `{{primitives.focusRing.width.md}}` when the actual path is `{{primitives.border.width.md}}`. The `focusRing` and `border` shapes in primitives inherit from `borderCommonShape` which uses `borderWidthSizes` (from `border`), not separate `focusRing.*` tokens for structural values.
+
+If only a subset of the type should be used as a token (e.g., only font size), use `font.pick({ size: true })` instead of the full font type. If a token is not a primitive, use `z.string()` or `z.number()`, `z.object()` as appropriate.
 
 Example of re-using types in schema:
 
@@ -267,6 +263,79 @@ const hoverTextareaStyles = z.object({
 ```
 
 If only a subset of the type should be used as a token (e.g., only font size), use font.pick({ size: true }) instead of the full font type. If a token is not a primitive, use `z.string()` or `z.number()`, `z.object()` as appropriate.
+
+## Design nested state objects correctly
+
+When a component has sub-elements (navigation buttons, indicators, icons, etc.) that need state variants (hover, active, focus), use the **nested state pattern**:
+
+1. **Define the sub-component schema** with its default tokens as root-level fields, plus nested variants/state/severity (depending on which are necessary) objects as separate properties that also have their own tokens.
+2. **Use `z.object()` with explicit `.default()` on every field** for the standalone state schemas (e.g., `navigationButtonHover`). **Never** use `baseSchema.extend()` with `.optional()` fields — when `.prefault({})` is called on such a schema, all optional fields resolve to `undefined`, breaking the "no undefined tokens" rule.
+3. **Register state schemas independently** so they can be referenced in tests (e.g., `carouselNavigationButtonHover`).
+4. [variant].[state].[severity].token schema paths must be followed for all nested state objects. Depending on the sub-component, you may have only a subset of states (e.g., `hover` and `focus` but no `active` or `disabled` or only default) and can have different variants and severities if applicable. The rules should be the same as for the main component schema.
+5. **Place `focusRing` at the sub-component root level**, never inside a state object. FocusRing is a separate token used when applying focus styles.
+
+**Correct pattern for sub-component with no variants, hover and default state and no severities:**
+
+```typescript
+const carouselNavigationButtonHover = z
+  .object({
+    bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+    contrast: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+    border: border.default({
+      /* ... */
+    }),
+  })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonHover' })
+
+const carouselNavigationButton = z.object({
+  bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+  contrast: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+  padding: withRef(z.string()).default('{{primitives.space.sm}}'),
+  border: border.default({
+    /* ... */
+  }),
+  focusRing: borderWithShadow.default({
+    /* ... */
+  }), // ← at root, not in state
+  hover: carouselNavigationButtonHover.prefault({}), // ← nested, not flat
+  active: carouselNavigationButtonActive.prefault({}),
+  focus: carouselNavigationButtonFocus.prefault({}),
+})
+
+const carousel = z.object({
+  color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+  navigationButton: carouselNavigationButton.prefault({}), // ← nested, not flat
+  indicator: carouselIndicator.prefault({}),
+})
+```
+
+**Anti-pattern (DO NOT DO THIS):**
+
+```typescript
+const carouselNavigationButtonHover = z
+  .object({
+    bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+    contrast: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+    border: border.default({
+      /* ... */
+    }),
+  })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonHover' })
+
+const carouselNavigationButton = z.object({
+  bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+  contrast: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+  hoverColor: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'), // ← DO NOT put state tokens at root level
+})
+
+const carousel = z.object({
+  color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+  navigationButton: carouselNavigationButton.prefault({}), // ← nested, not flat
+  navigationButtonHover: carouselNavigationButtonHover.prefault({}), // ← DO NOT put state objects at root level
+})
+```
+
+If a sub-component doesn't need state variants, give it a flat schema with `.default()` on every field (no states, no nesting).
 
 ## Step 4 — Register the usage
 
