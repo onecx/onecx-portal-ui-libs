@@ -35,7 +35,6 @@ describe('button schema', () => {
                 layout: expect.any(Object),
                 focusRing: expect.any(Object),
                 text: expect.any(Object),
-                defaultState: expect.any(Object),
                 state: expect.any(Object),
             })
         })

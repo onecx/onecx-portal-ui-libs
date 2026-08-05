@@ -60,7 +60,6 @@ export const buttonLinkVariant = z
   })
   .register(themeSchemaRegistry, { id: "buttonLinkVariant" });
 
-/** Default values for the link button variant. */
 export const buttonLinkDefaults = {
   color: "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
   hover: {
@@ -71,7 +70,6 @@ export const buttonLinkDefaults = {
   },
 };
 
-/** Default values for the text button variant. */
 export const buttonTextVariantDefaults = {
   border: {
     width: "{{primitives.border.width.sm}}",
@@ -313,7 +311,6 @@ export const buttonTextVariantDefaults = {
   },
 };
 
-/** Default values for the outlined button variant. */
 export const buttonOutlinedDefaults = {
   border: {
     width: "{{primitives.border.width.sm}}",
@@ -755,7 +752,6 @@ export const buttonOutlinedDefaults = {
   },
 };
 
-/** Default values for the rounded button variant. */
 export const buttonRoundedDefaults = {
   border: {
     width: "{{primitives.border.width.sm}}",
@@ -1197,7 +1193,6 @@ export const buttonRoundedDefaults = {
   },
 };
 
-/** Default values for the raised button variant. */
 export const buttonRaisedDefaults = {
   border: {
     width: "{{primitives.border.width.sm}}",
