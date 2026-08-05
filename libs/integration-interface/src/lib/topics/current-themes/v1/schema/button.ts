@@ -159,84 +159,84 @@ const defaultVariantDefault: z.input<typeof buttonDisplayVariant> = {
   focusRing: {
     width: "{{primitives.focusRing.width.sm}}",
     style: "{{primitives.focusRing.style}}",
-    color: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+    color: "{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.color}}",
     offset: "{{primitives.focusRing.offset.sm}}",
-    shadow: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}"
+    shadow: "{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.shadow}}"
   },
   text: {
     fontWeight: "{{primitives.font.weight}}"
   },
   defaultState: {
     defaultSeverity: {
-      background: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      background: "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        color: "{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}",
+        style: "{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}",
         width: "{{primitives.border.width.sm}}"
       }
     },
     severity: {
       secondary: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.secondary.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.secondary.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.secondary.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.secondary.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.secondary.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.secondary.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.secondary.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.secondary.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       success: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.success.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.success.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.success.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.success.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.success.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.success.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.success.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.success.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       info: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.info.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.info.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.info.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.info.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.info.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.info.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.info.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.info.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       warning: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.warning.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.warning.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.warning.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.warning.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.warning.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.warning.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.warning.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.warning.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       help: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.help.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.help.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.help.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.help.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       danger: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.danger.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.danger.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.danger.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.danger.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.danger.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.danger.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.danger.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.danger.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       contrast: {
-        background: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.contrast.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.contrast.contrast}}",
+        background: "{{primitives.variant.primary.defaultState.severity.contrast.bg}}",
+        color: "{{primitives.variant.primary.defaultState.severity.contrast.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.contrast.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.defaultState.severity.contrast.border.style}}",
+          color: "{{primitives.variant.primary.defaultState.severity.contrast.border.color}}",
+          style: "{{primitives.variant.primary.defaultState.severity.contrast.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       }
@@ -245,75 +245,75 @@ const defaultVariantDefault: z.input<typeof buttonDisplayVariant> = {
   state: {
     hover: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.defaultVariant.state.hover.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.primary.state.hover.defaultSeverity.bg}}",
+        color: "{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.state.hover.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.primary.state.hover.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.primary.state.hover.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.secondary.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.secondary.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.secondary.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.secondary.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.success.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.success.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.info.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.info.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.info.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.info.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.warning.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.warning.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.warning.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.warning.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.help.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.help.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.danger.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.danger.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.danger.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.danger.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.contrast.contrast}}",
+          background: "{{primitives.variant.primary.state.hover.severity.contrast.bg}}",
+          color: "{{primitives.variant.primary.state.hover.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.hover.severity.contrast.border.style}}",
+            color: "{{primitives.variant.primary.state.hover.severity.contrast.border.color}}",
+            style: "{{primitives.variant.primary.state.hover.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -321,75 +321,75 @@ const defaultVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     active: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.defaultVariant.state.active.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.state.active.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.primary.state.active.defaultSeverity.bg}}",
+        color: "{{primitives.variant.primary.state.active.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.state.active.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.primary.state.active.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.primary.state.active.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.secondary.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.secondary.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.secondary.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.secondary.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.success.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.success.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.success.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.success.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.info.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.info.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.info.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.info.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.warning.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.warning.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.warning.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.warning.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.help.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.help.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.danger.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.danger.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.danger.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.danger.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.active.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.contrast.contrast}}",
+          background: "{{primitives.variant.primary.state.active.severity.contrast.bg}}",
+          color: "{{primitives.variant.primary.state.active.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.active.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.active.severity.contrast.border.style}}",
+            color: "{{primitives.variant.primary.state.active.severity.contrast.border.color}}",
+            style: "{{primitives.variant.primary.state.active.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -397,207 +397,207 @@ const defaultVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     focus: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.primary.state.focus.defaultSeverity.bg}}",
+        color: "{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.primary.state.focus.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         focusRing: {
           width: "{{primitives.focusRing.width.sm}}",
           style: "{{primitives.focusRing.style}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.focusRing.color}}",
+          color: "{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.color}}",
           offset: "{{primitives.focusRing.offset.sm}}",
-          shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}"
+          shadow: "{{primitives.variant.primary.state.focus.defaultSeverity.focusRing.shadow}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.secondary.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.secondary.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.secondary.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.secondary.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.secondary.focusRing.shadow}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.success.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.success.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.success.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.success.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.success.focusRing.shadow}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.info.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.info.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.info.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.info.focusRing.shadow}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.warning.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.warning.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.warning.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.warning.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.warning.focusRing.shadow}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.help.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.help.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.help.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.help.focusRing.shadow}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.danger.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.danger.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.danger.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.danger.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.danger.focusRing.shadow}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.contrast}}",
+          background: "{{primitives.variant.primary.state.focus.severity.contrast.bg}}",
+          color: "{{primitives.variant.primary.state.focus.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.border.style}}",
+            color: "{{primitives.variant.primary.state.focus.severity.contrast.border.color}}",
+            style: "{{primitives.variant.primary.state.focus.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.focusRing.color}}",
+            color: "{{primitives.variant.primary.state.focus.severity.contrast.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.defaultVariant.state.focus.severity.contrast.focusRing.shadow}}"
+            shadow: "{{primitives.variant.primary.state.focus.severity.contrast.focusRing.shadow}}"
           }
         }
       }
     },
     disabled: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.defaultVariant.state.disabled.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}",
+        color: "{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.defaultVariant.state.disabled.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.primary.state.disabled.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.primary.state.disabled.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.secondary.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.secondary.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.secondary.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.secondary.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.success.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.success.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.success.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.success.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.info.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.info.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.info.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.info.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.warning.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.warning.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.warning.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.warning.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.help.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.help.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.danger.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.danger.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.danger.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.danger.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.contrast.contrast}}",
+          background: "{{primitives.variant.primary.state.disabled.severity.contrast.bg}}",
+          color: "{{primitives.variant.primary.state.disabled.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.contrast.border.style}}",
+            color: "{{primitives.variant.primary.state.disabled.severity.contrast.border.color}}",
+            style: "{{primitives.variant.primary.state.disabled.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -631,238 +631,238 @@ const textVariantDefault: z.input<typeof buttonDisplayVariant> = {
   },
   defaultState: {
     defaultSeverity: {
-      background: "{{primitives.defaultVariant.text.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.text.defaultState.defaultSeverity.contrast}}"
+      background: "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}"
     },
     severity: {
       secondary: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.secondary.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.secondary.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.secondary.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.secondary.contrast}}"
       },
       success: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.success.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.success.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.success.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.success.contrast}}"
       },
       info: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.info.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.info.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.info.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.info.contrast}}"
       },
       warning: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.warning.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.warning.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.warning.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.warning.contrast}}"
       },
       help: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.help.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.help.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.help.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.help.contrast}}"
       },
       danger: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.danger.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.danger.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.danger.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.danger.contrast}}"
       },
       contrast: {
-        background: "{{primitives.defaultVariant.text.defaultState.severity.contrast.bg}}",
-        color: "{{primitives.defaultVariant.text.defaultState.severity.contrast.contrast}}"
+        background: "{{primitives.variant.secondary.defaultState.severity.contrast.bg}}",
+        color: "{{primitives.variant.secondary.defaultState.severity.contrast.contrast}}"
       }
     }
   },
   state: {
     hover: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.text.state.hover.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.text.state.hover.defaultSeverity.contrast}}"
+        background: "{{primitives.variant.secondary.state.hover.defaultSeverity.bg}}",
+        color: "{{primitives.variant.secondary.state.hover.defaultSeverity.contrast}}"
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.secondary.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.secondary.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.secondary.contrast}}"
         },
         success: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.success.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.success.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.success.contrast}}"
         },
         info: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.info.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.info.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.info.contrast}}"
         },
         warning: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.warning.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.warning.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.warning.contrast}}"
         },
         help: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.help.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.help.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.help.contrast}}"
         },
         danger: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.danger.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.danger.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.danger.contrast}}"
         },
         contrast: {
-          background: "{{primitives.defaultVariant.text.state.hover.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.text.state.hover.severity.contrast.contrast}}"
+          background: "{{primitives.variant.secondary.state.hover.severity.contrast.bg}}",
+          color: "{{primitives.variant.secondary.state.hover.severity.contrast.contrast}}"
         }
       }
     },
     active: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.text.state.active.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.text.state.active.defaultSeverity.contrast}}"
+        background: "{{primitives.variant.secondary.state.active.defaultSeverity.bg}}",
+        color: "{{primitives.variant.secondary.state.active.defaultSeverity.contrast}}"
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.secondary.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.secondary.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.secondary.contrast}}"
         },
         success: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.success.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.success.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.success.contrast}}"
         },
         info: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.info.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.info.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.info.contrast}}"
         },
         warning: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.warning.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.warning.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.warning.contrast}}"
         },
         help: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.help.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.help.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.help.contrast}}"
         },
         danger: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.danger.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.danger.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.danger.contrast}}"
         },
         contrast: {
-          background: "{{primitives.defaultVariant.text.state.active.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.text.state.active.severity.contrast.contrast}}"
+          background: "{{primitives.variant.secondary.state.active.severity.contrast.bg}}",
+          color: "{{primitives.variant.secondary.state.active.severity.contrast.contrast}}"
         }
       }
     },
     focus: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.text.state.focus.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.text.state.focus.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.secondary.state.focus.defaultSeverity.bg}}",
+        color: "{{primitives.variant.secondary.state.focus.defaultSeverity.contrast}}",
         focusRing: {
           width: "{{primitives.focusRing.width.sm}}",
           style: "{{primitives.focusRing.style}}",
-          color: "{{primitives.defaultVariant.text.state.focus.defaultSeverity.focusRing.color}}",
+          color: "{{primitives.variant.secondary.state.focus.defaultSeverity.focusRing.color}}",
           offset: "{{primitives.focusRing.offset.sm}}",
-          shadow: "{{primitives.defaultVariant.text.state.focus.defaultSeverity.focusRing.shadow}}"
+          shadow: "{{primitives.variant.secondary.state.focus.defaultSeverity.focusRing.shadow}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.secondary.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.secondary.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.secondary.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.secondary.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.secondary.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.secondary.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.secondary.focusRing.shadow}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.success.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.success.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.success.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.success.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.success.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.success.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.success.focusRing.shadow}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.info.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.info.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.info.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.info.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.info.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.info.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.info.focusRing.shadow}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.warning.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.warning.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.warning.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.warning.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.warning.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.warning.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.warning.focusRing.shadow}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.help.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.help.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.help.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.help.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.help.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.help.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.help.focusRing.shadow}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.danger.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.danger.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.danger.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.danger.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.danger.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.danger.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.danger.focusRing.shadow}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.text.state.focus.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.text.state.focus.severity.contrast.contrast}}",
+          background: "{{primitives.variant.secondary.state.focus.severity.contrast.bg}}",
+          color: "{{primitives.variant.secondary.state.focus.severity.contrast.contrast}}",
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.text.state.focus.severity.contrast.focusRing.color}}",
+            color: "{{primitives.variant.secondary.state.focus.severity.contrast.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.text.state.focus.severity.contrast.focusRing.shadow}}"
+            shadow: "{{primitives.variant.secondary.state.focus.severity.contrast.focusRing.shadow}}"
           }
         }
       }
     },
     disabled: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.text.state.disabled.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.text.state.disabled.defaultSeverity.contrast}}"
+        background: "{{primitives.variant.secondary.state.disabled.defaultSeverity.bg}}",
+        color: "{{primitives.variant.secondary.state.disabled.defaultSeverity.contrast}}"
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.secondary.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.secondary.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.secondary.contrast}}"
         },
         success: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.success.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.success.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.success.contrast}}"
         },
         info: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.info.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.info.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.info.contrast}}"
         },
         warning: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.warning.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.warning.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.warning.contrast}}"
         },
         help: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.help.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.help.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.help.contrast}}"
         },
         danger: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.danger.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.danger.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.danger.contrast}}"
         },
         contrast: {
-          background: "{{primitives.defaultVariant.text.state.disabled.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.text.state.disabled.severity.contrast.contrast}}"
+          background: "{{primitives.variant.secondary.state.disabled.severity.contrast.bg}}",
+          color: "{{primitives.variant.secondary.state.disabled.severity.contrast.contrast}}"
         }
       }
     }
@@ -882,75 +882,75 @@ const outlinedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   },
   defaultState: {
     defaultSeverity: {
-      background: "{{primitives.defaultVariant.outlined.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.outlined.defaultState.defaultSeverity.contrast}}",
+      background: "{{primitives.variant.tertiary.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.variant.tertiary.defaultState.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.defaultVariant.outlined.defaultState.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.outlined.defaultState.defaultSeverity.border.style}}",
+        color: "{{primitives.variant.tertiary.defaultState.defaultSeverity.border.color}}",
+        style: "{{primitives.variant.tertiary.defaultState.defaultSeverity.border.style}}",
         width: "{{primitives.border.width.sm}}"
       }
     },
     severity: {
       secondary: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.secondary.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.secondary.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.secondary.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.secondary.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.secondary.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.secondary.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.secondary.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.secondary.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       success: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.success.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.success.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.success.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.success.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.success.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.success.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.success.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.success.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       info: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.info.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.info.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.info.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.info.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.info.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.info.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.info.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.info.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       warning: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.warning.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.warning.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.warning.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.warning.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.warning.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.warning.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.warning.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.warning.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       help: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.help.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.help.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.help.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.help.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.help.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.help.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.help.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.help.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       danger: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.danger.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.danger.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.danger.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.danger.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.danger.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.danger.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.danger.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.danger.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       contrast: {
-        background: "{{primitives.defaultVariant.outlined.defaultState.severity.contrast.bg}}",
-        color: "{{primitives.defaultVariant.outlined.defaultState.severity.contrast.contrast}}",
+        background: "{{primitives.variant.tertiary.defaultState.severity.contrast.bg}}",
+        color: "{{primitives.variant.tertiary.defaultState.severity.contrast.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.defaultState.severity.contrast.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.defaultState.severity.contrast.border.style}}",
+          color: "{{primitives.variant.tertiary.defaultState.severity.contrast.border.color}}",
+          style: "{{primitives.variant.tertiary.defaultState.severity.contrast.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       }
@@ -959,75 +959,75 @@ const outlinedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   state: {
     hover: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.outlined.state.hover.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.outlined.state.hover.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.tertiary.state.hover.defaultSeverity.bg}}",
+        color: "{{primitives.variant.tertiary.state.hover.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.state.hover.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.state.hover.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.tertiary.state.hover.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.tertiary.state.hover.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.secondary.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.secondary.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.secondary.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.secondary.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.success.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.success.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.success.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.success.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.info.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.info.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.info.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.info.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.warning.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.warning.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.warning.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.warning.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.help.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.help.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.help.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.help.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.danger.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.danger.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.danger.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.danger.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.outlined.state.hover.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.hover.severity.contrast.contrast}}",
+          background: "{{primitives.variant.tertiary.state.hover.severity.contrast.bg}}",
+          color: "{{primitives.variant.tertiary.state.hover.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.hover.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.hover.severity.contrast.border.style}}",
+            color: "{{primitives.variant.tertiary.state.hover.severity.contrast.border.color}}",
+            style: "{{primitives.variant.tertiary.state.hover.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1035,75 +1035,75 @@ const outlinedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     active: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.outlined.state.active.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.outlined.state.active.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.tertiary.state.active.defaultSeverity.bg}}",
+        color: "{{primitives.variant.tertiary.state.active.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.state.active.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.state.active.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.tertiary.state.active.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.tertiary.state.active.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.secondary.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.secondary.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.secondary.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.secondary.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.success.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.success.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.success.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.success.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.info.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.info.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.info.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.info.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.warning.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.warning.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.warning.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.warning.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.help.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.help.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.help.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.help.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.danger.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.danger.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.danger.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.danger.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.outlined.state.active.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.active.severity.contrast.contrast}}",
+          background: "{{primitives.variant.tertiary.state.active.severity.contrast.bg}}",
+          color: "{{primitives.variant.tertiary.state.active.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.active.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.active.severity.contrast.border.style}}",
+            color: "{{primitives.variant.tertiary.state.active.severity.contrast.border.color}}",
+            style: "{{primitives.variant.tertiary.state.active.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1111,207 +1111,207 @@ const outlinedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     focus: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.tertiary.state.focus.defaultSeverity.bg}}",
+        color: "{{primitives.variant.tertiary.state.focus.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.tertiary.state.focus.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.tertiary.state.focus.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         focusRing: {
           width: "{{primitives.focusRing.width.sm}}",
           style: "{{primitives.focusRing.style}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.focusRing.color}}",
+          color: "{{primitives.variant.tertiary.state.focus.defaultSeverity.focusRing.color}}",
           offset: "{{primitives.focusRing.offset.sm}}",
-          shadow: "{{primitives.defaultVariant.outlined.state.focus.defaultSeverity.focusRing.shadow}}"
+          shadow: "{{primitives.variant.tertiary.state.focus.defaultSeverity.focusRing.shadow}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.secondary.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.secondary.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.secondary.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.secondary.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.secondary.focusRing.shadow}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.success.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.success.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.success.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.success.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.success.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.success.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.success.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.success.focusRing.shadow}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.info.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.info.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.info.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.info.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.info.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.info.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.info.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.info.focusRing.shadow}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.warning.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.warning.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.warning.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.warning.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.warning.focusRing.shadow}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.help.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.help.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.help.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.help.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.help.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.help.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.help.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.help.focusRing.shadow}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.danger.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.danger.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.danger.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.danger.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.danger.focusRing.shadow}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.contrast}}",
+          background: "{{primitives.variant.tertiary.state.focus.severity.contrast.bg}}",
+          color: "{{primitives.variant.tertiary.state.focus.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.border.style}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.contrast.border.color}}",
+            style: "{{primitives.variant.tertiary.state.focus.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.focusRing.color}}",
+            color: "{{primitives.variant.tertiary.state.focus.severity.contrast.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.outlined.state.focus.severity.contrast.focusRing.shadow}}"
+            shadow: "{{primitives.variant.tertiary.state.focus.severity.contrast.focusRing.shadow}}"
           }
         }
       }
     },
     disabled: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.outlined.state.disabled.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.outlined.state.disabled.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.tertiary.state.disabled.defaultSeverity.bg}}",
+        color: "{{primitives.variant.tertiary.state.disabled.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.outlined.state.disabled.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.outlined.state.disabled.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.tertiary.state.disabled.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.tertiary.state.disabled.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.secondary.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.secondary.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.secondary.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.secondary.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.success.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.success.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.success.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.success.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.info.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.info.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.info.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.info.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.warning.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.warning.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.warning.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.warning.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.help.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.help.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.help.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.help.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.danger.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.danger.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.danger.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.danger.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.outlined.state.disabled.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.outlined.state.disabled.severity.contrast.contrast}}",
+          background: "{{primitives.variant.tertiary.state.disabled.severity.contrast.bg}}",
+          color: "{{primitives.variant.tertiary.state.disabled.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.outlined.state.disabled.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.outlined.state.disabled.severity.contrast.border.style}}",
+            color: "{{primitives.variant.tertiary.state.disabled.severity.contrast.border.color}}",
+            style: "{{primitives.variant.tertiary.state.disabled.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1333,75 +1333,75 @@ const roundedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   },
   defaultState: {
     defaultSeverity: {
-      background: "{{primitives.defaultVariant.rounded.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.rounded.defaultState.defaultSeverity.contrast}}",
+      background: "{{primitives.variant.quaternary.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.variant.quaternary.defaultState.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.defaultVariant.rounded.defaultState.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.rounded.defaultState.defaultSeverity.border.style}}",
+        color: "{{primitives.variant.quaternary.defaultState.defaultSeverity.border.color}}",
+        style: "{{primitives.variant.quaternary.defaultState.defaultSeverity.border.style}}",
         width: "{{primitives.border.width.sm}}"
       }
     },
     severity: {
       secondary: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.secondary.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.secondary.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.secondary.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.secondary.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.secondary.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.secondary.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.secondary.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.secondary.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       success: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.success.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.success.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.success.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.success.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.success.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.success.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.success.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.success.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       info: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.info.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.info.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.info.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.info.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.info.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.info.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.info.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.info.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       warning: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.warning.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.warning.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.warning.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.warning.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.warning.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.warning.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.warning.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.warning.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       help: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.help.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.help.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.help.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.help.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.help.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.help.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.help.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.help.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       danger: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.danger.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.danger.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.danger.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.danger.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.danger.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.danger.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.danger.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.danger.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       contrast: {
-        background: "{{primitives.defaultVariant.rounded.defaultState.severity.contrast.bg}}",
-        color: "{{primitives.defaultVariant.rounded.defaultState.severity.contrast.contrast}}",
+        background: "{{primitives.variant.quaternary.defaultState.severity.contrast.bg}}",
+        color: "{{primitives.variant.quaternary.defaultState.severity.contrast.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.defaultState.severity.contrast.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.defaultState.severity.contrast.border.style}}",
+          color: "{{primitives.variant.quaternary.defaultState.severity.contrast.border.color}}",
+          style: "{{primitives.variant.quaternary.defaultState.severity.contrast.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       }
@@ -1410,75 +1410,75 @@ const roundedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   state: {
     hover: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.rounded.state.hover.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.rounded.state.hover.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quaternary.state.hover.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quaternary.state.hover.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.state.hover.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.state.hover.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quaternary.state.hover.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quaternary.state.hover.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.secondary.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.success.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.success.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.success.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.success.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.info.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.info.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.info.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.info.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.warning.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.warning.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.warning.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.warning.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.help.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.help.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.help.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.help.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.danger.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.danger.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.danger.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.danger.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.rounded.state.hover.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.hover.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quaternary.state.hover.severity.contrast.bg}}",
+          color: "{{primitives.variant.quaternary.state.hover.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.hover.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.hover.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quaternary.state.hover.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quaternary.state.hover.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1486,75 +1486,75 @@ const roundedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     active: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.rounded.state.active.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.rounded.state.active.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quaternary.state.active.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quaternary.state.active.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.state.active.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.state.active.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quaternary.state.active.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quaternary.state.active.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.secondary.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.success.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.success.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.success.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.success.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.info.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.info.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.info.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.info.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.warning.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.warning.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.warning.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.warning.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.help.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.help.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.help.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.help.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.danger.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.danger.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.danger.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.danger.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.rounded.state.active.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.active.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quaternary.state.active.severity.contrast.bg}}",
+          color: "{{primitives.variant.quaternary.state.active.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.active.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.active.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quaternary.state.active.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quaternary.state.active.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1562,207 +1562,207 @@ const roundedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     focus: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quaternary.state.focus.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quaternary.state.focus.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quaternary.state.focus.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quaternary.state.focus.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         focusRing: {
           width: "{{primitives.focusRing.width.sm}}",
           style: "{{primitives.focusRing.style}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.focusRing.color}}",
+          color: "{{primitives.variant.quaternary.state.focus.defaultSeverity.focusRing.color}}",
           offset: "{{primitives.focusRing.offset.sm}}",
-          shadow: "{{primitives.defaultVariant.rounded.state.focus.defaultSeverity.focusRing.shadow}}"
+          shadow: "{{primitives.variant.quaternary.state.focus.defaultSeverity.focusRing.shadow}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.secondary.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.secondary.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.secondary.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.secondary.focusRing.shadow}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.success.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.success.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.success.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.success.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.success.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.success.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.success.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.success.focusRing.shadow}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.info.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.info.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.info.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.info.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.info.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.info.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.info.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.info.focusRing.shadow}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.warning.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.warning.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.warning.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.warning.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.warning.focusRing.shadow}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.help.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.help.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.help.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.help.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.help.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.help.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.help.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.help.focusRing.shadow}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.danger.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.danger.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.danger.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.danger.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.danger.focusRing.shadow}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quaternary.state.focus.severity.contrast.bg}}",
+          color: "{{primitives.variant.quaternary.state.focus.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quaternary.state.focus.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.focusRing.color}}",
+            color: "{{primitives.variant.quaternary.state.focus.severity.contrast.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.rounded.state.focus.severity.contrast.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quaternary.state.focus.severity.contrast.focusRing.shadow}}"
           }
         }
       }
     },
     disabled: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.rounded.state.disabled.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.rounded.state.disabled.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quaternary.state.disabled.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quaternary.state.disabled.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.rounded.state.disabled.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.rounded.state.disabled.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quaternary.state.disabled.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quaternary.state.disabled.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.secondary.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.success.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.success.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.success.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.success.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.info.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.info.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.info.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.info.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.warning.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.warning.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.warning.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.warning.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.help.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.help.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.help.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.help.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.danger.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.danger.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.danger.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.danger.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.rounded.state.disabled.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.rounded.state.disabled.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quaternary.state.disabled.severity.contrast.bg}}",
+          color: "{{primitives.variant.quaternary.state.disabled.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.rounded.state.disabled.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.rounded.state.disabled.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quaternary.state.disabled.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quaternary.state.disabled.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -1784,82 +1784,82 @@ const raisedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   },
   defaultState: {
     defaultSeverity: {
-      background: "{{primitives.defaultVariant.raised.defaultState.defaultSeverity.bg}}",
-      color: "{{primitives.defaultVariant.raised.defaultState.defaultSeverity.contrast}}",
+      background: "{{primitives.variant.quinary.defaultState.defaultSeverity.bg}}",
+      color: "{{primitives.variant.quinary.defaultState.defaultSeverity.contrast}}",
       border: {
-        color: "{{primitives.defaultVariant.raised.defaultState.defaultSeverity.border.color}}",
-        style: "{{primitives.defaultVariant.raised.defaultState.defaultSeverity.border.style}}",
+        color: "{{primitives.variant.quinary.defaultState.defaultSeverity.border.color}}",
+        style: "{{primitives.variant.quinary.defaultState.defaultSeverity.border.style}}",
         width: "{{primitives.border.width.sm}}"
       },
       shadow: "{{primitives.shadow.md}}"
     },
     severity: {
       secondary: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.secondary.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.secondary.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.secondary.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.secondary.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.secondary.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.secondary.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.secondary.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.secondary.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       success: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.success.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.success.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.success.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.success.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.success.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.success.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.success.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.success.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       info: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.info.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.info.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.info.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.info.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.info.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.info.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.info.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.info.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       warning: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.warning.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.warning.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.warning.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.warning.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.warning.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.warning.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.warning.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.warning.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       help: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.help.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.help.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.help.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.help.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.help.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.help.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.help.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.help.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       danger: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.danger.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.danger.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.danger.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.danger.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.danger.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.danger.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.danger.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.danger.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
       },
       contrast: {
-        background: "{{primitives.defaultVariant.raised.defaultState.severity.contrast.bg}}",
-        color: "{{primitives.defaultVariant.raised.defaultState.severity.contrast.contrast}}",
+        background: "{{primitives.variant.quinary.defaultState.severity.contrast.bg}}",
+        color: "{{primitives.variant.quinary.defaultState.severity.contrast.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.defaultState.severity.contrast.border.color}}",
-          style: "{{primitives.defaultVariant.raised.defaultState.severity.contrast.border.style}}",
+          color: "{{primitives.variant.quinary.defaultState.severity.contrast.border.color}}",
+          style: "{{primitives.variant.quinary.defaultState.severity.contrast.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.md}}"
@@ -1869,82 +1869,82 @@ const raisedVariantDefault: z.input<typeof buttonDisplayVariant> = {
   state: {
     hover: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.raised.state.hover.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.raised.state.hover.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quinary.state.hover.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quinary.state.hover.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.state.hover.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.raised.state.hover.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quinary.state.hover.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quinary.state.hover.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         shadow: "{{primitives.shadow.lg}}"
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.secondary.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         success: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.success.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.success.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.success.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.success.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         info: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.info.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.info.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.info.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.info.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         warning: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.warning.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.warning.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.warning.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.warning.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         help: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.help.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.help.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.help.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.help.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         danger: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.danger.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.danger.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.danger.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.danger.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
         },
         contrast: {
-          background: "{{primitives.defaultVariant.raised.state.hover.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.hover.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quinary.state.hover.severity.contrast.bg}}",
+          color: "{{primitives.variant.quinary.state.hover.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.hover.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.hover.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quinary.state.hover.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quinary.state.hover.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           shadow: "{{primitives.shadow.lg}}"
@@ -1953,75 +1953,75 @@ const raisedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     active: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.raised.state.active.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.raised.state.active.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quinary.state.active.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quinary.state.active.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.state.active.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.raised.state.active.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quinary.state.active.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quinary.state.active.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.secondary.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.success.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.success.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.success.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.success.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.info.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.info.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.info.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.info.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.warning.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.warning.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.warning.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.warning.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.help.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.help.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.help.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.help.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.danger.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.danger.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.danger.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.danger.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.raised.state.active.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.active.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quinary.state.active.severity.contrast.bg}}",
+          color: "{{primitives.variant.quinary.state.active.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.active.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.active.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quinary.state.active.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quinary.state.active.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }
@@ -2029,207 +2029,207 @@ const raisedVariantDefault: z.input<typeof buttonDisplayVariant> = {
     },
     focus: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quinary.state.focus.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quinary.state.focus.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quinary.state.focus.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quinary.state.focus.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         },
         focusRing: {
           width: "{{primitives.focusRing.width.sm}}",
           style: "{{primitives.focusRing.style}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.focusRing.color}}",
+          color: "{{primitives.variant.quinary.state.focus.defaultSeverity.focusRing.color}}",
           offset: "{{primitives.focusRing.offset.sm}}",
-          shadow: "{{primitives.defaultVariant.raised.state.focus.defaultSeverity.focusRing.shadow}}"
+          shadow: "{{primitives.variant.quinary.state.focus.defaultSeverity.focusRing.shadow}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.secondary.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.secondary.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.secondary.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.secondary.focusRing.shadow}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.success.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.success.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.success.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.success.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.success.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.success.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.success.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.success.focusRing.shadow}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.info.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.info.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.info.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.info.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.info.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.info.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.info.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.info.focusRing.shadow}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.warning.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.warning.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.warning.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.warning.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.warning.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.warning.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.warning.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.warning.focusRing.shadow}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.help.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.help.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.help.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.help.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.help.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.help.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.help.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.help.focusRing.shadow}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.danger.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.danger.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.danger.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.danger.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.danger.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.danger.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.danger.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.danger.focusRing.shadow}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quinary.state.focus.severity.contrast.bg}}",
+          color: "{{primitives.variant.quinary.state.focus.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quinary.state.focus.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           },
           focusRing: {
             width: "{{primitives.focusRing.width.sm}}",
             style: "{{primitives.focusRing.style}}",
-            color: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.focusRing.color}}",
+            color: "{{primitives.variant.quinary.state.focus.severity.contrast.focusRing.color}}",
             offset: "{{primitives.focusRing.offset.sm}}",
-            shadow: "{{primitives.defaultVariant.raised.state.focus.severity.contrast.focusRing.shadow}}"
+            shadow: "{{primitives.variant.quinary.state.focus.severity.contrast.focusRing.shadow}}"
           }
         }
       }
     },
     disabled: {
       defaultSeverity: {
-        background: "{{primitives.defaultVariant.raised.state.disabled.defaultSeverity.bg}}",
-        color: "{{primitives.defaultVariant.raised.state.disabled.defaultSeverity.contrast}}",
+        background: "{{primitives.variant.quinary.state.disabled.defaultSeverity.bg}}",
+        color: "{{primitives.variant.quinary.state.disabled.defaultSeverity.contrast}}",
         border: {
-          color: "{{primitives.defaultVariant.raised.state.disabled.defaultSeverity.border.color}}",
-          style: "{{primitives.defaultVariant.raised.state.disabled.defaultSeverity.border.style}}",
+          color: "{{primitives.variant.quinary.state.disabled.defaultSeverity.border.color}}",
+          style: "{{primitives.variant.quinary.state.disabled.defaultSeverity.border.style}}",
           width: "{{primitives.border.width.sm}}"
         }
       },
       severity: {
         secondary: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.secondary.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.secondary.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.secondary.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.secondary.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.secondary.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.secondary.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.secondary.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.secondary.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         success: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.success.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.success.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.success.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.success.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.success.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.success.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.success.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.success.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         info: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.info.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.info.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.info.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.info.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.info.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.info.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.info.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.info.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         warning: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.warning.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.warning.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.warning.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.warning.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.warning.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.warning.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.warning.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.warning.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         help: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.help.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.help.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.help.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.help.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.help.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.help.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.help.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.help.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         danger: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.danger.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.danger.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.danger.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.danger.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.danger.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.danger.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.danger.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.danger.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         },
         contrast: {
-          background: "{{primitives.defaultVariant.raised.state.disabled.severity.contrast.bg}}",
-          color: "{{primitives.defaultVariant.raised.state.disabled.severity.contrast.contrast}}",
+          background: "{{primitives.variant.quinary.state.disabled.severity.contrast.bg}}",
+          color: "{{primitives.variant.quinary.state.disabled.severity.contrast.contrast}}",
           border: {
-            color: "{{primitives.defaultVariant.raised.state.disabled.severity.contrast.border.color}}",
-            style: "{{primitives.defaultVariant.raised.state.disabled.severity.contrast.border.style}}",
+            color: "{{primitives.variant.quinary.state.disabled.severity.contrast.border.color}}",
+            style: "{{primitives.variant.quinary.state.disabled.severity.contrast.border.style}}",
             width: "{{primitives.border.width.sm}}"
           }
         }

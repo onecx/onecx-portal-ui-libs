@@ -52,9 +52,9 @@ describe('button schema', () => {
                     focusRing: {
                         width: '{{primitives.focusRing.width.sm}}',
                         style: '{{primitives.focusRing.style}}',
-                        color: '{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+                        color: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.color}}',
                         offset: '{{primitives.focusRing.offset.sm}}',
-                        shadow: '{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}',
+                        shadow: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.shadow}}',
                     },
                     text: {
                         fontWeight: '{{primitives.font.weight}}',
@@ -187,11 +187,11 @@ describe('button schema', () => {
                     expectExactTokens(
                         value?.defaultVariant?.state?.hover?.severity?.success,
                         {
-                            background: '{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.bg}}',
-                            color: '{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.contrast}}',
+                            background: '{{primitives.variant.primary.state.hover.severity.success.bg}}',
+                            color: '{{primitives.variant.primary.state.hover.severity.success.contrast}}',
                             border: {
-                                color: '{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.border.color}}',
-                                style: '{{primitives.defaultVariant.defaultVariant.state.hover.severity.success.border.style}}',
+                                color: '{{primitives.variant.primary.state.hover.severity.success.border.color}}',
+                                style: '{{primitives.variant.primary.state.hover.severity.success.border.style}}',
                                 width: '{{primitives.border.width.sm}}',
                             },
                         }
@@ -200,19 +200,19 @@ describe('button schema', () => {
                     expectExactTokens(
                         value?.variants?.outlined?.state?.focus?.severity?.info,
                         {
-                            background: '{{primitives.defaultVariant.outlined.state.focus.severity.info.bg}}',
-                            color: '{{primitives.defaultVariant.outlined.state.focus.severity.info.contrast}}',
+                            background: '{{primitives.variant.tertiary.state.focus.severity.info.bg}}',
+                            color: '{{primitives.variant.tertiary.state.focus.severity.info.contrast}}',
                             border: {
-                                color: '{{primitives.defaultVariant.outlined.state.focus.severity.info.border.color}}',
-                                style: '{{primitives.defaultVariant.outlined.state.focus.severity.info.border.style}}',
+                                color: '{{primitives.variant.tertiary.state.focus.severity.info.border.color}}',
+                                style: '{{primitives.variant.tertiary.state.focus.severity.info.border.style}}',
                                 width: '{{primitives.border.width.sm}}',
                             },
                             focusRing: {
                                 width: '{{primitives.focusRing.width.sm}}',
                                 style: '{{primitives.focusRing.style}}',
-                                color: '{{primitives.defaultVariant.outlined.state.focus.severity.info.focusRing.color}}',
+                                color: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.color}}',
                                 offset: '{{primitives.focusRing.offset.sm}}',
-                                shadow: '{{primitives.defaultVariant.outlined.state.focus.severity.info.focusRing.shadow}}',
+                                shadow: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.shadow}}',
                             },
                         }
                     )
