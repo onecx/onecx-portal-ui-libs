@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { borderWithShadow, withRef } from '../primitives'
+import { borderWithShadow, color, withRef } from '../primitives'
 
 export class MultiselectChipRemoveIconSchema {
   private static readonly commonTokens = {
@@ -8,19 +8,21 @@ export class MultiselectChipRemoveIconSchema {
   }
 
   private static readonly defaultStateTokens = {
-    color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    ...this.commonTokens,
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.border.width.md}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.md}}',
+      shadow: '{{primitives.border.shadow.none}}',
+    }),
   }
 
   static readonly focusTokens = z.object({
-    color: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-    focusRing: borderWithShadow.default({
-      width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
-      offset: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.offset}}',
-      radius: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.radius}}',
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
-      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
-    }),
+    ...this.commonTokens,
+    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
   })
 
   static readonly schema = z

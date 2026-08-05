@@ -10,7 +10,8 @@ import { MultiselectEmptyMessageSchema } from './emptymessage'
  */
 export class MultiselectListItemsSchema {
   private static readonly tokens = {
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
   }
 
   static readonly schema = z

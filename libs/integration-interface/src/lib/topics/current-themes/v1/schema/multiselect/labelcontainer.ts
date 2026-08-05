@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { MultiselectIconSchema } from './icon'
 import { MultiselectChipSchema } from './chip'
 
+// TODO: use schema from input component when available
 /**
  * Multiselect label container schema that contains selcted items and dropdown icon.
  */

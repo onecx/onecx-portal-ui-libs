@@ -1,5 +1,5 @@
 import z from 'zod'
-import { font, withRef } from '../primitives'
+import { color, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 /**
@@ -8,13 +8,14 @@ import { themeSchemaRegistry } from '../registry'
 export class MultiselectEmptyMessageSchema {
   static readonly schema = z
     .object({
-      padding: withRef(z.string()).default('{{primitives.space.sm}}'),
+      paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
+      paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
       font: font.pick({ weight: true, size: true, style: true }).default({
         weight: '{{primitives.font.weight}}',
         size: '{{primitives.font.size}}',
         style: '{{primitives.font.style}}',
       }),
-      color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+      color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     })
     .register(themeSchemaRegistry, { id: 'multiselectEmptyMessage' })
 }

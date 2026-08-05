@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { border, withRef } from '../primitives'
+import { border, borderWithShadow, color, withRef } from '../primitives'
 import { MultiselectFilterSchema } from './filter'
 import { MultiselectListItemsSchema } from './listitems'
 
@@ -12,16 +12,17 @@ export class MultiselectOverlaySchema {
     background: z
       .union([z.string(), withRef(z.string())])
       .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    shadow: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.shadow}}'),
-    border: border.default({
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default({
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.width}}',
       offset: '{{primitives.border.offset.none}}',
       radius: '{{primitives.border.radius.md}}',
+      shadow: '{{primitives.border.shadow.none}}',
     }),
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   }
 
   static readonly schema = z

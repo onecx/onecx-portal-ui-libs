@@ -8,7 +8,8 @@ import { withRef, font, bg, color, border, borderWithShadow } from '../primitive
  */
 export class MultiselectInputSchema {
   private static readonly commonTokens = {
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
     font: font.pick({ family: true, size: true, weight: true }).default({
       family: '{{primitives.font.family}}',
       size: '{{primitives.font.size}}',
@@ -32,6 +33,12 @@ export class MultiselectInputSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    }),
+    focusRing: borderWithShadow.default({
+      ...this.commonBorder,
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.shadow}}',
     }),
   }
 
@@ -58,12 +65,6 @@ export class MultiselectInputSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-    }),
-    focusRing: borderWithShadow.default({
-      ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.shadow}}',
     }),
   })
 

@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, withRef } from '../primitives'
+import { bg, border, color, withRef } from '../primitives'
 
 /**
  * Checkbox inside multiselect filter and list schema.
@@ -47,7 +47,7 @@ export class MultiselectCheckboxSchema {
 
   static readonly selectedTokens = z.object({
     background: z.union([bg, withRef(z.string())]).default('{{primitives.primary.state.selected.defaultSeverity.bg}}'),
-    color: z.string().default('{{primitives.primary.state.selected.defaultSeverity.contrast}}'),
+    iconColor: color.default('{{primitives.primary.state.selected.defaultSeverity.contrast}}'),
     border: border.default({
       color: '{{primitives.primary.state.selected.defaultSeverity.border.color}}',
       style: '{{primitives.primary.state.selected.defaultSeverity.border.style}}',

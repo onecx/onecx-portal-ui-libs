@@ -10,6 +10,8 @@ export class MultiselectIconSchema {
     .object({
       color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
       size: withRef(z.string()).default('{{primitives.icon.size}}'),
+      paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
+      paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
     })
     .register(themeSchemaRegistry, { id: 'multiselectIcon' })
 }

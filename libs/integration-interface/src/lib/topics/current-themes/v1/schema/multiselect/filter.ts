@@ -10,7 +10,8 @@ import { withRef } from '../primitives'
  */
 export class MultiselectFilterSchema {
   private static readonly tokens = {
-    padding: withRef(z.string()).default('{{primitives.space.sm}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
   }
 
   static readonly schema = z
