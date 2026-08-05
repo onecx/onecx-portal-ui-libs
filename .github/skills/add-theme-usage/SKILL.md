@@ -117,6 +117,21 @@ The primitives referenced by the schema must exist in `primitives.ts` and the ma
 
 **If a usage has hover state, reference `primitives.[variant].state.hover.severity.[severity].[token]`, not `primitives.[variant].defaultState.severity.[severity].[token]`.** The state in the primitive reference should match the semantic meaning.
 
+## Apply area tokens for overlay components
+
+**`primitives.area.overlay` exists for a reason.** When a component renders as an overlay (panel, dropdown, popup, tooltip, dialog, etc.), all its children should reference `primitives.area.overlay.*` instead of `primitives.defaultVariant.*`. This ensures that when a primitive changes (e.g., overlay background), the value reflects in all overlay children automatically.
+
+**Rules for overlay areas:**
+
+- The **panel/overlay root** and **all its children** use `primitives.area.overlay.defaultState.defaultSeverity.*` for: `bg` (background), `contrast` (color), `border.color`, `border.style`
+- States (hover, active, focus, etc.) use `primitives.area.overlay.state.[state].defaultSeverity.*`
+- This applies to: color, background, border color/style, and focusRing color/background of overlay children
+- The overlay root itself (e.g., `panel`) uses `primitives.area.overlay.*` for its border properties too
+
+**Do NOT use `primitives.defaultVariant.*` or `primitives.variant.*` for overlay children** — use `primitives.area.overlay.*` instead. The `area.overlay` type is `variantWithStates` (same shape as `defaultVariant` and variant colors), so the same `defaultState`/`state`/`defaultSeverity` paths apply.
+
+**Components that are NOT inside the overlay** (e.g., an icon that sits in the input field, not the panel) should still use `primitives.defaultVariant.*` for their color/background but may use appropriate area tokens for focusRing.
+
 ## Step 1 — Read the PrimeNG tokens
 
 Pull the design-token tree via MCP or the docs page. Enumerate every leaf token. Record the PrimeNG dot-path and kind (color, layout, numeric). Preserve deeper groupings (`body`, `header`, `title`, severity sub-trees) — do not flatten.
