@@ -16,6 +16,7 @@ import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { picklist } from './schema/picklist'
 import { calendar } from './schema/calendar'
+import { button } from './schema/button'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -33,6 +34,7 @@ type UsagesInput = {
   textarea?: z.input<typeof textarea>
   picklist?: z.input<typeof picklist>
   calendar?: z.input<typeof calendar>
+  button?: z.input<typeof button>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -43,6 +45,7 @@ const usages: z.ZodType<UsagesInput> = z
     region: (region as typeof region).optional(),
     table: (table as typeof table).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
+    button: (button as typeof button).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),

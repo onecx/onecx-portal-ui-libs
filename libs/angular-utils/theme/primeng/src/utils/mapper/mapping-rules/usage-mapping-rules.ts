@@ -13,8 +13,10 @@ import { tabsMappingRules } from './usages/tabs.rules'
 import { dropdownMappingRules } from './usages/dropdown.rules'
 import { textareaMappingRules } from './usages/textarea.rules'
 import { picklistMappingRules } from './usages/picklist.rules'
+import { buttonMappingRules } from './usages/button.rules'
 
 export const usageMappingRules: MappingRule[] = [
+  ...buttonMappingRules,
   ...badgeMappingRules,
   ...calendarMappingRules,
   ...datatableMappingRules,
