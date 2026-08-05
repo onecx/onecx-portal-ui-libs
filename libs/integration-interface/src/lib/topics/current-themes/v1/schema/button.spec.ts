@@ -1,5 +1,11 @@
-import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
-import { button, buttonDisplayVariant, buttonLinkVariant, buttonSize, buttonSizes } from './button'
+import { expectTokens, expectExactTokens, expectExactUndefinedTokens } from './test-utils'
+import {
+    button,
+    buttonDisplayVariant,
+    buttonLinkVariant,
+    buttonSize,
+    buttonSizes,
+} from './button'
 
 describe('button schema', () => {
     it('parses an empty object', () => {
@@ -15,8 +21,8 @@ describe('button schema', () => {
             expect(result.success).toBe(true)
 
             const value = result.data as any
-            expectExactUndefinedTokens(value, button.shape, ['sizes'])
-            expectExactTokens(value, {
+            expectExactUndefinedTokens(value, button.shape, ['sizes', 'icon'])
+            expectTokens(value, {
                 transition: {
                     duration: '{{primitives.transition.duration}}',
                 },
@@ -25,20 +31,23 @@ describe('button schema', () => {
                 roundedBorderRadius: '{{primitives.radius.full}}',
                 raisedShadow: '{{primitives.shadow.md}}',
                 badgeSize: '{{primitives.space.lg}}',
-                defaultVariant: expect.any(Object),
-                variants: expect.any(Object),
+                border: expect.any(Object),
+                layout: expect.any(Object),
+                focusRing: expect.any(Object),
+                text: expect.any(Object),
+                defaultState: expect.any(Object),
+                state: expect.any(Object),
             })
         })
 
-        describe('defaultVariant', () => {
-            it('should apply defaults', () => {
+        describe('root flattened defaults', () => {
+            it('should apply defaults for border, layout, focusRing, text', () => {
                 const result = button.safeParse({})
 
                 expect(result.success).toBe(true)
 
                 const value = result.data as any
-                expectExactUndefinedTokens(value?.defaultVariant, buttonDisplayVariant.shape, ['icon'])
-                expectExactTokens(value?.defaultVariant, {
+                expectTokens(value, {
                     border: {
                         width: '{{primitives.border.width.sm}}',
                         radius: '{{primitives.radius.md}}',
@@ -59,164 +68,160 @@ describe('button schema', () => {
                     text: {
                         fontWeight: '{{primitives.font.weight}}',
                     },
+                })
+            })
+        })
+
+        describe('variants', () => {
+            it('should apply defaults for textVariant', () => {
+                const result = button.safeParse({})
+
+                expect(result.success).toBe(true)
+
+                const value = result.data as any
+                expectExactUndefinedTokens(value?.textVariant, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
+                expectExactTokens(value?.textVariant, {
+                    border: {
+                        width: '{{primitives.border.width.sm}}',
+                        radius: '{{primitives.radius.md}}',
+                    },
+                    layout: {
+                        gap: '{{primitives.space.xs}}',
+                        paddingX: '{{primitives.space.md}}',
+                        paddingY: '{{primitives.space.sm}}',
+                        iconOnlyWidth: '{{primitives.space.lg}}',
+                    },
                     defaultState: expect.any(Object),
                     state: expect.any(Object),
                 })
             })
 
-            describe('variants', () => {
-                it('should apply defaults for text', () => {
-                    const result = button.safeParse({})
+            it('should apply defaults for outlined', () => {
+                const result = button.safeParse({})
 
-                    expect(result.success).toBe(true)
+                expect(result.success).toBe(true)
 
-                    const value = result.data as any
-                    expectExactUndefinedTokens(value?.variants?.text, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
-                    expectExactTokens(value?.variants?.text, {
+                const value = result.data as any
+                expectExactUndefinedTokens(value?.outlined, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
+                expectExactTokens(value?.outlined, {
+                    border: {
+                        width: '{{primitives.border.width.sm}}',
+                        radius: '{{primitives.radius.md}}',
+                    },
+                    layout: {
+                        gap: '{{primitives.space.xs}}',
+                        paddingX: '{{primitives.space.md}}',
+                        paddingY: '{{primitives.space.sm}}',
+                        iconOnlyWidth: '{{primitives.space.lg}}',
+                    },
+                    defaultState: expect.any(Object),
+                    state: expect.any(Object),
+                })
+            })
+
+            it('should apply defaults for rounded', () => {
+                const result = button.safeParse({})
+
+                expect(result.success).toBe(true)
+
+                const value = result.data as any
+                expectExactUndefinedTokens(value?.rounded, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
+                expectExactTokens(value?.rounded, {
+                    border: {
+                        width: '{{primitives.border.width.sm}}',
+                        radius: '{{primitives.radius.full}}',
+                    },
+                    layout: {
+                        gap: '{{primitives.space.xs}}',
+                        paddingX: '{{primitives.space.md}}',
+                        paddingY: '{{primitives.space.sm}}',
+                        iconOnlyWidth: '{{primitives.space.lg}}',
+                    },
+                    defaultState: expect.any(Object),
+                    state: expect.any(Object),
+                })
+            })
+
+            it('should apply defaults for raised', () => {
+                const result = button.safeParse({})
+
+                expect(result.success).toBe(true)
+
+                const value = result.data as any
+                expectExactUndefinedTokens(value?.raised, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
+                expectExactTokens(value?.raised, {
+                    border: {
+                        width: '{{primitives.border.width.sm}}',
+                        radius: '{{primitives.radius.md}}',
+                    },
+                    layout: {
+                        gap: '{{primitives.space.xs}}',
+                        paddingX: '{{primitives.space.md}}',
+                        paddingY: '{{primitives.space.sm}}',
+                        iconOnlyWidth: '{{primitives.space.lg}}',
+                    },
+                    defaultState: expect.any(Object),
+                    state: expect.any(Object),
+                })
+            })
+
+            it('should apply defaults for link', () => {
+                const result = button.safeParse({})
+
+                expect(result.success).toBe(true)
+
+                const value = result.data as any
+                expectExactUndefinedTokens(value?.link, buttonLinkVariant.shape, [])
+                expectExactTokens(value?.link, {
+                    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+                    hover: {
+                        color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
+                    },
+                    active: {
+                        color: '{{primitives.variant.primary.state.active.defaultSeverity.contrast}}',
+                    },
+                })
+            })
+
+            it('should include severity combinations on non-default states', () => {
+                const result = button.safeParse({})
+
+                expect(result.success).toBe(true)
+
+                const value = result.data as any
+
+                expectExactTokens(
+                    value?.state?.hover?.severity?.success,
+                    {
+                        background: '{{primitives.variant.primary.state.hover.severity.success.bg}}',
+                        color: '{{primitives.variant.primary.state.hover.severity.success.contrast}}',
                         border: {
+                            color: '{{primitives.variant.primary.state.hover.severity.success.border.color}}',
+                            style: '{{primitives.variant.primary.state.hover.severity.success.border.style}}',
                             width: '{{primitives.border.width.sm}}',
-                            radius: '{{primitives.radius.md}}',
                         },
-                        layout: {
-                            gap: '{{primitives.space.xs}}',
-                            paddingX: '{{primitives.space.md}}',
-                            paddingY: '{{primitives.space.sm}}',
-                            iconOnlyWidth: '{{primitives.space.lg}}',
-                        },
-                        defaultState: expect.any(Object),
-                        state: expect.any(Object),
-                    })
-                })
+                    }
+                )
 
-                it('should apply defaults for outlined', () => {
-                    const result = button.safeParse({})
-
-                    expect(result.success).toBe(true)
-
-                    const value = result.data as any
-                    expectExactUndefinedTokens(value?.variants?.outlined, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
-                    expectExactTokens(value?.variants?.outlined, {
+                expectExactTokens(
+                    value?.outlined?.state?.focus?.severity?.info,
+                    {
+                        background: '{{primitives.variant.tertiary.state.focus.severity.info.bg}}',
+                        color: '{{primitives.variant.tertiary.state.focus.severity.info.contrast}}',
                         border: {
+                            color: '{{primitives.variant.tertiary.state.focus.severity.info.border.color}}',
+                            style: '{{primitives.variant.tertiary.state.focus.severity.info.border.style}}',
                             width: '{{primitives.border.width.sm}}',
-                            radius: '{{primitives.radius.md}}',
                         },
-                        layout: {
-                            gap: '{{primitives.space.xs}}',
-                            paddingX: '{{primitives.space.md}}',
-                            paddingY: '{{primitives.space.sm}}',
-                            iconOnlyWidth: '{{primitives.space.lg}}',
+                        focusRing: {
+                            width: '{{primitives.focusRing.width.sm}}',
+                            style: '{{primitives.focusRing.style}}',
+                            color: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.color}}',
+                            offset: '{{primitives.focusRing.offset.sm}}',
+                            shadow: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.shadow}}',
                         },
-                        defaultState: expect.any(Object),
-                        state: expect.any(Object),
-                    })
-                })
-
-                it('should apply defaults for rounded', () => {
-                    const result = button.safeParse({})
-
-                    expect(result.success).toBe(true)
-
-                    const value = result.data as any
-                    expectExactUndefinedTokens(value?.variants?.rounded, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
-                    expectExactTokens(value?.variants?.rounded, {
-                        border: {
-                            width: '{{primitives.border.width.sm}}',
-                            radius: '{{primitives.radius.full}}',
-                        },
-                        layout: {
-                            gap: '{{primitives.space.xs}}',
-                            paddingX: '{{primitives.space.md}}',
-                            paddingY: '{{primitives.space.sm}}',
-                            iconOnlyWidth: '{{primitives.space.lg}}',
-                        },
-                        defaultState: expect.any(Object),
-                        state: expect.any(Object),
-                    })
-                })
-
-                it('should apply defaults for raised', () => {
-                    const result = button.safeParse({})
-
-                    expect(result.success).toBe(true)
-
-                    const value = result.data as any
-                    expectExactUndefinedTokens(value?.variants?.raised, buttonDisplayVariant.shape, ['focusRing', 'icon', 'text'])
-                    expectExactTokens(value?.variants?.raised, {
-                        border: {
-                            width: '{{primitives.border.width.sm}}',
-                            radius: '{{primitives.radius.md}}',
-                        },
-                        layout: {
-                            gap: '{{primitives.space.xs}}',
-                            paddingX: '{{primitives.space.md}}',
-                            paddingY: '{{primitives.space.sm}}',
-                            iconOnlyWidth: '{{primitives.space.lg}}',
-                        },
-                        defaultState: expect.any(Object),
-                        state: expect.any(Object),
-                    })
-                })
-
-                it('should apply defaults for link', () => {
-                    const result = button.safeParse({})
-
-                    expect(result.success).toBe(true)
-
-                    const value = result.data as any
-                    expectExactUndefinedTokens(value?.variants?.link, buttonLinkVariant.shape, [])
-                    expectExactTokens(value?.variants?.link, {
-                        defaultState: {
-                            color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-                        },
-                        hover: {
-                            color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
-                        },
-                        active: {
-                            color: '{{primitives.variant.primary.state.active.defaultSeverity.contrast}}',
-                        },
-                    })
-                })
-
-                it('should include severity combinations on non-default states', () => {
-                    const result = button.safeParse({})
-
-                    expect(result.success).toBe(true)
-
-                    const value = result.data as any
-
-                    expectExactTokens(
-                        value?.defaultVariant?.state?.hover?.severity?.success,
-                        {
-                            background: '{{primitives.variant.primary.state.hover.severity.success.bg}}',
-                            color: '{{primitives.variant.primary.state.hover.severity.success.contrast}}',
-                            border: {
-                                color: '{{primitives.variant.primary.state.hover.severity.success.border.color}}',
-                                style: '{{primitives.variant.primary.state.hover.severity.success.border.style}}',
-                                width: '{{primitives.border.width.sm}}',
-                            },
-                        }
-                    )
-
-                    expectExactTokens(
-                        value?.variants?.outlined?.state?.focus?.severity?.info,
-                        {
-                            background: '{{primitives.variant.tertiary.state.focus.severity.info.bg}}',
-                            color: '{{primitives.variant.tertiary.state.focus.severity.info.contrast}}',
-                            border: {
-                                color: '{{primitives.variant.tertiary.state.focus.severity.info.border.color}}',
-                                style: '{{primitives.variant.tertiary.state.focus.severity.info.border.style}}',
-                                width: '{{primitives.border.width.sm}}',
-                            },
-                            focusRing: {
-                                width: '{{primitives.focusRing.width.sm}}',
-                                style: '{{primitives.focusRing.style}}',
-                                color: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.color}}',
-                                offset: '{{primitives.focusRing.offset.sm}}',
-                                shadow: '{{primitives.variant.tertiary.state.focus.severity.info.focusRing.shadow}}',
-                            },
-                        }
-                    )
-                })
+                    }
+                )
             })
         })
 
