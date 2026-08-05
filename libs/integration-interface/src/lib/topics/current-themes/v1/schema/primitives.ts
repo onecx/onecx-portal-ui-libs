@@ -266,7 +266,33 @@ export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'a
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
-
+// Usage example for global typography scale (fontSizes):
+// {
+//   "primitives": {
+//     "font": {
+//       "sizes": {
+//         "xs": "0.75rem",
+//         "sm": "0.875rem",
+//         "md": "1rem",
+//         "lg": "1.125rem",
+//         "xl": "1.25rem",
+//         "xxl": "1.5rem"
+//       }
+//     }
+//   }
+// }
+// Usage example for component-level fontSize referencing primitives.font.sizes:
+// {
+//   "components": {
+//     "badge": {
+//       "defaultVariant": {
+//         "defaultVariant": {
+//           "fontSize": "{{primitives.font.sizes.md}}"
+//         }
+//       }
+//     }
+//   }
+// }
 const fontSizeScale = z
   .object({
     xs: withRef(z.string()).optional(),
@@ -280,7 +306,7 @@ const fontSizeScale = z
 export const font = z
   .object({
     family: withRef(z.string()).optional(),
-    size: z.union([withRef(z.string()), withRef(fontSizeScale)]).optional(),
+    size: z.union([withRef(z.string()), withRef(fontSizeScale)]).optional(), 
     weight: withRef(z.string()).optional(),
     lineHeight: withRef(z.string()).optional(),
     letterSpacing: withRef(z.string()).optional(),
@@ -295,7 +321,7 @@ export const transition = z
   })
   .register(themeSchemaRegistry, { id: 'transition' })
 
-export const iconSizeScale = z
+export const iconSize = z
   .object({
     xs: withRef(z.string()).optional(),
     sm: withRef(z.string()).optional(),
@@ -303,14 +329,14 @@ export const iconSizeScale = z
     lg: withRef(z.string()).optional(),
     xl: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'iconSizeScale' })
+  .register(themeSchemaRegistry, { id: 'iconSize' })
 
 export const icon = z
   .object({
     size: withRef(
       z.union([
         z.string(),
-        iconSizeScale,
+        iconSize,
       ])
     ).optional(),
     color: color.optional(),
@@ -333,7 +359,7 @@ type PrimitivesShape = {
   border: z.ZodOptional<typeof borderShape>
   focusRing: z.ZodOptional<typeof focusRingShape>
   transition: z.ZodOptional<typeof transition>
-  icon: z.ZodOptional<typeof icon>
+  iconSize: z.ZodOptional<typeof iconSize>
 }
 
 const primitivesShape: PrimitivesShape = {
@@ -351,7 +377,7 @@ const primitivesShape: PrimitivesShape = {
   border: (borderShape as typeof borderShape).optional(),
   focusRing: (focusRingShape as typeof focusRingShape).optional(),
   transition: (transition as typeof transition).optional(),
-  icon: (icon as typeof icon).optional(),
+  iconSize: (iconSize as typeof iconSize).optional(),
 }
 
 export const primitives = z.object(primitivesShape).optional().register(themeSchemaRegistry, { id: 'primitives' })
