@@ -169,6 +169,7 @@ Create `libs/integration-interface/src/lib/topics/current-themes/v1/schema/<comp
 - Use `border: border.default({...})` or `border: borderWithShadow.default({...})` for border tokens, not flat scalar `borderRadius` or `borderWidth`.
   **`defaultVariant` must NOT appear as a key in token paths.** The default variant has no key — `usage.textarea.background` (not `usage.textarea.defaultVariant.background`).
 - **`variant` must NOT appear as a raw key in token paths.** Named variants use their name directly — `usage.textarea.filled.background` (not `usage.textarea.variant.primary.background`).
+- **`defaultState` must NOT appear as a raw key in token paths.** Named variants use their name directly — `usage.component.background` (not `usage.component.defaultState.background`).
 - **`focusRing` must NEVER be inside a state object.** It belongs at the variant level (e.g., `usage.textarea.filled.focusRing`), not `usage.textarea.hover.focusRing`. FocusRing is referenced when setting focus styles but is defined at the variant root.
 - Hierarchy order: When a usage needs variant, state and severity simultaneously: **component → variant → state → severity → token**. Breaking this order (e.g., state before variant) is invalid.
 - The schema must produce tokens that follow this hierarchy when flattened: usage.component.[variant].state.severity.tokenName
@@ -351,6 +352,45 @@ const carousel = z.object({
 ```
 
 If a sub-component doesn't need state variants, give it a flat schema with `.default()` on every field (no states, no nesting).
+
+**Never share one z.object() shape across multiple states via `.default(...)`**
+
+**Anti-pattern (DO NOT DO THIS):**
+
+```typescript
+const inputState = z.object({
+  bg: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+})
+
+const carouselNavigationButton = z.object({
+  ...
+  hover: inputState.default(hoverInputState), // ← DO NOT share one shape across multiple states
+  focus: inputState.default(activeInputState),
+})
+```
+
+.default(x) only substitutes x when the key is completely missing. If the key exists but is missing some fields, those fields will be undefined. This breaks the "no undefined tokens" rule. Instead, create a separate z.object() for each state and register it independently.
+
+**Correct pattern: each state has its own z.object() with `.default(...)` and is registered independently**
+
+```typescript
+const hoverInputVariantState = z.object({
+  bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+  color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+}).register(themeSchemaRegistry, { id: 'hoverInputVariantState' })
+
+const focusInputVariantState = z.object({
+  bg: z.union([bg, withRef(z.string())]).default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
+  color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
+}).register(themeSchemaRegistry, { id: 'focusInputVariantState' })
+
+const carouselNavigationButton = z.object({
+  ...
+  hover: hoverInputVariantState.prefault({}), // ← DO NOT share one shape across multiple states
+  focus: focusInputVariantState.prefault({})
+})
+```
 
 ## Step 4 — Register the usage
 
