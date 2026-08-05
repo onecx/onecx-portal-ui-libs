@@ -1,11 +1,17 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
 import {
   input,
+  inputDisabledState,
+  inputFilledDisabledState,
+  inputFilledFocusState,
+  inputFilledHoverState,
+  inputFilledInvalidState,
   inputFilledVariant,
-  inputFilledVariantState,
   inputFocusRingSchema,
+  inputFocusState,
+  inputHoverState,
+  inputInvalidState,
   inputSize,
-  inputState,
 } from './input'
 
 describe('input schema', () => {
@@ -51,39 +57,17 @@ describe('input schema', () => {
           radius: '{{primitives.radius.md}}',
           shadow: '{{primitives.shadow.none}}',
         },
-        defaultState: expect.any(Object),
+        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        placeholder: {
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        },
         hover: expect.any(Object),
         focus: expect.any(Object),
         disabled: expect.any(Object),
         invalid: expect.any(Object),
         sizes: expect.any(Object),
         filled: expect.any(Object),
-      })
-    })
-
-    describe('defaultState', () => {
-      it('should apply defaults', () => {
-        const result = input.safeParse({})
-
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactUndefinedTokens(value?.defaultState, inputState.shape, [])
-        expectExactTokens(value?.defaultState, {
-          background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-          border: {
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.sm}}',
-            offset: '{{primitives.border.offset.none}}',
-            radius: '{{primitives.border.radius.md}}',
-            shadow: '{{primitives.shadow.none}}',
-          },
-          placeholder: {
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-          },
-        })
       })
     })
 
@@ -94,7 +78,7 @@ describe('input schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expectExactUndefinedTokens(value?.hover, inputState.shape, [])
+        expectExactUndefinedTokens(value?.hover, inputHoverState.shape, [])
         expectExactTokens(value?.hover, {
           background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
@@ -120,7 +104,7 @@ describe('input schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expectExactUndefinedTokens(value?.focus, inputState.shape, [])
+        expectExactUndefinedTokens(value?.focus, inputFocusState.shape, [])
         expectExactTokens(value?.focus, {
           background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
@@ -146,7 +130,7 @@ describe('input schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expectExactUndefinedTokens(value?.disabled, inputState.shape, [])
+        expectExactUndefinedTokens(value?.disabled, inputDisabledState.shape, [])
         expectExactTokens(value?.disabled, {
           background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
@@ -172,7 +156,7 @@ describe('input schema', () => {
         expect(result.success).toBe(true)
 
         const value = result.data
-        expectExactUndefinedTokens(value?.invalid, inputState.shape, [])
+        expectExactUndefinedTokens(value?.invalid, inputInvalidState.shape, [])
         expectExactTokens(value?.invalid, {
           background: '{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
@@ -248,29 +232,13 @@ describe('input schema', () => {
         const value = result.data
         expectExactUndefinedTokens(value?.filled, inputFilledVariant.shape, [])
         expectExactTokens(value?.filled, {
-          defaultState: expect.any(Object),
+          background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+          color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+          placeholder: expect.any(Object),
           hover: expect.any(Object),
           focus: expect.any(Object),
           disabled: expect.any(Object),
           invalid: expect.any(Object),
-        })
-      })
-
-      describe('defaultState', () => {
-        it('should apply defaults', () => {
-          const result = input.safeParse({})
-
-          expect(result.success).toBe(true)
-
-          const value = result.data
-          expectExactUndefinedTokens(value?.filled?.defaultState, inputFilledVariantState.shape, [])
-          expectExactTokens(value?.filled?.defaultState, {
-            background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
-            color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-            placeholder: {
-              color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-            },
-          })
         })
       })
 
@@ -281,7 +249,7 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.filled?.hover, inputFilledVariantState.shape, [])
+          expectExactUndefinedTokens(value?.filled?.hover, inputFilledHoverState.shape, [])
           expectExactTokens(value?.filled?.hover, {
             background: '{{primitives.variant.primary.state.hover.defaultSeverity.bg}}',
             color: '{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}',
@@ -299,7 +267,7 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.filled?.focus, inputFilledVariantState.shape, [])
+          expectExactUndefinedTokens(value?.filled?.focus, inputFilledFocusState.shape, [])
           expectExactTokens(value?.filled?.focus, {
             background: '{{primitives.variant.primary.state.focus.defaultSeverity.bg}}',
             color: '{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}',
@@ -317,7 +285,7 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.filled?.disabled, inputFilledVariantState.shape, [])
+          expectExactUndefinedTokens(value?.filled?.disabled, inputFilledDisabledState.shape, [])
           expectExactTokens(value?.filled?.disabled, {
             background: '{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}',
             color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
@@ -335,7 +303,7 @@ describe('input schema', () => {
           expect(result.success).toBe(true)
 
           const value = result.data
-          expectExactUndefinedTokens(value?.filled?.invalid, inputFilledVariantState.shape, [])
+          expectExactUndefinedTokens(value?.filled?.invalid, inputFilledInvalidState.shape, [])
           expectExactTokens(value?.filled?.invalid, {
             background: '{{primitives.variant.primary.state.invalid.defaultSeverity.bg}}',
             color: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',

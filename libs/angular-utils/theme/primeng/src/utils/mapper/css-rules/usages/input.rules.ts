@@ -159,11 +159,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.defaultState.background'
+        from: 'usages.input.filled.background'
       },
       {
         property: 'color',
-        from: 'usages.input.filled.defaultState.color'
+        from: 'usages.input.filled.color'
       },
     ],
   },
@@ -172,7 +172,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.defaultState.placeholder.color'
+        from: 'usages.input.filled.placeholder.color'
       },
     ],
   },

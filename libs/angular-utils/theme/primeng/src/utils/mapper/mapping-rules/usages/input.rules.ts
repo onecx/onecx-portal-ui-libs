@@ -3,12 +3,12 @@ import { toColorString } from '../../mapper.utils'
 
 export const inputMappingRules: MappingRule[] = [
   {
-    from: 'usages.input.defaultState.background',
+    from: 'usages.input.background',
     to: 'components.inputtext.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.input.defaultState.color',
+    from: 'usages.input.color',
     to: 'components.inputtext.root.color',
     transform: toColorString,
   },
@@ -24,7 +24,7 @@ export const inputMappingRules: MappingRule[] = [
   },
 
   {
-    from: 'usages.input.filled.defaultState.background',
+    from: 'usages.input.filled.background',
     to: 'components.inputtext.root.filledBackground',
     transform: toColorString,
   },
@@ -83,7 +83,7 @@ export const inputMappingRules: MappingRule[] = [
   },
 
   {
-    from: 'usages.input.defaultState.placeholder.color',
+    from: 'usages.input.placeholder.color',
     to: 'components.inputtext.root.placeholderColor',
     transform: toColorString,
   },
