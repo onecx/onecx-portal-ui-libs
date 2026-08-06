@@ -3,10 +3,6 @@ import { toColorString } from '../../mapper.utils'
 export const togglebuttonMappingRules: MappingRule[] = [
   // Root properties
   {
-    from: 'usages.togglebutton.padding',
-    to: 'components.togglebutton.root.padding',
-  },
-  {
     from: 'usages.togglebutton.gap',
     to: 'components.togglebutton.root.gap',
   },
@@ -22,7 +18,7 @@ export const togglebuttonMappingRules: MappingRule[] = [
     from: 'usages.togglebutton.transitionDuration',
     to: 'components.togglebutton.root.transitionDuration',
   },
-  
+
   // Colors - default (unchecked)
   {
     from: 'usages.togglebutton.background',
@@ -190,18 +186,10 @@ export const togglebuttonMappingRules: MappingRule[] = [
     from: 'usages.togglebutton.sm.font.size',
     to: 'components.togglebutton.root.sm.fontSize',
   },
-  {
-    from: 'usages.togglebutton.sm.padding',
-    to: 'components.togglebutton.root.sm.padding',
-  },
   // Size variants - lg
   {
     from: 'usages.togglebutton.lg.font.size',
     to: 'components.togglebutton.root.lg.fontSize',
-  },
-  {
-    from: 'usages.togglebutton.lg.padding',
-    to: 'components.togglebutton.root.lg.padding',
   },
   // Icon colors (default/unchecked)
   {
@@ -226,10 +214,6 @@ export const togglebuttonMappingRules: MappingRule[] = [
     transform: toColorString,
   },
   // Content sub-element
-  {
-    from: 'usages.togglebutton.content.padding',
-    to: 'components.togglebutton.content.padding',
-  },
   {
     from: 'usages.togglebutton.content.border.radius',
     to: 'components.togglebutton.content.borderRadius',

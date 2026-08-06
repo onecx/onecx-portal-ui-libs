@@ -1,5 +1,28 @@
 import type { CssRule } from '../../mapper.types'
 export const togglebuttonCssRules: CssRule[] = [
+  // Root padding
+  {
+    selector: '.p-togglebutton',
+    declarations: [
+      {
+        property: 'padding-left',
+        from: 'usages.togglebutton.paddingX',
+      },
+      {
+        property: 'padding-right',
+        from: 'usages.togglebutton.paddingX',
+      },
+      {
+        property: 'padding-top',
+        from: 'usages.togglebutton.paddingY',
+      },
+      {
+        property: 'padding-bottom',
+        from: 'usages.togglebutton.paddingY',
+      },
+    ],
+  },
+
   // Font properties
   {
     selector: '.p-togglebutton',
@@ -26,7 +49,7 @@ export const togglebuttonCssRules: CssRule[] = [
       },
     ],
   },
-  
+
   // Hover border color
   {
     selector: '.p-togglebutton:not(:disabled):hover',
@@ -164,6 +187,83 @@ export const togglebuttonCssRules: CssRule[] = [
       {
         property: 'color',
         from: 'usages.togglebutton.icon.focus.color',
+      },
+    ],
+  },
+
+  // Size variant - sm padding
+  {
+    selector: '.p-togglebutton-sm',
+    declarations: [
+      {
+        property: 'padding-left',
+        from: 'usages.togglebutton.sm.paddingX',
+      },
+      {
+        property: 'padding-right',
+        from: 'usages.togglebutton.sm.paddingX',
+      },
+      {
+        property: 'padding-top',
+        from: 'usages.togglebutton.sm.paddingY',
+      },
+      {
+        property: 'padding-bottom',
+        from: 'usages.togglebutton.sm.paddingY',
+      },
+    ],
+  },
+
+  // Size variant - lg padding
+  {
+    selector: '.p-togglebutton-lg',
+    declarations: [
+      {
+        property: 'padding-left',
+        from: 'usages.togglebutton.lg.paddingX',
+      },
+      {
+        property: 'padding-right',
+        from: 'usages.togglebutton.lg.paddingX',
+      },
+      {
+        property: 'padding-top',
+        from: 'usages.togglebutton.lg.paddingY',
+      },
+      {
+        property: 'padding-bottom',
+        from: 'usages.togglebutton.lg.paddingY',
+      },
+    ],
+  },
+
+  // Content element - padding, background, shadow
+  {
+    selector: '.p-togglebutton .p-togglebutton-content',
+    declarations: [
+      {
+        property: 'padding-left',
+        from: 'usages.togglebutton.content.paddingX',
+      },
+      {
+        property: 'padding-right',
+        from: 'usages.togglebutton.content.paddingX',
+      },
+      {
+        property: 'padding-top',
+        from: 'usages.togglebutton.content.paddingY',
+      },
+      {
+        property: 'padding-bottom',
+        from: 'usages.togglebutton.content.paddingY',
+      },
+      {
+        property: 'background',
+        from: 'usages.togglebutton.content.background',
+      },
+      {
+        property: 'box-shadow',
+        from: 'usages.togglebutton.content.shadow',
       },
     ],
   },
