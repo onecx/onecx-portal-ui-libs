@@ -26,7 +26,7 @@ This skill adds full Theme V2 support for one PrimeNG component (called a **usag
 
 ## Theme token hierarchy
 
-The token path hierarchy is: **component → variant → state → severity → property**.
+The token path hierarchy is: **component → variant → state → severity → property (IMPORTANT)** .
 
 Rules enforced by the schema and tests:
 
