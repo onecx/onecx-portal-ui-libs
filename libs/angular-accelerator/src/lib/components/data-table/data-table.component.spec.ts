@@ -1593,7 +1593,7 @@ describe('DataTableComponent', () => {
       expect(result.options).toEqual([
         {
           label: 'T1',
-          value: 'T1',
+          value: 'k1',
           toFilterBy: 'T1',
         },
       ])

@@ -67,7 +67,7 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: FilterType.EQUALS, value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, {}], false)
+      const result = sut.filterItems([items as any, filters as any], false)
 
       expect(result).toEqual(items)
     })
@@ -81,7 +81,7 @@ describe('DataSortBase', () => {
         { columnId: 'status', filterType: FilterType.IS_NOT_EMPTY, value: true },
       ]
 
-      const result = sut.filterItems([items as any, filters as any, {}], true)
+      const result = sut.filterItems([items as any, filters as any], true)
 
       expect(result).toEqual([{ status: 'A' }])
     })
@@ -92,7 +92,7 @@ describe('DataSortBase', () => {
       const items = [{ status: 'A' }, { status: 'B' }]
       const filters: any[] = [{ columnId: 'status', filterType: 'SOMETHING_ELSE', value: 'A' }]
 
-      const result = sut.filterItems([items as any, filters as any, {}], true)
+      const result = sut.filterItems([items as any, filters as any], true)
 
       expect(result).toEqual(items)
     })
