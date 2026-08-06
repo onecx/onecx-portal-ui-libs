@@ -1,5 +1,5 @@
 import { message } from './message'
-import { expectExactTokens, expectExactUndefinedTokens, expectTokens } from './test-utils'
+import { expectExactTokens, expectExactUndefinedTokens, expectTokens, expectUndefinedTokens } from './test-utils'
 
 const BASE_TOKENS = {
   border: {
@@ -53,6 +53,10 @@ describe('message schema', () => {
   })
 
   describe('settings', () => {
+    it('should be undefined when not provided', () => {
+      expectUndefinedTokens(value, ['settings'])
+    })
+
     it('should apply default settings', () => {
       const settingsValue = message.safeParse({ settings: {} }).data
       expectExactTokens(settingsValue?.settings, {
@@ -64,6 +68,13 @@ describe('message schema', () => {
   })
 
   describe('size', () => {
+    it('should not be undefined', () => {
+      expectUndefinedTokens(value?.xs, [])
+      expectUndefinedTokens(value?.sm, [])
+      expectUndefinedTokens(value?.md, [])
+      expectUndefinedTokens(value?.lg, [])
+      expectUndefinedTokens(value?.xl, [])
+    })
     it.each([
       ['xs', '{{primitives.space.xs}}', '{{primitives.font.size.xs}}', '{{primitives.icon.size.xs}}'],
       ['sm', '{{primitives.space.sm}}', '{{primitives.font.size.sm}}', '{{primitives.icon.size.sm}}'],
@@ -81,6 +92,12 @@ describe('message schema', () => {
   })
 
   describe('close', () => {
+    it('should not be undefined', () => {
+      expectUndefinedTokens(value?.close, [])
+      expectUndefinedTokens(value?.close.primary, [])
+      expectUndefinedTokens(value?.close, [])
+    })
+
     it('should apply base token defaults', () => {
       expectExactTokens(value?.close, {
         width: '{{primitives.icon.size.md}}',
@@ -101,6 +118,10 @@ describe('message schema', () => {
     })
 
     describe('primary', () => {
+      it('should be defined when primary close tokens are not provided', () => {
+        expectUndefinedTokens(value?.close?.primary, [])
+      })
+
       // 'error' severity key maps to 'danger' token in default/focus state
       const defaultSeverities: [string, string][] = [
         ['info', 'info'],
@@ -126,6 +147,10 @@ describe('message schema', () => {
       ]
 
       describe('text', () => {
+        it('should be defined when primary and secondary text tokens are not provided', () => {
+          expectUndefinedTokens(value?.close?.primary?.text, [])
+          expectUndefinedTokens(value?.close?.secondary?.text, [])
+        })
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.primary?.text as any)?.[severity], {
             backgroundColor: `{{primitives.variant.primary.defaultState.severity.${token}.bg.color}}`,
@@ -144,6 +169,11 @@ describe('message schema', () => {
       })
 
       describe('outline', () => {
+        it('should be defined when primary and secondary outline tokens are not provided', () => {
+          expectUndefinedTokens(value?.close?.primary?.outline, [])
+          expectUndefinedTokens(value?.close?.secondary?.outline, [])
+        })
+
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.primary?.outline as any)?.[severity], {
             backgroundColor: `{{primitives.variant.primary.defaultState.severity.${token}.bg.color}}`,
@@ -162,6 +192,10 @@ describe('message schema', () => {
       })
 
       describe('filled', () => {
+        it('should be defined when primary and secondary filled tokens are not provided', () => {
+          expectUndefinedTokens(value?.close?.primary?.filled, [])
+          expectUndefinedTokens(value?.close?.secondary?.filled, [])
+        })
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.primary?.filled as any)?.[severity], {
             backgroundColor: `{{primitives.variant.primary.defaultState.severity.${token}.bg.color}}`,
@@ -181,6 +215,12 @@ describe('message schema', () => {
     })
 
     describe('secondary', () => {
+      it('should be defined when secondary close tokens are not provided', () => {
+        expectUndefinedTokens(value?.close?.secondary?.filled, [])
+        expectUndefinedTokens(value?.close?.secondary?.text, [])
+        expectUndefinedTokens(value?.close?.secondary?.outline, [])
+      })
+
       // 'error' severity key maps to 'danger' token in default/focus state
       const defaultSeverities: [string, string][] = [
         ['info', 'info'],
@@ -199,6 +239,10 @@ describe('message schema', () => {
       ]
 
       describe('text', () => {
+        it('should be defined when secondary close text token is not provided', () => {
+          expectUndefinedTokens(value?.close?.secondary?.text, [])
+        })
+
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.secondary?.text as any)?.[severity], {
             backgroundColor: `{{primitives.variant.secondary.defaultState.severity.${token}.bg.color}}`,
@@ -217,6 +261,9 @@ describe('message schema', () => {
       })
 
       describe('outline', () => {
+        it('should be defined when secondary close outline token is not provided', () => {
+          expectUndefinedTokens(value?.close?.secondary?.outline, [])
+        })
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.secondary?.outline as any)?.[severity], {
             backgroundColor: `{{primitives.variant.secondary.defaultState.severity.${token}.bg.color}}`,
@@ -235,6 +282,9 @@ describe('message schema', () => {
       })
 
       describe('filled', () => {
+        it('should be defined when secondary close filled token is not provided', () => {
+          expectUndefinedTokens(value?.close?.secondary?.filled, [])
+        })
         it.each(defaultSeverities)('should apply %s default state', (severity, token) => {
           expectExactTokens((value?.close?.secondary?.filled as any)?.[severity], {
             backgroundColor: `{{primitives.variant.secondary.defaultState.severity.${token}.bg.color}}`,
@@ -259,13 +309,17 @@ describe('message schema', () => {
 
     describe('primary', () => {
       describe('text', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.primary, [])
+          expectUndefinedTokens(value?.primary.text, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.primary?.text, {
             ...BASE_TEXT_VARIANT_TOKENS,
           })
         })
         it.each(severities)('should apply %s severity defaults', (severity) => {
-          expectExactTokens((value?.primary?.text as any)?.[severity], {
+          expectExactTokens(value?.primary?.text?.[severity], {
             color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}`,
             icon: { color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}` },
           })
@@ -273,13 +327,17 @@ describe('message schema', () => {
       })
 
       describe('outline', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.primary, [])
+          expectUndefinedTokens(value?.primary?.outline, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.primary?.outline, {
             ...BASE_FILLED_OUTLINED_VARIANT_TOKENS,
           })
         })
         it.each(severities)('should apply %s severity defaults', (severity) => {
-          expectExactTokens((value?.primary?.outline as any)?.[severity], {
+          expectExactTokens(value?.primary?.outline?.[severity], {
             color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}`,
             icon: { color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}` },
             backgroundColor: `{{primitives.variant.primary.defaultState.severity.${severity}.bg.color}}`,
@@ -290,13 +348,17 @@ describe('message schema', () => {
       })
 
       describe('filled', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.primary, [])
+          expectUndefinedTokens(value?.primary?.filled, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.primary?.filled, {
             ...BASE_FILLED_OUTLINED_VARIANT_TOKENS,
           })
         })
         it.each(severities)('should apply %s severity defaults', (severity) => {
-          expectExactTokens((value?.primary?.filled as any)?.[severity], {
+          expectExactTokens(value?.primary?.filled?.[severity], {
             color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}`,
             icon: { color: `{{primitives.variant.primary.defaultState.severity.${severity}.contrast}}` },
             backgroundColor: `{{primitives.variant.primary.defaultState.severity.${severity}.bg.color}}`,
@@ -309,13 +371,17 @@ describe('message schema', () => {
 
     describe('secondary', () => {
       describe('text', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.secondary, [])
+          expectUndefinedTokens(value?.secondary?.text, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.secondary?.text, {
             ...BASE_TEXT_VARIANT_TOKENS,
           })
         })
         it.each(severities)('should apply %s severity defaults', (severity) => {
-          expectExactTokens((value?.secondary?.text as any)?.[severity], {
+          expectExactTokens(value?.secondary?.text?.[severity], {
             color: `{{primitives.variant.secondary.defaultState.severity.${severity}.contrast}}`,
             icon: { color: `{{primitives.variant.secondary.defaultState.severity.${severity}.contrast}}` },
           })
@@ -323,13 +389,17 @@ describe('message schema', () => {
       })
 
       describe('outline', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.secondary, [])
+          expectUndefinedTokens(value?.secondary?.outline, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.secondary?.outline, {
             ...BASE_FILLED_OUTLINED_VARIANT_TOKENS,
           })
         })
         it.each(severities)('should apply %s severity defaults', (severity) => {
-          expectExactTokens((value?.secondary?.outline as any)?.[severity], {
+          expectExactTokens(value?.secondary?.outline?.[severity], {
             color: `{{primitives.variant.secondary.defaultState.severity.${severity}.contrast}}`,
             icon: { color: `{{primitives.variant.secondary.defaultState.severity.${severity}.contrast}}` },
             backgroundColor: `{{primitives.variant.secondary.defaultState.severity.${severity}.bg.color}}`,
@@ -340,6 +410,10 @@ describe('message schema', () => {
       })
 
       describe('filled', () => {
+        it('should not be undefined', () => {
+          expectUndefinedTokens(value?.secondary, [])
+          expectUndefinedTokens(value?.secondary?.filled, [])
+        })
         it('should apply base token defaults', () => {
           expectTokens(value?.secondary?.filled, {
             ...BASE_FILLED_OUTLINED_VARIANT_TOKENS,
