@@ -1,7 +1,6 @@
-import { border, color, font, withRef } from '../primitives'
+import { border, color, font, icon, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { z } from 'zod'
-import { MultiselectIconButtonSchema } from './iconbutton'
 import { MultiselectChipSchema } from './chip'
 
 // TODO: use schema from input component when available
@@ -39,6 +38,18 @@ export class MultiselectLabelContainerSchema {
     offset: '{{primitives.border.offset.none}}',
   }
 
+  private static readonly commonDropdown = {
+    size: '{{primitives.icon.size.sm}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+  }
+
+  private static readonly commonClearIcon = {
+    size: '{{primitives.icon.size.sm}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+  }
+
   private static readonly defaultStateTokens = {
     background: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
     placeholderColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
@@ -46,6 +57,14 @@ export class MultiselectLabelContainerSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    }),
+    dropdownIcon: icon.default({
+      ...this.commonDropdown,
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    }),
+    clearIcon: icon.default({
+      ...this.commonClearIcon,
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
     }),
     ...this.commonTokens,
   }
@@ -58,6 +77,14 @@ export class MultiselectLabelContainerSchema {
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
     }),
+    dropdownIcon: icon.default({
+      ...this.commonDropdown,
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    }),
+    clearIcon: icon.default({
+      ...this.commonClearIcon,
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    }),
     ...this.commonTokens,
   })
 
@@ -68,6 +95,14 @@ export class MultiselectLabelContainerSchema {
       ...this.commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+    }),
+    dropdownIcon: icon.default({
+      ...this.commonDropdown,
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+    }),
+    clearIcon: icon.default({
+      ...this.commonClearIcon,
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
     }),
     ...this.commonTokens,
   })
@@ -80,6 +115,14 @@ export class MultiselectLabelContainerSchema {
       color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
     }),
+    dropdownIcon: icon.default({
+      ...this.commonDropdown,
+      color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+    }),
+    clearIcon: icon.default({
+      ...this.commonClearIcon,
+      color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+    }),
     ...this.commonTokens,
   })
 
@@ -91,16 +134,20 @@ export class MultiselectLabelContainerSchema {
       color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
+    dropdownIcon: icon.default({
+      ...this.commonDropdown,
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+    }),
+    clearIcon: icon.default({
+      ...this.commonClearIcon,
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+    }),
     ...this.commonTokens,
   })
 
   static readonly schema = z
     .object({
       chip: (MultiselectChipSchema.schema as typeof MultiselectChipSchema.schema).prefault({}),
-      dropdownIconButton: (MultiselectIconButtonSchema.schema as typeof MultiselectIconButtonSchema.schema).prefault(
-        {}
-      ),
-      clearIconButton: (MultiselectIconButtonSchema.schema as typeof MultiselectIconButtonSchema.schema).prefault({}),
       ...this.defaultStateTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),

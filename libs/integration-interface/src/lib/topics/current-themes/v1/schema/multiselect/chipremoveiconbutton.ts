@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { borderWithShadow, color, withRef } from '../primitives'
+import { borderWithShadow, color, icon, withRef } from '../primitives'
 
 export class MultiselectChipRemoveIconButtonSchema {
   private static readonly commonTokens = {
@@ -25,8 +25,8 @@ export class MultiselectChipRemoveIconButtonSchema {
     color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
   })
 
-  static readonly schema = z
-    .object({
+  static readonly schema = icon
+    .extend({
       ...this.defaultStateTokens,
       focus: this.focusTokens.prefault({}),
     })

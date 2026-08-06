@@ -51,9 +51,7 @@ export class MultiselectCheckboxSchema {
       .default('{{primitives.variant.primary.state.selected.defaultSeverity.bg}}'),
     checkIcon: icon.default({
       color: '{{primitives.variant.primary.state.selected.defaultSeverity.contrast}}',
-      size: '{{icon.size.sm}}',
-      content: '{{icon.content}}',
-      url: '{{icon.url}}',
+      size: '{{primitives.icon.size.sm}}',
     }),
     border: border.default({
       color: '{{primitives.variant.primary.state.selected.defaultSeverity.border.color}}',
