@@ -2,7 +2,7 @@ import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
 import { borderWithShadow, color, withRef } from '../primitives'
 
-export class MultiselectChipRemoveIconSchema {
+export class MultiselectChipRemoveIconButtonSchema {
   private static readonly commonTokens = {
     size: withRef(z.string()).default('{{primitives.icon.size}}'),
   }
@@ -30,5 +30,5 @@ export class MultiselectChipRemoveIconSchema {
       ...this.defaultStateTokens,
       focus: this.focusTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectChip' })
+    .register(themeSchemaRegistry, { id: 'multiselectChipRemoveIconButton' })
 }

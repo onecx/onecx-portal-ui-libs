@@ -2,7 +2,7 @@ import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
 import { MultiselectCheckboxSchema } from './checkbox'
 import { MultiselectInputSchema } from './input'
-import { MultiselectIconSchema } from './icon'
+import { MultiselectIconButtonSchema } from './iconbutton'
 import { withRef } from '../primitives'
 
 /**
@@ -19,7 +19,7 @@ export class MultiselectFilterSchema {
       ...this.tokens,
       checkbox: (MultiselectCheckboxSchema.schema as typeof MultiselectCheckboxSchema.schema).prefault({}),
       input: (MultiselectInputSchema.schema as typeof MultiselectInputSchema.schema).prefault({}),
-      filterIcon: (MultiselectIconSchema.schema as typeof MultiselectIconSchema.schema).prefault({}),
+      filterIconButton: (MultiselectIconButtonSchema.schema as typeof MultiselectIconButtonSchema.schema).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'multiselectFilter' })
 }

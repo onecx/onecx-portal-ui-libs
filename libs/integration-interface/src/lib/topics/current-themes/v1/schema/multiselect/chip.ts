@@ -1,7 +1,7 @@
 import { border, borderWithShadow, color, font } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { z } from 'zod'
-import { MultiselectChipRemoveIconSchema } from './chipremoveicon'
+import { MultiselectChipRemoveIconButtonSchema } from './chipremoveiconbutton'
 
 /**
  * Multiselect chip schema for selected items in multiselect container.
@@ -71,7 +71,7 @@ export class MultiselectChipSchema {
       focus: this.focusTokens.prefault({}),
       hover: this.hoverTokens.prefault({}),
       chipRemoveIcon: (
-        MultiselectChipRemoveIconSchema.schema as typeof MultiselectChipRemoveIconSchema.schema
+        MultiselectChipRemoveIconButtonSchema.schema as typeof MultiselectChipRemoveIconButtonSchema.schema
       ).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'multiselectChip' })

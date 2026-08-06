@@ -5,7 +5,7 @@ import { color, withRef } from '../primitives'
 /**
  * Icon schema for dropdown icon and filter icon inside filter input field of multiselect overlay.
  */
-export class MultiselectIconSchema {
+export class MultiselectIconButtonSchema {
   static readonly schema = z
     .object({
       color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
@@ -13,5 +13,5 @@ export class MultiselectIconSchema {
       paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
       paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectIcon' })
+    .register(themeSchemaRegistry, { id: 'multiselectIconButton' })
 }

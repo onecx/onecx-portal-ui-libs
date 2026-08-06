@@ -1,7 +1,7 @@
 import { border, color, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { z } from 'zod'
-import { MultiselectIconSchema } from './icon'
+import { MultiselectIconButtonSchema } from './iconbutton'
 import { MultiselectChipSchema } from './chip'
 
 // TODO: use schema from input component when available
@@ -97,8 +97,10 @@ export class MultiselectLabelContainerSchema {
   static readonly schema = z
     .object({
       chip: (MultiselectChipSchema.schema as typeof MultiselectChipSchema.schema).prefault({}),
-      dropdownIcon: (MultiselectIconSchema.schema as typeof MultiselectIconSchema.schema).prefault({}),
-      clearIcon: (MultiselectIconSchema.schema as typeof MultiselectIconSchema.schema).prefault({}),
+      dropdownIconButton: (MultiselectIconButtonSchema.schema as typeof MultiselectIconButtonSchema.schema).prefault(
+        {}
+      ),
+      clearIconButton: (MultiselectIconButtonSchema.schema as typeof MultiselectIconButtonSchema.schema).prefault({}),
       ...this.defaultStateTokens,
       hover: this.hoverTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
