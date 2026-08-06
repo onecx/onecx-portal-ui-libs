@@ -86,8 +86,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_XS_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_XS_DEFAULTS)
-      .optional(),
+      .default(MESSAGE_XS_DEFAULTS),
     sm: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_SM_DEFAULTS.padding).optional(),
@@ -97,8 +96,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_SM_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_SM_DEFAULTS)
-      .optional(),
+      .default(MESSAGE_SM_DEFAULTS),
     md: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_MD_DEFAULTS.padding).optional(),
@@ -108,8 +106,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_MD_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_MD_DEFAULTS)
-      .optional(),
+      .default(MESSAGE_MD_DEFAULTS),
     lg: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_LG_DEFAULTS.padding).optional(),
@@ -119,8 +116,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_LG_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_LG_DEFAULTS)
-      .optional(),
+      .default(MESSAGE_LG_DEFAULTS),
     xl: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_XL_DEFAULTS.padding).optional(),
@@ -130,7 +126,6 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_XL_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_XL_DEFAULTS)
-      .optional(),
+      .default(MESSAGE_XL_DEFAULTS),
   }
 }

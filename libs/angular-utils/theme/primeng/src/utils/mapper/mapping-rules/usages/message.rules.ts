@@ -28,15 +28,15 @@ const closeButton_default: MappingRule[] = [
   },
   //close icon
   {
-    from: 'usages.message.close.icon.size',
+    from: 'usages.message.md.close.icon.size',
     to: 'components.message.closeIcon.size',
   },
   {
-    from: 'usages.message.size.sm.close.icon.size',
+    from: 'usages.message.sm.close.icon.size',
     to: 'components.message.closeIcon.sm.size',
   },
   {
-    from: 'usages.message.size.lg.close.icon.size',
+    from: 'usages.message.lg.close.icon.size',
     to: 'components.message.closeIcon.lg.size',
   },
 ]
@@ -48,7 +48,7 @@ const outlined: MappingRule[] = [
   },
   // -- info outlined --
   {
-    from: 'usages.message.primary.outlined.default.info.color',
+    from: 'usages.message.primary.outline.info.color',
     to: 'components.message.info.outlined.color',
     transform: toColorString,
   },
@@ -78,7 +78,7 @@ const root: MappingRule[] = [
 
   //------ info ------
   {
-    from: 'usages.message.primary.filled.default.info.shadow.color',
+    from: 'usages.message.primary.filled.info.shadowColor',
     to: 'components.message.info.shadow',
   },
 ]
@@ -93,11 +93,11 @@ const content: MappingRule[] = [
     to: 'components.message.content.gap',
   },
   {
-    from: 'usages.message.size.sm.padding',
+    from: 'usages.message.sm.padding',
     to: 'components.message.content.sm.padding',
   },
   {
-    from: 'usages.message.size.lg.padding',
+    from: 'usages.message.lg.padding',
     to: 'components.message.content.lg.padding',
   },
 ]
@@ -112,11 +112,11 @@ const text: MappingRule[] = [
     to: 'components.message.text.fontWeight',
   },
   {
-    from: 'usages.message.size.sm.font.size',
+    from: 'usages.message.sm.font.size',
     to: 'components.message.text.sm.fontSize',
   },
   {
-    from: 'usages.message.size.lg.font.size',
+    from: 'usages.message.lg.font.size',
     to: 'components.message.text.lg.fontSize',
   },
 ]
@@ -127,152 +127,152 @@ const icon: MappingRule[] = [
     to: 'components.message.icon.size',
   },
   {
-    from: 'usages.message.size.sm.icon.size',
+    from: 'usages.message.sm.icon.size',
     to: 'components.message.icon.sm.size',
   },
   {
-    from: 'usages.message.size.lg.icon.size',
+    from: 'usages.message.lg.icon.size',
     to: 'components.message.icon.lg.size',
   },
 ]
 
 const closeButton_info: MappingRule[] = [
   {
-    from: 'usages.message.close.primary.filled.info.hover.backgroundColor',
+    from: 'usages.message.close.primary.filled.hover.info.backgroundColor',
     to: 'components.message.info.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.info.focus.focusRing.color',
+    from: 'usages.message.close.primary.filled.info.focusRing.color',
     to: 'components.message.info.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.info.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.info.closeButton.focusRing.shadow',
   },
 ]
 
 const closeButton_success: MappingRule[] = [
   {
-    from: 'usages.message.close.primary.filled.success.hover.backgroundColor',
+    from: 'usages.message.close.primary.filled.hover.success.backgroundColor',
     to: 'components.message.success.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.success.focus.focusRing.color',
+    from: 'usages.message.close.primary.filled.success.focusRing.color',
     to: 'components.message.success.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.success.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.success.closeButton.focusRing.shadow',
   },
 ]
 
 const closeButton_warn: MappingRule[] = [
   {
-    from: 'usages.message.close.primary.filled.warning.hover.backgroundColor',
+    from: 'usages.message.close.primary.filled.hover.warning.backgroundColor',
     to: 'components.message.warn.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.warning.focus.focusRing.color',
+    from: 'usages.message.close.primary.filled.warning.focusRing.color',
     to: 'components.message.warn.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.warning.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.warn.closeButton.focusRing.shadow',
   },
 ]
 
 const closeButton_error: MappingRule[] = [
   {
-    from: 'usages.message.close.primary.filled.error.hover.backgroundColor',
+    from: 'usages.message.close.primary.filled.hover.error.backgroundColor',
     to: 'components.message.error.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.error.focus.focusRing.color',
+    from: 'usages.message.close.primary.filled.error.focusRing.color',
     to: 'components.message.error.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.primary.filled.error.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.error.closeButton.focusRing.shadow',
   },
 ]
 
 const closeButton_secondary: MappingRule[] = [
   {
-    from: 'usages.message.close.secondary.filled.info.hover.backgroundColor',
+    from: 'usages.message.close.secondary.filled.hover.info.backgroundColor',
     to: 'components.message.secondary.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.secondary.filled.info.focus.focusRing.color',
+    from: 'usages.message.close.secondary.filled.info.focusRing.color',
     to: 'components.message.secondary.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.secondary.filled.info.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.secondary.closeButton.focusRing.shadow',
   },
 ]
 
 const closeButton_contrast: MappingRule[] = [
   {
-    from: 'usages.message.close.secondary.filled.contrast.default.backgroundColor',
+    from: 'usages.message.close.secondary.filled.hover.contrast.backgroundColor',
     to: 'components.message.contrast.closeButton.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.secondary.filled.contrast.focus.focusRing.color',
+    from: 'usages.message.close.secondary.filled.contrast.focusRing.color',
     to: 'components.message.contrast.closeButton.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.close.secondary.filled.contrast.focus.focusRing.shadow',
+    from: 'usages.message.close.focusRing.shadow',
     to: 'components.message.contrast.closeButton.focusRing.shadow',
   },
 ]
 
 const message_success_container: MappingRule[] = [
   {
-    from: 'usages.message.primary.filled.default.success.backgroundColor',
+    from: 'usages.message.primary.filled.success.backgroundColor',
     to: 'components.message.success.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.success.border.color',
+    from: 'usages.message.primary.filled.success.border.color',
     to: 'components.message.success.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.success.color',
+    from: 'usages.message.primary.filled.success.color',
     to: 'components.message.success.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.success.shadow.color',
+    from: 'usages.message.primary.filled.success.shadowColor',
     to: 'components.message.success.shadow',
   },
   // -- outlined --
   {
-    from: 'usages.message.primary.outlined.default.success.color',
+    from: 'usages.message.primary.outline.success.color',
     to: 'components.message.success.outlined.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.outlined.default.success.border.color',
+    from: 'usages.message.primary.outline.success.border.color',
     to: 'components.message.success.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.primary.text.default.success.color',
+    from: 'usages.message.primary.text.success.color',
     to: 'components.message.success.simple.color',
     transform: toColorString,
   },
@@ -281,39 +281,39 @@ const message_success_container: MappingRule[] = [
 const message_success: MappingRule[] = [...message_success_container, ...closeButton_success]
 const message_warn_container: MappingRule[] = [
   {
-    from: 'usages.message.primary.filled.default.warning.backgroundColor',
+    from: 'usages.message.primary.filled.warning.backgroundColor',
     to: 'components.message.warn.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.warning.border.color',
+    from: 'usages.message.primary.filled.warning.border.color',
     to: 'components.message.warn.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.warning.color',
+    from: 'usages.message.primary.filled.warning.color',
     to: 'components.message.warn.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.warning.shadow.color',
+    from: 'usages.message.primary.filled.warning.shadowColor',
     to: 'components.message.warn.shadow',
   },
   // -- outlined --
   {
-    from: 'usages.message.primary.outlined.default.warning.color',
+    from: 'usages.message.primary.outline.warning.color',
     to: 'components.message.warn.outlined.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.outlined.default.warning.border.color',
+    from: 'usages.message.primary.outline.warning.border.color',
     to: 'components.message.warn.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.primary.text.default.warning.color',
+    from: 'usages.message.primary.text.warning.color',
     to: 'components.message.warn.simple.color',
     transform: toColorString,
   },
@@ -323,39 +323,39 @@ const message_warn: MappingRule[] = [...message_warn_container, ...closeButton_w
 
 const message_error_container: MappingRule[] = [
   {
-    from: 'usages.message.primary.filled.default.error.backgroundColor',
+    from: 'usages.message.primary.filled.error.backgroundColor',
     to: 'components.message.error.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.error.border.color',
+    from: 'usages.message.primary.filled.error.border.color',
     to: 'components.message.error.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.error.color',
+    from: 'usages.message.primary.filled.error.color',
     to: 'components.message.error.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.error.shadow.color',
+    from: 'usages.message.primary.filled.error.shadowColor',
     to: 'components.message.error.shadow',
   },
   // -- outlined --
   {
-    from: 'usages.message.primary.outlined.default.error.color',
+    from: 'usages.message.primary.outline.error.color',
     to: 'components.message.error.outlined.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.outlined.default.error.border.color',
+    from: 'usages.message.primary.outline.error.border.color',
     to: 'components.message.error.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.primary.text.default.error.color',
+    from: 'usages.message.primary.text.error.color',
     to: 'components.message.error.simple.color',
     transform: toColorString,
   },
@@ -365,29 +365,29 @@ const message_error: MappingRule[] = [...message_error_container, ...closeButton
 
 const message_info_container: MappingRule[] = [
   {
-    from: 'usages.message.primary.filled.default.info.backgroundColor',
+    from: 'usages.message.primary.filled.info.backgroundColor',
     to: 'components.message.info.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.info.border.color',
+    from: 'usages.message.primary.filled.info.border.color',
     to: 'components.message.info.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.info.color',
+    from: 'usages.message.primary.filled.info.color',
     to: 'components.message.info.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.outlined.default.info.border.color',
+    from: 'usages.message.primary.outline.info.border.color',
     to: 'components.message.info.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.primary.text.default.info.color',
+    from: 'usages.message.primary.text.info.color',
     to: 'components.message.info.simple.color',
     transform: toColorString,
   },
@@ -397,39 +397,39 @@ const message_info: MappingRule[] = [...message_info_container, ...closeButton_i
 
 const message_secondary_container: MappingRule[] = [
   {
-    from: 'usages.message.secondary.filled.default.info.backgroundColor',
+    from: 'usages.message.secondary.filled.info.backgroundColor',
     to: 'components.message.secondary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.secondary.filled.default.info.border.color',
+    from: 'usages.message.secondary.filled.info.border.color',
     to: 'components.message.secondary.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.secondary.filled.default.info.color',
+    from: 'usages.message.secondary.filled.info.color',
     to: 'components.message.secondary.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.secondary.filled.default.info.shadow.color',
+    from: 'usages.message.secondary.filled.info.shadowColor',
     to: 'components.message.secondary.shadow',
   },
   // -- outlined --
   {
-    from: 'usages.message.secondary.outlined.default.info.color',
+    from: 'usages.message.secondary.outline.info.color',
     to: 'components.message.secondary.outlined.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.secondary.outlined.default.info.border.color',
+    from: 'usages.message.secondary.outline.info.border.color',
     to: 'components.message.secondary.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.secondary.text.default.info.color',
+    from: 'usages.message.secondary.text.info.color',
     to: 'components.message.secondary.simple.color',
     transform: toColorString,
   },
@@ -439,39 +439,39 @@ const message_secondary: MappingRule[] = [...message_secondary_container, ...clo
 
 const message_contrast_container: MappingRule[] = [
   {
-    from: 'usages.message.primary.filled.default.contrast.backgroundColor',
+    from: 'usages.message.primary.filled.contrast.backgroundColor',
     to: 'components.message.contrast.background',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.contrast.border.color',
+    from: 'usages.message.primary.filled.contrast.border.color',
     to: 'components.message.contrast.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.contrast.color',
+    from: 'usages.message.primary.filled.contrast.color',
     to: 'components.message.contrast.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.filled.default.contrast.shadow.color',
+    from: 'usages.message.primary.filled.contrast.shadowColor',
     to: 'components.message.contrast.shadow',
   },
   // -- outlined --
   {
-    from: 'usages.message.primary.outlined.default.contrast.color',
+    from: 'usages.message.primary.outline.contrast.color',
     to: 'components.message.contrast.outlined.color',
     transform: toColorString,
   },
   {
-    from: 'usages.message.primary.outlined.default.contrast.border.color',
+    from: 'usages.message.primary.outline.contrast.border.color',
     to: 'components.message.contrast.outlined.borderColor',
     transform: toColorString,
   },
 
   // -- simple --
   {
-    from: 'usages.message.primary.text.default.contrast.color',
+    from: 'usages.message.primary.text.contrast.color',
     to: 'components.message.contrast.simple.color',
     transform: toColorString,
   },
