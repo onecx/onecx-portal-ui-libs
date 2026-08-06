@@ -14,6 +14,7 @@ import { fieldset } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
+import { input } from './schema/input'
 import { picklist } from './schema/picklist'
 import { calendar } from './schema/calendar'
 import { message } from './schema/message'
@@ -32,6 +33,7 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
+  input?: z.input<typeof input>
   picklist?: z.input<typeof picklist>
   calendar?: z.input<typeof calendar>
   message?: z.input<typeof message>
@@ -49,8 +51,9 @@ const usages: z.ZodType<UsagesInput> = z
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldset).optional(),
     diagram: (diagram as typeof diagram).optional(),
-    toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
+    input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
+    toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     textarea: (textarea as typeof textarea).optional(),
     picklist: (picklist as typeof picklist).optional(),
     calendar: (calendar as typeof calendar).optional(),

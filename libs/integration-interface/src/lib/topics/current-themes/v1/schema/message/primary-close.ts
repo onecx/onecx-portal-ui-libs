@@ -225,6 +225,6 @@ export class PrimaryCloseMessageSchema {
 
   static readonly schema = (PrimaryCloseMessageSchema.close as typeof PrimaryCloseMessageSchema.close).register(
     themeSchemaRegistry,
-    { id: 'messageCloseButton' }
+    { id: 'primaryMessageCloseButton' }
   )
 }

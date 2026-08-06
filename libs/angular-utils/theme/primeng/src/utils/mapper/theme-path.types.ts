@@ -57,18 +57,18 @@ type ObjIndex<T, K extends string> = T extends object ? (K extends keyof T ? T[K
 type LeafPaths<T, D extends number = 11> = [D] extends [never]
   ? never
   : T extends (...args: unknown[]) => unknown
-    ? never
-    : T extends object
-      ? {
-          [K in keyof T & string]: NonNullable<T[K]> extends infer V
-            ? V extends (...args: unknown[]) => unknown
-              ? K
-              : V extends object
-                ? `${K}.${LeafPaths<V, Prev[D]>}`
-                : K
-            : never
-        }[keyof T & string]
-      : never
+  ? never
+  : T extends object
+  ? {
+    [K in keyof T & string]: NonNullable<T[K]> extends infer V
+    ? V extends (...args: unknown[]) => unknown
+    ? K
+    : V extends object
+    ? `${K}.${LeafPaths<V, Prev[D]>}`
+    : K
+    : never
+  }[keyof T & string]
+  : never
 
 /**
  * Source type for theme path generation.
@@ -104,6 +104,7 @@ export type ThemePath =
   | `usages.tabs.${LeafPaths<NonNullable<Usages['tabs']>>}`
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
   | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
+  | `usages.input.${LeafPaths<NonNullable<Usages['input']>>}`
   | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
   | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`
@@ -133,10 +134,10 @@ type ModeAlias<K extends string> = K extends 'light' | 'dark' ? K | '{mode}' : K
 type PresetPaths<T, D extends number = 10> = [D] extends [never]
   ? never
   : Exclude<ObjKeys<RemoveIndex<NonNullable<T>>>, PresetExcluded> extends infer K
-    ? K extends string
-      ? ModeAlias<K> | `${ModeAlias<K>}.${PresetPaths<ObjIndex<NonNullable<T>, K>, Prev[D]>}`
-      : never
-    : never
+  ? K extends string
+  ? ModeAlias<K> | `${ModeAlias<K>}.${PresetPaths<ObjIndex<NonNullable<T>, K>, Prev[D]>}`
+  : never
+  : never
 
 /**
  * All valid dot-notation paths into the PrimeNG `components` section.
