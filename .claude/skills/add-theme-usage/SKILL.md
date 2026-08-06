@@ -1,1 +1,1 @@
-../../../.github/skills/add-theme-usage/SKILL.md
+../../../.agents/skills/add-theme-usage/SKILL.md

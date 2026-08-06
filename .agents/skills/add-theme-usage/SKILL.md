@@ -33,7 +33,6 @@ Rules enforced by the schema and tests:
 - **`defaultVariant` must NOT appear as a key in flattened token paths.** The default variant has no key — `usages.textarea.background` (not `usages.textarea.defaultVariant.background`).
 - **Named variants use their name directly** — `usages.textarea.filled.background` (not `usages.textarea.variant.primary.background`).
 - **`focusRing` must NEVER be inside a state object.** It belongs at the variant level (e.g., `usages.textarea.focusRing`), not nested under a state. FocusRing is referenced when setting focus styles but is defined at the variant root.
-- **Hierarchy order: component → variant → state → severity → token.** Breaking this order is invalid.
 
 In the Zod schema, the default variant's tokens live at the root of the usage object (no wrapper key). States (`hover`, `active`, `focus`, `disabled`, `invalid`) are sibling keys. Named variants (e.g., `filled`) are also sibling keys, with their own nested state objects.
 
@@ -157,7 +156,7 @@ Create `libs/integration-interface/src/lib/topics/current-themes/v1/schema/<comp
 - For color tokens accepting plain color or structured background: `z.union([bg, withRef(z.string())])`.
 - Every leaf has a `.default("{{primitives.…}}")` — no leaf without a default (except `settings`).
 - **States and variants:** the default variant's tokens sit at the root. States (`hover`, `active`, `focus`, `disabled`, `invalid`) are sibling keys using `.prefault({})`. Named variants are sibling keys with nested state objects, also using `.prefault({})`.
-- **Severity placement in hierarchy:** severity is the INNERMOST layer before property. The hierarchy is always **component → variant → state → severity → property**.
+- **Severity placement in hierarchy:** severity is the INNERMOST layer before property. The hierarchy is always **component → variant → state → severity → property**. Breaking this order (e.g., state before variant) is invalid.
   - **Default variant, default state, no severity:** `usages.textarea.background`
   - **Default variant, default state, WITH severity:** `usages.message.info.color` (severity at root, no state layer)
   - **Default variant, hover state, WITH severity:** `usages.component.hover.info.color` (state wraps severity)
@@ -171,7 +170,6 @@ Create `libs/integration-interface/src/lib/topics/current-themes/v1/schema/<comp
 - **`variant` must NOT appear as a raw key in token paths.** Named variants use their name directly — `usage.textarea.filled.background` (not `usage.textarea.variant.primary.background`).
 - **`defaultState` must NOT appear as a raw key in token paths.** Named variants use their name directly — `usage.component.background` (not `usage.component.defaultState.background`).
 - **`focusRing` must NEVER be inside a state object.** It belongs at the variant level (e.g., `usage.textarea.filled.focusRing`), not `usage.textarea.hover.focusRing`. FocusRing is referenced when setting focus styles but is defined at the variant root.
-- Hierarchy order: When a usage needs variant, state and severity simultaneously: **component → variant → state → severity → token**. Breaking this order (e.g., state before variant) is invalid.
 - The schema must produce tokens that follow this hierarchy when flattened: usage.component.[variant].state.severity.tokenName
 
 **The `settings` object:**
@@ -411,7 +409,7 @@ import type { MappingRule } from '../../mapper.types';
 import { toColorString } from '../../mapper.utils';
 
 export const <component>MappingRules: MappingRule[] = [
-  { from: 'usages.<component>.defaultVariant.defaultState.defaultSeverity.background',
+  { from: 'usages.<component>.background',
     to: 'components.<component>.colorScheme.{mode}.root.background',
     transform: toColorString },
   // ...one rule per exposed leaf...
@@ -420,8 +418,10 @@ export const <component>MappingRules: MappingRule[] = [
 
 **Conventions:**
 
-- `from` paths always use the full hierarchy: `defaultVariant.defaultState.defaultSeverity` for non-severity tokens.
-- **Severity-aware `from` paths:** `usages.component.defaultVariant.defaultState.severity.warning.color` for severity tokens.
+- `from` paths always use the following hierarchy: `usages.component.*` for tokens without state or severity.
+- **State-aware `from` paths:** `usages.component.hover.color` for state tokens.
+- **Severity-aware `from` paths:** `usages.component.severity.warning.color` for severity tokens.
+- **State + severity-aware `from` paths:** `usages.component.hover.severity.warning.color`.
 - Use `toColorString` for any `color` or `bg` leaf.
 - Use `{mode}` for `colorScheme.<light|dark>` targets.
 - No rules for `settings.*`.
