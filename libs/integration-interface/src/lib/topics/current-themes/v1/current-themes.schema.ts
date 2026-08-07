@@ -16,6 +16,7 @@ import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input } from './schema/input'
 import { picklist } from './schema/picklist'
+import { togglebutton } from "./schema/togglebutton";
 import { calendar } from './schema/calendar'
 
 type UsagesInput = {
@@ -34,6 +35,7 @@ type UsagesInput = {
   textarea?: z.input<typeof textarea>
   input?: z.input<typeof input>
   picklist?: z.input<typeof picklist>
+  togglebutton?: z.input<typeof togglebutton>
   calendar?: z.input<typeof calendar>
 }
 
@@ -54,6 +56,7 @@ const usages: z.ZodType<UsagesInput> = z
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
     textarea: (textarea as typeof textarea).optional(),
     picklist: (picklist as typeof picklist).optional(),
+    togglebutton: (togglebutton as typeof togglebutton).optional(),
     calendar: (calendar as typeof calendar).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
