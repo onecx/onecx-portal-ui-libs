@@ -191,36 +191,42 @@ export const bgContrast = z.object({
 export const fontShape = z
   .object({
     family: withRef(z.string()).optional(),
-    size: z.union([
-      withRef(z.string()),
-      z.object({
-        xs: withRef(z.string()).optional(),
-        sm: withRef(z.string()).optional(),
-        md: withRef(z.string()).optional(),
-        lg: withRef(z.string()).optional(),
-        xl: withRef(z.string()).optional(),
-      }),
-    ]).optional(),
-    weight: z.union([
-      withRef(z.string()),
-      z.object({
-        light: withRef(z.string()).optional(),
-        normal: withRef(z.string()).optional(),
-        medium: withRef(z.string()).optional(),
-        semibold: withRef(z.string()).optional(),
-        bold: withRef(z.string()).optional(),
-      }),
-    ]).optional(),
-    lineHeight: z.union([
-      withRef(z.string()).optional(),
-      z.object({
-        xs: withRef(z.string()).optional(),
-        sm: withRef(z.string()).optional(),
-        md: withRef(z.string()).optional(),
-        lg: withRef(z.string()).optional(),
-        xl: withRef(z.string()).optional(),
-      }),
-    ]).optional(),
+    size: z
+      .union([
+        withRef(z.string()),
+        z.object({
+          xs: withRef(z.string()).optional(),
+          sm: withRef(z.string()).optional(),
+          md: withRef(z.string()).optional(),
+          lg: withRef(z.string()).optional(),
+          xl: withRef(z.string()).optional(),
+        }),
+      ])
+      .optional(),
+    weight: z
+      .union([
+        withRef(z.string()),
+        z.object({
+          light: withRef(z.string()).optional(),
+          normal: withRef(z.string()).optional(),
+          medium: withRef(z.string()).optional(),
+          semibold: withRef(z.string()).optional(),
+          bold: withRef(z.string()).optional(),
+        }),
+      ])
+      .optional(),
+    lineHeight: z
+      .union([
+        withRef(z.string()).optional(),
+        z.object({
+          xs: withRef(z.string()).optional(),
+          sm: withRef(z.string()).optional(),
+          md: withRef(z.string()).optional(),
+          lg: withRef(z.string()).optional(),
+          xl: withRef(z.string()).optional(),
+        }),
+      ])
+      .optional(),
   })
   .register(themeSchemaRegistry, { id: 'fontShape' })
 
@@ -244,6 +250,8 @@ export const icon = z
     content: z.string().optional(),
     font: font.optional(),
     url: z.string().optional(),
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'icon' })
 
