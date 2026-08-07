@@ -3,80 +3,80 @@ import { toColorString } from '../../mapper.utils'
 
 const FIELDSET_CONTAINER: MappingRule[] = [
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.defaultVariant.defaultState.defaultSeverity.bg',
+    from: 'usages.fieldset.backgroundColor',
     to: 'components.fieldset.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.defaultVariant.defaultState.defaultSeverity.border.color',
+    from: 'usages.fieldset.border.color',
     to: 'components.fieldset.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.defaultVariant.defaultState.defaultSeverity.border.radius',
+    from: 'usages.fieldset.border.radius',
     to: 'components.fieldset.root.borderRadius',
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.defaultVariant.defaultState.defaultSeverity.contrast',
+    from: 'usages.fieldset.color',
     to: 'components.fieldset.root.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.container.defaultVariant.defaultState.defaultSeverity.padding',
+    from: 'usages.fieldset.padding',
     to: 'components.fieldset.root.padding',
   },
 ]
 
 const FIELDSET_LEGEND: MappingRule[] = [
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.color',
+    from: 'usages.fieldset.legend.color',
     to: 'components.fieldset.legend.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.hover.defaultSeverity.color',
+    from: 'usages.fieldset.legend.hover.color',
     to: 'components.fieldset.legend.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.padding',
+    from: 'usages.fieldset.legend.padding',
     to: 'components.fieldset.legend.padding',
   },
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.font.weight',
+    from: 'usages.fieldset.legend.font.weight',
     to: 'components.fieldset.legend.fontWeight',
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.focus.defaultSeverity.focusRing.width',
+    from: 'usages.fieldset.legend.focusRing.width',
     to: 'components.fieldset.legend.focusRing.width',
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.focus.defaultSeverity.focusRing.style',
+    from: 'usages.fieldset.legend.focusRing.style',
     to: 'components.fieldset.legend.focusRing.style',
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.focus.defaultSeverity.focusRing.color',
+    from: 'usages.fieldset.legend.focus.color',
     to: 'components.fieldset.legend.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.focus.defaultSeverity.focusRing.offset',
+    from: 'usages.fieldset.legend.focusRing.offset',
     to: 'components.fieldset.legend.focusRing.offset',
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.focus.defaultSeverity.focusRing.shadow',
+    from: 'usages.fieldset.legend.focusRing.shadow',
     to: 'components.fieldset.legend.focusRing.shadow',
   },
 ]
 
 const FIELDSET_TOGGLE_ICON: MappingRule[] = [
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.icon.color',
+    from: 'usages.fieldset.legend.toggleIcon.color',
     to: 'components.fieldset.toggleIcon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.hover.defaultSeverity.color',
+    from: 'usages.fieldset.legend.toggleIcon.hover.color',
     to: 'components.fieldset.toggleIcon.hoverColor',
     transform: toColorString,
   },
@@ -84,7 +84,7 @@ const FIELDSET_TOGGLE_ICON: MappingRule[] = [
 
 const FIELDSET_CONTENT: MappingRule[] = [
   {
-    from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.content.defaultVariant.defaultState.defaultSeverity.padding',
+    from: 'usages.fieldset.padding',
     to: 'components.fieldset.content.padding',
   },
 ]

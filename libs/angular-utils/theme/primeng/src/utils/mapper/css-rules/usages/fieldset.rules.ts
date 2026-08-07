@@ -6,15 +6,15 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.icon.color',
+        from: 'usages.fieldset.legend.toggleIcon.color',
       },
       {
         property: 'width',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.icon.size',
+        from: 'usages.fieldset.legend.toggleIcon.width',
       },
       {
         property: 'height',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.icon.size',
+        from: 'usages.fieldset.legend.toggleIcon.height',
       },
     ],
   },
@@ -23,7 +23,7 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.hover.defaultSeverity.color',
+        from: 'usages.fieldset.legend.toggleIcon.hover.color',
       },
     ],
   },
@@ -35,7 +35,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.defaultVariant.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.color',
+        from: 'usages.fieldset.legend.color', // when legend is text only
       },
     ],
   },
@@ -44,7 +44,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.defaultState.defaultSeverity.color',
+        from: 'usages.fieldset.legend.color', // when legend is button
       },
     ],
   },
@@ -53,7 +53,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.variant.withToggle.defaultState.defaultSeverity.legend.defaultVariant.state.hover.defaultSeverity.color',
+        from: 'usages.fieldset.legend.hover.color',
       },
     ],
   },
