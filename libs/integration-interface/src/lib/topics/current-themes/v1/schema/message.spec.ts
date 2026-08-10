@@ -16,7 +16,7 @@ const BASE_TOKENS = {
   },
   font: {
     size: '{{primitives.font.size.md}}',
-    weight: '{{primitives.font.weight.md}}',
+    weight: '{{primitives.font.weight.medium}}',
   },
 }
 
@@ -24,7 +24,7 @@ const BASE_TEXT_VARIANT_TOKENS = {
   transition: { duration: '{{primitives.transition.duration}}' },
   padding: '{{primitives.space.md}}',
   gap: '{{primitives.space.md}}',
-  font: { size: '{{primitives.font.size.md}}', weight: '{{primitives.font.weight.md}}' },
+  font: { size: '{{primitives.font.size.md}}', weight: '{{primitives.font.weight.medium}}' },
   icon: { size: '{{primitives.icon.size.md}}' },
 }
 
@@ -69,14 +69,12 @@ describe('message schema', () => {
 
   describe('size', () => {
     it('should not be undefined', () => {
-      expectUndefinedTokens(value?.xs, [])
       expectUndefinedTokens(value?.sm, [])
       expectUndefinedTokens(value?.md, [])
       expectUndefinedTokens(value?.lg, [])
       expectUndefinedTokens(value?.xl, [])
     })
     it.each([
-      ['xs', '{{primitives.space.xs}}', '{{primitives.font.size.xs}}', '{{primitives.icon.size.xs}}'],
       ['sm', '{{primitives.space.sm}}', '{{primitives.font.size.sm}}', '{{primitives.icon.size.sm}}'],
       ['md', '{{primitives.space.md}}', '{{primitives.font.size.md}}', '{{primitives.icon.size.md}}'],
       ['lg', '{{primitives.space.lg}}', '{{primitives.font.size.lg}}', '{{primitives.icon.size.lg}}'],
@@ -103,10 +101,10 @@ describe('message schema', () => {
         width: '{{primitives.icon.size.md}}',
         height: '{{primitives.icon.size.md}}',
         focusRing: {
-          width: '{{primitives.focusRing.width}}',
-          style: '{{primitives.focusRing.style}}',
-          offset: '{{primitives.focusRing.offset}}',
-          shadow: '{{primitives.focusRing.shadow}}',
+          width: '{{primitives.focusRing.width.md}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+          offset: '{{primitives.focusRing.offset.md}}',
+          shadow: '{{primitives.focusRing.shadow.none}}',
         },
         border: {
           radius: '{{primitives.radius.md}}',

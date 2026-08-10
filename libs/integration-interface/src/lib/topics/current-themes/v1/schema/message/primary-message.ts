@@ -16,7 +16,7 @@ export class PrimaryMessageSchema {
     font: z
       .object({
         size: withRef(z.string()).default('{{primitives.font.size.md}}'),
-        weight: withRef(z.string()).default('{{primitives.font.weight.md}}'),
+        weight: withRef(z.string()).default('{{primitives.font.weight.medium}}'),
       })
       .prefault({}),
     icon: z

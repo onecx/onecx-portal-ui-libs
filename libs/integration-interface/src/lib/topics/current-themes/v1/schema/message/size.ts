@@ -1,21 +1,6 @@
 import z from 'zod'
 import { font, icon, withRef } from '../primitives'
 
-const MESSAGE_XS_DEFAULTS = {
-  padding: '{{primitives.space.xs}}',
-  font: {
-    size: '{{primitives.font.size.xs}}',
-  },
-  icon: {
-    size: '{{primitives.icon.size.xs}}',
-  },
-  close: {
-    icon: {
-      size: '{{primitives.icon.size.xs}}',
-    },
-  },
-}
-
 const MESSAGE_SM_DEFAULTS = {
   padding: '{{primitives.space.sm}}',
   font: {
@@ -77,16 +62,6 @@ const MESSAGE_XL_DEFAULTS = {
 }
 export class MessageSizeSchema {
   static readonly sizeTokens = {
-    xs: z
-      .object({
-        padding: withRef(z.string()).default(MESSAGE_XS_DEFAULTS.padding).optional(),
-        font: font.pick({ size: true }).default({ size: MESSAGE_XS_DEFAULTS.font.size }),
-        icon: icon.pick({ size: true }).default({ size: MESSAGE_XS_DEFAULTS.icon.size }),
-        close: z.object({
-          icon: icon.pick({ size: true }).default({ size: MESSAGE_XS_DEFAULTS.close.icon.size }),
-        }),
-      })
-      .default(MESSAGE_XS_DEFAULTS),
     sm: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_SM_DEFAULTS.padding).optional(),
