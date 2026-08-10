@@ -9,10 +9,11 @@ export class CloseButtonMessageSchema {
     height: z.string().default('{{primitives.icon.size.md}}'),
     focusRing: z
       .object({
-        width: z.string().default('{{primitives.focusRing.width.md}}'),
+        width: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}'),
+        offset: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.offset}}'),
+        radius: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.radius}}'),
         style: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}'),
-        offset: z.string().default('{{primitives.focusRing.offset.md}}'),
-        shadow: z.string().default('{{primitives.focusRing.shadow.none}}'),
+        shadow: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}'),
       })
       .prefault({}),
     border: z
