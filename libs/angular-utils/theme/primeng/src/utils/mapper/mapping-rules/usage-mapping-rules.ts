@@ -16,6 +16,7 @@ import { picklistMappingRules } from './usages/picklist.rules'
 import { togglebuttonMappingRules } from './usages/togglebutton.rules';
 import { inputMappingRules } from './usages/input.rules'
 import { selectbuttonMappingRules } from './usages/selectbutton.rules'
+import { rippleMappingRules } from './usages/ripple.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -36,4 +37,5 @@ export const usageMappingRules: MappingRule[] = [
   ...picklistMappingRules,
   ...togglebuttonMappingRules,
   ...selectbuttonMappingRules,
+  ...rippleMappingRules,
 ]
