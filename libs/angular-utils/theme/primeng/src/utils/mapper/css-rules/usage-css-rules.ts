@@ -13,6 +13,7 @@ import { dropdownCssRules } from './usages/dropdown.rules'
 import { textareaCssRules } from './usages/textarea.rules'
 import { picklistCssRules } from './usages/picklist.rules'
 import { inputCssRules } from './usages/input.rules'
+import { interactiveDataViewCssRules } from './usages/interactive-dataview.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -29,4 +30,5 @@ export const usageCssRules: CssRule[] = [
   ...toggleswitchCssRules,
   ...textareaCssRules,
   ...picklistCssRules,
+  ...interactiveDataViewCssRules,
 ]

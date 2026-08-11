@@ -14,6 +14,7 @@ import { dropdownMappingRules } from './usages/dropdown.rules'
 import { textareaMappingRules } from './usages/textarea.rules'
 import { picklistMappingRules } from './usages/picklist.rules'
 import { inputMappingRules } from './usages/input.rules'
+import { interactiveDataViewMappingRules } from './usages/interactive-dataview.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -32,4 +33,5 @@ export const usageMappingRules: MappingRule[] = [
   ...dropdownMappingRules,
   ...textareaMappingRules,
   ...picklistMappingRules,
+  ...interactiveDataViewMappingRules,
 ]

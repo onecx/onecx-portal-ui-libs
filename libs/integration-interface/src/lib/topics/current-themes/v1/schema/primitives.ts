@@ -239,7 +239,7 @@ export const font = z
 
 export const icon = z
   .object({
-    size: withRef(iconSizes).optional(),
+    size: z.union([iconSizes, withRef(z.string())]).optional(),
     color: color.optional(),
     content: z.string().optional(),
     font: font.optional(),
