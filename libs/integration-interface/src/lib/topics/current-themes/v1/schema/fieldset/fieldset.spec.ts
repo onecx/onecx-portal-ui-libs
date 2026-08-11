@@ -26,12 +26,15 @@ const FIELDSET_LEGEND_BASE_TOKENS = {
     radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
     width: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.width}}',
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    offset: '{{primitives.border.offset.sm}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
   },
   padding: '{{primitives.space.md}}',
   gap: '{{primitives.space.md}}',
   font: {
     size: '{{primitives.font.size}}',
     weight: '{{primitives.font.weight}}',
+    family: '{{primitives.font.family}}',
   },
   focusRing: {
     width: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.width}}',
@@ -47,6 +50,23 @@ const FIELDSET_LEGEND_HOVER_TOKENS = {
   border: {
     color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
   },
+}
+
+const FIELDSET_LEGEND_ACTIVE_TOKENS = {
+  backgroundColor: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
+  color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
+  },
+}
+
+const FIELDSET_LEGEND_DISABLED_TOKENS = {
+  backgroundColor: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}',
+  color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+  },
+  opacity: '0.5',
 }
 
 const FIELDSET_LEGEND_FOCUS_TOKENS = {
@@ -92,6 +112,8 @@ describe('fieldset schema', () => {
           ...FIELDSET_LEGEND_BASE_TOKENS,
           hover: FIELDSET_LEGEND_HOVER_TOKENS,
           focus: FIELDSET_LEGEND_FOCUS_TOKENS,
+          active: FIELDSET_LEGEND_ACTIVE_TOKENS,
+          disabled: FIELDSET_LEGEND_DISABLED_TOKENS,
           toggleIcon: FIELDSET_LEGEND_TOGGLE_ICON_TOKENS,
         },
       })
@@ -124,6 +146,8 @@ describe('fieldset schema', () => {
         ...FIELDSET_LEGEND_BASE_TOKENS,
         hover: FIELDSET_LEGEND_HOVER_TOKENS,
         focus: FIELDSET_LEGEND_FOCUS_TOKENS,
+        active: FIELDSET_LEGEND_ACTIVE_TOKENS,
+        disabled: FIELDSET_LEGEND_DISABLED_TOKENS,
         toggleIcon: FIELDSET_LEGEND_TOGGLE_ICON_TOKENS,
       })
     })
@@ -137,6 +161,28 @@ describe('fieldset schema', () => {
 
       expectExactUndefinedTokens(value?.legend.hover, LegendSchema.hoverTokens.shape, [])
       expectExactTokens(value?.legend.hover, FIELDSET_LEGEND_HOVER_TOKENS)
+    })
+
+    it('should test active tokens', () => {
+      const result = fieldset.safeParse({})
+
+      expect(result.success).toBe(true)
+
+      const value = result.data
+
+      expectExactUndefinedTokens(value?.legend.active, LegendSchema.activeTokens.shape, [])
+      expectExactTokens(value?.legend.active, FIELDSET_LEGEND_ACTIVE_TOKENS)
+    })
+
+    it('should test disabled tokens', () => {
+      const result = fieldset.safeParse({})
+
+      expect(result.success).toBe(true)
+
+      const value = result.data
+
+      expectExactUndefinedTokens(value?.legend.disabled, LegendSchema.disabledTokens.shape, [])
+      expectExactTokens(value?.legend.disabled, FIELDSET_LEGEND_DISABLED_TOKENS)
     })
 
     it('should test focus tokens', () => {
