@@ -110,6 +110,9 @@ export type ThemePath =
   | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`
   | `usages.picklist.${LeafPaths<NonNullable<Usages['picklist']>>}`
   | `usages.interactiveDataView.${LeafPaths<NonNullable<Usages['interactiveDataView']>>}`
+  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
+  | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
+  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
