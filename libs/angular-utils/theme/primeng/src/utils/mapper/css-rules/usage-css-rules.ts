@@ -12,6 +12,7 @@ import { tabsCssRules } from './usages/tabs.rules'
 import { dropdownCssRules } from './usages/dropdown.rules'
 import { textareaCssRules } from './usages/textarea.rules'
 import { picklistCssRules } from './usages/picklist.rules'
+import { messageCssRules } from './usages/message.rules'
 import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
@@ -32,5 +33,6 @@ export const usageCssRules: CssRule[] = [
   ...textareaCssRules,
   ...togglebuttonCssRules,
   ...picklistCssRules,
+  ...messageCssRules,
   ...selectbuttonCssRules,
 ]
