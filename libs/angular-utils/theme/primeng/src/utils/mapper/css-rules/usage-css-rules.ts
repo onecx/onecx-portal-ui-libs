@@ -15,6 +15,7 @@ import { picklistCssRules } from './usages/picklist.rules'
 import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
+import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -33,4 +34,5 @@ export const usageCssRules: CssRule[] = [
   ...togglebuttonCssRules,
   ...picklistCssRules,
   ...selectbuttonCssRules,
+  ...loadingIndicatorCssRules
 ]

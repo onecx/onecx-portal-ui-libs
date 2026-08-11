@@ -19,6 +19,7 @@ import { picklist } from './schema/picklist'
 import { togglebutton } from "./schema/togglebutton";
 import { calendar } from './schema/calendar'
 import { selectbutton } from './schema/selectbutton'
+import { loadingIndicator } from './schema/loading-indicator'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -39,6 +40,7 @@ type UsagesInput = {
   togglebutton?: z.input<typeof togglebutton>
   calendar?: z.input<typeof calendar>
   selectbutton?: z.input<typeof selectbutton>
+  loadingIndicator?: z.input<typeof loadingIndicator>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -61,6 +63,7 @@ const usages: z.ZodType<UsagesInput> = z
     togglebutton: (togglebutton as typeof togglebutton).optional(),
     calendar: (calendar as typeof calendar).optional(),
     selectbutton: (selectbutton as typeof selectbutton).optional(),
+    loadingIndicator: (loadingIndicator as typeof loadingIndicator).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
