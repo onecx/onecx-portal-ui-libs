@@ -13,8 +13,10 @@ import { tabsMappingRules } from './usages/tabs.rules'
 import { dropdownMappingRules } from './usages/dropdown.rules'
 import { textareaMappingRules } from './usages/textarea.rules'
 import { picklistMappingRules } from './usages/picklist.rules'
-import { togglebuttonMappingRules } from './usages/togglebutton.rules'
+import { messageMappingRules } from './usages/message.rules'
+import { togglebuttonMappingRules } from './usages/togglebutton.rules';
 import { inputMappingRules } from './usages/input.rules'
+import { selectbuttonMappingRules } from './usages/selectbutton.rules'
 import { panelmenuMappingRules } from './usages/panelmenu.rules'
 
 export const usageMappingRules: MappingRule[] = [
@@ -34,6 +36,8 @@ export const usageMappingRules: MappingRule[] = [
   ...dropdownMappingRules,
   ...textareaMappingRules,
   ...picklistMappingRules,
+  ...messageMappingRules,
   ...togglebuttonMappingRules,
+  ...selectbuttonMappingRules,
   ...panelmenuMappingRules,
 ]
