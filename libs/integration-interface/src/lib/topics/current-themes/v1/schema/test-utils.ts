@@ -12,20 +12,20 @@
  * asserting key count).
  */
 
-export function expectTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
+export function expectTokens(o: object | undefined, expectedTokens: Record<string, any>) {
   for (const [key, expected] of Object.entries(expectedTokens)) {
     const actual = (o as any)[key]
     expect(actual).toStrictEqual(expected)
   }
 }
 
-export function expectExactTokens(o: Object | undefined, expectedTokens: Record<string, any>) {
+export function expectExactTokens(o: object | undefined, expectedTokens: Record<string, any>) {
   expect(Object.keys(o ?? {}).length).toEqual(Object.keys(expectedTokens).length)
   expectTokens(o, expectedTokens)
 }
 
 export function expectExactUndefinedTokens(
-  o: Object | undefined,
+  o: object | undefined,
   schemaShape: any,
   expectedUndefinedTokens: string[]
 ) {
@@ -37,7 +37,7 @@ export function expectExactUndefinedTokens(
   expectUndefinedTokens(o, expectedUndefinedTokens)
 }
 
-export function expectUndefinedTokens(o: Object | undefined, expectedUndefinedTokens: string[]) {
+export function expectUndefinedTokens(o: object | undefined, expectedUndefinedTokens: string[]) {
   for (const key of expectedUndefinedTokens) {
     const actual = (o as any)[key]
     expect(actual).toBeUndefined()
