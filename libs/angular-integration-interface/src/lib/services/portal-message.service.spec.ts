@@ -107,6 +107,6 @@ describe('PortalMessageService', () => {
     portalMessageService.warning({ summaryKey: 'unit.test.message' })
     portalMessageService.message$.subscribe((m) => (message = m))
 
-    expect(message).toEqual(expect.objectContaining({ severity: 'warning' }))
+    expect(message).toEqual(expect.objectContaining({ severity: 'warn' }))
   }))
 })
