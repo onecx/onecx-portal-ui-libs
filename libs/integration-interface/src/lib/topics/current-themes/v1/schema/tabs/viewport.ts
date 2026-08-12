@@ -1,6 +1,6 @@
 import z from "zod"
 import { themeSchemaRegistry } from "../registry"
-import { bg, color, withRef } from "../primitives"
+import { withRef } from "../primitives"
 
 /**
  * Tabs viewport component schema definition 

@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { bg, border, borderWithShadow, color, font } from '../primitives'
 
 export class AccordionHeaderSchema {
   private static readonly tokens = {
