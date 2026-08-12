@@ -92,7 +92,7 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  * `usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top`.
  */
 export type ThemePath =
-  | `primitives.${LeafPaths<NonNullable<Primitives>>}`
+  | `primitives.${LeafPaths<NonNullable<Primitives>, 9>}`
   | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`

@@ -10,11 +10,15 @@ import {
   primaryButtonFocus,
   primaryButtonDisabled,
   primaryButtonRounded,
+  primaryButtonIconOnly,
   primaryButtonRaised,
   primaryButtonText,
   primaryButtonTextRaised,
   primaryButtonOutlined,
   createButtonSeverityFields,
+  smButtonTokens,
+  lgButtonTokens,
+  mdButtonTokens,
 } from './primary'
 import { secondaryButton } from './secondary'
 
@@ -37,11 +41,15 @@ export class ButtonSchema {
     focus: primaryButtonFocus.prefault({}),
     disabled: primaryButtonDisabled.prefault({}),
     rounded: primaryButtonRounded.prefault({}),
+    iconOnly: primaryButtonIconOnly.prefault({}),
     raised: primaryButtonRaised.prefault({}),
     text: primaryButtonText.prefault({}),
     textRaised: primaryButtonTextRaised.prefault({}),
     outlined: primaryButtonOutlined.prefault({}),
     ...createButtonSeverityFields('primaryButtonBrandDefault', 'defaultVariant.defaultVariant', 'defaultState'),
+    sm: smButtonTokens.prefault({}),
+    md: mdButtonTokens.prefault({}),
+    lg: lgButtonTokens.prefault({}),
   }
 
   static readonly schema = z

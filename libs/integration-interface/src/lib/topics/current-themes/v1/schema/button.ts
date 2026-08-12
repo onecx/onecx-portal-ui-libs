@@ -1,3 +1,3 @@
 import { ButtonSchema } from './button/button'
 
-export const button = ButtonSchema.schema
+export const button: typeof ButtonSchema.schema = ButtonSchema.schema

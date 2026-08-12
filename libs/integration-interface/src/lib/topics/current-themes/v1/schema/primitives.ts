@@ -307,6 +307,7 @@ export const shapeVariants = z
     text: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
     raisedText: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
     outlined: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    iconOnly: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
   })
   .register(themeSchemaRegistry, { id: 'shapeVariants' })
 

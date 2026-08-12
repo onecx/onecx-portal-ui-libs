@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { bg, borderWithShadow, color, font, withRef } from '../primitives'
+import { bg, borderWithShadow, color, font, icon, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 // Font for button component — excludes family and size (set globally/individually)
@@ -39,6 +39,8 @@ export function createButtonSeverityStyle(
     .register(themeSchemaRegistry, { id })
 }
 
+const SEVERITIES = ['success', 'info', 'warning', 'danger', 'contrast'] as const
+
 // Helper group creator for severities as flat fields direct on parental state schemas
 export function createButtonSeverityFields(
   prefix: string,
@@ -47,18 +49,19 @@ export function createButtonSeverityFields(
   radius = '{{primitives.radius.md}}',
   shadow = '{{primitives.shadow.none}}'
 ) {
-  const getStyle = (severity: 'success' | 'info' | 'warning' | 'danger' | 'contrast') => {
-    const id = `${prefix}Severity${severity.charAt(0).toUpperCase() + severity.slice(1)}`
-    return createButtonSeverityStyle(id, variantPath, statePath, severity, radius, shadow).prefault({}).optional()
-  }
-
-  return {
-    success: getStyle('success'),
-    info: getStyle('info'),
-    warning: getStyle('warning'),
-    danger: getStyle('danger'),
-    contrast: getStyle('contrast'),
-  }
+  return Object.fromEntries(
+    SEVERITIES.map(severity => [
+      severity,
+      createButtonSeverityStyle(
+        `${prefix}Severity${severity[0].toUpperCase()}${severity.slice(1)}`,
+        variantPath,
+        statePath,
+        severity,
+        radius,
+        shadow
+      ).prefault({}).optional()
+    ])
+  )
 }
 
 export const primaryFocusRingDefaults = {
@@ -246,6 +249,87 @@ export const primaryButtonRounded = z
     ),
   })
   .register(themeSchemaRegistry, { id: 'primaryButtonRounded' })
+
+// Primary IconOnly State Schemas
+export const primaryButtonIconOnlyHover = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.variant.iconOnly.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.variant.iconOnly.state.hover.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default({
+      ...primaryBorderDefaults,
+      color: '{{primitives.defaultVariant.variant.iconOnly.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.variant.iconOnly.state.hover.defaultSeverity.border.style}}',
+    }),
+    ...createButtonSeverityFields('primaryButtonIconOnlyHover', 'defaultVariant.variant.iconOnly', 'state.hover'),
+  })
+  .register(themeSchemaRegistry, { id: 'primaryButtonIconOnlyHover' })
+
+export const primaryButtonIconOnlyActive = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.variant.iconOnly.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.variant.iconOnly.state.active.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default({
+      ...primaryBorderDefaults,
+      color: '{{primitives.defaultVariant.variant.iconOnly.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.variant.iconOnly.state.active.defaultSeverity.border.style}}',
+    }),
+    ...createButtonSeverityFields('primaryButtonIconOnlyActive', 'defaultVariant.variant.iconOnly', 'state.active'),
+  })
+  .register(themeSchemaRegistry, { id: 'primaryButtonIconOnlyActive' })
+
+export const primaryButtonIconOnlyFocus = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.variant.iconOnly.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.variant.iconOnly.state.focus.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default({
+      ...primaryBorderDefaults,
+      color: '{{primitives.defaultVariant.variant.iconOnly.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.variant.iconOnly.state.focus.defaultSeverity.border.style}}',
+    }),
+    ...createButtonSeverityFields('primaryButtonIconOnlyFocus', 'defaultVariant.variant.iconOnly', 'state.focus'),
+  })
+  .register(themeSchemaRegistry, { id: 'primaryButtonIconOnlyFocus' })
+
+export const primaryButtonIconOnlyDisabled = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.variant.iconOnly.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.variant.iconOnly.state.disabled.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default({
+      ...primaryBorderDefaults,
+      color: '{{primitives.defaultVariant.variant.iconOnly.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.variant.iconOnly.state.disabled.defaultSeverity.border.style}}',
+    }),
+    ...createButtonSeverityFields('primaryButtonIconOnlyDisabled', 'defaultVariant.variant.iconOnly', 'state.disabled'),
+  })
+  .register(themeSchemaRegistry, { id: 'primaryButtonIconOnlyDisabled' })
+
+export const primaryButtonIconOnly = z
+  .object({
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.variant.iconOnly.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.variant.iconOnly.defaultState.defaultSeverity.contrast}}'),
+    border: borderWithShadow.default(primaryBorderDefaults),
+    width: withRef(z.string()).optional(),
+    icon: icon.default({
+      color: '{{primitives.defaultVariant.variant.iconOnly.defaultState.defaultSeverity.contrast}}',
+      size: '{{primitives.icon.size.sm}}',
+    }),
+    hover: primaryButtonIconOnlyHover.prefault({}),
+    active: primaryButtonIconOnlyActive.prefault({}),
+    focus: primaryButtonIconOnlyFocus.prefault({}),
+    disabled: primaryButtonIconOnlyDisabled.prefault({}),
+    ...createButtonSeverityFields('primaryButtonIconOnly', 'defaultVariant.variant.iconOnly', 'defaultState'),
+  })
+  .register(themeSchemaRegistry, { id: 'primaryButtonIconOnly' })
 
 // Primary Raised State Schemas
 export const primaryButtonRaisedHover = z
@@ -548,6 +632,25 @@ export const primaryButtonTextRaised = z
     ),
   })
   .register(themeSchemaRegistry, { id: 'primaryButtonTextRaised' })
+
+// Size variant token schemas
+export const smButtonTokens = z.object({
+  font: font.pick({ size: true }).default({ size: '{{primitives.font.size.sm}}' }),
+  paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.xs}}'),
+})
+
+export const mdButtonTokens = z.object({
+  font: font.pick({ size: true }).default({ size: '{{primitives.font.size.md}}' }),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
+})
+
+export const lgButtonTokens = z.object({
+  font: font.pick({ size: true }).default({ size: '{{primitives.font.size.lg}}' }),
+  paddingX: withRef(z.string()).default('{{primitives.space.lg}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+})
 
 // Primary Outlined State Schemas
 export const primaryButtonOutlinedHover = z

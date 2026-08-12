@@ -148,9 +148,7 @@ export const buttonCssRules: CssRule[] = [
   // ─── Rounded Shape ─────────────────────────────────────────────────────────
   {
     selector: '.p-button-rounded',
-    declarations: [
-      { property: 'border-radius', from: 'usages.button.rounded.border.radius' },
-    ],
+    declarations: [{ property: 'border-radius', from: 'usages.button.rounded.border.radius' }],
   },
 
   // ─── Rounded Focus ─────────────────────────────────────────────────────────
@@ -173,12 +171,72 @@ export const buttonCssRules: CssRule[] = [
     ],
   },
 
+  // ─── IconOnly Shape ────────────────────────────────────────────────────────
+  {
+    selector: '.p-button-icon-only',
+    declarations: [
+      { property: 'background', from: 'usages.button.iconOnly.background' },
+      { property: 'color', from: 'usages.button.iconOnly.color' },
+      { property: 'border-color', from: 'usages.button.iconOnly.border.color' },
+      { property: 'border-radius', from: 'usages.button.iconOnly.border.radius' },
+    ],
+  },
+
+  // ─── IconOnly Focus ────────────────────────────────────────────────────────
+  {
+    selector: '.p-button-icon-only:not(:disabled):focus',
+    declarations: [
+      { property: 'background', from: 'usages.button.iconOnly.focus.background' },
+      { property: 'color', from: 'usages.button.iconOnly.focus.color' },
+      { property: 'border-color', from: 'usages.button.iconOnly.focus.border.color' },
+    ],
+  },
+
+  // ─── IconOnly Disabled ─────────────────────────────────────────────────────
+  {
+    selector: '.p-button-icon-only:disabled',
+    declarations: [
+      { property: 'background', from: 'usages.button.iconOnly.disabled.background' },
+      { property: 'color', from: 'usages.button.iconOnly.disabled.color' },
+      { property: 'border-color', from: 'usages.button.iconOnly.disabled.border.color' },
+    ],
+  },
+
+  // ─── Secondary IconOnly Base ───────────────────────────────────────────────
+  {
+    selector: '.p-button-secondary.p-button-icon-only',
+    declarations: [
+      { property: 'background', from: 'usages.button.secondary.iconOnly.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.border.color' },
+      { property: 'border-radius', from: 'usages.button.secondary.iconOnly.border.radius' },
+    ],
+  },
+
+  // ─── Secondary IconOnly Focus ──────────────────────────────────────────────
+  {
+    selector: '.p-button-secondary.p-button-icon-only:not(:disabled):focus',
+    declarations: [
+      { property: 'background', from: 'usages.button.secondary.iconOnly.focus.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.focus.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.focus.border.color' },
+    ],
+  },
+
+  // ─── Secondary IconOnly Disabled ───────────────────────────────────────────
+  {
+    selector: '.p-button-secondary.p-button-icon-only:disabled',
+    declarations: [
+      { property: 'background', from: 'usages.button.secondary.iconOnly.disabled.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.disabled.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.disabled.border.color' },
+    ],
+  },
+
   // ─── Raised Shadow ─────────────────────────────────────────────────────────
   {
     selector: '.p-button-raised',
-    declarations: [
-      { property: 'box-shadow', from: 'usages.button.raised.border.shadow' },
-    ],
+    declarations: [{ property: 'box-shadow', from: 'usages.button.raised.border.shadow' }],
   },
 
   // ─── Raised Focus ──────────────────────────────────────────────────────────
@@ -211,6 +269,54 @@ export const buttonCssRules: CssRule[] = [
       { property: 'line-height', from: 'usages.button.font.lineHeight' },
       { property: 'letter-spacing', from: 'usages.button.font.letterSpacing' },
       { property: 'font-style', from: 'usages.button.font.style' },
+    ],
+  },
+
+  // ─── Size Variant - sm ─────────────────────────────────────────────────────
+  {
+    selector: '.p-button-sm',
+    declarations: [
+      { property: 'font-size', from: 'usages.button.sm.font.size' },
+      { property: 'padding-left', from: 'usages.button.sm.paddingX' },
+      { property: 'padding-right', from: 'usages.button.sm.paddingX' },
+      { property: 'padding-top', from: 'usages.button.sm.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.sm.paddingY' },
+    ],
+  },
+
+  // ─── Size Variant - lg ─────────────────────────────────────────────────────
+  {
+    selector: '.p-button-lg',
+    declarations: [
+      { property: 'font-size', from: 'usages.button.lg.font.size' },
+      { property: 'padding-left', from: 'usages.button.lg.paddingX' },
+      { property: 'padding-right', from: 'usages.button.lg.paddingX' },
+      { property: 'padding-top', from: 'usages.button.lg.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.lg.paddingY' },
+    ],
+  },
+
+  // ─── Secondary Size Variant - sm ───────────────────────────────────────────
+  {
+    selector: '.p-button-secondary.p-button-sm',
+    declarations: [
+      { property: 'font-size', from: 'usages.button.secondary.sm.font.size' },
+      { property: 'padding-left', from: 'usages.button.secondary.sm.paddingX' },
+      { property: 'padding-right', from: 'usages.button.secondary.sm.paddingX' },
+      { property: 'padding-top', from: 'usages.button.secondary.sm.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.secondary.sm.paddingY' },
+    ],
+  },
+
+  // ─── Secondary Size Variant - lg ───────────────────────────────────────────
+  {
+    selector: '.p-button-secondary.p-button-lg',
+    declarations: [
+      { property: 'font-size', from: 'usages.button.secondary.lg.font.size' },
+      { property: 'padding-left', from: 'usages.button.secondary.lg.paddingX' },
+      { property: 'padding-right', from: 'usages.button.secondary.lg.paddingX' },
+      { property: 'padding-top', from: 'usages.button.secondary.lg.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.secondary.lg.paddingY' },
     ],
   },
 ]
