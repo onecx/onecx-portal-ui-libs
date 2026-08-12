@@ -111,6 +111,8 @@ export type ThemePath =
   | `usages.picklist.${LeafPaths<NonNullable<Usages['picklist']>>}`
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
+  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
+  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
