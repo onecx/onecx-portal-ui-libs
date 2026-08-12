@@ -56,22 +56,22 @@ const header: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.accordion.header.background',
+    from: 'usages.accordion.header.background.color',
     to: 'components.accordion.header.background',
     transform: toColorString,
   },
   {
-    from: 'usages.accordion.header.hover.background',
+    from: 'usages.accordion.header.hover.background.color',
     to: 'components.accordion.header.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.accordion.header.active.background',
+    from: 'usages.accordion.header.active.background.color',
     to: 'components.accordion.header.activeBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.accordion.header.active.hover.background',
+    from: 'usages.accordion.header.active.hover.background.color',
     to: 'components.accordion.header.activeHoverBackground',
     transform: toColorString,
   },
@@ -126,7 +126,7 @@ const toggleIcon: MappingRule[] = [
 
 const firstLast: MappingRule[] = [
   {
-    from: 'usages.accordion.header.first.border.radius',
+    from: 'usages.accordion.header.first.border.width',
     to: 'components.accordion.header.first.borderWidth',
   },
   {
@@ -154,7 +154,7 @@ const content: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.accordion.content.background',
+    from: 'usages.accordion.content.background.color',
     to: 'components.accordion.content.background',
     transform: toColorString,
   },

@@ -40,7 +40,7 @@ describe('accordion schema', () => {
         padding: '{{primitives.space.md}}',
         border: {
           width: '{{primitives.border.width.md}}',
-          style: '{{primitives.border.style.solid}}',
+          style: '{{primitives.border.style}}',
           color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         },
       })
@@ -68,7 +68,9 @@ describe('accordion schema', () => {
         },
         toggleIcon: expect.any(Object),
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
+        background: {
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
+        },
       })
     })
 
@@ -78,36 +80,48 @@ describe('accordion schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data?.header
-      expectExactUndefinedTokens(value?.hover, {
-        color: true,
-        background: true,
-      }, [])
+      expectExactUndefinedTokens(
+        value?.hover,
+        {
+          color: true,
+          background: true,
+        },
+        []
+      )
       expectExactTokens(value?.hover, {
         color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}',
+        background: { color: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}' },
       })
 
-      expectExactUndefinedTokens(value?.active, {
-        color: true,
-        background: true,
-        hover: true,
-      }, [])
+      expectExactUndefinedTokens(
+        value?.active,
+        {
+          color: true,
+          background: true,
+          hover: true,
+        },
+        []
+      )
       expectExactTokens(value?.active, {
         color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
+        background: { color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}' },
         hover: {
           color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-          background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
+          background: { color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}' },
         },
       })
 
-      expectExactUndefinedTokens(value?.focus, {
-        color: true,
-        background: true,
-      }, [])
+      expectExactUndefinedTokens(
+        value?.focus,
+        {
+          color: true,
+          background: true,
+        },
+        []
+      )
       expectExactTokens(value?.focus, {
         color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}',
+        background: { color: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}' },
       })
     })
 
@@ -116,21 +130,25 @@ describe('accordion schema', () => {
 
       expect(result.success).toBe(true)
 
-      
       const value = result.data?.header
-      expectExactUndefinedTokens(value?.focusRing, {
-        width: true,
-        style: true,
-        shadow: true,
-        offset: true,
-        color: true,
-      }, [])
+      expectExactUndefinedTokens(
+        value?.focusRing,
+        {
+          width: true,
+          style: true,
+          shadow: true,
+          offset: true,
+          color: true,
+        },
+        []
+      )
       expectExactTokens(value?.focusRing, {
-        width: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}',
-        style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
-        shadow: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}',
-        offset: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.offset}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+        color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
+        style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
+        width: '{{primitives.border.width.md}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
+        shadow: '{{primitives.border.shadow.none}}',
       })
     })
 
@@ -168,7 +186,7 @@ describe('accordion schema', () => {
       expectExactUndefinedTokens(value?.content, AccordionContentSchema.schema.shape, [])
       expectExactTokens(value?.content, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
+        background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
         border: {
           width: '{{primitives.border.width.md}}',
           color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
