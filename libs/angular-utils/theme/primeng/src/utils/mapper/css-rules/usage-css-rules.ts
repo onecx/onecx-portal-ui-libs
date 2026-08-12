@@ -14,6 +14,7 @@ import { textareaCssRules } from './usages/textarea.rules'
 import { picklistCssRules } from './usages/picklist.rules'
 import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
+import { panelmenuCssRules } from './usages/panelmenu.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -31,4 +32,5 @@ export const usageCssRules: CssRule[] = [
   ...textareaCssRules,
   ...togglebuttonCssRules,
   ...picklistCssRules,
+  ...panelmenuCssRules,
 ]
