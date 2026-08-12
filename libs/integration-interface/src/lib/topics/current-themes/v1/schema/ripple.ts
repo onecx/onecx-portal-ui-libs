@@ -7,6 +7,8 @@ import { themeSchemaRegistry } from './registry'
 
 export const rippleSettings = z
   .object({
+    disabled: withRef(z.boolean()).default(false),
+    unbounded: withRef(z.boolean()).default(false),
     centered: withRef(z.boolean()).default(false),
     radius: withRef(z.number()).optional(),
   })

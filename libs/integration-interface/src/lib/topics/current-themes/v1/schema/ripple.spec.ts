@@ -29,7 +29,11 @@ describe('ripple schema', () => {
 
         const value = result.data
         expectExactUndefinedTokens(value?.settings, rippleSettings.shape, ['radius'])
-        expectExactTokens(value?.settings, { centered: false, })
+        expectExactTokens(value?.settings, {
+          disabled: false,
+          unbounded: false,
+          centered: false,
+        })
       })
     })
   })
