@@ -6,7 +6,7 @@ import { LegendSchema } from './legend'
 
 export class FieldsetSchema {
   static readonly token = {
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
     }),
     border: border.pick({ color: true, radius: true }).default({

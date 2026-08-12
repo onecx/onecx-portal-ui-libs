@@ -4,7 +4,7 @@ import { LegendSchema } from './legend'
 import { FieldsetSettingsSchema } from './settings'
 
 const FIELDSET_BASE_TOKENS = {
-  backgroundColor: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
+  background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
   border: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
@@ -24,7 +24,7 @@ const FIELDSET_BASE_TOKENS = {
 }
 
 const FIELDSET_LEGEND_BASE_TOKENS = {
-  backgroundColor: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
+  background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   border: {
     radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
@@ -49,7 +49,7 @@ const FIELDSET_LEGEND_BASE_TOKENS = {
 }
 
 const FIELDSET_LEGEND_HOVER_TOKENS = {
-  backgroundColor: {
+  background: {
     color: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}',
   },
   color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
@@ -59,7 +59,7 @@ const FIELDSET_LEGEND_HOVER_TOKENS = {
 }
 
 const FIELDSET_LEGEND_ACTIVE_TOKENS = {
-  backgroundColor: {
+  background: {
     color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
   },
   color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
@@ -69,7 +69,7 @@ const FIELDSET_LEGEND_ACTIVE_TOKENS = {
 }
 
 const FIELDSET_LEGEND_DISABLED_TOKENS = {
-  backgroundColor: {
+  background: {
     color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}',
   },
   color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
@@ -80,7 +80,7 @@ const FIELDSET_LEGEND_DISABLED_TOKENS = {
 }
 
 const FIELDSET_LEGEND_FOCUS_TOKENS = {
-  backgroundColor: {
+  background: {
     color: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}',
   },
   color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',

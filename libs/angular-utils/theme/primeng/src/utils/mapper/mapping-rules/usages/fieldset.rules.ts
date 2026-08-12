@@ -3,7 +3,7 @@ import { toColorString } from '../../mapper.utils'
 
 const FIELDSET_CONTAINER: MappingRule[] = [
   {
-    from: 'usages.fieldset.backgroundColor',
+    from: 'usages.fieldset.background.color',
     to: 'components.fieldset.root.background',
     transform: toColorString,
   },
@@ -28,6 +28,11 @@ const FIELDSET_CONTAINER: MappingRule[] = [
 ]
 
 const FIELDSET_LEGEND: MappingRule[] = [
+  {
+    from: 'usages.fieldset.legend.background.color',
+    to: 'components.fieldset.legend.background',
+    transform: toColorString,
+  },
   {
     from: 'usages.fieldset.legend.color',
     to: 'components.fieldset.legend.color',

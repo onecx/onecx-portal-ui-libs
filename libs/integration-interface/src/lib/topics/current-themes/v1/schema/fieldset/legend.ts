@@ -4,7 +4,7 @@ import { bg, border, font, withRef } from '../primitives'
 
 export class LegendSchema {
   static readonly token = {
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
     }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
@@ -33,7 +33,7 @@ export class LegendSchema {
   }
 
   static readonly hoverTokens = z.object({
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}',
     }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
@@ -45,7 +45,7 @@ export class LegendSchema {
   })
 
   static readonly focusTokens = z.object({
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}',
     }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
@@ -60,7 +60,7 @@ export class LegendSchema {
   })
 
   static readonly activeTokens = z.object({
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
     }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
@@ -70,7 +70,7 @@ export class LegendSchema {
   })
 
   static readonly disabledTokens = z.object({
-    backgroundColor: bg.pick({ color: true }).default({
+    background: bg.pick({ color: true }).default({
       color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}',
     }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
