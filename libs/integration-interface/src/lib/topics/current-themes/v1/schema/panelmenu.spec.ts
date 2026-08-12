@@ -1,12 +1,10 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
-import {
-  panelmenu,
-  PanelMenuSchema,
-  PanelMenuSettingsSchema,
-  PanelMenuHeaderSchema,
-  PanelMenuContentSchema,
-  PanelMenuItemSchema,
-} from './panelmenu'
+import { panelmenu } from './panelmenu'
+import { PanelMenuSchema } from './panelmenu/panelmenu'
+import { PanelMenuSettingsSchema } from './panelmenu/settings'
+import { PanelMenuHeaderSchema } from './panelmenu/header'
+import { PanelMenuContentSchema } from './panelmenu/content'
+import { PanelMenuItemSchema } from './panelmenu/item'
 
 // Common test constants for reusability
 const COMMON_PADDING = {
