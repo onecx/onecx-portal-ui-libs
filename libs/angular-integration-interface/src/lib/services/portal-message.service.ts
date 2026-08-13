@@ -45,7 +45,7 @@ export class PortalMessageService implements OnDestroy {
   }
 
   warning(msg: Message) {
-    this.addTranslated('warning', msg)
+    this.addTranslated('warn', msg)
   }
 
   private addTranslated(severity: string, msg: Message) {
