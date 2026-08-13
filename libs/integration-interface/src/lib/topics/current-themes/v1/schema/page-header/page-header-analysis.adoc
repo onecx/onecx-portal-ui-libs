@@ -252,3 +252,21 @@ const json = JSON.stringify(payload, null, 2)
 	}
 }
 ----
+usages.menu.header.font.size = "..."
+
+usages.pageheader.menu.(...) = "X"
+
+type Action {
+...
+severity: 'success' | 'danger'
+}
+
+action.severity === 'success' => use "pageHeader.action.(...).sucess.background"
+
+usages.button.(...).[severity].[token]
+
+usages.pageheader.action = usages.button
+
+usages.pageheader.action = {
+  prop: usages.button.(...)
+}

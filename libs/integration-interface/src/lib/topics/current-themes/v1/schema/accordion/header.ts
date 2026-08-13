@@ -1,10 +1,10 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, borderWithShadow, color, font } from '../primitives'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
 
 export class AccordionHeaderSchema {
   private static readonly tokens = {
-    padding: z.string().optional().default('{{primitives.space.md}}'),
+    padding: withRef(z.string()).default('{{primitives.space.md}}'),
     font: font.pick({ weight: true, size: true }).default({
       weight: '{{primitives.font.weight.bold}}',
       size: '{{primitives.font.size.md}}',
@@ -94,11 +94,22 @@ export class AccordionHeaderSchema {
   }
 
   private static readonly firstLastTokens = {
-    border: border
-      .pick({ radius: true, width: true })
-      .default({
-        radius: '{{primitives.radius.md}}',
-        width: '{{primitives.border.width.md}}',
+    border: z
+      .object({
+        radius: z
+          .union([
+            withRef(z.string()),
+            z
+              .object({
+                top: z.string().optional(),
+                right: z.string().optional(),
+                bottom: z.string().optional(),
+                left: z.string().optional(),
+              })
+              .prefault({}),
+          ])
+          .prefault({}),
+        width: z.string().optional().default('{{primitives.border.width.md}}'),
       })
       .prefault({}),
   }

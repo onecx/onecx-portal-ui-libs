@@ -1,15 +1,17 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { border, withRef } from '../primitives'
+import { withRef } from '../primitives'
 
 export class AccordionPanelSchema {
   private static readonly tokens = {
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    border: border.pick({ width: true, color: true, style: true }).default({
-      width: '{{primitives.border.width.md}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-    }),
+    border: z
+      .object({
+        width: withRef(z.string()).default('{{primitives.border.width.md}}'),
+        style: withRef(z.string()).default('{{primitives.border.style}}'),
+        color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
+      })
+      .prefault({}),
   }
 
   static readonly schema = z

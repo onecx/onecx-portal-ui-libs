@@ -1,0 +1,63 @@
+== Primitives usage
+
+Primitive values are reusable theme tokens. A consumer references a token with
+`{{primitives.<area>.<property>}}`; for example, `{{primitives.space.md}}`.
+Every primitive property is optional. String, number, and object values shown
+below may be replaced with a valid theme reference unless noted otherwise.
+
+[cols="1,2,3",options="header"]
+|===
+|Area |Property |Value
+
+|`defaultVariant`
+|`bg`, `contrast`, `defaultState`, `state`
+|A `variantWithStates` value. `defaultState` and each `state` (`hover`, `active`, `selected`, `focus`, `invalid`, `disabled`) contain `defaultSeverity` and optional `severity` overrides (`success`, `info`, `warning`, `danger`, `contrast`). A severity value supports `bg`, `contrast`, `border`, `focusRing`, and `cursor`.
+
+|`variant`
+|`primary`, `secondary`, `tertiary`, `quaternary`, `quinary`
+|A `variantWithStates` value; use `{{primitives.variant.primary.defaultState.defaultSeverity.bg}}`, for example.
+
+|`screenSettings`
+|`xs`, `sm`, `md`, `lg`
+|A `layout` value for the respective screen size.
+
+|`area`
+|`canvas`, `surface`, `overlay`
+|A `variantWithStates` value; use `{{primitives.area.surface.defaultState.defaultSeverity.bg}}`, for example.
+
+|`shadow`
+|`none`, `sm`, `md`, `lg`, `xl`
+|CSS box-shadow string or theme reference.
+
+|`font`
+|`family`, `size`, `weight`, `lineHeight`, `letterSpacing`, `style`
+|CSS font value string or theme reference.
+
+|`space`
+|`xs`, `sm`, `md`, `lg`, `xl`, `xxl`
+|CSS spacing string or theme reference.
+
+|`layout`
+|`contentMaxWidth`, `overlayMaxWidth`, `gap`, `padding`, `margin`, `alignItems`, `justifyContent`
+|CSS layout value string or theme reference.
+
+|`radius`
+|`none`, `sm`, `md`, `lg`, `xl`, `full`
+|CSS border-radius string or theme reference.
+
+|`icon`
+|`sm`, `md`, `lg`, `xl`
+|CSS icon dimension string or theme reference.
+
+|`border`
+|`width`, `offset`, `radius`
+|`width`: named `none`, `sm`, `md`, `lg` values, or per-side values (`top`, `right`, `bottom`, `left`). `offset`: named `none`, `sm`, `md`, `lg` values. `radius`: named `none`, `sm`, `md`, `lg`, `xl`, `full` values. Each leaf is a CSS string or theme reference.
+
+|`focusRing`
+|`width`, `offset`, `radius`, `shadow`
+|Uses the same named/per-side `width`, named `offset`, and named `radius` shapes as `border`; `shadow` uses named `none`, `sm`, `md`, `lg`, `xl` values. Each leaf is a CSS string or theme reference.
+
+|`transition`
+|`duration`
+|Number or theme reference.
+|===
