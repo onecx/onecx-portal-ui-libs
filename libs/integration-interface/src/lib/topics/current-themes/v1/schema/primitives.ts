@@ -284,6 +284,33 @@ export const severityVariantGroup = z
   })
   .register(themeSchemaRegistry, { id: 'severityVariantGroup' })
 
+export const variantStyleAndStates = bgContrast
+  .extend({
+    defaultState: severityVariantGroup.optional(),
+    state: z
+      .object({
+        hover: severityVariantGroup.optional(),
+        active: severityVariantGroup.optional(),
+        selected: severityVariantGroup.optional(),
+        focus: severityVariantGroup.optional(),
+        invalid: severityVariantGroup.optional(),
+        disabled: severityVariantGroup.optional(),
+      })
+      .optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'variantStyleAndStates' })
+
+export const shapeVariants = z
+  .object({
+    rounded: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    raised: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    text: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    raisedText: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    outlined: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    iconOnly: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'shapeVariants' })
+
 export const variantWithStates = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
@@ -297,6 +324,8 @@ export const variantWithStates = bgContrast
         disabled: severityVariantGroup.optional(),
       })
       .optional(),
+    defaultVariant: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    variant: (shapeVariants as typeof shapeVariants).optional(),
   })
   .register(themeSchemaRegistry, { id: 'variantWithStates' })
 
@@ -319,7 +348,7 @@ const colorVariantsShape: ColorVariantsShape = {
 
 export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants' })
 
-export const area = variantWithStates.extend({})
+export const area = (variantWithStates as typeof variantWithStates).extend({})
 
 type AreasShape = {
   canvas: z.ZodOptional<typeof area>
