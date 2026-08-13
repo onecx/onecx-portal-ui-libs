@@ -7,7 +7,7 @@ export class AccordionPanelSchema {
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     border: border.pick({ width: true, color: true, style: true }).default({
       width: '{{primitives.border.width.md}}',
-      style: '{{primitives.border.style}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     }),
   }

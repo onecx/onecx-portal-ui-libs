@@ -40,7 +40,7 @@ describe('accordion schema', () => {
         padding: '{{primitives.space.md}}',
         border: {
           width: '{{primitives.border.width.md}}',
-          style: '{{primitives.border.style}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
           color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         },
       })
