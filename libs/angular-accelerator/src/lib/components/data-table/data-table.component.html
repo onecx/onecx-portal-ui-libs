@@ -242,7 +242,38 @@
       </td>
       } @if (stateService.actionColumnConfigPosition() === 'left') {
       <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
-      } @for (column of stateService.columns(); track column) {
+      } @for (column of stateService.columns(); track column; let ci = $index) {
+      @if (ci === groupColumnIndex() && getGroupMeta(rowObject); as groupMeta) {
+        @if (groupMeta.isGroupStart) {
+        <td
+          name="group-cell"
+          [attr.rowspan]="groupMeta.rowspan"
+          scope="rowgroup"
+        >
+          @if (column.groupCellTemplateKey; as templateKey) {
+            @if (columnTemplates[column.id]) {
+            <ng-container
+              [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
+              [ngTemplateOutletContext]="{ rowObject: rowObject, column: column, groupKey: groupMeta.groupKey, groupLabel: groupMeta.groupLabel, groupSize: groupMeta.rowspan, groupIndex: groupMeta.groupIndex, $implicit: buildGroupCellContext(rowObject) }"
+            >
+            </ng-container>
+            } @else {
+            {{ resolveFieldData(rowObject, column.id) }}
+            }
+          } @else {
+            @if (columnTemplates[column.id]) {
+            <ng-container
+              [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
+              [ngTemplateOutletContext]="{ rowObject: rowObject, column: column, groupKey: groupMeta.groupKey, groupLabel: groupMeta.groupLabel, groupSize: groupMeta.rowspan, groupIndex: groupMeta.groupIndex, $implicit: buildGroupCellContext(rowObject) }"
+            >
+            </ng-container>
+            } @else {
+            {{ resolveFieldData(rowObject, column.id) }}
+            }
+          }
+        </td>
+        }
+      } @else {
       <td>
         @defer (on viewport) { @if (columnTemplates[column.id]) {
         <ng-container
@@ -254,6 +285,7 @@
         <p-skeleton width="3rem" />
         }
       </td>
+      }
       } @if (stateService.actionColumnConfigPosition() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
       }

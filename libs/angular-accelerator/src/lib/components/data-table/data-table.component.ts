@@ -34,6 +34,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableGroupCellTemplateContext } from '../../model/data-table-column.model'
 import { Filter, FilterType } from '../../model/filter.model'
 import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
@@ -47,6 +48,7 @@ import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
+import { planRowGroups, RowGroupRowMeta } from './row-group-planner'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -661,6 +663,23 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       this.pageSizeChanged.emit(pageSize)
     })
 
+    // Compute grouping metadata whenever displayed rows change
+    this.displayedRows$.subscribe((displayedRows) => {
+      const column = this.activeGroupingColumn()
+      const config = column?.rowGrouping
+      if (!config) {
+        this._groupMetaMap.set(new Map())
+        return
+      }
+      const keyPath = config.groupKeyFieldPath
+      const plan = planRowGroups<Row>(displayedRows, config.groupByColumnId, keyPath)
+      const metaMap = new Map<string | number, RowGroupRowMeta>()
+      for (let i = 0; i < plan.rows.length; i++) {
+        metaMap.set(plan.rows[i].id, plan.meta[i])
+      }
+      this._groupMetaMap.set(metaMap)
+    })
+
     this.rowSelectable = this.rowSelectable.bind(this)
   }
 
@@ -1001,6 +1020,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   }
 
   resolveFieldData(object: any, key: any) {
+    // Try flat key first (for flattened rows from displayedRows$ pipeline)
+    if (typeof key === 'string' && object != null && object[key] !== undefined) {
+      return object[key]
+    }
     return ObjectUtils.resolveFieldData(object, key)
   }
 
@@ -1043,8 +1066,53 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     columns.forEach(([key, value], index) => {
       summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
     })
-    
+
     return summary.trim()
+  }
+
+  // --- Row Grouping ---
+
+  /** Mapping from row id → group metadata (only populated when grouping is active). */
+  private _groupMetaMap = signal<Map<string | number, RowGroupRowMeta>>(new Map())
+  groupMetaMap = computed(() => this._groupMetaMap())
+
+  /** The grouping column definition, if any column has rowGrouping configured. */
+  activeGroupingColumn = computed<DataTableColumn | undefined>(() => {
+    const cols = this.stateService.columns()
+    return cols.find((c) => c.rowGrouping)
+  })
+
+  /** Zero-based column index of the grouping column, or -1 if no grouping. */
+  groupColumnIndex = computed<number>(() => {
+    const cols = this.stateService.columns()
+    const gc = this.activeGroupingColumn()
+    if (!gc) {
+      return -1
+    }
+    return cols.indexOf(gc)
+  })
+
+  /** Returns the group metadata for a given row, or null if grouping is inactive. */
+  getGroupMeta(row: Row): RowGroupRowMeta | null {
+    const mm = this.groupMetaMap()
+    return mm.get(row.id) ?? null
+  }
+
+  /** Build group-cell template context for a row. */
+  buildGroupCellContext(row: Row): DataTableGroupCellTemplateContext<Row> | null {
+    const meta = this.getGroupMeta(row)
+    const column = this.activeGroupingColumn()
+    if (!meta || !column) {
+      return null
+    }
+    return {
+      groupKey: meta.groupKey,
+      groupLabel: meta.groupLabel,
+      groupSize: meta.rowspan,
+      groupIndex: meta.groupIndex,
+      rowObject: row,
+      column,
+    }
   }
 }
 

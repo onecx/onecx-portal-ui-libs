@@ -2339,4 +2339,194 @@ describe('DataTableComponent', () => {
 
       expect(summary).toBe('id: 1,name: Alice,active: true')
   })
+
+  describe('Row grouping', () => {
+    const groupingRows = [
+      { id: '1', category: 'A', name: 'item-1' },
+      { id: '2', category: 'B', name: 'item-2' },
+      { id: '3', category: 'A', name: 'item-3' },
+    ]
+    const groupingColumns = [
+      {
+        id: 'category',
+        columnType: ColumnType.STRING,
+        nameKey: 'Category',
+        rowGrouping: { groupByColumnId: 'category', groupKeyFieldPath: 'category' },
+      },
+      {
+        id: 'name',
+        columnType: ColumnType.STRING,
+        nameKey: 'Name',
+      },
+    ]
+
+    beforeEach(async () => {
+      component.rows.set(groupingRows as any)
+      component.columns = (groupingColumns as any)
+      fixture.detectChanges()
+      await fixture.whenStable()
+    })
+
+    it('should not render group cells when no rowGrouping config is present', () => {
+      component.columns = ([
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'Name' },
+      ] as any)
+      fixture.detectChanges()
+
+      expect(component.groupColumnIndex()).toBe(-1)
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(0)
+    })
+
+    it('should render one group cell per group with correct rowspan', () => {
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(2) // two groups: A (2 rows) and B (1 row)
+
+      expect(groupCells[0].getAttribute('rowspan')).toBe('2')
+      expect(groupCells[1].getAttribute('rowspan')).toBe('1')
+    })
+
+    it('should set scope="rowgroup" on all group cells', () => {
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBeGreaterThan(0)
+      for (let i = 0; i < groupCells.length; i++) {
+        expect(groupCells[i].getAttribute('scope')).toBe('rowgroup')
+      }
+    })
+
+    it('should render default group cell text matching normal cell presentation', () => {
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(2)
+      expect(groupCells[0].textContent.trim()).toContain('A')
+      expect(groupCells[1].textContent.trim()).toContain('B')
+    })
+
+    it('should handle empty-label groups', () => {
+      component.rows.set([
+        { id: '1', category: '', name: 'x' },
+        { id: '2', category: '', name: 'y' },
+      ] as any)
+      fixture.detectChanges()
+
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(1)
+      expect(groupCells[0].getAttribute('rowspan')).toBe('2')
+    })
+
+    it('should handle single-member groups', () => {
+      component.rows.set([
+        { id: '1', category: 'X', name: 'x' },
+      ] as any)
+      fixture.detectChanges()
+
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(1)
+      expect(groupCells[0].getAttribute('rowspan')).toBe('1')
+    })
+
+    it('should produce correct group metadata via getGroupMeta', () => {
+      const metaA = component.getGroupMeta({ id: '1' } as Row)
+      expect(metaA).toBeTruthy()
+      expect(metaA!.isGroupStart).toBe(true)
+      expect(metaA!.rowspan).toBe(2)
+      expect(metaA!.groupKey).toBe('A')
+
+      const metaB = component.getGroupMeta({ id: '2' } as Row)
+      expect(metaB!.isGroupStart).toBe(true)
+      expect(metaB!.rowspan).toBe(1)
+
+      const metaA2 = component.getGroupMeta({ id: '3' } as Row)
+      expect(metaA2!.isGroupStart).toBe(false)
+    })
+
+    it('buildGroupCellContext should return null when no grouping is active', () => {
+      component.columns = ([
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'Name' },
+      ] as any)
+      fixture.detectChanges()
+
+      expect(component.buildGroupCellContext({ id: '1' } as Row)).toBeNull()
+    })
+
+    it('buildGroupCellContext should return context with groupKey, groupLabel, groupSize, groupIndex, rowObject, column', () => {
+      const ctx = component.buildGroupCellContext({ id: '1' } as Row)
+      expect(ctx).toBeTruthy()
+      expect(ctx!.groupKey).toBe('A')
+      expect(ctx!.groupLabel).toBe('A')
+      expect(ctx!.groupSize).toBe(2)
+      expect(ctx!.groupIndex).toBe(0)
+      expect(ctx!.rowObject.id).toBe('1')
+      expect(ctx!.column.id).toBe('category')
+    })
+
+    it('should use nested groupKeyFieldPath and still render correctly', async () => {
+      component.rows.set([
+        { id: '1', nested: { key: 'k1', label: 'G1' }, name: 'a' },
+        { id: '2', nested: { key: 'k2', label: 'G2' }, name: 'b' },
+        { id: '3', nested: { key: 'k1', label: 'G1' }, name: 'c' },
+      ] as any)
+      component.columns = ([
+        {
+          id: 'nested.label',
+          columnType: ColumnType.STRING,
+          nameKey: 'Group',
+          rowGrouping: { groupByColumnId: 'nested.label', groupKeyFieldPath: 'nested.key' },
+        },
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'Name' },
+      ] as any)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      // Allow debounceTime in template effect to settle
+      await new Promise((r) => setTimeout(r, 100))
+      fixture.detectChanges()
+
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(2)
+      expect(groupCells[0].getAttribute('rowspan')).toBe('2')
+      expect(groupCells[0].textContent.trim()).toContain('G1')
+    })
+
+    it('should produce correct group order (first-seen)', () => {
+      const metaC = component.getGroupMeta({ id: '2' } as Row)
+      expect(metaC).toBeTruthy()
+
+      const metaA = component.getGroupMeta({ id: '1' } as Row)
+      expect(metaA).toBeTruthy()
+
+      // 'A' appears first, so its groupIndex is 0
+      expect(metaA!.groupIndex).toBe(0)
+      // 'B' appears second, so its groupIndex is 1
+      expect(metaC!.groupIndex).toBe(1)
+    })
+
+    describe('harness group cell assertions', () => {
+      it('should retrieve group cells via harness', async () => {
+        const cells = await dataTable.getGroupCells()
+        expect(cells.length).toBe(2)
+      })
+
+      it('should retrieve group cell labels via harness', async () => {
+        const label0 = await dataTable.getGroupCellLabel(0)
+        expect(label0).toContain('A')
+        const label1 = await dataTable.getGroupCellLabel(1)
+        expect(label1).toContain('B')
+      })
+
+      it('should retrieve group cell rowspans via harness', async () => {
+        const rs0 = await dataTable.getGroupCellRowspan(0)
+        expect(rs0).toBe(2)
+        const rs1 = await dataTable.getGroupCellRowspan(1)
+        expect(rs1).toBe(1)
+      })
+
+      it('should retrieve group cell scope via harness', async () => {
+        expect(await dataTable.getGroupCellScope(0)).toBe('rowgroup')
+        expect(await dataTable.getGroupCellScope(1)).toBe('rowgroup')
+      })
+
+      it('should throw on out-of-range harness index', async () => {
+        await expect(dataTable.getGroupCellLabel(99)).rejects.toThrow('out of range')
+      })
+    })
+  })
 })

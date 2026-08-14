@@ -736,3 +736,123 @@ export const WithCaptionTemplate = {
 }
 
 export default DataTableComponentSBConfig
+
+// --- Row Grouping Stories ---
+
+const groupRows = [
+  { id: 1, category: 'Fruit', categoryKey: 'fruit', name: 'Apple', amount: 5 },
+  { id: 2, category: 'Fruit', categoryKey: 'fruit', name: 'Banana', amount: 3 },
+  { id: 3, category: 'Vegetable', categoryKey: 'vegetable', name: 'Carrot', amount: 10 },
+  { id: 4, category: 'Fruit', categoryKey: 'fruit', name: 'Cherry', amount: 8 },
+  { id: 5, category: 'Vegetable', categoryKey: 'vegetable', name: 'Broccoli', amount: 4 },
+]
+
+const groupColumns = [
+  {
+    id: 'category',
+    columnType: ColumnType.STRING,
+    nameKey: 'Category',
+    rowGrouping: { groupByColumnId: 'category', groupKeyFieldPath: 'categoryKey' },
+  },
+  {
+    id: 'name',
+    columnType: ColumnType.STRING,
+    nameKey: 'Name',
+  },
+  {
+    id: 'amount',
+    columnType: ColumnType.NUMBER,
+    nameKey: 'Amount',
+  },
+]
+
+export const WithRowGrouping = {
+  render: (args: any) => ({
+    props: args,
+    template: `
+      <ocx-data-table
+        [rows]="rows"
+        [columns]="columns"
+        [paginator]="paginator"
+      >
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    rows: groupRows,
+    columns: groupColumns,
+    emptyResultsMessage: 'No results',
+  },
+}
+
+export const WithRowGroupingCustomTemplate = {
+  render: (args: any) => ({
+    props: args,
+    template: `
+      <ocx-data-table
+        [rows]="rows"
+        [columns]="columns"
+        [paginator]="paginator"
+      >
+        <ng-template pTemplate="categoryIdTableCell"
+          let-rowObject="rowObject"
+          let-column="column"
+          let-groupKey="groupKey"
+          let-groupLabel="groupLabel"
+          let-groupSize="groupSize"
+          let-groupIndex="groupIndex"
+          let-groupCtx="$implicit"
+        >
+          @if (groupCtx) {
+            <strong>{{ groupCtx.groupLabel }}</strong>
+            <span class="ml-2 text-muted">({{ groupCtx.groupSize }} items)</span>
+          } @else {
+            {{ rowObject[column.id] }}
+          }
+        </ng-template>
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    rows: groupRows,
+    columns: groupColumns,
+    emptyResultsMessage: 'No results',
+  },
+}
+
+/** Two groups share the same display label "Mixed" but have different strict keys. */
+export const WithRowGroupingSameLabelDifferentKeys = {
+  render: (args: any) => ({
+    props: args,
+    template: `
+      <ocx-data-table
+        [rows]="rows"
+        [columns]="columns"
+        [paginator]="paginator"
+      >
+      </ocx-data-table>
+    `,
+  }),
+  args: {
+    rows: [
+      { id: 1, type: 'Mixed', typeKey: 'typeA', name: 'Alpha' },
+      { id: 2, type: 'Mixed', typeKey: 'typeB', name: 'Beta' },
+      { id: 3, type: 'Mixed', typeKey: 'typeA', name: 'Gamma' },
+      { id: 4, type: 'Mixed', typeKey: 'typeB', name: 'Delta' },
+    ],
+    columns: [
+      {
+        id: 'type',
+        columnType: ColumnType.STRING,
+        nameKey: 'Type',
+        rowGrouping: { groupByColumnId: 'type', groupKeyFieldPath: 'typeKey' },
+      },
+      {
+        id: 'name',
+        columnType: ColumnType.STRING,
+        nameKey: 'Name',
+      },
+    ],
+    emptyResultsMessage: 'No results',
+  },
+}
