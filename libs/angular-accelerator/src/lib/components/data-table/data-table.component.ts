@@ -675,7 +675,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       const plan = planRowGroups<Row>(displayedRows, config.groupByColumnId, keyPath)
       const metaMap = new Map<string | number, RowGroupRowMeta>()
       for (let i = 0; i < plan.rows.length; i++) {
-        metaMap.set(plan.rows[i].id, plan.meta[i])
+        const rowId = plan.rows[i].id
+        if (typeof rowId === 'string' || typeof rowId === 'number') {
+          metaMap.set(rowId, plan.meta[i])
+        }
       }
       this._groupMetaMap.set(metaMap)
     })
@@ -1080,6 +1083,21 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   activeGroupingColumn = computed<DataTableColumn | undefined>(() => {
     const cols = this.stateService.columns()
     return cols.find((c) => c.rowGrouping)
+  })
+
+  /** Resolves the custom group-cell template by `groupCellTemplateKey`. Returns `null` when not configured. */
+  groupCellTemplateRef = computed<TemplateRef<any> | null>(() => {
+    const key = this.activeGroupingColumn()?.groupCellTemplateKey
+    if (!key) {
+      return null
+    }
+    const all = [
+      ...this.templates(),
+      ...this.viewTemplates(),
+      ...(this.parentTemplates() ?? []),
+    ]
+    const match = all.find((t) => t.name === key || t.getType() === key)
+    return match?.template ?? null
   })
 
   /** Zero-based column index of the grouping column, or -1 if no grouping. */

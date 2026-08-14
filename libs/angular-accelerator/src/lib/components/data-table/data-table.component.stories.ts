@@ -766,6 +766,26 @@ const groupColumns = [
   },
 ]
 
+const groupColumnsCustomTemplate = [
+  {
+    id: 'category',
+    columnType: ColumnType.STRING,
+    nameKey: 'Category',
+    rowGrouping: { groupByColumnId: 'category', groupKeyFieldPath: 'categoryKey' },
+    groupCellTemplateKey: 'groupCellTpl',
+  },
+  {
+    id: 'name',
+    columnType: ColumnType.STRING,
+    nameKey: 'Name',
+  },
+  {
+    id: 'amount',
+    columnType: ColumnType.NUMBER,
+    nameKey: 'Amount',
+  },
+]
+
 export const WithRowGrouping = {
   render: (args: any) => ({
     props: args,
@@ -794,7 +814,7 @@ export const WithRowGroupingCustomTemplate = {
         [columns]="columns"
         [paginator]="paginator"
       >
-        <ng-template pTemplate="categoryIdTableCell"
+        <ng-template pTemplate="groupCellTpl"
           let-rowObject="rowObject"
           let-column="column"
           let-groupKey="groupKey"
@@ -803,19 +823,15 @@ export const WithRowGroupingCustomTemplate = {
           let-groupIndex="groupIndex"
           let-groupCtx="$implicit"
         >
-          @if (groupCtx) {
-            <strong>{{ groupCtx.groupLabel }}</strong>
-            <span class="ml-2 text-muted">({{ groupCtx.groupSize }} items)</span>
-          } @else {
-            {{ rowObject[column.id] }}
-          }
+          <strong>{{ groupCtx.groupLabel }}</strong>
+          <span class="ml-2 text-muted">({{ groupCtx.groupSize }} items)</span>
         </ng-template>
       </ocx-data-table>
     `,
   }),
   args: {
     rows: groupRows,
-    columns: groupColumns,
+    columns: groupColumnsCustomTemplate,
     emptyResultsMessage: 'No results',
   },
 }

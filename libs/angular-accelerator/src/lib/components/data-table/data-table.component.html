@@ -250,8 +250,14 @@
           [attr.rowspan]="groupMeta.rowspan"
           scope="rowgroup"
         >
-          @if (column.groupCellTemplateKey; as templateKey) {
-            @if (columnTemplates[column.id]) {
+          @defer (on viewport) {
+            @if (groupCellTemplateRef(); as groupTpl) {
+            <ng-container
+              [ngTemplateOutlet]="groupTpl"
+              [ngTemplateOutletContext]="{ rowObject: rowObject, column: column, groupKey: groupMeta.groupKey, groupLabel: groupMeta.groupLabel, groupSize: groupMeta.rowspan, groupIndex: groupMeta.groupIndex, $implicit: buildGroupCellContext(rowObject) }"
+            >
+            </ng-container>
+            } @else if (columnTemplates[column.id]) {
             <ng-container
               [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
               [ngTemplateOutletContext]="{ rowObject: rowObject, column: column, groupKey: groupMeta.groupKey, groupLabel: groupMeta.groupLabel, groupSize: groupMeta.rowspan, groupIndex: groupMeta.groupIndex, $implicit: buildGroupCellContext(rowObject) }"
@@ -260,16 +266,8 @@
             } @else {
             {{ resolveFieldData(rowObject, column.id) }}
             }
-          } @else {
-            @if (columnTemplates[column.id]) {
-            <ng-container
-              [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
-              [ngTemplateOutletContext]="{ rowObject: rowObject, column: column, groupKey: groupMeta.groupKey, groupLabel: groupMeta.groupLabel, groupSize: groupMeta.rowspan, groupIndex: groupMeta.groupIndex, $implicit: buildGroupCellContext(rowObject) }"
-            >
-            </ng-container>
-            } @else {
-            {{ resolveFieldData(rowObject, column.id) }}
-            }
+          } @placeholder {
+            <p-skeleton width="3rem" />
           }
         </td>
         }
