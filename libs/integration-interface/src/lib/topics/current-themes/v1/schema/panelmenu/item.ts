@@ -24,6 +24,31 @@ export class PanelMenuItemSchema {
     radius: '{{primitives.border.radius.md}}',
   }
 
+  private static readonly iconDefaults = {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly iconHoverDefaults = {
+    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly iconActiveDefaults = {
+    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly iconFocusDefaults = {
+    color: '{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly iconDisabledDefaults = {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
   private static readonly defaultStateTokens = {
     ...this.commonTokens,
     color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
@@ -43,6 +68,12 @@ export class PanelMenuItemSchema {
       radius: '{{primitives.border.radius.md}}',
       shadow: '{{primitives.shadow.none}}',
     }),
+    icon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.iconDefaults),
   }
 
   static readonly hoverTokens = z.object({
@@ -56,6 +87,12 @@ export class PanelMenuItemSchema {
       color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
     }),
+    icon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.iconHoverDefaults),
   })
 
   static readonly activeTokens = z.object({
@@ -69,6 +106,12 @@ export class PanelMenuItemSchema {
       color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
     }),
+    icon: z
+      .object({
+        color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.iconActiveDefaults),
   })
 
   static readonly focusTokens = z.object({
@@ -82,6 +125,12 @@ export class PanelMenuItemSchema {
       color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
     }),
+    icon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.iconFocusDefaults),
   })
 
   static readonly disabledTokens = z.object({
@@ -95,39 +144,12 @@ export class PanelMenuItemSchema {
       color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
-  })
-
-  private static readonly iconDefaultTokens = {
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  }
-
-  static readonly iconHoverTokens = z.object({
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly iconActiveTokens = z.object({
-    color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly iconFocusTokens = z.object({
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly iconDisabledTokens = z.object({
-    color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly iconTokens = z.object({
-    ...this.iconDefaultTokens,
-    hover: this.iconHoverTokens.prefault({}),
-    active: this.iconActiveTokens.prefault({}),
-    focus: this.iconFocusTokens.prefault({}),
-    disabled: this.iconDisabledTokens.prefault({}),
+    icon: z
+      .object({
+        color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.iconDisabledDefaults),
   })
 
   static readonly schema = z
@@ -137,7 +159,6 @@ export class PanelMenuItemSchema {
       active: this.activeTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
-      icon: this.iconTokens.prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'panelmenuItem' })
 }

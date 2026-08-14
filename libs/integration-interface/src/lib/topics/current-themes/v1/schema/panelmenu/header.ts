@@ -18,6 +18,31 @@ export class PanelMenuHeaderSchema {
     radius: '{{primitives.border.radius.md}}',
   }
 
+  private static readonly toggleIconDefaults = {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly toggleIconHoverDefaults = {
+    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly toggleIconActiveDefaults = {
+    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly toggleIconFocusDefaults = {
+    color: '{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
+  private static readonly toggleIconDisabledDefaults = {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+    rotate: '0deg',
+  }
+
   private static readonly defaultStateTokens = {
     ...this.commonTokens,
     color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
@@ -42,6 +67,12 @@ export class PanelMenuHeaderSchema {
       radius: '{{primitives.border.radius.md}}',
       shadow: '{{primitives.shadow.none}}',
     }),
+    toggleIcon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.toggleIconDefaults),
   }
 
   static readonly hoverTokens = z.object({
@@ -55,6 +86,12 @@ export class PanelMenuHeaderSchema {
       color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
     }),
+    toggleIcon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.toggleIconHoverDefaults),
   })
 
   static readonly activeTokens = z.object({
@@ -68,6 +105,12 @@ export class PanelMenuHeaderSchema {
       color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
     }),
+    toggleIcon: z
+      .object({
+        color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.toggleIconActiveDefaults),
   })
 
   static readonly focusTokens = z.object({
@@ -81,6 +124,12 @@ export class PanelMenuHeaderSchema {
       color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
     }),
+    toggleIcon: z
+      .object({
+        color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.toggleIconFocusDefaults),
   })
 
   static readonly disabledTokens = z.object({
@@ -94,39 +143,12 @@ export class PanelMenuHeaderSchema {
       color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
-  })
-
-  private static readonly toggleIconDefaultTokens = {
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  }
-
-  static readonly toggleIconHoverTokens = z.object({
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly toggleIconActiveTokens = z.object({
-    color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly toggleIconFocusTokens = z.object({
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly toggleIconDisabledTokens = z.object({
-    color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-    rotate: withRef(z.string()).default('0deg'),
-  })
-
-  static readonly toggleIconTokens = z.object({
-    ...this.toggleIconDefaultTokens,
-    hover: this.toggleIconHoverTokens.prefault({}),
-    active: this.toggleIconActiveTokens.prefault({}),
-    focus: this.toggleIconFocusTokens.prefault({}),
-    disabled: this.toggleIconDisabledTokens.prefault({}),
+    toggleIcon: z
+      .object({
+        color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
+        rotate: withRef(z.string()).default('0deg'),
+      })
+      .default(this.toggleIconDisabledDefaults),
   })
 
   static readonly schema = z
@@ -136,7 +158,6 @@ export class PanelMenuHeaderSchema {
       active: this.activeTokens.prefault({}),
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
-      toggleIcon: this.toggleIconTokens.prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'panelmenuHeader' })
 }

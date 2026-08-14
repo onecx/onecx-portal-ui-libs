@@ -126,11 +126,11 @@ describe('panelmenu schema', () => {
         border: COMMON_BORDER.header('area.overlay.defaultState.defaultSeverity'),
         font: COMMON_FONT.full,
         focusRing: COMMON_FOCUS_RING,
+        toggleIcon: ICON_TOKENS.default('area.overlay.defaultState.defaultSeverity'),
         hover: expect.any(Object),
         active: expect.any(Object),
         focus: expect.any(Object),
         disabled: expect.any(Object),
-        toggleIcon: expect.any(Object),
       })
     })
 
@@ -147,6 +147,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
         background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
         border: COMMON_BORDER.header('area.overlay.state.hover.defaultSeverity'),
+        toggleIcon: ICON_TOKENS.default('area.overlay.state.hover.defaultSeverity'),
       })
     })
 
@@ -163,6 +164,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
         background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
         border: COMMON_BORDER.header('variant.primary.defaultState.defaultSeverity'),
+        toggleIcon: ICON_TOKENS.default('variant.primary.defaultState.defaultSeverity'),
       })
     })
 
@@ -179,6 +181,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}',
         background: '{{primitives.area.overlay.state.focus.defaultSeverity.bg}}',
         border: COMMON_BORDER.header('area.overlay.state.focus.defaultSeverity'),
+        toggleIcon: ICON_TOKENS.default('area.overlay.state.focus.defaultSeverity'),
       })
     })
 
@@ -195,89 +198,8 @@ describe('panelmenu schema', () => {
         color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
         background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
         border: COMMON_BORDER.header('defaultVariant.state.disabled.defaultSeverity'),
+        toggleIcon: ICON_TOKENS.default('defaultVariant.state.disabled.defaultSeverity'),
       })
-    })
-
-    it('should apply defaults for toggleIcon', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.header.toggleIcon, PanelMenuHeaderSchema.toggleIconTokens.shape, [])
-
-      expect(value?.header?.toggleIcon?.color).toEqual(
-        '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'
-      )
-      expect(value?.header?.toggleIcon?.rotate).toEqual('0deg')
-      expect(value?.header?.toggleIcon?.hover).toBeDefined()
-      expect(value?.header?.toggleIcon?.active).toBeDefined()
-      expect(value?.header?.toggleIcon?.focus).toBeDefined()
-      expect(value?.header?.toggleIcon?.disabled).toBeDefined()
-    })
-
-    it('should apply defaults for toggleIcon hover state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.header.toggleIcon.hover, PanelMenuHeaderSchema.toggleIconHoverTokens.shape, [])
-
-      expectExactTokens(
-        value?.header?.toggleIcon?.hover,
-        ICON_TOKENS.default('area.overlay.state.hover.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for toggleIcon active state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.header.toggleIcon.active,
-        PanelMenuHeaderSchema.toggleIconActiveTokens.shape,
-        []
-      )
-
-      expectExactTokens(
-        value?.header?.toggleIcon?.active,
-        ICON_TOKENS.default('variant.primary.defaultState.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for toggleIcon focus state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.header.toggleIcon.focus, PanelMenuHeaderSchema.toggleIconFocusTokens.shape, [])
-
-      expectExactTokens(
-        value?.header?.toggleIcon?.focus,
-        ICON_TOKENS.default('area.overlay.state.focus.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for toggleIcon disabled state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.header.toggleIcon.disabled,
-        PanelMenuHeaderSchema.toggleIconDisabledTokens.shape,
-        []
-      )
-
-      expectExactTokens(
-        value?.header?.toggleIcon?.disabled,
-        ICON_TOKENS.default('defaultVariant.state.disabled.defaultSeverity')
-      )
     })
   })
 
@@ -317,11 +239,11 @@ describe('panelmenu schema', () => {
         background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
         border: COMMON_BORDER.item('area.overlay.defaultState.defaultSeverity'),
         focusRing: COMMON_FOCUS_RING,
+        icon: ICON_TOKENS.default('area.overlay.defaultState.defaultSeverity'),
         hover: expect.any(Object),
         active: expect.any(Object),
         focus: expect.any(Object),
         disabled: expect.any(Object),
-        icon: expect.any(Object),
       })
     })
 
@@ -340,6 +262,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
         background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
         border: COMMON_BORDER.item('area.overlay.state.hover.defaultSeverity'),
+        icon: ICON_TOKENS.default('area.overlay.state.hover.defaultSeverity'),
       })
     })
 
@@ -358,6 +281,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
         background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
         border: COMMON_BORDER.item('variant.primary.defaultState.defaultSeverity'),
+        icon: ICON_TOKENS.default('variant.primary.defaultState.defaultSeverity'),
       })
     })
 
@@ -376,6 +300,7 @@ describe('panelmenu schema', () => {
         color: '{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}',
         background: '{{primitives.area.overlay.state.focus.defaultSeverity.bg}}',
         border: COMMON_BORDER.item('area.overlay.state.focus.defaultSeverity'),
+        icon: ICON_TOKENS.default('area.overlay.state.focus.defaultSeverity'),
       })
     })
 
@@ -394,81 +319,8 @@ describe('panelmenu schema', () => {
         color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
         background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
         border: COMMON_BORDER.item('defaultVariant.state.disabled.defaultSeverity'),
+        icon: ICON_TOKENS.default('defaultVariant.state.disabled.defaultSeverity'),
       })
-    })
-
-    it('should apply defaults for icon', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.content?.item.icon, PanelMenuItemSchema.iconTokens.shape, [])
-
-      expect(value?.content?.item?.icon?.color).toEqual(
-        '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'
-      )
-      expect(value?.content?.item?.icon?.rotate).toEqual('0deg')
-      expect(value?.content?.item?.icon?.hover).toBeDefined()
-      expect(value?.content?.item?.icon?.active).toBeDefined()
-      expect(value?.content?.item?.icon?.focus).toBeDefined()
-      expect(value?.content?.item?.icon?.disabled).toBeDefined()
-    })
-
-    it('should apply defaults for icon hover state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.content?.item.icon.hover, PanelMenuItemSchema.iconHoverTokens.shape, [])
-
-      expectExactTokens(
-        value?.content?.item?.icon?.hover,
-        ICON_TOKENS.default('area.overlay.state.hover.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for icon active state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.content?.item.icon.active, PanelMenuItemSchema.iconActiveTokens.shape, [])
-
-      expectExactTokens(
-        value?.content?.item?.icon?.active,
-        ICON_TOKENS.default('variant.primary.defaultState.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for icon focus state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.content?.item.icon.focus, PanelMenuItemSchema.iconFocusTokens.shape, [])
-
-      expectExactTokens(
-        value?.content?.item?.icon?.focus,
-        ICON_TOKENS.default('area.overlay.state.focus.defaultSeverity')
-      )
-    })
-
-    it('should apply defaults for icon disabled state', () => {
-      const result = panelmenu.safeParse({})
-
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.content?.item.icon.disabled, PanelMenuItemSchema.iconDisabledTokens.shape, [])
-
-      expectExactTokens(
-        value?.content?.item?.icon?.disabled,
-        ICON_TOKENS.default('defaultVariant.state.disabled.defaultSeverity')
-      )
     })
   })
 })
