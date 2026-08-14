@@ -1,3 +1,11 @@
+## [7.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.0...v7.12.1) (2026-08-14)
+
+### Bug Fixes
+
+* checkbox selection highlighted across pagination ([#1647](https://github.com/onecx/onecx-portal-ui-libs/issues/1647)) ([00974a6](https://github.com/onecx/onecx-portal-ui-libs/commit/00974a6047be0f766072f3073d8e4f70aa65db96))
+* primng class changes adapted ([#1603](https://github.com/onecx/onecx-portal-ui-libs/issues/1603)) ([094c453](https://github.com/onecx/onecx-portal-ui-libs/commit/094c45360d97fab2ec37da95a509437bd155011d))
+* v7-portal-message-service to warn ([#1641](https://github.com/onecx/onecx-portal-ui-libs/issues/1641)) ([4d1bd10](https://github.com/onecx/onecx-portal-ui-libs/commit/4d1bd101d432265eb569c03bbe46798915106068))
+
 ## [7.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.11.0...v7.12.0) (2026-07-09)
 
 ### Features
