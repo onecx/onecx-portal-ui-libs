@@ -2395,21 +2395,16 @@ describe('DataTableComponent', () => {
     })
 
     it('should render default group cell text matching normal cell presentation', async () => {
-      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
-      expect(groupCells.length).toBe(2)
-      // Wait for @defer (on viewport) to render content
+      // Wait for column templates to resolve (debounceTime(50)) and for @defer (on viewport) blocks to render
       await fixture.whenStable()
-      await new Promise((r) => setTimeout(r, 50))
+      await new Promise((r) => setTimeout(r, 100))
       fixture.detectChanges()
       await fixture.whenStable()
 
-      // Fallback: if defer blocks don't render in headless tests, check via getGroupMeta instead
-      const meta0 = component.getGroupMeta({ id: '1' } as Row)
-      expect(meta0).toBeTruthy()
-      expect(meta0!.groupLabel).toContain('A')
-      const meta1 = component.getGroupMeta({ id: '2' } as Row)
-      expect(meta1).toBeTruthy()
-      expect(meta1!.groupLabel).toContain('B')
+      const groupCells = fixture.nativeElement.querySelectorAll('td[name="group-cell"]')
+      expect(groupCells.length).toBe(2)
+      expect(groupCells[0].textContent!.trim()).toContain('A')
+      expect(groupCells[1].textContent!.trim()).toContain('B')
     })
 
     it('should handle empty-label groups', () => {
@@ -2565,6 +2560,7 @@ describe('DataTableComponent', () => {
       component.rows.set([
         { id: 'valid-id', category: 'A', name: 'x' },
         { id: 42, category: 'A', name: 'y' },
+        { id: { value: 42 }, category: 'B', name: 'z' } as any,
       ] as any)
       component.columns = ([
         {
@@ -2576,13 +2572,19 @@ describe('DataTableComponent', () => {
       ] as any)
       fixture.detectChanges()
 
+      // String id is valid and should be in the meta map (group start for A)
       const meta1 = component.getGroupMeta({ id: 'valid-id' } as Row)
       expect(meta1).toBeTruthy()
       expect(meta1!.isGroupStart).toBe(true)
 
+      // Numeric id is valid and should be in the meta map (second row of group A)
       const meta2 = component.getGroupMeta({ id: 42 } as Row)
       expect(meta2).toBeTruthy()
       expect(meta2!.isGroupStart).toBe(false)
+
+      // Non-primitive object id must be skipped from meta map
+      const meta3 = component.getGroupMeta({ id: { value: 42 } } as any)
+      expect(meta3).toBeNull()
     })
 
     describe('harness group cell assertions', () => {
