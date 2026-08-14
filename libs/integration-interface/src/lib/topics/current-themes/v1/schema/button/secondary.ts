@@ -1,11 +1,11 @@
 import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
-import { buttonFont, createButtonSeverityFields, lgButtonTokens, mdButtonTokens, smButtonTokens } from './primary'
+import { buttonFont, createButtonSeverityFields, lgButtonTokens, mdButtonTokens, smButtonTokens } from './default'
 
 const secondaryFocusRingDefaults = {
-  color: '{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-  style: '{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  color: '{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
   width: '{{primitives.border.width.sm}}',
   offset: '{{primitives.border.offset.none}}',
   radius: '{{primitives.radius.md}}',
@@ -13,8 +13,8 @@ const secondaryFocusRingDefaults = {
 }
 
 const secondaryBorderDefaults = {
-  color: '{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.border.color}}',
-  style: '{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.border.style}}',
+  color: '{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.border.color}}',
+  style: '{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.border.style}}',
   width: '{{primitives.border.width.sm}}',
   offset: '{{primitives.border.offset.none}}',
   radius: '{{primitives.radius.md}}',
@@ -25,14 +25,14 @@ export const secondaryButtonHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultVariant.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultVariant.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.defaultVariant.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.defaultVariant.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.defaultVariant.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultVariant.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.defaultVariant.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.defaultVariant.state.hover.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonHover', 'variant.primary.defaultVariant', 'state.hover'),
+    ...createButtonSeverityFields('secondaryButtonHover', 'variant.secondary.defaultVariant', 'state.hover'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonHover' })
 
@@ -40,14 +40,14 @@ export const secondaryButtonActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultVariant.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultVariant.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.defaultVariant.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.defaultVariant.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.defaultVariant.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultVariant.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.defaultVariant.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.defaultVariant.state.active.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonActive', 'variant.primary.defaultVariant', 'state.active'),
+    ...createButtonSeverityFields('secondaryButtonActive', 'variant.secondary.defaultVariant', 'state.active'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonActive' })
 
@@ -55,14 +55,14 @@ export const secondaryButtonFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultVariant.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultVariant.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.defaultVariant.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.defaultVariant.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultVariant.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.defaultVariant.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.defaultVariant.state.focus.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonFocus', 'variant.primary.defaultVariant', 'state.focus'),
+    ...createButtonSeverityFields('secondaryButtonFocus', 'variant.secondary.defaultVariant', 'state.focus'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonFocus' })
 
@@ -70,14 +70,14 @@ export const secondaryButtonDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultVariant.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.defaultVariant.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultVariant.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonDisabled', 'variant.primary.defaultVariant', 'state.disabled'),
+    ...createButtonSeverityFields('secondaryButtonDisabled', 'variant.secondary.defaultVariant', 'state.disabled'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonDisabled' })
 
@@ -86,17 +86,17 @@ export const secondaryButtonRoundedHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.rounded.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.rounded.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.rounded.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.rounded.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.rounded.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.rounded.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.rounded.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.rounded.state.hover.defaultSeverity.border.style}}',
       radius: '{{primitives.radius.full}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRoundedHover',
-      'variant.primary.variant.rounded',
+      'variant.secondary.variant.rounded',
       'state.hover',
       '{{primitives.radius.full}}'
     ),
@@ -107,17 +107,17 @@ export const secondaryButtonRoundedActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.rounded.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.rounded.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.rounded.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.rounded.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.rounded.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.rounded.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.rounded.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.rounded.state.active.defaultSeverity.border.style}}',
       radius: '{{primitives.radius.full}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRoundedActive',
-      'variant.primary.variant.rounded',
+      'variant.secondary.variant.rounded',
       'state.active',
       '{{primitives.radius.full}}'
     ),
@@ -128,17 +128,17 @@ export const secondaryButtonRoundedFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.rounded.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.rounded.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.rounded.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.rounded.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.rounded.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.rounded.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.rounded.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.rounded.state.focus.defaultSeverity.border.style}}',
       radius: '{{primitives.radius.full}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRoundedFocus',
-      'variant.primary.variant.rounded',
+      'variant.secondary.variant.rounded',
       'state.focus',
       '{{primitives.radius.full}}'
     ),
@@ -149,17 +149,17 @@ export const secondaryButtonRoundedDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.rounded.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.rounded.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.rounded.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.rounded.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.rounded.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.rounded.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.rounded.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.rounded.state.disabled.defaultSeverity.border.style}}',
       radius: '{{primitives.radius.full}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRoundedDisabled',
-      'variant.primary.variant.rounded',
+      'variant.secondary.variant.rounded',
       'state.disabled',
       '{{primitives.radius.full}}'
     ),
@@ -170,19 +170,19 @@ export const secondaryButtonRounded = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.rounded.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.rounded.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.rounded.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.rounded.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
       radius: '{{primitives.radius.full}}',
     }),
-    hover: secondaryButtonRoundedHover.prefault({}),
-    active: secondaryButtonRoundedActive.prefault({}),
-    focus: secondaryButtonRoundedFocus.prefault({}),
-    disabled: secondaryButtonRoundedDisabled.prefault({}),
+    hover: secondaryButtonRoundedHover.prefault({ severity: {} }),
+    active: secondaryButtonRoundedActive.prefault({ severity: {} }),
+    focus: secondaryButtonRoundedFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonRoundedDisabled.prefault({ severity: {} }),
     ...createButtonSeverityFields(
       'secondaryButtonRounded',
-      'variant.primary.variant.rounded',
+      'variant.secondary.variant.rounded',
       'defaultState',
       '{{primitives.radius.full}}'
     ),
@@ -194,14 +194,14 @@ export const secondaryButtonIconOnlyHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.iconOnly.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.iconOnly.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.iconOnly.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.iconOnly.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.iconOnly.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.iconOnly.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.iconOnly.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.iconOnly.state.hover.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonIconOnlyHover', 'variant.primary.variant.iconOnly', 'state.hover'),
+    ...createButtonSeverityFields('secondaryButtonIconOnlyHover', 'variant.secondary.variant.iconOnly', 'state.hover'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonIconOnlyHover' })
 
@@ -209,14 +209,14 @@ export const secondaryButtonIconOnlyActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.iconOnly.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.iconOnly.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.iconOnly.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.iconOnly.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.iconOnly.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.iconOnly.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.iconOnly.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.iconOnly.state.active.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonIconOnlyActive', 'variant.primary.variant.iconOnly', 'state.active'),
+    ...createButtonSeverityFields('secondaryButtonIconOnlyActive', 'variant.secondary.variant.iconOnly', 'state.active'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonIconOnlyActive' })
 
@@ -224,14 +224,14 @@ export const secondaryButtonIconOnlyFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.iconOnly.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.iconOnly.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.iconOnly.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.iconOnly.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.iconOnly.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.iconOnly.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.iconOnly.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.iconOnly.state.focus.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonIconOnlyFocus', 'variant.primary.variant.iconOnly', 'state.focus'),
+    ...createButtonSeverityFields('secondaryButtonIconOnlyFocus', 'variant.secondary.variant.iconOnly', 'state.focus'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonIconOnlyFocus' })
 
@@ -239,16 +239,16 @@ export const secondaryButtonIconOnlyDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.iconOnly.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.iconOnly.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.iconOnly.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.iconOnly.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.iconOnly.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.iconOnly.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.iconOnly.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.iconOnly.state.disabled.defaultSeverity.border.style}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonIconOnlyDisabled',
-      'variant.primary.variant.iconOnly',
+      'variant.secondary.variant.iconOnly',
       'state.disabled'
     ),
   })
@@ -258,15 +258,15 @@ export const secondaryButtonIconOnly = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.iconOnly.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.iconOnly.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.iconOnly.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.iconOnly.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default(secondaryBorderDefaults),
     width: withRef(z.string()).optional(),
-    hover: secondaryButtonIconOnlyHover.prefault({}),
-    active: secondaryButtonIconOnlyActive.prefault({}),
-    focus: secondaryButtonIconOnlyFocus.prefault({}),
-    disabled: secondaryButtonIconOnlyDisabled.prefault({}),
-    ...createButtonSeverityFields('secondaryButtonIconOnly', 'variant.primary.variant.iconOnly', 'defaultState'),
+    hover: secondaryButtonIconOnlyHover.prefault({ severity: {} }),
+    active: secondaryButtonIconOnlyActive.prefault({ severity: {} }),
+    focus: secondaryButtonIconOnlyFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonIconOnlyDisabled.prefault({ severity: {} }),
+    ...createButtonSeverityFields('secondaryButtonIconOnly', 'variant.secondary.variant.iconOnly', 'defaultState'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonIconOnly' })
 
@@ -275,17 +275,17 @@ export const secondaryButtonRaisedHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raised.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raised.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raised.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raised.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raised.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raised.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raised.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raised.state.hover.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRaisedHover',
-      'variant.primary.variant.raised',
+      'variant.secondary.variant.raised',
       'state.hover',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -297,17 +297,17 @@ export const secondaryButtonRaisedActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raised.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raised.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raised.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raised.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raised.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raised.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raised.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raised.state.active.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRaisedActive',
-      'variant.primary.variant.raised',
+      'variant.secondary.variant.raised',
       'state.active',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -319,17 +319,17 @@ export const secondaryButtonRaisedFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raised.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raised.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raised.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raised.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raised.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raised.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raised.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raised.state.focus.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRaisedFocus',
-      'variant.primary.variant.raised',
+      'variant.secondary.variant.raised',
       'state.focus',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -341,17 +341,17 @@ export const secondaryButtonRaisedDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raised.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raised.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raised.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raised.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raised.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raised.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raised.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raised.state.disabled.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonRaisedDisabled',
-      'variant.primary.variant.raised',
+      'variant.secondary.variant.raised',
       'state.disabled',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -363,19 +363,19 @@ export const secondaryButtonRaised = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raised.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raised.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raised.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raised.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
       shadow: '{{primitives.shadow.md}}',
     }),
-    hover: secondaryButtonRaisedHover.prefault({}),
-    active: secondaryButtonRaisedActive.prefault({}),
-    focus: secondaryButtonRaisedFocus.prefault({}),
-    disabled: secondaryButtonRaisedDisabled.prefault({}),
+    hover: secondaryButtonRaisedHover.prefault({ severity: {} }),
+    active: secondaryButtonRaisedActive.prefault({ severity: {} }),
+    focus: secondaryButtonRaisedFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonRaisedDisabled.prefault({ severity: {} }),
     ...createButtonSeverityFields(
       'secondaryButtonRaised',
-      'variant.primary.variant.raised',
+      'variant.secondary.variant.raised',
       'defaultState',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -388,14 +388,14 @@ export const secondaryButtonTextHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.text.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.text.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.text.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.text.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.text.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.text.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.text.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.text.state.hover.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonTextHover', 'variant.primary.variant.text', 'state.hover'),
+    ...createButtonSeverityFields('secondaryButtonTextHover', 'variant.secondary.variant.text', 'state.hover'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonTextHover' })
 
@@ -403,14 +403,14 @@ export const secondaryButtonTextActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.text.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.text.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.text.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.text.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.text.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.text.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.text.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.text.state.active.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonTextActive', 'variant.primary.variant.text', 'state.active'),
+    ...createButtonSeverityFields('secondaryButtonTextActive', 'variant.secondary.variant.text', 'state.active'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonTextActive' })
 
@@ -418,14 +418,14 @@ export const secondaryButtonTextFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.text.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.text.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.text.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.text.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.text.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.text.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.text.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.text.state.focus.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonTextFocus', 'variant.primary.variant.text', 'state.focus'),
+    ...createButtonSeverityFields('secondaryButtonTextFocus', 'variant.secondary.variant.text', 'state.focus'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonTextFocus' })
 
@@ -433,14 +433,14 @@ export const secondaryButtonTextDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.text.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.text.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.text.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.text.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.text.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.text.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.text.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.text.state.disabled.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonTextDisabled', 'variant.primary.variant.text', 'state.disabled'),
+    ...createButtonSeverityFields('secondaryButtonTextDisabled', 'variant.secondary.variant.text', 'state.disabled'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonTextDisabled' })
 
@@ -448,14 +448,14 @@ export const secondaryButtonText = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.text.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.text.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.text.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.text.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default(secondaryBorderDefaults),
-    hover: secondaryButtonTextHover.prefault({}),
-    active: secondaryButtonTextActive.prefault({}),
-    focus: secondaryButtonTextFocus.prefault({}),
-    disabled: secondaryButtonTextDisabled.prefault({}),
-    ...createButtonSeverityFields('secondaryButtonText', 'variant.primary.variant.text', 'defaultState'),
+    hover: secondaryButtonTextHover.prefault({ severity: {} }),
+    active: secondaryButtonTextActive.prefault({ severity: {} }),
+    focus: secondaryButtonTextFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonTextDisabled.prefault({ severity: {} }),
+    ...createButtonSeverityFields('secondaryButtonText', 'variant.secondary.variant.text', 'defaultState'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonText' })
 
@@ -464,17 +464,17 @@ export const secondaryButtonTextRaisedHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raisedText.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raisedText.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raisedText.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raisedText.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raisedText.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raisedText.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raisedText.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raisedText.state.hover.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonTextRaisedHover',
-      'variant.primary.variant.raisedText',
+      'variant.secondary.variant.raisedText',
       'state.hover',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -486,17 +486,17 @@ export const secondaryButtonTextRaisedActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raisedText.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raisedText.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raisedText.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raisedText.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raisedText.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raisedText.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raisedText.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raisedText.state.active.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonTextRaisedActive',
-      'variant.primary.variant.raisedText',
+      'variant.secondary.variant.raisedText',
       'state.active',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -508,17 +508,17 @@ export const secondaryButtonTextRaisedFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raisedText.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raisedText.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raisedText.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raisedText.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raisedText.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raisedText.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raisedText.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raisedText.state.focus.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonTextRaisedFocus',
-      'variant.primary.variant.raisedText',
+      'variant.secondary.variant.raisedText',
       'state.focus',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -530,17 +530,17 @@ export const secondaryButtonTextRaisedDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raisedText.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raisedText.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raisedText.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raisedText.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.raisedText.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.raisedText.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.raisedText.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.raisedText.state.disabled.defaultSeverity.border.style}}',
       shadow: '{{primitives.shadow.md}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonTextRaisedDisabled',
-      'variant.primary.variant.raisedText',
+      'variant.secondary.variant.raisedText',
       'state.disabled',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -552,19 +552,19 @@ export const secondaryButtonTextRaised = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.raisedText.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.raisedText.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.raisedText.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.raisedText.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
       shadow: '{{primitives.shadow.md}}',
     }),
-    hover: secondaryButtonTextRaisedHover.prefault({}),
-    active: secondaryButtonTextRaisedActive.prefault({}),
-    focus: secondaryButtonTextRaisedFocus.prefault({}),
-    disabled: secondaryButtonTextRaisedDisabled.prefault({}),
+    hover: secondaryButtonTextRaisedHover.prefault({ severity: {} }),
+    active: secondaryButtonTextRaisedActive.prefault({ severity: {} }),
+    focus: secondaryButtonTextRaisedFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonTextRaisedDisabled.prefault({ severity: {} }),
     ...createButtonSeverityFields(
       'secondaryButtonTextRaised',
-      'variant.primary.variant.raisedText',
+      'variant.secondary.variant.raisedText',
       'defaultState',
       '{{primitives.radius.md}}',
       '{{primitives.shadow.md}}'
@@ -577,14 +577,14 @@ export const secondaryButtonOutlinedHover = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.outlined.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.outlined.state.hover.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.outlined.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.outlined.state.hover.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.outlined.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.outlined.state.hover.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.outlined.state.hover.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.outlined.state.hover.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonOutlinedHover', 'variant.primary.variant.outlined', 'state.hover'),
+    ...createButtonSeverityFields('secondaryButtonOutlinedHover', 'variant.secondary.variant.outlined', 'state.hover'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonOutlinedHover' })
 
@@ -592,14 +592,14 @@ export const secondaryButtonOutlinedActive = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.outlined.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.outlined.state.active.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.outlined.state.active.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.outlined.state.active.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.outlined.state.active.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.outlined.state.active.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.outlined.state.active.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.outlined.state.active.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonOutlinedActive', 'variant.primary.variant.outlined', 'state.active'),
+    ...createButtonSeverityFields('secondaryButtonOutlinedActive', 'variant.secondary.variant.outlined', 'state.active'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonOutlinedActive' })
 
@@ -607,14 +607,14 @@ export const secondaryButtonOutlinedFocus = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.outlined.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.outlined.state.focus.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.outlined.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.outlined.state.focus.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.outlined.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.outlined.state.focus.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.outlined.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.outlined.state.focus.defaultSeverity.border.style}}',
     }),
-    ...createButtonSeverityFields('secondaryButtonOutlinedFocus', 'variant.primary.variant.outlined', 'state.focus'),
+    ...createButtonSeverityFields('secondaryButtonOutlinedFocus', 'variant.secondary.variant.outlined', 'state.focus'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonOutlinedFocus' })
 
@@ -622,16 +622,16 @@ export const secondaryButtonOutlinedDisabled = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.outlined.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.outlined.state.disabled.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.outlined.state.disabled.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.outlined.state.disabled.defaultSeverity.contrast}}'),
     border: borderWithShadow.default({
       ...secondaryBorderDefaults,
-      color: '{{primitives.variant.primary.variant.outlined.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.variant.outlined.state.disabled.defaultSeverity.border.style}}',
+      color: '{{primitives.variant.secondary.variant.outlined.state.disabled.defaultSeverity.border.color}}',
+      style: '{{primitives.variant.secondary.variant.outlined.state.disabled.defaultSeverity.border.style}}',
     }),
     ...createButtonSeverityFields(
       'secondaryButtonOutlinedDisabled',
-      'variant.primary.variant.outlined',
+      'variant.secondary.variant.outlined',
       'state.disabled'
     ),
   })
@@ -641,14 +641,14 @@ export const secondaryButtonOutlined = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.variant.outlined.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.variant.outlined.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.variant.outlined.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.variant.outlined.defaultState.defaultSeverity.contrast}}'),
     border: borderWithShadow.default(secondaryBorderDefaults),
-    hover: secondaryButtonOutlinedHover.prefault({}),
-    active: secondaryButtonOutlinedActive.prefault({}),
-    focus: secondaryButtonOutlinedFocus.prefault({}),
-    disabled: secondaryButtonOutlinedDisabled.prefault({}),
-    ...createButtonSeverityFields('secondaryButtonOutlined', 'variant.primary.variant.outlined', 'defaultState'),
+    hover: secondaryButtonOutlinedHover.prefault({ severity: {} }),
+    active: secondaryButtonOutlinedActive.prefault({ severity: {} }),
+    focus: secondaryButtonOutlinedFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonOutlinedDisabled.prefault({ severity: {} }),
+    ...createButtonSeverityFields('secondaryButtonOutlined', 'variant.secondary.variant.outlined', 'defaultState'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButtonOutlined' })
 
@@ -656,26 +656,26 @@ export const secondaryButton = z
   .object({
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+      .default('{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     font: buttonFont as typeof buttonFont,
     border: borderWithShadow.default(secondaryBorderDefaults),
     paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
     paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
     focusRing: borderWithShadow.default(secondaryFocusRingDefaults),
-    hover: secondaryButtonHover.prefault({}),
-    active: secondaryButtonActive.prefault({}),
-    focus: secondaryButtonFocus.prefault({}),
-    disabled: secondaryButtonDisabled.prefault({}),
-    rounded: secondaryButtonRounded.prefault({}),
-    iconOnly: secondaryButtonIconOnly.prefault({}),
-    raised: secondaryButtonRaised.prefault({}),
-    text: secondaryButtonText.prefault({}),
-    textRaised: secondaryButtonTextRaised.prefault({}),
-    outlined: secondaryButtonOutlined.prefault({}),
+    hover: secondaryButtonHover.prefault({ severity: {} }),
+    active: secondaryButtonActive.prefault({ severity: {} }),
+    focus: secondaryButtonFocus.prefault({ severity: {} }),
+    disabled: secondaryButtonDisabled.prefault({ severity: {} }),
+    rounded: secondaryButtonRounded.prefault({ severity: {} }),
+    iconOnly: secondaryButtonIconOnly.prefault({ severity: {} }),
+    raised: secondaryButtonRaised.prefault({ severity: {} }),
+    text: secondaryButtonText.prefault({ severity: {} }),
+    textRaised: secondaryButtonTextRaised.prefault({ severity: {} }),
+    outlined: secondaryButtonOutlined.prefault({ severity: {} }),
     sm: smButtonTokens.prefault({}),
     md: mdButtonTokens.prefault({}),
     lg: lgButtonTokens.prefault({}),
-    ...createButtonSeverityFields('secondaryButtonBrandDefault', 'variant.primary.defaultVariant', 'defaultState'),
+    ...createButtonSeverityFields('secondaryButtonBrandDefault', 'variant.secondary.defaultVariant', 'defaultState'),
   })
   .register(themeSchemaRegistry, { id: 'secondaryButton' })
