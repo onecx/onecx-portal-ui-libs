@@ -1,135 +1,107 @@
-import z from 'zod'
-import { bg, withRef, color, border, font, borderWithShadow } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { calendarIconShape, calendarIconDefaults } from './inputicon'
 
-// TODO: Refactor to relevant tokens from input usage tokens
 /**
- * Input field in the calendar header panel schema.
+ * Shape of a single state block for the calendar input.
  */
-export class CalendarInputSchema {
-  private static readonly commonTokens = {
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-    font: font.pick({ family: true, size: true, weight: true }).default({
+const calendarInputStateShape = z.object({
+  padding: withRef(z.string()).optional(),
+  shadow: withRef(z.string()).optional(),
+  font: font.pick({ family: true, size: true, weight: true }).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: border.optional(),
+  placeholderColor: color.optional(),
+  icon: calendarIconShape.prefault({}),
+})
+
+/**
+ * Size variant shape for the calendar input (sm/lg).
+ */
+const calendarInputSizeShape = z.object({
+  padding: withRef(z.string()).optional(),
+  fontSize: withRef(z.string()).optional(),
+})
+
+/**
+ * Shape for the input field in the calendar header panel.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarInputShape = z.object({
+  sm: calendarInputSizeShape.prefault({}),
+  lg: calendarInputSizeShape.prefault({}),
+  focusRing: borderWithShadow.optional(),
+
+  defaultState: calendarInputStateShape.prefault({}),
+  hover: calendarInputStateShape.prefault({}),
+  focus: calendarInputStateShape.prefault({}),
+  disabled: calendarInputStateShape.prefault({}),
+  invalid: calendarInputStateShape.prefault({}),
+  active: calendarInputStateShape.prefault({}),
+})
+
+/**
+ * Default tokens for the calendar input.
+ */
+export const calendarInputDefaults = {
+  sm: {
+    padding: '{{primitives.space.sm}}',
+    fontSize: '{{primitives.font.size}}',
+  },
+  lg: {
+    padding: '{{primitives.space.lg}}',
+    fontSize: '{{primitives.font.size}}',
+  },
+  focusRing: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    shadow: '{{primitives.shadow.none}}',
+    radius: '{{primitives.radius.md}}',
+  },
+  defaultState: {
+    padding: '{{primitives.space.md}}',
+    shadow: '{{primitives.shadow.md}}',
+    font: {
       family: '{{primitives.font.family}}',
       size: '{{primitives.font.size}}',
       weight: '{{primitives.font.weight}}',
-    }),
-  }
-
-  private static readonly sizeTokens = {
-    sm: z.object({
-      padding: withRef(z.string()).default('{{primitives.space.sm}}'),
-      fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
-    }).default({
-      padding: '{{primitives.space.sm}}',
-      fontSize: '{{primitives.font.size}}',
-    }),
-    lg: z.object({
-      padding: withRef(z.string()).default('{{primitives.space.lg}}'),
-      fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
-    }).default({
-      padding: '{{primitives.space.lg}}',
-      fontSize: '{{primitives.font.size}}',
-    }),
-  }
-
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.md}}',
-    radius: '{{primitives.border.radius.md}}',
-    offset: '{{primitives.border.offset.none}}',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
-    }),
-    placeholderColor: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-  }
-
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.state.hover.defaultSeverity.border.style}}',
-    }),
-    placeholderColor: color.default('{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}'),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}',
-    }),
-    placeholderColor: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
-  })
-
-  private static readonly focusRingTokens = {
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.variant.primary.defaultState.defaultSeverity.focusRing.style}}',
+    },
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    border: {
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.md}}',
+      radius: '{{primitives.border.radius.md}}',
       offset: '{{primitives.border.offset.none}}',
-      shadow: '{{primitives.shadow.none}}',
-      radius: '{{primitives.radius.md}}',
-    }),
-  }
-
-  static readonly disabledTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.state.disabled.defaultSeverity.border.style}}',
-    }),
-    placeholderColor: color.default('{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}'),
-  })
-
-  static readonly invalidTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.state.invalid.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.state.invalid.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.state.invalid.defaultSeverity.border.style}}',
-    }),
-    placeholderColor: color.default('{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}'),
-  })
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      ...this.sizeTokens,
-      ...this.focusRingTokens,
-      hover: this.hoverTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-      disabled: this.disabledTokens.prefault({}),
-      invalid: this.invalidTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarInput' })
+    },
+    placeholderColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    icon: calendarIconDefaults,
+  },
+  hover: {
+    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+  },
+  focus: {
+    border: {
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+      width: '{{primitives.border.width.md}}',
+    },
+  },
+  disabled: {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+    background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+  },
+  invalid: {
+    border: {
+      color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+    },
+    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+  },
+  active: {
+    background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+  },
 }

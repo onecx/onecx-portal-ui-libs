@@ -1,35 +1,60 @@
 import * as z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { bg, color, borderWithShadow, withRef } from '../primitives'
-import { CalendarPanelHeaderSchema } from './panelheader'
-import { CalendarDatePanelSchema } from './datepanel'
+import { bg, borderWithShadow, color, withRef } from '../primitives'
+import { calendarDatePanelShape, calendarDatePanelDefaults } from './datepanel'
+import { calendarFooterButtonBarShape, calendarFooterButtonBarDefaults } from './footerbuttonbar'
+import { calendarMultiMonthDividerShape, calendarMultiMonthDividerDefaults } from './multimonthdivider'
+import { calendarPanelHeaderShape, calendarPanelHeaderDefaults } from './panelheader'
+import { calendarTimePickerShape, calendarTimePickerDefaults } from './timepicker'
 
 /**
- * Calendar panel schema including header and date panel.
+ * Shape for a single state block of the calendar panel.
  */
-export class CalendarPanelSchema {
-  private static readonly tokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    border: borderWithShadow.default({
+const calendarPanelStateShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: borderWithShadow.optional(),
+  padding: withRef(z.string()).optional(),
+  headerGap: withRef(z.string()).optional(),
+
+  header: calendarPanelHeaderShape.prefault({}),
+  datePanel: calendarDatePanelShape.prefault({}),
+  multiMonthDivider: calendarMultiMonthDividerShape.prefault({}),
+  timePicker: calendarTimePickerShape.prefault({}),
+  footerButtonBar: calendarFooterButtonBarShape.prefault({}),
+})
+
+/**
+ * Shape for the calendar panel including header and date panel.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarPanelShape = z.object({
+  defaultState: calendarPanelStateShape.prefault({}),
+  hover: calendarPanelStateShape.prefault({}),
+  focus: calendarPanelStateShape.prefault({}),
+})
+
+/**
+ * Default tokens for the calendar panel.
+ */
+export const calendarPanelDefaults = {
+  defaultState: {
+    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    border: {
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.sm}}',
       offset: '{{primitives.border.offset.none}}',
       radius: '{{primitives.border.radius.sm}}',
       shadow: '{{primitives.shadow.sm}}',
-    }),
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    headerGap: withRef(z.string()).default('{{primitives.space.sm}}'),
-  }
+    },
+    padding: '{{primitives.space.md}}',
+    headerGap: '{{primitives.space.sm}}',
 
-  static readonly schema = z
-    .object({
-      header: (CalendarPanelHeaderSchema.schema as typeof CalendarPanelHeaderSchema.schema).prefault({}),
-      datePanel: (CalendarDatePanelSchema.schema as typeof CalendarDatePanelSchema.schema).prefault({}),
-      ...this.tokens,
-    })
-    .register(themeSchemaRegistry, { id: 'calendarPanel' })
+    header: calendarPanelHeaderDefaults,
+    datePanel: calendarDatePanelDefaults,
+    multiMonthDivider: calendarMultiMonthDividerDefaults,
+    timePicker: calendarTimePickerDefaults,
+    footerButtonBar: calendarFooterButtonBarDefaults,
+  },
 }

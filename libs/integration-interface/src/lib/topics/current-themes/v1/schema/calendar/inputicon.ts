@@ -1,67 +1,61 @@
-import z from 'zod'
+import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
 
 /**
- * Schema for icon styles used in the calendar input field.
+ * Shape of a single state block for calendar input icons.
  */
-export class CalendarInputIconSchema {
-  private static readonly commonTokens = {
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    width: withRef(z.string()).default('2.5rem'),
-    height: withRef(z.string()).default('2.5rem'),
-  }
+const calendarIconStateShape = z.object({
+  padding: withRef(z.string()).optional(),
+  width: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  color: color.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+})
 
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-  }
+/**
+ * Shape for icon styles used in the calendar input field.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarIconShape = z.object({
+  focusRing: borderWithShadow.optional(),
 
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
-  })
+  defaultState: calendarIconStateShape.prefault({}),
+  hover: calendarIconStateShape.prefault({}),
+  focus: calendarIconStateShape.prefault({}),
+  disabled: calendarIconStateShape.prefault({}),
+  invalid: calendarIconStateShape.prefault({}),
+  active: calendarIconStateShape.prefault({}),
+})
 
-  static readonly activeTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.active.defaultSeverity.bg}}'),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-  })
-
-  private static readonly focusRingTokens = {
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.border.width.md}}',
-      offset: '{{primitives.border.offset.none}}',
-      shadow: '{{primitives.shadow.none}}',
-      radius: '{{primitives.radius.md}}',
-    }),
-  }
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      ...this.focusRingTokens,
-      hover: this.hoverTokens.prefault({}),
-      active: this.activeTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarInputIcon' })
+/**
+ * Default tokens for the calendar input icon.
+ */
+export const calendarIconDefaults = {
+  focusRing: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    shadow: '{{primitives.shadow.none}}',
+    radius: '{{primitives.radius.md}}',
+  },
+  defaultState: {
+    padding: '{{primitives.space.md}}',
+    width: '2.5rem',
+    height: '2.5rem',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  },
+  hover: {
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+  },
+  focus: {
+    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+  },
+  disabled: {
+    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+  },
+  invalid: {
+    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+  },
 }

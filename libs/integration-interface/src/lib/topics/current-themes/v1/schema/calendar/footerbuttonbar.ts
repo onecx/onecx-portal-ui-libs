@@ -1,26 +1,45 @@
-import z from 'zod'
-import { withRef, border } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
-import { CalendarPanelButtonSchema } from './panelbutton'
+import * as z from 'zod'
+import { border, withRef } from '../primitives'
+import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
 
-export class CalendarFooterButtonBarSchema {
-  private static readonly tokens = {
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    border: border.default({
+/**
+ * Shape for a single state block of the calendar footer button bar.
+ */
+const calendarFooterButtonBarStateShape = z.object({
+  padding: withRef(z.string()).optional(),
+  border: border.optional(),
+  gap: withRef(z.string()).optional(),
+
+  todayButton: calendarPanelButtonShape.prefault({}),
+  clearButton: calendarPanelButtonShape.prefault({}),
+})
+
+/**
+ * Shape for the footer button bar in the calendar panel.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarFooterButtonBarShape = z.object({
+  defaultState: calendarFooterButtonBarStateShape.prefault({}),
+  hover: calendarFooterButtonBarStateShape.prefault({}),
+  focus: calendarFooterButtonBarStateShape.prefault({}),
+})
+
+/**
+ * Default tokens for the footer button bar.
+ */
+export const calendarFooterButtonBarDefaults = {
+  defaultState: {
+    padding: '{{primitives.space.md}}',
+    border: {
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.md}}',
       radius: '{{primitives.border.radius.md}}',
       offset: '{{primitives.border.offset.none}}',
-    }),
-    gap: withRef(z.string()).default('{{primitives.space.md}}'),
-  }
+    },
+    gap: '{{primitives.space.md}}',
 
-  static readonly schema = z
-    .object({
-      todayButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
-      clearButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
-      ...this.tokens,
-    })
-    .register(themeSchemaRegistry, { id: 'calendarFooterButtonBar' })
+    todayButton: calendarPanelButtonDefaults,
+    clearButton: calendarPanelButtonDefaults,
+  },
 }

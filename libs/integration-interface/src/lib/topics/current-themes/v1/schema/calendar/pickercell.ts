@@ -1,88 +1,84 @@
-import { themeSchemaRegistry } from '../registry'
-import { bg, color, font, border, withRef } from '../primitives'
-import z from 'zod'
+import * as z from 'zod'
+import { bg, border, color, font, withRef } from '../primitives'
 
 /**
- * Shared schema for calendar picker cells (dateCell, monthCell, yearCell)
+ * Shape of a single state block for calendar picker cells.
  */
-export class CalendarPickerCellSchema {
-  private static readonly commonTokens = {
-    width: withRef(z.string()).default('2.5rem'),
-    height: withRef(z.string()).default('2.5rem'),
-    padding: withRef(z.string()).default('{{primitives.space.xs}}'),
-    font: font.pick({ weight: true, size: true }).default({
+const calendarPickerCellStateShape = z.object({
+  width: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  padding: withRef(z.string()).optional(),
+  font: font.pick({ weight: true, size: true }).optional(),
+  color: color.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  border: border.optional(),
+  inRangeBackground: z.union([bg, withRef(z.string())]).optional(),
+  rangeSelectedBackground: color.optional(),
+})
+
+/**
+ * Shape for calendar picker cells (dateCell, monthCell, yearCell).
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarPickerCellShape = z.object({
+  defaultState: calendarPickerCellStateShape.prefault({}),
+  hover: calendarPickerCellStateShape.prefault({}),
+  selected: calendarPickerCellStateShape.prefault({}),
+  focus: calendarPickerCellStateShape.prefault({}),
+  active: calendarPickerCellStateShape.prefault({}),
+  disabled: calendarPickerCellStateShape.prefault({}),
+})
+
+/**
+ * Default tokens for calendar picker cells.
+ * Shared across dateCell, monthCell and yearCell.
+ */
+export const calendarPickerCellDefaults = {
+  defaultState: {
+    width: '2.5rem',
+    height: '2.5rem',
+    padding: '{{primitives.space.xs}}',
+    font: {
       weight: '{{primitives.font.weight}}',
       size: '{{primitives.font.size}}',
-    }),
-  }
-
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.none}}',
-    radius: '{{primitives.border.radius.md}}',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+    border: {
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-    }),
-  }
-  static readonly selectedTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.state.selected.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.selected.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.selected.defaultSeverity.border.style}}',
-    }),
-    inRangeBackground: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
-    rangeSelectedBackground: color.default('{{primitives.area.overlay.state.selected.defaultSeverity.bg}}'),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
-    }),
-  })
-
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.md}}',
+    },
+  },
+  hover: {
+    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+    background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+    border: {
       color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
-    }),
-  })
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      hover: this.hoverTokens.prefault({}),
-      selected: this.selectedTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarPickerCell' })
+    },
+  },
+  selected: {
+    color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
+    background: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
+    border: {
+      color: '{{primitives.area.overlay.state.selected.defaultSeverity.border.color}}',
+    },
+    inRangeBackground: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    rangeSelectedBackground: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
+  },
+  focus: {
+    border: {
+      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+      width: '{{primitives.border.width.md}}',
+    },
+  },
+  active: {
+    background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
+  },
+  disabled: {
+    color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+    background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
+  },
 }
