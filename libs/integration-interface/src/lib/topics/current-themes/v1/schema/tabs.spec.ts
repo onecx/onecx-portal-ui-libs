@@ -2,7 +2,6 @@ import { tabs } from './tabs'
 import {
   expectExactTokens,
   expectExactUndefinedTokens,
-  expectTokens,
 } from './test-utils'
 import { TabsNavButtonSchema } from './tabs/navButton'
 import { TabsViewportSchema } from './tabs/viewport'

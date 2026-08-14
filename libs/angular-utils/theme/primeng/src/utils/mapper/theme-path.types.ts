@@ -109,9 +109,10 @@ export type ThemePath =
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
   | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`
   | `usages.picklist.${LeafPaths<NonNullable<Usages['picklist']>>}`
-  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
-  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`;
+  | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
+  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
+  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
