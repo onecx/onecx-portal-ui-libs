@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react'
 import { useWrappedGuards } from './use-wrapped-guards'
 import { wrapGuards } from '../utils/wrap-guards.utils'
 
-const mockLocation = { key: 'test', pathname: '/test', search: '', hash: '', state: null, unstable_mask: undefined }
+const mockLocation = { key: 'test', pathname: '/test', search: '', hash: '', state: null}
 const mockMatches = [{ params: {}, handle: {}, pathname: '/', data: null, id: '1' }]
 
 jest.mock('react-router', () => ({
