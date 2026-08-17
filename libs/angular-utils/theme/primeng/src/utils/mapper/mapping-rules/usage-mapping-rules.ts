@@ -18,6 +18,7 @@ import { messageMappingRules } from './usages/message.rules'
 import { togglebuttonMappingRules } from './usages/togglebutton.rules';
 import { inputMappingRules } from './usages/input.rules'
 import { selectbuttonMappingRules } from './usages/selectbutton.rules'
+import { rippleMappingRules } from './usages/ripple.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -40,4 +41,5 @@ export const usageMappingRules: MappingRule[] = [
   ...togglebuttonMappingRules,
   ...accordionMappingRules,
   ...selectbuttonMappingRules,
+  ...rippleMappingRules,
 ]

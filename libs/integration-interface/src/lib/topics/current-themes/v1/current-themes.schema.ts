@@ -21,6 +21,7 @@ import { calendar } from './schema/calendar'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
+import { ripple } from './schema/ripple'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -43,6 +44,7 @@ type UsagesInput = {
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
+  ripple?: z.input<typeof ripple>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -67,6 +69,7 @@ const usages: z.ZodType<UsagesInput> = z
     accordion: (accordion as typeof accordion).optional(),
     message: (message as typeof message).optional(),
     selectbutton: (selectbutton as typeof selectbutton).optional(),
+    ripple: (ripple as typeof ripple).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
