@@ -16,12 +16,13 @@ import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input } from './schema/input'
 import { picklist } from './schema/picklist'
-import { togglebutton } from "./schema/togglebutton";
+import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
 import { ripple } from './schema/ripple'
+import { panelmenu } from './schema/panelmenu'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -45,6 +46,7 @@ type UsagesInput = {
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
   ripple?: z.input<typeof ripple>
+  panelmenu?: z.input<typeof panelmenu>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -70,6 +72,7 @@ const usages: z.ZodType<UsagesInput> = z
     message: (message as typeof message).optional(),
     selectbutton: (selectbutton as typeof selectbutton).optional(),
     ripple: (ripple as typeof ripple).optional(),
+    panelmenu: (panelmenu as typeof panelmenu).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
