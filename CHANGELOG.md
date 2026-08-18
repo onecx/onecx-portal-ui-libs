@@ -1,3 +1,10 @@
+## [6.27.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.1...v6.27.2) (2026-08-18)
+
+### Bug Fixes
+
+* v6 filter translation issues ([#1631](https://github.com/onecx/onecx-portal-ui-libs/issues/1631)) ([#1648](https://github.com/onecx/onecx-portal-ui-libs/issues/1648)) ([4be407c](https://github.com/onecx/onecx-portal-ui-libs/commit/4be407c79988a1fdd8d0997fff3440bec8e02b42))
+* v6 filter translation issues ([#1631](https://github.com/onecx/onecx-portal-ui-libs/issues/1631)) ([#1648](https://github.com/onecx/onecx-portal-ui-libs/issues/1648)) ([#1655](https://github.com/onecx/onecx-portal-ui-libs/issues/1655)) ([0925f67](https://github.com/onecx/onecx-portal-ui-libs/commit/0925f67460dbc93a404804a3953ed1ddcb7c6836))
+
 ## [6.27.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.0...v6.27.1) (2026-07-21)
 
 ### Bug Fixes
