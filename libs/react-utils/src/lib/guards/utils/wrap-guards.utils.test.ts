@@ -9,7 +9,6 @@ describe('wrapGuards', () => {
     hash: '',
     state: null,
     key: 'current',
-    unstable_mask: undefined,
   }
 
   const nextLocation: Location = {
@@ -18,7 +17,6 @@ describe('wrapGuards', () => {
     hash: '',
     state: null,
     key: 'next',
-    unstable_mask: undefined,
   }
 
   const buildMatches = (handle: Record<string, unknown>): UIMatch[] => [
