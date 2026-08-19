@@ -23,6 +23,7 @@ import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import { content } from './schema/content'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -47,6 +48,7 @@ type UsagesInput = {
   selectbutton?: z.input<typeof selectbutton>
   ripple?: z.input<typeof ripple>
   panelmenu?: z.input<typeof panelmenu>
+  content?: z.input<typeof content>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -73,6 +75,7 @@ const usages: z.ZodType<UsagesInput> = z
     selectbutton: (selectbutton as typeof selectbutton).optional(),
     ripple: (ripple as typeof ripple).optional(),
     panelmenu: (panelmenu as typeof panelmenu).optional(),
+    content: (content as typeof content).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 

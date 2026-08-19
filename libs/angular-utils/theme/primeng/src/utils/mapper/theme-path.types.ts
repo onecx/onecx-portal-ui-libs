@@ -114,7 +114,8 @@ export type ThemePath =
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
   | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
-  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`;  
+  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
+  | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**

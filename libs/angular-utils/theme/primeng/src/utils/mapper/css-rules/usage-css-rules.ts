@@ -17,6 +17,7 @@ import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
+import { contentCssRules } from './usages/content.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -37,4 +38,5 @@ export const usageCssRules: CssRule[] = [
   ...messageCssRules,
   ...selectbuttonCssRules,
   ...panelmenuCssRules,
+  ...contentCssRules,
 ]
