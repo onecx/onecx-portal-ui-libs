@@ -163,7 +163,9 @@
     "cross-spawn": "^7.0.6",
     "undici": "^6.24.0",
     "semver": "^7.7.3",
-    "minimatch": "^9.0.6"
+    "minimatch": "^9.0.6",
+    "js-yaml@^3.0.0": "3.15.1",
+    "js-yaml@^4.0.0": "4.3.1"
   },
   "nx": {
     "includedScripts": []
