@@ -13,6 +13,6 @@ export const calendarTodayShape = z.object({
  * Default tokens for the today cell.
  */
 export const calendarTodayDefaults = {
-  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
 }

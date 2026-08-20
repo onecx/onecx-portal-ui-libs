@@ -3,9 +3,9 @@ import { bg, border, borderWithShadow, color, font, withRef } from '../primitive
 import { calendarIconShape, calendarIconDefaults } from './inputicon'
 
 /**
- * Shape of a single state block for the calendar input.
+ * Shape of a single severity block for the calendar input (leaf tokens + icon).
  */
-const calendarInputStateShape = z.object({
+const calendarInputSeverityShape = z.object({
   padding: withRef(z.string()).optional(),
   shadow: withRef(z.string()).optional(),
   font: font.pick({ family: true, size: true, weight: true }).optional(),
@@ -14,6 +14,13 @@ const calendarInputStateShape = z.object({
   border: border.optional(),
   placeholderColor: color.optional(),
   icon: calendarIconShape.prefault({}),
+})
+
+/**
+ * Shape of a single state block for the calendar input (default severity only).
+ */
+const calendarInputStateShape = z.object({
+  defaultSeverity: calendarInputSeverityShape.prefault({}),
 })
 
 /**
@@ -26,6 +33,8 @@ const calendarInputSizeShape = z.object({
 
 /**
  * Shape for the input field in the calendar header panel.
+ * Static tokens (sm/lg, focusRing) sit at the root; the default token path lives under
+ * `defaultVariant.defaultState.defaultSeverity`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarInputShape = z.object({
@@ -33,16 +42,20 @@ export const calendarInputShape = z.object({
   lg: calendarInputSizeShape.prefault({}),
   focusRing: borderWithShadow.optional(),
 
-  defaultState: calendarInputStateShape.prefault({}),
-  hover: calendarInputStateShape.prefault({}),
-  focus: calendarInputStateShape.prefault({}),
-  disabled: calendarInputStateShape.prefault({}),
-  invalid: calendarInputStateShape.prefault({}),
-  active: calendarInputStateShape.prefault({}),
+  defaultVariant: z.object({
+    defaultState: calendarInputStateShape.prefault({}),
+    hover: calendarInputStateShape.prefault({}),
+    focus: calendarInputStateShape.prefault({}),
+    disabled: calendarInputStateShape.prefault({}),
+    invalid: calendarInputStateShape.prefault({}),
+    active: calendarInputStateShape.prefault({}),
+  }).prefault({}),
 })
 
 /**
  * Default tokens for the calendar input.
+ * The full token set sits on the default path; named states carry only the
+ * tokens that differ from `defaultState`.
  */
 export const calendarInputDefaults = {
   sm: {
@@ -61,47 +74,61 @@ export const calendarInputDefaults = {
     shadow: '{{primitives.shadow.none}}',
     radius: '{{primitives.radius.md}}',
   },
-  defaultState: {
-    padding: '{{primitives.space.md}}',
-    shadow: '{{primitives.shadow.md}}',
-    font: {
-      family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+  defaultVariant: {
+    defaultState: {
+      defaultSeverity: {
+        padding: '{{primitives.space.md}}',
+        shadow: '{{primitives.shadow.md}}',
+        font: {
+          family: '{{primitives.font.family}}',
+          size: '{{primitives.font.size}}',
+          weight: '{{primitives.font.weight}}',
+        },
+        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        border: {
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+          width: '{{primitives.border.width.md}}',
+          radius: '{{primitives.border.radius.md}}',
+          offset: '{{primitives.border.offset.none}}',
+        },
+        placeholderColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        icon: calendarIconDefaults,
+      },
     },
-    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    border: {
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.md}}',
-      radius: '{{primitives.border.radius.md}}',
-      offset: '{{primitives.border.offset.none}}',
+    hover: {
+      defaultSeverity: {
+        background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      },
     },
-    placeholderColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    icon: calendarIconDefaults,
-  },
-  hover: {
-    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-  },
-  focus: {
-    border: {
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      width: '{{primitives.border.width.md}}',
+    focus: {
+      defaultSeverity: {
+        border: {
+          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+          width: '{{primitives.border.width.md}}',
+        },
+      },
     },
-  },
-  disabled: {
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-    background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
-  },
-  invalid: {
-    border: {
-      color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+    disabled: {
+      defaultSeverity: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+        background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+      },
     },
-    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
-  },
-  active: {
-    background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+    invalid: {
+      defaultSeverity: {
+        border: {
+          color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+        },
+        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+      },
+    },
+    active: {
+      defaultSeverity: {
+        background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+      },
+    },
   },
 }

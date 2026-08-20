@@ -2,9 +2,9 @@ import * as z from 'zod'
 import { bg, border, color, font, withRef } from '../primitives'
 
 /**
- * Shape of a single state block for calendar picker cells.
+ * Shape of a single severity block for calendar picker cells.
  */
-const calendarPickerCellStateShape = z.object({
+const calendarPickerCellSeverityShape = z.object({
   width: withRef(z.string()).optional(),
   height: withRef(z.string()).optional(),
   padding: withRef(z.string()).optional(),
@@ -17,16 +17,25 @@ const calendarPickerCellStateShape = z.object({
 })
 
 /**
+ * Shape of a single state block for calendar picker cells (default severity only).
+ */
+const calendarPickerCellStateShape = z.object({
+  defaultSeverity: calendarPickerCellSeverityShape.prefault({}),
+})
+
+/**
  * Shape for calendar picker cells (dateCell, monthCell, yearCell).
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarPickerCellShape = z.object({
-  defaultState: calendarPickerCellStateShape.prefault({}),
-  hover: calendarPickerCellStateShape.prefault({}),
-  selected: calendarPickerCellStateShape.prefault({}),
-  focus: calendarPickerCellStateShape.prefault({}),
-  active: calendarPickerCellStateShape.prefault({}),
-  disabled: calendarPickerCellStateShape.prefault({}),
+  defaultVariant: z.object({
+    defaultState: calendarPickerCellStateShape.prefault({}),
+    hover: calendarPickerCellStateShape.prefault({}),
+    selected: calendarPickerCellStateShape.prefault({}),
+    focus: calendarPickerCellStateShape.prefault({}),
+    active: calendarPickerCellStateShape.prefault({}),
+    disabled: calendarPickerCellStateShape.prefault({}),
+  }).prefault({}),
 })
 
 /**
@@ -34,51 +43,65 @@ export const calendarPickerCellShape = z.object({
  * Shared across dateCell, monthCell and yearCell.
  */
 export const calendarPickerCellDefaults = {
-  defaultState: {
-    width: '2.5rem',
-    height: '2.5rem',
-    padding: '{{primitives.space.xs}}',
-    font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+  defaultVariant: {
+    defaultState: {
+      defaultSeverity: {
+        width: '2.5rem',
+        height: '2.5rem',
+        padding: '{{primitives.space.xs}}',
+        font: {
+          weight: '{{primitives.font.weight}}',
+          size: '{{primitives.font.size}}',
+        },
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+        background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+        border: {
+          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+          width: '{{primitives.border.width.sm}}',
+          offset: '{{primitives.border.offset.none}}',
+          radius: '{{primitives.border.radius.md}}',
+        },
+      },
     },
-    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
-    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
-    border: {
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.sm}}',
-      offset: '{{primitives.border.offset.none}}',
-      radius: '{{primitives.border.radius.md}}',
+    hover: {
+      defaultSeverity: {
+        color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+        background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+        border: {
+          color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
+        },
+      },
     },
-  },
-  hover: {
-    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
-    background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
-    border: {
-      color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
+    selected: {
+      defaultSeverity: {
+        color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
+        background: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
+        border: {
+          color: '{{primitives.area.overlay.state.selected.defaultSeverity.border.color}}',
+        },
+        inRangeBackground: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+        rangeSelectedBackground: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
+      },
     },
-  },
-  selected: {
-    color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
-    background: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
-    border: {
-      color: '{{primitives.area.overlay.state.selected.defaultSeverity.border.color}}',
+    focus: {
+      defaultSeverity: {
+        border: {
+          color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+          width: '{{primitives.border.width.md}}',
+        },
+      },
     },
-    inRangeBackground: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-    rangeSelectedBackground: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
-  },
-  focus: {
-    border: {
-      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-      width: '{{primitives.border.width.md}}',
+    active: {
+      defaultSeverity: {
+        background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
+      },
     },
-  },
-  active: {
-    background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
-  },
-  disabled: {
-    color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
-    background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
+    disabled: {
+      defaultSeverity: {
+        color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+        background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
+      },
+    },
   },
 }

@@ -2,9 +2,9 @@ import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
 
 /**
- * Shape of a single state block for calendar input icons.
+ * Shape of a single severity block for calendar input icons (leaf tokens).
  */
-const calendarIconStateShape = z.object({
+const calendarIconSeverityShape = z.object({
   padding: withRef(z.string()).optional(),
   width: withRef(z.string()).optional(),
   height: withRef(z.string()).optional(),
@@ -13,12 +13,16 @@ const calendarIconStateShape = z.object({
 })
 
 /**
- * Shape for icon styles used in the calendar input field.
- * All keys are optional — defaults are applied at the calendar schema level.
+ * Shape of a single state block for calendar input icons (default severity + leaf tokens).
  */
-export const calendarIconShape = z.object({
-  focusRing: borderWithShadow.optional(),
+const calendarIconStateShape = z.object({
+  defaultSeverity: calendarIconSeverityShape.prefault({}),
+})
 
+/**
+ * Shape of the calendar input icon variant slot (states).
+ */
+const calendarIconVariantShape = z.object({
   defaultState: calendarIconStateShape.prefault({}),
   hover: calendarIconStateShape.prefault({}),
   focus: calendarIconStateShape.prefault({}),
@@ -28,7 +32,21 @@ export const calendarIconShape = z.object({
 })
 
 /**
+ * Shape for icon styles used in the calendar input field.
+ * Static tokens (focusRing) sit at the root; the default token path lives under
+ * `defaultVariant.defaultState.defaultSeverity`.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarIconShape = z.object({
+  focusRing: borderWithShadow.optional(),
+
+  defaultVariant: calendarIconVariantShape.prefault({}),
+})
+
+/**
  * Default tokens for the calendar input icon.
+ * The full token set sits on the default path; named states carry only the
+ * tokens that differ from `defaultState`.
  */
 export const calendarIconDefaults = {
   focusRing: {
@@ -39,23 +57,35 @@ export const calendarIconDefaults = {
     shadow: '{{primitives.shadow.none}}',
     radius: '{{primitives.radius.md}}',
   },
-  defaultState: {
-    padding: '{{primitives.space.md}}',
-    width: '2.5rem',
-    height: '2.5rem',
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  },
-  hover: {
-    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-  },
-  focus: {
-    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-  },
-  disabled: {
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-  },
-  invalid: {
-    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+  defaultVariant: {
+    defaultState: {
+      defaultSeverity: {
+        padding: '{{primitives.space.md}}',
+        width: '2.5rem',
+        height: '2.5rem',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+      },
+    },
+    hover: {
+      defaultSeverity: {
+        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      },
+    },
+    focus: {
+      defaultSeverity: {
+        color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+      },
+    },
+    disabled: {
+      defaultSeverity: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      },
+    },
+    invalid: {
+      defaultSeverity: {
+        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
+      },
+    },
   },
 }

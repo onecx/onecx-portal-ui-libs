@@ -55,18 +55,18 @@ const variantContentDefaults = {
 /**
  * Default tokens for the calendar component.
  *
- * Assembled from per-component defaults exports. All variants get the same
- * defaults so you can set custom values on any variant level independently.
+ * Assembled from per-component defaults exports. Only `defaultVariant` carries
+ * the defaults tree — it *is* the default. The named variants (`primary`,
+ * `secondary`, ...) stay `.optional()` and resolve via the runtime fallback
+ * mechanism unless a theme supplies their values explicitly.
+ *
+ * Exported so tests can assert the resolved schema output against this exact
+ * source object instead of duplicating literal token values.
  */
-const calendarDefaults = {
+export const calendarDefaults = {
   transitionDuration: '{{primitives.transition.duration}}',
 
   defaultVariant: variantContentDefaults,
-  primary: variantContentDefaults,
-  secondary: variantContentDefaults,
-  tertiary: variantContentDefaults,
-  quaternary: variantContentDefaults,
-  quinary: variantContentDefaults,
 }
 
 // ------------------------------------------------------------------
@@ -78,10 +78,9 @@ const calendarDefaults = {
  * Only keys present in `calendarDefaults` get `.default()`.
  * All other keys stay optional (filled by fallback mechanism).
  */
-export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(
-  themeSchemaRegistry,
-  { id: 'calendar' },
-)
+export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(themeSchemaRegistry, {
+  id: 'calendar',
+})
 
 // Backward-compatible facade for consumers that import `CalendarSchema.schema`
 export class CalendarSchema {

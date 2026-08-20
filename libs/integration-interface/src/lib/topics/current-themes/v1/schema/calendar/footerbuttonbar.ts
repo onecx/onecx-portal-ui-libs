@@ -1,17 +1,29 @@
 import * as z from 'zod'
 import { border, withRef } from '../primitives'
-import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
+import {
+  calendarFooterButtonShape,
+  calendarTodayButtonDefaults,
+  calendarClearButtonDefaults,
+} from './footerbutton'
 
 /**
- * Shape for a single state block of the calendar footer button bar.
+ * Shape of a single severity block of the calendar footer button bar.
+ * The bar's buttons sit inside the state block.
  */
-const calendarFooterButtonBarStateShape = z.object({
+const calendarFooterButtonBarSeverityShape = z.object({
   padding: withRef(z.string()).optional(),
   border: border.optional(),
   gap: withRef(z.string()).optional(),
 
-  todayButton: calendarPanelButtonShape.prefault({}),
-  clearButton: calendarPanelButtonShape.prefault({}),
+  todayButton: calendarFooterButtonShape.prefault({}),
+  clearButton: calendarFooterButtonShape.prefault({}),
+})
+
+/**
+ * Shape of a single state block of the calendar footer button bar (default severity only).
+ */
+const calendarFooterButtonBarStateShape = z.object({
+  defaultSeverity: calendarFooterButtonBarSeverityShape.prefault({}),
 })
 
 /**
@@ -19,27 +31,33 @@ const calendarFooterButtonBarStateShape = z.object({
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarFooterButtonBarShape = z.object({
-  defaultState: calendarFooterButtonBarStateShape.prefault({}),
-  hover: calendarFooterButtonBarStateShape.prefault({}),
-  focus: calendarFooterButtonBarStateShape.prefault({}),
+  defaultVariant: z.object({
+    defaultState: calendarFooterButtonBarStateShape.prefault({}),
+    hover: calendarFooterButtonBarStateShape.prefault({}),
+    focus: calendarFooterButtonBarStateShape.prefault({}),
+  }).prefault({}),
 })
 
 /**
  * Default tokens for the footer button bar.
  */
 export const calendarFooterButtonBarDefaults = {
-  defaultState: {
-    padding: '{{primitives.space.md}}',
-    border: {
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.md}}',
-      radius: '{{primitives.border.radius.md}}',
-      offset: '{{primitives.border.offset.none}}',
-    },
-    gap: '{{primitives.space.md}}',
+  defaultVariant: {
+    defaultState: {
+      defaultSeverity: {
+        padding: '{{primitives.space.md}}',
+        border: {
+          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+          width: '{{primitives.border.width.md}}',
+          radius: '{{primitives.border.radius.md}}',
+          offset: '{{primitives.border.offset.none}}',
+        },
+        gap: '{{primitives.space.md}}',
 
-    todayButton: calendarPanelButtonDefaults,
-    clearButton: calendarPanelButtonDefaults,
+        todayButton: calendarTodayButtonDefaults,
+        clearButton: calendarClearButtonDefaults,
+      },
+    },
   },
 }
