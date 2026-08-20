@@ -4,7 +4,6 @@ import { themeSchemaRegistry } from '../registry';
 import { DataTableCellWithStatesSchema } from './data-table-cell-with-states';
 import { DataTableSortIconStylesSchema } from './data-table-icon-styles';
 import { DataTableFilterIconStylesSchema } from './data-table-icon-styles';
-import { DataTableHeaderCellSchema } from './data-table-header-cell';
 
 export class DataTableHeaderRowSchema {
   private static readonly defaultBorderTokens = {
@@ -32,28 +31,21 @@ export class DataTableHeaderRowSchema {
     offset: "{{primitives.border.offset.none}}",
   }
 
-  private static readonly activeBorderTokens = {
-    color: "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
-    style: "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.border.radius.none}}",
-    offset: "{{primitives.border.offset.none}}",
-  }
-
-  private static readonly selectedBorderTokens = {
-    color: "{{primitives.defaultVariant.state.selected.defaultSeverity.border.color}}",
-    style: "{{primitives.defaultVariant.state.selected.defaultSeverity.border.style}}",
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.border.radius.none}}",
-    offset: "{{primitives.border.offset.none}}",
-  }
-
   private static readonly focusBorderTokens = {
     color: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
     style: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
     width: "{{primitives.border.width.none}}",
     radius: "{{primitives.border.radius.none}}",
     offset: "{{primitives.border.offset.none}}",
+  }
+
+  private static readonly focusRingTokens = {
+    color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}"),
+    style: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}"),
+    width: withRef(z.string()).default("{{primitives.focusRing.width.none}}"),
+    radius: withRef(z.string()).default("{{primitives.focusRing.radius.none}}"),
+    offset: withRef(z.string()).default("{{primitives.focusRing.offset.none}}"),
+    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow.none}}"),
   }
 
   private static readonly defaultTokens = {
@@ -77,22 +69,6 @@ export class DataTableHeaderRowSchema {
     border: border.default(this.hoverBorderTokens),
   }
 
-  private static readonly activeTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
-    border: border.default(this.activeBorderTokens),
-  }
-
-  private static readonly selectedTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}'),
-    border: border.default(this.selectedBorderTokens),
-  }
-
   private static readonly focusTokens = {
     background: z
       .union([bg, withRef(z.string())])
@@ -107,9 +83,6 @@ export class DataTableHeaderRowSchema {
       cell: (
         DataTableCellWithStatesSchema.schema as typeof DataTableCellWithStatesSchema.schema
       ).prefault({}),
-      headerCell: (
-        DataTableHeaderCellSchema.schema as typeof DataTableHeaderCellSchema.schema
-      ).prefault({}),
       sortIcons: (
         DataTableSortIconStylesSchema.schema as typeof DataTableSortIconStylesSchema.schema
       ).prefault({}),
@@ -117,9 +90,8 @@ export class DataTableHeaderRowSchema {
         DataTableFilterIconStylesSchema.schema as typeof DataTableFilterIconStylesSchema.schema
       ).prefault({}),
       hover: z.object({...this.hoverTokens}).prefault({}),
-      active: z.object({...this.activeTokens}).prefault({}),
-      selected: z.object({...this.selectedTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
+      focusRing: z.object({...this.focusRingTokens}).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'dataTableHeaderRow' });
 }

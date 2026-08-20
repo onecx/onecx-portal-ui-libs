@@ -1,5 +1,5 @@
 import z from 'zod';
-import { icon, withRef, color } from '../primitives';
+import { icon, withRef } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 
 export class DataTableSortIconStylesSchema {
@@ -29,12 +29,6 @@ export class DataTableSortIconStylesSchema {
     }),
   }
 
-  private static readonly selectedTokens = {
-    icon: icon.pick({ color: true }).default({
-      color: "{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}",
-    }),
-  }
-
   private static readonly focusTokens = {
     icon: icon.pick({ color: true }).default({
       color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
@@ -46,7 +40,6 @@ export class DataTableSortIconStylesSchema {
       ...this.tokens,
       hover: z.object({...this.hoverTokens}).prefault({}),
       active: z.object({...this.activeTokens}).prefault({}),
-      selected: z.object({...this.selectedTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'dataTableSortIconStyles' });
@@ -80,12 +73,6 @@ export class DataTableFilterIconStylesSchema {
     }),
   }
 
-  private static readonly selectedTokens = {
-    icon: icon.pick({ color: true }).default({
-      color: "{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}",
-    }),
-  }
-
   private static readonly focusTokens = {
     icon: icon.pick({ color: true }).default({
       color: "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
@@ -97,7 +84,6 @@ export class DataTableFilterIconStylesSchema {
       ...this.tokens,
       hover: z.object({...this.hoverTokens}).prefault({}),
       active: z.object({...this.activeTokens}).prefault({}),
-      selected: z.object({...this.selectedTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'dataTableFilterIconStyles' });

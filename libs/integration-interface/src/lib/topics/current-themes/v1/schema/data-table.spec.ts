@@ -2,10 +2,9 @@ import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
 import { dataTable } from './data-table/data-table'
 import { DataTableStylesSchema } from './data-table/data-table-styles'
 import { DataTableRowSchema } from './data-table/data-table-row'
-import { DataTableRowWithStatesSchema } from './data-table/data-table-row-with-states'
+import { DataTableFooterRowSchema } from './data-table/data-table-footer-row'
 import { DataTableHeaderRowSchema } from './data-table/data-table-header-row'
 import { DataTableCellWithStatesSchema } from './data-table/data-table-cell-with-states'
-import { DataTableHeaderCellSchema } from './data-table/data-table-header-cell'
 import { DataTableSortIconStylesSchema } from './data-table/data-table-icon-styles'
 import { DataTableFilterIconStylesSchema } from './data-table/data-table-icon-styles'
 import { DataTableColumnTitleSchema } from './data-table/data-table-column-title'
@@ -57,6 +56,15 @@ const focusBorderTokens = {
   width: '{{primitives.border.width.none}}',
   radius: '{{primitives.border.radius.none}}',
   offset: '{{primitives.border.offset.none}}',
+}
+
+const focusRingTokens = {
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  width: '{{primitives.focusRing.width.none}}',
+  radius: '{{primitives.focusRing.radius.none}}',
+  offset: '{{primitives.focusRing.offset.none}}',
+  shadow: '{{primitives.focusRing.shadow.none}}',
 }
 
 describe('data-table schema', () => {
@@ -154,9 +162,8 @@ describe('data-table row schema', () => {
       odd: expect.any(Object),
       even: expect.any(Object),
       hover: expect.any(Object),
-      active: expect.any(Object),
       selected: expect.any(Object),
-      focus: expect.any(Object),
+      focusRing: expect.any(Object),
     })
   })
 
@@ -169,6 +176,10 @@ describe('data-table row schema', () => {
       expectExactTokens(value?.row?.odd, {
         background: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
         color: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
+        border: defaultBorderTokens,
+        cell: expect.any(Object),
+        hover: expect.any(Object),
+        selected: expect.any(Object),
       })
     })
   })
@@ -182,6 +193,10 @@ describe('data-table row schema', () => {
       expectExactTokens(value?.row?.even, {
         background: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
         color: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
+        border: defaultBorderTokens,
+        cell: expect.any(Object),
+        hover: expect.any(Object),
+        selected: expect.any(Object),
       })
     })
   })
@@ -200,20 +215,6 @@ describe('data-table row schema', () => {
     })
   })
 
-  describe('row active', () => {
-    it('should apply defaults', () => {
-      const result = dataTable.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactTokens(value?.row?.active, {
-        background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-        border: activeBorderTokens,
-      })
-    })
-  })
-
   describe('row selected', () => {
     it('should apply defaults', () => {
       const result = dataTable.safeParse({})
@@ -228,17 +229,13 @@ describe('data-table row schema', () => {
     })
   })
 
-  describe('row focus', () => {
+  describe('row focusRing', () => {
     it('should apply defaults', () => {
       const result = dataTable.safeParse({})
       expect(result.success).toBe(true)
 
       const value = result.data
-      expectExactTokens(value?.row?.focus, {
-        background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-        border: focusBorderTokens,
-      })
+      expectExactTokens(value?.row?.focusRing, focusRingTokens)
     })
   })
 
@@ -260,7 +257,6 @@ describe('data-table row schema', () => {
         verticalAlign: 'middle',
         truncate: false,
         hover: expect.any(Object),
-        active: expect.any(Object),
         selected: expect.any(Object),
         focus: expect.any(Object),
       })
@@ -276,20 +272,6 @@ describe('data-table row schema', () => {
           background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
           color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
           border: hoverBorderTokens,
-        })
-      })
-    })
-
-    describe('cell active', () => {
-      it('should apply defaults', () => {
-        const result = dataTable.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.row?.cell?.active, {
-          background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-          border: activeBorderTokens,
         })
       })
     })
@@ -324,13 +306,13 @@ describe('data-table row schema', () => {
   })
 })
 
-describe('data-table footer (row with states) schema', () => {
+describe('data-table footer schema', () => {
   it('should apply defaults', () => {
     const result = dataTable.safeParse({})
     expect(result.success).toBe(true)
 
     const value = result.data
-    expectExactUndefinedTokens(value?.footer, DataTableRowWithStatesSchema.schema.shape, [])
+    expectExactUndefinedTokens(value?.footer, DataTableFooterRowSchema.schema.shape, [])
     expectExactTokens(value?.footer, {
       background: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
       color: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
@@ -345,6 +327,7 @@ describe('data-table footer (row with states) schema', () => {
       active: expect.any(Object),
       selected: expect.any(Object),
       focus: expect.any(Object),
+      focusRing: expect.any(Object),
     })
   })
 
@@ -404,6 +387,16 @@ describe('data-table footer (row with states) schema', () => {
     })
   })
 
+  describe('footer focusRing', () => {
+    it('should apply defaults', () => {
+      const result = dataTable.safeParse({})
+      expect(result.success).toBe(true)
+
+      const value = result.data
+      expectExactTokens(value?.footer?.focusRing, focusRingTokens)
+    })
+  })
+
   describe('footer cell', () => {
     it('should apply defaults', () => {
       const result = dataTable.safeParse({})
@@ -422,7 +415,6 @@ describe('data-table footer (row with states) schema', () => {
         verticalAlign: 'middle',
         truncate: false,
         hover: expect.any(Object),
-        active: expect.any(Object),
         selected: expect.any(Object),
         focus: expect.any(Object),
       })
@@ -447,13 +439,11 @@ describe('data-table header row schema', () => {
       textAlign: 'left',
       height: '2.5rem',
       cell: expect.any(Object),
-      headerCell: expect.any(Object),
       sortIcons: expect.any(Object),
       filterIcons: expect.any(Object),
       hover: expect.any(Object),
-      active: expect.any(Object),
-      selected: expect.any(Object),
       focus: expect.any(Object),
+      focusRing: expect.any(Object),
     })
   })
 
@@ -471,34 +461,6 @@ describe('data-table header row schema', () => {
     })
   })
 
-  describe('header row active', () => {
-    it('should apply defaults', () => {
-      const result = dataTable.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactTokens(value?.header?.active, {
-        background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-        border: activeBorderTokens,
-      })
-    })
-  })
-
-  describe('header row selected', () => {
-    it('should apply defaults', () => {
-      const result = dataTable.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactTokens(value?.header?.selected, {
-        background: '{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}',
-        border: selectedBorderTokens,
-      })
-    })
-  })
-
   describe('header row focus', () => {
     it('should apply defaults', () => {
       const result = dataTable.safeParse({})
@@ -510,6 +472,16 @@ describe('data-table header row schema', () => {
         color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
         border: focusBorderTokens,
       })
+    })
+  })
+
+  describe('header row focusRing', () => {
+    it('should apply defaults', () => {
+      const result = dataTable.safeParse({})
+      expect(result.success).toBe(true)
+
+      const value = result.data
+      expectExactTokens(value?.header?.focusRing, focusRingTokens)
     })
   })
 
@@ -531,51 +503,8 @@ describe('data-table header row schema', () => {
         verticalAlign: 'middle',
         truncate: false,
         hover: expect.any(Object),
-        active: expect.any(Object),
         selected: expect.any(Object),
         focus: expect.any(Object),
-      })
-    })
-  })
-
-  describe('header row headerCell', () => {
-    it('should apply defaults', () => {
-      const result = dataTable.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.header?.headerCell, DataTableHeaderCellSchema.schema.shape, [])
-      expectExactTokens(value?.header?.headerCell, {
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        hover: expect.any(Object),
-        selected: expect.any(Object),
-      })
-    })
-
-    describe('headerCell hover', () => {
-      it('should apply defaults', () => {
-        const result = dataTable.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.header?.headerCell?.hover, {
-          background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-        })
-      })
-    })
-
-    describe('headerCell selected', () => {
-      it('should apply defaults', () => {
-        const result = dataTable.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.header?.headerCell?.selected, {
-          background: '{{primitives.defaultVariant.state.selected.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}',
-        })
       })
     })
   })
@@ -599,7 +528,6 @@ describe('data-table header row schema', () => {
         defaultIcon: 'onecx:sort-default',
         hover: expect.any(Object),
         active: expect.any(Object),
-        selected: expect.any(Object),
         focus: expect.any(Object),
       })
     })
@@ -627,20 +555,6 @@ describe('data-table header row schema', () => {
         expectExactTokens(value?.header?.sortIcons?.active, {
           icon: {
             color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-          },
-        })
-      })
-    })
-
-    describe('sortIcons selected', () => {
-      it('should apply defaults', () => {
-        const result = dataTable.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.header?.sortIcons?.selected, {
-          icon: {
-            color: '{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}',
           },
         })
       })
@@ -679,7 +593,6 @@ describe('data-table header row schema', () => {
         offIcon: 'onecx:filter-off',
         hover: expect.any(Object),
         active: expect.any(Object),
-        selected: expect.any(Object),
         focus: expect.any(Object),
       })
     })
@@ -707,20 +620,6 @@ describe('data-table header row schema', () => {
         expectExactTokens(value?.header?.filterIcons?.active, {
           icon: {
             color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-          },
-        })
-      })
-    })
-
-    describe('filterIcons selected', () => {
-      it('should apply defaults', () => {
-        const result = dataTable.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.header?.filterIcons?.selected, {
-          icon: {
-            color: '{{primitives.defaultVariant.state.selected.defaultSeverity.contrast}}',
           },
         })
       })

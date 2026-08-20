@@ -3,7 +3,7 @@ import { themeSchemaRegistry } from '../registry';
 import { DataTableStylesSchema } from './data-table-styles';
 import { dataTableSettings } from './data-table-settings';
 import { DataTableHeaderRowSchema } from './data-table-header-row';
-import { DataTableRowWithStatesSchema } from './data-table-row-with-states';
+import { DataTableFooterRowSchema } from './data-table-footer-row';
 import { DataTableRowSchema } from './data-table-row';
 import { DataTableColumnTitleSchema } from './data-table-column-title';
 
@@ -18,7 +18,7 @@ export class DataTableSchema {
         DataTableHeaderRowSchema.schema as typeof DataTableHeaderRowSchema.schema
       ).prefault({}),
       footer: (
-        DataTableRowWithStatesSchema.schema as typeof DataTableRowWithStatesSchema.schema
+        DataTableFooterRowSchema.schema as typeof DataTableFooterRowSchema.schema
       ).prefault({}),
       row: (
         DataTableRowSchema.schema as typeof DataTableRowSchema.schema

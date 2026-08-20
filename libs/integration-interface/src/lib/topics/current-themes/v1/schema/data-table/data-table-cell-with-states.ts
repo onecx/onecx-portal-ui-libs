@@ -74,14 +74,6 @@ export class DataTableCellWithStatesSchema {
     border: border.default(this.hoverBorderTokens),
   }
 
-  private static readonly activeTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
-    border: border.default(this.activeBorderTokens),
-  }
-
   private static readonly selectedTokens = {
     background: z
       .union([bg, withRef(z.string())])
@@ -102,7 +94,6 @@ export class DataTableCellWithStatesSchema {
     .object({
       ...this.defaultTokens,
       hover: z.object({...this.hoverTokens}).prefault({}),
-      active: z.object({...this.activeTokens}).prefault({}),
       selected: z.object({...this.selectedTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })

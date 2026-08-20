@@ -29,14 +29,6 @@ export class DataTableRowSchema {
     offset: "{{primitives.border.offset.none}}",
   }
 
-  private static readonly activeBorderTokens = {
-    color: "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
-    style: "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.border.radius.none}}",
-    offset: "{{primitives.border.offset.none}}",
-  }
-
   private static readonly selectedBorderTokens = {
     color: "{{primitives.defaultVariant.state.selected.defaultSeverity.border.color}}",
     style: "{{primitives.defaultVariant.state.selected.defaultSeverity.border.style}}",
@@ -45,12 +37,13 @@ export class DataTableRowSchema {
     offset: "{{primitives.border.offset.none}}",
   }
 
-  private static readonly focusBorderTokens = {
-    color: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-    style: "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.border.radius.none}}",
-    offset: "{{primitives.border.offset.none}}",
+  private static readonly focusRingTokens = {
+    color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}"),
+    style: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}"),
+    width: withRef(z.string()).default("{{primitives.focusRing.width.none}}"),
+    radius: withRef(z.string()).default("{{primitives.focusRing.radius.none}}"),
+    offset: withRef(z.string()).default("{{primitives.focusRing.offset.none}}"),
+    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow.none}}"),
   }
 
   private static readonly defaultTokens = {
@@ -66,34 +59,12 @@ export class DataTableRowSchema {
     height: withRef(z.string()).default('2.5rem'),
   }
 
-  private static readonly oddTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.surface.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'),
-  }
-
-  private static readonly evenTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.surface.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'),
-  }
-
   private static readonly hoverTokens = {
     background: z
       .union([bg, withRef(z.string())])
       .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
     color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
     border: border.default(this.hoverBorderTokens),
-  }
-
-  private static readonly activeTokens = {
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
-    border: border.default(this.activeBorderTokens),
   }
 
   private static readonly selectedTokens = {
@@ -104,12 +75,26 @@ export class DataTableRowSchema {
     border: border.default(this.selectedBorderTokens),
   }
 
-  private static readonly focusTokens = {
+  private static readonly oddTokens = {
     background: z
       .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-    border: border.default(this.focusBorderTokens),
+      .default('{{primitives.area.surface.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'),
+    border: border.default(this.defaultBorderTokens),
+    cell: (DataTableCellWithStatesSchema.schema as typeof DataTableCellWithStatesSchema.schema).prefault({}),
+    hover: z.object({...this.hoverTokens}).prefault({}),
+    selected: z.object({...this.selectedTokens}).prefault({}),
+  }
+
+  private static readonly evenTokens = {
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.area.surface.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'),
+    border: border.default(this.defaultBorderTokens),
+    cell: (DataTableCellWithStatesSchema.schema as typeof DataTableCellWithStatesSchema.schema).prefault({}),
+    hover: z.object({...this.hoverTokens}).prefault({}),
+    selected: z.object({...this.selectedTokens}).prefault({}),
   }
 
   static readonly schema = z
@@ -121,9 +106,8 @@ export class DataTableRowSchema {
       odd: z.object({...this.oddTokens}).prefault({}),
       even: z.object({...this.evenTokens}).prefault({}),
       hover: z.object({...this.hoverTokens}).prefault({}),
-      active: z.object({...this.activeTokens}).prefault({}),
       selected: z.object({...this.selectedTokens}).prefault({}),
-      focus: z.object({...this.focusTokens}).prefault({}),
+      focusRing: z.object({...this.focusRingTokens}).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'dataTableRow' });
 }
