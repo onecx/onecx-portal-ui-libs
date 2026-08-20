@@ -2,7 +2,7 @@ import z from 'zod';
 import { border, withRef, bg, color } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 import { FilterViewSchema } from './filter-view';
-import { DataListGridSortingSchema } from './data-list-grid-sorting';
+import { DataListGridSortingSchema } from '../data-list-grid-sorting/data-list-grid-sorting';
 import { DataViewSchema } from './data-view';
 import { CustomGroupColumnSelectorSchema } from './custom-group-column-selector';
 

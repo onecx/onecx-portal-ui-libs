@@ -1,5 +1,5 @@
 import z from 'zod';
-import { withRef, bg, color, border, focusRingShape } from '../primitives';
+import { withRef, bg, color, border } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 
 export class DataViewContentSchema {
@@ -13,15 +13,19 @@ export class DataViewContentSchema {
   }
 
   private static readonly focusRingTokens = {
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.focusRing.radius}}",
-    offset: "{{primitives.focusRing.offset}}",
-    shadow: "{{primitives.focusRing.shadow}}",
+    color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}"),
+    style: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}"),
+    width: withRef(z.string()).default("{{primitives.focusRing.width.none}}"),
+    radius: withRef(z.string()).default("{{primitives.focusRing.radius.none}}"),
+    offset: withRef(z.string()).default("{{primitives.focusRing.offset.none}}"),
+    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow.none}}"),
   }
 
   private static readonly tokens = {
     border: border.default(this.borderTokens),
-    focusRing: focusRingShape.default(this.focusRingTokens),
+    focusRing: z.object({
+      ...this.focusRingTokens,
+    }).prefault({}),
     paddingX: withRef(z.string()).default("{{primitives.space.sm}}"),
     paddingY: withRef(z.string()).default("{{primitives.space.sm}}"),
     gap: withRef(z.string()).default("{{primitives.space.sm}}"),

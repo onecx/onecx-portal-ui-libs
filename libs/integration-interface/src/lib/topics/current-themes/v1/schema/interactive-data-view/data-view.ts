@@ -1,7 +1,7 @@
 import z from 'zod';
 import { border, withRef, bg, color } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
-import { DataListGridSchema } from './data-list-grid';
+import { DataListGridSchema } from '../data-list-grid/data-list-grid';
 import { DataViewContentSchema } from './data-view-content';
 import { dataTable } from '../data-table/data-table';
 

@@ -4,12 +4,6 @@ import { InteractiveDataViewSchema } from './interactive-data-view/interactive-d
 import { FilterViewSchema } from './interactive-data-view/filter-view'
 import { FilterViewChipSchema } from './interactive-data-view/filter-view-chip'
 import { FilterViewChipRemoveIconButtonSchema } from './interactive-data-view/filter-view-chip-remove-icon-button'
-import { DataListGridSchema } from './interactive-data-view/data-list-grid'
-import { DataListGridSortingSchema } from './interactive-data-view/data-list-grid-sorting'
-import { DataListGridSortingFloatLabelSchema } from './interactive-data-view/data-list-grid-sorting-float-label'
-import { DataListGridSortingButtonSchema } from './interactive-data-view/data-list-grid-sorting-button'
-import { DataListGridItemCardSchema } from './interactive-data-view/data-list-grid-item-card'
-import { DataListGridItemRowSchema } from './interactive-data-view/data-list-grid-item-row'
 import { DataViewSchema } from './interactive-data-view/data-view'
 import { DataViewContentSchema } from './interactive-data-view/data-view-content'
 import { CustomGroupColumnSelectorSchema } from './interactive-data-view/custom-group-column-selector'
@@ -125,10 +119,12 @@ describe('filter-view schema', () => {
           offset: '{{primitives.border.offset.none}}',
         },
         focusRing: {
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.focusRing.radius}}',
-          offset: '{{primitives.focusRing.offset}}',
-          shadow: '{{primitives.focusRing.shadow}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+          width: '{{primitives.focusRing.width.none}}',
+          radius: '{{primitives.focusRing.radius.none}}',
+          offset: '{{primitives.focusRing.offset.none}}',
+          shadow: '{{primitives.focusRing.shadow.none}}',
         },
         background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -230,10 +226,12 @@ describe('filter-view schema', () => {
             offset: '{{primitives.border.offset.none}}',
           },
           focusRing: {
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.focusRing.radius}}',
-            offset: '{{primitives.focusRing.offset}}',
-            shadow: '{{primitives.focusRing.shadow}}',
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+            width: '{{primitives.focusRing.width.none}}',
+            radius: '{{primitives.focusRing.radius.none}}',
+            offset: '{{primitives.focusRing.offset.none}}',
+            shadow: '{{primitives.focusRing.shadow.none}}',
           },
           icon: {
             size: '{{primitives.iconSizes.sm}}',
@@ -282,362 +280,14 @@ describe('filter-view schema', () => {
               offset: '{{primitives.border.offset.none}}',
             },
             focusRing: {
-              width: '{{primitives.border.width.none}}',
-              radius: '{{primitives.focusRing.radius}}',
-              offset: '{{primitives.focusRing.offset}}',
-              shadow: '{{primitives.focusRing.shadow}}',
+              color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+              style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+              width: '{{primitives.focusRing.width.none}}',
+              radius: '{{primitives.focusRing.radius.none}}',
+              offset: '{{primitives.focusRing.offset.none}}',
+              shadow: '{{primitives.focusRing.shadow.none}}',
             },
           })
-        })
-      })
-    })
-  })
-})
-
-describe('data-list-grid schema', () => {
-  describe('data-list-grid root tokens', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(value?.dataView?.dataListGrid, DataListGridSchema.schema.shape, [])
-      expectExactTokens(value?.dataView?.dataListGrid, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        gap: '{{primitives.space.md}}',
-        justifyContent: 'flex-start',
-        itemCard: expect.any(Object),
-        itemRow: expect.any(Object),
-      })
-    })
-  })
-
-  describe('data-list-grid item-card', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataView?.dataListGrid?.itemCard,
-        DataListGridItemCardSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataView?.dataListGrid?.itemCard, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        paddingX: '{{primitives.space.sm}}',
-        paddingY: '{{primitives.space.sm}}',
-        gap: '{{primitives.space.sm}}',
-        hover: expect.any(Object),
-        focus: expect.any(Object),
-      })
-    })
-
-    describe('item-card hover state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataView?.dataListGrid?.itemCard?.hover, {
-          border: {
-            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-        })
-      })
-    })
-
-    describe('item-card focus state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataView?.dataListGrid?.itemCard?.focus, {
-          border: {
-            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-          focusRing: {
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.focusRing.radius}}',
-            offset: '{{primitives.focusRing.offset}}',
-            shadow: '{{primitives.focusRing.shadow}}',
-          },
-        })
-      })
-    })
-  })
-
-  describe('data-list-grid item-row', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataView?.dataListGrid?.itemRow,
-        DataListGridItemRowSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataView?.dataListGrid?.itemRow, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        paddingX: '{{primitives.space.sm}}',
-        paddingY: '{{primitives.space.sm}}',
-        gap: '{{primitives.space.sm}}',
-        hover: expect.any(Object),
-        focus: expect.any(Object),
-      })
-    })
-
-    describe('item-row hover state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataView?.dataListGrid?.itemRow?.hover, {
-          border: {
-            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-        })
-      })
-    })
-
-    describe('item-row focus state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataView?.dataListGrid?.itemRow?.focus, {
-          border: {
-            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
-          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-          focusRing: {
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.focusRing.radius}}',
-            offset: '{{primitives.focusRing.offset}}',
-            shadow: '{{primitives.focusRing.shadow}}',
-          },
-        })
-      })
-    })
-  })
-})
-
-describe('data-list-grid-sorting schema', () => {
-  describe('data-list-grid-sorting root tokens', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataListGridSorting,
-        DataListGridSortingSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataListGridSorting, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.radius.sm}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        space: '{{primitives.space.md}}',
-        floatLabel: expect.any(Object),
-        dropdown: expect.any(Object),
-        button: expect.any(Object),
-      })
-    })
-  })
-
-  describe('data-list-grid-sorting float-label', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataListGridSorting?.floatLabel,
-        DataListGridSortingFloatLabelSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataListGridSorting?.floatLabel, {
-        font: {
-          weight: '{{primitives.font.weight}}',
-        },
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        focus: expect.any(Object),
-        active: expect.any(Object),
-      })
-    })
-
-    describe('float-label focus state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataListGridSorting?.floatLabel?.focus, {
-          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-        })
-      })
-    })
-
-    describe('float-label active state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataListGridSorting?.floatLabel?.active, {
-          color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-          font: {
-            size: '{{primitives.font.size}}',
-            weight: '{{primitives.font.weight}}',
-          },
-          background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-          border: {
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          paddingX: '{{primitives.space.sm}}',
-          paddingY: '{{primitives.space.sm}}',
-        })
-      })
-    })
-  })
-
-  describe('data-list-grid-sorting button', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataListGridSorting?.button,
-        DataListGridSortingButtonSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataListGridSorting?.button, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        focusRing: {
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.focusRing.radius}}',
-          offset: '{{primitives.focusRing.offset}}',
-          shadow: '{{primitives.focusRing.shadow}}',
-        },
-        icon: {
-          size: '{{primitives.iconSizes.sm}}',
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-          content: '',
-          url: '',
-        },
-        hover: expect.any(Object),
-        focus: expect.any(Object),
-      })
-    })
-
-    describe('button hover state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataListGridSorting?.button?.hover, {
-          border: {
-            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          icon: {
-            color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-          },
-        })
-      })
-    })
-
-    describe('button focus state', () => {
-      it('should apply defaults', () => {
-        const result = interactiveDataView.safeParse({})
-        expect(result.success).toBe(true)
-
-        const value = result.data
-        expectExactTokens(value?.dataListGridSorting?.button?.focus, {
-          border: {
-            color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-            style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.border.radius.none}}',
-            offset: '{{primitives.border.offset.none}}',
-          },
-          focusRing: {
-            width: '{{primitives.border.width.none}}',
-            radius: '{{primitives.focusRing.radius}}',
-            offset: '{{primitives.focusRing.offset}}',
-            shadow: '{{primitives.focusRing.shadow}}',
-          },
         })
       })
     })
@@ -690,10 +340,12 @@ describe('data-view schema', () => {
           offset: '{{primitives.border.offset.none}}',
         },
         focusRing: {
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.focusRing.radius}}',
-          offset: '{{primitives.focusRing.offset}}',
-          shadow: '{{primitives.focusRing.shadow}}',
+          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+          width: '{{primitives.focusRing.width.none}}',
+          radius: '{{primitives.focusRing.radius.none}}',
+          offset: '{{primitives.focusRing.offset.none}}',
+          shadow: '{{primitives.focusRing.shadow.none}}',
         },
         paddingX: '{{primitives.space.sm}}',
         paddingY: '{{primitives.space.sm}}',

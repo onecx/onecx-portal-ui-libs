@@ -1,9 +1,9 @@
 import z from 'zod';
-import { border, color, withRef, icon } from '../primitives';
+import { withRef, bg, color, border } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 
-export class FilterViewChipRemoveIconButtonSchema {
-  private static readonly borderCommonTokens = {
+export class DataListGridItemCardSchema {
+  private static readonly defaultBorderTokens = {
     color: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
     style: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
     width: "{{primitives.border.width.none}}",
@@ -37,27 +37,30 @@ export class FilterViewChipRemoveIconButtonSchema {
   }
 
   private static readonly defaultTokens = {
-    border: border.default(this.borderCommonTokens),
-    focusRing: z.object({
-      ...this.focusRingTokens,
-    }).prefault({}),
-    icon: icon.default({
-      size: "{{primitives.iconSizes.sm}}",
-      color: "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      content: "",
-      url: "",
-    }),
+    border: border.default(this.defaultBorderTokens),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+    paddingX: withRef(z.string()).default("{{primitives.space.sm}}"),
+    paddingY: withRef(z.string()).default("{{primitives.space.sm}}"),
+    gap: withRef(z.string()).default("{{primitives.space.sm}}"),
   }
 
   private static readonly hoverTokens = {
     border: border.default(this.hoverBorderTokens),
-    icon: icon.pick({ color: true }).default({
-      color: "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-    }),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
   }
 
   private static readonly focusTokens = {
     border: border.default(this.focusBorderTokens),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
+    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
     focusRing: z.object({
       ...this.focusRingTokens,
     }).prefault({}),
@@ -73,7 +76,7 @@ export class FilterViewChipRemoveIconButtonSchema {
         ...this.focusTokens,
       }).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'filterViewChipRemoveIconButton' });
+    .register(themeSchemaRegistry, { id: 'dataListGridItemCard' });
 }
 
-export const filterViewChipRemoveIconButton = FilterViewChipRemoveIconButtonSchema.schema;
+export const dataListGridItemCard = DataListGridItemCardSchema.schema;

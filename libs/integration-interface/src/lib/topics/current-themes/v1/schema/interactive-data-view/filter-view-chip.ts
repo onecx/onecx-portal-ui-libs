@@ -1,5 +1,5 @@
 import z from 'zod';
-import { withRef, bg, color, border, focusRingShape, icon, font } from '../primitives';
+import { withRef, bg, color, border, icon, font } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 import { FilterViewChipRemoveIconButtonSchema } from './filter-view-chip-remove-icon-button';
 
@@ -35,10 +35,12 @@ export class FilterViewChipSchema {
   }
 
   private static readonly focusRingTokens = {
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.focusRing.radius}}",
-    offset: "{{primitives.focusRing.offset}}",
-    shadow: "{{primitives.focusRing.shadow}}",
+    color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}"),
+    style: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}"),
+    width: withRef(z.string()).default("{{primitives.focusRing.width.none}}"),
+    radius: withRef(z.string()).default("{{primitives.focusRing.radius.none}}"),
+    offset: withRef(z.string()).default("{{primitives.focusRing.offset.none}}"),
+    shadow: withRef(z.string()).default("{{primitives.focusRing.shadow.none}}"),
   }
 
   private static readonly iconFontTokens = {
@@ -61,7 +63,9 @@ export class FilterViewChipSchema {
   private static readonly defaultTokens = {
     settings: this.filterViewChipSettings.prefault({}),
     border: border.default(this.borderTokens),
-    focusRing: focusRingShape.default(this.focusRingTokens),
+    focusRing: z.object({
+      ...this.focusRingTokens,
+    }).prefault({}),
     background: z
       .union([bg, withRef(z.string())])
       .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
