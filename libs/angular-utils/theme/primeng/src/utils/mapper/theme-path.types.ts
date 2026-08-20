@@ -112,7 +112,11 @@ export type ThemePath =
   | `usages.interactiveDataView.${LeafPaths<NonNullable<Usages['interactiveDataView']>>}`
   | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
-  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`;
+  | `usages.ripple.${LeafPaths<NonNullable<Usages['ripple']>>}`
+  | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
+  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
+  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
+  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`;  
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
