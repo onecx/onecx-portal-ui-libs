@@ -112,7 +112,6 @@
                 [attr.aria-disabled]="item.disabled ? true : null"
                 [routerLink]="item.disabled ? null : item.routerLink || null"
                 [attr.href]="item.disabled ? null : item.routerLink || null"
-                (click)="item.disabled ? $event.preventDefault() : (!item.routerLink && item.command?.($event))"
               >
                 @if (item.icon) {
                 <span class="p-menu-item-icon" [ngClass]="item.icon"></span>
