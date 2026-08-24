@@ -1,10 +1,5 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, color, withRef } from '../primitives'
-
-export class AccordionContentSchema {
-  private static readonly tokens = {
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
 import { bg, border, withRef } from '../primitives'
 
 export class AccordionContentSchema {
