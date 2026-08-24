@@ -50,7 +50,8 @@ export default {
           { labelKey: 'Level 2', url: '/' },
         ]),
         TooltipModule,
-        OcxTooltipDirective
+        OcxTooltipDirective,
+        RouterModule,
       ],
     }),
   ],
