@@ -15,14 +15,13 @@ export const loadingIndicatorOverlay = z
 
 export const loadingIndicatorSpinner = z
   .object({
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     size: withRef(z.string()).default('{{primitives.space.lg}}'),
-    trackColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
     border: z
       .object({
+        color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+        trackColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
         width: withRef(z.string()).default('{{primitives.border.width.md}}'),
-      })
-      .default({ width: '{{primitives.border.width.md}}' }),
+      }),
     animationDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
   })
   .register(themeSchemaRegistry, { id: 'loadingIndicatorSpinner' })

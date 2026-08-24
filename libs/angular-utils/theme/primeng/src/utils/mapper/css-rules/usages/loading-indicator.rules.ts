@@ -25,11 +25,11 @@ const SPINNER: CssRule = {
   declarations: [
     {
       property: 'border-color',
-      from: 'usages.loadingIndicator.spinner.color',
+      from: 'usages.loadingIndicator.spinner.border.color',
     },
     {
       property: 'border-bottom-color',
-      from: 'usages.loadingIndicator.spinner.trackColor',
+      from: 'usages.loadingIndicator.spinner.border.trackColor',
     },
     {
       property: 'width',
