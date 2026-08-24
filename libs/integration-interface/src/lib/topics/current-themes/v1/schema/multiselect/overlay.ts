@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { border, borderWithShadow, color, withRef } from '../primitives'
+import { borderWithShadow, color, withRef } from '../primitives'
 import { MultiselectFilterSchema } from './filter'
 import { MultiselectListItemsSchema } from './listitems'
 
