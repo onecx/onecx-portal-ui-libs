@@ -49,10 +49,10 @@ describe('loadingIndicator schema', () => {
         const value = result.data
         expectExactUndefinedTokens(value?.spinner, loadingIndicatorSpinner.shape, [])
         expectExactTokens(value?.spinner, {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
           size: '{{primitives.space.lg}}',
-          trackColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
           border: {
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+            trackColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
             width: '{{primitives.border.width.md}}',
           },
           animationDuration: '{{primitives.transition.duration}}',
