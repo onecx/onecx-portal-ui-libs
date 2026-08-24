@@ -110,7 +110,6 @@
                 class="p-menu-item-link"
                 [routerLink]="item.routerLink || null"
                 [attr.href]="item.routerLink || null"
-                (click)="!item.disabled && !item.routerLink && item.command?.($event)"
               >
                 @if (item.icon) {
                 <span class="p-menu-item-icon" [ngClass]="item.icon"></span>
