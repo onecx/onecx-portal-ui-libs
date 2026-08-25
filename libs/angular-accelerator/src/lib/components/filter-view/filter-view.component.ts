@@ -154,6 +154,7 @@ export class FilterViewComponent {
       'defaultTranslationKeyValue',
     ],
     [ColumnType.STRING]: ['stringFilterChipValue', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
+    [ColumnType.BOOLEAN]: ['booleanFilterChipValue', 'booleanTableFilterCell', 'booleanTableCell', 'defaultBooleanValue'],
   }
   private readonly chipTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
@@ -174,6 +175,7 @@ export class FilterViewComponent {
       'defaultTranslationKeyValue',
     ],
     [ColumnType.STRING]: ['stringFilterViewCell', 'stringTableFilterCell', 'stringTableCell', 'defaultStringValue'],
+    [ColumnType.BOOLEAN]: ['booleanFilterViewCell', 'booleanTableFilterCell', 'booleanTableCell', 'defaultBooleanValue'],
   }
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
