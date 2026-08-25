@@ -40,7 +40,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { RowGroupPlanner } from './utils/row-group-planner'
-import { DataTableGroupingConfig, GroupCellContext, GroupPlan, GroupedRowsResult, GroupedRowWithRows } from './model/data-table-grouping.model'
+import { DataTableGroupingConfig, GroupCellContext, GroupedRowWithRows } from './model/data-table-grouping.model'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
@@ -431,7 +431,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
           ...row,
           rowIndex: originalIndex,
           groupIndex: groupIdx,
-          __isGroupHeader: false
+          __isGroupHeader: false,
+          groupKey: group.key
         })
       })
     }
@@ -440,16 +441,50 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   isGrouped = computed(() => this.groupPlan() !== null)
 
-  getGroupRowSpan = (group: GroupPlan): number => group.rowspan
+  /**
+   * Gets the rowspan value for a group header cell.
+   * Returns the number of rows in the group.
+   * Used by the template for the rowspan attribute on group header cells.
+   */
+  getGroupRowSpan = (groupKey: string | number): number => {
+    const grouped = this.groupedRows()
+    if (!grouped) {
+      return 1
+    }
+    const group = grouped.groups.find(g => g.key === groupKey)
+    return group?.rowspan ?? 1
+  }
 
-  getGroupKey = (row: Row): string | null => {
+  getGroupKey = (row: Row): string | number | null => {
     const config = this.groupingConfigSignal()
     const plan = this.groupPlan()
     if (!config || !plan) {
       return null
     }
     const path = config.groupKeyPath ?? config.groupByColumnId
-    return RowGroupPlanner.getGroupKey(row, path)
+    const key = RowGroupPlanner.getGroupKey(row, path)
+    return key ?? null
+  }
+
+  /**
+   * Returns the custom group cell template if provided, otherwise undefined.
+   * This allows consumers to provide a TemplateRef for custom group cell rendering.
+   */
+  getGroupColumnCellTemplate(): TemplateRef<GroupCellContext> | undefined {
+    return this.groupCell()
+  }
+
+  /**
+   * Returns the column definition for the grouping column.
+   * Used to get the column's cell template for the default group cell presentation.
+   */
+  getGroupingColumn(): DataTableColumn | undefined {
+    const config = this.groupingConfigSignal()
+    const columns = this.stateService.columns()
+    if (!config?.groupByColumnId) {
+      return undefined
+    }
+    return columns.find(c => c.id === config.groupByColumnId)
   }
 
   getGroupByKey = (key: string | number): GroupedRowWithRows | undefined => {
@@ -470,7 +505,27 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     rowspan: group.rowspan
   })
 
-  groupTrackByFunction = (index: number, group: GroupedRowWithRows): number => index
+  /**
+   * Checks if the given row is the first row in its group.
+   * Used to determine when to render the group header cell.
+   */
+  isFirstRowInGroup = (row: Row & { groupIndex?: number; groupKey?: string | number }): boolean => {
+    if (!this.isGrouped() || !row.groupKey) {
+      return false
+    }
+    const grouped = this.groupedRows()
+    if (!grouped) {
+      return false
+    }
+    const group = grouped.groups.find(g => g.key === row.groupKey)
+    if (!group || group.rows.length === 0) {
+      return false
+    }
+    // Check if this is the first row in the group by comparing row identities
+    return group.rows[0].id === row.id
+  }
+
+  groupTrackByFunction = (_index: number, _group: GroupedRowWithRows): number => _index
 
   groupRowTrackByFunction = (index: number, row: Row & { rowIndex: number; groupIndex: number }): number => {
     return row.rowIndex
@@ -1005,6 +1060,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       [ColumnType.RELATIVE_DATE]: ['relativeDateCell', 'relativeDateTableCell', 'defaultRelativeDateCell'],
       [ColumnType.TRANSLATION_KEY]: ['translationKeyCell', 'translationKeyTableCell', 'defaultTranslationKeyCell'],
       [ColumnType.STRING]: ['stringCell', 'stringTableCell', 'defaultStringCell'],
+      [ColumnType.BOOLEAN]: ['booleanCell', 'booleanTableCell', 'defaultBooleanCell'],
     },
   }
 
@@ -1040,6 +1096,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         'stringCell',
         'stringTableCell',
         'defaultStringCell',
+      ],
+      [ColumnType.BOOLEAN]: [
+        'booleanFilterCell',
+        'booleanTableFilterCell',
+        'booleanCell',
+        'booleanTableCell',
+        'defaultBooleanCell',
       ],
     },
   }

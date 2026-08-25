@@ -18,10 +18,52 @@ export interface DataTableHarnessFilters extends BaseHarnessFilters {
   id?: string
 }
 
+export interface GroupCellHarnessFilters extends BaseHarnessFilters {
+  groupKey?: string
+}
+
+export class GroupCellHarness extends ContentContainerComponentHarness {
+  static hostSelector = 'th[scope="rowgroup"]'
+
+  static with(options: GroupCellHarnessFilters): HarnessPredicate<GroupCellHarness> {
+    return new HarnessPredicate(GroupCellHarness, options).addOption(
+      'groupKey',
+      options.groupKey,
+      (harness, groupKey) => HarnessPredicate.stringMatches(harness.getGroupKey(), groupKey)
+    )
+  }
+
+  async getGroupKey(): Promise<string | null> {
+    return await (await this.host()).getAttribute('id').then(id => id?.replace('group-header-', '') ?? null)
+  }
+
+  async getLabel(): Promise<string> {
+    // Search for .group-label anywhere within the group cell
+    const labelElement = await this.locatorForOptional('.group-label')()
+    if (labelElement) {
+      return await labelElement.text()
+    }
+    // Fallback: get all text content and extract label
+    const host = await this.host()
+    const text = await host.text()
+    return text.trim().split('(')[0].trim()
+  }
+
+  async getRowspan(): Promise<number> {
+    const rowspan = await (await this.host()).getAttribute('rowspan')
+    return rowspan ? parseInt(rowspan, 10) : 1
+  }
+
+  async getScope(): Promise<string | null> {
+    return await (await this.host()).getAttribute('scope')
+  }
+}
+
 export interface GroupRowHarnessFilters extends BaseHarnessFilters {
   groupKey?: string
 }
 
+/** @deprecated Use GroupCellHarness instead. Kept for backward compatibility. */
 export class GroupRowHarness extends ContentContainerComponentHarness {
   static hostSelector = 'tr.group-row'
 
@@ -38,12 +80,10 @@ export class GroupRowHarness extends ContentContainerComponentHarness {
   }
 
   async getGroupLabel(): Promise<string> {
-    // Search for .group-label anywhere within the group row, including nested td elements
     const labelElement = await this.locatorForOptional('.group-label')()
     if (labelElement) {
       return await labelElement.text()
     }
-    // Fallback: search in all td elements within the row
     const tds = await this.locatorForAll('td')()
     for (const td of tds) {
       const text = await td.text()
@@ -51,7 +91,6 @@ export class GroupRowHarness extends ContentContainerComponentHarness {
         return text.trim()
       }
     }
-    // Final fallback: try to find any span within the row
     const spans = await this.locatorForAll('span')()
     for (const span of spans) {
       const text = await span.text()
@@ -63,14 +102,12 @@ export class GroupRowHarness extends ContentContainerComponentHarness {
   }
 
   async getGroupCount(): Promise<number> {
-    // Search for .group-count anywhere within the group row
     const countElement = await this.locatorForOptional('.group-count')()
     if (countElement) {
       const text = await countElement.text()
       const match = text.match(/\((\d+)/)
       return match ? parseInt(match[1], 10) : 0
     }
-    // Fallback: search in all td elements for the count pattern
     const tds = await this.locatorForAll('td')()
     for (const td of tds) {
       const text = await td.text()
@@ -79,7 +116,6 @@ export class GroupRowHarness extends ContentContainerComponentHarness {
         return parseInt(match[1], 10)
       }
     }
-    // Final fallback: search in all spans
     const spans = await this.locatorForAll('span')()
     for (const span of spans) {
       const text = await span.text()
@@ -103,6 +139,8 @@ export class DataTableHarness extends ContentContainerComponentHarness {
 
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
+  getGroupCells = this.locatorForAll(GroupCellHarness)
+  /** @deprecated Use getGroupCells instead. Kept for backward compatibility. */
   getGroupRows = this.locatorForAll(GroupRowHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
   getOverflowMenu = this.locatorForOptional(PMenuHarness)
@@ -213,26 +251,37 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     return null
   }
 
+  async getGroupCell(groupKey: string): Promise<GroupCellHarness | null> {
+    const harnesses = await this.getGroupCells()
+    for (const harness of harnesses) {
+      const key = await harness.getGroupKey()
+      if (key === groupKey) {
+        return harness
+      }
+    }
+    return null
+  }
+
   async getGroupLabels(): Promise<string[]> {
-    const harnesses = await this.getGroupRows()
+    const harnesses = await this.getGroupCells()
     const labels: string[] = []
     for (const harness of harnesses) {
-      labels.push(await harness.getGroupLabel())
+      labels.push(await harness.getLabel())
     }
     return labels
   }
 
   async getGroupCounts(): Promise<number[]> {
-    const harnesses = await this.getGroupRows()
+    const harnesses = await this.getGroupCells()
     const counts: number[] = []
     for (const harness of harnesses) {
-      counts.push(await harness.getGroupCount())
+      counts.push(await harness.getRowspan())
     }
     return counts
   }
 
   async isGrouped(): Promise<boolean> {
-    const groupRows = await this.getGroupRows()
-    return groupRows.length > 0
+    const groupCells = await this.getGroupCells()
+    return groupCells.length > 0
   }
 }

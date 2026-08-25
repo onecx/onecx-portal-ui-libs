@@ -11,7 +11,8 @@ import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
-import { DataTableGroupingConfig, GroupCellContext } from '../../model/data-table-grouping.model'
+import { DataTableGroupingConfig } from './model/data-table-grouping.model'
+import { Row } from './data-table.component'
 import { MenuModule } from 'primeng/menu'
 import { CheckboxModule } from 'primeng/checkbox'
 import { FormsModule } from '@angular/forms'
@@ -793,7 +794,7 @@ const groupingDefaultArgs = {
 }
 
 const groupingConfig: DataTableGroupingConfig = {
-  groupBy: 'category',
+  groupByColumnId: 'category',
 }
 
 export const WithBasicGrouping = {
@@ -833,8 +834,8 @@ const nestedGroupingColumns = [
 ]
 
 const nestedGroupingConfig: DataTableGroupingConfig = {
-  groupBy: 'department.name',
-  groupLabel: (ctx: GroupCellContext) => `Department: ${ctx.groupKey} (${ctx.groupCount} members)`,
+  groupByColumnId: 'department.name',
+  groupLabel: (key: string | number, rows: any[]) => `Department: ${key} (${rows.length} members)`,
 }
 
 const nestedGroupingDefaultArgs = {
@@ -862,18 +863,18 @@ export const WithNestedFieldGrouping = {
 }
 
 const customGroupCellTemplate = `
-  <ng-template #customGroupCell let-groupKey="groupKey" let-groupCount="groupCount" let-groupLabel="groupLabel" let-groupedRows="groupedRows">
+  <ng-template #customGroupCell let-context>
     <div class="flex align-items-center gap-2 p-2 bg-blue-50 border-round">
       <i class="pi pi-folder text-blue-500"></i>
-      <span class="font-bold text-blue-700">{{ groupLabel }}</span>
-      <span class="bg-blue-100 text-blue-700 px-2 py-1 border-round text-sm">{{ groupCount }} items</span>
-      <span class="text-sm text-blue-500">Keys: {{ groupedRows.map(r => r.id).join(', ') }}</span>
+      <span class="font-bold text-blue-700">{{ context.label }}</span>
+      <span class="bg-blue-100 text-blue-700 px-2 py-1 border-round text-sm">{{ context.rowspan }} items</span>
+      <span class="text-sm text-blue-500">Keys: {{ context.rows.map(r => r.id).join(', ') }}</span>
     </div>
   </ng-template>
 `
 
 const customGroupingConfig: DataTableGroupingConfig = {
-  groupBy: 'category',
+  groupByColumnId: 'category',
 }
 
 export const WithCustomGroupCellTemplate = {
@@ -895,8 +896,8 @@ export const WithCustomGroupCellTemplate = {
 }
 
 const groupBySelectorConfig: DataTableGroupingConfig = {
-  groupBy: 'available',
-  groupLabel: (ctx: GroupCellContext) => ctx.groupKey ? 'Available Items' : 'Unavailable Items',
+  groupByColumnId: 'available',
+  groupLabel: (key: string | number, rows: Row[]) => key ? 'Available Items' : 'Unavailable Items',
 }
 
 const groupBySelectorRows = [

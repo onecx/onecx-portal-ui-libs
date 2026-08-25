@@ -2461,8 +2461,8 @@ describe('Row grouping', () => {
     expect(groupingComponent.groupedRows()).toBeTruthy()
     expect(groupingComponent.groupedRows()!.groups.length).toBe(2)
 
-    const groupRows = await groupingDataTable.getGroupRows()
-    expect(groupRows.length).toBe(2)
+    const groupCells = await groupingDataTable.getGroupCells()
+    expect(groupCells.length).toBe(2)
   })
 
   it('should return correct group labels via harness', async () => {
@@ -2487,19 +2487,19 @@ describe('Row grouping', () => {
     expect(groupCounts).toEqual([3, 2])
   })
 
-  it('should get group row by key via harness', async () => {
+  it('should get group cell by key via harness', async () => {
     groupingFixture.componentRef.setInput('groupingConfig', {
       groupByColumnId: 'category',
     })
     groupingFixture.detectChanges()
     await groupingFixture.whenStable()
 
-    const fruitsGroup = await groupingDataTable.getGroupRow('Fruits')
+    const fruitsGroup = await groupingDataTable.getGroupCell('Fruits')
     expect(fruitsGroup).toBeTruthy()
     const fruitsKey = await fruitsGroup!.getGroupKey()
     expect(fruitsKey).toBe('Fruits')
 
-    const vegGroup = await groupingDataTable.getGroupRow('Vegetables')
+    const vegGroup = await groupingDataTable.getGroupCell('Vegetables')
     expect(vegGroup).toBeTruthy()
     const vegKey = await vegGroup!.getGroupKey()
     expect(vegKey).toBe('Vegetables')
@@ -2512,7 +2512,7 @@ describe('Row grouping', () => {
     groupingFixture.detectChanges()
     await groupingFixture.whenStable()
 
-    const nonExistent = await groupingDataTable.getGroupRow('NonExistent')
+    const nonExistent = await groupingDataTable.getGroupCell('NonExistent')
     expect(nonExistent).toBeNull()
   })
 
@@ -2561,8 +2561,8 @@ describe('Row grouping', () => {
     groupingFixture.detectChanges()
     await groupingFixture.whenStable()
 
-    const groupRows = await groupingDataTable.getGroupRows()
-    expect(groupRows.length).toBe(2)
+    const groupCells = await groupingDataTable.getGroupCells()
+    expect(groupCells.length).toBe(2)
   })
 
   it('should use default group cell template when no custom template provided', async () => {
@@ -2572,9 +2572,9 @@ describe('Row grouping', () => {
     groupingFixture.detectChanges()
     await groupingFixture.whenStable()
 
-    const groupRows = await groupingDataTable.getGroupRows()
-    expect(groupRows.length).toBe(2)
-    const firstGroupLabel = await groupRows[0].getGroupLabel()
+    const groupCells = await groupingDataTable.getGroupCells()
+    expect(groupCells.length).toBe(2)
+    const firstGroupLabel = await groupCells[0].getLabel()
     expect(firstGroupLabel).toBe('Fruits')
   })
 
@@ -2606,8 +2606,8 @@ describe('Row grouping', () => {
     await hostFixture.whenStable()
 
     expect(dataTable.groupCell()).toBeInstanceOf(TemplateRef)
-    const groupRows = hostFixture.nativeElement.querySelectorAll('.group-row')
-    expect(groupRows.length).toBe(2)
+    const groupCells = hostFixture.nativeElement.querySelectorAll('th[scope="rowgroup"]')
+    expect(groupCells.length).toBe(2)
     expect(hostFixture.nativeElement.querySelector('.custom-group-cell')).toBeTruthy()
   })
 

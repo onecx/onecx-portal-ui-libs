@@ -57,9 +57,9 @@ export interface GroupCellContext {
 
 /**
  * Function type for extracting a group key from a row.
- * Receives a row and returns a string or number key.
+ * Receives a row, its index, and the full rows array, returns a string or number key.
  */
-export type GroupKeyGetter = (row: Row) => string | number
+export type GroupKeyGetter = (row: Row, index: number, rows: readonly Row[]) => string | number
 
 /**
  * Internal type representing a computed group plan.

@@ -1,7 +1,7 @@
-import { DataTableGroupingConfig } from '../model/data-table-grouping.model';
+import { DataTableGroupingConfig, GroupKeyGetter } from '../model/data-table-grouping.model';
 import { DataTableColumn } from '../../../model/data-table-column.model';
 import { Row } from '../data-table.component';
-import { ObjectUtils } from '../../../utils/objectutils';
+import { ObjectUtils } from 'primeng/utils';
 import { GroupPlan, GroupedRowsResult } from '../model/data-table-grouping.model';
 
 /**
@@ -34,13 +34,16 @@ export class RowGroupPlanner {
     const groupByColumnId = config.groupByColumnId;
     const groupKeyPath = config.groupKeyPath ?? groupByColumnId;
     const groupLabelFn = config.groupLabel;
+    const groupKeyGetter = config.groupKeyGetter;
 
     // First pass: compute group key for each row and build group map
     // Using Map to preserve insertion order (first occurrence order)
     const groupMap = new Map<string | number, { rowIndices: number[]; firstRow: Row }>();
 
     rows.forEach((row, index) => {
-      const key = this.getGroupKey(row, groupKeyPath);
+      const key = groupKeyGetter
+        ? groupKeyGetter(row, index, rows as readonly Row[])
+        : this.getGroupKey(row, groupKeyPath);
       const normalizedKey = key ?? ''; // Normalize undefined/null to empty string for grouping
 
       if (!groupMap.has(normalizedKey)) {
@@ -77,13 +80,15 @@ export class RowGroupPlanner {
 
   /**
    * Extracts a group key from a row using a dot-notation path.
-   * Uses ObjectUtils.resolveFieldData for nested property access.
+   * Uses PrimeNG's ObjectUtils.resolveFieldData for nested property access.
+   * Returns null for missing paths (consistent with nullish coalescing).
    *
    * @param row - Row object
    * @param path - Dot-notation path (e.g., 'status.code')
-   * @returns The resolved value (string, number, or undefined)
+   * @returns The resolved value (string, number) or null if not found
    */
-  static getGroupKey(row: Row, path: string): string | number | undefined {
-    return ObjectUtils.resolveFieldData(row, path) as string | number | undefined;
+  static getGroupKey(row: Row, path: string): string | number | null {
+    const value = ObjectUtils.resolveFieldData(row, path);
+    return value ?? null;
   }
 }
