@@ -18,6 +18,80 @@ export interface DataTableHarnessFilters extends BaseHarnessFilters {
   id?: string
 }
 
+export interface GroupRowHarnessFilters extends BaseHarnessFilters {
+  groupKey?: string
+}
+
+export class GroupRowHarness extends ContentContainerComponentHarness {
+  static hostSelector = 'tr.group-row'
+
+  static with(options: GroupRowHarnessFilters): HarnessPredicate<GroupRowHarness> {
+    return new HarnessPredicate(GroupRowHarness, options).addOption(
+      'groupKey',
+      options.groupKey,
+      (harness, groupKey) => HarnessPredicate.stringMatches(harness.getGroupKey(), groupKey)
+    )
+  }
+
+  async getGroupKey(): Promise<string | null> {
+    return await (await this.host()).getAttribute('id').then(id => id?.replace('group-row-', '') ?? null)
+  }
+
+  async getGroupLabel(): Promise<string> {
+    // Search for .group-label anywhere within the group row, including nested td elements
+    const labelElement = await this.locatorForOptional('.group-label')()
+    if (labelElement) {
+      return await labelElement.text()
+    }
+    // Fallback: search in all td elements within the row
+    const tds = await this.locatorForAll('td')()
+    for (const td of tds) {
+      const text = await td.text()
+      if (text && text.trim() !== '' && !text.includes('(')) {
+        return text.trim()
+      }
+    }
+    // Final fallback: try to find any span within the row
+    const spans = await this.locatorForAll('span')()
+    for (const span of spans) {
+      const text = await span.text()
+      if (text && text.trim() !== '' && !text.includes('(')) {
+        return text.trim()
+      }
+    }
+    return ''
+  }
+
+  async getGroupCount(): Promise<number> {
+    // Search for .group-count anywhere within the group row
+    const countElement = await this.locatorForOptional('.group-count')()
+    if (countElement) {
+      const text = await countElement.text()
+      const match = text.match(/\((\d+)/)
+      return match ? parseInt(match[1], 10) : 0
+    }
+    // Fallback: search in all td elements for the count pattern
+    const tds = await this.locatorForAll('td')()
+    for (const td of tds) {
+      const text = await td.text()
+      const match = text.match(/\((\d+)/)
+      if (match) {
+        return parseInt(match[1], 10)
+      }
+    }
+    // Final fallback: search in all spans
+    const spans = await this.locatorForAll('span')()
+    for (const span of spans) {
+      const text = await span.text()
+      const match = text.match(/\((\d+)/)
+      if (match) {
+        return parseInt(match[1], 10)
+      }
+    }
+    return 0
+  }
+}
+
 export class DataTableHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-table'
 
@@ -29,6 +103,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
 
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
+  getGroupRows = this.locatorForAll(GroupRowHarness)
   getPaginator = this.locatorFor(PPaginatorHarness)
   getOverflowMenu = this.locatorForOptional(PMenuHarness)
 
@@ -125,5 +200,39 @@ export class DataTableHarness extends ContentContainerComponentHarness {
       throw new Error(`No expansion toggle at index ${rowIndex}. Found ${buttons.length} toggle(s).`)
     }
     await buttons[rowIndex].click()
+  }
+
+  async getGroupRow(groupKey: string): Promise<GroupRowHarness | null> {
+    const harnesses = await this.getGroupRows()
+    for (const harness of harnesses) {
+      const key = await harness.getGroupKey()
+      if (key === groupKey) {
+        return harness
+      }
+    }
+    return null
+  }
+
+  async getGroupLabels(): Promise<string[]> {
+    const harnesses = await this.getGroupRows()
+    const labels: string[] = []
+    for (const harness of harnesses) {
+      labels.push(await harness.getGroupLabel())
+    }
+    return labels
+  }
+
+  async getGroupCounts(): Promise<number[]> {
+    const harnesses = await this.getGroupRows()
+    const counts: number[] = []
+    for (const harness of harnesses) {
+      counts.push(await harness.getGroupCount())
+    }
+    return counts
+  }
+
+  async isGrouped(): Promise<boolean> {
+    const groupRows = await this.getGroupRows()
+    return groupRows.length > 0
   }
 }

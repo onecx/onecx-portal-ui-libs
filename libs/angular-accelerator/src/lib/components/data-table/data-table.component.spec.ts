@@ -17,13 +17,27 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component } from '@angular/core'
+import { Component, TemplateRef, ViewChild } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
 @Component({ standalone: false, template: '' })
 class TestRouteComponent {}
+
+@Component({
+  standalone: false,
+  template: `
+    <ng-template #groupCellTemplate let-group>
+      <div class="custom-group-cell">{{ group.label }}-custom ({{ group.rowspan }})</div>
+    </ng-template>
+    <ocx-data-table [groupingConfig]="{ groupByColumnId: 'category' }" [groupCellTemplate]="groupCellTemplate"></ocx-data-table>
+  `,
+})
+class GroupCellTemplateHostComponent {
+  @ViewChild('groupCellTemplate', { static: true })
+  groupCellTemplate!: TemplateRef<unknown>
+}
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -42,6 +56,7 @@ describe('DataTableComponent', () => {
       ALL: 'All',
       SEARCH_RESULTS_FOUND: '{{results}} Results Found',
       NO_SEARCH_RESULTS_FOUND: 'No Results Found',
+        ROWS: 'Rows',
     },
   }
 
@@ -53,6 +68,7 @@ describe('DataTableComponent', () => {
       ALL: 'Alle',
       SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
       NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
+        ROWS: 'Zeilen',
     },
   }
 
@@ -2338,5 +2354,337 @@ describe('DataTableComponent', () => {
       const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
 
       expect(summary).toBe('id: 1,name: Alice,active: true')
+  })
+})
+
+describe('Row grouping', () => {
+  let groupingFixture: ComponentFixture<DataTableComponent>
+  let groupingComponent: DataTableComponent
+  let groupingDataTable: DataTableHarness
+  let translateService: TranslateService
+
+  const GROUPING_TRANSLATIONS = {
+    en: {
+      OCX_DATA_TABLE: {
+        SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
+        SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
+        ALL: 'All',
+        SEARCH_RESULTS_FOUND: '{{results}} Results Found',
+        NO_SEARCH_RESULTS_FOUND: 'No Results Found',
+        ROWS: 'Rows',
+      },
+    },
+    de: {
+      OCX_DATA_TABLE: {
+        SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
+        SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
+        ALL: 'Alle',
+        SEARCH_RESULTS_FOUND: '{{results}} Ergebnisse gefunden',
+        NO_SEARCH_RESULTS_FOUND: 'Keine Ergebnisse gefunden',
+        ROWS: 'Zeilen',
+      },
+    },
+  }
+
+  const groupingMockData = [
+    { id: 1, category: 'Fruits', product: 'Apple', amount: 10 },
+    { id: 2, category: 'Fruits', product: 'Banana', amount: 20 },
+    { id: 3, category: 'Vegetables', product: 'Carrot', amount: 15 },
+    { id: 4, category: 'Vegetables', product: 'Broccoli', amount: 25 },
+    { id: 5, category: 'Fruits', product: 'Orange', amount: 5 },
+  ]
+
+  const groupingColumns = [
+    { columnType: ColumnType.STRING, id: 'category', nameKey: 'Category', sortable: true },
+    { columnType: ColumnType.STRING, id: 'product', nameKey: 'Product', sortable: false },
+    { columnType: ColumnType.NUMBER, id: 'amount', nameKey: 'Amount', sortable: true },
+  ]
+
+  beforeEach(async () => {
+    TestBed.resetTestingModule()
+    await TestBed.configureTestingModule({
+      declarations: [DataTableComponent, TestRouteComponent],
+      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService(GROUPING_TRANSLATIONS),
+        provideUserServiceMock(),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
+        DataViewStateService,
+      ],
+    }).compileComponents()
+
+    groupingFixture = TestBed.createComponent(DataTableComponent)
+    groupingComponent = groupingFixture.componentInstance
+    groupingComponent.rows.set(groupingMockData as any)
+    groupingComponent.columns = (groupingColumns as any)
+    groupingFixture.componentRef.setInput('paginator', true)
+    translateService = TestBed.inject(TranslateService)
+    translateService.use('en')
+    const userServiceMock = TestBed.inject(UserServiceMock)
+    userServiceMock.permissionsTopic$.publish(['VIEW', 'EDIT', 'DELETE'])
+    groupingFixture.detectChanges()
+    groupingDataTable = await TestbedHarnessEnvironment.harnessForFixture(groupingFixture, DataTableHarness)
+  })
+
+  it('should not be grouped when groupingConfig is not provided', async () => {
+    expect(groupingComponent.isGrouped()).toBe(false)
+    expect(groupingComponent.groupPlan()).toBeNull()
+    expect(groupingComponent.groupedRows()).toBeNull()
+  })
+
+  it('should compute group plan when groupingConfig is provided', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.isGrouped()).toBe(true)
+    expect(groupingComponent.groupPlan()).toBeTruthy()
+    expect(groupingComponent.groupPlan()!.groups.length).toBe(2)
+    expect(groupingComponent.groupPlan()!.groups.map((g) => g.key)).toEqual(['Fruits', 'Vegetables'])
+    expect(groupingComponent.groupPlan()!.groups[0].count).toBe(3)
+    expect(groupingComponent.groupPlan()!.groups[1].count).toBe(2)
+  })
+
+  it('should group rows and render group rows in harness', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.groupedRows()).toBeTruthy()
+    expect(groupingComponent.groupedRows()!.groups.length).toBe(2)
+
+    const groupRows = await groupingDataTable.getGroupRows()
+    expect(groupRows.length).toBe(2)
+  })
+
+  it('should return correct group labels via harness', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const groupLabels = await groupingDataTable.getGroupLabels()
+    expect(groupLabels).toEqual(['Fruits', 'Vegetables'])
+  })
+
+  it('should return correct group counts via harness', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const groupCounts = await groupingDataTable.getGroupCounts()
+    expect(groupCounts).toEqual([3, 2])
+  })
+
+  it('should get group row by key via harness', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const fruitsGroup = await groupingDataTable.getGroupRow('Fruits')
+    expect(fruitsGroup).toBeTruthy()
+    const fruitsKey = await fruitsGroup!.getGroupKey()
+    expect(fruitsKey).toBe('Fruits')
+
+    const vegGroup = await groupingDataTable.getGroupRow('Vegetables')
+    expect(vegGroup).toBeTruthy()
+    const vegKey = await vegGroup!.getGroupKey()
+    expect(vegKey).toBe('Vegetables')
+  })
+
+  it('should return null for non-existent group key', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const nonExistent = await groupingDataTable.getGroupRow('NonExistent')
+    expect(nonExistent).toBeNull()
+  })
+
+  it('should support nested field path for groupBy', async () => {
+    const nestedData = [
+      { id: 1, category: { name: 'Fruits', type: 'Food' }, product: 'Apple' },
+      { id: 2, category: { name: 'Fruits', type: 'Food' }, product: 'Banana' },
+      { id: 3, category: { name: 'Vegetables', type: 'Food' }, product: 'Carrot' },
+    ]
+    const nestedColumns = [
+      { columnType: ColumnType.STRING, id: 'category.name', nameKey: 'Category' },
+      { columnType: ColumnType.STRING, id: 'product', nameKey: 'Product' },
+    ]
+
+    groupingComponent.rows.set(nestedData as any)
+    groupingComponent.columns = (nestedColumns as any)
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category.name',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.isGrouped()).toBe(true)
+    expect(groupingComponent.groupPlan()!.groups.length).toBe(2)
+    expect(groupingComponent.groupPlan()!.groups.map((g) => g.key)).toEqual(['Fruits', 'Vegetables'])
+  })
+
+  it('should use custom groupLabelFormatter when provided', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+      groupLabel: (key, rows) => `${key} (${rows.length} items)`,
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.groupPlan()!.groups[0].label).toBe('Fruits (3 items)')
+    expect(groupingComponent.groupPlan()!.groups[1].label).toBe('Vegetables (2 items)')
+  })
+
+  it('should render custom group cell template when provided', async () => {
+    const customTemplate = `<div class="custom-group">Custom: {{group.key}} ({{group.count}})</div>`
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.componentRef.setInput('groupCellTemplate', customTemplate)
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const groupRows = await groupingDataTable.getGroupRows()
+    expect(groupRows.length).toBe(2)
+  })
+
+  it('should use default group cell template when no custom template provided', async () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    const groupRows = await groupingDataTable.getGroupRows()
+    expect(groupRows.length).toBe(2)
+    const firstGroupLabel = await groupRows[0].getGroupLabel()
+    expect(firstGroupLabel).toBe('Fruits')
+  })
+
+  it('should use a real TemplateRef groupCellTemplate when provided', async () => {
+    TestBed.resetTestingModule()
+    await TestBed.configureTestingModule({
+      declarations: [GroupCellTemplateHostComponent, TestRouteComponent, DataTableComponent],
+      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService(GROUPING_TRANSLATIONS),
+        provideUserServiceMock(),
+        provideRouter([{ path: '**', component: TestRouteComponent }]),
+        {
+          provide: HAS_PERMISSION_CHECKER,
+          useExisting: UserService,
+        },
+        DataViewStateService,
+      ],
+    }).compileComponents()
+
+    const hostFixture = TestBed.createComponent(GroupCellTemplateHostComponent)
+    const dataTableRef = hostFixture.debugElement.query(
+      (el) => el.nativeElement.tagName === 'OCX-DATA-TABLE'
+    )!
+    const dataTable = dataTableRef.componentInstance as DataTableComponent
+    dataTable.rows.set(groupingMockData as any)
+    dataTable.columns = groupingColumns as any
+    hostFixture.detectChanges()
+    await hostFixture.whenStable()
+
+    expect(dataTable.groupCell()).toBeInstanceOf(TemplateRef)
+    const groupRows = hostFixture.nativeElement.querySelectorAll('.group-row')
+    expect(groupRows.length).toBe(2)
+    expect(hostFixture.nativeElement.querySelector('.custom-group-cell')).toBeTruthy()
+  })
+
+  it('should track group rows by group index', () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+
+    const trackByFn = groupingComponent.groupTrackByFunction
+    expect(trackByFn(0, groupingComponent.groupedRows()!.groups[0])).toBe(0)
+    expect(trackByFn(1, groupingComponent.groupedRows()!.groups[1])).toBe(1)
+  })
+
+  it('should track group data rows by original row index', () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+
+    const trackByFn = groupingComponent.groupRowTrackByFunction
+    const flatRows = groupingComponent.groupedRows()!.flatRows
+    expect(trackByFn(0, flatRows[0])).toBe(flatRows[0].rowIndex)
+  })
+
+  it('should return correct group key for a row', () => {
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+
+    const groupKey = groupingComponent.getGroupKey(groupingMockData[0])
+    expect(groupKey).toBe('Fruits')
+  })
+
+  it('should return null group key when grouping config is not set', () => {
+    const groupKey = groupingComponent.getGroupKey(groupingMockData[0])
+    expect(groupKey).toBeNull()
+  })
+
+  it('should handle empty rows with grouping config', async () => {
+    groupingComponent.rows.set([] as any)
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.isGrouped()).toBe(true)
+    expect(groupingComponent.groupPlan()!.groups.length).toBe(0)
+    expect(groupingComponent.groupedRows()!.groups.length).toBe(0)
+
+    const groupRows = await groupingDataTable.getGroupRows()
+    expect(groupRows.length).toBe(0)
+  })
+
+  it('should handle grouping with single row', async () => {
+    groupingComponent.rows.set([groupingMockData[0]] as any)
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(groupingComponent.groupPlan()!.groups.length).toBe(1)
+    expect(groupingComponent.groupPlan()!.groups[0].count).toBe(1)
+  })
+
+  it('should report isGrouped correctly via harness', async () => {
+    expect(await groupingDataTable.isGrouped()).toBe(false)
+
+    groupingFixture.componentRef.setInput('groupingConfig', {
+      groupByColumnId: 'category',
+    })
+    groupingFixture.detectChanges()
+    await groupingFixture.whenStable()
+
+    expect(await groupingDataTable.isGrouped()).toBe(true)
   })
 })

@@ -55,6 +55,7 @@ export * from './lib/model/column-type.model'
 export * from './lib/model/data-action'
 export * from './lib/model/button-dialog'
 export * from './lib/model/translation.model'
+export * from './lib/components/data-table/model/data-table-grouping.model'
 
 // export * from './lib/model/data-column-name-id.model'
 export * from './lib/model/data-sort-direction'

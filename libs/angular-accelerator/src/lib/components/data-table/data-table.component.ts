@@ -39,10 +39,12 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
+import { RowGroupPlanner } from './utils/row-group-planner'
+import { DataTableGroupingConfig, GroupCellContext, GroupPlan, GroupedRowsResult, GroupedRowWithRows } from './model/data-table-grouping.model'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -191,6 +193,37 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   captionTemplate = input<TemplateRef<any> | undefined>(undefined)
+
+  /**
+   * Opt-in configuration for single-level row grouping.
+   * When `undefined`, the table renders flat rows exactly as before (fully backward compatible).
+   *
+   * @example
+   * ```html
+   * <ocx-data-table
+   *   [groupingConfig]="{ groupByColumnId: 'category', groupKeyPath: 'category.name' }">
+   * </ocx-data-table>
+   * ```
+   */
+  groupingConfig = input<DataTableGroupingConfig | undefined>(undefined)
+
+  /**
+   * Optional custom template for the group header cell, receiving a `GroupCellContext`
+   * as its implicit (`$implicit`) context. When not provided (or not a valid `TemplateRef`),
+   * the built-in default group cell template is rendered.
+   */
+  groupCellTemplate = input<TemplateRef<GroupCellContext> | undefined>(undefined)
+  groupCellChildTemplate = contentChild<TemplateRef<GroupCellContext>>('groupCell')
+  groupCell = computed(() => {
+    // Only use the input template when it is a genuine TemplateRef; otherwise fall
+    // back to the content-child template (or the built-in default in the view).
+    const template = this.groupCellTemplate()
+    if (template instanceof TemplateRef) {
+      return template
+    }
+    return this.groupCellChildTemplate() ?? undefined
+  })
+
   stringCellTemplate = input<TemplateRef<any> | undefined>(undefined)
   stringCellChildTemplate = contentChild<TemplateRef<any>>('stringCell')
   stringCell = computed(() => {
@@ -313,7 +346,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   @Output() rowExpanded = observableOutput<Row>()
   @Output() rowCollapsed = observableOutput<Row>()
 
-  displayedRows$ = combineLatest([
+  // Rows with filter + sort applied but before flattening. Shared source for both the
+  // flattened display rows and the (un-flattened) rows used by row grouping, so a
+  // dot-notation groupKeyPath resolves against the original nested row shape.
+  private processedRows$ = combineLatest([
     toObservable(this.rows),
     toObservable(this.stateService.filters),
     toObservable(this.stateService.sortColumn),
@@ -342,8 +378,103 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         params.clientSideSorting
       ),
     })),
-    map(({ rows }) => this.flattenItems(rows))
+    map(({ rows }) => rows)
   )
+
+  displayedRows$ = this.processedRows$.pipe(map((rows) => this.flattenItems(rows)))
+
+  groupableRows$ = this.processedRows$
+
+  // Grouping computed signals
+  groupingConfigSignal = this.groupingConfig
+  displayedRowsSignal = toSignal(this.displayedRows$, { initialValue: [] as Row[] })
+  groupableRowsSignal = toSignal(this.groupableRows$, { initialValue: [] as Row[] })
+
+  groupPlan = computed(() => {
+    const config = this.groupingConfigSignal()
+    const rows = this.groupableRowsSignal() as Row[]
+    const columns = this.stateService.columns()
+    if (!config || columns.length === 0) {
+      return null
+    }
+    return RowGroupPlanner.planGroups(rows, columns, config)
+  })
+
+  groupedRows = computed(() => {
+    const plan = this.groupPlan()
+    // Use flattened displayed rows (same order/count as the plan's source) so cell
+    // rendering matches the non-grouped table; row indices line up across both.
+    const rows = this.displayedRowsSignal() as Row[]
+    if (!plan) {
+      return null
+    }
+    const groups = plan.groups.map(group => ({
+      ...group,
+      rows: group.rowIndices.map(i => rows[i])
+    }))
+    // Build flat array with a group header row followed by that group's data rows.
+    // Data rows carry their original row index; headers carry a unique negative index
+    // so rowTrackBy stays unique across every row.
+    const flatRows: (Row & { rowIndex: number; groupIndex: number; __isGroupHeader: boolean; groupKey?: string | number })[] = []
+    for (let groupIdx = 0; groupIdx < groups.length; groupIdx++) {
+      const group = groups[groupIdx]
+      flatRows.push({
+        id: `group-${group.key}`,
+        rowIndex: -(groupIdx + 1),
+        groupIndex: groupIdx,
+        __isGroupHeader: true,
+        groupKey: group.key
+      })
+      group.rowIndices.forEach(originalIndex => {
+        const row = rows[originalIndex]
+        flatRows.push({
+          ...row,
+          rowIndex: originalIndex,
+          groupIndex: groupIdx,
+          __isGroupHeader: false
+        })
+      })
+    }
+    return { groups, flatRows }
+  })
+
+  isGrouped = computed(() => this.groupPlan() !== null)
+
+  getGroupRowSpan = (group: GroupPlan): number => group.rowspan
+
+  getGroupKey = (row: Row): string | null => {
+    const config = this.groupingConfigSignal()
+    const plan = this.groupPlan()
+    if (!config || !plan) {
+      return null
+    }
+    const path = config.groupKeyPath ?? config.groupByColumnId
+    return RowGroupPlanner.getGroupKey(row, path)
+  }
+
+  getGroupByKey = (key: string | number): GroupedRowWithRows | undefined => {
+    const grouped = this.groupedRows()
+    return grouped?.groups.find(g => g.key === key)
+  }
+
+  getGroupContext = (groupKey: string | number): GroupedRowWithRows | { label: string; rowspan: number } => {
+    const group = this.getGroupByKey(groupKey)
+    return group ?? { label: '', rowspan: 0 }
+  }
+
+  getGroupCellContext = (group: GroupedRowWithRows): GroupCellContext => ({
+    key: group.key,
+    label: group.label,
+    rows: group.rows,
+    rowIndices: group.rowIndices,
+    rowspan: group.rowspan
+  })
+
+  groupTrackByFunction = (index: number, group: GroupedRowWithRows): number => index
+
+  groupRowTrackByFunction = (index: number, row: Row & { rowIndex: number; groupIndex: number }): number => {
+    return row.rowIndex
+  }
 
   selectedFilteredRows = computed(() => {
     const selectionIds = this.selectedIds()

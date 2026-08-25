@@ -22,8 +22,7 @@
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } @if (editTableRowObserved && (!editActionVisibleField() || fieldIsTruthy(rowObject, editActionVisibleField())))
-      {
+      } @if (editTableRowObserved && (!editActionVisibleField() || fieldIsTruthy(rowObject, editActionVisibleField()))) {
       <button
         [id]="resolveFieldData(rowObject, 'id')+'-editButton'"
         *ocxIfPermission="editPermission()"
@@ -133,8 +132,8 @@
 @if (displayedPageSize(); as displayedPageSize) { @if ((columnTemplates$ | async) ?? {}; as columnTemplates) {
 @if ((columnHeaderTemplates$ | async) ?? {}; as columnHeaderTemplates) {
 <p-table
-  [value]="(displayedRows$ | async) ?? []"
-  [paginator]="paginator()"
+  [value]="isGrouped() ? groupedRows()?.flatRows ?? [] : (displayedRows$ | async) ?? []"
+  [paginator]="paginator() && !isGrouped()"
   [first]="stateService.activePage() * displayedPageSize"
   (onPage)="onPageChange($event)"
   [rows]="displayedPageSize"
@@ -147,7 +146,7 @@
   [id]="'dataTable_' + name()"
   (selectionChange)="onSelectionChange($event)"
   dataKey="id"
-  [rowTrackBy]="rowTrackByFunction"
+  [rowTrackBy]="isGrouped() ? groupRowTrackByFunction : rowTrackByFunction"
   [selection]="selectedFilteredRows()"
   [scrollable]="true"
   scrollHeight="flex"
@@ -219,45 +218,87 @@
     }
   </ng-template>
 
-  <ng-template #body let-rowObject>
-    @if (columnTemplates) {
-    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
-      <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
+  <ng-template #groupRow let-group>
+    <tr class="group-row" [attr.id]="'group-row-' + group?.key">
+      <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: { id: 'group-' + group?.key }}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
-        @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
-        <p-checkbox
-          [value]="true"
-          [binary]="true"
-          [disabled]="true"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
-        ></p-checkbox>
-        } @else {
-        <p-tableCheckbox
-          [value]="rowObject"
-          [disabled]="isRowSelectionDisabled(rowObject)"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
-        ></p-tableCheckbox>
-        }
+        <span class="sr-only">{{ 'OCX_DATA_TABLE.GROUP_ROW' | translate }}</span>
       </td>
       } @if (stateService.actionColumnConfigPosition() === 'left') {
-      <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
-      } @for (column of stateService.columns(); track column) {
-      <td>
-        @defer (on viewport) { @if (columnTemplates[column.id]) {
+      <td></td>
+      }
+      <td [attr.colspan]="stateService.columns().length">
         <ng-container
-          [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
-          [ngTemplateOutletContext]="{ rowObject: rowObject, column: column }"
+          [ngTemplateOutlet]="groupCell() ?? defaultGroupCell"
+          [ngTemplateOutletContext]="{ $implicit: group }"
         >
         </ng-container>
-        } } @placeholder {
-        <p-skeleton width="3rem" />
-        }
       </td>
-      } @if (stateService.actionColumnConfigPosition() === 'right') {
-      <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+      @if (stateService.actionColumnConfigPosition() === 'right') {
+      <td></td>
       }
     </tr>
+  </ng-template>
+
+  <ng-template #defaultGroupCell let-group>
+    <div class="group-cell-content">
+      <span class="group-label">{{ group.label }}</span>
+      <span class="group-count">({{ group.rowspan }} {{ 'OCX_DATA_TABLE.ROWS' | translate }})</span>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowObject>
+    <ng-container>
+      @if (rowObject.__isGroupHeader) {
+        <ng-container *ngTemplateOutlet="groupRow; context: { $implicit: getGroupContext(rowObject.groupKey!) }"></ng-container>
+      } @else {
+        <ng-container *ngTemplateOutlet="bodyRow; context: { rowObject: rowObject }"></ng-container>
+      }
+    </ng-container>
+  </ng-template>
+
+  <ng-template #bodyRow let-rowObject="rowObject">
+    @if (columnTemplates) {
+    <ng-container>
+      <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
+        <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
+        @if (selectionChangedObserved) {
+        <td>
+          @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
+          <p-checkbox
+            [value]="true"
+            [binary]="true"
+            [disabled]="true"
+            [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+          ></p-checkbox>
+          } @else {
+          <p-tableCheckbox
+            [value]="rowObject"
+            [disabled]="isRowSelectionDisabled(rowObject)"
+            [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+          ></p-tableCheckbox>
+          }
+        </td>
+        } @if (stateService.actionColumnConfigPosition() === 'left') {
+        <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+        } @for (column of stateService.columns(); track column) {
+        <td>
+          @defer (on viewport) { @if (columnTemplates[column.id]) {
+          <ng-container
+            [ngTemplateOutlet]="cell() ?? columnTemplates[column.id]"
+            [ngTemplateOutletContext]="{ rowObject: rowObject, column: column }"
+          >
+          </ng-container>
+          } } @placeholder {
+          <p-skeleton width="3rem" />
+          }
+        </td>
+        } @if (stateService.actionColumnConfigPosition() === 'right') {
+        <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+        }
+      </tr>
+    </ng-container>
     }
   </ng-template>
 
