@@ -1,5 +1,5 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
-import { content } from './content'
+import { content, contentTitle } from './content'
 
 describe('content schema', () => {
   it('parses an empty object', () => {
@@ -37,6 +37,29 @@ describe('content schema', () => {
           offset: '{{primitives.border.offset.none}}',
         },
         shadow: '{{primitives.shadow.md}}',
+        title: expect.any(Object),
+      })
+    })
+
+    describe('title', () => {
+      it('should apply defaults', () => {
+        const result = content.safeParse({})
+
+        expect(result.success).toBe(true)
+
+        const value = result.data
+        expectExactUndefinedTokens(value?.title, contentTitle.shape, [])
+        expectExactTokens(value?.title, {
+          color: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
+          font: {
+            family: '{{primitives.font.family}}',
+            size: '{{primitives.font.size.lg}}',
+            weight: '{{primitives.font.weight.medium}}',
+            lineHeight: '{{primitives.font.lineHeight}}',
+            letterSpacing: '{{primitives.font.letterSpacing}}',
+            style: '{{primitives.font.style}}',
+          },
+        })
       })
     })
   })

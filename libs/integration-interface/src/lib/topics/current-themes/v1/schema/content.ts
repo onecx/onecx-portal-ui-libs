@@ -2,6 +2,19 @@ import * as z from 'zod'
 import { bg, border, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 
+export const contentTitle = z
+  .object({
+    color: color.default('{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'),
+    font: font.default({
+      family: '{{primitives.font.family}}',
+      size: '{{primitives.font.size.lg}}',
+      weight: '{{primitives.font.weight.medium}}',
+      lineHeight: '{{primitives.font.lineHeight}}',
+      letterSpacing: '{{primitives.font.letterSpacing}}',
+      style: '{{primitives.font.style}}',
+    }),
+  })
+  .register(themeSchemaRegistry, { id: 'contentTitle' })
 export const content = z
   .object({
     background: z
@@ -26,5 +39,6 @@ export const content = z
       offset: '{{primitives.border.offset.none}}',
     }),
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
+    title: (contentTitle as typeof contentTitle).prefault({}),
   })
   .register(themeSchemaRegistry, { id: 'content' })

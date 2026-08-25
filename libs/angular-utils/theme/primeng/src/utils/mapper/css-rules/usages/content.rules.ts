@@ -18,4 +18,16 @@ export const contentCssRules: CssRule[] = [
       { property: 'box-shadow', from: 'usages.content.shadow' },
     ],
   },
+  {
+    selector: '#ocx_content_title_element',
+    declarations: [
+      { property: 'color', from: 'usages.content.title.color' },
+      { property: 'font-family', from: 'usages.content.title.font.family' },
+      { property: 'font-size', from: 'usages.content.title.font.size' },
+      { property: 'font-weight', from: 'usages.content.title.font.weight' },
+      { property: 'line-height', from: 'usages.content.title.font.lineHeight' },
+      { property: 'letter-spacing', from: 'usages.content.title.font.letterSpacing' },
+      { property: 'font-style', from: 'usages.content.title.font.style' },
+    ],
+  },
 ]
