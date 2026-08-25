@@ -125,6 +125,28 @@ describe('RowGroupPlanner', () => {
       expect(result.groups[0].rowspan).toBe(1);
     });
 
+    it('should handle null/undefined group keys by grouping them together', () => {
+      const nullKeyRows: Row[] = [
+        { id: 1, status: 'A', name: 'Item 1' },
+        { id: 2, name: 'Item 2' }, // missing status
+        { id: 3, status: null, name: 'Item 3' }, // explicit null
+        { id: 4, status: 'B', name: 'Item 4' },
+      ];
+      const config: DataTableGroupingConfig = { groupByColumnId: 'status' };
+      const result = RowGroupPlanner.planGroups(nullKeyRows, columns, config);
+
+      expect(result.groups).toHaveLength(3);
+      // Groups follow first occurrence order: 'A' (index 0), null/undefined (indices 1,2), 'B' (index 3)
+      expect(result.groups[0].key).toBe('A');
+      expect(result.groups[0].rowIndices).toEqual([0]);
+      expect(result.groups[1].key).toBeNull();
+      expect(result.groups[1].rowIndices).toEqual([1, 2]); // indices of rows with missing/null status
+      expect(result.groups[1].label).toBe('null'); // String(null) = 'null'
+      expect(result.groups[1].rowspan).toBe(2);
+      expect(result.groups[2].key).toBe('B');
+      expect(result.groups[2].rowIndices).toEqual([3]);
+    });
+
     it('should handle single row group (rowspan = 1)', () => {
       const singleRow: Row[] = [{ id: 1, status: 'A', name: 'Item 1' }];
       const config: DataTableGroupingConfig = { groupByColumnId: 'status' };
@@ -208,6 +230,36 @@ describe('RowGroupPlanner', () => {
       const row: Row = { id: 1, status: 'ACTIVE' };
       const key = RowGroupPlanner.getGroupKey(row, 'missing.path');
       expect(key).toBeNull();
+    });
+
+    it('should use custom groupKeyGetter when provided', () => {
+      const config: DataTableGroupingConfig = {
+        groupByColumnId: 'status',
+        groupKeyGetter: (row, index, rows) => `custom-${row.status}-${index}`
+      };
+      const result = RowGroupPlanner.planGroups(rows, columns, config);
+
+      expect(result.groups).toHaveLength(5); // Each row gets unique key
+      expect(result.groups[0].key).toBe('custom-A-0');
+      expect(result.groups[1].key).toBe('custom-B-1');
+      expect(result.groups[2].key).toBe('custom-A-2');
+      expect(result.groups[3].key).toBe('custom-A-3');
+      expect(result.groups[4].key).toBe('custom-C-4');
+    });
+
+    it('should use groupKeyGetter with row, index, and rows parameters', () => {
+      const config: DataTableGroupingConfig = {
+        groupByColumnId: 'status',
+        groupKeyGetter: (row, index, rows) => {
+          expect(index).toBeLessThan(rows.length);
+          expect(rows).toBeDefined();
+          return row.status + '-idx' + index;
+        }
+      };
+      const result = RowGroupPlanner.planGroups(rows, columns, config);
+
+      expect(result.groups).toHaveLength(5);
+      expect(result.groups[0].key).toBe('A-idx0');
     });
   });
 });

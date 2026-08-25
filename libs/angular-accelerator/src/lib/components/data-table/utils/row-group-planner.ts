@@ -1,8 +1,7 @@
-import { DataTableGroupingConfig, GroupKeyGetter } from '../model/data-table-grouping.model';
+import { DataTableGroupingConfig, GroupPlan, GroupedRowsResult } from '../model/data-table-grouping.model';
 import { DataTableColumn } from '../../../model/data-table-column.model';
 import { Row } from '../data-table.component';
 import { ObjectUtils } from 'primeng/utils';
-import { GroupPlan, GroupedRowsResult } from '../model/data-table-grouping.model';
 
 /**
  * Internal pure planner for row grouping.
@@ -38,18 +37,22 @@ export class RowGroupPlanner {
 
     // First pass: compute group key for each row and build group map
     // Using Map to preserve insertion order (first occurrence order)
-    const groupMap = new Map<string | number, { rowIndices: number[]; firstRow: Row }>();
+    const groupMap = new Map<string | number | symbol, { rowIndices: number[]; firstRow: Row }>();
 
     rows.forEach((row, index) => {
       const key = groupKeyGetter
         ? groupKeyGetter(row, index, rows as readonly Row[])
         : this.getGroupKey(row, groupKeyPath);
-      const normalizedKey = key ?? ''; // Normalize undefined/null to empty string for grouping
+      // Use a unique symbol for null/undefined keys to avoid unintended grouping
+      const normalizedKey = key ?? RowGroupPlanner.NULL_KEY;
 
       if (!groupMap.has(normalizedKey)) {
         groupMap.set(normalizedKey, { rowIndices: [], firstRow: row });
       }
-      groupMap.get(normalizedKey)!.rowIndices.push(index);
+      const group = groupMap.get(normalizedKey);
+      if (group) {
+        group.rowIndices.push(index);
+      }
     });
 
     // Second pass: build group plans in insertion order (first occurrence)
@@ -57,14 +60,19 @@ export class RowGroupPlanner {
     const allRowIndices: number[] = [];
     const rowIndexToGroupIndex = new Map<number, number>();
 
-    groupMap.forEach(({ rowIndices, firstRow }, key) => {
+    groupMap.forEach(({ rowIndices }, key) => {
+      // Convert symbol back to null for group key storage
+      const isNullKey = key === RowGroupPlanner.NULL_KEY;
+      const actualKey = isNullKey ? null : (key as string | number);
+      // Keep null as-is for label generation so String(null) = 'null'
+      const labelKey = actualKey;
       const label = groupLabelFn
-        ? groupLabelFn(key, rowIndices.map(i => rows[i]))
-        : String(key);
+        ? groupLabelFn(labelKey as string | number, rowIndices.map(i => rows[i]))
+        : String(labelKey);
 
       const groupIndex = groups.length;
       groups.push({
-        key,
+        key: actualKey,
         label,
         rowIndices,
         rowspan: rowIndices.length,
@@ -77,6 +85,9 @@ export class RowGroupPlanner {
 
     return { groups, flatRowIndices: allRowIndices, allRowIndices, rowIndexToGroupIndex };
   }
+
+  /** Unique symbol to represent null/undefined group keys internally */
+  private static readonly NULL_KEY = Symbol('null-group-key');
 
   /**
    * Extracts a group key from a row using a dot-notation path.

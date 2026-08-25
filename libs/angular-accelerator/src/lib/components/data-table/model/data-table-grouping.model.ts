@@ -39,8 +39,8 @@ export interface DataTableGroupingConfig {
  * Contains all information needed to render a group header cell.
  */
 export interface GroupCellContext {
-  /** The computed group key (string or number) */
-  key: string | number
+  /** The computed group key (string, number, or null) */
+  key: string | number | null
 
   /** The display label for the group (either key or custom groupLabel result) */
   label: string
@@ -57,17 +57,18 @@ export interface GroupCellContext {
 
 /**
  * Function type for extracting a group key from a row.
- * Receives a row, its index, and the full rows array, returns a string or number key.
+ * Receives a row, its index, and the full rows array, returns a string, number, or null key.
+ * Null keys will be grouped together.
  */
-export type GroupKeyGetter = (row: Row, index: number, rows: readonly Row[]) => string | number
+export type GroupKeyGetter = (row: Row, index: number, rows: readonly Row[]) => string | number | null
 
 /**
  * Internal type representing a computed group plan.
  * Not part of the public API - used internally by DataTableComponent.
  */
 export interface GroupPlan {
-  /** The group key */
-  key: string | number
+  /** The group key (can be null for rows with null/undefined group key) */
+  key: string | number | null
   /** The display label */
   label: string
   /** Row indices in the original data array */

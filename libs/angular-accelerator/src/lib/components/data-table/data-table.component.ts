@@ -410,12 +410,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     }
     const groups = plan.groups.map(group => ({
       ...group,
-      rows: group.rowIndices.map(i => rows[i])
+      rows: group.rowIndices.map((originalIndex: number) => rows[originalIndex])
     }))
     // Build flat array with a group header row followed by that group's data rows.
     // Data rows carry their original row index; headers carry a unique negative index
     // so rowTrackBy stays unique across every row.
-    const flatRows: (Row & { rowIndex: number; groupIndex: number; __isGroupHeader: boolean; groupKey?: string | number })[] = []
+    const flatRows: (Row & { rowIndex: number; groupIndex: number; __isGroupHeader: boolean; groupKey?: string | number | null })[] = []
     for (let groupIdx = 0; groupIdx < groups.length; groupIdx++) {
       const group = groups[groupIdx]
       flatRows.push({
@@ -425,7 +425,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         __isGroupHeader: true,
         groupKey: group.key
       })
-      group.rowIndices.forEach(originalIndex => {
+      group.rowIndices.forEach((originalIndex: number) => {
         const row = rows[originalIndex]
         flatRows.push({
           ...row,
@@ -446,25 +446,47 @@ export class DataTableComponent extends DataSortBase implements OnInit {
    * Returns the number of rows in the group.
    * Used by the template for the rowspan attribute on group header cells.
    */
-  getGroupRowSpan = (groupKey: string | number): number => {
+  getGroupRowSpan = (groupKey: string | number | null): number => {
     const grouped = this.groupedRows()
     if (!grouped) {
       return 1
     }
-    const group = grouped.groups.find(g => g.key === groupKey)
+    const group = grouped.groups.find((g: GroupedRowWithRows) => g.key === groupKey)
     return group?.rowspan ?? 1
   }
 
-  getGroupKey = (row: Row): string | number | null => {
+  getGroupKey = (row: Row, index: number = 0, rows: readonly Row[] = []): string | number | null => {
     const config = this.groupingConfigSignal()
     const plan = this.groupPlan()
     if (!config || !plan) {
       return null
     }
+    // Use custom groupKeyGetter if provided, otherwise fall back to default path resolution
+    if (config.groupKeyGetter) {
+      return config.groupKeyGetter(row, index, rows)
+    }
     const path = config.groupKeyPath ?? config.groupByColumnId
     const key = RowGroupPlanner.getGroupKey(row, path)
     return key ?? null
   }
+
+  getGroupByKey = (key: string | number | null): GroupedRowWithRows | undefined => {
+    const grouped = this.groupedRows()
+    return grouped?.groups.find((g: GroupedRowWithRows) => g.key === key)
+  }
+
+  getGroupContext = (groupKey: string | number | null): GroupedRowWithRows | { label: string; rowspan: number } => {
+    const group = this.getGroupByKey(groupKey)
+    return group ?? { label: '', rowspan: 0 }
+  }
+
+  getGroupCellContext = (group: GroupedRowWithRows): GroupCellContext => ({
+    key: group.key,
+    label: group.label,
+    rows: group.rows,
+    rowIndices: group.rowIndices,
+    rowspan: group.rowspan
+  })
 
   /**
    * Returns the custom group cell template if provided, otherwise undefined.
@@ -487,23 +509,28 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return columns.find(c => c.id === config.groupByColumnId)
   }
 
-  getGroupByKey = (key: string | number): GroupedRowWithRows | undefined => {
-    const grouped = this.groupedRows()
-    return grouped?.groups.find(g => g.key === key)
-  }
+  /**
+   * Returns the cell template for a given column.
+   * This is used by the default group cell template to reuse the grouping column's cell presentation.
+   * Memoized as a computed signal to avoid recursive change detection when called from templates.
+   */
+  columnCellTemplates = computed(() => {
+    const templates = this.templates() ?? []
+    const templateMap = new Map<ColumnType, TemplateRef<any> | null>()
 
-  getGroupContext = (groupKey: string | number): GroupedRowWithRows | { label: string; rowspan: number } => {
-    const group = this.getGroupByKey(groupKey)
-    return group ?? { label: '', rowspan: 0 }
-  }
+    // Pre-compute templates for all column types to avoid re-computation during template rendering
+    Object.values(ColumnType).forEach((type: ColumnType | number) => {
+      if (typeof type === 'string') { // Filter out numeric enum values
+        templateMap.set(type as ColumnType, this.getColumnTypeTemplate([...templates], type as ColumnType, TemplateType.CELL))
+      }
+    })
 
-  getGroupCellContext = (group: GroupedRowWithRows): GroupCellContext => ({
-    key: group.key,
-    label: group.label,
-    rows: group.rows,
-    rowIndices: group.rowIndices,
-    rowspan: group.rowspan
+    return templateMap
   })
+
+  getColumnCellTemplate(column: DataTableColumn): TemplateRef<any> | null {
+    return this.columnCellTemplates().get(column.columnType) ?? null
+  }
 
   /**
    * Checks if the given row is the first row in its group.
@@ -517,7 +544,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     if (!grouped) {
       return false
     }
-    const group = grouped.groups.find(g => g.key === row.groupKey)
+    const group = grouped.groups.find((g: GroupedRowWithRows) => g.key === row.groupKey)
     if (!group || group.rows.length === 0) {
       return false
     }

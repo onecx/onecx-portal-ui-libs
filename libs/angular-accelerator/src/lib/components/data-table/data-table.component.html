@@ -218,11 +218,23 @@
     }
   </ng-template>
 
-  <ng-template #defaultGroupCell let-context>
-    <div class="group-cell-content">
-      <span class="group-label">{{ context.label }}</span>
-      <span class="group-count">({{ context.rowspan }} {{ 'OCX_DATA_TABLE.ROWS' | translate }})</span>
-    </div>
+  <ng-template #defaultGroupCell let-group>
+    <ng-container *ngIf="getGroupingColumn() as groupCol; else fallbackGroupCell">
+      <!-- Use the grouping column's cell template to render the group header cell.
+           Only use custom template if provided; otherwise fall back to group label. -->
+      <ng-container *ngIf="getColumnCellTemplate(groupCol) as template; else fallbackGroupCell">
+        <ng-container
+          [ngTemplateOutlet]="template"
+          [ngTemplateOutletContext]="{ rowObject: group.rows[0], column: groupCol }">
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <ng-template #fallbackGroupCell>
+      <div class="group-cell-content">
+        <span class="group-label">{{ group.label }}</span>
+        <span class="group-count">({{ group.rowspan }} {{ 'OCX_DATA_TABLE.ROWS' | translate }})</span>
+      </div>
+    </ng-template>
   </ng-template>
 
   <ng-template pTemplate="body" let-rowObject>
