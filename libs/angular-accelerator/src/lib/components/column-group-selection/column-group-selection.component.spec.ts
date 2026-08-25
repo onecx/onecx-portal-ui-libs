@@ -31,6 +31,19 @@ describe('ColumnGroupSelectionComponent', () => {
     component = fixture.componentInstance
   })
 
+  describe('template', () => {
+    it('should have autofocus attribute on p-select element', () => {
+      fixture.componentRef.setInput('columns', [makeColumn({ predefinedGroupKeys: ['g1'] })])
+      fixture.componentRef.setInput('defaultGroupKey', 'def')
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+      fixture.detectChanges()
+
+      const pSelect = fixture.nativeElement.querySelector('p-select')
+      expect(pSelect).toBeTruthy()
+      expect(pSelect.hasAttribute('autofocus')).toBe(true)
+    })
+  })
+
   describe('selectedGroupKey setter', () => {
     it('should set the selectedGroupKey model value', () => {
       fixture.componentRef.setInput('selectedGroupKey', 'custom')
