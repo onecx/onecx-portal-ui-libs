@@ -16,7 +16,6 @@ describe('ActivateGuardsWrapper', () => {
       hash: '',
       state: null,
       key: 'current',
-      unstable_mask: undefined,
     },
     params: {},
     matches: [],
