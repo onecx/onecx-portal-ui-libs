@@ -189,7 +189,7 @@ const DROPDOWN_LIST: MappingRule[] = [
 
 const DROPDOWN_OPTION: MappingRule[] = [
   {
-    from: 'usages.dropdown.option.states.focus.bg',
+    from: 'usages.dropdown.option.focus.bg',
     to: 'components.select.option.focusBackground',
     transform: toColorString,
   },
@@ -209,7 +209,7 @@ const DROPDOWN_OPTION: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.dropdown.option.states.focus.contrast',
+    from: 'usages.dropdown.option.focus.contrast',
     to: 'components.select.option.focusColor',
     transform: toColorString,
   },
