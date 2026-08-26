@@ -385,12 +385,12 @@ describe('DialogFooterComponent', () => {
     it('should render all PrimeNG severity values correctly on primary button', async () => {
       // Test a representative set of severities to verify the feature works
       // PrimeNG may not remove old severity classes when changing, so we test individually
-      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',
         'success',
         'info',
-        'warning',
+        'warn',
         'help',
         'danger',
         'contrast',
@@ -422,12 +422,12 @@ describe('DialogFooterComponent', () => {
     })
 
     it('should render all PrimeNG severity values correctly on secondary button', async () => {
-      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',
         'success',
         'info',
-        'warning',
+        'warn',
         'help',
         'danger',
         'contrast',
@@ -461,12 +461,12 @@ describe('DialogFooterComponent', () => {
     })
 
     it('should render all PrimeNG severity values correctly on custom button', async () => {
-      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',
         'success',
         'info',
-        'warning',
+        'warn',
         'help',
         'danger',
         'contrast',

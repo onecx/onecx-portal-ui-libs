@@ -9,7 +9,7 @@ export type PButtonSeverity =
   | 'secondary'
   | 'success'
   | 'info'
-  | 'warning'
+  | 'warn'
   | 'help'
   | 'danger'
   | 'contrast'
@@ -76,7 +76,7 @@ export class PButtonDirectiveHarness extends ComponentHarness {
       'p-button-secondary': 'secondary',
       'p-button-success': 'success',
       'p-button-info': 'info',
-      'p-button-warning': 'warning',
+      'p-button-warn': 'warn',
       'p-button-help': 'help',
       'p-button-danger': 'danger',
       'p-button-contrast': 'contrast',

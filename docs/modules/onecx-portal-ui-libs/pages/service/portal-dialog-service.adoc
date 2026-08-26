@@ -230,7 +230,7 @@ Allowed severity values (matching PrimeNG's documented button severities):
 * `secondary`
 * `success`
 * `info`
-* `warning`
+* `warn`
 * `help`
 * `danger`
 * `contrast`
