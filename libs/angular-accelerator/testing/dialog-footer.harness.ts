@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness, PButtonDirectiveHarness } from '@onecx/angular-testing'
+import { ContentContainerComponentHarness, PButtonDirectiveHarness, type PButtonSeverity } from '@onecx/angular-testing'
 
 export class DialogFooterHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-dialog-footer'
@@ -36,5 +36,13 @@ export class DialogFooterHarness extends ContentContainerComponentHarness {
 
   async getSecondaryButtonDisabled(): Promise<boolean | undefined> {
     return await (await this.getSecondaryButton())?.getDisabled()
+  }
+
+  async getPrimaryButtonSeverity(): Promise<PButtonSeverity> {
+    return await (await this.getPrimaryButton()).getSeverity()
+  }
+
+  async getSecondaryButtonSeverity(): Promise<PButtonSeverity | undefined> {
+    return await (await this.getSecondaryButton())?.getSeverity()
   }
 }

@@ -4,6 +4,17 @@ export interface PButtonDirectiveHarnessFilters extends BaseHarnessFilters {
   id?: string
 }
 
+export type PButtonSeverity =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'help'
+  | 'danger'
+  | 'contrast'
+  | undefined
+
 export class PButtonDirectiveHarness extends ComponentHarness {
   static hostSelector = 'button[pButton]'
 
@@ -36,14 +47,46 @@ export class PButtonDirectiveHarness extends ComponentHarness {
       return null
     }
 
-    const iconClass = Array.from(classList as DOMTokenList).find((c: string) => 
+    const iconClass = Array.from(classList as DOMTokenList).find((c: string) =>
       (c.startsWith('pi-'))
     )
-    
+
     return iconClass ? `pi ${iconClass}` : null
   }
 
   async getDisabled(): Promise<boolean> {
     return await (await this.host()).getProperty('disabled')
+  }
+
+  /**
+   * Gets the PrimeNG button severity by reading the host element's CSS classes.
+   * PrimeNG applies severity as CSS classes in the format 'p-button-{severity}'.
+   * Returns undefined when no severity class is present (backward compatible with default appearance).
+   */
+  async getSeverity(): Promise<PButtonSeverity> {
+    const host = await this.host()
+    const classList = await host.getProperty('classList')
+    if (!classList) {
+      return undefined
+    }
+
+    const classes = Array.from(classList as DOMTokenList)
+    const severityMap: Record<string, Exclude<PButtonSeverity, undefined>> = {
+      'p-button-primary': 'primary',
+      'p-button-secondary': 'secondary',
+      'p-button-success': 'success',
+      'p-button-info': 'info',
+      'p-button-warning': 'warning',
+      'p-button-help': 'help',
+      'p-button-danger': 'danger',
+      'p-button-contrast': 'contrast',
+    }
+
+    for (const cls of classes) {
+      if (cls in severityMap) {
+        return severityMap[cls]
+      }
+    }
+    return undefined
   }
 }

@@ -308,4 +308,148 @@ describe('DialogFooterComponent', () => {
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButton()).toBeNull()
   })
+
+  describe('button severity', () => {
+    it('should render primary button with configured severity', async () => {
+      component.dialogData.set({
+        config: {
+          primaryButtonDetails: {
+            key: 'CustomMain',
+            severity: 'danger',
+          },
+          secondaryButtonIncluded: true,
+          secondaryButtonDetails: {
+            key: 'CustomSide',
+            severity: 'secondary',
+          },
+          customButtons: [
+            {
+              id: 'custom1',
+              key: 'CustomCustom1',
+              alignment: 'right',
+              severity: 'success',
+            },
+            {
+              id: 'custom2',
+              key: 'CustomCustom2',
+              alignment: 'right',
+              severity: 'contrast',
+            },
+          ],
+        },
+        componentData: {},
+      })
+
+      expect(await dialogFooterHarness.getPrimaryButtonSeverity()).toBe('danger')
+      expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBe('secondary')
+    })
+
+    it('should render primary, secondary, and custom buttons without severity when omitted', async () => {
+      component.dialogData.set({
+        config: {
+          primaryButtonDetails: {
+            key: 'CustomMain',
+          },
+          secondaryButtonIncluded: true,
+          secondaryButtonDetails: {
+            key: 'CustomSide',
+          },
+          customButtons: [
+            {
+              id: 'custom1',
+              key: 'CustomCustom1',
+              alignment: 'right',
+            },
+            {
+              id: 'custom2',
+              key: 'CustomCustom2',
+              alignment: 'right',
+            },
+          ],
+        },
+        componentData: {},
+      })
+
+      expect(await dialogFooterHarness.getPrimaryButtonSeverity()).toBeUndefined()
+      expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBeUndefined()
+    })
+
+    it('should render all PrimeNG severity values correctly on primary button', async () => {
+      // Test a representative set of severities to verify the feature works
+      // PrimeNG may not remove old severity classes when changing, so we test individually
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+        'primary',
+        'secondary',
+        'success',
+        'info',
+        'warning',
+        'help',
+        'danger',
+        'contrast',
+      ]
+
+      for (const severity of testSeverities) {
+        // Create a fresh component instance for each severity to avoid PrimeNG class accumulation
+        fixture.destroy()
+        fixture = TestBed.createComponent(DialogFooterComponent)
+        component = fixture.componentInstance
+        dialogFooterHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DialogFooterHarness)
+
+        component.dialogData.set({
+          config: {
+            primaryButtonDetails: {
+              key: 'CustomMain',
+              severity,
+            },
+            secondaryButtonIncluded: false,
+          },
+          componentData: {},
+        })
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(await dialogFooterHarness.getPrimaryButtonSeverity()).toBe(severity)
+      }
+    })
+
+    it('should render all PrimeNG severity values correctly on secondary button', async () => {
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+        'primary',
+        'secondary',
+        'success',
+        'info',
+        'warning',
+        'help',
+        'danger',
+        'contrast',
+      ]
+
+      for (const severity of testSeverities) {
+        fixture.destroy()
+        fixture = TestBed.createComponent(DialogFooterComponent)
+        component = fixture.componentInstance
+        dialogFooterHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DialogFooterHarness)
+
+        component.dialogData.set({
+          config: {
+            primaryButtonDetails: {
+              key: 'CustomMain',
+            },
+            secondaryButtonIncluded: true,
+            secondaryButtonDetails: {
+              key: 'CustomSide',
+              severity,
+            },
+          },
+          componentData: {},
+        })
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBe(severity)
+      }
+    })
+  })
 })

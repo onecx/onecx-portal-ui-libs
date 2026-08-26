@@ -3,6 +3,20 @@ import { DialogButton, DialogInitiator } from '../services/portal-dialog.service
 import { PrimeIcon } from '../utils/primeicon.utils'
 
 /**
+ * PrimeNG button severity values matching PrimeNG's documented button severity options
+ * PrimeNG does not publicly export a severity type for its button, so we define a local union type
+ */
+export type DialogButtonSeverity =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'help'
+  | 'danger'
+  | 'contrast'
+
+/**
  * Object describing details for button rendering containing key for translation, optional icon and optional parameters for translation
  *
  * @example
@@ -28,6 +42,12 @@ export interface ButtonDialogButtonDetails {
   parameters?: Record<string, unknown>
   tooltipKey?: string
   tooltipPosition?: 'right' | 'left' | 'top' | 'bottom' | string | undefined
+  /**
+   * Optional PrimeNG button severity.
+   * When omitted, the button renders with PrimeNG's default appearance (no explicit severity class).
+   * Allowed values: 'primary', 'secondary', 'success', 'info', 'warning', 'help', 'danger', 'contrast'
+   */
+  severity?: DialogButtonSeverity
 }
 
 export interface ButtonDialogCustomButtonDetails extends ButtonDialogButtonDetails {
