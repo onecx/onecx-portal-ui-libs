@@ -51,6 +51,8 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly activeColumnsLabelKey = input<string>('')
   readonly inactiveColumnsLabel = input<string>('')
   readonly inactiveColumnsLabelKey = input<string>('')
+
+  readonly hasActiveColumns = computed(() => this.displayedColumnsModel().length > 0)
   
   @Input()
   set frozenActionColumn(value: boolean) {
@@ -128,6 +130,11 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   }
 
   onSaveClick() {
+    // Prevent saving when no active columns are selected
+    if (!this.hasActiveColumns()) {
+      return
+    }
+
     this.visible.set(false)
 
     const before = this.displayedColumns().map((column) => column.id)

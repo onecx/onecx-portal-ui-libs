@@ -17,6 +17,7 @@ import {
   input,
   model,
   output,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core'
@@ -194,6 +195,9 @@ export class InteractiveDataViewComponent implements OnInit {
       columnKeys.map((key) => this.stateService.availableColumns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]
     )
   })
+
+  // Track whether displayed columns have ever been non-empty (to suppress warning on initial empty state)
+  private readonly _hasHadColumns = signal<boolean>(false)
 
   @Input()
   set frozenActionColumn(value: boolean) {
@@ -626,6 +630,22 @@ export class InteractiveDataViewComponent implements OnInit {
           }
         }
       })
+    })
+
+    // Warn when displayed columns transition from a non-empty state to empty after initialization
+    effect(() => {
+      const displayedColumns = this.displayedColumns()
+      if (displayedColumns.length > 0) {
+        this._hasHadColumns.set(true)
+        return
+      }
+      // Only warn when we previously had columns (post-initial transition to empty)
+      if (untracked(() => this._hasHadColumns())) {
+        console.warn(
+          '[InteractiveDataViewComponent] Displayed columns is empty. The sort dropdown will have no sortable fields. ' +
+            'Ensure at least one column is selected in the Column Picker or via displayedColumnKeys input.'
+        )
+      }
     })
   }
 

@@ -877,6 +877,106 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.stateService.filters()).toEqual(filters)
     })
 
+    describe('console warning for empty displayed columns', () => {
+      let consoleWarnSpy: jest.SpyInstance
+
+      beforeEach(() => {
+        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      })
+
+      afterEach(() => {
+        consoleWarnSpy.mockRestore()
+      })
+
+      it('should still render list/grid rows when displayed columns is empty', () => {
+        const { fixture, component } = createComponentWithFixture(true)
+
+        fixture.componentRef.setInput('columns', [
+          { id: 'c1', nameKey: 'C1' } as any,
+        ])
+        fixture.componentRef.setInput('data', [{ id: '1', name: 'Item 1' } as any])
+        component.ngOnInit()
+        fixture.detectChanges()
+
+        // Empty displayed columns
+        fixture.componentRef.setInput('displayedColumnKeys', [])
+        fixture.detectChanges()
+
+        // Component should still render (no error)
+        expect(component.displayedColumns()).toEqual([])
+        expect(fixture.nativeElement).toBeTruthy()
+      })
+
+      it('should bind sort dropdown to displayed columns', () => {
+        const { fixture, component } = createComponentWithFixture(true)
+
+        const c1 = { id: 'c1', nameKey: 'C1', sortable: true } as any
+        const c2 = { id: 'c2', nameKey: 'C2', sortable: true } as any
+
+        fixture.componentRef.setInput('columns', [c1, c2])
+        fixture.componentRef.setInput('displayedColumnKeys', ['c1', 'c2'])
+        component.ngOnInit()
+        fixture.detectChanges()
+
+        // When displayed columns has items, sort dropdown should have those columns
+        expect(component.displayedColumns()).toEqual([c1, c2])
+
+        // When empty, displayed columns is empty
+        fixture.componentRef.setInput('displayedColumnKeys', [])
+        fixture.detectChanges()
+        expect(component.displayedColumns()).toEqual([])
+      })
+
+      it('should warn when column picker clears all displayed columns (post-initial transition via picker)', () => {
+        const { fixture, component } = createComponentWithFixture(true)
+
+        const c1 = { id: 'c1', nameKey: 'C1' } as any
+        const c2 = { id: 'c2', nameKey: 'C2' } as any
+
+        fixture.componentRef.setInput('columns', [c1, c2])
+        fixture.componentRef.setInput('displayedColumnKeys', ['c1', 'c2'])
+        fixture.componentRef.setInput('customGroupKey', 'custom')
+        component.ngOnInit()
+        fixture.detectChanges()
+
+        consoleWarnSpy.mockClear()
+
+        // Simulate column picker clearing all columns via onColumnSelectionChange
+        component.onColumnSelectionChange({ activeColumns: [] } as any)
+        TestBed.tick()
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+        )
+      })
+
+      it('should warn when column group selection changes to empty group (post-initial)', () => {
+        const { fixture, component } = createComponentWithFixture(true)
+
+        const c1 = { id: 'c1', nameKey: 'g1', predefinedGroupKeys: ['g1'] } as any
+        const c2 = { id: 'c2', nameKey: 'g2', predefinedGroupKeys: ['g2'] } as any
+
+        fixture.componentRef.setInput('columns', [c1, c2])
+        fixture.componentRef.setInput('defaultGroupKey', 'g1')
+        fixture.componentRef.setInput('customGroupKey', 'custom')
+        component.ngOnInit()
+        fixture.detectChanges()
+
+        consoleWarnSpy.mockClear()
+
+        // Select an empty group (g2 has no columns selected)
+        component.onColumnGroupSelectionChange({
+          groupKey: 'g2',
+          activeColumns: [],
+        } as any)
+        TestBed.tick()
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+          expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+        )
+      })
+    })
+
     it('should call service setSortColumn and setSortDirection when sortField changes via effect', () => {
       const { component } = createComponent(true)
       component.sortField = 'name'
@@ -1215,6 +1315,120 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
       expect(component.stateService.actionColumnConfigPosition()).toBe('left')
+    })
+  })
+
+  describe('empty displayed columns warning', () => {
+    const makeColumn = (id: string) => ({ id, nameKey: id } as any)
+
+    it('should not warn on initial empty displayed columns resolution', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const { component } = createComponent(true)
+
+      // Set up columns but don't set any displayedColumnKeys - initial resolution
+      component.columns = [makeColumn('c1'), makeColumn('c2')]
+      component.ngOnInit()
+      TestBed.tick()
+
+      // No warning on initial resolution even if displayedColumns is empty
+      expect(consoleWarnSpy).not.toHaveBeenCalled()
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('should warn when displayed columns transition to empty after initial resolution via displayedColumnKeys', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const { fixture, component } = createComponentWithFixture(true)
+
+      fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
+      fixture.componentRef.setInput('displayedColumnKeys', ['c1'])
+      component.ngOnInit()
+      fixture.detectChanges()
+      TestBed.tick()
+
+      consoleWarnSpy.mockClear()
+
+      // Now transition to empty
+      fixture.componentRef.setInput('displayedColumnKeys', [])
+      fixture.detectChanges()
+      TestBed.tick()
+
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+      )
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('should warn on each subsequent transition to empty displayed columns', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const { fixture, component } = createComponentWithFixture(true)
+
+      fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
+      fixture.componentRef.setInput('displayedColumnKeys', ['c1'])
+      component.ngOnInit()
+      fixture.detectChanges()
+      TestBed.tick()
+
+      consoleWarnSpy.mockClear()
+
+      // First transition to empty
+      fixture.componentRef.setInput('displayedColumnKeys', [])
+      fixture.detectChanges()
+      TestBed.tick()
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+
+      // Back to non-empty
+      fixture.componentRef.setInput('displayedColumnKeys', ['c1'])
+      fixture.detectChanges()
+      TestBed.tick()
+
+      // Second transition to empty
+      fixture.componentRef.setInput('displayedColumnKeys', [])
+      fixture.detectChanges()
+      TestBed.tick()
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(2)
+
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('should warn when displayedColumnKeys is set to empty array from outside after init', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const { fixture, component } = createComponentWithFixture(true)
+
+      fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
+      fixture.componentRef.setInput('displayedColumnKeys', ['c1', 'c2'])
+      component.ngOnInit()
+      fixture.detectChanges()
+      TestBed.tick()
+
+      consoleWarnSpy.mockClear()
+
+      // External input sets displayedColumnKeys to empty
+      fixture.componentRef.setInput('displayedColumnKeys', [])
+      fixture.detectChanges()
+      TestBed.tick()
+
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+      )
+      consoleWarnSpy.mockRestore()
+    })
+
+    it('should not warn when initial displayedColumnKeys is set to empty via input', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const { fixture, component } = createComponentWithFixture(true)
+
+      // Set empty displayedColumnKeys from the start
+      fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
+      fixture.componentRef.setInput('displayedColumnKeys', [])
+      component.ngOnInit()
+      fixture.detectChanges()
+      TestBed.tick()
+
+      // No warning on initial resolution
+      expect(consoleWarnSpy).not.toHaveBeenCalled()
+      consoleWarnSpy.mockRestore()
     })
   })
 })
