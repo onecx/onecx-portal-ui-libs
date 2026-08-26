@@ -459,5 +459,49 @@ describe('DialogFooterComponent', () => {
         expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBe(severity)
       }
     })
+
+    it('should render all PrimeNG severity values correctly on custom button', async () => {
+      const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'help' | 'danger' | 'contrast'> = [
+        'primary',
+        'secondary',
+        'success',
+        'info',
+        'warning',
+        'help',
+        'danger',
+        'contrast',
+      ]
+
+      for (const severity of testSeverities) {
+        fixture.destroy()
+        fixture = TestBed.createComponent(DialogFooterComponent)
+        component = fixture.componentInstance
+        dialogFooterHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DialogFooterHarness)
+
+        component.dialogData.set({
+          config: {
+            primaryButtonDetails: {
+              key: 'CustomMain',
+            },
+            secondaryButtonIncluded: false,
+            customButtons: [
+              {
+                id: 'customTest',
+                key: 'CustomButton',
+                alignment: 'right',
+                severity,
+              },
+            ],
+          },
+          componentData: {},
+        })
+        component['setupCustomButtons'](component.dialogData())
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        expect(await dialogFooterHarness.getCustomButtonSeverity('customTest')).toBe(severity)
+      }
+    })
   })
 })
