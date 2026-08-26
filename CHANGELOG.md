@@ -1,3 +1,9 @@
+## [7.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.1...v7.12.2) (2026-08-26)
+
+### Bug Fixes
+
+* v7 page header actions ([#1660](https://github.com/onecx/onecx-portal-ui-libs/issues/1660)) ([ce292ff](https://github.com/onecx/onecx-portal-ui-libs/commit/ce292ff3fdfbdcf388f20371a68bdb11f3d38c51))
+
 ## [7.12.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.0...v7.12.1) (2026-08-14)
 
 ### Bug Fixes
