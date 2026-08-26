@@ -339,9 +339,13 @@ describe('DialogFooterComponent', () => {
         },
         componentData: {},
       })
+      // Call private setupCustomButtons to update custom buttons signals since we set dialogData directly
+      component['setupCustomButtons'](component.dialogData())
 
       expect(await dialogFooterHarness.getPrimaryButtonSeverity()).toBe('danger')
       expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBe('secondary')
+      expect(await dialogFooterHarness.getCustomButtonSeverity('custom1')).toBe('success')
+      expect(await dialogFooterHarness.getCustomButtonSeverity('custom2')).toBe('contrast')
     })
 
     it('should render primary, secondary, and custom buttons without severity when omitted', async () => {
@@ -369,9 +373,13 @@ describe('DialogFooterComponent', () => {
         },
         componentData: {},
       })
+      // Call private setupCustomButtons to update custom buttons signals since we set dialogData directly
+      component['setupCustomButtons'](component.dialogData())
 
       expect(await dialogFooterHarness.getPrimaryButtonSeverity()).toBeUndefined()
       expect(await dialogFooterHarness.getSecondaryButtonSeverity()).toBeUndefined()
+      expect(await dialogFooterHarness.getCustomButtonSeverity('custom1')).toBeUndefined()
+      expect(await dialogFooterHarness.getCustomButtonSeverity('custom2')).toBeUndefined()
     })
 
     it('should render all PrimeNG severity values correctly on primary button', async () => {

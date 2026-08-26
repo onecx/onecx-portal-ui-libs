@@ -45,4 +45,25 @@ export class DialogFooterHarness extends ContentContainerComponentHarness {
   async getSecondaryButtonSeverity(): Promise<PButtonSeverity | undefined> {
     return await (await this.getSecondaryButton())?.getSeverity()
   }
+
+  /**
+   * Gets a custom button harness by its ID (optional - returns null if not found)
+   */
+  getCustomButton = (id: string) => this.locatorForOptional(PButtonDirectiveHarness.with({ id }))()
+
+  /**
+   * Gets the severity of a custom button by its ID
+   */
+  async getCustomButtonSeverity(id: string): Promise<PButtonSeverity | undefined> {
+    const button = await this.getCustomButton(id)
+    return button ? await button.getSeverity() : undefined
+  }
+
+  /**
+   * Gets the label of a custom button by its ID
+   */
+  async getCustomButtonLabel(id: string): Promise<string | null | undefined> {
+    const button = await this.getCustomButton(id)
+    return button ? await button.getLabel() : undefined
+  }
 }
