@@ -17,6 +17,7 @@ import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
 import { interactiveDataViewCssRules } from './usages/interactive-dataview.rules'
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
+import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
 
 export const usageCssRules: CssRule[] = [
@@ -38,5 +39,6 @@ export const usageCssRules: CssRule[] = [
   ...interactiveDataViewCssRules,
   ...messageCssRules,
   ...selectbuttonCssRules,
+  ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
 ]
