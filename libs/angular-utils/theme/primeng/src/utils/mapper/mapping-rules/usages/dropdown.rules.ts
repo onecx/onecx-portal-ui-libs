@@ -244,28 +244,28 @@ const DROPDOWN_OPTION: MappingRule[] = [
 ]
 
 const DROPDOWN_MISC: MappingRule[] = [
-  {
-    from: 'usages.dropdown.clear.states.default.contrast',
-    to: 'components.select.clearIcon.color',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.dropdown.checkmark.color',
-    to: 'components.select.checkmark.color',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.dropdown.checkmark.space.xs',
-    to: 'components.select.checkmark.gutterStart',
-  },
-  {
-    from: 'usages.dropdown.checkmark.space.md',
-    to: 'components.select.checkmark.gutterEnd',
-  },
-  {
-    from: 'usages.dropdown.empty.message.md',
-    to: 'components.select.emptyMessage.padding',
-  },
+	{
+		from: 'usages.dropdown.clear.icon.color',
+		to: 'components.select.clearIcon.color',
+		transform: toColorString,
+	},
+	{
+		from: 'usages.dropdown.checkmark.color',
+		to: 'components.select.checkmark.color',
+		transform: toColorString,
+	},
+	{
+		from: 'usages.dropdown.checkmark.gutter.start',
+		to: 'components.select.checkmark.gutterStart',
+	},
+	{
+		from: 'usages.dropdown.checkmark.gutter.end',
+		to: 'components.select.checkmark.gutterEnd',
+	},
+	{
+		from: 'usages.dropdown.empty.message.padding',
+		to: 'components.select.emptyMessage.padding',
+	},
 ]
 
 export const dropdownMappingRules: MappingRule[] = [

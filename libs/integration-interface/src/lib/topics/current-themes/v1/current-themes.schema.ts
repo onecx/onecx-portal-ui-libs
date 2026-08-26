@@ -18,9 +18,11 @@ import { input } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
+import { interactiveDataView } from './schema/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
+import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 
@@ -42,9 +44,11 @@ type UsagesInput = {
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
   calendar?: z.input<typeof calendar>
+  interactiveDataView?: z.input<typeof interactiveDataView>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
+  loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
   panelmenu?: z.input<typeof panelmenu>
 }
@@ -68,9 +72,11 @@ const usages: z.ZodType<UsagesInput> = z
     picklist: (picklist as typeof picklist).optional(),
     togglebutton: (togglebutton as typeof togglebutton).optional(),
     calendar: (calendar as typeof calendar).optional(),
+    interactiveDataView: (interactiveDataView as typeof interactiveDataView).optional(),
     accordion: (accordion as typeof accordion).optional(),
     message: (message as typeof message).optional(),
     selectbutton: (selectbutton as typeof selectbutton).optional(),
+    loadingIndicator: (loadingIndicator as typeof loadingIndicator).optional(),
     ripple: (ripple as typeof ripple).optional(),
     panelmenu: (panelmenu as typeof panelmenu).optional(),
   })
