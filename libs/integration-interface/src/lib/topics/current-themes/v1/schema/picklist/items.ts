@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, color, withRef } from '../primitives'
+import { bg, withRef } from '../primitives'
 import { PicklistPanelItemSchema } from './item'
 
 /**
