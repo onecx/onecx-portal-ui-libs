@@ -12,105 +12,88 @@ export const badgeSettings = z
   })
   .register(themeSchemaRegistry, { id: 'badgeSettings' })
 
-// Base badge style (size-specific properties)
-export const badgeSizeStyle = z
+export const badgeDot = z
+  .object({
+    size: withRef(z.string()).default('0.5rem'),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeDot' })
+
+const badgeSizeStyle = z
   .object({
     fontSize: withRef(z.string()).optional(),
     minWidth: withRef(z.string()).optional(),
     height: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badgeSizeStyle' })
 
-// Badge style with size variants
-export const badgeStyleWithSizeVariants = z
-  .object({
-    background: z.union([bg, withRef(z.string())]).optional(),
-    color: color.optional(),
-    border: border.optional(),
-    font: font.optional(),
-    padding: withRef(z.string()).optional(),
-    // Default size
-    defaultVariant: badgeSizeStyle.optional(),
-    // Size variants
-    sizeVariant: z
-      .object({
-        sm: badgeSizeStyle.optional(),
-        lg: badgeSizeStyle.optional(),
-        xl: badgeSizeStyle.optional(),
-      })
-      .optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'badgeStyleWithSizeVariants' })
+const badgeBaseDefaults = {
+  font: {
+    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight}}',
+  },
+  border: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.none}}',
+    offset: '{{primitives.border.offset.none}}',
+    radius: '{{primitives.radius.full}}',
+  },
+  padding: '{{primitives.space.sm}}',
+}
 
-const colorVariant = (severity: string) => ({
-  background: `{{primitives.variant.primary.defaultState.defaultVariant.${severity}.bg}}`,
-  color: `{{primitives.variant.primary.defaultState.defaultVariant.${severity}.contrast}}`,
+const BADGE_DEFAULT_SIZE = {
+  minWidth: '1.5rem',
+  height: '1.5rem',
+}
+
+const BADGE_SM_SIZE = {
+  fontSize: '{{primitives.font.size}}',
+  minWidth: '1.25rem',
+  height: '1.25rem',
+}
+
+const BADGE_LG_SIZE = {
+  fontSize: '{{primitives.font.size}}',
+  minWidth: '1.75rem',
+  height: '1.75rem',
+}
+
+const BADGE_XL_SIZE = {
+  fontSize: '{{primitives.font.size}}',
+  minWidth: '2rem',
+  height: '2rem',
+}
+
+const colorVariant = (variant: string, severity?: string) => ({
+  background: `{{primitives.variant.${variant}.defaultState.${severity ? `severity.${severity}` : 'defaultSeverity'}.bg}}`,
+  color: `{{primitives.variant.${variant}.defaultState.${severity ? `severity.${severity}` : 'defaultSeverity'}.contrast}}`,
 })
+
+const badgeColorVariant = (def: { background: string; color: string }) =>
+  z
+    .object({
+      background: z.union([bg, withRef(z.string())]).default(def.background),
+      color: color.default(def.color),
+    })
+    .prefault({})
 
 export const badge = z
   .object({
     settings: (badgeSettings as typeof badgeSettings).optional(),
-
-    // Dot section
-    dot: z
-      .object({
-        size: withRef(z.string()).default('0.5rem'),
-      })
-      .optional(),
-
-    // Default variant (severity = default, size = default)
-    defaultVariant: badgeStyleWithSizeVariants.optional().default({
-      background: '{{primitives.variant.primary.defaultState.defaultVariant.bg}}',
-      color: '{{primitives.variant.primary.defaultState.defaultVariant.contrast}}',
-      border: {
-        radius: '{{primitives.radius.full}}',
-      },
-      font: {
-        size: '{{primitives.font.size}}',
-        weight: '{{primitives.font.weight}}',
-      },
-      padding: '{{primitives.space.sm}}',
-      defaultVariant: {
-        fontSize: '{{primitives.font.size}}',
-        minWidth: '1.5rem',
-        height: '1.5rem',
-      },
-      sizeVariant: {
-        sm: {
-          fontSize: '{{primitives.font.size}}',
-          minWidth: '1.25rem',
-          height: '1.25rem',
-        },
-        lg: {
-          fontSize: '{{primitives.font.size}}',
-          minWidth: '1.75rem',
-          height: '1.75rem',
-        },
-        xl: {
-          fontSize: '{{primitives.font.size}}',
-          minWidth: '2rem',
-          height: '2rem',
-        },
-      },
-    }),
-
-    // Severity variants
-    variant: z
-      .object({
-        primary: badgeStyleWithSizeVariants.optional().default({
-          background: '{{primitives.variant.primary.defaultState.defaultVariant.bg}}',
-          color: '{{primitives.variant.primary.defaultState.defaultVariant.contrast}}',
-        }),
-        secondary: badgeStyleWithSizeVariants.optional().default({
-          background: '{{primitives.variant.secondary.defaultState.defaultVariant.bg}}',
-          color: '{{primitives.variant.secondary.defaultState.defaultVariant.contrast}}',
-        }),
-        success: badgeStyleWithSizeVariants.optional().default(colorVariant('success')),
-        info: badgeStyleWithSizeVariants.optional().default(colorVariant('info')),
-        warning: badgeStyleWithSizeVariants.optional().default(colorVariant('warning')),
-        danger: badgeStyleWithSizeVariants.optional().default(colorVariant('danger')),
-        contrast: badgeStyleWithSizeVariants.optional().default(colorVariant('contrast')),
-      })
-      .optional(),
+    dot: (badgeDot as typeof badgeDot).prefault({}),
+    font: font.default(badgeBaseDefaults.font),
+    border: border.default(badgeBaseDefaults.border),
+    padding: withRef(z.string()).default(badgeBaseDefaults.padding),
+    minWidth: withRef(z.string()).default(BADGE_DEFAULT_SIZE.minWidth),
+    height: withRef(z.string()).default(BADGE_DEFAULT_SIZE.height),
+    sm: badgeSizeStyle.default(BADGE_SM_SIZE),
+    lg: badgeSizeStyle.default(BADGE_LG_SIZE),
+    xl: badgeSizeStyle.default(BADGE_XL_SIZE),
+    primary: badgeColorVariant(colorVariant('primary')),
+    secondary: badgeColorVariant(colorVariant('secondary')),
+    success: badgeColorVariant(colorVariant('primary', 'success')),
+    info: badgeColorVariant(colorVariant('primary', 'info')),
+    warning: badgeColorVariant(colorVariant('primary', 'warning')),
+    danger: badgeColorVariant(colorVariant('primary', 'danger')),
+    contrast: badgeColorVariant(colorVariant('primary', 'contrast')),
   })
   .register(themeSchemaRegistry, { id: 'badge' })
