@@ -70,6 +70,7 @@
           name="frozen-action-column-select-button"
           [allowEmpty]="false"
           ariaLabelledBy="frozenActionColumnLabel"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
@@ -87,6 +88,7 @@
           name="action-column-position-select-button"
           [allowEmpty]="false"
           ariaLabelledBy="actionColumnPositionLabel"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
