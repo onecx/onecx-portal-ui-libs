@@ -222,15 +222,15 @@ describe('ColumnGroupSelectionComponent', () => {
   })
 
   describe('autofocus', () => {
-    it('should have autofocus property on p-select', () => {
+    it('should have autofocus property on p-select set to false', () => {
       fixture.componentRef.setInput('customGroupKey', 'custom')
       fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] })])
       fixture.detectChanges()
 
       const pSelectDebugEl = fixture.debugElement.query(By.css('p-select'))
       expect(pSelectDebugEl).toBeTruthy()
-      // Check that the autofocus input property is set to true
-      expect(pSelectDebugEl.componentInstance.autofocus).toBe(true)
+      // Check that the autofocus input property is set to false
+      expect(pSelectDebugEl.componentInstance.autofocus).toBe(false)
     })
   })
 })
