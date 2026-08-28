@@ -98,10 +98,7 @@ export const rowWithStates = z
 export const iconBaseStyles = z
   .object({
     size: withRef(
-      z.union([
-        z.string(),
-        z.object({ width: z.string().optional(), height: z.string().optional() }),
-      ])
+      z.union([z.string(), z.object({ width: z.string().optional(), height: z.string().optional() })])
     ).default('16px'),
     color: color.default('{{primitives.icon.defaultVariant.color}}'),
     backgroundColor: color.default('{{primitives.icon.defaultVariant.bg}}'),
@@ -191,7 +188,19 @@ export const alternatingRowStyles = z
   })
   .register(themeSchemaRegistry, { id: 'alternatingRowStyles' })
 
-export const tableRow = z.object({
+type TableRowShape = {
+  defaultState: z.ZodOptional<typeof alternatingRowStyles>
+  state: z.ZodOptional<
+    z.ZodObject<{
+      hover: z.ZodOptional<typeof alternatingRowStyles>
+      active: z.ZodOptional<typeof alternatingRowStyles>
+      selected: z.ZodOptional<typeof alternatingRowStyles>
+      focus: z.ZodOptional<typeof alternatingRowStyles>
+    }>
+  >
+}
+
+const tableRowShape: TableRowShape = {
   defaultState: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
   state: z
     .object({
@@ -201,14 +210,24 @@ export const tableRow = z.object({
       focus: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
     })
     .optional(),
-})
+}
 
-export const table = z
-  .object({
-    settings: (tableSettings as typeof tableSettings).optional(),
-    base: (tableStyles as typeof tableStyles).optional(),
-    header: (rowWithStates as typeof rowWithStates).optional(),
-    footer: (rowWithStates as typeof rowWithStates).optional(),
-    row: (tableRow as typeof tableRow).optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'table' })
+export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow' })
+
+type TableShape = {
+  settings: z.ZodOptional<typeof tableSettings>
+  base: z.ZodOptional<typeof tableStyles>
+  header: z.ZodOptional<typeof headerRowWithStates>
+  footer: z.ZodOptional<typeof rowWithStates>
+  row: z.ZodOptional<typeof tableRow>
+}
+
+const tableShape: TableShape = {
+  settings: (tableSettings as typeof tableSettings).optional(),
+  base: (tableStyles as typeof tableStyles).optional(),
+  header: (headerRowWithStates as typeof headerRowWithStates).optional(),
+  footer: (rowWithStates as typeof rowWithStates).optional(),
+  row: (tableRow as typeof tableRow).optional(),
+}
+
+export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table' })
