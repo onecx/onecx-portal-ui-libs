@@ -53,6 +53,8 @@ type UsagesInput = {
   panelmenu?: z.input<typeof panelmenu>
 }
 
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
+
 const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
