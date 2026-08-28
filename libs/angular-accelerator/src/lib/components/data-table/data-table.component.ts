@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common'
 import {
   Component,
-  Input,
+  DestroyRef,
   Injector,
   LOCALE_ID,
   OnInit,
@@ -23,7 +23,7 @@ import { computedPrevious } from 'ngxtension/computed-previous'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
@@ -37,14 +37,12 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { ThemeTableSettingsService } from '../../services/theme-v2-settings-table.service'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { createThemeTableSettings } from '../../utils/theme-v2-settings-table.utils'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -86,7 +84,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
-  private readonly themeTableSettings = inject(ThemeTableSettingsService)
+  private readonly themeService = inject(ThemeService)
+  private readonly destroyRef = inject(DestroyRef)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -130,7 +129,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   selectionEnabledField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
-  private readonly themeTableSettingsState = createThemeTableSettings(this.themeTableSettings)
 
   page = model<number>(0)
   tableStyle = input<{ [klass: string]: any } | undefined>(undefined)
@@ -224,26 +222,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   additionalActions = model<DataAction[]>([])
-  @Input('checkboxColumnPosition')
-  set checkboxColumnPositionInput(value: 'left' | 'right') {
-    this.themeTableSettingsState.setCheckboxColumnPosition(value)
-  }
 
-  @Input('frozenActionColumn')
-  set frozenActionColumnInput(value: boolean) {
-    this.themeTableSettingsState.setFrozenActionColumn(value)
-  }
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
 
-  @Input('actionColumnPosition')
-  set actionColumnPositionInput(value: 'left' | 'right') {
-    this.themeTableSettingsState.setActionColumnPosition(value)
-  }
+  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
+  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
 
-  checkboxColumnPosition = this.themeTableSettingsState.checkboxColumnPosition
-
-  frozenActionColumn = this.themeTableSettingsState.frozenActionColumn
-
-  actionColumnPosition = this.themeTableSettingsState.actionColumnPosition
+  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   expandedRows = model<Row[] | string[] | number[]>([])
   expandedRowIds = computed<(string | number)[]>(() =>
@@ -587,6 +577,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)
+
+    this.themeService.currentThemes$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(async (theme) => {
+        if (!(await themeVersionAvailable(2, this.injector))) {
+          return
+        }
+        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+      })
   }
 
   ngOnInit(): void {

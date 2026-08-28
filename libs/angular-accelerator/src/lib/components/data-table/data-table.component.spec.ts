@@ -10,7 +10,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { DataTableComponent, Row } from './data-table.component'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, themeVersionAvailable } from '@onecx/angular-utils'
 import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs'
@@ -19,6 +19,13 @@ import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 import { CurrentThemes } from '@onecx/integration-interface'
+
+jest.mock('@onecx/angular-utils', () => ({
+  ...jest.requireActual('@onecx/angular-utils'),
+  themeVersionAvailable: jest.fn(),
+}))
+
+const themeVersionAvailableMock = jest.mocked(themeVersionAvailable)
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -29,6 +36,13 @@ describe('DataTableComponent', () => {
   let selectedCheckBoxes: PTableCheckboxHarness[]
   let router: Router
   let currentThemes$: BehaviorSubject<CurrentThemes>
+
+  const flushAsync = async (fixture: ComponentFixture<DataTableComponent>) => {
+    for (let i = 0; i < 5; i++) {
+      fixture.detectChanges()
+      await Promise.resolve()
+    }
+  }
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -214,6 +228,7 @@ describe('DataTableComponent', () => {
     },
   ]
   beforeEach(async () => {
+    themeVersionAvailableMock.mockResolvedValue(false)
     currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
 
     await TestBed.configureTestingModule({
@@ -458,8 +473,8 @@ describe('DataTableComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumnActual()).toBe(false)
+      expect(component.actionColumnPositionActual()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -491,6 +506,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should apply action column defaults from themed table settings', async () => {
+      themeVersionAvailableMock.mockResolvedValue(true)
       component.viewTableRow.subscribe((event) => console.log(event))
 
       currentThemes$.next({
@@ -507,10 +523,10 @@ describe('DataTableComponent', () => {
           },
         },
       } as CurrentThemes)
-      fixture.detectChanges()
+      await flushAsync(fixture)
 
-      expect(component.frozenActionColumn()).toBe(true)
-      expect(component.actionColumnPosition()).toBe('left')
+      expect(component.frozenActionColumnActual()).toBe(true)
+      expect(component.actionColumnPositionActual()).toBe('left')
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
 
@@ -523,6 +539,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should apply checkbox column defaults from themed table settings', async () => {
+      themeVersionAvailableMock.mockResolvedValue(true)
       component.selectionChanged.subscribe(() => undefined)
 
       currentThemes$.next({
@@ -538,9 +555,9 @@ describe('DataTableComponent', () => {
           },
         },
       } as CurrentThemes)
-      fixture.detectChanges()
+      await flushAsync(fixture)
 
-      expect(component.checkboxColumnPosition()).toBe('right')
+      expect(component.checkboxColumnPositionActual()).toBe('right')
       expect(await dataTable.getSelectionColumnHeader('left')).toBe(null)
       expect(await dataTable.getSelectionColumn('left')).toBe(null)
       expect(await dataTable.getSelectionColumnHeader('right')).toBeTruthy()
@@ -548,6 +565,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should prefer explicit action column inputs over themed table settings', async () => {
+      themeVersionAvailableMock.mockResolvedValue(true)
       component.viewTableRow.subscribe((event) => console.log(event))
 
       currentThemes$.next({
@@ -566,10 +584,10 @@ describe('DataTableComponent', () => {
       } as CurrentThemes)
       fixture.componentRef.setInput('frozenActionColumn', false)
       fixture.componentRef.setInput('actionColumnPosition', 'right')
-      fixture.detectChanges()
+      await flushAsync(fixture)
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumnActual()).toBe(false)
+      expect(component.actionColumnPositionActual()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -582,6 +600,7 @@ describe('DataTableComponent', () => {
     })
 
     it('should prefer explicit checkbox column input over themed table settings', async () => {
+      themeVersionAvailableMock.mockResolvedValue(true)
       component.selectionChanged.subscribe(() => undefined)
 
       currentThemes$.next({
@@ -598,9 +617,9 @@ describe('DataTableComponent', () => {
         },
       } as CurrentThemes)
       fixture.componentRef.setInput('checkboxColumnPosition', 'left')
-      fixture.detectChanges()
+      await flushAsync(fixture)
 
-      expect(component.checkboxColumnPosition()).toBe('left')
+      expect(component.checkboxColumnPositionActual()).toBe('left')
       expect(await dataTable.getSelectionColumnHeader('right')).toBe(null)
       expect(await dataTable.getSelectionColumn('right')).toBe(null)
       expect(await dataTable.getSelectionColumnHeader('left')).toBeTruthy()

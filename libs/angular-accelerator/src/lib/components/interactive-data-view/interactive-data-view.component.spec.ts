@@ -560,16 +560,17 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(sortedSpy).toHaveBeenCalledWith(event)
     })
 
-    it('should update action column config onActionColumnConfigChange', () => {
+    it('should update action column config onActionColumnConfigChange (dialog choice wins over theme)', () => {
       const { component } = createComponent(true)
 
-      component.frozenActionColumnInput = false
-      component.actionColumnPositionInput = 'right' as any
+      // Simulate a themed default that the dialog should override.
+      component.frozenActionColumnThemeSetting.set(false)
+      component.actionColumnPositionThemeSetting.set('right')
 
       component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
 
-      expect(component.frozenActionColumn()).toBe(true)
-      expect(component.actionColumnPosition()).toBe('left' as any)
+      expect(component.frozenActionColumnActual()).toBe(true)
+      expect(component.actionColumnPositionActual()).toBe('left')
     })
   })
 
