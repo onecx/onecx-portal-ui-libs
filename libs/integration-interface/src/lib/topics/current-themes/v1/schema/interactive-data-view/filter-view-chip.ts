@@ -1,5 +1,5 @@
 import z from 'zod';
-import { withRef, bg, color, border, icon, font } from '../primitives';
+import { withRef, bg, color, border, icon } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 import { FilterViewChipRemoveIconButtonSchema } from './filter-view-chip-remove-icon-button';
 
