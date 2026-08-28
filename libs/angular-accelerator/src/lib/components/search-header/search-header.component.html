@@ -34,6 +34,7 @@
   [subheader]="subheader()"
   [manualBreadcrumbs]="manualBreadcrumbs()"
   [actions]="headerActions()"
+  class="search-header"
 >
   <ng-template #additionalToolbarContentLeft>
     @if (searchConfigChangeObserved() && pageName()) {
@@ -58,29 +59,25 @@
     <ng-container [ngTemplateOutlet]="_additionalToolbarContent()"></ng-container>
     }
   </ng-template>
-  <div class="flex row-gap-3 column-gap-6 flex-wrap align-items-center">
-    <section #searchParameterFields [attr.aria-label]="'Search Criteria'">
+  <div class="flex row-gap-3 column-gap-6 flex-wrap align-items-center search-header__layout">
+    <section #searchParameterFields [attr.aria-label]="'Search Criteria'" class="search-header__criteria">
       <ng-content></ng-content>
     </section>
     <section
-      class="flex flex-wrap gap-2"
+      class="flex flex-wrap gap-2 search-header__search-reset-panel"
       [ngClass]="'flex-row'"
       [attr.aria-label]="'OCX_SEARCH_HEADER.CONTROLS.ARIA_LABEL' | translate"
     >
-      @let searchButtonsReversed = (searchButtonsReversed$ | async);
-      @if (searchButtonsReversed !== null) {
-        @if (searchButtonsReversed) {
-          <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
-          @if (resetted.observed()) {
-            <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
-          }
-        } @else {
-          @if (resetted.observed()) {
-            <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
-          }
-          <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
-        }
+      @let searchButtonsReversed = (searchButtonsReversed$ | async); @if (searchButtonsReversed !== null) { @if
+      (searchButtonsReversed) {
+      <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
+      @if (resetted.observed()) {
+      <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
+      } } @else { @if (resetted.observed()) {
+      <ng-container [ngTemplateOutlet]="resetBtn"></ng-container>
       }
+      <ng-container [ngTemplateOutlet]="searchBtn"></ng-container>
+      } }
     </section>
   </div>
 </ocx-page-header>

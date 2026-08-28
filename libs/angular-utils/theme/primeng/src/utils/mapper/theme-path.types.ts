@@ -120,7 +120,8 @@ export type ThemePath =
   | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
   | `usages.menu.${LeafPaths<NonNullable<Usages['menu']>>}`
   | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
-  | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`;
+  | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
+  | `usages.searchHeader.${LeafPaths<NonNullable<Usages['searchHeader']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
