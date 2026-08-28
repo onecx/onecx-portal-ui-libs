@@ -1,12 +1,13 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { borderWithShadow, withRef } from '../primitives'
-import { de } from 'zod/v4/locales'
+import { bg, borderWithShadow, withRef } from '../primitives'
 
 export class BreadcrumbItemSchema {
   private static readonly tokens = {
     color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    backgroundColor: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}'),
+    background: bg
+      .pick({ color: true })
+      .default({ color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' }),
     border: z
       .object({
         radius: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}'),
@@ -16,7 +17,7 @@ export class BreadcrumbItemSchema {
     icon: z
       .object({
         color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-        size: withRef(z.string()).default('{{primitives.icon.size.md}}'),
+        size: withRef(z.string()).default('{{primitives.icon.md}}'),
         hover: z
           .object({
             color: withRef(z.string()).default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
@@ -29,75 +30,68 @@ export class BreadcrumbItemSchema {
         font: z
           .object({
             weight: withRef(z.string()).default('{{primitives.font.weight}}'),
-            size: withRef(z.string()).default('{{primitives.font.size.md}}'),
+            size: withRef(z.string()).default('{{primitives.font.size}}'),
           })
           .prefault({}),
-        textDecoration: withRef(z.string()).default('none'),
       })
       .prefault({}),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+      width: '{{primitives.focusRing.width.md}}',
+      offset: '{{primitives.focusRing.offset.md}}',
+      radius: '{{primitives.focusRing.radius.md}}',
+      shadow: '{{primitives.focusRing.shadow.md}}',
+    }),
   }
 
-  static readonly focusRing = borderWithShadow.default({
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-    width: '{{primitives.focusRing.width.md}}',
-    offset: '{{primitives.focusRing.offset.md}}',
-    radius: '{{primitives.focusRing.radius.md}}',
-    shadow: '{{primitives.focusRing.shadow.md}}',
-  })
-
   static readonly itemHover = z.object({
-    backgroundColor: withRef(z.string()).default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}'),
+    background: bg
+      .pick({ color: true })
+      .default({ color: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}' }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
     border: z
       .object({
         color: withRef(z.string()).default('{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}'),
       })
       .prefault({}),
-    textDecoration: withRef(z.string()).default('underline'),
   })
 
   static readonly itemFocus = z.object({
-    backgroundColor: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}'),
+    background: bg
+      .pick({ color: true })
+      .default({ color: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}' }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
     border: z
       .object({
         color: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}'),
       })
       .prefault({}),
-    focusRing: z
-      .object({
-        color: withRef(z.string()).default('{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}'),
-      })
-      .prefault({}),
-    textDecoration: withRef(z.string()).default('underline'),
   })
 
   static readonly itemActive = z.object({
-    backgroundColor: withRef(z.string()).default('{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}'),
+    background: bg
+      .pick({ color: true })
+      .default({ color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}' }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
     border: z
       .object({
         color: withRef(z.string()).default('{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}'),
       })
       .prefault({}),
-    textDecoration: withRef(z.string()).default('underline'),
   })
 
   static readonly itemDisabled = z.object({
-    backgroundColor: withRef(z.string()).default(
-      '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}'
-    ),
+    background: bg
+      .pick({ color: true })
+      .default({ color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}' }),
     color: withRef(z.string()).default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
     border: z
       .object({
-        color: withRef(z.string()).default(
-          '{{primitives.defaultVariant.state.disableda.defaultSeverity.border.color}}'
-        ),
+        color: withRef(z.string()).default('{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}'),
       })
       .prefault({}),
-    textDecoration: withRef(z.string()).default('underline'),
   })
-  
+
   static readonly schema = z
     .object({
       ...this.tokens,
@@ -105,7 +99,6 @@ export class BreadcrumbItemSchema {
       focus: (this.itemFocus as typeof this.itemFocus).prefault({}),
       disabled: (this.itemDisabled as typeof this.itemDisabled).prefault({}),
       active: (this.itemActive as typeof this.itemActive).prefault({}),
-      focusRing: (this.focusRing as typeof this.focusRing).prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'breadcrumbItem' })
 }

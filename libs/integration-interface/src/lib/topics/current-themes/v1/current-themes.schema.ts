@@ -25,6 +25,9 @@ import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import { menu } from './schema/menu'
+import { breadcrumb } from './schema/breadcrumb'
+import { pageHeader } from './schema/page-header'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -51,6 +54,9 @@ type UsagesInput = {
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
   panelmenu?: z.input<typeof panelmenu>
+  menu?: z.input<typeof menu>
+  breadcrumb?: z.input<typeof breadcrumb>
+  pageHeader?: z.input<typeof pageHeader>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -79,6 +85,9 @@ const usages: z.ZodType<UsagesInput> = z
     loadingIndicator: (loadingIndicator as typeof loadingIndicator).optional(),
     ripple: (ripple as typeof ripple).optional(),
     panelmenu: (panelmenu as typeof panelmenu).optional(),
+    menu: (menu as typeof menu).optional(),
+    breadcrumb: (breadcrumb as typeof breadcrumb).optional(),
+    pageHeader: (pageHeader as typeof pageHeader).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 

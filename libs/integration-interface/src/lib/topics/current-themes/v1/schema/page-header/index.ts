@@ -1,35 +1,35 @@
-import z from "zod"
-import { themeSchemaRegistry } from "../registry"
-import { PageHeaderSettingsSchema } from "./settings"
-import { PageHeaderSchema as PageHeader } from "./header"
-import { border, withRef } from "../primitives"
-import { PageHeaderContentSchema } from "./content"
-import { BreadcrumbSchema } from "../breadcrumb/index"
-import { tooltip } from "../tooltip"
+import z from 'zod'
+import { themeSchemaRegistry } from '../registry'
+import { PageHeaderSettingsSchema } from './settings'
+import { PageHeaderTitleBarSchema } from './title-bar'
+import { border, withRef, bg } from '../primitives'
+import { PageHeaderContentSchema } from './content'
 
 export class PageHeaderSchema {
-    private static readonly tokens = {
-        border: border.default({
-            width: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.width}}',
-            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-            radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
-        }),
-        padding: withRef(z.string()).default('{{primitives.space.md}}'),
-        shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-    }
-    
-    static readonly schema = z.object({
-        ...this.tokens,
-        settings: (PageHeaderSettingsSchema.schema as typeof PageHeaderSettingsSchema.schema).prefault({}),
-        breadcrumb: (BreadcrumbSchema.schema as typeof BreadcrumbSchema.schema).prefault({}),
-        header: (PageHeader.schema as typeof PageHeader.schema).prefault({}),
-        content: (PageHeaderContentSchema.schema as typeof PageHeaderContentSchema.schema).prefault({}),
-        tooltip: tooltip.prefault({}), // TODO: revisit this once everything else is done
-        menu: z.object({}).optional(), // TODO: revisit this once everything else is done
-    }).register(themeSchemaRegistry, { id: 'pageHeader' })
-}
+  private static readonly tokens = {
+    border: border.default({
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+    }),
+    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
+    background: bg.pick({color: true}).default({color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}'}),
+    margin: withRef(z.string()).default('{{primitives.space.md}}'),
+  }
 
-// TODO 1 - Revise again from container
-// TODO 2 - Add info related to existing primitives
-// TODO 3 - add content schema and add to the page header schema
-// TODO 4 - define menubar spec - https://primeng.dev/menu 
+  static readonly schema = z
+    .object({
+      ...this.tokens,
+      settings: (PageHeaderSettingsSchema.schema as typeof PageHeaderSettingsSchema.schema).prefault({}),
+      breadcrumbWrapper: z
+        .object({
+          padding: withRef(z.string()).optional().default('{{primitives.space.md}}'),
+          margin: withRef(z.string()).optional().default('{{primitives.space.md}}'),
+        })
+        .prefault({}),
+      header: (PageHeaderTitleBarSchema.schema as typeof PageHeaderTitleBarSchema.schema).prefault({}),
+      content: (PageHeaderContentSchema.schema as typeof PageHeaderContentSchema.schema).prefault({}),
+    })
+    .register(themeSchemaRegistry, { id: 'pageHeader' })
+}
