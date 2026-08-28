@@ -117,7 +117,11 @@ export type ThemePath =
   | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
   | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
-  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`;
+  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
+  | `usages.menu.${LeafPaths<NonNullable<Usages['menu']>>}`
+  | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
+  | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
+  | `usages.searchHeader.${LeafPaths<NonNullable<Usages['searchHeader']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
