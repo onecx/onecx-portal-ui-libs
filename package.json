@@ -135,6 +135,15 @@
     "typescript": "^5.5.4",
     "sonarqube-scanner": "^4.3.0"
   },
+<<<<<<< Updated upstream
+=======
+  "overrides": {
+    "js-yaml@^3.0.0": "3.15.1",
+    "js-yaml@^4.0.0": "4.3.1",
+    "minimatch@^9.0.0": "9.0.9"
+
+  },
+>>>>>>> Stashed changes
   "nx": {
     "includedScripts": []
   },
