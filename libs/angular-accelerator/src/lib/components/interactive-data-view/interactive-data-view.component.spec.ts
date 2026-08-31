@@ -6,6 +6,7 @@ import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
+import * as loggerUtils from '../../utils/logger.utils'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -19,6 +20,18 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       writable: true,
       configurable: true,
     })
+  }
+
+  // Mocks the component logger so warn assertions target it instead of the console directly
+  const mockLoggerWarn = (): jest.Mock => {
+    const loggerWarnSpy = jest.fn()
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn() as any,
+      info: jest.fn() as any,
+      warn: loggerWarnSpy as any,
+      error: jest.fn() as any,
+    })
+    return loggerWarnSpy
   }
 
   const createComponent = (slotDefined = true) => {
@@ -878,14 +891,14 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
 
     describe('console warning for empty displayed columns', () => {
-      let consoleWarnSpy: jest.SpyInstance
+      let consoleWarnSpy: jest.Mock
 
       beforeEach(() => {
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+        consoleWarnSpy = mockLoggerWarn()
       })
 
       afterEach(() => {
-        consoleWarnSpy.mockRestore()
+        jest.restoreAllMocks()
       })
 
       it('should still render list/grid rows when displayed columns is empty', () => {
@@ -946,7 +959,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         TestBed.tick()
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-          expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+          expect.stringContaining('Displayed columns is empty')
         )
       })
 
@@ -972,7 +985,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         TestBed.tick()
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-          expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+          expect.stringContaining('Displayed columns is empty')
         )
       })
     })
@@ -1322,7 +1335,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     const makeColumn = (id: string) => ({ id, nameKey: id } as any)
 
     it('should not warn on initial empty displayed columns resolution', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = mockLoggerWarn()
       const { component } = createComponent(true)
 
       // Set up columns but don't set any displayedColumnKeys - initial resolution
@@ -1332,11 +1345,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       // No warning on initial resolution even if displayedColumns is empty
       expect(consoleWarnSpy).not.toHaveBeenCalled()
-      consoleWarnSpy.mockRestore()
+      jest.restoreAllMocks()
     })
 
     it('should warn when displayed columns transition to empty after initial resolution via displayedColumnKeys', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = mockLoggerWarn()
       const { fixture, component } = createComponentWithFixture(true)
 
       fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
@@ -1354,13 +1367,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+        expect.stringContaining('Displayed columns is empty')
       )
-      consoleWarnSpy.mockRestore()
+      jest.restoreAllMocks()
     })
 
     it('should warn on each subsequent transition to empty displayed columns', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = mockLoggerWarn()
       const { fixture, component } = createComponentWithFixture(true)
 
       fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
@@ -1388,11 +1401,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       TestBed.tick()
       expect(consoleWarnSpy).toHaveBeenCalledTimes(2)
 
-      consoleWarnSpy.mockRestore()
+      jest.restoreAllMocks()
     })
 
     it('should warn when displayedColumnKeys is set to empty array from outside after init', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = mockLoggerWarn()
       const { fixture, component } = createComponentWithFixture(true)
 
       fixture.componentRef.setInput('columns', [makeColumn('c1'), makeColumn('c2')])
@@ -1410,13 +1423,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[InteractiveDataViewComponent] Displayed columns is empty')
+        expect.stringContaining('Displayed columns is empty')
       )
-      consoleWarnSpy.mockRestore()
+      jest.restoreAllMocks()
     })
 
     it('should not warn when initial displayedColumnKeys is set to empty via input', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+      const consoleWarnSpy = mockLoggerWarn()
       const { fixture, component } = createComponentWithFixture(true)
 
       // Set empty displayedColumnKeys from the start
@@ -1428,7 +1441,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       // No warning on initial resolution
       expect(consoleWarnSpy).not.toHaveBeenCalled()
-      consoleWarnSpy.mockRestore()
+      jest.restoreAllMocks()
     })
   })
 })

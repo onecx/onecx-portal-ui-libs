@@ -49,6 +49,7 @@ import { PermissionInput } from '../../model/permission.model'
 import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { RowListGridData } from '../../model/row-list-grid-data.model'
+import { createLogger } from '../../utils/logger.utils'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -545,6 +546,8 @@ export class InteractiveDataViewComponent implements OnInit {
   // Used for communication between the slot component and this component's internal logic
   readonly slotGroupSelectionChangeListener = new EventEmitter<ColumnGroupData | undefined>()
 
+  private readonly logger = createLogger('InteractiveDataViewComponent')
+
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
@@ -641,8 +644,8 @@ export class InteractiveDataViewComponent implements OnInit {
       }
       // Only warn when we previously had columns (post-initial transition to empty)
       if (untracked(() => this._hasHadColumns())) {
-        console.warn(
-          '[InteractiveDataViewComponent] Displayed columns is empty. The sort dropdown will have no sortable fields. ' +
+        this.logger.warn(
+          'Displayed columns is empty. The sort dropdown will have no sortable fields. ' +
             'Ensure at least one column is selected in the Column Picker or via displayedColumnKeys input.'
         )
       }
