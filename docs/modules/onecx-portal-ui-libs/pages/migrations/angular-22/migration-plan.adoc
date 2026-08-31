@@ -6,6 +6,8 @@
 [#overview]
 == Overview
 
+IMPORTANT: This page describes the *current* migration plan. It has not been executed yet and is subject to change as the migration progresses.
+
 As part of the upcoming move to Angular 22, OneCX is changing the component library that its `@onecx/*` UI libraries are built on: from **PrimeNG** to **Angular Material**, styled with **Tailwind CSS**.
 
 This page explains the plan at a high level and lays out the options available to OneCX application teams. It intentionally does not go into implementation detail — detailed, step-by-step technical migration guides will follow separately.
@@ -62,6 +64,9 @@ Our goal is full feature parity between the current PrimeNG-based components and
 
 Where can I follow along with progress?::
 Detailed, step-by-step technical migration guides will be published as components are migrated. This page will be kept up to date with links once they're available.
+
+Will the PrimeNG helpers still be available?::
+Yes. The helpers OneCX currently provides for PrimeNG will remain available for Optimus UI, since Optimus UI is a PrimeNG-compatible fork. They will not be carried over to the Angular Material components.
 
 [#related-resources]
 == Related resources
