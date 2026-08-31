@@ -2,21 +2,16 @@ import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
 
 /**
- * Shape of a single severity block for calendar input icons (leaf tokens).
+ * Shape of a single state block for calendar input icons (leaf tokens). No named severities
+ * exist for this node, so tokens sit directly here instead of behind a `defaultSeverity`
+ * wrapper.
  */
-const calendarIconSeverityShape = z.object({
+const calendarIconStateShape = z.object({
   padding: withRef(z.string()).optional(),
   width: withRef(z.string()).optional(),
   height: withRef(z.string()).optional(),
   color: color.optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
-})
-
-/**
- * Shape of a single state block for calendar input icons (default severity + leaf tokens).
- */
-const calendarIconStateShape = z.object({
-  defaultSeverity: calendarIconSeverityShape.prefault({}),
 })
 
 /**
@@ -59,33 +54,23 @@ export const calendarIconDefaults = {
   },
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        padding: '{{primitives.space.md}}',
-        width: '2.5rem',
-        height: '2.5rem',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-      },
+      padding: '{{primitives.space.md}}',
+      width: '2.5rem',
+      height: '2.5rem',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
     },
     hover: {
-      defaultSeverity: {
-        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-      },
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
     },
     focus: {
-      defaultSeverity: {
-        color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
-      },
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
     },
     disabled: {
-      defaultSeverity: {
-        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-      },
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
     },
     invalid: {
-      defaultSeverity: {
-        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
-      },
+      color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
     },
   },
 }

@@ -1,134 +1,35 @@
 import * as z from 'zod'
-import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { inputShape, inputDefaults } from '../input'
 import { calendarIconShape, calendarIconDefaults } from './inputicon'
 
 /**
- * Shape of a single severity block for the calendar input (leaf tokens + icon).
+ * Shape for the calendar's input field.
+ *
+ * Option 1 (extends the generic input usage): reuses the full `inputShape`
+ * token set (so the calendar input can be themed exactly like a standalone
+ * input, via `usages.calendar.input.*` exclusively) and adds the two
+ * calendar-only tokens that the generic input does not carry:
+ *   - `icon`   — the calendar-specific input icon (own variant/state tree)
+ *   - `shadow` — a calendar-specific static elevation token
+ * Both sit at the input's root, as siblings of `defaultVariant`/`filled`.
+ * (A shallow `.extend()` cannot re-nest the generic input's severity blocks,
+ * so calendar-only tokens are added at the root rather than inside a state.)
  */
-const calendarInputSeverityShape = z.object({
-  padding: withRef(z.string()).optional(),
-  shadow: withRef(z.string()).optional(),
-  font: font.pick({ family: true, size: true, weight: true }).optional(),
-  background: z.union([bg, withRef(z.string())]).optional(),
-  color: color.optional(),
-  border: border.optional(),
-  placeholderColor: color.optional(),
+export const calendarInputShape = inputShape.extend({
   icon: calendarIconShape.prefault({}),
+  shadow: z.string().optional(),
 })
 
 /**
- * Shape of a single state block for the calendar input (default severity only).
- */
-const calendarInputStateShape = z.object({
-  defaultSeverity: calendarInputSeverityShape.prefault({}),
-})
-
-/**
- * Size variant shape for the calendar input (sm/lg).
- */
-const calendarInputSizeShape = z.object({
-  padding: withRef(z.string()).optional(),
-  fontSize: withRef(z.string()).optional(),
-})
-
-/**
- * Shape for the input field in the calendar header panel.
- * Static tokens (sm/lg, focusRing) sit at the root; the default token path lives under
- * `defaultVariant.defaultState.defaultSeverity`.
- * All keys are optional — defaults are applied at the calendar schema level.
- */
-export const calendarInputShape = z.object({
-  sm: calendarInputSizeShape.prefault({}),
-  lg: calendarInputSizeShape.prefault({}),
-  focusRing: borderWithShadow.optional(),
-
-  defaultVariant: z.object({
-    defaultState: calendarInputStateShape.prefault({}),
-    hover: calendarInputStateShape.prefault({}),
-    focus: calendarInputStateShape.prefault({}),
-    disabled: calendarInputStateShape.prefault({}),
-    invalid: calendarInputStateShape.prefault({}),
-    active: calendarInputStateShape.prefault({}),
-  }).prefault({}),
-})
-
-/**
- * Default tokens for the calendar input.
- * The full token set sits on the default path; named states carry only the
- * tokens that differ from `defaultState`.
+ * Defaults for the calendar input.
+ *
+ * Inherits the generic input's full defaults tree (baseline + named states +
+ * the `filled` variant). Because the generic input's `active` background
+ * already equals the calendar's panel-open look, no `active` override is
+ * needed here. The only calendar-specific defaults are `icon` and `shadow`.
  */
 export const calendarInputDefaults = {
-  sm: {
-    padding: '{{primitives.space.sm}}',
-    fontSize: '{{primitives.font.size}}',
-  },
-  lg: {
-    padding: '{{primitives.space.lg}}',
-    fontSize: '{{primitives.font.size}}',
-  },
-  focusRing: {
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
-    width: '{{primitives.border.width.md}}',
-    offset: '{{primitives.border.offset.none}}',
-    shadow: '{{primitives.shadow.none}}',
-    radius: '{{primitives.radius.md}}',
-  },
-  defaultVariant: {
-    defaultState: {
-      defaultSeverity: {
-        padding: '{{primitives.space.md}}',
-        shadow: '{{primitives.shadow.md}}',
-        font: {
-          family: '{{primitives.font.family}}',
-          size: '{{primitives.font.size}}',
-          weight: '{{primitives.font.weight}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.md}}',
-          radius: '{{primitives.border.radius.md}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        placeholderColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        icon: calendarIconDefaults,
-      },
-    },
-    hover: {
-      defaultSeverity: {
-        background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-      },
-    },
-    focus: {
-      defaultSeverity: {
-        border: {
-          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-          width: '{{primitives.border.width.md}}',
-        },
-      },
-    },
-    disabled: {
-      defaultSeverity: {
-        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-        background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
-      },
-    },
-    invalid: {
-      defaultSeverity: {
-        border: {
-          color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
-        },
-        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}',
-      },
-    },
-    active: {
-      defaultSeverity: {
-        background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-      },
-    },
-  },
+  ...inputDefaults,
+  icon: calendarIconDefaults,
+  shadow: '{{primitives.shadow.md}}',
 }

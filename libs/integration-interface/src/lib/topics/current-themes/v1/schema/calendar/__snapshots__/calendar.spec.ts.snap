@@ -538,106 +538,194 @@ Object {
           "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
           "offset": "{{primitives.border.offset.none}}",
           "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
           "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
-          "width": "{{primitives.border.width.md}}",
+          "width": "{{primitives.border.width.sm}}",
         },
         "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
         "font": Object {
-          "family": "{{primitives.font.family}}",
           "size": "{{primitives.font.size}}",
           "weight": "{{primitives.font.weight}}",
         },
-        "icon": Object {
-          "defaultVariant": Object {
-            "defaultState": Object {
-              "defaultSeverity": Object {
-                "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-                "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-                "height": "2.5rem",
-                "padding": "{{primitives.space.md}}",
-                "width": "2.5rem",
-              },
-            },
-            "disabled": Object {
-              "defaultSeverity": Object {
-                "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-              },
-            },
-            "focus": Object {
-              "defaultSeverity": Object {
-                "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
-              },
-            },
-            "hover": Object {
-              "defaultSeverity": Object {
-                "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-              },
-            },
-            "invalid": Object {
-              "defaultSeverity": Object {
-                "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
-              },
-            },
-          },
-          "focusRing": Object {
-            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.radius.md}}",
-            "shadow": "{{primitives.shadow.none}}",
-            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
-            "width": "{{primitives.border.width.md}}",
+        "lg": Object {
+          "fontSize": "{{primitives.font.size}}",
+          "padding": Object {
+            "x": "{{primitives.space.lg}}",
+            "y": "{{primitives.space.md}}",
           },
         },
-        "padding": "{{primitives.space.md}}",
-        "placeholderColor": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-        "shadow": "{{primitives.shadow.md}}",
+        "padding": Object {
+          "x": "{{primitives.space.md}}",
+          "y": "{{primitives.space.sm}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "sm": Object {
+          "fontSize": "{{primitives.font.size}}",
+          "padding": Object {
+            "x": "{{primitives.space.sm}}",
+            "y": "{{primitives.space.xs}}",
+          },
+        },
+        "transitionDuration": "{{primitives.transition.duration}}",
       },
     },
     "disabled": Object {
       "defaultSeverity": Object {
         "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
+          "style": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}",
+        },
         "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        },
       },
     },
     "focus": Object {
       "defaultSeverity": Object {
+        "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
         "border": Object {
           "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-          "width": "{{primitives.border.width.md}}",
+          "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+        },
+        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
       },
     },
     "hover": Object {
       "defaultSeverity": Object {
         "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+          "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+        },
         "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
       },
     },
     "invalid": Object {
       "defaultSeverity": Object {
+        "background": "{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}",
         "border": Object {
           "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+          "style": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}",
         },
         "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        },
       },
     },
   },
-  "focusRing": Object {
-    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
-    "offset": "{{primitives.border.offset.none}}",
-    "radius": "{{primitives.radius.md}}",
-    "shadow": "{{primitives.shadow.none}}",
-    "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
-    "width": "{{primitives.border.width.md}}",
+  "filled": Object {
+    "active": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.state.active.defaultSeverity.bg}}",
+      },
+    },
+    "defaultState": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+        },
+      },
+    },
+    "disabled": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.disabled.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+        },
+      },
+    },
+    "focus": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.focus.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+        },
+      },
+    },
+    "hover": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.hover.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+        },
+      },
+    },
+    "invalid": Object {
+      "defaultSeverity": Object {
+        "background": "{{primitives.variant.primary.invalid.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+        },
+      },
+    },
   },
-  "lg": Object {
-    "fontSize": "{{primitives.font.size}}",
-    "padding": "{{primitives.space.lg}}",
+  "icon": Object {
+    "defaultVariant": Object {
+      "defaultState": Object {
+        "defaultSeverity": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "height": "2.5rem",
+          "padding": "{{primitives.space.md}}",
+          "width": "2.5rem",
+        },
+      },
+      "disabled": Object {
+        "defaultSeverity": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        },
+      },
+      "focus": Object {
+        "defaultSeverity": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+      },
+      "hover": Object {
+        "defaultSeverity": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+      },
+      "invalid": Object {
+        "defaultSeverity": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        },
+      },
+    },
+    "focusRing": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.radius.md}}",
+      "shadow": "{{primitives.shadow.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+      "width": "{{primitives.border.width.md}}",
+    },
   },
-  "sm": Object {
-    "fontSize": "{{primitives.font.size}}",
-    "padding": "{{primitives.space.sm}}",
-  },
+  "shadow": "{{primitives.shadow.md}}",
 }
 `;
 
@@ -858,6 +946,14 @@ Object {
             "style": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}",
             "width": "{{primitives.border.width.md}}",
           },
+        },
+        "yearMonthNav": Object {
+          "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          "font": Object {
+            "size": "{{primitives.font.size}}",
+            "weight": "{{primitives.font.weight}}",
+          },
+          "gap": "{{primitives.space.sm}}",
         },
       },
     },
@@ -1382,6 +1478,14 @@ Object {
                     "width": "{{primitives.border.width.md}}",
                   },
                 },
+                "yearMonthNav": Object {
+                  "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+                  "font": Object {
+                    "size": "{{primitives.font.size}}",
+                    "weight": "{{primitives.font.weight}}",
+                  },
+                  "gap": "{{primitives.space.sm}}",
+                },
               },
             },
           },
@@ -1619,106 +1723,194 @@ Object {
               "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
               "offset": "{{primitives.border.offset.none}}",
               "radius": "{{primitives.border.radius.md}}",
+              "shadow": "{{primitives.shadow.none}}",
               "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
-              "width": "{{primitives.border.width.md}}",
+              "width": "{{primitives.border.width.sm}}",
             },
             "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+            "focusRing": Object {
+              "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+              "offset": "{{primitives.border.offset.none}}",
+              "radius": "{{primitives.radius.md}}",
+              "shadow": "{{primitives.shadow.none}}",
+              "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+              "width": "{{primitives.border.width.md}}",
+            },
             "font": Object {
-              "family": "{{primitives.font.family}}",
               "size": "{{primitives.font.size}}",
               "weight": "{{primitives.font.weight}}",
             },
-            "icon": Object {
-              "defaultVariant": Object {
-                "defaultState": Object {
-                  "defaultSeverity": Object {
-                    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-                    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-                    "height": "2.5rem",
-                    "padding": "{{primitives.space.md}}",
-                    "width": "2.5rem",
-                  },
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {
-                    "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-                  },
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {
-                    "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
-                  },
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {
-                    "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-                  },
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {
-                    "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
-                  },
-                },
-              },
-              "focusRing": Object {
-                "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
-                "offset": "{{primitives.border.offset.none}}",
-                "radius": "{{primitives.radius.md}}",
-                "shadow": "{{primitives.shadow.none}}",
-                "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
-                "width": "{{primitives.border.width.md}}",
+            "lg": Object {
+              "fontSize": "{{primitives.font.size}}",
+              "padding": Object {
+                "x": "{{primitives.space.lg}}",
+                "y": "{{primitives.space.md}}",
               },
             },
-            "padding": "{{primitives.space.md}}",
-            "placeholderColor": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-            "shadow": "{{primitives.shadow.md}}",
+            "padding": Object {
+              "x": "{{primitives.space.md}}",
+              "y": "{{primitives.space.sm}}",
+            },
+            "placeholder": Object {
+              "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+            },
+            "sm": Object {
+              "fontSize": "{{primitives.font.size}}",
+              "padding": Object {
+                "x": "{{primitives.space.sm}}",
+                "y": "{{primitives.space.xs}}",
+              },
+            },
+            "transitionDuration": "{{primitives.transition.duration}}",
           },
         },
         "disabled": Object {
           "defaultSeverity": Object {
             "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+            "border": Object {
+              "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
+              "style": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}",
+            },
             "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+            },
           },
         },
         "focus": Object {
           "defaultSeverity": Object {
+            "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
             "border": Object {
               "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-              "width": "{{primitives.border.width.md}}",
+              "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+            },
+            "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
             },
           },
         },
         "hover": Object {
           "defaultSeverity": Object {
             "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+            "border": Object {
+              "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+              "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+            },
             "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+            },
           },
         },
         "invalid": Object {
           "defaultSeverity": Object {
+            "background": "{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}",
             "border": Object {
               "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+              "style": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}",
             },
             "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+            },
           },
         },
       },
-      "focusRing": Object {
-        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
-        "offset": "{{primitives.border.offset.none}}",
-        "radius": "{{primitives.radius.md}}",
-        "shadow": "{{primitives.shadow.none}}",
-        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
-        "width": "{{primitives.border.width.md}}",
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.state.active.defaultSeverity.bg}}",
+          },
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+            "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+            },
+          },
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.disabled.defaultSeverity.bg}}",
+            "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+            },
+          },
+        },
+        "focus": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.focus.defaultSeverity.bg}}",
+            "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+            },
+          },
+        },
+        "hover": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.hover.defaultSeverity.bg}}",
+            "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+            },
+          },
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {
+            "background": "{{primitives.variant.primary.invalid.defaultSeverity.bg}}",
+            "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+            "placeholder": Object {
+              "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+            },
+          },
+        },
       },
-      "lg": Object {
-        "fontSize": "{{primitives.font.size}}",
-        "padding": "{{primitives.space.lg}}",
+      "icon": Object {
+        "defaultVariant": Object {
+          "defaultState": Object {
+            "defaultSeverity": Object {
+              "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+              "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+              "height": "2.5rem",
+              "padding": "{{primitives.space.md}}",
+              "width": "2.5rem",
+            },
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {
+              "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+            },
+          },
+          "focus": Object {
+            "defaultSeverity": Object {
+              "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+            },
+          },
+          "hover": Object {
+            "defaultSeverity": Object {
+              "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+            },
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {
+              "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+            },
+          },
+        },
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
       },
-      "sm": Object {
-        "fontSize": "{{primitives.font.size}}",
-        "padding": "{{primitives.space.sm}}",
-      },
+      "shadow": "{{primitives.shadow.md}}",
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -2236,6 +2428,14 @@ Object {
                         "width": "{{primitives.border.width.md}}",
                       },
                     },
+                    "yearMonthNav": Object {
+                      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+                      "font": Object {
+                        "size": "{{primitives.font.size}}",
+                        "weight": "{{primitives.font.weight}}",
+                      },
+                      "gap": "{{primitives.space.sm}}",
+                    },
                   },
                 },
               },
@@ -2360,164 +2560,66 @@ Object {
     "input": Object {
       "defaultVariant": Object {
         "active": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "defaultState": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "disabled": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "focus": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "hover": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "invalid": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
+          "defaultSeverity": Object {},
+        },
+      },
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {},
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {},
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {},
+        },
+        "focus": Object {
+          "defaultSeverity": Object {},
+        },
+        "hover": Object {
+          "defaultSeverity": Object {},
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {},
+        },
+      },
+      "icon": Object {
+        "defaultVariant": Object {
+          "active": Object {
+            "defaultSeverity": Object {},
+          },
+          "defaultState": Object {
+            "defaultSeverity": Object {},
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {},
+          },
+          "focus": Object {
+            "defaultSeverity": Object {},
+          },
+          "hover": Object {
+            "defaultSeverity": Object {},
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {},
           },
         },
       },
-      "lg": Object {},
-      "sm": Object {},
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -2940,6 +3042,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -2989,6 +3092,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -3038,6 +3142,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -3540,6 +3645,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -3589,6 +3695,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -3638,6 +3745,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -4140,6 +4248,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -4189,6 +4298,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -4238,6 +4348,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -4347,164 +4458,66 @@ Object {
     "input": Object {
       "defaultVariant": Object {
         "active": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "defaultState": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "disabled": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "focus": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "hover": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "invalid": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
+          "defaultSeverity": Object {},
+        },
+      },
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {},
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {},
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {},
+        },
+        "focus": Object {
+          "defaultSeverity": Object {},
+        },
+        "hover": Object {
+          "defaultSeverity": Object {},
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {},
+        },
+      },
+      "icon": Object {
+        "defaultVariant": Object {
+          "active": Object {
+            "defaultSeverity": Object {},
+          },
+          "defaultState": Object {
+            "defaultSeverity": Object {},
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {},
+          },
+          "focus": Object {
+            "defaultSeverity": Object {},
+          },
+          "hover": Object {
+            "defaultSeverity": Object {},
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {},
           },
         },
       },
-      "lg": Object {},
-      "sm": Object {},
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -4927,6 +4940,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -4976,6 +4990,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -5025,6 +5040,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -5527,6 +5543,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -5576,6 +5593,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -5625,6 +5643,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -6127,6 +6146,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -6176,6 +6196,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -6225,6 +6246,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -6334,164 +6356,66 @@ Object {
     "input": Object {
       "defaultVariant": Object {
         "active": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "defaultState": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "disabled": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "focus": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "hover": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "invalid": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
+          "defaultSeverity": Object {},
+        },
+      },
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {},
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {},
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {},
+        },
+        "focus": Object {
+          "defaultSeverity": Object {},
+        },
+        "hover": Object {
+          "defaultSeverity": Object {},
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {},
+        },
+      },
+      "icon": Object {
+        "defaultVariant": Object {
+          "active": Object {
+            "defaultSeverity": Object {},
+          },
+          "defaultState": Object {
+            "defaultSeverity": Object {},
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {},
+          },
+          "focus": Object {
+            "defaultSeverity": Object {},
+          },
+          "hover": Object {
+            "defaultSeverity": Object {},
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {},
           },
         },
       },
-      "lg": Object {},
-      "sm": Object {},
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -6914,6 +6838,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -6963,6 +6888,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -7012,6 +6938,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -7514,6 +7441,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -7563,6 +7491,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -7612,6 +7541,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -8114,6 +8044,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -8163,6 +8094,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -8212,6 +8144,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -8321,164 +8254,66 @@ Object {
     "input": Object {
       "defaultVariant": Object {
         "active": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "defaultState": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "disabled": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "focus": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "hover": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "invalid": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
+          "defaultSeverity": Object {},
+        },
+      },
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {},
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {},
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {},
+        },
+        "focus": Object {
+          "defaultSeverity": Object {},
+        },
+        "hover": Object {
+          "defaultSeverity": Object {},
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {},
+        },
+      },
+      "icon": Object {
+        "defaultVariant": Object {
+          "active": Object {
+            "defaultSeverity": Object {},
+          },
+          "defaultState": Object {
+            "defaultSeverity": Object {},
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {},
+          },
+          "focus": Object {
+            "defaultSeverity": Object {},
+          },
+          "hover": Object {
+            "defaultSeverity": Object {},
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {},
           },
         },
       },
-      "lg": Object {},
-      "sm": Object {},
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -8901,6 +8736,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -8950,6 +8786,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -8999,6 +8836,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -9501,6 +9339,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -9550,6 +9389,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -9599,6 +9439,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -10101,6 +9942,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -10150,6 +9992,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -10199,6 +10042,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -10308,164 +10152,66 @@ Object {
     "input": Object {
       "defaultVariant": Object {
         "active": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "defaultState": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "disabled": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "focus": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "hover": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
-          },
+          "defaultSeverity": Object {},
         },
         "invalid": Object {
-          "defaultSeverity": Object {
-            "icon": Object {
-              "defaultVariant": Object {
-                "active": Object {
-                  "defaultSeverity": Object {},
-                },
-                "defaultState": Object {
-                  "defaultSeverity": Object {},
-                },
-                "disabled": Object {
-                  "defaultSeverity": Object {},
-                },
-                "focus": Object {
-                  "defaultSeverity": Object {},
-                },
-                "hover": Object {
-                  "defaultSeverity": Object {},
-                },
-                "invalid": Object {
-                  "defaultSeverity": Object {},
-                },
-              },
-            },
+          "defaultSeverity": Object {},
+        },
+      },
+      "filled": Object {
+        "active": Object {
+          "defaultSeverity": Object {},
+        },
+        "defaultState": Object {
+          "defaultSeverity": Object {},
+        },
+        "disabled": Object {
+          "defaultSeverity": Object {},
+        },
+        "focus": Object {
+          "defaultSeverity": Object {},
+        },
+        "hover": Object {
+          "defaultSeverity": Object {},
+        },
+        "invalid": Object {
+          "defaultSeverity": Object {},
+        },
+      },
+      "icon": Object {
+        "defaultVariant": Object {
+          "active": Object {
+            "defaultSeverity": Object {},
+          },
+          "defaultState": Object {
+            "defaultSeverity": Object {},
+          },
+          "disabled": Object {
+            "defaultSeverity": Object {},
+          },
+          "focus": Object {
+            "defaultSeverity": Object {},
+          },
+          "hover": Object {
+            "defaultSeverity": Object {},
+          },
+          "invalid": Object {
+            "defaultSeverity": Object {},
           },
         },
       },
-      "lg": Object {},
-      "sm": Object {},
     },
     "panel": Object {
       "defaultVariant": Object {
@@ -10888,6 +10634,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -10937,6 +10684,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -10986,6 +10734,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -11488,6 +11237,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -11537,6 +11287,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -11586,6 +11337,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },
@@ -12088,6 +11840,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "focus": Object {
@@ -12137,6 +11890,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
                 "hover": Object {
@@ -12186,6 +11940,7 @@ Object {
                         },
                       },
                     },
+                    "yearMonthNav": Object {},
                   },
                 },
               },

@@ -7,10 +7,12 @@ import { calendarPanelHeaderShape, calendarPanelHeaderDefaults } from './panelhe
 import { calendarTimePickerShape, calendarTimePickerDefaults } from './timepicker'
 
 /**
- * Shape of a single severity block of the calendar panel.
- * The panel's children (header, date panel, etc.) sit inside the state block.
+ * Shape of a single state block of the calendar panel.
+ * The panel's children (header, date panel, etc.) sit inside the state block. No named
+ * severities exist for this node, so tokens sit directly here instead of behind a
+ * `defaultSeverity` wrapper.
  */
-const calendarPanelSeverityShape = z.object({
+const calendarPanelStateShape = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
   color: color.optional(),
   border: borderWithShadow.optional(),
@@ -22,13 +24,6 @@ const calendarPanelSeverityShape = z.object({
   multiMonthDivider: calendarMultiMonthDividerShape.prefault({}),
   timePicker: calendarTimePickerShape.prefault({}),
   footerButtonBar: calendarFooterButtonBarShape.prefault({}),
-})
-
-/**
- * Shape of a single state block of the calendar panel (default severity only).
- */
-const calendarPanelStateShape = z.object({
-  defaultSeverity: calendarPanelSeverityShape.prefault({}),
 })
 
 /**
@@ -49,26 +44,24 @@ export const calendarPanelShape = z.object({
 export const calendarPanelDefaults = {
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
-        border: {
-          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.sm}}',
-          offset: '{{primitives.border.offset.none}}',
-          radius: '{{primitives.border.radius.sm}}',
-          shadow: '{{primitives.shadow.sm}}',
-        },
-        padding: '{{primitives.space.md}}',
-        headerGap: '{{primitives.space.sm}}',
-
-        header: calendarPanelHeaderDefaults,
-        datePanel: calendarDatePanelDefaults,
-        multiMonthDivider: calendarMultiMonthDividerDefaults,
-        timePicker: calendarTimePickerDefaults,
-        footerButtonBar: calendarFooterButtonBarDefaults,
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.sm}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.sm}}',
+        shadow: '{{primitives.shadow.sm}}',
       },
+      padding: '{{primitives.space.md}}',
+      headerGap: '{{primitives.space.sm}}',
+
+      header: calendarPanelHeaderDefaults,
+      datePanel: calendarDatePanelDefaults,
+      multiMonthDivider: calendarMultiMonthDividerDefaults,
+      timePicker: calendarTimePickerDefaults,
+      footerButtonBar: calendarFooterButtonBarDefaults,
     },
   },
 }

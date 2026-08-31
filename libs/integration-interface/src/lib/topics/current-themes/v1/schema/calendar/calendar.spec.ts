@@ -128,10 +128,12 @@ describe('calendar schema', () => {
   })
 
   it('resolves a baseline leaf through the default token path (defaultVariant.defaultState.defaultSeverity)', () => {
+    // The calendar input's baseline background is the generic input's default-path background
+    // (Option 1 — extends the generic input usage; the calendar adds only `icon`/`shadow`).
     expectLeafAtTokenPath(
       parsed,
-      ['defaultVariant', 'input', 'defaultVariant', 'defaultState', 'defaultSeverity', 'padding'],
-      '{{primitives.space.md}}'
+      ['defaultVariant', 'input', 'defaultVariant', 'defaultState', 'defaultSeverity', 'background'],
+      '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'
     )
   })
 
@@ -173,11 +175,29 @@ describe('calendar schema', () => {
       )
     })
 
-    it('keeps the static tokens (sm, lg, focusRing) at the node root, siblings of defaultVariant', () => {
-      expect(resolved['sm']).toBeDefined()
-      expect(resolved['lg']).toBeDefined()
-      expect(resolved['focusRing']).toBeDefined()
-      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeUndefined()
+    it('keeps the calendar-only tokens (icon, shadow) at the input root, siblings of defaultVariant/filled', () => {
+      // Option 1: a shallow .extend() cannot re-nest the generic input's severity
+      // blocks, so the calendar-only tokens sit at the input root.
+      expect(resolved['icon']).toBeDefined()
+      expect(resolved['shadow']).toBe('{{primitives.shadow.md}}')
+      expect(resolved['defaultVariant']).toBeDefined()
+      expect(resolved['filled']).toBeDefined()
+    })
+
+    it('inherits the generic input static tokens (sm, lg, focusRing) inside the baseline severity block', () => {
+      // The generic input's sm/lg/focusRing are leaf tokens of the default severity
+      // block (not at the input root) — reused via Option 1.
+      const baseline = at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity'])
+      expect(baseline['sm']).toBeDefined()
+      expect(baseline['lg']).toBeDefined()
+      expect(baseline['focusRing']).toBeDefined()
+    })
+
+    it('reuses the shared calendar icon shape/defaults by reference and inherits the generic input defaults', () => {
+      // Option 1: calendarInputDefaults spreads the generic inputDefaults and adds
+      // only the calendar-specific icon/shadow. The icon reuses the shared icon const.
+      expect(calendarInputDefaults.icon).toBe(calendarIconDefaults)
+      expect(innerSchema(shapeAt(calendarInputShape, ['icon']))).toBe(calendarIconShape)
     })
   })
 
@@ -273,6 +293,18 @@ describe('calendar schema', () => {
 
     it('resolves the expected default token tree', () => {
       expect(schema.parse({})).toMatchSnapshot()
+    })
+
+    it('resolves the new yearMonthNav baseline leaf inside the state block (header.yearMonthNav)', () => {
+      // The .p-datepicker-title month/year display is a static (flat) element placed
+      // inside the header's state block — no own variant/state tree.
+      expectLeafAtTokenPath(
+        schema.parse({}),
+        ['defaultVariant', 'defaultState', 'defaultSeverity', 'yearMonthNav', 'color'],
+        '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'
+      )
+      // It is a child of the header's state block, not a root-level token.
+      expect(at(schema.parse({}), ['yearMonthNav'])).toBeUndefined()
     })
 
     it('reuses the shared panel-button shape/defaults by reference (navButton)', () => {

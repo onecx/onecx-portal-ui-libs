@@ -1,12 +1,16 @@
 # Calendar Schema Audit
 
-**Date:** 2026-08-19
+**Date:** 2026-08-19 (initial restructure) · **2026-08-26** (input consolidation + `yearMonthNav`)
 **Reviewed:** 2026-08-19 (full re-audit against the refined `theme-schema-audit` skill; schema restructure
-per v3.1.0, test strategy finalized at v3.3.0)
+per v3.1.0, test strategy finalized at v3.3.0) and 2026-08-26 (input consolidation run — see _Input
+consolidation (2026-08-26)_).
 **Schema files:** `libs/integration-interface/src/lib/topics/current-themes/v1/schema/calendar/`
 **Status:** ✅ Schema restructured to the **variable-dependency** model with the **default-token-path**
-invariant. Reference values unchanged (structure only). Consolidated test coverage added via the
-snapshot-plus-invariants strategy (see _Testing_). One downstream item remains deferred (see _Deferred_).
+invariant. Reference values unchanged (structure only). **Calendar `input` consolidated to Option 1**
+(extends the generic `usages.input`; only `usages.calendar.input.*` is consumed), generic `input`
+restructured with the **shape/defaults separation** pattern and an added `active` state, and a new
+`header.yearMonthNav` child added. Consolidated test coverage via the snapshot-plus-invariants
+strategy (see _Testing_). One downstream item remains deferred (see _Deferred_).
 
 ## What changed in this run (relative to the prior 3-round audit)
 
@@ -24,6 +28,60 @@ redirected (v3.0.0 → v3.1.0) to restore the **variable-dependency** model _and
 The re-audit (Steps 0–5b) re-derived the rough schema from PrimeNG 21.2.13's rendered DOM, confirmed it
 node-by-node, and applied the structural gaps G1–G4 (below). **All `{{primitives…}}` reference values and
 literal tokens were left byte-identical — only the nesting was restructured.**
+
+## Input consolidation (2026-08-26)
+
+A follow-up audit run (2026-08-26) resolved the calendar `input` consolidation question that the
+initial restructure had left as an **independent** token set (Option 2), and added the missing
+`header.yearMonthNav` child. Three structural decisions were applied; all reference values were
+carried over unchanged.
+
+### G1 — added `header.yearMonthNav`
+
+The `.p-datepicker-title` month/year display was not modelled. Added `calendarYearMonthNavShape`
+to `panelheader.ts`: a **static** text element (no own variant/state tree), tokens flat — analogous
+to `today` and `timeSeparator`. Tokens: `gap`, `font{weight,size}`, `color`. It sits **inside the
+header's state block** (state-dependent: `defaultVariant.defaultState.defaultSeverity.yearMonthNav`),
+matching `selectMonth`/`selectYear`/`navButton`. Baseline defaults (states omitted → fallback):
+`gap = space.sm`, `font.weight = font.weight`, `font.size = font.size`,
+`color = area.overlay.defaultState.defaultSeverity.contrast`.
+
+### G2 — `input` consolidated to Option 1 (extends the generic input)
+
+The calendar `input` was rewritten from its independent token set to **Option 1**:
+
+```ts
+export const calendarInputShape = inputShape.extend({
+  icon: calendarIconShape.prefault({}),   // calendar-only child (own variant/state tree)
+  shadow: z.string().optional(),          // calendar-only static elevation token
+})
+export const calendarInputDefaults = { ...inputDefaults, icon: calendarIconDefaults, shadow: '{{primitives.shadow.md}}' }
+```
+
+- Reuses the full generic `inputShape` token set (so the calendar input is themed via
+  `usages.calendar.input.*` exclusively — a generic `usages.input.*` is **not** consumed).
+- The two calendar-only tokens (`icon`, `shadow`) sit at the input **root**, as siblings of
+  `defaultVariant`/`filled`. A shallow `.extend()` cannot re-nest the generic input's severity
+  blocks, so calendar-only tokens are added at the root rather than inside a state.
+- No `active` override: the generic input's `active` background
+  (`{{primitives.defaultVariant.state.active.defaultSeverity.bg}}`) already equals the calendar's
+  panel-open look.
+- This dropped the calendar-specific `font.family` and the single-string `padding` / `placeholderColor`
+  tokens in favour of the generic input's `padding{x,y}` / `placeholder{color}` / `font{weight,size}`.
+
+### G3 — generic `input` restructured + `active` added (prerequisite for G2)
+
+Option 1 requires a clean generic `inputShape`/`inputDefaults` to extend. `schema/input.ts` was
+restructured to the **shape/defaults separation** pattern (it was still the legacy flat shape before
+this run): pure all-optional `inputShape` (severity blocks with `defaultSeverity`, a `defaultVariant`
+tree with `defaultState` + `hover`/`focus`/`active`/`disabled`/`invalid`, and a partial `filled`
+variant), a plain `inputDefaults` tree, and `input = applyDefaultsRecursive(inputShape, inputDefaults)
+.register(themeSchemaRegistry, { id: 'input' })`. The `active` state was added to the generic input
+(carrying an `active` background default) so the calendar inherits a panel-open `active` without an
+override. Legacy sub-schemas (`inputTransition`, `inputFocusRingSchema`, `inputHoverState`,
+`inputFocusState`, `inputDisabledState`, `inputInvalidState`, `inputFilled*`, `inputFilledVariant`)
+were removed; the assembled `input` (and `inputPadding`/`inputSize`) exports are kept —
+`current-themes.schema.ts` imports only the assembled `input`.
 
 ## Canonical Values
 
@@ -46,15 +104,18 @@ calendar                                   [variants: defaultVariant + primary�
 ├─ settings                                (static — no default slots; pass-through props)
 ├─ transitionDuration                      (static — scalar, z.number)
 └─ defaultVariant / primary…quinary        (variant slots — same shape; only defaultVariant gets defaults)
-   ├─ input                                (dep: variant) [S]
-   │  ├─ sm, lg, focusRing                 [s]  input root
-   │  └─ defaultVariant
-   │     ├─ defaultState → defaultSeverity → {padding, shadow, font, bg, color, border, placeholderColor, icon}
-   │     └─ hover/focus/disabled/invalid/active → defaultSeverity → {diffs}
-   │        icon (dep: state) [S]
-   │           └─ defaultVariant
-   │              ├─ defaultState → defaultSeverity → {padding, width, height, color, bg}
-   │              └─ hover/focus/disabled/invalid/active → defaultSeverity → {color}
+   ├─ input                                (dep: variant) [S] — **Option 1: extends generic `usages.input`**
+   │  ├─ icon, shadow                      [s]  calendar-only tokens at the input root (siblings of `defaultVariant`/`filled`)
+   │  └─ (token set inherited from generic `inputShape`)
+   │     ├─ sm, lg, focusRing              [s]
+   │     ├─ defaultVariant
+   │     │  ├─ defaultState → defaultSeverity → {transitionDuration, font{weight,size}, padding{x,y}, focusRing, sm, lg, bg, color, border, placeholder{color}}
+   │     │  └─ hover/focus/active/disabled/invalid → defaultSeverity → {diffs}
+   │     ├─ filled (partial override)      → defaultState/hover/focus/active/disabled/invalid → defaultSeverity → {diffs}
+   │     └─ icon (dep: state) [S]  calendarIcon (calendar-only)
+   │        └─ defaultVariant
+   │           ├─ defaultState → defaultSeverity → {padding, width, height, color, bg}
+   │           └─ hover/focus/disabled/invalid/active → defaultSeverity → {color}
    ├─ panel                                (dep: variant) [S]
    │  └─ defaultVariant
    │     ├─ defaultState → defaultSeverity → {bg, color, border, padding, headerGap,
@@ -62,8 +123,9 @@ calendar                                   [variants: defaultVariant + primary�
    │     └─ hover/focus → defaultSeverity → {diffs}
    │        header (dep: state) [S]
    │        │  └─ defaultVariant
-   │        │     ├─ defaultState → defaultSeverity → {bg, color, padding, margin, gap, selectMonth, selectYear, navButton}
+   │        │     ├─ defaultState → defaultSeverity → {bg, color, padding, margin, gap, yearMonthNav, selectMonth, selectYear, navButton}
    │        │     └─ hover/focus → defaultSeverity → {diffs}
+   │        │        yearMonthNav [s] → {gap, font{weight,size}, color}   (.p-datepicker-title; **new** — G1)
    │        │        selectMonth / selectYear → navigationSelector (shared) [S]
    │        │        navButton → panelButton (shared) [S]
    │        datePanel (dep: state) [S]
@@ -197,6 +259,18 @@ objects so a theme can restyle them separately.
 `defaultVariant` → `area.overlay` reference-family fixes already in the working tree; both are otherwise
 static/flat and needed no structural restructure.)
 
+### Files modified (2026-08-26 input-consolidation run)
+
+| File                              | Change                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| `schema/input.ts`                 | G3 — restructured to shape/defaults separation + added `active` state (prerequisite for G2) |
+| `schema/calendar/input.ts`        | G2 — Option 1: `inputShape.extend({ icon, shadow })`; `calendarInputDefaults = { …inputDefaults, icon, shadow }` |
+| `schema/calendar/panelheader.ts`  | G1 — added `calendarYearMonthNavShape` + `yearMonthNav` defaults                             |
+| `schema/input.spec.ts`            | Step 10 — rewritten (removed imports no longer exist; snapshot + invariants)                |
+| `schema/calendar/calendar.spec.ts`| Step 10 — corrected Option-1 invariants + new `yearMonthNav` invariant                       |
+| `schema/__snapshots__/input.spec.ts.snap` (new) | Step 10 — regenerated (incl. `active`)                                       |
+| `schema/calendar/__snapshots__/calendar.spec.ts.snap` | Step 10 — regenerated (root/input/panel header/panel)               |
+
 ## Deferred
 
 1. **Mapper / preset layer (out of scope).** The restructure deepened the paths (added `defaultVariant` and
@@ -260,3 +334,41 @@ hand-assert the invariants** strategy:
   per-node), stable across re-runs. The one remaining suite failure in the full `current-themes/v1/schema`
   run (`message.spec.ts`, a `focusRing` token-path mismatch) is pre-existing and unrelated to the calendar
   files touched here.
+
+### Input-consolidation test updates (2026-08-26)
+
+The 2026-08-26 run's structural changes (G1–G3) made the 2026-08-19 calendar spec and the stale
+`input.spec.ts` fail; both were updated (Step 10 of the skill — spec/snapshot changes live here, not in
+Step 8):
+
+- **`input.spec.ts` rewritten** — it still imported the legacy sub-schemas (`inputDisabledState`,
+  `inputFilled*`, `inputFocusRingSchema`, …) that the `input.ts` restructure (G3) removed, so it no longer
+  compiled. Rewritten to the **snapshot + invariants** strategy: `safeParse({})`, `expectDefaultsMatchShape`
+  (shape/defaults parity), a snapshot of `input.parse({})`, and explicit invariants — the default token
+  path, the static input tokens (`transitionDuration`/`font`/`padding`/`focusRing`/`sm`/`lg`) on the
+  baseline severity block (not the input root), no grouping-wrapper keys, the `active` background default,
+  and the `filled` variant being a **partial override** (`background`/`color`/`placeholder` present;
+  `border` + static tokens resolve via fallback). The snapshot `input schema resolves the expected default
+  token tree 1` was regenerated (now includes the `active` state under both `defaultVariant` and `filled`).
+- **`calendar/calendar.spec.ts` updated** — three invariants were stale under Option 1 and were corrected:
+  (1) the **root** default-token-path leaf moved from the calendar-input's single-string `padding`
+  (`{{primitives.space.md}}`, Option-2) to the generic input's baseline `background`
+  (`{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}`); (2) the input's "static tokens at
+  root" assertion was replaced — under Option 1 the generic `sm`/`lg`/`focusRing` now live **inside the
+  baseline severity block** (inherited), and the **calendar-only `icon`/`shadow` sit at the input root**
+  (siblings of `defaultVariant`/`filled`), with the shared `calendarIconShape`/`calendarIconDefaults`
+  asserted by reference; (3) a **new `panel header` invariant** asserts the `yearMonthNav` baseline leaf
+  (`color = area.overlay.defaultState.defaultSeverity.contrast`) resolves **inside the header's state
+  block** and is absent at the header root.
+- **Snapshots regenerated** (`jest -u`, never hand-edited): the calendar **root**, **input**, **panel
+  header** (new `yearMonthNav`), and **panel** (inherits the header/input changes) snapshots now reflect
+  the Option-1 input tree. The root snapshot's net line change is the *expected* Option-1 effect: under
+  Option 2 `icon` was nested inside every state severity block (repeated across all states × named
+  variants), whereas under Option 1 `icon`/`shadow` sit once at the input root and the named-variant state
+  blocks resolve empty — so the named-variant subtrees shrink while the `defaultVariant` block grows with
+  the generic input's full tree (`filled` variant, `padding{x,y}`, `placeholder{color}`, `active`). All 19
+  calendar snapshot names remain present (none dropped); `yearMonthNav` appears throughout the
+  header-bearing subtrees.
+- **Result:** full `current-themes/v1/schema` run — **274 tests pass, 1 fail** (the pre-existing,
+  unrelated `message.spec.ts` `close.focusRing` token-path mismatch, which does not import `input.ts`),
+  **20/20 snapshots pass**.

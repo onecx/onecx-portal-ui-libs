@@ -7,23 +7,17 @@ import {
 } from './footerbutton'
 
 /**
- * Shape of a single severity block of the calendar footer button bar.
- * The bar's buttons sit inside the state block.
+ * Shape of a single state block of the calendar footer button bar.
+ * The bar's buttons sit inside the state block. No named severities exist for this node, so
+ * tokens sit directly here instead of behind a `defaultSeverity` wrapper.
  */
-const calendarFooterButtonBarSeverityShape = z.object({
+const calendarFooterButtonBarStateShape = z.object({
   padding: withRef(z.string()).optional(),
   border: border.optional(),
   gap: withRef(z.string()).optional(),
 
   todayButton: calendarFooterButtonShape.prefault({}),
   clearButton: calendarFooterButtonShape.prefault({}),
-})
-
-/**
- * Shape of a single state block of the calendar footer button bar (default severity only).
- */
-const calendarFooterButtonBarStateShape = z.object({
-  defaultSeverity: calendarFooterButtonBarSeverityShape.prefault({}),
 })
 
 /**
@@ -44,20 +38,18 @@ export const calendarFooterButtonBarShape = z.object({
 export const calendarFooterButtonBarDefaults = {
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        padding: '{{primitives.space.md}}',
-        border: {
-          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.md}}',
-          radius: '{{primitives.border.radius.md}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        gap: '{{primitives.space.md}}',
-
-        todayButton: calendarTodayButtonDefaults,
-        clearButton: calendarClearButtonDefaults,
+      padding: '{{primitives.space.md}}',
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.md}}',
+        radius: '{{primitives.border.radius.md}}',
+        offset: '{{primitives.border.offset.none}}',
       },
+      gap: '{{primitives.space.md}}',
+
+      todayButton: calendarTodayButtonDefaults,
+      clearButton: calendarClearButtonDefaults,
     },
   },
 }

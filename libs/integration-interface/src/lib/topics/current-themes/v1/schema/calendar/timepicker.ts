@@ -4,11 +4,12 @@ import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbu
 import { calendarTimeSeperatorShape, calendarTimeSeperatorDefaults } from './timeseperator'
 
 /**
- * Shape of a single severity block of the calendar time picker.
+ * Shape of a single state block of the calendar time picker.
  * The time picker's children (separator, button) sit inside the state block,
- * matching the placement of panel/datePanel/footerButtonBar children.
+ * matching the placement of panel/datePanel/footerButtonBar children. No named severities exist
+ * for this node, so tokens sit directly here instead of behind a `defaultSeverity` wrapper.
  */
-const calendarTimePickerSeverityShape = z.object({
+const calendarTimePickerStateShape = z.object({
   padding: withRef(z.string()).optional(),
   border: border.optional(),
   gap: withRef(z.string()).optional(),
@@ -17,13 +18,6 @@ const calendarTimePickerSeverityShape = z.object({
 
   timeSeparator: calendarTimeSeperatorShape.prefault({}),
   timePickerButton: calendarPanelButtonShape.prefault({}),
-})
-
-/**
- * Shape of a single state block of the calendar time picker (default severity only).
- */
-const calendarTimePickerStateShape = z.object({
-  defaultSeverity: calendarTimePickerSeverityShape.prefault({}),
 })
 
 /**
@@ -44,22 +38,20 @@ export const calendarTimePickerShape = z.object({
 export const calendarTimePickerDefaults = {
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        padding: '{{primitives.space.md}}',
-        border: {
-          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.md}}',
-          radius: '{{primitives.border.radius.md}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        gap: '{{primitives.space.md}}',
-        buttonGap: '{{primitives.space.xs}}',
-        margin: '{{primitives.space.md}}',
-
-        timeSeparator: calendarTimeSeperatorDefaults,
-        timePickerButton: calendarPanelButtonDefaults,
+      padding: '{{primitives.space.md}}',
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.md}}',
+        radius: '{{primitives.border.radius.md}}',
+        offset: '{{primitives.border.offset.none}}',
       },
+      gap: '{{primitives.space.md}}',
+      buttonGap: '{{primitives.space.xs}}',
+      margin: '{{primitives.space.md}}',
+
+      timeSeparator: calendarTimeSeperatorDefaults,
+      timePickerButton: calendarPanelButtonDefaults,
     },
   },
 }

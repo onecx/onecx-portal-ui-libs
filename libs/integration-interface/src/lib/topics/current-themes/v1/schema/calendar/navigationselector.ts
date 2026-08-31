@@ -2,9 +2,10 @@ import * as z from 'zod'
 import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
 
 /**
- * Shape of a single severity block for calendar navigation selectors.
+ * Shape of a single state block for calendar navigation selectors. No named severities exist for
+ * this node, so tokens sit directly here instead of behind a `defaultSeverity` wrapper.
  */
-const calendarNavigationSelectorSeverityShape = z.object({
+const calendarNavigationSelectorStateShape = z.object({
   padding: withRef(z.string()).optional(),
   font: font.pick({ weight: true, size: true }).optional(),
   border: border.optional(),
@@ -13,16 +14,9 @@ const calendarNavigationSelectorSeverityShape = z.object({
 })
 
 /**
- * Shape of a single state block for calendar navigation selectors (default severity only).
- */
-const calendarNavigationSelectorStateShape = z.object({
-  defaultSeverity: calendarNavigationSelectorSeverityShape.prefault({}),
-})
-
-/**
  * Shape for navigation selector buttons in the calendar header panel.
  * Static token (focusRing) sits at the root; the default token path lives under
- * `defaultVariant.defaultState.defaultSeverity`.
+ * `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarNavigationSelectorShape = z.object({
@@ -49,35 +43,29 @@ export const calendarNavigationSelectorDefaults = {
   },
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        padding: '{{primitives.space.sm}}',
-        font: {
-          weight: '{{primitives.font.weight}}',
-          size: '{{primitives.font.size}}',
-        },
-        border: {
-          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          offset: '{{primitives.border.offset.none}}',
-          radius: '{{primitives.border.radius.md}}',
-        },
-        background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      padding: '{{primitives.space.sm}}',
+      font: {
+        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size}}',
       },
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.none}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
+      },
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
     },
     hover: {
-      defaultSeverity: {
-        background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
-        color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
-      },
+      background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
     },
     focus: {
-      defaultSeverity: {
-        border: {
-          color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-          width: '{{primitives.border.width.md}}',
-        },
+      border: {
+        color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+        width: '{{primitives.border.width.md}}',
       },
     },
   },

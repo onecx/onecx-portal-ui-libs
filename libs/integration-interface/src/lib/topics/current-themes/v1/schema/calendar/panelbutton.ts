@@ -2,25 +2,20 @@ import * as z from 'zod'
 import { bg, border, borderWithShadow, color, withRef } from '../primitives'
 
 /**
- * Shape of a single severity block for calendar panel buttons.
+ * Shape of a single state block for calendar panel buttons.
+ * No named severities exist for this node, so its tokens sit directly on the state block instead
+ * of behind a `defaultSeverity` wrapper.
  */
-const calendarPanelButtonSeverityShape = z.object({
+const calendarPanelButtonStateShape = z.object({
   color: z.union([color, withRef(z.string())]).optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
   border: border.optional(),
 })
 
 /**
- * Shape of a single state block for calendar panel buttons (default severity only).
- */
-const calendarPanelButtonStateShape = z.object({
-  defaultSeverity: calendarPanelButtonSeverityShape.prefault({}),
-})
-
-/**
  * Shape for calendar panel buttons (e.g. navigation buttons in panel header).
  * Static tokens (width/height, focusRing) sit at the root; the default token path lives under
- * `defaultVariant.defaultState.defaultSeverity`.
+ * `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarPanelButtonShape = z.object({
@@ -54,42 +49,32 @@ export const calendarPanelButtonDefaults = {
   },
   defaultVariant: {
     defaultState: {
-      defaultSeverity: {
-        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
-        background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
-        border: {
-          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          offset: '{{primitives.border.offset.none}}',
-          radius: '{{primitives.border.radius.md}}',
-        },
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.none}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
       },
     },
     hover: {
-      defaultSeverity: {
-        background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
-        color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
-      },
+      background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
     },
     focus: {
-      defaultSeverity: {
-        border: {
-          color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-          width: '{{primitives.border.width.md}}',
-        },
+      border: {
+        color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+        width: '{{primitives.border.width.md}}',
       },
     },
     active: {
-      defaultSeverity: {
-        background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
-      },
+      background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
     },
     disabled: {
-      defaultSeverity: {
-        color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
-        background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
-      },
+      color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+      background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
     },
   },
 }
