@@ -116,12 +116,25 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     this.visible.set(false)
 
     const before = this.displayedColumns().map((column) => column.id)
-    const after = this.displayedColumnsModel().map((column) => column.id)
+    const selectedColumns = [...this.displayedColumnsModel()]
+
+    const beforeSet = new Set(before)
+    const afterSet = new Set(selectedColumns.map((column) => column.id))
+    const hasSetChanged =
+      beforeSet.size !== afterSet.size || [...beforeSet].some((id) => !afterSet.has(id)) || [...afterSet].some((id) => !beforeSet.has(id))
+
+    // Keep deterministic base order when columns are moved between active/inactive lists.
+    const normalizedColumns = hasSetChanged ? this.sortColumnsByAvailableOrder(selectedColumns) : selectedColumns
+    const after = normalizedColumns.map((column) => column.id)
+
+    if (hasSetChanged) {
+      this.displayedColumnsModel.set(normalizedColumns)
+    }
 
     if (!after.every((colId, i) => colId === before[i]) || after.length !== before.length) {
-      this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel()] })
+      this.columnSelectionChanged.emit({ activeColumns: normalizedColumns })
       this.componentStateChanged.emit({
-        displayedColumns: [...this.displayedColumnsModel()],
+        displayedColumns: normalizedColumns,
       })
     }
 
@@ -147,5 +160,18 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
 
   onCancelClick() {
     this.visible.set(false)
+  }
+
+  private sortColumnsByAvailableOrder(columns: DataTableColumn[]): DataTableColumn[] {
+    const selectedColumnsById = new Map(columns.map((column) => [column.id, column]))
+    const orderedSelectedColumns = this.stateService
+      .availableColumns()
+      .filter((column) => selectedColumnsById.has(column.id))
+      .map((column) => selectedColumnsById.get(column.id) as DataTableColumn)
+
+    const knownIds = new Set(orderedSelectedColumns.map((column) => column.id))
+    const missingFromAvailable = columns.filter((column) => !knownIds.has(column.id))
+
+    return [...orderedSelectedColumns, ...missingFromAvailable]
   }
 }
