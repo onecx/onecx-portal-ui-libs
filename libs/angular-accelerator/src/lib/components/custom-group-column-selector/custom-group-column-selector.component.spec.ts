@@ -126,6 +126,40 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       expect(columnChangedSpy).not.toHaveBeenCalled()
     })
+
+    it('should preserve base column order when a previously inactive column becomes active again', () => {
+      const c1 = makeColumn('c1')
+      const c2 = makeColumn('c2')
+      const c3 = makeColumn('c3')
+
+      fixture.componentRef.setInput('columns', [c1, c2, c3])
+      component.displayedColumns.set([c1, c3])
+      component.displayedColumnsModel.set([c1, c3, c2])
+
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(columnChangedSpy).toHaveBeenCalledWith({ activeColumns: [c1, c2, c3] })
+      expect(component.displayedColumnsModel()).toEqual([c1, c2, c3])
+    })
+
+    it('should keep manual reordering when active column set does not change', () => {
+      const c1 = makeColumn('c1')
+      const c2 = makeColumn('c2')
+      const c3 = makeColumn('c3')
+
+      fixture.componentRef.setInput('columns', [c1, c2, c3])
+      component.displayedColumns.set([c1, c2, c3])
+      component.displayedColumnsModel.set([c1, c3, c2])
+
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(columnChangedSpy).toHaveBeenCalledWith({ activeColumns: [c1, c3, c2] })
+      expect(component.displayedColumnsModel()).toEqual([c1, c3, c2])
+    })
   })
 
   describe('onCancelClick', () => {
