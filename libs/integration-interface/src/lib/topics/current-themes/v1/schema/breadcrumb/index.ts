@@ -2,7 +2,7 @@ import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
 import { BreadcrumbSettingsSchema } from './settings'
 import { BreadcrumbItemSchema } from './item'
-import { bg, withRef } from '../primitives'
+import { bg, color, withRef } from '../primitives'
 
 export class BreadcrumbSchema {
   private static readonly tokens = {
@@ -19,7 +19,8 @@ export class BreadcrumbSchema {
   }
 
   static readonly separator = z.object({
-    color: withRef(z.string()).default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
+    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
+    width: withRef(z.string()).default('{{primitives.border.width.md}}'),
   })
 
   static readonly schema = z

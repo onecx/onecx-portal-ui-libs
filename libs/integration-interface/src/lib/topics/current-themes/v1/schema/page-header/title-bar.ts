@@ -1,5 +1,5 @@
 import z from 'zod'
-import { withRef, color, bg, font } from '../primitives'
+import { withRef, color, bg, font, icon } from '../primitives'
 
 export class PageHeaderTitleBarSchema {
   static readonly tokens = {
@@ -34,13 +34,17 @@ export class PageHeaderTitleBarSchema {
     background: bg.pick({ color: true }).default({
       color: '{{primitives.variant.primary.defaultState.defaultSeverity.bg.color}}',
     }),
-    icon: z
-      .object({
-        size: withRef(z.string()).default('{{primitives.icon.md}}'),
-        width: withRef(z.string()).default('1rem'),
-        height: withRef(z.string()).default('1rem'),
+    icon: icon
+      .pick({ size: true })
+      .extend({
+        width: '1rem',
+        height: '1rem',
       })
-      .prefault({}),
+      .default({
+        size: '{{primitives.icon.md}}',
+        width: '1rem',
+        height: '1rem',
+      }),
     image: z
       .object({
         size: withRef(z.string()).default('{{primitives.icon.md}}'),
@@ -57,12 +61,8 @@ export class PageHeaderTitleBarSchema {
   static readonly actionPanel = z.object({
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     gap: withRef(z.string()).default('{{primitives.space.md}}'),
-    alignment: z
-      .object({
-        horizontal: withRef(z.enum(['left', 'center', 'right'])).default('center'),
-        vertical: withRef(z.enum(['top', 'middle', 'bottom'])).default('middle'),
-      })
-      .prefault({}),
+    alignItems: withRef(z.string()).optional().default('center'),
+    justifyContent: withRef(z.string()).optional().default('center'),
   })
 
   static readonly schema = z.object({

@@ -43,7 +43,7 @@ export const breadcrumbRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.breadcrumb.item.icon.hover.color',
+    from: 'usages.breadcrumb.item.hover.icon.color',
     to: 'components.breadcrumb.colorScheme.{mode}.item.icon.hoverColor',
     transform: toColorString,
   },

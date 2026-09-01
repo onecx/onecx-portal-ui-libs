@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, borderWithShadow, color, transition, withRef } from '../primitives'
+import { bg, border, borderWithShadow, color, font, icon, transition, withRef } from '../primitives'
 import { MenuItemSchema } from './item'
 import { MenuSettingsSchema } from './settings'
 
@@ -22,21 +22,17 @@ export class MenuSchema {
 
   static readonly submenuLabel = z.object({
     padding: withRef(z.string()).default('{{primitives.spacing.sm}}'),
-    font: z
-      .object({
-        weight: withRef(z.string()).default('{{primitives.font.weight.normal}}'),
-        size: withRef(z.string()).default('{{primitives.font.size}}'),
-      })
-      .prefault({}),
+    font: font.pick({ weight: true, size: true }).default({
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size}}',
+    }),
     background: bg
       .pick({ color: true })
       .default({ color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' }),
     color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
   })
 
-  static readonly submenuIcon = z.object({
-    size: withRef(z.string()).default('{{primitives.icon.md}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
+  static readonly submenuIcon = icon.pick({ size: true, color: true }).extend({
     focus: z
       .object({
         color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
@@ -57,7 +53,13 @@ export class MenuSchema {
       settings: (MenuSettingsSchema.schema as typeof MenuSettingsSchema.schema).prefault({}),
       item: (MenuItemSchema.schema as typeof MenuItemSchema.schema).prefault({}),
       submenuLabel: this.submenuLabel.prefault({}),
-      submenuIcon: this.submenuIcon.prefault({}),
+      submenuIcon: this.submenuIcon.default({
+        size: '{{primitives.icon.md}}',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        focus: {
+          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+        },
+      }),
       separator: this.separator.prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'menu' })

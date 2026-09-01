@@ -24,6 +24,14 @@ const MENU_ITEM_BASE_TOKENS = {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     radius: '{{primitives.border.radius.md}}',
   },
+  focusRing: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    width: '{{primitives.focusRing.width.md}}',
+    offset: '{{primitives.focusRing.offset.md}}',
+    radius: '{{primitives.focusRing.radius.md}}',
+    shadow: '{{primitives.focusRing.shadow.md}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  },
   label: {
     font: {
       family: '{{primitives.font.family}}',
