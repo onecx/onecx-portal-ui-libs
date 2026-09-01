@@ -1,6 +1,5 @@
 import {
   Component,
-  DestroyRef,
   Injector,
   Input,
   OnInit,
@@ -18,7 +17,7 @@ import {
   viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, from, map, startWith, timestamp } from 'rxjs'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
@@ -49,7 +48,6 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
   private readonly themeService = inject(ThemeService)
-  private readonly destroyRef = inject(DestroyRef)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -319,8 +317,8 @@ export class DataViewComponent implements OnInit {
       }
     })
 
-    this.themeService.currentThemes$
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    from(this.themeService.currentThemes$)
+      .pipe(takeUntilDestroyed())
       .subscribe(async (theme) => {
         if (!(await themeVersionAvailable(2, this.injector))) {
           return
