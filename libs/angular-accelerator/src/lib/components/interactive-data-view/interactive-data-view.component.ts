@@ -2,6 +2,7 @@ import {
   Component,
   DestroyRef,
   EventEmitter,
+  Injector,
   Input,
   OnInit,
   Output,
@@ -20,8 +21,11 @@ import {
   viewChild,
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
+import { ThemeService } from '@onecx/angular-integration-interface'
+import { mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { PrimeTemplate } from 'primeng/api'
 import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { CurrentThemes } from '@onecx/integration-interface'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -43,7 +47,7 @@ import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { toSignal } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
@@ -69,6 +73,8 @@ export interface ColumnGroupData {
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
   private readonly destroyRef = inject(DestroyRef)
+  private readonly injector = inject(Injector)
+  private readonly themeService = inject(ThemeService)
 
   dataViewComponent = viewChild(DataViewComponent)
 
@@ -146,8 +152,18 @@ export class InteractiveDataViewComponent implements OnInit {
       []
     )
   })
-  frozenActionColumn = model<boolean>(false)
-  actionColumnPosition = model<'left' | 'right'>('right')
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
+  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
@@ -474,6 +490,19 @@ export class InteractiveDataViewComponent implements OnInit {
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
+    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
+    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
+    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
+      .subscribe(async (theme) => {
+        if (!(await themeVersionAvailable(2, this.injector))) {
+          return
+        }
+        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+      })
+
     effect(() => {
       this.registerEventListenerForDataView()
     })
@@ -584,8 +613,8 @@ export class InteractiveDataViewComponent implements OnInit {
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
         startWith({
           actionColumnConfig: {
-            frozen: this.frozenActionColumn(),
-            position: this.actionColumnPosition(),
+            frozen: this.frozenActionColumnActual(),
+            position: this.actionColumnPositionActual(),
           },
           displayedColumns: this.displayedColumns(),
           activeColumnGroupKey: this.selectedGroupKey(),
@@ -704,8 +733,8 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.frozenActionColumn.set(event.frozenActionColumn)
-    this.actionColumnPosition.set(event.actionColumnPosition)
+    this.frozenActionColumnThemeSetting.set(event.frozenActionColumn)
+    this.actionColumnPositionThemeSetting.set(event.actionColumnPosition)
   }
 
   onRowSelectionChange(event: Row[]) {

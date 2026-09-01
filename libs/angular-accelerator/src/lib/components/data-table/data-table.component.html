@@ -3,10 +3,10 @@
   <td
     class="actions"
     pFrozenColumn
-    [frozen]="frozenActionColumn()"
-    [alignFrozen]="actionColumnPosition()"
-    [attr.name]="actionColumnPosition() === 'left' ? 'action-column-left' : 'action-column-right'"
-    [ngClass]="(frozenActionColumn() && actionColumnPosition() === 'left') ? 'border-right-1' : (frozenActionColumn() && actionColumnPosition() === 'right') ? 'border-left-1' : ''"
+    [frozen]="frozenActionColumnActual()"
+    [alignFrozen]="actionColumnPositionActual()"
+    [attr.name]="actionColumnPositionActual() === 'left' ? 'action-column-left' : 'action-column-right'"
+    [ngClass]="(frozenActionColumnActual() && actionColumnPositionActual() === 'left') ? 'border-right-1' : (frozenActionColumnActual() && actionColumnPositionActual() === 'right') ? 'border-left-1' : ''"
   >
     <div class="icon-button-row-wrapper">
       @if (viewTableRowObserved && (!viewActionVisibleField() || fieldIsTruthy(rowObject, viewActionVisibleField()))) {
@@ -104,10 +104,10 @@
   @if (actionColumnVisible) {
   <th
     pFrozenColumn
-    [frozen]="frozenActionColumn()"
-    [alignFrozen]="actionColumnPosition()"
-    [ngClass]="(frozenActionColumn() && actionColumnPosition() === 'left') ? 'border-right-1' : (frozenActionColumn() && actionColumnPosition() === 'right') ? 'border-left-1' : ''"
-    [attr.name]="actionColumnPosition() === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
+    [frozen]="frozenActionColumnActual()"
+    [alignFrozen]="actionColumnPositionActual()"
+    [ngClass]="(frozenActionColumnActual() && actionColumnPositionActual() === 'left') ? 'border-right-1' : (frozenActionColumnActual() && actionColumnPositionActual() === 'right') ? 'border-left-1' : ''"
+    [attr.name]="actionColumnPositionActual() === 'left' ? 'action-column-header-left' : 'action-column-header-right'"
     scope="col"
   >
     {{ 'OCX_DATA_TABLE.ACTIONS_COLUMN_NAME' | translate }}
@@ -146,8 +146,8 @@
   <ng-template #header>
     <tr style="vertical-align: top">
       <ng-container *ngTemplateOutlet="expansionColumnHeader"></ng-container>
-      @if (selectionChangedObserved) {
-      <th style="width: 4rem" scope="col">
+      @if (selectionChangedObserved && checkboxColumnPositionActual() === 'left') {
+      <th style="width: 4rem" name="selection-column-header-left" scope="col">
         @if (allowSelectAll()) {
         <p-tableHeaderCheckbox
           [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
@@ -156,7 +156,7 @@
         }
         <span class="sr-only">{{ 'OCX_DATA_TABLE.SELECTION_COLUMN' | translate }}</span>
       </th>
-      } @if (actionColumnPosition() === 'left') {
+      } @if (actionColumnPositionActual() === 'left') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of columns(); track column) { @if (column.sortable || column.filterable) {
       <th scope="col" [pSortableColumn]="column.sortable ? column.nameKey : undefined">
@@ -263,8 +263,18 @@
       </th>
       } @else {
       <th scope="col">{{ column.nameKey | translate }}</th>
-      } } @if (actionColumnPosition() === 'right') {
+      } } @if (actionColumnPositionActual() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
+      } @if (selectionChangedObserved && checkboxColumnPositionActual() === 'right') {
+      <th style="width: 4rem" name="selection-column-header-right" scope="col">
+        @if (allowSelectAll()) {
+        <p-tableHeaderCheckbox
+          [ocxTooltip]="'OCX_DATA_TABLE.SELECT_ALL_TOOLTIP' | translate"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ALL_ARIA_LABEL' | translate"
+        ></p-tableHeaderCheckbox>
+        }
+        <span class="sr-only">{{ 'OCX_DATA_TABLE.SELECTION_COLUMN' | translate }}</span>
+      </th>
       }
     </tr>
   </ng-template>
@@ -281,8 +291,8 @@
     @if (columnTemplates) {
     <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
-      @if (selectionChangedObserved) {
-      <td>
+      @if (selectionChangedObserved && checkboxColumnPositionActual() === 'left') {
+      <td name="selection-column-left">
         @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
         <p-checkbox
           [value]="true"
@@ -298,7 +308,7 @@
         ></p-tableCheckbox>
         }
       </td>
-      } @if (actionColumnPosition() === 'left') {
+      } @if (actionColumnPositionActual() === 'left') {
       <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
       } @for (column of columns(); track column) {
       <td>
@@ -312,8 +322,25 @@
         <p-skeleton width="3rem" />
         }
       </td>
-      } @if (actionColumnPosition() === 'right') {
+      } @if (actionColumnPositionActual() === 'right') {
       <ng-container *ngTemplateOutlet="actionColumn; context: { localRowObject: rowObject }"></ng-container>
+      } @if (selectionChangedObserved && checkboxColumnPositionActual() === 'right') {
+      <td name="selection-column-right">
+        @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
+        <p-checkbox
+          [value]="true"
+          [binary]="true"
+          [disabled]="true"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+        ></p-checkbox>
+        } @else {
+        <p-tableCheckbox
+          [value]="rowObject"
+          [disabled]="isRowSelectionDisabled(rowObject)"
+          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+        ></p-tableCheckbox>
+        }
+      </td>
       }
     </tr>
     }

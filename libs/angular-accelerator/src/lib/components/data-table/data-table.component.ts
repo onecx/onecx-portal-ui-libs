@@ -22,11 +22,12 @@ import { computedPrevious } from 'ngxtension/computed-previous'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
-import { UserService } from '@onecx/angular-integration-interface'
+import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
 import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { CurrentThemes } from '@onecx/integration-interface'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -36,10 +37,10 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 
@@ -83,6 +84,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly themeService = inject(ThemeService)
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -219,8 +221,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   additionalActions = model<DataAction[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
+  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   expandedRows = model<Row[] | string[] | number[]>([])
   expandedRowIds = computed<(string | number)[]>(() =>
@@ -564,6 +576,19 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)
+
+    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
+    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
+    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
+      .subscribe(async (theme) => {
+        if (!(await themeVersionAvailable(2, this.injector))) {
+          return
+        }
+        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+      })
   }
 
   ngOnInit(): void {

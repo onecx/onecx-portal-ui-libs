@@ -53,6 +53,8 @@ type UsagesInput = {
   panelmenu?: z.input<typeof panelmenu>
 }
 
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
+
 const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
@@ -135,6 +137,14 @@ export type ThemePropertiesV2 = {
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

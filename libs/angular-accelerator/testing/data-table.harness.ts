@@ -64,6 +64,14 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     return await this.locatorForOptional(`[name="action-column-${position}"]`)()
   }
 
+  async getSelectionColumnHeader(position: 'left' | 'right') {
+    return await this.locatorForOptional(`[name="selection-column-header-${position}"]`)()
+  }
+
+  async getSelectionColumn(position: 'left' | 'right') {
+    return await this.locatorForOptional(`[name="selection-column-${position}"]`)()
+  }
+
   async getActionButtons() {
     return await this.locatorForAll(`[name="data-table-action-button"]`)()
   }

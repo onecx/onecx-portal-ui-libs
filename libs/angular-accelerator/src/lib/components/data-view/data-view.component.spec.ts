@@ -18,6 +18,17 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
+import { ThemeService } from '@onecx/angular-integration-interface'
+import { themeVersionAvailable } from '@onecx/angular-utils'
+import { CurrentThemes } from '@onecx/integration-interface'
+import { BehaviorSubject } from 'rxjs'
+
+jest.mock('@onecx/angular-utils', () => ({
+  ...jest.requireActual('@onecx/angular-utils'),
+  themeVersionAvailable: jest.fn(),
+}))
+
+const themeVersionAvailableMock = jest.mocked(themeVersionAvailable)
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -33,6 +44,7 @@ describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
+  let currentThemes$: BehaviorSubject<CurrentThemes>
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -204,12 +216,21 @@ describe('DataViewComponent', () => {
   ]
 
   beforeEach(async () => {
+    themeVersionAvailableMock.mockResolvedValue(false)
+    currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
+
     await TestBed.configureTestingModule({
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
       imports: [DataViewModule, AngularAcceleratorModule, RouterModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
+        {
+          provide: ThemeService,
+          useValue: {
+            currentThemes$,
+          },
+        },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -264,8 +285,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumnActual()).toBe(false)
+      expect(component.actionColumnPositionActual()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 

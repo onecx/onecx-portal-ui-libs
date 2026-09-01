@@ -18,6 +18,10 @@ import {
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
 import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { CurrentThemes } from '@onecx/integration-interface'
+import { ThemeService } from '@onecx/angular-integration-interface'
+import { mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -44,6 +48,7 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
+  private readonly themeService = inject(ThemeService)
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -91,8 +96,19 @@ export class DataViewComponent implements OnInit {
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   selectedRows = input<Row[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
+  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+
+  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
   expandedRows = model<Row[] | string[] | number[]>([])
@@ -301,6 +317,19 @@ export class DataViewComponent implements OnInit {
         this.pageSizeChanged.emit(pageSize)
       }
     })
+
+    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
+    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
+    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
+      .subscribe(async (theme) => {
+        if (!(await themeVersionAvailable(2, this.injector))) {
+          return
+        }
+        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+      })
   }
 
   ngOnInit(): void {
