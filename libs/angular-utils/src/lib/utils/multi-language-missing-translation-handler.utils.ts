@@ -34,7 +34,7 @@ type DynamicAppId = { appElementName?: string }
  *
  * The lookup only reads the loader via `currentLoader.getTranslation(lang)` and
  * never calls `reloadLang` or otherwise mutates the active language, which keeps
- * the resolution stateless and flicker-free (ADR-0001).
+ * the resolution stateless and flicker-free.
  */
 @Injectable()
 export class MultiLanguageMissingTranslationHandler implements MissingTranslationHandler {

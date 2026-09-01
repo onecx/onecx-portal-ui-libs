@@ -624,7 +624,7 @@ describe('MultiLanguageMissingTranslationHandler', () => {
     })
   })
 
-  describe('no global language state mutation (ADR-0001)', () => {
+  describe('no global language state mutation', () => {
     it('should never call reloadLang, use, or setTranslation on the translate service', async () => {
       userServiceMock.profile$.publish({ settings: { locales: ['fr', 'en'] } } as UserProfile)
 

@@ -135,23 +135,3 @@ export class AppComponent implements OnInit {
 ----
 
 ====
-
-== Missing translation handler behavior
-
-The `MultiLanguageMissingTranslationHandler` resolves a key that is missing from the
-active language by walking the user's candidate locales in order. For each locale the
-lookup happens in this order:
-
-* the static translation table loaded for that locale (`currentLoader.getTranslation`);
-* the dynamic translations published by the shell for the same locale (deep-merged
-across the app's translation contexts, derived from the multi-language identifier
-`name`/`version` namespaces and the app identity);
-* the next locale;
-* finally the raw key.
-
-A static value always takes precedence over a dynamic value for the same locale, so a
-key present in both sources resolves to the static translation.
-
-This lookup uses only stateless loader access. It does not call `reloadLang` and does
-not mutate the active language or reset loaded translation tables, which keeps the
-resolution flicker-free.
