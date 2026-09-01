@@ -9,7 +9,7 @@ export const headerRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.border.color',
+    from: 'usages.calendar.panel.border.color',
     to: 'components.datepicker.header.borderColor',
     transform: toColorString,
   },
@@ -25,11 +25,11 @@ export const headerRules: MappingRule[] = [
 
   // ─── Title ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.header.yearMonthNav.gap',
+    from: 'usages.calendar.panel.header.gap',
     to: 'components.datepicker.title.gap',
   },
   {
-    from: 'usages.calendar.panel.header.yearMonthNav.fontWeight',
+    from: 'usages.calendar.panel.header.selectMonth.font.weight',
     to: 'components.datepicker.title.fontWeight',
   },
 ]
