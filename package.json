@@ -135,6 +135,14 @@
     "typescript": "^5.5.4",
     "sonarqube-scanner": "^4.3.0"
   },
+  "overrides": {
+    "js-yaml@^3.0.0": "3.15.1",
+    "js-yaml@^4.0.0": "4.3.1",
+    "minimatch@^9.0.0": "9.0.9",
+    "minimatch@^3.0.0": "^3.1.4",
+    "brace-expansion@^1.0.0": "^1.1.16",
+    "brace-expansion@^2.0.0": "^2.1.2"
+  },
   "nx": {
     "includedScripts": []
   },
