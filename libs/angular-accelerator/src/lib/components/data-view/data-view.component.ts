@@ -17,7 +17,8 @@ import {
   viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, from, map, startWith, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { CurrentThemes } from '@onecx/integration-interface'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
@@ -317,8 +318,9 @@ export class DataViewComponent implements OnInit {
       }
     })
 
-    from(this.themeService.currentThemes$)
-      .pipe(takeUntilDestroyed())
+    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
+    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
+    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
       .subscribe(async (theme) => {
         if (!(await themeVersionAvailable(2, this.injector))) {
           return

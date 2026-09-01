@@ -26,7 +26,8 @@ import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
-import { Observable, combineLatest, debounceTime, filter, firstValueFrom, from, map, mergeMap, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { CurrentThemes } from '@onecx/integration-interface'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -576,8 +577,9 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    from(this.themeService.currentThemes$)
-      .pipe(takeUntilDestroyed())
+    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
+    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
+    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
       .subscribe(async (theme) => {
         if (!(await themeVersionAvailable(2, this.injector))) {
           return
