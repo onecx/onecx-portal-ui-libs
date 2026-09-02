@@ -49,4 +49,20 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(pPickList.nativeElement.getAttribute('autofocus')).toBe('false')
     })
   })
+
+  describe('p-selectbutton autofocus', () => {
+    it('should apply autofocus="false" to both p-selectbuttons', async () => {
+      component.visible = true
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const frozenButton = fixture.debugElement.query(By.css('#frozenActionColumn'))
+      expect(frozenButton).toBeTruthy()
+      const alignmentButton = fixture.debugElement.query(By.css('#actionColumnPosition'))
+      expect(alignmentButton).toBeTruthy()
+
+      expect((frozenButton.componentInstance as unknown as { autofocus?: unknown }).autofocus).toBe(false)
+      expect((alignmentButton.componentInstance as unknown as { autofocus?: unknown }).autofocus).toBe(false)
+    })
+  })
 })
