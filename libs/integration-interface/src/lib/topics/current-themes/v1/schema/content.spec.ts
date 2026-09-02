@@ -27,8 +27,10 @@ describe('content schema', () => {
           letterSpacing: '{{primitives.font.letterSpacing}}',
           style: '{{primitives.font.style}}',
         },
-        padding: '{{primitives.space.md}}',
-        margin: '{{primitives.space.xl}}',
+        paddingX: '{{primitives.space.md}}',
+        paddingY: '{{primitives.space.md}}',
+        marginX: '0',
+        marginY: '{{primitives.space.xl}}',
         border: {
           color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
           style: '{{primitives.area.surface.defaultState.defaultSeverity.border.style}}',

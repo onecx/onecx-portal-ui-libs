@@ -29,8 +29,10 @@ export const content = z
       letterSpacing: '{{primitives.font.letterSpacing}}',
       style: '{{primitives.font.style}}',
     }),
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    margin: withRef(z.string()).default('{{primitives.space.xl}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+    marginX: withRef(z.string()).default('0'),
+    marginY: withRef(z.string()).default('{{primitives.space.xl}}'),
     border: border.default({
       color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.area.surface.defaultState.defaultSeverity.border.style}}',
