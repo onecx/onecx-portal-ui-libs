@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { CommonModule } from '@angular/common'
+import { CommonModule, formatDate } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -439,6 +439,35 @@ describe('FilterViewComponent (class logic)', () => {
       expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'a', filterType: 'equals' }])
     })
 
+    it('should add a filter when only the filter type differs from an existing filter for the same column/value', () => {
+      stateService.filters.set([{ columnId: 'c1', value: 'a', filterType: 'equals' }] as Filter[])
+      setupAddFilter({ filterType: FilterType.STARTS_WITH })
+      component.onAddFilterColumnChange('c1')
+      component.onAddFilterValueChange('a')
+      fixture.detectChanges()
+
+      component.onAddFilterClick()
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([
+        { columnId: 'c1', value: 'a', filterType: 'equals' },
+        { columnId: 'c1', value: 'a', filterType: FilterType.STARTS_WITH },
+      ])
+    })
+
+    it('should not add a filter when an existing filter already matches column, value and type', () => {
+      stateService.filters.set([{ columnId: 'c1', value: 'a', filterType: FilterType.STARTS_WITH }] as Filter[])
+      setupAddFilter({ filterType: FilterType.STARTS_WITH })
+      component.onAddFilterColumnChange('c1')
+      component.onAddFilterValueChange('a')
+      fixture.detectChanges()
+
+      component.onAddFilterClick()
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'a', filterType: FilterType.STARTS_WITH }])
+    })
+
     it('should clear the selections in onAddFilterCancel', () => {
       setupAddFilter()
       component.onAddFilterColumnChange('c1')
@@ -546,6 +575,52 @@ describe('FilterViewComponent (class logic)', () => {
 
       expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'a', filterType: 'equals' }])
       expect(component.addFilterOpen()).toBe(false)
+    })
+  })
+
+  describe('formatFilterLabel / distinct-value labels', () => {
+    const stringCol = makeColumn({ id: 'c1', columnType: ColumnType.STRING })
+    const numberCol = makeColumn({ id: 'n1', columnType: ColumnType.NUMBER })
+    const dateCol: DataTableColumn = { id: 'd1', nameKey: 'D1', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' }
+
+    it('should format string values as-is', () => {
+      expect(component.formatFilterLabel('hello', stringCol)).toBe('hello')
+    })
+
+    it('should format number values as strings while preserving the typed value', () => {
+      expect(component.formatFilterLabel(42, numberCol)).toBe('42')
+      expect(component.formatFilterLabel(-0.5, numberCol)).toBe('-0.5')
+    })
+
+    it('should format boolean values as strings', () => {
+      expect(component.formatFilterLabel(true, numberCol)).toBe('true')
+      expect(component.formatFilterLabel(false, numberCol)).toBe('false')
+    })
+
+    it('should format date values using the column date display convention', () => {
+      const date = new Date(2022, 1, 1)
+      expect(component.formatFilterLabel(date, dateCol)).toBe('2022-02-01')
+    })
+
+    it('should fall back to medium date format when no dateFormat is configured', () => {
+      const date = new Date(2022, 1, 1)
+      const col: DataTableColumn = { id: 'd2', nameKey: 'D2', columnType: ColumnType.DATE }
+      expect(component.formatFilterLabel(date, col)).toBe(formatDate(date, 'medium', 'en-US'))
+    })
+
+    it('should serialise plain object values rather than render [object Object]', () => {
+      expect(component.formatFilterLabel({ a: 1 }, stringCol)).toBe('{"a":1}')
+    })
+
+    it('should keep the original typed value while producing a string label in getDistinctColumnValues', () => {
+      stateService.data.set([{ id: 'r1', n1: 42 } as any, { id: 'r2', n1: 42 } as any])
+      fixture.componentRef.setInput('columns', [numberCol])
+      fixture.detectChanges()
+
+      const values = component.getDistinctColumnValues(numberCol)
+      expect(values).toHaveLength(1)
+      expect(values[0].value).toBe(42)
+      expect(values[0].label).toBe('42')
     })
   })
 })

@@ -5,6 +5,7 @@ import {
   inject,
   Input,
   input,
+  LOCALE_ID,
   output,
   signal,
   TemplateRef,
@@ -12,6 +13,7 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core'
+import { formatDate } from '@angular/common'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
@@ -54,7 +56,8 @@ export interface FilterViewComponentState {
 export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
-  
+  private readonly locale = inject(LOCALE_ID)
+
   ColumnType = ColumnType
   FilterType = FilterType
 
@@ -332,9 +335,11 @@ export class FilterViewComponent {
   }
 
   /**
-   * Applies the selected column/value as an EQUALS filter to the shared filter
-   * state, mirroring the data table's per-column filter behaviour. Duplicate
-   * values for the same column are ignored.
+   * Applies the selected column/value to the shared filter state, mirroring the
+   * data table's per-column filter behaviour. The filter type comes from the
+   * column's configured `filterType` (defaulting to EQUALS); a duplicate with
+   * the same column, value and type is ignored, while a different filter type
+   * for the same column/value is treated as a distinct filter variant.
    */
   onAddFilterClick() {
     const columnId = this.selectedAddFilterColumn()
@@ -348,12 +353,12 @@ export class FilterViewComponent {
       return
     }
 
+    const filterType = column.filterType ?? FilterType.EQUALS
     const existing = this.stateService.filters()
-    if (existing.some((f) => f.columnId === columnId && f.value === value)) {
+    if (existing.some((f) => f.columnId === columnId && f.value === value && f.filterType === filterType)) {
       return
     }
 
-    const filterType = column.filterType ?? FilterType.EQUALS
     this.stateService.filters.set([...existing, { columnId, value, filterType }])
     this.onAddFilterCancel()
   }
@@ -377,9 +382,42 @@ export class FilterViewComponent {
         : [...new Set(values)]
 
     return uniqueValues.map((value) => ({
-      label: value as string,
+      label: this.formatFilterLabel(value, column),
       value,
     }))
+  }
+
+  /**
+   * Produces a user-readable string label for a distinct filter value, while
+   * `getDistinctColumnValues` keeps the original typed value for filtering.
+   * Numbers/booleans/strings are coerced with `String`; dates are formatted
+   * using the same date-display convention as the rest of the library; plain
+   * objects are serialised rather than rendered as `[object Object]`.
+   */
+  formatFilterLabel(value: unknown, column: DataTableColumn): string {
+    if (column.columnType === ColumnType.DATE) {
+      if (value instanceof Date) {
+        return formatDate(value, column.dateFormat ?? 'medium', this.locale)
+      }
+      const date = new Date(value as string | number)
+      if (!Number.isNaN(date.getTime())) {
+        return formatDate(date, column.dateFormat ?? 'medium', this.locale)
+      }
+    }
+
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value)
+    }
+
+    if (value !== null && typeof value === 'object') {
+      try {
+        return JSON.stringify(value)
+      } catch {
+        return String(value)
+      }
+    }
+
+    return String(value)
   }
 
   focusTrigger() {
