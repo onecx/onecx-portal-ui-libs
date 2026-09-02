@@ -8,6 +8,7 @@ import {
   output,
   signal,
   TemplateRef,
+  untracked,
   viewChild,
   viewChildren,
 } from '@angular/core'
@@ -21,6 +22,7 @@ import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
 import { limit } from '../../utils/filter.utils'
 import { Popover } from 'primeng/popover'
+import { SelectItem } from 'primeng/api'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { Button } from 'primeng/button'
@@ -78,8 +80,43 @@ export class FilterViewComponent {
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
 
+  /**
+   * The columns currently shown in the active layout. Only these columns are
+   * offered in the add-filter picker, so users can only filter what they can see.
+   * Defaults to the available columns when the host does not provide them.
+   */
+  readonly displayedColumns = input<DataTableColumn[] | undefined>(undefined)
+
   readonly filtered = output<Filter[]>()
   readonly componentStateChanged = output<FilterViewComponentState>()
+
+  readonly selectedAddFilterColumn = signal<string | undefined>(undefined)
+  readonly selectedAddFilterValue = signal<unknown>(undefined)
+  readonly addFilterOpen = signal(false)
+
+  /** Whether the add-filter form is available at all (there are displayed columns to pick from). */
+  readonly canAddFilter = computed(() => this.addFilterColumns().length > 0)
+
+  /** Columns the user may add a filter for, limited to the displayed columns. */
+  readonly addFilterColumns = computed(() => this.displayedColumns() ?? this.stateService.availableColumns())
+
+  readonly canApplyAddFilter = computed(
+    () => this.selectedAddFilterColumn() !== undefined && this.selectedAddFilterValue() !== undefined
+  )
+
+  readonly addFilterColumnValues = computed(() => {
+    const columnId = this.selectedAddFilterColumn()
+    if (!columnId) {
+      return []
+    }
+
+    const column = this.getColumn(columnId, this.addFilterColumns())
+    if (!column || column.filterType === FilterType.IS_NOT_EMPTY) {
+      return []
+    }
+
+    return this.getDistinctColumnValues(column)
+  })
 
   readonly columnFilterTableColumns = signal<DataTableColumn[]>([
     {
@@ -224,6 +261,16 @@ export class FilterViewComponent {
       this.componentStateChanged.emit({ filters })
       this.annouceFilterCount()
     })
+
+    effect(() => {
+      this.displayedColumns()
+      untracked(() => {
+        if (this.selectedAddFilterColumn() !== undefined || this.selectedAddFilterValue() !== undefined) {
+          this.selectedAddFilterColumn.set(undefined)
+          this.selectedAddFilterValue.set(undefined)
+        }
+      })
+    })
   }
 
   getTemplate(
@@ -264,6 +311,75 @@ export class FilterViewComponent {
   onFilterDelete(row: Row) {
     const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
+  }
+
+  onAddFilterColumnChange(columnId: string | undefined) {
+    this.selectedAddFilterColumn.set(columnId)
+    this.selectedAddFilterValue.set(undefined)
+  }
+
+  onAddFilterValueChange(value: unknown) {
+    this.selectedAddFilterValue.set(value)
+  }
+
+  /** Toggles the add-filter form open/closed, resetting any partial selection when closing. */
+  onAddFilterToggle() {
+    if (this.addFilterOpen()) {
+      this.onAddFilterCancel()
+    } else {
+      this.addFilterOpen.set(true)
+    }
+  }
+
+  /**
+   * Applies the selected column/value as an EQUALS filter to the shared filter
+   * state, mirroring the data table's per-column filter behaviour. Duplicate
+   * values for the same column are ignored.
+   */
+  onAddFilterClick() {
+    const columnId = this.selectedAddFilterColumn()
+    const value = this.selectedAddFilterValue()
+    if (!columnId || value === undefined) {
+      return
+    }
+
+    const column = this.getColumn(columnId, this.addFilterColumns())
+    if (!column) {
+      return
+    }
+
+    const existing = this.stateService.filters()
+    if (existing.some((f) => f.columnId === columnId && f.value === value)) {
+      return
+    }
+
+    const filterType = column.filterType ?? FilterType.EQUALS
+    this.stateService.filters.set([...existing, { columnId, value, filterType }])
+    this.onAddFilterCancel()
+  }
+
+  onAddFilterCancel() {
+    this.addFilterOpen.set(false)
+    this.selectedAddFilterColumn.set(undefined)
+    this.selectedAddFilterValue.set(undefined)
+  }
+
+  /** Derives the distinct, non-empty values for a column from the shared data. */
+  getDistinctColumnValues(column: DataTableColumn): SelectItem[] {
+    const data = this.stateService.data()
+    const values: unknown[] = data
+      .map((row) => ObjectUtils.resolveFieldData(row, column.id))
+      .filter((value) => value !== null && value !== undefined && value !== '')
+
+    const uniqueValues =
+      column.columnType === ColumnType.DATE
+        ? [...new Map(values.map((value) => [new Date(value as string | number | Date).getTime(), value])).values()]
+        : [...new Set(values)]
+
+    return uniqueValues.map((value) => ({
+      label: value as string,
+      value,
+    }))
   }
 
   focusTrigger() {

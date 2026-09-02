@@ -65,6 +65,26 @@ export const WithFilterViewButton = {
   },
 }
 
+export const WithFilterViewAddFilterInListLayout = {
+  render: CustomContentInteractiveDataView,
+  args: {
+    ...defaultArgs,
+    disableFilterView: false,
+    filterViewDisplayMode: 'chips',
+    layout: 'list',
+  },
+}
+
+export const WithFilterViewAddFilterInGridLayout = {
+  render: CustomContentInteractiveDataView,
+  args: {
+    ...defaultArgs,
+    disableFilterView: false,
+    filterViewDisplayMode: 'chips',
+    layout: 'grid',
+  },
+}
+
 const CustomFilterViewChipsInteractiveDataView: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: {
     ...args,
