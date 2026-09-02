@@ -32,7 +32,7 @@ describe('ColumnGroupSelectionComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should autofocus the group selection p-select when rendered', () => {
+  it('should NOT autofocus the group selection p-select when rendered', () => {
     // Supply a column with predefinedGroupKeys so allGroupKeys$ emits non-empty
     // and the @if guard renders the <p-select>.
     const column: DataTableColumn = {
@@ -44,11 +44,12 @@ describe('ColumnGroupSelectionComponent', () => {
     component.columns = [column]
     fixture.detectChanges()
 
-    // PrimeNG's Select exposes `autofocus` as an @Input (it is NOT a host attribute),
-    // so the [autofocus]="true" binding is verified on the Select component instance.
+    // PrimeNG's Select exposes autofocus as an @Input (NOT a host attribute) with a
+    // booleanAttribute transform, so the static attribute autofocus="false" is coerced
+    // to the boolean false and verified on the Select component instance.
     const pSelect = fixture.debugElement.query(By.css('p-select'))
     expect(pSelect).toBeTruthy()
     const select = pSelect.componentInstance as Select
-    expect(select.autofocus).toBe(true)
+    expect(select.autofocus).toBe(false)
   })
 })
