@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
+import { By } from '@angular/platform-browser'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
@@ -15,7 +17,15 @@ describe('CustomGroupColumnSelectorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), TooltipModule, OcxTooltipDirective],
+      imports: [
+        CommonModule,
+        NoopAnimationsModule,
+        AngularAcceleratorPrimeNgModule,
+        FormsModule,
+        TranslateModule.forRoot(),
+        TooltipModule,
+        OcxTooltipDirective,
+      ],
       providers: [provideTranslateTestingService({})],
     }).compileComponents()
 
@@ -26,5 +36,17 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  describe('p-pickList autofocus', () => {
+    it('should apply autofocus="false" to the p-pickList', async () => {
+      component.visible = true
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const pPickList = fixture.debugElement.query(By.css('p-pickList'))
+      expect(pPickList).toBeTruthy()
+      expect(pPickList.nativeElement.getAttribute('autofocus')).toBe('false')
+    })
   })
 })
