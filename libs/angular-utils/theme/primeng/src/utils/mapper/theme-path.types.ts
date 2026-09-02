@@ -109,13 +109,16 @@ export type ThemePath =
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
   | `usages.textarea.${LeafPaths<NonNullable<Usages['textarea']>>}`
   | `usages.picklist.${LeafPaths<NonNullable<Usages['picklist']>>}`
+  | `usages.interactiveDataView.${LeafPaths<NonNullable<Usages['interactiveDataView']>>}`
+  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
   | `usages.ripple.${LeafPaths<NonNullable<Usages['ripple']>>}`
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
   | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
-  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
-  | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`;
+  | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
+  | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
+  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`;
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**

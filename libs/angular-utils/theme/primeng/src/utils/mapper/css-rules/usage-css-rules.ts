@@ -15,7 +15,9 @@ import { picklistCssRules } from './usages/picklist.rules'
 import { messageCssRules } from './usages/message.rules'
 import { togglebuttonCssRules } from './usages/togglebutton.rules'
 import { inputCssRules } from './usages/input.rules'
+import { interactiveDataViewCssRules } from './usages/interactive-dataview.rules'
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
+import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
 import { contentCssRules } from './usages/content.rules'
 
@@ -35,8 +37,10 @@ export const usageCssRules: CssRule[] = [
   ...textareaCssRules,
   ...togglebuttonCssRules,
   ...picklistCssRules,
+  ...interactiveDataViewCssRules,
   ...messageCssRules,
   ...selectbuttonCssRules,
+  ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
   ...contentCssRules,
 ]
