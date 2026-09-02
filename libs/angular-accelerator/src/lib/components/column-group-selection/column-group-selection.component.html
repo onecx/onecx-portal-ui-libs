@@ -2,6 +2,7 @@
   @if ((allGroupKeys$ | async)?.length) {
     <p-select
       class="p-inputwrapper-filled"
+      [autofocus]="true"
       inputId="columnGroupSelectionDropdown"
       id="columnGroupSelectionDropdownElement"
       (onChange)="changeGroupSelection($event)"
