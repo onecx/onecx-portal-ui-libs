@@ -56,3 +56,8 @@ The **Shell** is responsible for managing theme variables. When a Workspace load
 === Default Theme Variables
 
 Before a Workspace is loaded, the Shell ensures that theme variables are available with default values. These default values are defined in the link:../../libs/portal-layout-styles/src/styles/shell/theme_defaults.scss[theme defaults stylesheet], which is imported by the Shell’s global stylesheet.
+
+[#fallback-mechanism]
+=== CSS-Based Fallback Mechanism (Theming V2)
+
+For Theming V2 tokens, undefined variant/state/severity combinations resolve via a native CSS `var()` fallback chain rather than requiring every combination to be hand-authored. See link:fallback-mechanism.adoc[Theming V2 Fallback Mechanism] for details.

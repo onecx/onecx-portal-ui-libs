@@ -1,0 +1,81 @@
+
+= Theming V2 Fallback Mechanism
+
+:idprefix:
+:idseparator: -
+
+This document describes the CSS-based fallback mechanism delivered by the `@onecx/integration-interface` library for Theming V2 tokens. It is intended for engineers integrating the library's exported schema, metadata, and fallback-chain functions into a `ThemeApplyService`.
+
+[#overview]
+== Overview
+
+Every Theming V2 token is a CSS custom property. At the point of consumption, that property resolves to either:
+
+* the tenant's explicit value, when the tenant configured that exact combination, or
+* a `var(--fallback-combo)` reference to its next less-specific combination.
+
+The relaxation from a specific combination to a less-specific one is expressed entirely as native CSS `var()` references, so the browser resolves the chain at paint time. There is no runtime resolution function at the point of consumption: the mechanism materializes the chain once (see link:#chain-materialization[Chain Materialization]) and emits one CSS custom property per combination. A fully relaxed base combination that has no real configured value emits no entry at all, so the browser's or PrimeNG's own default styling applies.
+
+[#fallbackorder]
+== fallbackOrder
+
+`fallbackOrder` controls the axis priority used when relaxing a combination to its parent. The default order is `['state', 'variant', 'severity']`: state relaxes to the default state first, then variant, then severity.
+
+A theme document may override the default by setting `ThemePropertiesV2.fallbackOrder` to any ordered subset of the `AxisKind` values. When omitted, the default order is used. Omitting the property and setting it to `['state', 'variant', 'severity']` produce identical output.
+
+[#axis-markers]
+== Axis Markers
+
+Axis markers tag individual Zod schema nodes with their axis kind and name, using the standard Zod `.meta()` channel. The `markAxis` helper is the supported way to add a marker:
+
+[source,typescript]
+----
+markAxis(schema, kind, name)
+----
+
+* `schema` - the Zod schema node to mark.
+* `kind` - one of the four `AxisKind` values: `variant`, `state`, `severity`, or `child`.
+* `name` - the axis value name (for example `outlined` or `defaultState`).
+
+Both `markAxis` and the `AxisKind` type are exported from `@onecx/integration-interface`. The `child` kind marks a nested axis group boundary rather than a variant/state/severity axis (see link:#nested-axis-groups[Nested Axis Groups]).
+
+[#metadata-generation]
+== Metadata Generation
+
+`deriveLeafAxisMetadata(schema)` walks a marked-up token schema tree and produces one `LeafAxisMetadata` entry per distinct terminal token field:
+
+[source,typescript]
+----
+deriveLeafAxisMetadata(schema)  // -> LeafAxisMetadata[]
+----
+
+Each `LeafAxisMetadata` records a representative `path` to the terminal field and the ordered list of `groups` (axis groups) the field passes through, outermost first. Each group captures the union of its applicable variant/state/severity names (sorted) and its default name per axis.
+
+This output is tenant-independent static build output: it depends only on the schema's structure and markers, never on any tenant's configured values. `deriveLeafAxisMetadata` and the `LeafAxisMetadata` / `AxisGroupMetadata` types are exported from `@onecx/integration-interface`.
+
+[#chain-materialization]
+== Chain Materialization
+
+`buildFallbackChainForLeaves` turns the per-leaf metadata plus the tenant's real values into the final CSS-variable map:
+
+[source,typescript]
+----
+buildFallbackChainForLeaves(leaves, realValues, cssPrefix, fallbackOrder)
+----
+
+* `leaves` - the `LeafAxisMetadata[]` produced by `deriveLeafAxisMetadata`.
+* `realValues` - a `Map<string, string>` from CSS variable name to the tenant's explicit value.
+* `cssPrefix` - the CSS variable name prefix (for example `onecx-theme-input`).
+* `fallbackOrder` - the axis relaxation order; defaults to `['state', 'variant', 'severity']` when omitted.
+
+The function returns a single `Map<string, string>` mapping every combination's CSS variable name to either its real value or a `var(--parent)` reference. That map is applied through an inline `setProperty` loop on the target element - there is no second CSS delivery mechanism. `buildFallbackChainForLeaves` (and the single-leaf `buildFallbackChain`) are exported from `@onecx/integration-interface`.
+
+[#nested-axis-groups]
+== Nested Axis Groups
+
+A token's path may cross multiple axis groups - for example a token nested under a `child` marker belongs to an inner axis group in addition to the enclosing one. Each axis group relaxes independently, and relaxation proceeds innermost group first: the innermost group is relaxed until it is fully at its defaults, and only then does relaxation advance to the next-outer group. Every group uses the same `fallbackOrder`.
+
+[#regionoverrides]
+== regionOverrides
+
+`ThemePropertiesV2.regionOverrides` reuses the identical `primitives`/`usages` shape per region. A consumer invokes `buildFallbackChainForLeaves` once per region, using that region's merged data, so each region's tokens resolve independently while sharing the same mechanism.
