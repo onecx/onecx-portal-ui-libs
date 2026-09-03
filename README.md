@@ -46,7 +46,7 @@ To find out more on pre-releases with semantic-release, please refer https://sem
 
 ## OneCX peer dependency pinning
 
-`@onecx/*` peer dependencies declared in `libs/*/package.json` are pinned to exact versions (no `^` or other semver range) rather than caret ranges. This guarantees every OneCX Library loaded into the same Host Application via Webpack Module Federation resolves to one exact shared version, preventing version drift. `release-script.sh` maintains this pinning automatically by rewriting all `@onecx/*` peer dependency versions to the new release version, without a `^` prefix, on every release.
+`@onecx/*` peer dependencies declared in `libs/*/package.json` are pinned to exact versions (no `^` or other semver range) rather than caret ranges. These exact pins help prevent and detect package-manager version drift, but the Host Application and remotes still need to declare the intended shared dependencies and runtime version behavior in their Module Federation configuration. `release-script.sh` maintains this pinning automatically by rewriting all `@onecx/*` peer dependency versions to the new release version, without a `^` prefix, on every release.
 
 # Migrating to Angular 19, PrimeNG 19 and OneCX v6
 
