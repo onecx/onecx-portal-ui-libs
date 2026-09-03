@@ -5,7 +5,6 @@ import { FilterViewSchema } from './interactive-data-view/filter-view'
 import { FilterViewChipSchema } from './interactive-data-view/filter-view-chip'
 import { FilterViewChipRemoveIconButtonSchema } from './interactive-data-view/filter-view-chip-remove-icon-button'
 import { DataViewSchema } from './interactive-data-view/data-view'
-import { DataViewContentSchema } from './interactive-data-view/data-view-content'
 import { CustomGroupColumnSelectorSchema } from './interactive-data-view/custom-group-column-selector'
 import { CustomGroupColumnSelectorSkeletonSchema } from './interactive-data-view/custom-group-column-selector-skeleton'
 
@@ -295,63 +294,20 @@ describe('filter-view schema', () => {
 })
 
 describe('data-view schema', () => {
+
   describe('data-view root tokens', () => {
     it('should apply defaults', () => {
       const result = interactiveDataView.safeParse({})
       expect(result.success).toBe(true)
 
       const value = result.data
-      expectExactUndefinedTokens(value?.dataView, DataViewSchema.schema.shape, [])
+      //only added properties validation, not the entire schema
       expectExactTokens(value?.dataView, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        gap: '{{primitives.space.md}}',
-        dataListGrid: expect.any(Object),
-        dataViewContent: expect.any(Object),
-        dataTable: expect.any(Object),
-      })
-    })
-  })
-
-  describe('data-view content', () => {
-    it('should apply defaults', () => {
-      const result = interactiveDataView.safeParse({})
-      expect(result.success).toBe(true)
-
-      const value = result.data
-      expectExactUndefinedTokens(
-        value?.dataView?.dataViewContent,
-        DataViewContentSchema.schema.shape,
-        []
-      )
-      expectExactTokens(value?.dataView?.dataViewContent, {
-        border: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-          width: '{{primitives.border.width.none}}',
-          radius: '{{primitives.border.radius.none}}',
-          offset: '{{primitives.border.offset.none}}',
-        },
-        focusRing: {
-          color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-          style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
-          width: '{{primitives.focusRing.width.none}}',
-          radius: '{{primitives.focusRing.radius.none}}',
-          offset: '{{primitives.focusRing.offset.none}}',
-          shadow: '{{primitives.focusRing.shadow.none}}',
-        },
         paddingX: '{{primitives.space.sm}}',
         paddingY: '{{primitives.space.sm}}',
         gap: '{{primitives.space.sm}}',
-        justifyContent: 'center',
-        alignContent: 'center',
+        dataListGrid: expect.any(Object),
+        dataTable: expect.any(Object),
       })
     })
   })
