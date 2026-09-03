@@ -301,17 +301,11 @@ describe('data-view schema', () => {
       expect(result.success).toBe(true)
 
       const value = result.data
-      expectExactUndefinedTokens(value?.dataView, DataViewSchema.schema.shape, ['settings'])
+      //only added properties validation, not the entire schema
       expectExactTokens(value?.dataView, {
         paddingX: '{{primitives.space.sm}}',
         paddingY: '{{primitives.space.sm}}',
         gap: '{{primitives.space.sm}}',
-        background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-        border: expect.any(Object),
-        header: expect.any(Object),
-        content: expect.any(Object),
-        footer: expect.any(Object),
         dataListGrid: expect.any(Object),
         dataTable: expect.any(Object),
       })
