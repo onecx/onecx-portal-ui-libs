@@ -1,42 +1,88 @@
-import z from 'zod'
+import * as z from 'zod'
 import { withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
-import { CalendarSettingsSchema } from './settings'
-import { CalendarPanelSchema } from './panel'
-import { CalendarPanelButtonSchema } from './panelbutton'
-import { CalendarInputIconSchema } from './inputicon'
-import { CalendarTimePickerSchema } from './timepicker'
-import { CalendarTimeInputSchema } from './timeinput'
-import { CalendarTimeSeperatorSchema } from './timeseperator'
-import { CalendarMultiMonthDividerSchema } from './multimonthdivider'
-import { CalendarFooterButtonBarSchema } from './footerbuttonbar'
-import { CalendarInputSchema } from './input'
+import { applyDefaultsRecursive } from '../defaults-helper'
 
+import { calendarInputShape, calendarInputDefaults } from './input'
+import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
+import { calendarPanelShape, calendarPanelDefaults } from './panel'
+import { calendarSettingsShape } from './settings'
+
+// ------------------------------------------------------------------
+// SHAPE — all keys optional, no defaults baked in
+// ------------------------------------------------------------------
+
+/**
+ * Variant content shape (used by defaultVariant and all 5 named variants).
+ */
+const calendarVariantContentShape = z.object({
+  input: calendarInputShape.prefault({}),
+  panel: calendarPanelShape.prefault({}),
+  calendarIconButton: calendarPanelButtonShape.prefault({}),
+})
+
+const calendarShape = z.object({
+  settings: calendarSettingsShape.optional(),
+
+  defaultVariant: calendarVariantContentShape.prefault({}),
+  primary: calendarVariantContentShape.prefault({}),
+  secondary: calendarVariantContentShape.prefault({}),
+  tertiary: calendarVariantContentShape.prefault({}),
+  quaternary: calendarVariantContentShape.prefault({}),
+  quinary: calendarVariantContentShape.prefault({}),
+
+  transitionDuration: withRef(z.number()).optional(),
+})
+
+// ------------------------------------------------------------------
+// DEFAULTS — composed from per-component defaults
+// ------------------------------------------------------------------
+
+/**
+ * Variant content defaults shared by all variants.
+ *
+ * Every variant (`defaultVariant`, `primary`, `secondary`, ...) gets the same
+ * defaults here so they resolve to a value out of the box. Override any key at
+ * the variant level when providing theme values — only the keys you specify
+ * will differ.
+ */
+const variantContentDefaults = {
+  input: calendarInputDefaults,
+  panel: calendarPanelDefaults,
+  calendarIconButton: calendarPanelButtonDefaults,
+}
+
+/**
+ * Default tokens for the calendar component.
+ *
+ * Assembled from per-component defaults exports. Only `defaultVariant` carries
+ * the defaults tree — it *is* the default. The named variants (`primary`,
+ * `secondary`, ...) stay `.optional()` and resolve via the runtime fallback
+ * mechanism unless a theme supplies their values explicitly.
+ *
+ * Exported so tests can assert the resolved schema output against this exact
+ * source object instead of duplicating literal token values.
+ */
+export const calendarDefaults = {
+  transitionDuration: '{{primitives.transition.duration}}',
+
+  defaultVariant: variantContentDefaults,
+}
+
+// ------------------------------------------------------------------
+// EXPORT — shape + defaults applied once
+// ------------------------------------------------------------------
+
+/**
+ * Calendar schema: shape with defaults applied.
+ * Only keys present in `calendarDefaults` get `.default()`.
+ * All other keys stay optional (filled by fallback mechanism).
+ */
+export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(themeSchemaRegistry, {
+  id: 'calendar',
+})
+
+// Backward-compatible facade for consumers that import `CalendarSchema.schema`
 export class CalendarSchema {
-  private static readonly tokens = {
-    transitionDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
-  }
-
-  static readonly schema = z
-    .object({
-      settings: (CalendarSettingsSchema.schema as typeof CalendarSettingsSchema.schema).optional(),
-      input: (CalendarInputSchema.schema as typeof CalendarInputSchema.schema).prefault({}),
-      panel: (CalendarPanelSchema.schema as typeof CalendarPanelSchema.schema).prefault({}),
-      // Seperate button with calendar icon to open the panel
-      calendarIconButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
-      // Calendar icon inside the input field
-      inputCalendarIcon: (CalendarInputIconSchema.schema as typeof CalendarInputIconSchema.schema).prefault({}),
-      timePicker: (CalendarTimePickerSchema.schema as typeof CalendarTimePickerSchema.schema).optional(),
-      timePickerButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
-      timeInput: (CalendarTimeInputSchema.schema as typeof CalendarTimeInputSchema.schema).prefault({}),
-      timeSeparator: (CalendarTimeSeperatorSchema.schema as typeof CalendarTimeSeperatorSchema.schema).prefault({}),
-      multiMonthDivider: (
-        CalendarMultiMonthDividerSchema.schema as typeof CalendarMultiMonthDividerSchema.schema
-      ).prefault({}),
-      footerButtonBar: (CalendarFooterButtonBarSchema.schema as typeof CalendarFooterButtonBarSchema.schema).prefault(
-        {}
-      ),
-      ...this.tokens,
-    })
-    .register(themeSchemaRegistry, { id: 'calendar' })
+  static readonly schema = calendar
 }

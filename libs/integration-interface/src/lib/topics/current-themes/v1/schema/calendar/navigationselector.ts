@@ -1,64 +1,72 @@
-import z from 'zod'
-import { bg, withRef, color, border, font, borderWithShadow } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
 
-// TODO: Refactor to relevant tokens from button usage tokens
 /**
- * Navigation selector buttons in the calendar header panel (e.g. selectMonth, selectYear) schema.
+ * Shape of a single state block for calendar navigation selectors. No named severities exist for
+ * this node, so tokens sit directly here instead of behind a `defaultSeverity` wrapper.
  */
-export class CalendarNavigationSelectorSchema {
-  private static readonly commonTokens = {
-    padding: withRef(z.string()).default('{{primitives.space.sm}}'),
-    font: font.pick({ weight: true, size: true }).default({
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
-    }),
-    border: border.default({
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.none}}',
-      offset: '{{primitives.border.offset.none}}',
-      radius: '{{primitives.border.radius.md}}',
-    }),
-  }
+const calendarNavigationSelectorStateShape = z.object({
+  padding: withRef(z.string()).optional(),
+  font: font.pick({ weight: true, size: true }).optional(),
+  border: border.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+})
 
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-  }
+/**
+ * Shape for navigation selector buttons in the calendar header panel.
+ * Static token (focusRing) sits at the root; the default token path lives under
+ * `defaultVariant.defaultState`.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarNavigationSelectorShape = z.object({
+  focusRing: borderWithShadow.optional(),
 
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-  })
+  defaultVariant: z.object({
+    defaultState: calendarNavigationSelectorStateShape.prefault({}),
+    hover: calendarNavigationSelectorStateShape.prefault({}),
+    focus: calendarNavigationSelectorStateShape.prefault({}),
+  }).prefault({}),
+})
 
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-  })
-
-  private static readonly focusRingTokens = {
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.border.width.md}}',
-      offset: '{{primitives.border.offset.none}}',
-      shadow: '{{primitives.shadow.none}}',
-      radius: '{{primitives.radius.md}}',
-    }),
-  }
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      ...this.focusRingTokens,
-      hover: this.hoverTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarNavigationSelector' })
+/**
+ * Default tokens for the navigation selector.
+ */
+export const calendarNavigationSelectorDefaults = {
+  focusRing: {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
+    style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    shadow: '{{primitives.shadow.none}}',
+    radius: '{{primitives.radius.md}}',
+  },
+  defaultVariant: {
+    defaultState: {
+      padding: '{{primitives.space.sm}}',
+      font: {
+        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size}}',
+      },
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.none}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
+      },
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    },
+    hover: {
+      background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+    },
+    focus: {
+      border: {
+        color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+        width: '{{primitives.border.width.md}}',
+      },
+    },
+  },
 }
