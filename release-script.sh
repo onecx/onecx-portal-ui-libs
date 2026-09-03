@@ -21,7 +21,7 @@ for folder in "${folder_names[@]}"; do
     packageJsonDataLib=$(cat libs/$folder/package.json)
     libPackageName=$(echo "$packageJsonDataLib" | jq -r '.name')
     libPackageVersion=$(echo "$packageJsonDataLib" | jq -r '.version')
-    # Pin @onecx/* peer dependencies to an exact version (no caret) so every OneCX Library loaded via Module Federation into a Host Application resolves to the same shared version.
+    # Pin @onecx/* peer dependencies to an exact version (no caret) so released libraries stay consistent and package-manager version drift is minimized; runtime sharing is determined by host/remote Module Federation shared-dependency configuration.
     packageJsonDataLib=$(echo "$packageJsonDataLib" | sed -E 's/(@onecx[^"]+?": *?")([^"]+)"/\1'$1'"/')
     echo $packageJsonDataLib > libs/$folder/package.json
 
@@ -41,5 +41,4 @@ for folder in "${folder_names[@]}"; do
         fi
     fi
 done
-
 
