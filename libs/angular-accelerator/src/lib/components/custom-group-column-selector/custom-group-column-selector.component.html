@@ -47,6 +47,7 @@
     [allRightButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_RIGHT' | translate)"
     [leftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.LEFT' | translate)"
     [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
+    autofocus="false"
   >
     <ng-template let-item #item>
       <div>{{ item.nameKey | translate }}</div>
@@ -69,6 +70,7 @@
           name="frozen-action-column-select-button"
           [allowEmpty]="false"
           ariaLabelledBy="frozenActionColumnLabel"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
@@ -86,6 +88,7 @@
           name="action-column-position-select-button"
           [allowEmpty]="false"
           ariaLabelledBy="actionColumnPositionLabel"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>

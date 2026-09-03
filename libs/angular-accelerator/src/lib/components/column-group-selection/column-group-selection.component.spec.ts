@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { SelectModule } from 'primeng/select'
 import { FloatLabelModule } from 'primeng/floatlabel'
 import { TranslateModule } from '@ngx-translate/core'
+import { By } from '@angular/platform-browser'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -217,6 +218,19 @@ describe('ColumnGroupSelectionComponent', () => {
       fixture.detectChanges()
 
       expect(emitSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('autofocus', () => {
+    it('should have autofocus property on p-select set to false', () => {
+      fixture.componentRef.setInput('customGroupKey', 'custom')
+      fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] })])
+      fixture.detectChanges()
+
+      const pSelectDebugEl = fixture.debugElement.query(By.css('p-select'))
+      expect(pSelectDebugEl).toBeTruthy()
+      // Check that the autofocus input property is set to false
+      expect(pSelectDebugEl.componentInstance.autofocus).toBe(false)
     })
   })
 })
