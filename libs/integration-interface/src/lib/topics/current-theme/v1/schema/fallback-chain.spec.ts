@@ -8,6 +8,8 @@ import { buttonUsageSchema } from './button.schema';
 import { inputUsageSchema } from './input.schema';
 import { type AxisGroupMetadata, type LeafAxisMetadata } from './axis.model';
 import { deriveLeafAxisMetadata } from './metadata';
+import { markAxis } from './theme-properties-v2.schema';
+import { z } from 'zod';
 
 const inputLeaf = deriveLeafAxisMetadata(inputUsageSchema)[0];
 const buttonLeaves = deriveLeafAxisMetadata(buttonUsageSchema);
@@ -16,6 +18,14 @@ if (!colorLeafCandidate) {
   throw new Error('Expected a color leaf for the button usage schema');
 }
 const colorLeaf = colorLeafCandidate;
+
+function findLeaf(leaves: LeafAxisMetadata[], field: string): LeafAxisMetadata {
+  const leaf = leaves.find((candidate) => candidate.path[candidate.path.length - 1] === field);
+  if (!leaf) {
+    throw new Error(`Expected a leaf for field "${field}"`);
+  }
+  return leaf;
+}
 
 describe('cssVariableName', () => {
   it('should build a CSS variable name from a prefix and path segments', () => {
@@ -235,6 +245,29 @@ describe('buildFallbackChain (button usage, nested child axis group)', () => {
 
     const source = `--onecx-theme-button-text-defaultState-defaultSeverity-defaultVariant-defaultState-defaultSeverity-${colorLeafFieldName}`;
     expect(chain.get(source)).toBe(`var(${baseKey})`);
+  });
+});
+
+describe('buildFallbackChain (derived severity-only group)', () => {
+  const prefix = 'onecx-theme-severity-only';
+  const severityOnlySchema = z.object({
+    severity: markAxis(z.object({ background: z.string().optional() }), 'severity', 'only').optional(),
+  });
+  const severityOnlyLeaf = findLeaf(deriveLeafAxisMetadata(severityOnlySchema), 'background');
+  const baseKey = '--onecx-theme-severity-only-defaultVariant-defaultState-only-background';
+
+  it('should build a valid variable key for a real severity-only leaf value', () => {
+    const realValues = new Map<string, string>([[baseKey, 'purple']]);
+
+    const chain = buildFallbackChain(severityOnlyLeaf, realValues, prefix);
+
+    expect(chain.get(baseKey)).toBe('purple');
+  });
+
+  it('should still omit the fully-relaxed severity-only base combination when no real value exists', () => {
+    const chain = buildFallbackChain(severityOnlyLeaf, new Map(), prefix);
+
+    expect(chain.has(baseKey)).toBe(false);
   });
 });
 

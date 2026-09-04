@@ -41,6 +41,9 @@ function hasAnyAxisName(builder: GroupBuilder): boolean {
 }
 
 function defaultOf(declarationOrder: string[], literal: string): string {
+  if (declarationOrder.length === 0) {
+    return literal;
+  }
   return declarationOrder.includes(literal) ? literal : declarationOrder[0];
 }
 

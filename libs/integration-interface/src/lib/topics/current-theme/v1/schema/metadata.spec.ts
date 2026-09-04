@@ -82,6 +82,10 @@ describe('metadata', () => {
       expect(leaves[0].groups).toHaveLength(1);
       expect(leaves[0].groups[0].severities).toEqual(['only']);
       expect(leaves[0].groups[0].variants).toEqual([]);
+      expect(leaves[0].groups[0].states).toEqual([]);
+      expect(leaves[0].groups[0].defaultVariant).toBe('defaultVariant');
+      expect(leaves[0].groups[0].defaultState).toBe('defaultState');
+      expect(leaves[0].groups[0].defaultSeverity).toBe('only');
     });
 
     it('should not add a group for a terminal leaf reached while no axis group is open', () => {
