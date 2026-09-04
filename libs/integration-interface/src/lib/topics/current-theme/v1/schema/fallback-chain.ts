@@ -25,9 +25,13 @@ export function cssVariableName(prefix: string, path: string[]): string {
  */
 export function cartesianCombos(group: AxisGroupMetadata): Combo[] {
   const combos: Combo[] = [];
-  for (const variant of group.variants) {
-    for (const state of group.states) {
-      for (const severity of group.severities) {
+  const variants = group.variants.length > 0 ? group.variants : [group.defaultVariant];
+  const states = group.states.length > 0 ? group.states : [group.defaultState];
+  const severities = group.severities.length > 0 ? group.severities : [group.defaultSeverity];
+
+  for (const variant of variants) {
+    for (const state of states) {
+      for (const severity of severities) {
         combos.push({ variant, state, severity });
       }
     }

@@ -45,6 +45,22 @@ describe('cartesianCombos', () => {
       { variant: 'v2', state: 's2', severity: 't1' },
     ]);
   });
+
+  it('should normalize empty variant and state dimensions to their defaults while keeping severities intact', () => {
+    const combos = cartesianCombos({
+      variants: [],
+      states: [],
+      severities: ['high', 'low'],
+      defaultVariant: 'v1',
+      defaultState: 's1',
+      defaultSeverity: 't1',
+    });
+
+    expect(combos).toEqual([
+      { variant: 'v1', state: 's1', severity: 'high' },
+      { variant: 'v1', state: 's1', severity: 'low' },
+    ]);
+  });
 });
 
 describe('comboPathSegment', () => {
