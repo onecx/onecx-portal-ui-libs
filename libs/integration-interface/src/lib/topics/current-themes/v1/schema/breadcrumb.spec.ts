@@ -5,7 +5,11 @@ import { expectExactTokens, expectExactUndefinedTokens, expectUndefinedTokens } 
 const BREADCRUMB_ITEM_BASE_TOKENS = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-  border: { radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}' },
+  border: { 
+    radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+    width: '{{primitives.border.width.md}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+  },
   gap: '{{primitives.space.sm}}',
   icon: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -24,6 +28,8 @@ const BREADCRUMB_ITEM_BASE_TOKENS = {
     radius: '{{primitives.focusRing.radius.md}}',
     shadow: '{{primitives.focusRing.shadow.md}}',
   },
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
 }
 describe('breadcrumb schema', () => {
   it('parses an empty object', () => {

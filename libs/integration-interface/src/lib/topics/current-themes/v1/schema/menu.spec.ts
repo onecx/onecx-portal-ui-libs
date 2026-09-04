@@ -96,7 +96,7 @@ describe('menu schema - should validate following default tokens', () => {
         settings: expect.any(Object),
         item: expect.any(Object),
         submenuLabel: expect.any(Object),
-        submenuIcon: expect.any(Object),
+        submenuIconButton: expect.any(Object),
         separator: expect.any(Object),
       })
     })
@@ -174,7 +174,8 @@ describe('menu schema - should validate following default tokens', () => {
       expectExactTokens(value?.submenuLabel, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-        padding: '{{primitives.spacing.sm}}',
+        paddingX: '{{primitives.spacing.sm}}',
+        paddingY: '{{primitives.spacing.sm}}',
         font: {
           size: '{{primitives.font.size}}',
           weight: '{{primitives.font.weight.normal}}',
@@ -183,12 +184,12 @@ describe('menu schema - should validate following default tokens', () => {
     })
   })
 
-  describe('submenuIcon', () => {
+  describe('submenuIconButton', () => {
     it('base tokens', () => {
       const value = MenuSchema.schema.safeParse({}).data
 
-      expectExactUndefinedTokens(value?.submenuIcon, MenuSchema.submenuIcon.shape, [])
-      expectExactTokens(value?.submenuIcon, {
+      expectExactUndefinedTokens(value?.submenuIconButton, MenuSchema.submenuIconButton.shape, [])
+      expectExactTokens(value?.submenuIconButton, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         focus: {
           color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',

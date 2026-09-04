@@ -8,8 +8,10 @@ export class BreadcrumbItemSchema {
     background: bg
       .pick({ color: true })
       .default({ color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' }),
-    border: border.pick({ radius: true }).default({
+    border: border.pick({ radius: true, width: true, color: true }).default({
       radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     }),
     gap: withRef(z.string()).default('{{primitives.space.sm}}'),
     icon: icon.pick({ color: true, size: true }).default({
@@ -31,6 +33,8 @@ export class BreadcrumbItemSchema {
       radius: '{{primitives.focusRing.radius.md}}',
       shadow: '{{primitives.focusRing.shadow.md}}',
     }),
+    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   }
 
   static readonly itemHover = z.object({

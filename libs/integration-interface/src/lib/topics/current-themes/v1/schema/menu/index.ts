@@ -21,7 +21,8 @@ export class MenuSchema {
   }
 
   static readonly submenuLabel = z.object({
-    padding: withRef(z.string()).default('{{primitives.spacing.sm}}'),
+    paddingX: withRef(z.string()).default('{{primitives.spacing.sm}}'),
+    paddingY: withRef(z.string()).default('{{primitives.spacing.sm}}'),
     font: font.pick({ weight: true, size: true }).default({
       weight: '{{primitives.font.weight.normal}}',
       size: '{{primitives.font.size}}',
@@ -32,7 +33,7 @@ export class MenuSchema {
     color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
   })
 
-  static readonly submenuIcon = icon.pick({ size: true, color: true }).extend({
+  static readonly submenuIconButton = icon.pick({ size: true, color: true }).extend({
     focus: z
       .object({
         color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
@@ -53,7 +54,7 @@ export class MenuSchema {
       settings: (MenuSettingsSchema.schema as typeof MenuSettingsSchema.schema).prefault({}),
       item: (MenuItemSchema.schema as typeof MenuItemSchema.schema).prefault({}),
       submenuLabel: this.submenuLabel.prefault({}),
-      submenuIcon: this.submenuIcon.default({
+      submenuIconButton: this.submenuIconButton.default({
         size: '{{primitives.icon.md}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         focus: {

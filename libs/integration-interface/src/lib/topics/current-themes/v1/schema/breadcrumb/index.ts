@@ -26,8 +26,8 @@ export class BreadcrumbSchema {
   static readonly schema = z
     .object({
       ...this.tokens,
-      settings: (BreadcrumbSettingsSchema.schema as typeof BreadcrumbSettingsSchema.schema).prefault({}), // done
-      item: (BreadcrumbItemSchema.schema as typeof BreadcrumbItemSchema.schema).prefault({}), // done
+      settings: (BreadcrumbSettingsSchema.schema as typeof BreadcrumbSettingsSchema.schema).prefault({}),
+      item: (BreadcrumbItemSchema.schema as typeof BreadcrumbItemSchema.schema).prefault({}),
       separator: this.separator.prefault({}),
     })
     .register(themeSchemaRegistry, { id: 'breadcrumb' })
