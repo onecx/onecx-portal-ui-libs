@@ -28,6 +28,7 @@ type CustomGroupColumnSelectorInputs = Pick<
   | 'cancelButtonLabel'
   | 'activeColumnsLabel'
   | 'inactiveColumnsLabel'
+  | 'draggableColumnGroupSelectorDialog'
 >
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
@@ -92,6 +93,7 @@ const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
   cancelButtonLabel: 'Cancel',
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
+  draggableColumnGroupSelectorDialog: true,
 }
 
 export const Default = {
