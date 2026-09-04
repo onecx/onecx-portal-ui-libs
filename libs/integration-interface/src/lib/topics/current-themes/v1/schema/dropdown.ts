@@ -64,14 +64,14 @@ export const container = bgContrast
     width: withRef(z.string()).optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownContainer' })
+  .register(themeSchemaRegistry, { id: 'dropdownContainer', kind: 'child' })
 
 export const overlay = bgContrast
   .extend({
     border: borderWithShadow.optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownOverlay' })
+  .register(themeSchemaRegistry, { id: 'dropdownOverlay', kind: 'child' })
 
 export const list = font
   .extend({
@@ -170,4 +170,4 @@ export const dropdown = z
     checkmark,
     empty,
   })
-  .register(themeSchemaRegistry, { id: 'dropdown' })
+  .register(themeSchemaRegistry, { id: 'dropdown', kind: 'child' })

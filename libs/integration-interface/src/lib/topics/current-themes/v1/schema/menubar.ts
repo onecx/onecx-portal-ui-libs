@@ -89,7 +89,7 @@ export const menubarItem = z
     focusRing: borderWithShadow.optional(),
     tooltip: tooltip.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarItem' })
+  .register(themeSchemaRegistry, { id: 'menubarItem', kind: 'child' })
 
 export const menubarSubmenuScreenSettings = z
   .object({
@@ -122,7 +122,7 @@ export const menubarSubmenu = z
     maxWidth: withRef(z.string()).default('20rem'),
     screenSettings: (menubarSubmenuScreenSettings as typeof menubarSubmenuScreenSettings).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSubmenu' })
+  .register(themeSchemaRegistry, { id: 'menubarSubmenu', kind: 'child' })
 
 export const menubarSeparator = border
   .default(DEFAULT_MENUBAR_BORDER)
@@ -147,7 +147,7 @@ export const menubarMobileButton = z
     }),
     focusRing: borderWithShadow.default(DEFAULT_MENUBAR_FOCUS_RING),
   })
-  .register(themeSchemaRegistry, { id: 'menubarMobileButton' })
+  .register(themeSchemaRegistry, { id: 'menubarMobileButton', kind: 'child' })
 
 export const menubar = z
   .object({
@@ -171,4 +171,4 @@ export const menubar = z
       }),
     }),
   })
-  .register(themeSchemaRegistry, { id: 'menubar' })
+  .register(themeSchemaRegistry, { id: 'menubar', kind: 'child' })

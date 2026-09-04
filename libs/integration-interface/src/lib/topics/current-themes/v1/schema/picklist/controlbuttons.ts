@@ -16,5 +16,5 @@ export class PicklistControlButtonsSchema {
       ...this.tokens,
       button: (PicklistControlButtonSchema.schema as typeof PicklistControlButtonSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'picklistControlButtons' })
+    .register(themeSchemaRegistry, { id: 'picklistControlButtons', kind: 'child' })
 }

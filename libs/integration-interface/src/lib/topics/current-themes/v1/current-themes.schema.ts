@@ -53,7 +53,7 @@ const usages: z.ZodType<UsagesInput> = z
     picklist: (picklist as typeof picklist).optional(),
     calendar: (calendar as typeof calendar).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'usages' })
+  .register(themeSchemaRegistry, { id: 'usages', kind: 'child' })
 
 type PrimitivesInput = z.input<typeof primitives>
 
@@ -83,7 +83,7 @@ const regionOverrides = z
     footer: regionOverride as typeof regionOverride,
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'regionOverrides' })
+  .register(themeSchemaRegistry, { id: 'regionOverrides', kind: 'child' })
 
 export const themePropertiesV2 = z
   .object({

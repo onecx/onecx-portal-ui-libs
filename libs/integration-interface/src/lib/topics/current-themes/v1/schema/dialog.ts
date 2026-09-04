@@ -66,4 +66,4 @@ export const dialog = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dialog' })
+  .register(themeSchemaRegistry, { id: 'dialog', kind: 'child' })

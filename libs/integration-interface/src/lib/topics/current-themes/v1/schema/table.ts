@@ -58,17 +58,19 @@ export const tableCellStyles = blockStyles
   })
   .register(themeSchemaRegistry, { id: 'tableCellStyles' })
 
+export const cellStateGroup = z
+  .object({
+    hover: (tableCellStyles as typeof tableCellStyles).optional(),
+    active: (tableCellStyles as typeof tableCellStyles).optional(),
+    selected: (tableCellStyles as typeof tableCellStyles).optional(),
+    focus: (tableCellStyles as typeof tableCellStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'cellStateGroup', kind: 'state' })
+
 export const cellWithStates = z
   .object({
     defaultState: (tableCellStyles as typeof tableCellStyles).optional(),
-    state: z
-      .object({
-        hover: (tableCellStyles as typeof tableCellStyles).optional(),
-        active: (tableCellStyles as typeof tableCellStyles).optional(),
-        selected: (tableCellStyles as typeof tableCellStyles).optional(),
-        focus: (tableCellStyles as typeof tableCellStyles).optional(),
-      })
-      .optional(),
+    state: cellStateGroup.optional(),
   })
   .register(themeSchemaRegistry, { id: 'cellWithStates' })
 
@@ -81,17 +83,19 @@ export const tableRowStyles = blockStyles
   })
   .register(themeSchemaRegistry, { id: 'tableRowStyles' })
 
+export const rowStateGroup = z
+  .object({
+    hover: (tableRowStyles as typeof tableRowStyles).optional(),
+    active: (tableRowStyles as typeof tableRowStyles).optional(),
+    selected: (tableRowStyles as typeof tableRowStyles).optional(),
+    focus: (tableRowStyles as typeof tableRowStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'rowStateGroup', kind: 'state' })
+
 export const rowWithStates = z
   .object({
     defaultState: (tableRowStyles as typeof tableRowStyles).optional(),
-    state: z
-      .object({
-        hover: (tableRowStyles as typeof tableRowStyles).optional(),
-        active: (tableRowStyles as typeof tableRowStyles).optional(),
-        selected: (tableRowStyles as typeof tableRowStyles).optional(),
-        focus: (tableRowStyles as typeof tableRowStyles).optional(),
-      })
-      .optional(),
+    state: rowStateGroup.optional(),
   })
   .register(themeSchemaRegistry, { id: 'rowWithStates' })
 
@@ -129,7 +133,7 @@ export const sortIconStyles = z
     descending: sortDescendingIconStyles.optional(),
     default: sortDefaultIconStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'sortIconStyles' })
+  .register(themeSchemaRegistry, { id: 'sortIconStyles', kind: 'variant' })
 
 export const filterOnIconStyles = iconBaseStyles
   .extend({
@@ -148,34 +152,38 @@ export const filterIconStyles = z
     on: filterOnIconStyles.optional(),
     off: filterOffIconStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'filterIconStyles' })
+  .register(themeSchemaRegistry, { id: 'filterIconStyles', kind: 'variant' })
+
+export const sortStateGroup = z
+  .object({
+    hover: (sortIconStyles as typeof sortIconStyles).optional(),
+    active: (sortIconStyles as typeof sortIconStyles).optional(),
+    selected: (sortIconStyles as typeof sortIconStyles).optional(),
+    focus: (sortIconStyles as typeof sortIconStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'sortStateGroup', kind: 'state' })
+
+export const filterStateGroup = z
+  .object({
+    hover: (filterIconStyles as typeof filterIconStyles).optional(),
+    active: (filterIconStyles as typeof filterIconStyles).optional(),
+    selected: (filterIconStyles as typeof filterIconStyles).optional(),
+    focus: (filterIconStyles as typeof filterIconStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'filterStateGroup', kind: 'state' })
 
 export const headerRowWithStates = rowWithStates
   .extend({
     sort: z
       .object({
         defaultState: (sortIconStyles as typeof sortIconStyles).optional(),
-        state: z
-          .object({
-            hover: (sortIconStyles as typeof sortIconStyles).optional(),
-            active: (sortIconStyles as typeof sortIconStyles).optional(),
-            selected: (sortIconStyles as typeof sortIconStyles).optional(),
-            focus: (sortIconStyles as typeof sortIconStyles).optional(),
-          })
-          .optional(),
+        state: sortStateGroup.optional(),
       })
       .optional(),
     filter: z
       .object({
         defaultState: (filterIconStyles as typeof filterIconStyles).optional(),
-        state: z
-          .object({
-            hover: (filterIconStyles as typeof filterIconStyles).optional(),
-            active: (filterIconStyles as typeof filterIconStyles).optional(),
-            selected: (filterIconStyles as typeof filterIconStyles).optional(),
-            focus: (filterIconStyles as typeof filterIconStyles).optional(),
-          })
-          .optional(),
+        state: filterStateGroup.optional(),
       })
       .optional(),
   })
@@ -186,30 +194,25 @@ export const alternatingRowStyles = z
     odd: (rowWithStates as typeof rowWithStates).optional(),
     even: (rowWithStates as typeof rowWithStates).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'alternatingRowStyles' })
+  .register(themeSchemaRegistry, { id: 'alternatingRowStyles', kind: 'child' })
+
+export const tableRowStateGroup = z
+  .object({
+    hover: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+    active: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+    selected: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+    focus: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'tableRowStateGroup', kind: 'state' })
 
 type TableRowShape = {
   defaultState: z.ZodOptional<typeof alternatingRowStyles>
-  state: z.ZodOptional<
-    z.ZodObject<{
-      hover: z.ZodOptional<typeof alternatingRowStyles>
-      active: z.ZodOptional<typeof alternatingRowStyles>
-      selected: z.ZodOptional<typeof alternatingRowStyles>
-      focus: z.ZodOptional<typeof alternatingRowStyles>
-    }>
-  >
+  state: z.ZodOptional<typeof tableRowStateGroup>
 }
 
 const tableRowShape: TableRowShape = {
   defaultState: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-  state: z
-    .object({
-      hover: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-      active: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-      selected: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-      focus: (alternatingRowStyles as typeof alternatingRowStyles).optional(),
-    })
-    .optional(),
+  state: tableRowStateGroup.optional(),
 }
 
 export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow' })
@@ -230,4 +233,4 @@ const tableShape: TableShape = {
   row: (tableRow as typeof tableRow).optional(),
 }
 
-export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table' })
+export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table', kind: 'child' })

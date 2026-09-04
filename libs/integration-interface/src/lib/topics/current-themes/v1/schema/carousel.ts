@@ -216,4 +216,4 @@ export const carousel = z
     navigationButton: (carouselNavigationButton as typeof carouselNavigationButton).prefault({}),
     indicator: (carouselIndicator as typeof carouselIndicator).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'carousel' })
+  .register(themeSchemaRegistry, { id: 'carousel', kind: 'child' })

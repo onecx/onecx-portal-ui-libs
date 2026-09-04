@@ -78,4 +78,4 @@ export const diagram = z.object({
     container: (container as typeof container).optional(),
     footer: (diagramTextStyles as typeof diagramTextStyles).optional(),
 })
-    .register(themeSchemaRegistry, { id: "diagram" })
+    .register(themeSchemaRegistry, { id: "diagram", kind: "child" })

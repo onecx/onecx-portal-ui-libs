@@ -191,7 +191,7 @@ export const severityVariants = z
     danger: severityStyles.optional(),
     contrast: severityStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'severityVariants' })
+  .register(themeSchemaRegistry, { id: 'severityVariants', kind: 'severity' })
 
 // A single interaction-state group: a baseline style (defaultVariant) and per-level severity overrides (variants).
 // Used as the type for variantWithStates.defaultState and each state entry.
@@ -202,19 +202,21 @@ export const severityVariantGroup = z
   })
   .register(themeSchemaRegistry, { id: 'severityVariantGroup' })
 
+export const variantStateGroup = z
+  .object({
+    hover: severityVariantGroup.optional(),
+    active: severityVariantGroup.optional(),
+    selected: severityVariantGroup.optional(),
+    focus: severityVariantGroup.optional(),
+    invalid: severityVariantGroup.optional(),
+    disabled: severityVariantGroup.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'variantStateGroup', kind: 'state' })
+
 export const variantWithStates = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
-    state: z
-      .object({
-        hover: severityVariantGroup.optional(),
-        active: severityVariantGroup.optional(),
-        selected: severityVariantGroup.optional(),
-        focus: severityVariantGroup.optional(),
-        invalid: severityVariantGroup.optional(),
-        disabled: severityVariantGroup.optional(),
-      })
-      .optional(),
+    state: variantStateGroup.optional(),
   })
   .register(themeSchemaRegistry, { id: 'variantWithStates' })
 
@@ -235,7 +237,9 @@ const colorVariantsShape: ColorVariantsShape = {
   // TODO: Add a link variant to all components that support link display (e.g. buttons)
 }
 
-export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants' })
+export const colorVariants = z
+  .object(colorVariantsShape)
+  .register(themeSchemaRegistry, { id: 'colorVariants', kind: 'variant' })
 
 export const area = variantWithStates.extend({})
 
@@ -251,7 +255,7 @@ const areasShape: AreasShape = {
   overlay: area.optional(),
 }
 
-export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'areas' })
+export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'areas', kind: 'child' })
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.

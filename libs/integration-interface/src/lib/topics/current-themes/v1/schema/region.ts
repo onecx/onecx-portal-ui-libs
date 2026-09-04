@@ -22,4 +22,4 @@ export const region = z
   .object({
     font: fontWithDefaults.optional(),
   })
-  .register(themeSchemaRegistry, { id: "region" });
+  .register(themeSchemaRegistry, { id: "region", kind: "child" });

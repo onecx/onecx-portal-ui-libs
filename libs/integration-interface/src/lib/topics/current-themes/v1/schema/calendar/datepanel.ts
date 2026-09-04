@@ -31,5 +31,5 @@ export class CalendarDatePanelSchema {
       today: (CalendarTodaySchema.schema as typeof CalendarTodaySchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'calendarDatePanel' })
+    .register(themeSchemaRegistry, { id: 'calendarDatePanel', kind: 'child' })
 }

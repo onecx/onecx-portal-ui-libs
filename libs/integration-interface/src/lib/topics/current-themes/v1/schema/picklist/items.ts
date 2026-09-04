@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, color, withRef } from '../primitives'
+import { bg, withRef } from '../primitives'
 import { PicklistPanelItemSchema } from './item'
 
 /**
@@ -21,5 +21,5 @@ export class PicklistPanelItemsSchema {
       item: (PicklistPanelItemSchema.schema as typeof PicklistPanelItemSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'picklistPanelItems' })
+    .register(themeSchemaRegistry, { id: 'picklistPanelItems', kind: 'child' })
 }

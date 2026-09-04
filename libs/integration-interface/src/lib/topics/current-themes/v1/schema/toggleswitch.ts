@@ -141,4 +141,4 @@ export const toggleswitch = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: "toggleswitch" });
+  .register(themeSchemaRegistry, { id: "toggleswitch", kind: "child" });

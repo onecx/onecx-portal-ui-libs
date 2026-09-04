@@ -21,6 +21,15 @@ export const badgeSizeStyle = z
   })
   .register(themeSchemaRegistry, { id: 'badgeSizeStyle' })
 
+// Badge size-variant group (sm/lg/xl)
+export const badgeSizeVariantGroup = z
+  .object({
+    sm: badgeSizeStyle.optional(),
+    lg: badgeSizeStyle.optional(),
+    xl: badgeSizeStyle.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeSizeVariantGroup', kind: 'variant' })
+
 // Badge style with size variants
 export const badgeStyleWithSizeVariants = z
   .object({
@@ -32,13 +41,7 @@ export const badgeStyleWithSizeVariants = z
     // Default size
     defaultVariant: badgeSizeStyle.optional(),
     // Size variants
-    sizeVariant: z
-      .object({
-        sm: badgeSizeStyle.optional(),
-        lg: badgeSizeStyle.optional(),
-        xl: badgeSizeStyle.optional(),
-      })
-      .optional(),
+    sizeVariant: badgeSizeVariantGroup.optional(),
   })
   .register(themeSchemaRegistry, { id: 'badgeStyleWithSizeVariants' })
 
@@ -46,6 +49,24 @@ const colorVariant = (severity: string) => ({
   background: `{{primitives.variant.primary.defaultState.defaultVariant.${severity}.bg}}`,
   color: `{{primitives.variant.primary.defaultState.defaultVariant.${severity}.contrast}}`,
 })
+
+export const badgeSeverityVariantGroup = z
+  .object({
+    primary: badgeStyleWithSizeVariants.optional().default({
+      background: '{{primitives.variant.primary.defaultState.defaultVariant.bg}}',
+      color: '{{primitives.variant.primary.defaultState.defaultVariant.contrast}}',
+    }),
+    secondary: badgeStyleWithSizeVariants.optional().default({
+      background: '{{primitives.variant.secondary.defaultState.defaultVariant.bg}}',
+      color: '{{primitives.variant.secondary.defaultState.defaultVariant.contrast}}',
+    }),
+    success: badgeStyleWithSizeVariants.optional().default(colorVariant('success')),
+    info: badgeStyleWithSizeVariants.optional().default(colorVariant('info')),
+    warning: badgeStyleWithSizeVariants.optional().default(colorVariant('warning')),
+    danger: badgeStyleWithSizeVariants.optional().default(colorVariant('danger')),
+    contrast: badgeStyleWithSizeVariants.optional().default(colorVariant('contrast')),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeSeverityVariantGroup', kind: 'variant' })
 
 export const badge = z
   .object({
@@ -95,22 +116,6 @@ export const badge = z
     }),
 
     // Severity variants
-    variant: z
-      .object({
-        primary: badgeStyleWithSizeVariants.optional().default({
-          background: '{{primitives.variant.primary.defaultState.defaultVariant.bg}}',
-          color: '{{primitives.variant.primary.defaultState.defaultVariant.contrast}}',
-        }),
-        secondary: badgeStyleWithSizeVariants.optional().default({
-          background: '{{primitives.variant.secondary.defaultState.defaultVariant.bg}}',
-          color: '{{primitives.variant.secondary.defaultState.defaultVariant.contrast}}',
-        }),
-        success: badgeStyleWithSizeVariants.optional().default(colorVariant('success')),
-        info: badgeStyleWithSizeVariants.optional().default(colorVariant('info')),
-        warning: badgeStyleWithSizeVariants.optional().default(colorVariant('warning')),
-        danger: badgeStyleWithSizeVariants.optional().default(colorVariant('danger')),
-        contrast: badgeStyleWithSizeVariants.optional().default(colorVariant('contrast')),
-      })
-      .optional(),
+    variant: badgeSeverityVariantGroup.optional(),
   })
   .register(themeSchemaRegistry, { id: 'badge' })

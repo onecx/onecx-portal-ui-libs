@@ -38,5 +38,5 @@ export class CalendarSchema {
       ),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'calendar' })
+    .register(themeSchemaRegistry, { id: 'calendar', kind: 'child' })
 }

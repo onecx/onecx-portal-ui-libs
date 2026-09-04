@@ -22,5 +22,5 @@ export class CalendarFooterButtonBarSchema {
       clearButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'calendarFooterButtonBar' })
+    .register(themeSchemaRegistry, { id: 'calendarFooterButtonBar', kind: 'child' })
 }

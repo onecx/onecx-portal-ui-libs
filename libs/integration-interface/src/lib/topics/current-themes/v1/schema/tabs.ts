@@ -156,4 +156,4 @@ export const tabs = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'tabs' })
+  .register(themeSchemaRegistry, { id: 'tabs', kind: 'child' })

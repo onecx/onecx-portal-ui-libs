@@ -14,6 +14,8 @@ export * from './lib/topics/current-theme/v1/theme-override.model'
 export * from './lib/topics/current-themes/v1/current-themes.topic'
 export * from './lib/topics/current-themes/v1/current-themes.model'
 export * from './lib/topics/current-themes/v1/current-themes.schema'
+export * from './lib/topics/current-themes/v1/schema/registry'
+export * from './lib/topics/current-themes/v1/schema/axis-metadata'
 export * from './lib/topics/current-themes/v1/font-definition.schema'
 
 export * from './lib/topics/user-profile/v1/user-profile.model'

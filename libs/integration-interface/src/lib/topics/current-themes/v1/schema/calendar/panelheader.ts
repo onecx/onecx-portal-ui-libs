@@ -30,5 +30,5 @@ export class CalendarPanelHeaderSchema {
       navButton: (CalendarPanelButtonSchema.schema as typeof CalendarPanelButtonSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'calendarPanelHeader' })
+    .register(themeSchemaRegistry, { id: 'calendarPanelHeader', kind: 'child' })
 }

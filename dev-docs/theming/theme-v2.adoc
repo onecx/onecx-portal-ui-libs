@@ -332,6 +332,100 @@ border: border.default({
 
 This means that if a theme only defines primitives, the table automatically inherits consistent border values.
 
+[#schema-node-markers]
+== Schema Node Markers & Axis Metadata
+
+The theme Zod schemas register every group-container node with the local
+`themeSchemaRegistry` (see link:{schema_root}/schema/registry.ts[registry.ts]). Each
+registration carries a stable `id` and an optional `kind` from the
+`SchemaNodeKind` union. The `kind` classifies the node as one of the repeating
+axes or a named child-component boundary, so the axis structure of the theme can
+be read deterministically from the registry instead of being re-derived from
+naming conventions.
+
+[cols="25,75",options="header"]
+|===
+|`kind` | Meaning
+
+|`variant`
+|A repeating color/size variant axis. Example nodes: the `primitives.variant`
+container and the `badge.variant` container. The sibling keys are the variant
+names (e.g. `primary`, `secondary`, `tertiary`, `quaternary`, `quinary`).
+
+|`state`
+|A repeating interaction-state axis (e.g. `hover`, `active`, `selected`,
+`focus`, `invalid`, `disabled`). Example nodes: the per-component `state`
+containers in `badge`, `table`, `tooltip`, and `carousel`.
+
+|`severity`
+|A repeating severity axis. Example node: the `primitives.severity` container.
+The sibling keys are the severity names (e.g. `success`, `info`, `warning`,
+`danger`, `contrast`).
+
+|`child`
+|A named child-component boundary, not a repeating axis. Example nodes:
+`usages`, `regionOverrides`, `table`, `dialog`, `tabs`, and `badge`. Sibling
+keys are not axis members; they are either the component's own children or, for
+`usages`/`regionOverrides`, the set of components/regions.
+|===
+
+Classification follows a fixed priority so a given node maps to exactly one
+`kind`: interaction-state names win, then severity names, then known variant
+names, then named child components. Nodes that match none of these carry no
+`kind` (the registry entry has `kind === undefined`) and are treated as plain
+containers during the walk.
+
+[#per-leaf-axis-metadata]
+=== Per-Leaf Axis Metadata
+
+`axis-metadata.ts` walks the full `theme` schema once and produces
+`themeAxisMetadata`, an exported array describing the applicable axes for every
+leaf token. Each entry is a `LeafAxisMetadata`:
+
+[source,typescript]
+----
+interface AxisGroupBoundary {
+  kind: SchemaNodeKind;     // 'variant' | 'state' | 'severity' | 'child'
+  id: string;               // registry id of the group node
+  siblingNames: string[];   // sibling keys for variant/state/severity; empty for child
+  selected: string;         // the specific branch this leaf sits under (empty for child)
+}
+
+interface LeafAxisMetadata {
+  path: string;      // dot-path from the theme root, e.g. 'v2.primitives.variant.primary.bg.color'
+  variants: string[];   // applicable variant names, innermost axis outermost
+  states: string[];     // applicable state names
+  severities: string[]; // applicable severity names
+  groups: AxisGroupBoundary[]; // ordered axis-group/child boundaries, innermost first
+}
+----
+
+The `groups` array is ordered innermost-first: the boundary closest to the leaf
+comes first. Because the walk records one entry per leaf token (not per usage),
+every token path is unique and the metadata is tenant-independent — it contains
+no tenant or theme values, only the structural axis names and paths derived
+from the schema itself.
+
+For example, the leaf at `v2.primitives.variant.primary.bg.color` reports:
+
+[source,typescript]
+----
+{
+  path: 'v2.primitives.variant.primary.bg.color',
+  variants: ['primary'],
+  states: [],
+  severities: [],
+  groups: [
+    {
+      kind: 'variant',
+      id: 'colorVariants',
+      siblingNames: ['primary', 'secondary', 'tertiary', 'quaternary', 'quinary'],
+      selected: 'primary',
+    },
+  ],
+}
+----
+
 [#mapping-pipeline]
 == Mapping Pipeline
 

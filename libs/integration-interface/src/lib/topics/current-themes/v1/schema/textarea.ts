@@ -323,4 +323,4 @@ export const textarea = z
     focusRing: borderWithShadow.optional().default(focusRingDefaults),
     filled: (filledTextareaStateWithStates as typeof filledTextareaStateWithStates).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'textarea' })
+  .register(themeSchemaRegistry, { id: 'textarea', kind: 'child' })

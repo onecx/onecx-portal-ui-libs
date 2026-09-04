@@ -12,5 +12,5 @@ export class PicklistPanelSchema {
       header: (PicklistPanelHeaderSchema.schema as typeof PicklistPanelHeaderSchema.schema).prefault({}),
       items: (PicklistPanelItemsSchema.schema as typeof PicklistPanelItemsSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'picklistPanel' })
+    .register(themeSchemaRegistry, { id: 'picklistPanel', kind: 'child' })
 }
