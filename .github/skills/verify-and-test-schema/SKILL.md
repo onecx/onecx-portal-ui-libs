@@ -171,10 +171,10 @@ const hoverTextareaStyles = z.object({
   }),
   focusRing: borderWithShadow.default({
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-    width: '{{primitives.focusRing.width.md}}',
-    offset: '{{primitives.focusRing.offset.md}}',
-    radius: '{{primitives.focusRing.radius.md}}',
-    shadow: '{{primitives.focusRing.shadow.md}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    radius: '{{primitives.radius.md}}',
+    shadow: '{{primitives.shadow.none}}',
   }),
 })
 ```
