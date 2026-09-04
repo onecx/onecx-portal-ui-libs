@@ -17,6 +17,7 @@ import {
   input,
   model,
   output,
+  signal,
   untracked,
   viewChild,
 } from '@angular/core'
@@ -48,6 +49,7 @@ import { PermissionInput } from '../../model/permission.model'
 import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { RowListGridData } from '../../model/row-list-grid-data.model'
+import { createLogger } from '../../utils/logger.utils'
 
 export type InteractiveDataViewComponentState = ColumnGroupSelectionComponentState &
   CustomGroupColumnSelectorComponentState &
@@ -194,6 +196,9 @@ export class InteractiveDataViewComponent implements OnInit {
       columnKeys.map((key) => this.stateService.availableColumns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]
     )
   })
+
+  // Track whether displayed columns have ever been non-empty (to suppress warning on initial empty state)
+  private readonly _hasHadColumns = signal<boolean>(false)
 
   @Input()
   set frozenActionColumn(value: boolean) {
@@ -541,6 +546,8 @@ export class InteractiveDataViewComponent implements OnInit {
   // Used for communication between the slot component and this component's internal logic
   readonly slotGroupSelectionChangeListener = new EventEmitter<ColumnGroupData | undefined>()
 
+  private readonly logger = createLogger('InteractiveDataViewComponent')
+
   constructor() {
     this.isColumnGroupSelectionComponentDefined$ = this.slotService
       .isSomeComponentDefinedForSlot(this.columnGroupSlotName)
@@ -626,6 +633,22 @@ export class InteractiveDataViewComponent implements OnInit {
           }
         }
       })
+    })
+
+    // Warn when displayed columns transition from a non-empty state to empty after initialization
+    effect(() => {
+      const displayedColumns = this.displayedColumns()
+      if (displayedColumns.length > 0) {
+        this._hasHadColumns.set(true)
+        return
+      }
+      // Only warn when we previously had columns (post-initial transition to empty)
+      if (untracked(() => this._hasHadColumns())) {
+        this.logger.warn(
+          'Displayed columns is empty. The sort dropdown will have no sortable fields. ' +
+            'Ensure at least one column is selected in the Column Picker or via displayedColumnKeys input.'
+        )
+      }
     })
   }
 
