@@ -78,6 +78,7 @@ const defaultComponentArgs = {
   cancelButtonLabel: 'Cancel',
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
+  draggableColumnGroupSelectorDialog: true
 }
 
 export const Default = {

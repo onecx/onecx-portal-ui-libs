@@ -91,6 +91,7 @@ export class InteractiveDataViewComponent implements OnInit {
   editActionEnabledField = input<string | undefined>(undefined)
   tableSelectionEnabledField = input<string | undefined>(undefined)
   tableAllowSelectAll = input<boolean>(true)
+  draggableColumnGroupSelectorDialog = input<boolean>(true)
   name = input<string>('Data')
   titleLineId = input<string | undefined>(undefined)
   subtitleLineIds = input<string[] | undefined>(undefined)
@@ -142,8 +143,7 @@ export class InteractiveDataViewComponent implements OnInit {
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return (
-      (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]) ??
-      []
+      (columnKeys.map((key) => this.columns().find((col) => col.id === key)).filter(Boolean) as DataTableColumn[]) ?? []
     )
   })
   frozenActionColumn = model<boolean>(false)
@@ -441,7 +441,7 @@ export class InteractiveDataViewComponent implements OnInit {
     const childColumnHeader = this.childColumnHeader()
     return primeNgColumnHeader ?? childColumnHeader ?? undefined
   })
-  
+
   templates = contentChildren<PrimeTemplate>(PrimeTemplate)
 
   filtered = output<Filter[]>()
@@ -529,25 +529,22 @@ export class InteractiveDataViewComponent implements OnInit {
       untracked(() => {
         const columnGroupComponentDefined = this.isColumnGroupSelectionComponentDefined()
         if (columnGroupComponentDefined) {
-          if (
-            !(
-              this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||
-              this.selectedGroupKey() === this.customGroupKey()
-            )
-          ) {
+          if (!(
+            this.columns().some((c) => c.nameKey === this.selectedGroupKey()) ||
+            this.selectedGroupKey() === this.customGroupKey()
+          )) {
             this.selectedGroupKey.set(undefined)
           }
         }
       })
     })
-
   }
 
   /**
    * Triggers the group selection changed logic. This method should be called
    * when the column group selection changes, either from the UI or programmatically.
    * It updates the displayed columns, selected group key, and emits the change event.
-   * 
+   *
    * @param event The column group data, or undefined to use current state
    */
   triggerGroupSelectionChanged(event: ColumnGroupData | undefined): void {
