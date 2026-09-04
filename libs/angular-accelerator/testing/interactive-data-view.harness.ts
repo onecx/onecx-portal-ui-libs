@@ -5,6 +5,7 @@ import { DataLayoutSelectionHarness } from './data-layout-selection.harness'
 import { DataViewHarness } from './data-view.harness'
 import { SlotHarness } from './slot.harness'
 import { CustomGroupColumnSelectorHarness } from './custom-group-column-selector.harness'
+import { FilterViewHarness } from './filter-view.harness'
 
 export class InteractiveDataViewHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-interactive-data-view'
@@ -28,4 +29,5 @@ export class InteractiveDataViewHarness extends ContentContainerComponentHarness
   getDataListGridSortingSelect = this.locatorForOptional(PSelectHarness.with({ id: 'dataListGridSortingSelect' }))
   getDataListGridSortingButton = this.locatorForOptional(PButtonHarness.with({ id: 'dataListGridSortingButton' }))
   getDataView = this.locatorFor(DataViewHarness)
+  getFilterView = this.locatorForOptional(FilterViewHarness)
 }
