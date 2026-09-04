@@ -13,6 +13,7 @@
 ** xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging]
 
 ** Migrations
+*** xref:onecx-portal-ui-libs:migrations/angular-22/migration-plan.adoc[Angular Material Migration Plan]
 *** xref:onecx-portal-ui-libs:migrations/angular-19/index.adoc[Migrate App to Angular 19]
 *** xref:onecx-portal-ui-libs:migrations/angular-20/index.adoc[Migrate App to Angular 20]
 *** xref:onecx-portal-ui-libs:migrations/angular-21/index.adoc[Migrate App to Angular 21]
