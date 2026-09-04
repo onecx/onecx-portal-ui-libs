@@ -1,5 +1,5 @@
 import z from 'zod';
-import { withRef, bg, color, border } from '../primitives';
+import { withRef, color, border } from '../primitives';
 import { themeSchemaRegistry } from '../registry';
 
 export class DataViewContentSchema {

@@ -19,6 +19,7 @@ import { interactiveDataViewCssRules } from './usages/interactive-dataview.rules
 import { selectbuttonCssRules } from './usages/selectbutton.rules'
 import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
+import { pageHeaderCssRules } from './usages/page-header.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -41,4 +42,5 @@ export const usageCssRules: CssRule[] = [
   ...selectbuttonCssRules,
   ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
+  ...pageHeaderCssRules,
 ]
