@@ -21,8 +21,8 @@ export const tooltip = z
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     border: border.default({
-      color: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.sm}}',
       offset: '{{primitives.border.offset.sm}}',
       radius: '{{primitives.border.radius.md}}',
@@ -32,4 +32,4 @@ export const tooltip = z
       .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
     color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
   })
-  .register(themeSchemaRegistry, { id: 'tooltip' })
+  .register(themeSchemaRegistry, { id: 'tooltip', kind: 'child' })

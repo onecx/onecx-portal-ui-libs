@@ -1,8 +1,5 @@
 import { tooltip, tooltipSettings } from './tooltip'
-import {
-  expectExactTokens,
-  expectExactUndefinedTokens,
-} from './test-utils'
+import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
 
 describe('tooltip schema', () => {
   it('parses an empty object', () => {
@@ -25,8 +22,8 @@ describe('tooltip schema', () => {
         shadow: '{{primitives.shadow.md}}',
         padding: '{{primitives.space.md}}',
         border: {
-          color: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}',
-          style: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}',
+          color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+          style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
           width: '{{primitives.border.width.sm}}',
           offset: '{{primitives.border.offset.sm}}',
           radius: '{{primitives.border.radius.md}}',

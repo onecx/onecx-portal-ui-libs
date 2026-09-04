@@ -53,14 +53,16 @@ export const content = layout
   .optional()
   .register(themeSchemaRegistry, { id: 'fieldSetContent' })
 
-export const fieldset = z.object({
-  settings,
-  container,
-  legend,
-  legendHover,
-  legendFocusRing,
-  content,
-  toggleIcon,
-  toggleIconHover,
-  contentContainer,
-})
+export const fieldset = z
+  .object({
+    settings,
+    container,
+    legend,
+    legendHover,
+    legendFocusRing,
+    content,
+    toggleIcon,
+    toggleIconHover,
+    contentContainer,
+  })
+  .register(themeSchemaRegistry, { id: 'fieldset', kind: 'child' })

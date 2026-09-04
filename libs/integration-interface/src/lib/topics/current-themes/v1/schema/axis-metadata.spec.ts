@@ -3,8 +3,7 @@ import { deriveLeafAxisMetadata, themeAxisMetadata } from './axis-metadata'
 import type { LeafAxisMetadata } from './axis-metadata'
 import { themeSchemaRegistry } from './registry'
 
-const find = (meta: LeafAxisMetadata[], path: string): LeafAxisMetadata | undefined =>
-  meta.find((m) => m.path === path)
+const find = (meta: LeafAxisMetadata[], path: string): LeafAxisMetadata | undefined => meta.find((m) => m.path === path)
 
 describe('deriveLeafAxisMetadata', () => {
   it('records each branch of a variant group as its own leaf entry', () => {
@@ -171,12 +170,8 @@ describe('themeAxisMetadata', () => {
   })
 
   it('assigns each variant leaf its own variant name', () => {
-    const primary = themeAxisMetadata.find(
-      (m) => m.path === 'v2.primitives.variant.primary.bg.color'
-    )
-    const secondary = themeAxisMetadata.find(
-      (m) => m.path === 'v2.primitives.variant.secondary.bg.color'
-    )
+    const primary = themeAxisMetadata.find((m) => m.path === 'v2.primitives.variant.primary.bg.color')
+    const secondary = themeAxisMetadata.find((m) => m.path === 'v2.primitives.variant.secondary.bg.color')
 
     expect(primary?.variants).toEqual(['primary'])
     expect(secondary?.variants).toEqual(['secondary'])
@@ -187,5 +182,40 @@ describe('themeAxisMetadata', () => {
 
     expect(tableLeaf).toBeDefined()
     expect(tableLeaf?.groups.some((g) => g.kind === 'child' && g.id === 'usages')).toBe(true)
+  })
+
+  it('records its own child boundary for the leaves of every registered root component', () => {
+    // Guards against a future component whose root schema is added without the
+    // required `.register(..., { kind: 'child' })` marker — that would silently
+    // drop its component boundary from the derived leaf metadata.
+    const rootComponentIds: Record<string, string> = {
+      dialog: 'dialog',
+      badge: 'badge',
+      menubar: 'menubar',
+      region: 'region',
+      table: 'table',
+      tooltip: 'tooltip',
+      carousel: 'carousel',
+      tabs: 'tabs',
+      fieldset: 'fieldset',
+      diagram: 'diagram',
+      dropdown: 'dropdown',
+      toggleswitch: 'toggleswitch',
+      textarea: 'textarea',
+      picklist: 'picklist',
+      calendar: 'calendar',
+    }
+
+    for (const [usageName, registeredId] of Object.entries(rootComponentIds)) {
+      const leaves = themeAxisMetadata.filter((m) => m.path.startsWith(`v2.usages.${usageName}.`))
+      expect(leaves.length).toBeGreaterThan(0)
+
+      // Any leaf that lacks its own component boundary is reported by path so a
+      // failure pinpoints exactly which leaf (and which component) is missing it.
+      const missingBoundary = leaves
+        .filter((leaf) => !leaf.groups.some((g) => g.kind === 'child' && g.id === registeredId))
+        .map((leaf) => leaf.path)
+      expect(missingBoundary).toEqual([])
+    }
   })
 })

@@ -118,4 +118,4 @@ export const badge = z
     // Severity variants
     variant: badgeSeverityVariantGroup.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badge' })
+  .register(themeSchemaRegistry, { id: 'badge', kind: 'child' })
