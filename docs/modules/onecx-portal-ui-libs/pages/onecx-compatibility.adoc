@@ -1,36 +1,29 @@
 :idprefix:
 :idseparator: -
+:page-toclevels: 4
 
 :troubleshooting_shared_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#shell-related
-:troubleshooting_webpack_config: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#webpack-configuration
-:troubleshooting_installed_packages: xref:documentation:onecx-docs-dev:guides/troubleshooting.adoc#installed-packages
 
+[#onecx-compatibility]
 = OneCX UI Libraries: Compatibility
 
 This guide lists the minimal requirements for an UI App to be fully compatible with OneCX. Each requirement is classified as "must-have" or "should-have" and the impact of missing each requirement is described.
 
-[#must-have-requirements]
-== Must-have Requirements
+[#general]
+== General
 
-Have lower Angular package version than the Shell or respective preloader::
-Impact: Broken environment
-+
-* Check the Shell version and ensure your App uses an equal or lower Angular version.
-* Please refer to this {troubleshooting_shared_packages}[Troubleshooting Guide shell related section] on how to use DevTools to inspect shared packages.
+[#general-must-have-requirements]
+=== Must-have Requirements
 
-
-Constructed using @onecx/angular-webcomponents::
-Impact: Router out of sync, many potential issues
-+
-* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular/app-to-onecx.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
-
-
-Module-federation with remoteEntry.js (any technology)::
+[#application-exposal]
+==== Application exposal
+Application uses module federation exposing remoteEntry.js (any technology)::
 Impact: Applications exposed with different technologies might not be compatible with the Shell
 +
 * Ensure your App exposes remoteEntry.js and is configured for module federation.
 
-
+[#asset-exposal]
+==== Asset exposal
 Expose assets of used libraries::
 Impact: Translations missing
 +
@@ -70,7 +63,8 @@ Impact: Translations missing
 ...
 ----
 
-
+[#style-exposal]
+==== Styles exposal
 Expose styles.css of used libraries::
 Impact: Styles of components from libraries might be incorrect
 +
@@ -96,89 +90,45 @@ Impact: Styles of components from libraries might be incorrect
 ...
 ----
 
-Sharing is done with '^'::
+[#package-sharing]
+==== Package sharing
+Sharing is done with '^' sign to allow version flexibility::
 Impact: We should share as much as possible
 +
 * Use caret '^' for all shared package versions in package.json (except rxjs, which should use '~').
-* Refer to the {troubleshooting_installed_packages}[Troubleshooting Guide installed packages section] for correct range and examples.
+* Especially important for Angular packages to avoid trying to use multiple versions of Angular in the same environment, which is not allowed.
 
-
-Angular, PrimeNG, NGRX and OneCX packages are shared::
+// TODO: Add link to OneCX sharing utilities guide
+All required packages are shared::
 Impact: Broken application
 +
-* In webpack.config.js, share all required packages
-* Refer to the {troubleshooting_webpack_config}[Troubleshooting Guide webpack config section] for correct sharing syntax and examples.
-
+* Share all required packages
+** @angular/*
+** @ngx-translate/*
+** @onecx/*
+** rxjs
+** primeng
+* Its recommended to use the OneCX utilities to share packages. For more information, please refer to the xref:TODO[OneCX Utilities Guide].
 
 Share @onecx/angular-utils library::
 Impact: Might lead to unwanted side effects for your App and also other Apps in the Shell.
 +
-* Especially if @onecx/angular-accelerator or @onecx/portal-integration-interface is used and shared.
-* Please check your webpack configuration and make sure to include the @onecx/angular-utils in the shared modules.
+* Must be done if *@onecx/angular-accelerator* or *@onecx/portal-integration-interface* is used and shared.
+* Please check your configuration and make sure to include the @onecx/angular-utils in the shared modules or dependencies.
 
-
-Routing is done with relative paths::
-Impact: Incorrect routing results
-+
-* Use relative paths in Angular router configuration to avoid navigation issues.
-* Please refer to the xref:documentation:docs-guides-ui:angular/routing/index.adoc#general-routing-guidelines[OneCX Routing Guide] for using relative paths and other information on routing in OneCX.
-
-
-Webpack configuration for importMeta::
+[#allow-import-meta]
+==== Allow importMeta in configuration
+importMeta is configured::
 Impact: Translation issues
 +
-* Ensure your webpack configuration includes the correct importMeta configuration.
+* Ensure your configuration includes the correct importMeta configuration.
 * For the correct configuration, please refer to the xref:documentation:docs-guides-ui:angular/translation/multi-language-setup.adoc#provide-translation-path[OneCX Multi-language Translations Guide] and other information on multi-language in OneCX.
 
+[#general-should-have-requirements]
+=== Should-have Requirements
 
-Ensure package compatibility::
-Impact: Broken application
-+
-* Verify that all packages used in your App are compatible with OneCX.
-
-
-.Compatible package versions for Angular 18 (libs version 5.x)
-|===
-| Package               | Compatible Versions
-| @ngx-translate/core   | ^15.0.0
-| ngx-build-plus        | ^18.0.0
-| primeng               | ^17.18.0
-|===
-
-.Compatible package versions for Angular 19 (libs version 6.x)
-|===
-| Package                        | Compatible Versions
-| @ngx-translate/core   | ^16.0.0
-| ngx-build-plus        | ^19.0.0
-| primeng               | ^19.0.0
-|===
-
-
-[#should-have-requirements]
-== Should-have Requirements
-
-Module-federation via webpack for exposing remoteEntry.js::
-Impact: We don't know if other technologies are working
-+
-* Prefer webpack for module federation setup.
-* Verify your webpack configuration:
-
-.Example webpack.config.js
-[source,js]
-----
-...
-const config = withModuleFederationPlugin({
-  name: 'YOUR_MFE_NAME',
-  filename: 'remoteEntry.js',
-  exposes: {
-    './RemoteModule': 'src/main.ts',
-  },
-  shared: share({...})
-});
-...
-----
-
-Expose App styles.css::
+[#expose-app-styles]
+==== Expose App styles.css
 Impact: No styles for the application are loaded
 +
 * Ensure your App exposes its styles.css.
@@ -232,3 +182,76 @@ Impact: No styles for the application are loaded
   ...
 }
 ----
+
+[#angular]
+== Angular
+
+[#angular-must-have-requirements]
+=== Must-have Requirements
+
+[#angular-version-compatibility]
+==== Angular version compatibility
+Angular package version has to be lower than the Shell::
+Impact: Broken environment
++
+* Check the Shell version and ensure your App uses an equal or lower Angular version.
+* Please refer to the {troubleshooting_shared_packages}[Troubleshooting Guide] to know what versions are available in the environment.
+
+[#application-bootstrap]
+==== Application bootstrap
+Application is constructed using @onecx/angular-webcomponents::
+Impact: Router out of sync, many potential issues
++
+* For step-by-step instructions on migrating a vanilla Angular App to a OneCX-compatible microfrontend using @onecx/angular-webcomponents among other packages, refer to the xref:documentation:docs-guides-ui:angular/app-to-onecx.adoc#migration-steps[Migration Steps in Vanilla to OneCX Migration Guide].
+
+[#routing-with-relative-paths]
+==== Routing with relative paths
+Routing is done with relative paths::
+Impact: Incorrect routing results
++
+* Use relative paths in Angular router configuration to avoid navigation issues.
+* Please refer to the xref:documentation:docs-guides-ui:angular/routing/index.adoc#general-routing-guidelines[OneCX Routing Guide] for using relative paths and other information on routing in OneCX.
+
+[#angular-compatibility]
+==== Angular compatibility
+Ensure package compatibility::
+Impact: Broken application
++
+* Verify that all packages used in your App are compatible with OneCX.
+
+
+.Compatible package versions for Angular 18
+|===
+| Package               | Compatible Versions
+| @onecx/*              | ^5.0.0
+| @ngx-translate/core   | ^15.0.0
+| ngx-build-plus        | ^18.0.0
+| primeng               | ^17.18.0
+|===
+
+.Compatible package versions for Angular 19
+|===
+| Package                        | Compatible Versions
+| @onecx/*              | ^6.0.0
+| @ngx-translate/core   | ^16.0.0
+| ngx-build-plus        | ^19.0.0
+| primeng               | ^19.0.0
+|===
+
+.Compatible package versions for Angular 20
+|===
+| Package                        | Compatible Versions
+| @onecx/*              | ^7.0.0
+| @ngx-translate/core   | ^17.0.0
+| ngx-build-plus        | ^20.0.0
+| primeng               | ^20.0.0
+|===
+
+.Compatible package versions for Angular 21
+|===
+| Package                        | Compatible Versions
+| @onecx/*              | ^8.0.0
+| @ngx-translate/core   | ^17.0.0
+| ngx-build-plus        | ^21.0.0
+| primeng               | ^21.0.0
+|===
