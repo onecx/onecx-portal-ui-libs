@@ -95,13 +95,6 @@ export const borderShape = z
   })
   .register(themeSchemaRegistry, { id: 'borderShape' })
 
-export const focusRingShape = z
-  .object({
-    ...borderCommonShape,
-    shadow: withRef(shadowSizes).optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'focusRingShape' })
-
 // Layout tokens control structural constraints like content max-width and section gaps.
 // Useful for theming applications that need different layout densities (compact vs. comfortable).
 export const layout = z
@@ -182,6 +175,13 @@ export const borderWithShadow = border
     shadow: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'borderWithShadow' })
+
+// The global focus-ring primitive maps to a single PrimeNG `semantic.focusRing` value,
+// so its width/offset/shadow/radius are scalar CSS values (or refs to them) — matching
+// `borderWithShadow`, which is used by every per-component and per-severity focus ring.
+// (`borderCommonShape` above uses named-size objects, which are valid for per-component
+// borders but not for the focus-ring primitive.)
+export const focusRingShape = borderWithShadow.register(themeSchemaRegistry, { id: 'focusRingShape' })
 
 export const bgContrast = z.object({
   bg: z.union([bg, withRef(z.string())]).optional(),

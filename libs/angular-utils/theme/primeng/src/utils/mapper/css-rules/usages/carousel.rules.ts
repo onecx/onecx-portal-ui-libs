@@ -42,19 +42,19 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.styles.defaultState.contrast',
+        from: 'usages.carousel.indicator.contrast',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.styles.defaultState.border.color',
+        from: 'usages.carousel.indicator.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.styles.defaultState.border.width',
+        from: 'usages.carousel.indicator.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.styles.defaultState.border.style',
+        from: 'usages.carousel.indicator.border.style',
       },
     ],
   },
@@ -65,19 +65,19 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.styles.state.hover.contrast',
+        from: 'usages.carousel.indicator.hover.contrast',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.styles.state.hover.border.color',
+        from: 'usages.carousel.indicator.hover.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.styles.state.hover.border.width',
+        from: 'usages.carousel.indicator.hover.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.styles.state.hover.border.style',
+        from: 'usages.carousel.indicator.hover.border.style',
       },
     ],
   },
@@ -88,19 +88,19 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.styles.state.active.contrast',
+        from: 'usages.carousel.indicator.active.contrast',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.styles.state.active.border.color',
+        from: 'usages.carousel.indicator.active.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.styles.state.active.border.width',
+        from: 'usages.carousel.indicator.active.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.styles.state.active.border.style',
+        from: 'usages.carousel.indicator.active.border.style',
       },
     ],
   },
@@ -113,7 +113,7 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'padding',
-        from: 'usages.carousel.navigation.padding',
+        from: 'usages.carousel.navigationButton.padding',
       },
     ],
   },
