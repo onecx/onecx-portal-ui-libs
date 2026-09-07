@@ -118,7 +118,8 @@ export type ThemePath =
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
   | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
   | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
-  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`;
+  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
+  | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**

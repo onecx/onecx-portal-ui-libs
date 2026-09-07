@@ -20,6 +20,7 @@ import { selectbuttonCssRules } from './usages/selectbutton.rules'
 import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
 import { contentCssRules } from './usages/content.rules'
+import { dataviewCssRules } from './usages/dataview.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -43,4 +44,5 @@ export const usageCssRules: CssRule[] = [
   ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
   ...contentCssRules,
+  ...dataviewCssRules,
 ]

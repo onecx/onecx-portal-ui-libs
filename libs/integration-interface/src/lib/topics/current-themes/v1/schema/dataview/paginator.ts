@@ -1,17 +1,8 @@
-import z from 'zod';
-import { withRef, bg, color, border } from '../primitives';
-import { themeSchemaRegistry } from '../registry';
+import z from 'zod'
+import { themeSchemaRegistry } from '../registry'
+import { bg, border, color, withRef } from '../primitives'
 
-export class DataViewContentSchema {
-
-  private static readonly borderTokens = {
-    color: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
-    style: "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
-    width: "{{primitives.border.width.none}}",
-    radius: "{{primitives.border.radius.none}}",
-    offset: "{{primitives.border.offset.none}}",
-  }
-
+export class DataviewPaginatorSchema {
   private static readonly focusRingTokens = {
     color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}"),
     style: withRef(z.string()).default("{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}"),
@@ -22,22 +13,26 @@ export class DataViewContentSchema {
   }
 
   private static readonly tokens = {
-    border: border.default(this.borderTokens),
-    focusRing: z.object({
-      ...this.focusRingTokens,
-    }).prefault({}),
+    border: border.default({
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.none}}',
+      radius: '{{primitives.border.radius.none}}',
+      offset: '{{primitives.border.offset.none}}',
+    }),
+    focusRing: z.object({...this.focusRingTokens,}).prefault({}),
+    background: z
+      .union([bg, withRef(z.string())])
+      .default("{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}"),
+    color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}"),
     paddingX: withRef(z.string()).default("{{primitives.space.sm}}"),
     paddingY: withRef(z.string()).default("{{primitives.space.sm}}"),
     gap: withRef(z.string()).default("{{primitives.space.sm}}"),
-    justifyContent: withRef(z.string()).default("center"),
-    alignContent: withRef(z.string()).default("center")
   }
 
   static readonly schema = z
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'dataViewContent' });
+    .register(themeSchemaRegistry, { id: 'dataviewPaginator' })
 }
-
-export const dataViewContent = DataViewContentSchema.schema;
