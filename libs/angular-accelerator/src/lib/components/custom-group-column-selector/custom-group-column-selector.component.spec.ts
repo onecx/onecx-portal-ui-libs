@@ -153,6 +153,40 @@ describe('CustomGroupColumnSelectorComponent', () => {
     })
   })
 
+  describe('syncColumnModels', () => {
+    it('should resynchronize computed state after PickList mutates arrays in place', () => {
+      const c1 = makeColumn('c1')
+      const c2 = makeColumn('c2')
+
+      component.displayedColumnsModel.set([c1])
+      component.hiddenColumnsModel.set([c2])
+
+      expect(component.hasActiveColumns()).toBe(true)
+
+      // Simulate an in-place empty transfer from active -> inactive
+      component.displayedColumnsModel().splice(0, 1)
+      component.hiddenColumnsModel().push(c1)
+      expect(component.hasActiveColumns()).toBe(true)
+
+      component.syncColumnModels()
+
+      expect(component.displayedColumnsModel()).toEqual([])
+      expect(component.hiddenColumnsModel()).toEqual([c2, c1])
+      expect(component.hasActiveColumns()).toBe(false)
+
+      // Simulate an in-place reactivation from inactive -> active
+      component.hiddenColumnsModel().splice(1, 1)
+      component.displayedColumnsModel().push(c1)
+      expect(component.hasActiveColumns()).toBe(false)
+
+      component.syncColumnModels()
+
+      expect(component.displayedColumnsModel()).toEqual([c1])
+      expect(component.hiddenColumnsModel()).toEqual([c2])
+      expect(component.hasActiveColumns()).toBe(true)
+    })
+  })
+
   describe('onSaveClick with empty active columns guard', () => {
     it('should not emit columnSelectionChanged when displayedColumnsModel is empty', () => {
       const c1 = makeColumn('c1')

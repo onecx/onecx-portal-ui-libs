@@ -53,7 +53,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly inactiveColumnsLabelKey = input<string>('')
 
   readonly hasActiveColumns = computed(() => this.displayedColumnsModel().length > 0)
-  
+
   @Input()
   set frozenActionColumn(value: boolean) {
     this.stateService.actionColumnConfigFrozen.set(value)
@@ -115,6 +115,11 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
       actionColumnConfig: this._actionColumnState(),
       displayedColumns: this.displayedColumns(),
     })
+  }
+
+  syncColumnModels() {
+    this.displayedColumnsModel.set([...this.displayedColumnsModel()])
+    this.hiddenColumnsModel.set([...this.hiddenColumnsModel()])
   }
 
   onOpenCustomGroupColumnSelectionDialogClick() {
