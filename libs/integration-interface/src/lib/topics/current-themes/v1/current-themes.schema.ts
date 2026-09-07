@@ -25,6 +25,7 @@ import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 
 type UsagesInput = {
@@ -52,6 +53,7 @@ type UsagesInput = {
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
   panelmenu?: z.input<typeof panelmenu>
+  content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }
 
@@ -81,6 +83,7 @@ const usages: z.ZodType<UsagesInput> = z
     loadingIndicator: (loadingIndicator as typeof loadingIndicator).optional(),
     ripple: (ripple as typeof ripple).optional(),
     panelmenu: (panelmenu as typeof panelmenu).optional(),
+    content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
