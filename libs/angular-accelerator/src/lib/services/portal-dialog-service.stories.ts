@@ -179,6 +179,40 @@ export const CustomDataWithExtendedButtons = {
   },
 }
 
+export const CustomDataWithButtonSeverity = {
+  render: (args: any) => ({
+    props: {
+      ...args,
+    },
+    template: `
+          <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(args)}>
+          </ocx-button-dialog-with-portal-dialog-service>
+            `,
+  }),
+  args: {
+    title: 'Custom title',
+    messageOrComponent: 'Custom message',
+    primaryKey: {
+      key: 'PRIMARY_KEY',
+      severity: 'primary',
+    },
+    secondaryKey: {
+      key: 'SECONDARY_KEY',
+      severity: 'secondary',
+    },
+    extras: {
+      customButtons: [
+        {
+          id: 'custom1',
+          alignment: 'right',
+          key: 'DELETE_BUTTON',
+          severity: 'danger',
+        },
+      ],
+    },
+  },
+}
+
 @Component({
   standalone: false,
   selector: 'ocx-my-component-to-display',
