@@ -25,20 +25,26 @@ export const dialogSettings = z
   })
   .register(themeSchemaRegistry, { id: 'dialogSettings' })
 
+export const dialogRoot = bgContrast
+  .extend({
+    bg: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
+    contrast: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
+    border: border.default({
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.none}}',
+      radius: '{{primitives.border.radius.md}}',
+      offset: '{{primitives.border.offset.none}}',
+    }),
+    radius: withRef(z.string()).default('{{primitives.radius.md}}'),
+    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
+  })
+  .register(themeSchemaRegistry, { id: 'dialogRoot' })
+
 export const dialog = z
   .object({
     settings: (dialogSettings as typeof dialogSettings).optional(),
-    root: bgContrast
-      .extend({
-        bg: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
-        contrast: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
-        border: border.default({
-          color: '{{primitives.border.defaultVariant.color}}',
-        }),
-        radius: withRef(z.string()).default('{{primitives.radius.md}}'),
-        shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-      })
-      .optional(),
+    root: (dialogRoot as typeof dialogRoot).prefault({}),
     header: z
       .object({
         padding: withRef(z.string()).default('{{primitives.space.md}}'),
@@ -46,24 +52,24 @@ export const dialog = z
         alignItems: withRef(z.string()).default('center'),
         justifyContent: withRef(z.string()).default('space-between'),
       })
-      .optional(),
+      .prefault({}),
     title: z
       .object({
         fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
         fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
       })
-      .optional(),
+      .prefault({}),
     content: z
       .object({
         padding: withRef(z.string()).default('{{primitives.space.md}}'),
       })
-      .optional(),
+      .prefault({}),
     footer: z
       .object({
         padding: withRef(z.string()).default('{{primitives.space.md}}'),
         gap: withRef(z.string()).default('{{primitives.space.sm}}'),
         justifyContent: withRef(z.string()).default('flex-end'),
       })
-      .optional(),
+      .prefault({}),
   })
   .register(themeSchemaRegistry, { id: 'dialog' })
