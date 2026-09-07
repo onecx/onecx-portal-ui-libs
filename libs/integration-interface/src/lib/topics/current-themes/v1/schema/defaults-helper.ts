@@ -14,8 +14,8 @@ import * as z from 'zod'
  *   // → { a: z.string().default('hello'), b: z.string().optional() }
  */
 export function applyDefaultsRecursive(
-  shape: z.ZodObject<any>,
-  defaults: Record<string, unknown>,
+  shape: z.ZodObject,
+  defaults: Record<string, unknown>
 ): z.ZodObject<Record<string, z.ZodTypeAny>> {
   const newShape: Record<string, z.ZodTypeAny> = {}
 

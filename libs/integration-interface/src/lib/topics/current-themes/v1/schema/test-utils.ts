@@ -46,7 +46,7 @@ export function expectUndefinedTokens(o: object | undefined, expectedUndefinedTo
   }
 }
 
-export function expectDefaultsMatchShape(shape: z.ZodObject<any>, defaults: Record<string, unknown>) {
+export function expectDefaultsMatchShape(shape: z.ZodObject, defaults: Record<string, unknown>) {
   for (const key of Object.keys(defaults)) {
     expect(Object.keys(shape.shape)).toContain(key)
     const fieldSchema = shape.shape[key]

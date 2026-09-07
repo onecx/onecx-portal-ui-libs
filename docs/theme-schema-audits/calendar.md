@@ -52,10 +52,14 @@ The calendar `input` was rewritten from its independent token set to **Option 1*
 
 ```ts
 export const calendarInputShape = inputShape.extend({
-  icon: calendarIconShape.prefault({}),   // calendar-only child (own variant/state tree)
-  shadow: z.string().optional(),          // calendar-only static elevation token
+  icon: calendarIconShape.prefault({}), // calendar-only child (own variant/state tree)
+  shadow: z.string().optional(), // calendar-only static elevation token
 })
-export const calendarInputDefaults = { ...inputDefaults, icon: calendarIconDefaults, shadow: '{{primitives.shadow.md}}' }
+export const calendarInputDefaults = {
+  ...inputDefaults,
+  icon: calendarIconDefaults,
+  shadow: '{{primitives.shadow.md}}',
+}
 ```
 
 - Reuses the full generic `inputShape` token set (so the calendar input is themed via
@@ -160,13 +164,13 @@ calendar                                   [variants: defaultVariant + primary�
 
 ## Gaps Found and Applied
 
-| #      | Node(s)                                                                                                                                                                               | Gap before → applied                                                                                                                                                                                                                                                |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **G1** | All 11 state-bearing shapes: `input`, `icon`, `panel`, `panelHeader`, `datePanel`, `timePicker`, `footerButtonBar`, `navigationSelector`, `panelButton`, `footerButton`, `pickerCell` | **Missing `defaultVariant` slot.** States (`defaultState`, `hover`, …) sat at the node root. Now `<node>.defaultVariant.{defaultState,…}` (`defaultVariant` alone — no named variants declared)                                                                     |
-| **G2** | All of the above, every state                                                                                                                                                         | **Missing `defaultSeverity` leaf slot.** Tokens sat directly in the state object. Now each state (incl. `defaultState`) wraps its tokens/children in `defaultSeverity` (alone — no named severities)                                                                |
-| **G3** | `timePicker`                                                                                                                                                                          | **Placement inconsistency.** `timeSeparator` + `timePickerButton` sat at `timePicker`'s root. Moved **inside** its state blocks (`defaultVariant.defaultState.defaultSeverity.…`), matching `panel`/`datePanel`/`footerButtonBar`                                   |
-| **G4** | All 12 defaults trees                                                                                                                                                                 | Re-nested to `defaultVariant.defaultState.defaultSeverity.…`, mirroring G1–G3. **Reference values and literal tokens unchanged — structure only**                                                                                                                   |
-| **P**  | Root `calendar.ts`                                                                                                                                                                    | **Variant-defaults policy.** Only `defaultVariant` carries the defaults tree; `primary`…`quinary` stay `.optional()` with no baked defaults (resolved via runtime fallback unless a theme supplies them). `settings`/`transitionDuration` remain static at the root |
+| #      | Node(s)                                                                                                                                                                               | Gap before → applied                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **G1** | All 11 state-bearing shapes: `input`, `icon`, `panel`, `panelHeader`, `datePanel`, `timePicker`, `footerButtonBar`, `navigationSelector`, `panelButton`, `footerButton`, `pickerCell` | **Missing `defaultVariant` slot.** States (`defaultState`, `hover`, …) sat at the node root. Now `<node>.defaultVariant.{defaultState,…}` (`defaultVariant` alone — no named variants declared)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **G2** | All of the above, every state                                                                                                                                                         | **Considered a `defaultSeverity` leaf slot, decided against it.** None of the calendar's own nodes declare named severities, so per the skill's "no unused `defaultState`/`defaultSeverity` wrappers" rule (Step 8) their tokens correctly stay flat on the state object — no `defaultSeverity` key is introduced. `defaultSeverity` only ever appears inside `{{primitives...}}` reference strings for these nodes. The one exception is the calendar `input`, which extends the generic `usages.input` (Option 1) — that generic schema _does_ declare a real `defaultSeverity` level, so it is reachable at `calendar.*.input.defaultVariant.defaultState.defaultSeverity.*`. An earlier draft of this doc and of `calendar.spec.ts` incorrectly assumed every node got the wrapper; both have been corrected (2026-09-07, see _Post-review corrections_) |
+| **G3** | `timePicker`                                                                                                                                                                          | **Placement inconsistency.** `timeSeparator` + `timePickerButton` sat at `timePicker`'s root. Moved **inside** its state blocks (`defaultVariant.defaultState.defaultSeverity.…`), matching `panel`/`datePanel`/`footerButtonBar`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **G4** | All 12 defaults trees                                                                                                                                                                 | Re-nested to `defaultVariant.defaultState.defaultSeverity.…`, mirroring G1–G3. **Reference values and literal tokens unchanged — structure only**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **P**  | Root `calendar.ts`                                                                                                                                                                    | **Variant-defaults policy.** Only `defaultVariant` carries the defaults tree; `primary`…`quinary` stay `.optional()` with no baked defaults (resolved via runtime fallback unless a theme supplies them). `settings`/`transitionDuration` remain static at the root                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 **Confirmed OK (no change):** root shape (`defaultVariant` + 5 named variants); static nodes
 (`settings`, `view`, `weekDayLabel`, `today`, `multiMonthDivider`, `timeSeparator`) stay flat; static
@@ -226,7 +230,7 @@ objects so a theme can restyle them separately.
 ## Structural Verification
 
 - ✅ Shape/defaults separation across all files; shared shapes defined once, referenced by all consumers
-- ✅ `defaultVariant` at every state-bearing node (alone); `defaultSeverity` inside every state before tokens
+- ✅ `defaultVariant` at every state-bearing node (alone); `defaultSeverity` intentionally **omitted** for every calendar-local node (none declare named severities — see corrected G2); the calendar `input`'s inherited generic-input tree is the only place `defaultSeverity` is a real key
 - ✅ No grouping-wrapper keys (`variant`/`state`/`severity` objects); default slots are flat siblings of named slots
 - ✅ Static nodes stay flat; static tokens at the node root (siblings of `defaultVariant`)
 - ✅ `prefault({})` on all nested objects; `applyDefaultsRecursive` applies defaults in the main file
@@ -261,15 +265,15 @@ static/flat and needed no structural restructure.)
 
 ### Files modified (2026-08-26 input-consolidation run)
 
-| File                              | Change                                                                                     |
-| --------------------------------- | ------------------------------------------------------------------------------------------ |
-| `schema/input.ts`                 | G3 — restructured to shape/defaults separation + added `active` state (prerequisite for G2) |
-| `schema/calendar/input.ts`        | G2 — Option 1: `inputShape.extend({ icon, shadow })`; `calendarInputDefaults = { …inputDefaults, icon, shadow }` |
-| `schema/calendar/panelheader.ts`  | G1 — added `calendarYearMonthNavShape` + `yearMonthNav` defaults                             |
-| `schema/input.spec.ts`            | Step 10 — rewritten (removed imports no longer exist; snapshot + invariants)                |
-| `schema/calendar/calendar.spec.ts`| Step 10 — corrected Option-1 invariants + new `yearMonthNav` invariant                       |
-| `schema/__snapshots__/input.spec.ts.snap` (new) | Step 10 — regenerated (incl. `active`)                                       |
-| `schema/calendar/__snapshots__/calendar.spec.ts.snap` | Step 10 — regenerated (root/input/panel header/panel)               |
+| File                                                  | Change                                                                                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `schema/input.ts`                                     | G3 — restructured to shape/defaults separation + added `active` state (prerequisite for G2)                      |
+| `schema/calendar/input.ts`                            | G2 — Option 1: `inputShape.extend({ icon, shadow })`; `calendarInputDefaults = { …inputDefaults, icon, shadow }` |
+| `schema/calendar/panelheader.ts`                      | G1 — added `calendarYearMonthNavShape` + `yearMonthNav` defaults                                                 |
+| `schema/input.spec.ts`                                | Step 10 — rewritten (removed imports no longer exist; snapshot + invariants)                                     |
+| `schema/calendar/calendar.spec.ts`                    | Step 10 — corrected Option-1 invariants + new `yearMonthNav` invariant                                           |
+| `schema/__snapshots__/input.spec.ts.snap` (new)       | Step 10 — regenerated (incl. `active`)                                                                           |
+| `schema/calendar/__snapshots__/calendar.spec.ts.snap` | Step 10 — regenerated (root/input/panel header/panel)                                                            |
 
 ## Deferred
 
@@ -302,16 +306,19 @@ hand-assert the invariants** strategy:
   schema is tautological — `defaults-helper.spec.ts` already guarantees `parse({})` structurally equals
   the defaults passed in, so a source edit changes both sides at once and never fails. Snapshots carry
   regression protection for the value tree with zero duplication, and the snapshot diff shown in review
-  *is* the exact key/value diff; CI (`--ci`) refuses silent snapshot writes, so a reviewer must consciously
+  _is_ the exact key/value diff; CI (`--ci`) refuses silent snapshot writes, so a reviewer must consciously
   accept any change.
 - **Explicit structural invariants** are asserted alongside the snapshots (snapshots encode the shape but
   don't name it; these make the confirmed invariants greppable and self-documenting): the **default token
-  path** (a baseline leaf resolves through `defaultVariant.defaultState.defaultSeverity.<token>` — checked
-  with a path-walking helper that fails clearly if the leaf is one level shallower or wrapped), **static
+  path** (a baseline leaf resolves through `defaultVariant.defaultState.<token>` for every calendar-local
+  node — none declare named severities, so no `defaultSeverity` wrapper is introduced there; the calendar
+  `input` is the one exception and resolves through the full `defaultVariant.defaultState.defaultSeverity.
+<token>`, inherited from the generic `usages.input` — checked with a path-walking helper that fails
+  clearly if the leaf is one level shallower or deeper than expected for that node), **static
   tokens at the node root** as siblings of `defaultVariant` (input `sm`/`lg`/`focusRing`, icon
   `focusRing`, panel button `width`/`height`/`focusRing`, footer button `minWidth`/`focusRing` — asserted
-  defined at root and *undefined* inside the state block), **state-dependent children inside the state
-  blocks** (timePicker `timeSeparator`/`timePickerButton` — D2 — asserted *undefined* at the node root and
+  defined at root and _undefined_ inside the state block), **state-dependent children inside the state
+  blocks** (timePicker `timeSeparator`/`timePickerButton` — D2 — asserted _undefined_ at the node root and
   defined inside `defaultVariant.defaultState.defaultSeverity`), **no grouping-wrapper keys**
   (`variant`/`state`/`severity` objects) anywhere in the shape tree, and the **`defaultVariant`-only
   variant policy** (each of `primary`…`quinary` parses to a value distinct from the baked
@@ -321,8 +328,8 @@ hand-assert the invariants** strategy:
   `.prefault({})`): `calendarPanelButtonShape`/`Defaults` (used by `calendarIconButton`/`navButton`/
   `timePickerButton`) and `calendarPickerCellShape`/`Defaults` (used by `dateCell`/`monthCell`/`yearCell`
   via the view container, where the cell field sits at the view root). `footerbutton.ts`'s two distinct
-  defaults exports (`calendarTodayButtonDefaults`, `calendarClearButtonDefaults`) share the *shape*
-  (identity checked) but each gets its own snapshot via `describe.each`, since the *defaults* are
+  defaults exports (`calendarTodayButtonDefaults`, `calendarClearButtonDefaults`) share the _shape_
+  (identity checked) but each gets its own snapshot via `describe.each`, since the _defaults_ are
   independent. `settings.ts` (no defaults export) is asserted to resolve to `{}` when empty and to pass
   custom values through unchanged.
 - **Deleted:** the stale top-level `schema/calendar.spec.ts` facade spec — it imported removed classes
@@ -330,10 +337,12 @@ hand-assert the invariants** strategy:
   no longer compiled. The consolidated `calendar/calendar.spec.ts` already covers the `calendar` facade
   export (root `parses an empty object` + root snapshot + root invariants), so no replacement facade spec
   was needed.
-- **Result:** `npx jest … schema/calendar/calendar.spec` — **76 tests pass, 19 snapshots** (root tree +
+- **Result:** `npx jest … schema/calendar/calendar.spec` — **79 tests pass, 19 snapshots** (root tree +
   per-node), stable across re-runs. The one remaining suite failure in the full `current-themes/v1/schema`
   run (`message.spec.ts`, a `focusRing` token-path mismatch) is pre-existing and unrelated to the calendar
-  files touched here.
+  files touched here. (Count corrected 2026-09-07 — see _Post-review corrections_ below; the previously
+  recorded 76 included stale assertions that expected an unused `defaultSeverity` wrapper on nodes without
+  named severities.)
 
 ### Input-consolidation test updates (2026-08-26)
 
@@ -349,7 +358,7 @@ Step 8):
   baseline severity block (not the input root), no grouping-wrapper keys, the `active` background default,
   and the `filled` variant being a **partial override** (`background`/`color`/`placeholder` present;
   `border` + static tokens resolve via fallback). The snapshot `input schema resolves the expected default
-  token tree 1` was regenerated (now includes the `active` state under both `defaultVariant` and `filled`).
+token tree 1` was regenerated (now includes the `active` state under both `defaultVariant` and `filled`).
 - **`calendar/calendar.spec.ts` updated** — three invariants were stale under Option 1 and were corrected:
   (1) the **root** default-token-path leaf moved from the calendar-input's single-string `padding`
   (`{{primitives.space.md}}`, Option-2) to the generic input's baseline `background`
@@ -362,13 +371,41 @@ Step 8):
   block** and is absent at the header root.
 - **Snapshots regenerated** (`jest -u`, never hand-edited): the calendar **root**, **input**, **panel
   header** (new `yearMonthNav`), and **panel** (inherits the header/input changes) snapshots now reflect
-  the Option-1 input tree. The root snapshot's net line change is the *expected* Option-1 effect: under
+  the Option-1 input tree. The root snapshot's net line change is the _expected_ Option-1 effect: under
   Option 2 `icon` was nested inside every state severity block (repeated across all states × named
   variants), whereas under Option 1 `icon`/`shadow` sit once at the input root and the named-variant state
   blocks resolve empty — so the named-variant subtrees shrink while the `defaultVariant` block grows with
   the generic input's full tree (`filled` variant, `padding{x,y}`, `placeholder{color}`, `active`). All 19
   calendar snapshot names remain present (none dropped); `yearMonthNav` appears throughout the
   header-bearing subtrees.
-- **Result:** full `current-themes/v1/schema` run — **274 tests pass, 1 fail** (the pre-existing,
+- **Result:** full `current-themes/v1/schema` run — **383 tests pass, 1 fail** (the pre-existing,
   unrelated `message.spec.ts` `close.focusRing` token-path mismatch, which does not import `input.ts`),
-  **20/20 snapshots pass**.
+  **20/20 snapshots pass**. (Count corrected 2026-09-07, see _Post-review corrections_.)
+
+### Post-review corrections (2026-09-07)
+
+A post-merge code review of this branch (diffed against the `feat/theme-v2` merge-base) surfaced a few
+inaccuracies in this document and in `calendar.spec.ts` itself, all now fixed:
+
+- **Stale `defaultSeverity` assertions in `calendar.spec.ts`.** Seven `describe` blocks (panel header,
+  picker cell, input icon, panel button, time picker, footer today/clear button, footer button bar)
+  asserted a `.defaultSeverity` path segment that the actual schema code never produces for those nodes —
+  matching the G2 gap description's claim, which was itself wrong (see below). This made the spec file
+  fail to type-check. Fixed by removing the erroneous path segment from all seven blocks; the 15 affected
+  snapshots were regenerated (`jest -u`) to match.
+- **G2 gap description and the "Structural Verification" checklist** incorrectly stated that _every_
+  state wraps its tokens in a `defaultSeverity` level. In fact, per the skill's own "no unused
+  `defaultState`/`defaultSeverity` wrappers" rule, none of the calendar's own nodes declare named
+  severities, so their tokens correctly stay flat one level shallower; only the calendar `input` (via its
+  Option-1 extension of the generic `usages.input`, which does declare real severities) reaches a true
+  `defaultSeverity` key. Both sections have been corrected in place above.
+- **`timeInput` removal was undocumented.** The restructure deletes `calendar/timeinput.ts` without
+  folding its tokens elsewhere, silently dropping a previously themeable node. Confirmed as an intentional
+  scope reduction (not an oversight) and added as item 5 of _Deliberate DOM simplifications_ above.
+- **`any` typing in new helpers.** `applyDefaultsRecursive` (`defaults-helper.ts`) and
+  `expectDefaultsMatchShape` (`test-utils.ts`) are the only two functions introduced by this branch's
+  shape/defaults-separation work; both took `z.ZodObject<any>`. Retyped to plain `z.ZodObject` (valid and
+  non-`any` under Zod v4's default type parameters). The repo's other, pre-existing `test-utils.ts`
+  helpers (`expectTokens`, `expectExactTokens`, `expectExactUndefinedTokens`, `expectUndefinedTokens`)
+  still use `any` — out of scope for this branch, unchanged.
+- **Stale test counts** throughout this section were updated to the verified current numbers (see above).

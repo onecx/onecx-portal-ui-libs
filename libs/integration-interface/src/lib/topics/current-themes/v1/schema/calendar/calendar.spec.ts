@@ -36,8 +36,10 @@ import { calendarSettingsShape } from './settings'
  *   it shows only the key moves, value tokens unchanged.
  * - The **structural invariants** the audit confirmed are asserted
  *   explicitly (they are shape claims, where an assertion is sharper than a
- *   snapshot diff): the default token path
- *   (`defaultVariant.defaultState.defaultSeverity.<token>`), static tokens at
+ *   snapshot diff): the default token path (`defaultVariant.defaultState.<token>`
+ *   — calendar declares no named severities of its own, so its local nodes have
+ *   no `defaultSeverity` wrapper; only the generic `input` usage it extends via
+ *   Option 1 carries a real `defaultSeverity` level), static tokens at
  *   the node root (siblings of `defaultVariant`), state-dependent children
  *   inside the state blocks, no grouping-wrapper keys, the `defaultVariant`-
  *   only variant-coverage policy, and shared-shape reference identity.
@@ -67,9 +69,11 @@ function expectLeafAtTokenPath(
   for (const [i, segment] of tokenPath.entries()) {
     const obj = current as Record<string, unknown> | undefined
     if (!obj || typeof obj !== 'object' || !(segment in obj) || obj[segment] === undefined) {
-      throw new Error(`token path not resolved at '${tokenPath.slice(0, i + 1).join('.')}': ${JSON.stringify({
-        [String(segment)]: '(missing or undefined)',
-      })}`)
+      throw new Error(
+        `token path not resolved at '${tokenPath.slice(0, i + 1).join('.')}': ${JSON.stringify({
+          [String(segment)]: '(missing or undefined)',
+        })}`
+      )
     }
     current = obj[segment]
   }
@@ -219,7 +223,7 @@ describe('calendar schema', () => {
 
     it('keeps focusRing at the node root, siblings of defaultVariant', () => {
       expect(resolved['focusRing']).toBeDefined()
-      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeUndefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'focusRing'])).toBeUndefined()
     })
   })
 
@@ -247,7 +251,7 @@ describe('calendar schema', () => {
       expect(resolved['width']).toBeDefined()
       expect(resolved['height']).toBeDefined()
       expect(resolved['focusRing']).toBeDefined()
-      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeUndefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'focusRing'])).toBeUndefined()
     })
   })
 
@@ -270,7 +274,7 @@ describe('calendar schema', () => {
     it('resolves the default token path', () => {
       expectLeafAtTokenPath(
         resolved,
-        ['defaultVariant', 'defaultState', 'defaultSeverity', 'background'],
+        ['defaultVariant', 'defaultState', 'background'],
         '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'
       )
     })
@@ -300,7 +304,7 @@ describe('calendar schema', () => {
       // inside the header's state block — no own variant/state tree.
       expectLeafAtTokenPath(
         schema.parse({}),
-        ['defaultVariant', 'defaultState', 'defaultSeverity', 'yearMonthNav', 'color'],
+        ['defaultVariant', 'defaultState', 'yearMonthNav', 'color'],
         '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'
       )
       // It is a child of the header's state block, not a root-level token.
@@ -308,14 +312,10 @@ describe('calendar schema', () => {
     })
 
     it('reuses the shared panel-button shape/defaults by reference (navButton)', () => {
-      expect(calendarPanelHeaderDefaults.defaultVariant.defaultState.defaultSeverity.navButton).toBe(
-        calendarPanelButtonDefaults
+      expect(calendarPanelHeaderDefaults.defaultVariant.defaultState.navButton).toBe(calendarPanelButtonDefaults)
+      expect(innerSchema(shapeAt(calendarPanelHeaderShape, ['defaultVariant', 'defaultState', 'navButton']))).toBe(
+        calendarPanelButtonShape
       )
-      expect(
-        innerSchema(
-          shapeAt(calendarPanelHeaderShape, ['defaultVariant', 'defaultState', 'defaultSeverity', 'navButton'])
-        )
-      ).toBe(calendarPanelButtonShape)
     })
   })
 
@@ -455,19 +455,15 @@ describe('calendar schema', () => {
     it('keeps the state-dependent children (timeSeparator, timePickerButton) inside the state block, not at the node root', () => {
       expect(resolved['timeSeparator']).toBeUndefined()
       expect(resolved['timePickerButton']).toBeUndefined()
-      const stateBlock = at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity'])
+      const stateBlock = at(resolved, ['defaultVariant', 'defaultState'])
       expect(stateBlock.timeSeparator).toBeDefined()
       expect(stateBlock.timePickerButton).toBeDefined()
     })
 
     it('reuses the shared panel-button shape/defaults by reference (timePickerButton)', () => {
-      expect(calendarTimePickerDefaults.defaultVariant.defaultState.defaultSeverity.timePickerButton).toBe(
-        calendarPanelButtonDefaults
-      )
+      expect(calendarTimePickerDefaults.defaultVariant.defaultState.timePickerButton).toBe(calendarPanelButtonDefaults)
       expect(
-        innerSchema(
-          shapeAt(calendarTimePickerShape, ['defaultVariant', 'defaultState', 'defaultSeverity', 'timePickerButton'])
-        )
+        innerSchema(shapeAt(calendarTimePickerShape, ['defaultVariant', 'defaultState', 'timePickerButton']))
       ).toBe(calendarPanelButtonShape)
     })
   })
@@ -494,7 +490,7 @@ describe('calendar schema', () => {
     it('keeps the static tokens (minWidth, focusRing) at the node root, siblings of defaultVariant', () => {
       expect(resolved['minWidth']).toBeDefined()
       expect(resolved['focusRing']).toBeDefined()
-      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeUndefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'focusRing'])).toBeUndefined()
     })
   })
 
@@ -516,17 +512,13 @@ describe('calendar schema', () => {
     it('reuses the shared footer-button shape (independent defaults for todayButton and clearButton)', () => {
       // The buttons sit inside the state block, each wrapping the shared const in .prefault({}).
       expect(
-        innerSchema(
-          shapeAt(calendarFooterButtonBarShape, ['defaultVariant', 'defaultState', 'defaultSeverity', 'todayButton'])
-        )
+        innerSchema(shapeAt(calendarFooterButtonBarShape, ['defaultVariant', 'defaultState', 'todayButton']))
       ).toBe(calendarFooterButtonShape)
       expect(
-        innerSchema(
-          shapeAt(calendarFooterButtonBarShape, ['defaultVariant', 'defaultState', 'defaultSeverity', 'clearButton'])
-        )
+        innerSchema(shapeAt(calendarFooterButtonBarShape, ['defaultVariant', 'defaultState', 'clearButton']))
       ).toBe(calendarFooterButtonShape)
-      expect(calendarFooterButtonBarDefaults.defaultVariant.defaultState.defaultSeverity.todayButton).not.toBe(
-        calendarFooterButtonBarDefaults.defaultVariant.defaultState.defaultSeverity.clearButton
+      expect(calendarFooterButtonBarDefaults.defaultVariant.defaultState.todayButton).not.toBe(
+        calendarFooterButtonBarDefaults.defaultVariant.defaultState.clearButton
       )
     })
   })
