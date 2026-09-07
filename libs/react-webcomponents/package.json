@@ -23,9 +23,9 @@
   "peerDependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "@onecx/accelerator": "^9.0.0-rc.13",
-    "@onecx/react-integration-interface": "^9.0.0-rc.13",
-    "@onecx/integration-interface": "^9.0.0-rc.13",
+    "@onecx/accelerator": "9.0.0-rc.13",
+    "@onecx/react-integration-interface": "9.0.0-rc.13",
+    "@onecx/integration-interface": "9.0.0-rc.13",
     "react-router": "^7.13.0"
   },
   "dependencies": {
