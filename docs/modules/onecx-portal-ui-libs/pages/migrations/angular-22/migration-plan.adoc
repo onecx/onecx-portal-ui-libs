@@ -1,0 +1,76 @@
+= OneCX UI Library Migration Plan: PrimeNG to Angular Material
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+IMPORTANT: This page describes the *current* migration plan. It has not been executed yet and is subject to change as the migration progresses.
+
+As part of the upcoming move to Angular 22, OneCX is changing the component library that its `@onecx/*` UI libraries are built on: from **PrimeNG** to **Angular Material**, styled with **Tailwind CSS**.
+
+This page explains the plan at a high level and lays out the options available to OneCX application teams. It intentionally does not go into implementation detail — detailed, step-by-step technical migration guides will follow separately.
+
+[#why-were-changing]
+== Why we're changing
+
+PrimeNG, the component library OneCX's UI libraries have been built on, stopped being open source. To keep OneCX's own libraries fully open source, we are moving them onto **Angular Material**, styled with **Tailwind CSS** — a library maintained by the Angular team itself and closely aligned with the framework's direction (signals, modern control flow, and future rendering changes).
+
+[#our-compatibility-commitment]
+== Our compatibility commitment
+
+We know a library change like this can be disruptive, so our approach is guided by one priority: **migrate in the most compatible way possible.**
+
+* We are migrating OneCX's own components to their Angular Material equivalents one at a time, aiming to preserve existing public APIs, inputs, outputs, and behaviors wherever we can.
+* Our goal is **feature parity**: every feature supported by a component today should still be supported by its Angular Material counterpart.
+* Where a fully compatible change isn't possible, we will call it out clearly in the detailed migration guides, with guidance on what to adjust.
+
+[#your-options]
+== Your options
+
+OneCX libraries are, and will remain, library-agnostic at the application level. Once the migration lands, your team can choose any of the following paths for your own application's UI:
+
+Angular Material + Tailwind CSS (what OneCX libraries will use)::
+Adopt the same stack as the OneCX libraries themselves. This gives you the closest alignment with OneCX going forward and the least friction when consuming updated OneCX components.
+
+Optimus UI::
+Optimus UI is an open-source, community-maintained fork of PrimeNG. If your application already uses PrimeNG, Optimus UI is a path to keep using a PrimeNG-style API without adopting Angular Material.
+
+Any other component library::
+Because OneCX libraries don't impose a UI library on your application, you're also free to use a different Angular-compatible component library of your choice.
+
+There is no requirement to migrate your own application's component library in lockstep with OneCX's libraries. This is a choice each application team can make on its own timeline.
+
+[#how-to-prepare]
+== How to prepare
+
+* No action is required immediately — this plan is shared ahead of time so your team can plan accordingly.
+* If you intend to move to Angular Material alongside OneCX, watch for the detailed, step-by-step migration guides as components are migrated.
+* If you intend to stay on Optimus UI or another library, no changes are required on your part when OneCX's own libraries switch — OneCX will continue to support library-agnostic integration.
+* Timelines will be communicated separately as the migration progresses; this page will be kept up to date as the plan evolves.
+
+[#faq]
+== FAQ
+
+Do I have to migrate my application to Angular Material?::
+No. OneCX libraries remain library-agnostic. You may continue using Optimus UI, another component library, or Angular Material — the choice is yours.
+
+Will my application break if I don't migrate?::
+No. OneCX is not removing support for other component libraries at the application level. This migration only changes what OneCX's own libraries are built with internally.
+
+Will all PrimeNG-based features still be available after the migration?::
+Our goal is full feature parity between the current PrimeNG-based components and their Angular Material replacements. Any exceptions will be documented in the detailed migration guides.
+
+Where can I follow along with progress?::
+Detailed, step-by-step technical migration guides will be published as components are migrated. This page will be kept up to date with links once they're available.
+
+Will the PrimeNG helpers still be available?::
+Yes. The helpers OneCX currently provides for PrimeNG will remain available for Optimus UI, since Optimus UI is a PrimeNG-compatible fork. They will not be carried over to the Angular Material components.
+
+[#related-resources]
+== Related resources
+
+* https://material.angular.io/guide/getting-started[Angular Material Getting Started]
+* https://tailwindcss.com/docs/installation[Tailwind CSS Installation]
+* https://github.com/primefaces/optimus-ui[Optimus UI Repository]
