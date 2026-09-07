@@ -14,6 +14,7 @@ import { calendarWeekDayLabelShape, calendarWeekDayLabelDefaults } from './weekd
 import { calendarTodayShape, calendarTodayDefaults } from './today'
 import { calendarDatePanelShape, calendarDatePanelDefaults } from './datepanel'
 import { calendarMultiMonthDividerShape, calendarMultiMonthDividerDefaults } from './multimonthdivider'
+import { calendarTimeInputShape, calendarTimeInputDefaults } from './timeinput'
 import { calendarTimeSeperatorShape, calendarTimeSeperatorDefaults } from './timeseperator'
 import { calendarTimePickerShape, calendarTimePickerDefaults } from './timepicker'
 import { calendarFooterButtonShape, calendarTodayButtonDefaults, calendarClearButtonDefaults } from './footerbutton'
@@ -400,6 +401,39 @@ describe('calendar schema', () => {
     })
   })
 
+  describe('time input', () => {
+    const schema = applyDefaultsRecursive(calendarTimeInputShape, calendarTimeInputDefaults)
+    const resolved = schema.parse({})
+
+    it('parses an empty object', () => {
+      expect(schema.safeParse({}).success).toBe(true)
+    })
+
+    it('shape and defaults stay in sync', () => {
+      expectDefaultsMatchShape(calendarTimeInputShape, calendarTimeInputDefaults)
+    })
+
+    it('resolves the expected default token tree', () => {
+      expect(resolved).toMatchSnapshot()
+    })
+
+    it('keeps the static tokens (width, padding, font, focusRing) at the node root, siblings of defaultVariant', () => {
+      expect(resolved['width']).toBeDefined()
+      expect(resolved['padding']).toBeDefined()
+      expect(resolved['font']).toBeDefined()
+      expect(resolved['focusRing']).toBeDefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'focusRing'])).toBeUndefined()
+    })
+
+    it('resolves the default token path at defaultVariant.defaultState (no defaultSeverity wrapper)', () => {
+      expectLeafAtTokenPath(
+        resolved,
+        ['defaultVariant', 'defaultState', 'color'],
+        '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'
+      )
+    })
+  })
+
   describe('time separator', () => {
     const schema = applyDefaultsRecursive(calendarTimeSeperatorShape, calendarTimeSeperatorDefaults)
 
@@ -452,10 +486,12 @@ describe('calendar schema', () => {
       expect(resolved).toMatchSnapshot()
     })
 
-    it('keeps the state-dependent children (timeSeparator, timePickerButton) inside the state block, not at the node root', () => {
+    it('keeps the state-dependent children (timeInput, timeSeparator, timePickerButton) inside the state block, not at the node root', () => {
+      expect(resolved['timeInput']).toBeUndefined()
       expect(resolved['timeSeparator']).toBeUndefined()
       expect(resolved['timePickerButton']).toBeUndefined()
       const stateBlock = at(resolved, ['defaultVariant', 'defaultState'])
+      expect(stateBlock.timeInput).toBeDefined()
       expect(stateBlock.timeSeparator).toBeDefined()
       expect(stateBlock.timePickerButton).toBeDefined()
     })

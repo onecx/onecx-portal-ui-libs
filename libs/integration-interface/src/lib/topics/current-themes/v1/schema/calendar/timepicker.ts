@@ -1,11 +1,12 @@
 import * as z from 'zod'
 import { border, withRef } from '../primitives'
 import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
+import { calendarTimeInputShape, calendarTimeInputDefaults } from './timeinput'
 import { calendarTimeSeperatorShape, calendarTimeSeperatorDefaults } from './timeseperator'
 
 /**
  * Shape of a single state block of the calendar time picker.
- * The time picker's children (separator, button) sit inside the state block,
+ * The time picker's children (input, separator, button) sit inside the state block,
  * matching the placement of panel/datePanel/footerButtonBar children. No named severities exist
  * for this node, so tokens sit directly here instead of behind a `defaultSeverity` wrapper.
  */
@@ -16,6 +17,7 @@ const calendarTimePickerStateShape = z.object({
   buttonGap: withRef(z.string()).optional(),
   margin: withRef(z.string()).optional(),
 
+  timeInput: calendarTimeInputShape.prefault({}),
   timeSeparator: calendarTimeSeperatorShape.prefault({}),
   timePickerButton: calendarPanelButtonShape.prefault({}),
 })
@@ -50,6 +52,7 @@ export const calendarTimePickerDefaults = {
       buttonGap: '{{primitives.space.xs}}',
       margin: '{{primitives.space.md}}',
 
+      timeInput: calendarTimeInputDefaults,
       timeSeparator: calendarTimeSeperatorDefaults,
       timePickerButton: calendarPanelButtonDefaults,
     },

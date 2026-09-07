@@ -1297,6 +1297,52 @@ Object {
             "gap": "{{primitives.space.md}}",
             "margin": "{{primitives.space.md}}",
             "padding": "{{primitives.space.md}}",
+            "timeInput": Object {
+              "defaultVariant": Object {
+                "defaultState": Object {
+                  "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+                  "border": Object {
+                    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
+                    "radius": "{{primitives.border.radius.md}}",
+                    "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.none}}",
+                  },
+                  "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+                },
+                "focus": Object {
+                  "background": "{{primitives.area.overlay.state.focus.defaultSeverity.bg}}",
+                  "border": Object {
+                    "color": "{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}",
+                    "style": "{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}",
+                  },
+                  "color": "{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}",
+                },
+                "hover": Object {
+                  "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+                  "border": Object {
+                    "color": "{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}",
+                    "style": "{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}",
+                  },
+                  "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+                },
+              },
+              "focusRing": Object {
+                "color": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}",
+                "offset": "{{primitives.border.offset.none}}",
+                "radius": "{{primitives.radius.md}}",
+                "shadow": "{{primitives.shadow.none}}",
+                "style": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}",
+                "width": "{{primitives.border.width.md}}",
+              },
+              "font": Object {
+                "family": "{{primitives.font.family}}",
+                "size": "{{primitives.font.size}}",
+                "weight": "{{primitives.font.weight}}",
+              },
+              "padding": "{{primitives.space.xs}}",
+              "width": "3rem",
+            },
             "timePickerButton": Object {
               "defaultVariant": Object {
                 "active": Object {
@@ -2117,6 +2163,52 @@ Object {
                 "gap": "{{primitives.space.md}}",
                 "margin": "{{primitives.space.md}}",
                 "padding": "{{primitives.space.md}}",
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {
+                      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+                      "border": Object {
+                        "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+                        "offset": "{{primitives.border.offset.none}}",
+                        "radius": "{{primitives.border.radius.md}}",
+                        "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+                        "width": "{{primitives.border.width.none}}",
+                      },
+                      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+                    },
+                    "focus": Object {
+                      "background": "{{primitives.area.overlay.state.focus.defaultSeverity.bg}}",
+                      "border": Object {
+                        "color": "{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}",
+                        "style": "{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}",
+                      },
+                      "color": "{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}",
+                    },
+                    "hover": Object {
+                      "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+                      "border": Object {
+                        "color": "{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}",
+                        "style": "{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}",
+                      },
+                      "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+                    },
+                  },
+                  "focusRing": Object {
+                    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
+                    "radius": "{{primitives.radius.md}}",
+                    "shadow": "{{primitives.shadow.none}}",
+                    "style": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}",
+                    "width": "{{primitives.border.width.md}}",
+                  },
+                  "font": Object {
+                    "family": "{{primitives.font.family}}",
+                    "size": "{{primitives.font.size}}",
+                    "weight": "{{primitives.font.weight}}",
+                  },
+                  "padding": "{{primitives.space.xs}}",
+                  "width": "3rem",
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {
@@ -2514,6 +2606,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -2526,6 +2625,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -2538,6 +2644,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -2827,6 +2940,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -2839,6 +2959,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -2851,6 +2978,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3140,6 +3274,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3152,6 +3293,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3164,6 +3312,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3520,6 +3675,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3532,6 +3694,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3544,6 +3713,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3833,6 +4009,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3845,6 +4028,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -3857,6 +4047,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4146,6 +4343,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4158,6 +4362,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4170,6 +4381,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4526,6 +4744,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4538,6 +4763,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4550,6 +4782,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4839,6 +5078,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4851,6 +5097,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -4863,6 +5116,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5152,6 +5412,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5164,6 +5431,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5176,6 +5450,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5532,6 +5813,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5544,6 +5832,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5556,6 +5851,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5845,6 +6147,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5857,6 +6166,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -5869,6 +6185,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6158,6 +6481,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6170,6 +6500,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6182,6 +6519,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6538,6 +6882,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6550,6 +6901,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6562,6 +6920,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6851,6 +7216,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6863,6 +7235,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -6875,6 +7254,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -7164,6 +7550,13 @@ Object {
           "timePicker": Object {
             "defaultVariant": Object {
               "defaultState": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -7176,6 +7569,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "focus": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -7188,6 +7588,13 @@ Object {
                 "timeSeparator": Object {},
               },
               "hover": Object {
+                "timeInput": Object {
+                  "defaultVariant": Object {
+                    "defaultState": Object {},
+                    "focus": Object {},
+                    "hover": Object {},
+                  },
+                },
                 "timePickerButton": Object {
                   "defaultVariant": Object {
                     "active": Object {},
@@ -7209,6 +7616,55 @@ Object {
 }
 `;
 
+exports[`calendar schema time input resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "defaultState": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.md}}",
+        "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+    },
+    "focus": Object {
+      "background": "{{primitives.area.overlay.state.focus.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}",
+        "style": "{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}",
+      },
+      "color": "{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}",
+    },
+    "hover": Object {
+      "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}",
+        "style": "{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}",
+      },
+      "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+    },
+  },
+  "focusRing": Object {
+    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}",
+    "offset": "{{primitives.border.offset.none}}",
+    "radius": "{{primitives.radius.md}}",
+    "shadow": "{{primitives.shadow.none}}",
+    "style": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}",
+    "width": "{{primitives.border.width.md}}",
+  },
+  "font": Object {
+    "family": "{{primitives.font.family}}",
+    "size": "{{primitives.font.size}}",
+    "weight": "{{primitives.font.weight}}",
+  },
+  "padding": "{{primitives.space.xs}}",
+  "width": "3rem",
+}
+`;
+
 exports[`calendar schema time picker resolves the expected default token tree 1`] = `
 Object {
   "defaultVariant": Object {
@@ -7224,6 +7680,52 @@ Object {
       "gap": "{{primitives.space.md}}",
       "margin": "{{primitives.space.md}}",
       "padding": "{{primitives.space.md}}",
+      "timeInput": Object {
+        "defaultVariant": Object {
+          "defaultState": Object {
+            "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+            "border": Object {
+              "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+              "offset": "{{primitives.border.offset.none}}",
+              "radius": "{{primitives.border.radius.md}}",
+              "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+              "width": "{{primitives.border.width.none}}",
+            },
+            "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          },
+          "focus": Object {
+            "background": "{{primitives.area.overlay.state.focus.defaultSeverity.bg}}",
+            "border": Object {
+              "color": "{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}",
+              "style": "{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}",
+            },
+            "color": "{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}",
+          },
+          "hover": Object {
+            "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+            "border": Object {
+              "color": "{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}",
+              "style": "{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}",
+            },
+            "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          },
+        },
+        "focusRing": Object {
+          "color": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "family": "{{primitives.font.family}}",
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "padding": "{{primitives.space.xs}}",
+        "width": "3rem",
+      },
       "timePickerButton": Object {
         "defaultVariant": Object {
           "active": Object {

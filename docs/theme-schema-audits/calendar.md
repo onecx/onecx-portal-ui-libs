@@ -143,8 +143,9 @@ calendar                                   [variants: defaultVariant + primary�
    │        multiMonthDivider [s] → {border, gap}
    │        timePicker (dep: state) [S]
    │        │  └─ defaultVariant
-   │        │     ├─ defaultState → defaultSeverity → {padding, border, gap, buttonGap, margin, timeSeparator, timePickerButton}
+   │        │     ├─ defaultState → defaultSeverity → {padding, border, gap, buttonGap, margin, timeInput, timeSeparator, timePickerButton}
    │        │     └─ hover/focus → defaultSeverity → {diffs}
+   │        │        timeInput [s] → {width, padding, font, focusRing} (root, static) + defaultVariant.{defaultState,hover,focus} → {color, background, border}
    │        │        timeSeparator [s] → {color, padding, font}
    │        │        timePickerButton → panelButton (shared) [S]
    │        footerButtonBar (dep: state) [S]
@@ -160,7 +161,7 @@ calendar                                   [variants: defaultVariant + primary�
 1. `prev-button`/`next-button` → one shared `navButton` (visually identical).
 2. Year-view `title`/`decade` → modelled by `selectYear` (navigationSelector).
 3. `weeknumber` (PrimeNG `showWeek`) not themed.
-4. Time picker's per-unit (hour/minute/second/ampm) pickers → modelled as `timeSeparator` + one `timePickerButton` (increment/decrement are `panelButton`).
+4. Time picker's per-unit (hour/minute/second/ampm) pickers → modelled as `timeInput` (the number display) + `timeSeparator` (the `:`) + one shared `timePickerButton` (increment/decrement).
 
 ## Gaps Found and Applied
 
@@ -235,7 +236,9 @@ objects so a theme can restyle them separately.
 - ✅ Static nodes stay flat; static tokens at the node root (siblings of `defaultVariant`)
 - ✅ `prefault({})` on all nested objects; `applyDefaultsRecursive` applies defaults in the main file
 - ✅ Root: only `defaultVariant` carries baked defaults; `primary`…`quinary` stay `.optional()`
-- ✅ `timePicker` children moved into state blocks (G3)
+- ✅ `timePicker` children (`timeInput`, `timeSeparator`, `timePickerButton`) moved into state blocks (G3);
+  `timeInput` restored 2026-09-07 after being dropped without documentation (see _Post-review
+  corrections_)
 - ✅ `tsc --noEmit -p tsconfig.lib.json`: **no errors in any `calendar/` file** (the only errors are
   pre-existing `expect`-global references in the unrelated `test-utils.ts` helper, present at HEAD)
 - ✅ Runtime parse of `{}`: default token path resolves; D1 static tokens at root; D2 timePicker children
@@ -253,7 +256,8 @@ objects so a theme can restyle them separately.
 | `calendar/navigationselector.ts` | G1+G2; focusRing stays at root                                                      |
 | `calendar/datepanel.ts`          | G1+G2; children stay inside state block                                             |
 | `calendar/pickercell.ts`         | G1+G2 (no static tokens); `inRangeBackground` keeps `area.overlay` family (Round 3) |
-| `calendar/timepicker.ts`         | G1+G2 **+ G3** (timeSeparator/timePickerButton moved into state block)              |
+| `calendar/timepicker.ts`         | G1+G2 **+ G3** (timeInput/timeSeparator/timePickerButton moved into state block)     |
+| `calendar/timeinput.ts`          | **Restored** 2026-09-07 (was dropped without migration); rewritten to shape/defaults separation, no `defaultSeverity` wrapper, static width/padding/font/focusRing at root |
 | `calendar/footerbutton.ts`       | G1+G2 (new file, Round 3); minWidth/focusRing stay at root                          |
 | `calendar/footerbuttonbar.ts`    | G1+G2; children stay inside state block                                             |
 | `calendar/calendar.ts`           | **P** — `defaultVariant`-only defaults policy; shape unchanged                      |
@@ -337,12 +341,13 @@ hand-assert the invariants** strategy:
   no longer compiled. The consolidated `calendar/calendar.spec.ts` already covers the `calendar` facade
   export (root `parses an empty object` + root snapshot + root invariants), so no replacement facade spec
   was needed.
-- **Result:** `npx jest … schema/calendar/calendar.spec` — **79 tests pass, 19 snapshots** (root tree +
-  per-node), stable across re-runs. The one remaining suite failure in the full `current-themes/v1/schema`
-  run (`message.spec.ts`, a `focusRing` token-path mismatch) is pre-existing and unrelated to the calendar
-  files touched here. (Count corrected 2026-09-07 — see _Post-review corrections_ below; the previously
-  recorded 76 included stale assertions that expected an unused `defaultSeverity` wrapper on nodes without
-  named severities.)
+- **Result:** `npx jest … schema/calendar/calendar.spec` — **84 tests pass, 20 snapshots** (root tree +
+  per-node, incl. the restored `timeInput`), stable across re-runs. The one remaining suite failure in the
+  full `current-themes/v1/schema` run (`message.spec.ts`, a `focusRing` token-path mismatch) is
+  pre-existing and unrelated to the calendar files touched here. (Count corrected 2026-09-07 — see
+  _Post-review corrections_ below; the previously recorded 76 included stale assertions that expected an
+  unused `defaultSeverity` wrapper on nodes without named severities; 79 was the count immediately after
+  that fix, before `timeInput` was restored.)
 
 ### Input-consolidation test updates (2026-08-26)
 
@@ -378,9 +383,10 @@ token tree 1` was regenerated (now includes the `active` state under both `defau
   the generic input's full tree (`filled` variant, `padding{x,y}`, `placeholder{color}`, `active`). All 19
   calendar snapshot names remain present (none dropped); `yearMonthNav` appears throughout the
   header-bearing subtrees.
-- **Result:** full `current-themes/v1/schema` run — **383 tests pass, 1 fail** (the pre-existing,
+- **Result:** full `current-themes/v1/schema` run — **388 tests pass, 1 fail** (the pre-existing,
   unrelated `message.spec.ts` `close.focusRing` token-path mismatch, which does not import `input.ts`),
-  **20/20 snapshots pass**. (Count corrected 2026-09-07, see _Post-review corrections_.)
+  **21/21 snapshots pass**. (Count corrected 2026-09-07, see _Post-review corrections_; includes the
+  restored `timeInput` node.)
 
 ### Post-review corrections (2026-09-07)
 
@@ -399,9 +405,17 @@ inaccuracies in this document and in `calendar.spec.ts` itself, all now fixed:
   severities, so their tokens correctly stay flat one level shallower; only the calendar `input` (via its
   Option-1 extension of the generic `usages.input`, which does declare real severities) reaches a true
   `defaultSeverity` key. Both sections have been corrected in place above.
-- **`timeInput` removal was undocumented.** The restructure deletes `calendar/timeinput.ts` without
-  folding its tokens elsewhere, silently dropping a previously themeable node. Confirmed as an intentional
-  scope reduction (not an oversight) and added as item 5 of _Deliberate DOM simplifications_ above.
+- **`timeInput` removal was undocumented — since reverted.** The restructure had deleted
+  `calendar/timeinput.ts` without folding its tokens elsewhere, silently dropping a previously themeable
+  node. Initially confirmed as an intentional scope reduction, that decision was reversed on further
+  review (2026-09-07): `timeinput.ts` has been **restored** (rewritten to the shape/defaults-separation
+  pattern — `calendarTimeInputShape`/`calendarTimeInputDefaults`, no `defaultSeverity` wrapper, static
+  `width`/`padding`/`font`/`focusRing` at the node root, `color`/`background`/`border` varying per
+  `defaultVariant.defaultState`/`hover`/`focus`) and wired back in as a sibling of `timeSeparator` and
+  `timePickerButton` inside `timePicker`'s state block. Covered by its own `describe('time input', ...)`
+  block in `calendar.spec.ts` (parses-empty, shape/defaults parity, snapshot, static-token-root and
+  default-token-path invariants) and by the updated `time picker` block's children assertion. See the
+  corrected ASCII tree and simplification list above (item 4).
 - **`any` typing in new helpers.** `applyDefaultsRecursive` (`defaults-helper.ts`) and
   `expectDefaultsMatchShape` (`test-utils.ts`) are the only two functions introduced by this branch's
   shape/defaults-separation work; both took `z.ZodObject<any>`. Retyped to plain `z.ZodObject` (valid and
