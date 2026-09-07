@@ -42,11 +42,6 @@ export interface ButtonDialogButtonDetails {
   parameters?: Record<string, unknown>
   tooltipKey?: string
   tooltipPosition?: 'right' | 'left' | 'top' | 'bottom' | string | undefined
-  /**
-   * Optional PrimeNG button severity.
-   * When omitted, the button renders with PrimeNG's default appearance (no explicit severity class).
-   * Allowed values: 'primary', 'secondary', 'success', 'info', 'warn', 'help', 'danger', 'contrast'
-   */
   severity?: DialogButtonSeverity
 }
 
