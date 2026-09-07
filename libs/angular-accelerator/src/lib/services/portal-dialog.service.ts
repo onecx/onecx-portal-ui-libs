@@ -358,6 +358,32 @@ export class PortalDialogService implements OnDestroy {
    * ```
    *
    * @example
+   * Display dialog message with distinct button severities for primary, secondary, and a custom button
+   *
+   * ```
+   * // Primary button with 'primary' severity
+   * const primaryButton = {
+   *   key: 'OK_BUTTON',
+   *   severity: 'primary'
+   * }
+   *
+   * // Secondary button with 'secondary' severity
+   * const secondaryButton = {
+   *   key: 'CANCEL_BUTTON',
+   *   severity: 'secondary'
+   * }
+   *
+   * this.portalDialogService.openDialog('TITLE_KEY', 'WELCOME_MESSAGE', primaryButton, secondaryButton, {
+   *   customButtons: [
+   *     // Custom button with 'danger' severity
+   *     { id: 'delete', key: 'DELETE_BUTTON', alignment: 'right', severity: 'danger' },
+   *   ]
+   * }).subscribe((stateOnClose) => {
+   *   // operations when dialog has been closed
+   * })
+   * ```
+   *
+   * @example
    * Display dialog message without X button in top right corner
    *
    * ```
