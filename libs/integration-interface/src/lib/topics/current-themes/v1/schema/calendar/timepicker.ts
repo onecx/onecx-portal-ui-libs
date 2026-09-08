@@ -27,11 +27,13 @@ const calendarTimePickerStateShape = z.object({
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export const calendarTimePickerShape = z.object({
-  defaultVariant: z.object({
-    defaultState: calendarTimePickerStateShape.prefault({}),
-    hover: calendarTimePickerStateShape.prefault({}),
-    focus: calendarTimePickerStateShape.prefault({}),
-  }).prefault({}),
+  defaultVariant: z
+    .object({
+      defaultState: calendarTimePickerStateShape.prefault({}),
+      hover: calendarTimePickerStateShape.prefault({}),
+      focus: calendarTimePickerStateShape.prefault({}),
+    })
+    .prefault({}),
 })
 
 /**

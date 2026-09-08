@@ -1,8 +1,14 @@
-import * as z from 'zod'
 import { applyDefaultsRecursive } from '../defaults-helper'
-import { expectDefaultsMatchShape } from '../test-utils'
+import {
+  expectDefaultsMatchShape,
+  at,
+  expectLeafAtTokenPath,
+  expectNoGroupingWrapperKeys,
+  shapeAt,
+  innerSchema,
+} from '../test-utils'
 
-import { calendar, calendarDefaults } from './calendar'
+import { calendar } from './calendar'
 import { calendarInputShape, calendarInputDefaults } from './input'
 import { calendarIconShape, calendarIconDefaults } from './inputicon'
 import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
@@ -22,105 +28,6 @@ import { calendarFooterButtonBarShape, calendarFooterButtonBarDefaults } from '.
 import { calendarPanelShape, calendarPanelDefaults } from './panel'
 import { calendarSettingsShape } from './settings'
 
-/**
- * Single spec file for the whole `calendar` component (Step 8 of the
- * theme-schema-audit skill). One `describe` block per subcomponent, in the
- * same stable order used during the structural audit.
- *
- * Strategy — snapshot the values, hand-assert the invariants:
- *
- * - The **exact resolved key/value tree** is locked in with Jest snapshots
- *   (`toMatchSnapshot()` on `parse({})`), never by hand-transcribed literal
- *   trees: hand-written `expected*` literals would duplicate every value that
- *   already lives in the `*Defaults` exports and drift silently. The snapshot
- *   diff is the "exact key/value" diff, and for a structure-only restructure
- *   it shows only the key moves, value tokens unchanged.
- * - The **structural invariants** the audit confirmed are asserted
- *   explicitly (they are shape claims, where an assertion is sharper than a
- *   snapshot diff): the default token path (`defaultVariant.defaultState.<token>`
- *   — calendar declares no named severities of its own, so its local nodes have
- *   no `defaultSeverity` wrapper; only the generic `input` usage it extends via
- *   Option 1 carries a real `defaultSeverity` level), static tokens at
- *   the node root (siblings of `defaultVariant`), state-dependent children
- *   inside the state blocks, no grouping-wrapper keys, the `defaultVariant`-
- *   only variant-coverage policy, and shared-shape reference identity.
- * - **Shape/defaults parity** (`expectDefaultsMatchShape`) catches wiring
- *   bugs (typos, renames) independently of the resolved values.
- *
- * Shared shapes (panelButton ×3, pickerCell ×3, footerButton ×2) are
- * snapshotted exactly once in their own `describe` block; every consumer
- * only asserts it references the shared `*Shape`/`*Defaults` by reference.
- */
-
-// ------------------------------------------------------------------
-// Local assertion helpers (structural invariants)
-// ------------------------------------------------------------------
-
-/**
- * Asserts that `tokenPath` resolves to `expected` in `parsed` — i.e. the leaf
- * sits at exactly that nested path (the default token path), not one level
- * shallower or wrapped in another key.
- */
-function expectLeafAtTokenPath(
-  parsed: Record<string, unknown>,
-  tokenPath: (string | number)[],
-  expected: unknown
-): void {
-  let current: unknown = parsed
-  for (const [i, segment] of tokenPath.entries()) {
-    const obj = current as Record<string, unknown> | undefined
-    if (!obj || typeof obj !== 'object' || !(segment in obj) || obj[segment] === undefined) {
-      throw new Error(
-        `token path not resolved at '${tokenPath.slice(0, i + 1).join('.')}': ${JSON.stringify({
-          [String(segment)]: '(missing or undefined)',
-        })}`
-      )
-    }
-    current = obj[segment]
-  }
-  expect(current).toStrictEqual(expected)
-}
-
-/**
- * Asserts that no nested object in the shape tree is keyed with a
- * grouping-wrapper key (`variant`/`state`/`severity`): the default slots
- * (`defaultVariant`, `defaultState`, `defaultSeverity`) and their named
- * siblings must be flat keys, never wrapped in a category object.
- */
-function expectNoGroupingWrapperKeys(schema: z.ZodTypeAny): void {
-  if (schema instanceof z.ZodObject) {
-    const wrapperKeys = ['variant', 'state', 'severity'].filter((key) => key in schema.shape)
-    expect(wrapperKeys).toEqual([])
-    for (const fieldSchema of Object.values(schema.shape)) {
-      expectNoGroupingWrapperKeys(fieldSchema)
-    }
-  }
-}
-
-type AnyRecord = Record<string, any>
-
-/** Walks the parsed output down `path` (for invariant assertions on the resolved tree). */
-function at(o: AnyRecord, path: string[]): any {
-  return path.reduce((acc: any, key) => acc?.[key], o)
-}
-
-/** Unwraps a ZodPrefault/ZodDefault wrapper and returns the inner object's shape. */
-function objectShape(schema: z.ZodTypeAny): AnyRecord {
-  const inner = (schema as { def?: { innerType?: z.ZodTypeAny } }).def?.innerType
-  return ((inner ?? schema) as any).shape
-}
-
-/** Walks the shape tree down `path`, unwrapping prefaulted objects at each level. */
-function shapeAt(schema: z.ZodTypeAny, path: string[]): z.ZodTypeAny {
-  return path.reduce((current, key) => objectShape(current)[key], schema)
-}
-
-/** Unwraps a ZodPrefault/ZodDefault wrapper to the underlying schema (for identity checks). */
-function innerSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
-  const inner = (schema as { def?: { innerType?: z.ZodTypeAny } }).def?.innerType
-  return inner ?? schema
-}
-
 describe('calendar schema', () => {
   const parsed = calendar.parse({})
 
@@ -129,7 +36,10 @@ describe('calendar schema', () => {
   })
 
   it('resolves the expected default token tree', () => {
-    expect(parsed).toMatchSnapshot()
+    // The calendar schema models only `defaultVariant` (no named color variants — see the
+    // "The 5 canonical color variants are intentionally not modeled" comment in calendar.ts),
+    // so the whole resolved tree is captured by snapshotting `defaultVariant`.
+    expect(parsed['defaultVariant']).toMatchSnapshot()
   })
 
   it('resolves a baseline leaf through the default token path (defaultVariant.defaultState.defaultSeverity)', () => {
@@ -146,9 +56,9 @@ describe('calendar schema', () => {
     expectNoGroupingWrapperKeys(calendar)
   })
 
-  it('carries baked defaults on defaultVariant only — named variants carry no baked token values', () => {
-    for (const variant of ['primary', 'secondary', 'tertiary', 'quaternary', 'quinary'] as const) {
-      expect(parsed[variant]).not.toStrictEqual(calendarDefaults.defaultVariant)
+  it('does not model the 5 named color variants (primary/secondary/tertiary/quaternary/quinary)', () => {
+    for (const variant of ['primary', 'secondary', 'tertiary', 'quaternary', 'quinary']) {
+      expect(parsed[variant]).toBeUndefined()
     }
   })
 
@@ -294,10 +204,6 @@ describe('calendar schema', () => {
 
     it('shape and defaults stay in sync', () => {
       expectDefaultsMatchShape(calendarPanelHeaderShape, calendarPanelHeaderDefaults)
-    })
-
-    it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
     })
 
     it('resolves the new yearMonthNav baseline leaf inside the state block (header.yearMonthNav)', () => {
@@ -464,10 +370,6 @@ describe('calendar schema', () => {
     it('shape and defaults stay in sync', () => {
       expectDefaultsMatchShape(calendarDatePanelShape, calendarDatePanelDefaults)
     })
-
-    it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
-    })
   })
 
   describe('time picker', () => {
@@ -480,10 +382,6 @@ describe('calendar schema', () => {
 
     it('shape and defaults stay in sync', () => {
       expectDefaultsMatchShape(calendarTimePickerShape, calendarTimePickerDefaults)
-    })
-
-    it('resolves the expected default token tree', () => {
-      expect(resolved).toMatchSnapshot()
     })
 
     it('keeps the state-dependent children (timeInput, timeSeparator, timePickerButton) inside the state block, not at the node root', () => {
@@ -541,10 +439,6 @@ describe('calendar schema', () => {
       expectDefaultsMatchShape(calendarFooterButtonBarShape, calendarFooterButtonBarDefaults)
     })
 
-    it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
-    })
-
     it('reuses the shared footer-button shape (independent defaults for todayButton and clearButton)', () => {
       // The buttons sit inside the state block, each wrapping the shared const in .prefault({}).
       expect(
@@ -568,10 +462,6 @@ describe('calendar schema', () => {
 
     it('shape and defaults stay in sync', () => {
       expectDefaultsMatchShape(calendarPanelShape, calendarPanelDefaults)
-    })
-
-    it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
     })
   })
 

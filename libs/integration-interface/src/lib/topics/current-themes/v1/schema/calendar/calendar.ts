@@ -13,7 +13,10 @@ import { calendarSettingsShape } from './settings'
 // ------------------------------------------------------------------
 
 /**
- * Variant content shape (used by defaultVariant and all 5 named variants).
+ * Variant content shape (used by defaultVariant).
+ * The 5 canonical color variants are intentionally not modeled (the CSS mapper
+ * references no `usages.calendar.primary.*` etc.) — see the same decision on
+ * the generic `input` usage.
  */
 const calendarVariantContentShape = z.object({
   input: calendarInputShape.prefault({}),
@@ -25,11 +28,6 @@ const calendarShape = z.object({
   settings: calendarSettingsShape.optional(),
 
   defaultVariant: calendarVariantContentShape.prefault({}),
-  primary: calendarVariantContentShape.prefault({}),
-  secondary: calendarVariantContentShape.prefault({}),
-  tertiary: calendarVariantContentShape.prefault({}),
-  quaternary: calendarVariantContentShape.prefault({}),
-  quinary: calendarVariantContentShape.prefault({}),
 
   transitionDuration: withRef(z.number()).optional(),
 })
@@ -39,12 +37,7 @@ const calendarShape = z.object({
 // ------------------------------------------------------------------
 
 /**
- * Variant content defaults shared by all variants.
- *
- * Every variant (`defaultVariant`, `primary`, `secondary`, ...) gets the same
- * defaults here so they resolve to a value out of the box. Override any key at
- * the variant level when providing theme values — only the keys you specify
- * will differ.
+ * Variant content defaults for `defaultVariant`.
  */
 const variantContentDefaults = {
   input: calendarInputDefaults,
@@ -55,10 +48,8 @@ const variantContentDefaults = {
 /**
  * Default tokens for the calendar component.
  *
- * Assembled from per-component defaults exports. Only `defaultVariant` carries
- * the defaults tree — it *is* the default. The named variants (`primary`,
- * `secondary`, ...) stay `.optional()` and resolve via the runtime fallback
- * mechanism unless a theme supplies their values explicitly.
+ * Assembled from per-component defaults exports. `defaultVariant` carries
+ * the defaults tree — it *is* the default (and the only variant modeled).
  *
  * Exported so tests can assert the resolved schema output against this exact
  * source object instead of duplicating literal token values.

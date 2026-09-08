@@ -1,5 +1,4 @@
-import * as z from 'zod'
-import { expectDefaultsMatchShape } from './test-utils'
+import { expectDefaultsMatchShape, at, expectLeafAtTokenPath, expectNoGroupingWrapperKeys } from './test-utils'
 
 import { input, inputShape, inputDefaults } from './input'
 
@@ -23,41 +22,6 @@ import { input, inputShape, inputDefaults } from './input'
  * - **Shape/defaults parity** (`expectDefaultsMatchShape`) catches wiring bugs
  *   (typos, renames) independently of the resolved values.
  */
-
-type AnyRecord = Record<string, any>
-
-/** Walks the parsed output down `path` (for invariant assertions on the resolved tree). */
-function at(o: AnyRecord, path: string[]): any {
-  return path.reduce((acc: any, key) => acc?.[key], o)
-}
-
-/**
- * Asserts that `tokenPath` resolves to `expected` in `parsed` — i.e. the leaf
- * sits at exactly that nested path, not one level shallower or wrapped.
- */
-function expectLeafAtTokenPath(parsed: Record<string, unknown>, tokenPath: string[], expected: unknown): void {
-  let current: unknown = parsed
-  for (const [i, segment] of tokenPath.entries()) {
-    const obj = current as Record<string, unknown> | undefined
-    if (!obj || typeof obj !== 'object' || !(segment in obj) || obj[segment] === undefined) {
-      throw new Error(`token path not resolved at '${tokenPath.slice(0, i + 1).join('.')}': ${JSON.stringify({
-        [segment]: '(missing or undefined)',
-      })}`)
-    }
-    current = obj[segment]
-  }
-  expect(current).toStrictEqual(expected)
-}
-
-/** Asserts no nested object is keyed with a grouping-wrapper key (variant/state/severity). */
-function expectNoGroupingWrapperKeys(schema: z.ZodTypeAny): void {
-  if (schema instanceof z.ZodObject) {
-    expect(['variant', 'state', 'severity'].filter((key) => key in schema.shape)).toEqual([])
-    for (const fieldSchema of Object.values(schema.shape)) {
-      expectNoGroupingWrapperKeys(fieldSchema)
-    }
-  }
-}
 
 describe('input schema', () => {
   const parsed = input.parse({})

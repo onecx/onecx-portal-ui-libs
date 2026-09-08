@@ -246,21 +246,21 @@ objects so a theme can restyle them separately.
 
 ## Files Modified
 
-| File                             | Change                                                                              |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| `calendar/input.ts`              | G1+G2 (defaultVariant + defaultSeverity); sm/lg/focusRing stay at root (D1)         |
-| `calendar/inputicon.ts`          | G1+G2; focusRing stays at root                                                      |
-| `calendar/panel.ts`              | G1+G2; children stay inside state block                                             |
-| `calendar/panelbutton.ts`        | G1+G2; width/height/focusRing stay at root                                          |
-| `calendar/panelheader.ts`        | G1+G2; children stay inside state block                                             |
-| `calendar/navigationselector.ts` | G1+G2; focusRing stays at root                                                      |
-| `calendar/datepanel.ts`          | G1+G2; children stay inside state block                                             |
-| `calendar/pickercell.ts`         | G1+G2 (no static tokens); `inRangeBackground` keeps `area.overlay` family (Round 3) |
-| `calendar/timepicker.ts`         | G1+G2 **+ G3** (timeInput/timeSeparator/timePickerButton moved into state block)     |
+| File                             | Change                                                                                                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `calendar/input.ts`              | G1+G2 (defaultVariant + defaultSeverity); sm/lg/focusRing stay at root (D1)                                                                                                |
+| `calendar/inputicon.ts`          | G1+G2; focusRing stays at root                                                                                                                                             |
+| `calendar/panel.ts`              | G1+G2; children stay inside state block                                                                                                                                    |
+| `calendar/panelbutton.ts`        | G1+G2; width/height/focusRing stay at root                                                                                                                                 |
+| `calendar/panelheader.ts`        | G1+G2; children stay inside state block                                                                                                                                    |
+| `calendar/navigationselector.ts` | G1+G2; focusRing stays at root                                                                                                                                             |
+| `calendar/datepanel.ts`          | G1+G2; children stay inside state block                                                                                                                                    |
+| `calendar/pickercell.ts`         | G1+G2 (no static tokens); `inRangeBackground` keeps `area.overlay` family (Round 3)                                                                                        |
+| `calendar/timepicker.ts`         | G1+G2 **+ G3** (timeInput/timeSeparator/timePickerButton moved into state block)                                                                                           |
 | `calendar/timeinput.ts`          | **Restored** 2026-09-07 (was dropped without migration); rewritten to shape/defaults separation, no `defaultSeverity` wrapper, static width/padding/font/focusRing at root |
-| `calendar/footerbutton.ts`       | G1+G2 (new file, Round 3); minWidth/focusRing stay at root                          |
-| `calendar/footerbuttonbar.ts`    | G1+G2; children stay inside state block                                             |
-| `calendar/calendar.ts`           | **P** — `defaultVariant`-only defaults policy; shape unchanged                      |
+| `calendar/footerbutton.ts`       | G1+G2 (new file, Round 3); minWidth/focusRing stay at root                                                                                                                 |
+| `calendar/footerbuttonbar.ts`    | G1+G2; children stay inside state block                                                                                                                                    |
+| `calendar/calendar.ts`           | **P** — `defaultVariant`-only defaults policy; shape unchanged                                                                                                             |
 
 **Unchanged (static/flat, no default slots):** `settings.ts`, `view.ts`, `weekdaylabel.ts`, `today.ts`,
 `multimonthdivider.ts`, `timeseperator.ts`. (`today.ts` and `pickercell.ts` carry the Round-3
@@ -423,3 +423,58 @@ inaccuracies in this document and in `calendar.spec.ts` itself, all now fixed:
   helpers (`expectTokens`, `expectExactTokens`, `expectExactUndefinedTokens`, `expectUndefinedTokens`)
   still use `any` — out of scope for this branch, unchanged.
 - **Stale test counts** throughout this section were updated to the verified current numbers (see above).
+
+### Snapshot-size reduction (2026-09-08)
+
+`calendar.spec.ts.snap` had grown to ~8,000 lines. Root cause: `toMatchSnapshot()` was called
+independently at every level of the component hierarchy, so the same literal token data was serialized
+redundantly 3–4 times over (once at each leaf, again inside its composite parent, again inside the root),
+and the root `calendar schema` snapshot additionally enumerated all 6 variants even though only
+`defaultVariant` carries baked defaults — the other 5 (`primary`/`secondary`/`tertiary`/`quaternary`/
+`quinary`) resolve to zero-information, fully-empty shape skeletons already proven empty by the separate
+"carries baked defaults on `defaultVariant` only" invariant test.
+
+Fixed without any loss of coverage:
+
+- **Root `calendar schema` snapshot** narrowed from `expect(parsed).toMatchSnapshot()` to
+  `expect(parsed['defaultVariant']).toMatchSnapshot()` — drops the 5 redundant empty-variant subtrees.
+- **Removed the redundant full-tree `toMatchSnapshot()`** at 5 composite/parent describe blocks (`panel
+header`, `date panel`, `time picker`, `footer button bar`, `panel`) — each one's resolved values are
+  fully captured once, nested, inside the (now-narrowed) root snapshot; their own non-snapshot invariant
+  assertions (children-in-state-block, static-tokens-at-root, shared-shape-by-reference checks) are
+  unchanged and still catch structural regressions. Leaf-level snapshots (`time input`, `time separator`,
+  `week day label`, `today cell`, `multi month divider`, `panel button`, `picker cell`, `footer button`,
+  `input`, `input icon`) were left as-is — they remain the single source of truth for unique literal
+  values and give the smallest diff on change.
+- **Result:** `calendar.spec.ts.snap` reduced from **7,984 to 1,505 lines** (~81%); `calendar.spec.ts` —
+  **79 tests pass, 15 snapshots** (was 84/20 — the 5 fewer tests/snapshots are exactly the removed
+  redundant composite-level snapshot assertions). Full `current-themes/v1/schema` run unaffected:
+  **383 tests pass, 1 pre-existing unrelated failure** (`message.spec.ts`), **16/16 snapshots pass**.
+
+### Removal of the 5 named color variants (2026-09-08)
+
+The calendar root modeled `defaultVariant` plus the 5 canonical color variants (`primary`,
+`secondary`, `tertiary`, `quaternary`, `quinary`) — the same convention documented throughout this
+audit (see "Variant-defaults policy" above). No CSS mapper rule or other consumer in the workspace
+ever referenced `usages.calendar.primary.*` (or any of the other 4), matching the same finding
+already acted on for the generic `input` usage (whose `inputShape` docstring states: _"The 5
+canonical color variants are intentionally not modeled ... No flat-root tokens"_). Calendar is now
+brought in line with that precedent:
+
+- **`calendar.ts`** — removed the `primary`/`secondary`/`tertiary`/`quaternary`/`quinary` fields from
+  `calendarShape` and their corresponding entries from `calendarDefaults`. Only `defaultVariant` is
+  modeled at the root now; `calendarVariantContentShape`/`variantContentDefaults` are unchanged in
+  shape (they were already `defaultVariant`-only in substance — the other 5 keys just repeated the
+  same nested shape by reference).
+- **`calendar.spec.ts`** — replaced the "carries baked defaults on `defaultVariant` only — named
+  variants carry no baked token values" test (which asserted the 5 named variants resolve to a value
+  _different from_ `defaultVariant`'s) with a "does not model the 5 named color variants" test
+  (asserts the 5 keys are `undefined` on the parsed tree, since the fields no longer exist in the
+  shape at all). Updated the root snapshot's comment accordingly. No snapshot value changes — the
+  root snapshot was already scoped to `parsed['defaultVariant']` only (see the entry directly above),
+  and `defaultVariant`'s own resolved content is unchanged.
+- **Verified:** `calendar.spec.ts` — 79 tests pass, 15 snapshots (same counts; only the test body
+  changed, not the count). Full `current-themes/v1/schema` run unaffected.
+- This is a breaking change to the calendar schema's shape (removes 5 previously-optional root keys).
+  Since no consumer referenced them and they always resolved to `undefined`/empty by default, there is
+  no behavioral impact on any existing theme.

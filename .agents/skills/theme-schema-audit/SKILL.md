@@ -1,7 +1,7 @@
 ---
 name: theme-schema-audit
 description: Interactively audits and (re)builds the theme "usage" schema for a single component — its children, the dependency relationship between parent and child, which children reuse an existing generic usage versus defining their own tokens, and which tokens carry a literal default — then applies confirmed structural changes.
-version: 3.4.0
+version: 3.6.0
 ---
 
 # Theme Schema Audit — Theming Usages
@@ -48,6 +48,17 @@ the **canonical** baseline lists. Do not ask the user for these — they come fr
 
 Present this list briefly to the user as context before continuing (one short summary, not a
 question).
+
+#### Modeling the 5 canonical color variants
+
+Not every component's root needs to model `primary`/`secondary`/`tertiary`/`quaternary`/`quinary`
+alongside `defaultVariant` — only `defaultVariant` is mandatory. Add the 5 named variants (as
+additional sibling keys at the same node, same shape as `defaultVariant`) only where a real need is
+confirmed, e.g. the component's CSS mapper (or a Step 1/3 use-case) actually references
+`usages.<component>.<node>.primary.*` etc. Don't add them speculatively "just in case" — an unused
+set of 5 identically-shaped, always-empty keys only adds noise to the schema, its snapshot, and its
+tests for no behavioral benefit. This applies at any node in the tree, not just the component root
+(e.g. the generic `input` usage and the `calendar` usage both model `defaultVariant` only).
 
 ## Step 0 — Identify the component
 
@@ -385,11 +396,12 @@ const panelButtonVariantShape = z.object({
   // ... more states if needed
 })
 
+// Only `defaultVariant` is modeled — the 5 canonical color variants are added
+// only if Step 3/7 actually calls for them (i.e. the CSS mapper references
+// `usages.<component>.<node>.primary.*` etc.); don't model them speculatively
+// (see "Modeling the 5 canonical color variants" below).
 export const panelButtonShape = z.object({
   defaultVariant: panelButtonVariantShape.prefault({}),
-  primary: panelButtonVariantShape.prefault({}),
-  secondary: panelButtonVariantShape.prefault({}),
-  // ... all named variants get the same shape
 })
 
 // 2. Defaults tree — mirrors the shape, only keys that should have defaults.
@@ -417,9 +429,6 @@ export const panelButtonDefaults = {
     },
     // disabled, focus, active — omitted if nothing differs from defaultState
   },
-  // Named variants only carry a default where Step 7 decided the value should
-  // clearly differ from defaultVariant — most named variants stay empty here
-  // and inherit through the fallback mechanism instead of repeating the tree.
 }
 ```
 
@@ -467,29 +476,28 @@ import { panelShape, panelDefaults } from './panel'
 // ...
 
 // Shape assembly — children are placed per their dependency level (Step 2):
-//   dep `nothing`  → sibling of the variant slots (at the component root)
-//   dep `variant`  → inside each variant's content
+//   dep `nothing`  → sibling of `defaultVariant` (at the component root)
+//   dep `variant`  → inside defaultVariant's content
 // (input and panel below are dep-`variant`; a dep-`nothing` child would sit
-//  alongside defaultVariant/primary/... instead of inside them)
+//  alongside defaultVariant instead of inside it)
 const variantContentShape = z.object({
   input: inputShape.prefault({}),
   panel: panelShape.prefault({}),
 })
 
+// Only `defaultVariant` is modeled at the root — the 5 canonical color variants
+// (primary/secondary/tertiary/quaternary/quinary) are added only if Step 3/7
+// actually calls for them (see "Modeling the 5 canonical color variants" below);
+// don't add them speculatively, since a component's CSS mapper frequently
+// references no `usages.<component>.primary.*` etc. at all.
 const componentShape = z.object({
-  // dep-`nothing` children (if any) go here, as siblings of the variants
+  // dep-`nothing` children (if any) go here, as a sibling of defaultVariant
   defaultVariant: variantContentShape.prefault({}),
-  primary: variantContentShape.prefault({}),
-  secondary: variantContentShape.prefault({}),
-  tertiary: variantContentShape.prefault({}),
-  quaternary: variantContentShape.prefault({}),
-  quinary: variantContentShape.prefault({}),
 
   transitionDuration: withRef(z.number()).optional(),
 })
 
-// Defaults — only filled where Step 7 requires it (mandatory baseline, plus
-// any named variant that should clearly differ)
+// Defaults — only filled where Step 7 requires it (the mandatory baseline)
 const variantContentDefaults = {
   input: inputDefaults,
   panel: panelDefaults,
@@ -498,11 +506,6 @@ const variantContentDefaults = {
 const componentDefaults = {
   transitionDuration: '{{primitives.transition.duration}}',
   defaultVariant: variantContentDefaults,
-  primary: variantContentDefaults,
-  secondary: variantContentDefaults,
-  tertiary: variantContentDefaults,
-  quaternary: variantContentDefaults,
-  quinary: variantContentDefaults,
 }
 
 // Apply defaults to shape — only keys present in defaults get .default()
@@ -511,6 +514,7 @@ export const component = applyDefaultsRecursive(componentShape, componentDefault
 })
 
 // Backward-compatible facade if a class existed before
+// Since theming is not actively used, this export could also be removed
 export class ComponentSchema {
   static readonly schema = component
 }
@@ -665,6 +669,21 @@ small, explicit, greppable assertions:
   (`expectDefaultsMatchShape`) that walks the defaults tree and asserts every key exists on the
   corresponding shape. Catches wiring bugs (typos, renames) that are a different failure mode than
   a value regression.
+- **Nested-path assertions** — `integration-interface`'s tsconfig sets
+  `noPropertyAccessFromIndexSignature`, so the inferred `parse({})` return type (an index-signature
+  record) can't be dot-chained (`parsed.defaultVariant.foo` is a compile error). Use the shared
+  `at(o, path)` and `expectLeafAtTokenPath(parsed, tokenPath, expected)` helpers from
+  `schema/test-utils.ts` instead of re-declaring a local path-walker per spec file — they're
+  reused across every component's spec (e.g. `calendar.spec.ts`, `input.spec.ts`) and are the
+  single place to fix or extend that walking logic.
+- **No grouping-wrapper keys** — `expectNoGroupingWrapperKeys(schema)` (also in
+  `schema/test-utils.ts`) recursively asserts no nested object in a shape tree is keyed
+  `variant`/`state`/`severity` — those must always be flat sibling keys, never a wrapping category
+  object.
+- **Shared-shape reuse by reference** — `objectShape`/`shapeAt`/`innerSchema` (also in
+  `schema/test-utils.ts`) unwrap `ZodPrefault`/`ZodDefault` wrappers to walk or compare the
+  underlying shape tree, for asserting an Option-1 (extends) child reuses a shared shape/defaults
+  object by identity rather than a structurally-similar copy.
 - **The mandatory baseline default (Step 7)** exists at the conceptual
   `defaultVariant.defaultState.defaultSeverity` path for every node that declares those levels.
 - **No unused `defaultState`/`defaultSeverity` wrappers** — a node with no states/severities of its
@@ -688,6 +707,31 @@ small, explicit, greppable assertions:
 Keep this invariant set small and pointed — one assertion per confirmed decision — and let the
 snapshot carry the rest of the value tree.
 
+#### Avoid duplicate snapshotting across the hierarchy
+
+`parse({})` on a composite node returns its children's fully resolved subtrees inline. If every
+level of the component tree also gets its own `toMatchSnapshot()`, the same literal values end up
+serialized 3–4+ times over (once at the leaf's own `describe`, again inside its parent's snapshot,
+again inside the grandparent's, again inside the root's) — a real calendar schema's snapshot file
+grew to ~8,000 lines this way before being trimmed to ~1,500 with zero loss of coverage. Avoid this:
+
+- **Snapshot only at leaf level** — a subcomponent whose own `describe` block already runs
+  `toMatchSnapshot()` on its resolved values does not need a second snapshot taken of it again
+  inside a parent or ancestor's snapshot. Composite/consumer nodes (a node whose own children each
+  already have their own leaf-level snapshot) should skip `toMatchSnapshot()` entirely and rely on
+  the structural/reference invariants above (children reachable at the expected path, shared shapes
+  wired by reference, etc.) — those already catch wiring regressions; a snapshot there would only
+  ever re-diff data that's already diffed at the leaf.
+- **Scope the root snapshot to `defaultVariant` only** — `expect(parsed['defaultVariant']).toMatch
+Snapshot()`, not `expect(parsed).toMatchSnapshot()`. This matters even when the 5 named color
+  variants aren't modeled at all (see "Modeling the 5 canonical color variants" — the common case),
+  since `parsed` may still carry other root-level keys (e.g. `settings`) that add no unique
+  information to a value snapshot. When the 5 named variants _are_ modeled, they carry no baked
+  defaults unless Step 7 says otherwise, so they resolve to empty-shape skeletons — including them
+  in the root snapshot would only repeat that same empty structure 5 more times.
+- When in doubt, ask: "does this node's own describe block introduce any literal value that isn't
+  already captured by one of its children's snapshots?" If no, it doesn't need its own snapshot.
+
 #### Where to put the tests
 
 Use **exactly one spec file per component**, regardless of how many subcomponent schema files it's
@@ -696,13 +740,20 @@ split across: `schema/<component>/<component>.spec.ts` for multi-file components
 subcomponent (root first, then each child in the same stable order used in Step 1), rather than a
 separate `.spec.ts` per subcomponent file.
 
-- The root `describe` is a thin integration check: "parses an empty object", one snapshot of
-  `parse({})` for the fully assembled tree, and the component-level invariants (mandatory baseline
+- The root `describe` is a thin integration check: "parses an empty object", **one snapshot scoped
+  to `parsed['defaultVariant']` only** (not the full `parsed` object — see "Avoid duplicate
+  snapshotting across the hierarchy" above), and the component-level invariants (mandatory baseline
   default through the root, top-level consolidation/dependency checks).
-- Each subcomponent gets its own nested `describe`, testing its own shape/defaults in isolation via
+- Each **leaf** subcomponent (one with no children of its own that get their own `describe`) gets
+  its own nested `describe`, testing its own shape/defaults in isolation via
   `applyDefaultsRecursive(<subcomponent>Shape, <subcomponent>Defaults).parse({})`, with its own
   "parses an empty object" check, an `expectDefaultsMatchShape` check, its own snapshot, and the
   node-level invariants that apply to it.
+- Each **composite** subcomponent (one whose children already have their own leaf-level `describe`
+  and snapshot) still gets its own nested `describe` for its "parses an empty object",
+  `expectDefaultsMatchShape`, and node-level/wiring invariants — but **skips its own
+  `toMatchSnapshot()`**, since its resolved value is already fully captured, nested, inside an
+  ancestor's snapshot (ultimately the root's).
 - For an Option-1 (extends) generic child, give it a `describe` that asserts it reuses the generic
   usage's exports (reference/identity or resolved-token equality for a representative field) rather
   than re-snapshotting the generic usage's whole tree again.
@@ -720,8 +771,8 @@ Applying this to `schema/calendar/`, the entire component's tests live in a sing
 ```typescript
 // schema/calendar/calendar.spec.ts
 import { applyDefaultsRecursive } from '../defaults-helper'
-import { expectDefaultsMatchShape } from '../test-utils'
-import { calendar, calendarDefaults } from './calendar'
+import { expectDefaultsMatchShape, at } from '../test-utils'
+import { calendar } from './calendar'
 import { calendarInputShape, calendarInputDefaults } from './input'
 import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
 import { calendarPanelHeaderDefaults } from './panelheader'
@@ -729,48 +780,58 @@ import { calendarPickerCellShape, calendarPickerCellDefaults } from './pickercel
 // ... one import per remaining subcomponent file
 
 describe('calendar schema', () => {
+  const parsed = calendar.parse({})
+
   it('parses an empty object', () => {
     expect(calendar.safeParse({}).success).toBe(true)
   })
 
   it('resolves the expected default token tree', () => {
-    expect(calendar.parse({})).toMatchSnapshot()
+    // The calendar schema models only `defaultVariant` (no named color variants — see
+    // "Modeling the 5 canonical color variants" above), so scoping the snapshot to
+    // `defaultVariant` captures the entire resolved tree.
+    expect(parsed['defaultVariant']).toMatchSnapshot()
   })
 
   it('resolves a baseline leaf through the mandatory default path', () => {
-    const parsed = calendar.parse({})
-    expect(parsed.defaultVariant.input.defaultVariant.defaultState.defaultSeverity.padding).toStrictEqual(
-      '{{primitives.space.md}}'
-    )
+    // The calendar input extends the generic input usage (Option 1), so its baseline
+    // background is the generic input's own default-path background.
+    expect(
+      at(parsed, ['defaultVariant', 'input', 'defaultVariant', 'defaultState', 'defaultSeverity', 'background'])
+    ).toStrictEqual('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
   })
 
-  it('keeps static tokens at the node root, siblings of defaultVariant', () => {
-    const parsed = calendar.parse({})
-    expect(parsed.defaultVariant.input.focusRing).toBeDefined()
-    expect(parsed.defaultVariant.input.defaultVariant.defaultState.defaultSeverity.focusRing).toBeUndefined()
-  })
-
-  it('leaves named variants without their own baked defaults unless Step 7 says otherwise', () => {
-    const parsed = calendar.parse({})
+  it('does not model the 5 named color variants (primary/secondary/tertiary/quaternary/quinary)', () => {
     for (const variant of ['primary', 'secondary', 'tertiary', 'quaternary', 'quinary']) {
-      expect(parsed[variant]).not.toStrictEqual(calendarDefaults.defaultVariant)
+      expect(parsed[variant]).toBeUndefined()
     }
   })
 
-  it('omits defaultState/defaultSeverity for a static child with no states or severities of its own', () => {
-    // `today` (inside the date panel) declares no states/severities of its own — its tokens
-    // (`background`, `color`) sit as flat fields, not wrapped in an empty `defaultState`/
-    // `defaultSeverity` key. `datePanel` itself does declare states, so it keeps the wrapper.
-    const datePanel = calendar.parse({}).defaultVariant.panel.defaultVariant.defaultState.defaultSeverity.datePanel
-    const today = datePanel.defaultVariant.defaultState.defaultSeverity.today
+  it('omits defaultVariant/defaultState/defaultSeverity wrappers for a static child with no variant/state/severity of its own', () => {
+    // `today` (inside the date panel) declares no variant/state/severity tree of its own at
+    // all — its tokens (`background`, `color`) sit as flat fields directly on the parent
+    // (`datePanel`'s state block), never wrapped in an empty `defaultVariant`/`defaultState`/
+    // `defaultSeverity` key. `datePanel` itself does declare states, so it keeps its own wrapper.
+    const today = at(parsed, [
+      'defaultVariant',
+      'panel',
+      'defaultVariant',
+      'defaultState',
+      'datePanel',
+      'defaultVariant',
+      'defaultState',
+      'today',
+    ])
 
     expect(today.background).toBeDefined()
+    expect(today).not.toHaveProperty('defaultVariant')
     expect(today).not.toHaveProperty('defaultState')
     expect(today).not.toHaveProperty('defaultSeverity')
   })
 
   describe('input (Option 1 — extends the generic input usage)', () => {
     const schema = applyDefaultsRecursive(calendarInputShape, calendarInputDefaults)
+    const resolved = schema.parse({})
 
     it('parses an empty object', () => {
       expect(schema.safeParse({}).success).toBe(true)
@@ -779,12 +840,22 @@ describe('calendar schema', () => {
       expectDefaultsMatchShape(calendarInputShape, calendarInputDefaults)
     })
     it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
+      expect(resolved).toMatchSnapshot()
+    })
+    it('inherits the generic input static tokens (e.g. focusRing) inside the baseline severity block, not at the node root', () => {
+      // A shallow .extend() can't re-nest the generic input's severity blocks: the generic
+      // usage's own static tokens stay exactly where that usage put them (inside
+      // defaultVariant.defaultState.defaultSeverity) — this is the "resolved-token
+      // equality/reference" check an Option-1 (extends) child needs, proving it actually
+      // reuses the generic usage's tree rather than silently dropping it.
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeDefined()
+      expect(resolved['focusRing']).toBeUndefined()
     })
   })
 
   describe('panel button (shared: calendarIconButton, navButton, timePickerButton)', () => {
     const schema = applyDefaultsRecursive(calendarPanelButtonShape, calendarPanelButtonDefaults)
+    const resolved = schema.parse({})
 
     it('parses an empty object', () => {
       expect(schema.safeParse({}).success).toBe(true)
@@ -793,21 +864,25 @@ describe('calendar schema', () => {
       expectDefaultsMatchShape(calendarPanelButtonShape, calendarPanelButtonDefaults)
     })
     it('resolves the expected default token tree', () => {
-      expect(schema.parse({})).toMatchSnapshot()
+      expect(resolved).toMatchSnapshot()
     })
   })
 
-  describe('panel header (consumer of the shared panel button)', () => {
+  describe('panel header (composite consumer of the shared panel button)', () => {
+    // No toMatchSnapshot() here — panelHeader's resolved value (including navButton's tokens)
+    // is already captured, nested, inside the root's `defaultVariant` snapshot above, and
+    // navButton's own tokens are separately captured by the "panel button" describe's snapshot.
     it('reuses the shared navButton defaults by reference', () => {
-      expect(calendarPanelHeaderDefaults.defaultVariant.defaultState.defaultSeverity.navButton).toBe(
-        calendarPanelButtonDefaults
-      )
+      // No `defaultSeverity` wrapper here — panelHeader declares no named severities of its own.
+      expect(calendarPanelHeaderDefaults.defaultVariant.defaultState.navButton).toBe(calendarPanelButtonDefaults)
     })
     // ... one describe block per remaining subcomponent (inputicon, navigationselector,
     // pickercell, view for each of dateCell/monthCell/yearCell, weekdaylabel,
     // today, datepanel, multimonthdivider, timeseperator, timepicker, footerbutton for
-    // todayButton/clearButton, footerbuttonbar, panel, settings) — consumers of shared
-    // shapes (pickercell, panelbutton) assert reference equality instead of re-snapshotting.
+    // todayButton/clearButton, footerbuttonbar, panel, settings) — leaf nodes (pickercell,
+    // panelbutton, timeseperator, etc.) keep their own snapshot; composite/consumer nodes
+    // (datepanel, timepicker, footerbuttonbar, panel) skip toMatchSnapshot() and assert
+    // reference equality / child wiring instead.
   })
 })
 ```
