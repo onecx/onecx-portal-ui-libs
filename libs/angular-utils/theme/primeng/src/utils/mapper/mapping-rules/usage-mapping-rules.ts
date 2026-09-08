@@ -17,9 +17,11 @@ import { accordionMappingRules } from './usages/accordion.rules'
 import { messageMappingRules } from './usages/message.rules'
 import { togglebuttonMappingRules } from './usages/togglebutton.rules';
 import { inputMappingRules } from './usages/input.rules'
+import { interactiveDataViewMappingRules } from './usages/interactive-dataview.rules'
 import { selectbuttonMappingRules } from './usages/selectbutton.rules'
 import { rippleMappingRules } from './usages/ripple.rules'
 import { panelmenuMappingRules } from './usages/panelmenu.rules'
+import { dataviewMappingRules } from './usages/dataview.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -38,10 +40,12 @@ export const usageMappingRules: MappingRule[] = [
   ...dropdownMappingRules,
   ...textareaMappingRules,
   ...picklistMappingRules,
+  ...interactiveDataViewMappingRules,
   ...messageMappingRules,
   ...togglebuttonMappingRules,
   ...accordionMappingRules,
   ...selectbuttonMappingRules,
   ...rippleMappingRules,
-   ...panelmenuMappingRules,
+  ...panelmenuMappingRules,
+  ...dataviewMappingRules,
 ]

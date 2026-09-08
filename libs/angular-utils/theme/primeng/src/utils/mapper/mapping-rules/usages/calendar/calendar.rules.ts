@@ -14,7 +14,7 @@ export const calendarRules: MappingRule[] = [
     to: 'components.datepicker.weekDay.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.weekDayLabel.fontWeight',
+    from: 'usages.calendar.panel.datePanel.weekDayLabel.font.weight',
     to: 'components.datepicker.weekDay.fontWeight',
   },
   {
