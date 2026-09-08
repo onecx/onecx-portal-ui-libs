@@ -32,6 +32,11 @@
   <p-pickList
     [source]="displayedColumnsModel()"
     [target]="hiddenColumnsModel()"
+    (onMoveToTarget)="syncColumnModels()"
+    (onMoveToSource)="syncColumnModels()"
+    (onMoveAllToTarget)="syncColumnModels()"
+    (onMoveAllToSource)="syncColumnModels()"
+    (onSourceReorder)="syncColumnModels()"
     [sourceHeader]="resolvedActiveColumnsLabel"
     [targetHeader]="resolvedInactiveColumnsLabel"
     [sourceAriaLabel]="resolvedActiveColumnsLabel"
@@ -107,6 +112,7 @@
       (onClick)="onSaveClick()"
       [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
       [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
+      [disabled]="!hasActiveColumns()"
     ></p-button>
   </ng-template>
 </p-dialog>
