@@ -2,13 +2,9 @@ import type { Preview } from '@storybook/angular'
 import { InitializeOptions, initialize, mswDecorator } from 'msw-storybook-addon'
 import { patchPrimeNgAutoFocus } from '../src/lib/utils/primeng-autofocus-patch'
 
-// Stories import PrimeNG modules directly (e.g. `primeng/table`) and never load
-// AngularAcceleratorModule, so the module-file side effect that applies the
-// PrimeNG v20 AutoFocus patch does not run in the Storybook bundle. Apply it
-// here, at preview evaluation, so stories render with the patch active.
-// (No-op in production apps, which import AngularAcceleratorModule.)
+// Stories import PrimeNG modules directly (e.g. `primeng/table`) and never load AngularAcceleratorModule, so the module-file side effect that applies the
+// PrimeNG v20 AutoFocus patch does not run in the Storybook bundle.
 patchPrimeNgAutoFocus()
-
 
 /*
  * Initializes MSW
