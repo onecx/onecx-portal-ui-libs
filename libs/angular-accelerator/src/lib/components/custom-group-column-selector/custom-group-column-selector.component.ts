@@ -47,6 +47,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
 
   readonly frozenActionColumn = input<boolean>(false)
   readonly actionColumnPosition = input<'left' | 'right'>('right')
+  readonly draggableColumnGroupSelectorDialog = input<boolean>(true)
 
   readonly columnSelectionChanged = output<ColumnSelectionChangedEvent>()
   readonly actionColumnConfigChanged = output<ActionColumnChangedEvent>()
