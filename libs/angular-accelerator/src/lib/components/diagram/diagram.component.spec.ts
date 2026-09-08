@@ -151,6 +151,19 @@ describe('DiagramComponent', () => {
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
   })
 
+  it('should apply autofocus="false" to the diagram type p-selectbutton', async () => {
+    component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // PrimeNG's SelectButton exposes autofocus as an @Input (NOT a host attribute) with a
+    // booleanAttribute transform, so the static attribute autofocus="false" is coerced
+    // to the boolean false and verified on the SelectButton component instance.
+    const pSelectButton = fixture.debugElement.query(By.css('p-selectbutton[name="diagram-type-select-button"]'))
+    expect(pSelectButton).toBeTruthy()
+    expect((pSelectButton.componentInstance as unknown as { autofocus?: unknown }).autofocus).toBe(false)
+  })
+
   it('should change the rendered diagram whenever the select button is used to change the diagramType', async () => {
     component.supportedDiagramTypes = [DiagramType.PIE, DiagramType.HORIZONTAL_BAR]
 

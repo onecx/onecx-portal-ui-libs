@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { By } from '@angular/platform-browser'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -1572,6 +1573,27 @@ describe('DataTableComponent', () => {
       const menuItem = (component as any).toOverflowMenuItem(action, row, {})
 
       expect(menuItem.visible).toBe(true)
+    })
+  })
+
+  describe('column filter autofocus', () => {
+    it('should not autofocus the p-multiselect column filter', async () => {
+      component.rows = [{ id: 'row-1', name: 'a' }]
+      component.columns = [
+        {
+          columnType: ColumnType.STRING,
+          id: 'name',
+          nameKey: 'COLUMN_HEADER_NAME.NAME',
+          filterable: true,
+          sortable: true,
+        },
+      ]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const pMultiselect = fixture.debugElement.query(By.css('p-multiselect'))
+      expect(pMultiselect).toBeTruthy()
+      expect((pMultiselect.componentInstance as unknown as { autofocus?: unknown }).autofocus).toBe(false)
     })
   })
 })
