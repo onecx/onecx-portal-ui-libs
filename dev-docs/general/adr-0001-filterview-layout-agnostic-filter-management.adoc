@@ -1,0 +1,49 @@
+# ADR-0001: Layout-agnostic filter management in FilterView
+
+[role="lead"]
+Status: Accepted
+Date: 2026-09-02
+
+## Context
+
+`FilterView` (in `interactive-data-view`) let users *view* and *remove* active filters, but not *create* new ones. Adding a filter was only possible through the table layout's native per-column PrimeNG filter row. Users in the list or grid layout therefore could not filter the data at all without switching to the table layout.
+
+We want users to be able to add filters directly from `FilterView` in any layout (`table`, `list`, `grid`), using the same "pick a column, then pick one of the values that actually exists in the data" interaction that the table layout already provides.
+
+## Decision
+
+`FilterView` gains an *add-filter* flow as an **additional** entry point for creating filters. The native table header filter row is **left completely unchanged** and continues to work exactly as before; it coexists with the new `FilterView` add-filter controls.
+
+Both entry points write into the **same shared filter state** (`DataViewStateService.filters`), which is the single source of truth already consumed by `data-list-grid` and `data-table` client-side filtering. A filter added through `FilterView` narrows the table/list/grid identically to a filter added through the table header, and a filter added through the table header shows up in the `FilterView` chips/manage table.
+
+The add-filter picker offers columns by the same semantics as the table: for a selected column, the candidate values are the **distinct values present in the currently loaded data records** for that column (empty/`null`/`undefined` values are excluded).
+
+### Rules
+
+* *Add* choices are restricted to the **currently displayed columns** only. The `FilterView` receives the displayed columns from the host (`InteractiveDataView`) and offers exactly those. When the host does not provide them (e.g. `FilterView` is used on its own), the picker falls back to the available columns so the feature still works standalone.
+* *Active filter* display (chips and the manage table) continues to source from the **available columns**, so a filter that is still active on a now-hidden column remains visible and removable.
+* Applying a filter that already exists (same column and value) does not add a duplicate.
+* The add-filter form is shown as a self-contained inline action so it is available regardless of how many filters are currently active (the manage button is disabled at zero filters).
+* The existing `disableFilterView` default (`true`) is unchanged: `FilterView` is hidden — and therefore the add-filter controls are hidden — unless a host explicitly opts in.
+
+## Consequences
+
+* Because both the table header and `FilterView` update one shared `filters` state, they **must stay synchronized**; there is a single source of truth and no second copy of filter state to reconcile.
+* `FilterView` becomes layout-agnostic with respect to *adding* filters (view/remove were already so), while the table-native path is preserved for consumers that rely on it.
+* The column picker being limited to displayed columns means a user can never add a filter on a column they cannot currently see; this is the intended, predictable behavior.
+* The feature is opt-in per host and invisible to existing consumers by default, so there is no behavior change for applications that did not enable `FilterView`.
+
+## Affected files
+
+* `libs/angular-accelerator/src/lib/components/filter-view/filter-view.component.ts` — add-filter state, computeds and handlers; writes new filters into the shared filters state.
+* `libs/angular-accelerator/src/lib/components/filter-view/filter-view.component.html` — add-filter controls (toggle, column picker, value picker, apply, cancel).
+* `libs/angular-accelerator/src/lib/components/interactive-data-view/interactive-data-view.component.html` — passes `displayedColumns` into the `FilterView`; native table filter row unchanged.
+* `libs/angular-accelerator/src/lib/components/interactive-data-view/interactive-data-view.component.ts` — hosts the `FilterView` input wiring; `disableFilterView` default unchanged.
+
+## Tests
+
+* `libs/angular-accelerator/src/lib/components/filter-view/filter-view.component.spec.ts` — component-level add-filter behavior and edge cases (displayed-only columns, distinct values, apply/cancel/reset, preserving unrelated filters, honoring an existing column filter type).
+* `libs/angular-accelerator/src/lib/components/interactive-data-view/interactive-data-view.component.spec.ts` — end-to-end integration: add a filter in list/grid/table via `FilterView` and assert the narrowed result set; a `FilterView` filter reflected in the native table filtering; a table-header filter surfaced in the `FilterView` active filters; an active filter on a now-hidden column still shown and removable; default `disableFilterView` keeps the controls hidden.
+* `libs/angular-accelerator/testing/filter-view.harness.ts` — deterministic add-flow harness API.
+* `libs/angular-accelerator/testing/interactive-data-view.harness.ts` — exposes the `FilterView` harness for integration specs.
+* `libs/angular-accelerator/src/lib/components/interactive-data-view/interactive-data-view-filter-view.component.stories.ts` — list and grid layout stories demonstrating add-filter with `disableFilterView: false`.

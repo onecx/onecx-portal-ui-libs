@@ -1,11 +1,34 @@
 import { SlotService } from '@onecx/angular-remote-components'
-import { TestBed } from '@angular/core/testing'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { RouterTestingModule } from '@angular/router/testing'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, of } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
+import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists, provideTranslateTestingService } from '@onecx/angular-testing'
+import { InteractiveDataViewHarness } from '../../../../testing'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
+import { ColumnType } from '../../model/column-type.model'
+import type { Filter } from '../../model/filter.model'
+import type { DataTableColumn } from '../../model/data-table-column.model'
+
+ensureOriginMockExists()
+ensureIntersectionObserverMockExists()
+
+const mutationObserverMock = jest.fn(function MutationObserver(callback: any) {
+  this.observe = jest.fn()
+  this.disconnect = jest.fn()
+  this.trigger = (mockedMutationsList: any) => {
+    callback(mockedMutationsList, this)
+  }
+  return this
+})
+globalThis.MutationObserver = mutationObserverMock
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -1215,6 +1238,212 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       expect(component.stateService.actionColumnConfigFrozen()).toBe(true)
       expect(component.stateService.actionColumnConfigPosition()).toBe('left')
+    })
+  })
+})
+
+describe('InteractiveDataViewComponent (filter-view add-filter integration)', () => {
+  const ENGLISH_LANGUAGE = 'en'
+  const TRANSLATIONS = {
+    [ENGLISH_LANGUAGE]: {
+      PRODUCT: 'Product',
+      AMOUNT: 'Amount',
+    },
+  }
+
+  const columns: DataTableColumn[] = [
+    {
+      id: 'product',
+      columnType: ColumnType.STRING,
+      nameKey: 'PRODUCT',
+      filterable: true,
+      predefinedGroupKeys: ['default'],
+    },
+    {
+      id: 'amount',
+      columnType: ColumnType.NUMBER,
+      nameKey: 'AMOUNT',
+      filterable: true,
+      predefinedGroupKeys: ['default'],
+    },
+  ]
+
+  const data = [
+    { id: 1, product: 'Apples', amount: 2 },
+    { id: 2, product: 'Bananas', amount: 10 },
+    { id: 3, product: 'Strawberries', amount: 5 },
+  ] as any[]
+
+  let fixture: ComponentFixture<InteractiveDataViewComponent>
+  let harness: InteractiveDataViewHarness
+
+  const buildModule = () => {
+    const slotService = { isSomeComponentDefinedForSlot: () => of(false) } as unknown as SlotService
+    return TestBed.configureTestingModule({
+      imports: [AngularAcceleratorModule, NoopAnimationsModule, RouterTestingModule],
+      providers: [
+        { provide: SlotService, useValue: slotService },
+        provideTranslateTestingService(TRANSLATIONS),
+        provideUserServiceMock(),
+        DataViewStateService,
+      ],
+    })
+  }
+
+  const setup = async (layout: 'list' | 'grid' | 'table') => {
+    await buildModule()
+    fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    fixture.componentRef.setInput('columns', columns)
+    fixture.componentRef.setInput('disableFilterView', false)
+    fixture.componentRef.setInput('layout', layout)
+    fixture.componentRef.setInput('defaultGroupKey', 'default')
+    fixture.componentRef.setInput('emptyResultsMessage', 'No results')
+    fixture.componentRef.setInput('titleLineId', 'product')
+    fixture.detectChanges()
+    const stateService = TestBed.inject(DataViewStateService)
+    stateService.data.set(data)
+    fixture.detectChanges()
+    harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
+    return TestBed.inject(DataViewStateService)
+  }
+
+  describe('default behaviour', () => {
+    it('should hide the add-filter controls when disableFilterView is not opted in', async () => {
+      await buildModule()
+      fixture = TestBed.createComponent(InteractiveDataViewComponent)
+      fixture.componentRef.setInput('columns', columns)
+      fixture.componentRef.setInput('layout', 'list')
+      fixture.componentRef.setInput('defaultGroupKey', 'default')
+      fixture.detectChanges()
+      const stateService = TestBed.inject(DataViewStateService)
+      stateService.data.set(data)
+      fixture.detectChanges()
+      harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
+
+      const filterView = await harness.getFilterView()
+      expect(filterView).toBeNull()
+    })
+  })
+
+  describe('add-filter flow', () => {
+    it('should offer only the displayed columns in the add-filter picker', async () => {
+      await setup('list')
+      const filterView = await harness.getFilterView()
+      const options = await filterView.getAddFilterColumnOptions()
+      const optionTexts = await Promise.all(options.map((item) => item.getText()))
+      expect(optionTexts).toEqual(['Product', 'Amount'])
+    })
+
+    it('should narrow the offered columns when a displayed column is hidden', async () => {
+      await setup('list')
+      fixture.componentInstance['displayedColumnKeys'].set(['product'])
+      fixture.detectChanges()
+      const filterView = await harness.getFilterView()
+      const options = await filterView.getAddFilterColumnOptions()
+      const optionTexts = await Promise.all(options.map((item) => item.getText()))
+      expect(optionTexts).toEqual(['Product'])
+    })
+
+    // Full-component render plus several async harness interactions is the slowest scenario;
+    // allow extra headroom so it does not time out when the suite runs on a loaded machine.
+    it(
+      'should apply a chosen column/value as a filter that narrows the visible list',
+      async () => {
+        const stateService = await setup('list')
+        const filterView = await harness.getFilterView()
+
+        await filterView.chooseAddFilterColumn('Product')
+        await filterView.chooseAddFilterValue('Apples')
+        await filterView.applyAddFilter()
+
+        expect(stateService.filters()).toEqual([{ columnId: 'product', value: 'Apples', filterType: 'equals' }])
+
+        const listItems = await (await (await harness.getDataView())?.getDataListGrid())?.getDefaultListItems()
+        const visibleTexts = await Promise.all((listItems ?? []).map((item) => item.getData()))
+        const flat = visibleTexts.flat().join(' ')
+        expect(flat).toContain('Apples')
+        expect(flat).not.toContain('Bananas')
+      },
+      20000
+    )
+
+    it('should reflect a filter added through the FilterView in the native table filtering', async () => {
+      const stateService = await setup('table')
+      const filterView = await harness.getFilterView()
+      await filterView.chooseAddFilterColumn('Product')
+      await filterView.chooseAddFilterValue('Apples')
+      await filterView.applyAddFilter()
+
+      const rows = await (await (await harness.getDataView())?.getDataTable())?.getRows()
+      expect((rows ?? []).length).toBe(1)
+      expect(stateService.filters()).toEqual([{ columnId: 'product', value: 'Apples', filterType: 'equals' }])
+    })
+
+    it('should surface a filter added via the native table row in the FilterView active filters', async () => {
+      const stateService = await setup('table')
+      fixture.componentRef.setInput('filterViewDisplayMode', 'chips')
+      fixture.detectChanges()
+      const filterView = await harness.getFilterView()
+
+      stateService.filters.set([{ columnId: 'product', value: 'Apples', filterType: 'equals' }] as Filter[])
+      fixture.detectChanges()
+
+      const chips = await filterView.getChips()
+      const chipTexts = await Promise.all(chips.map((chip) => chip.getContent()))
+      expect(chipTexts.some((text) => (text ?? '').includes('Apples'))).toBe(true)
+    })
+
+    it('should cancel the add-filter flow without changing the filters', async () => {
+      const stateService = await setup('grid')
+      const filterView = await harness.getFilterView()
+      await filterView.chooseAddFilterColumn('Product')
+      await filterView.cancelAddFilter()
+
+      expect(stateService.filters()).toEqual([])
+    })
+
+    it('should apply a chosen filter in the grid layout that narrows the visible grid', async () => {
+      const stateService = await setup('grid')
+      const filterView = await harness.getFilterView()
+
+      await filterView.chooseAddFilterColumn('Product')
+      await filterView.chooseAddFilterValue('Apples')
+      await filterView.applyAddFilter()
+
+      expect(stateService.filters()).toEqual([{ columnId: 'product', value: 'Apples', filterType: 'equals' }])
+
+      const gridItems = await (await (await harness.getDataView())?.getDataListGrid())?.getDefaultGridItems()
+      const visibleTexts = await Promise.all((gridItems ?? []).map((item) => item.getData()))
+      const flat = visibleTexts.flat().join(' ')
+      expect(flat).toContain('Apples')
+      expect(flat).not.toContain('Bananas')
+    })
+
+    it('should still show and allow removing a filter on a column that is no longer displayed', async () => {
+      const stateService = await setup('list')
+      fixture.componentRef.setInput('filterViewDisplayMode', 'chips')
+      fixture.detectChanges()
+      const filterView = await harness.getFilterView()
+
+      stateService.filters.set([{ columnId: 'product', value: 'Apples', filterType: 'equals' }] as Filter[])
+      fixture.detectChanges()
+
+      const chipTextsBefore = await Promise.all((await filterView.getChips()).map((chip) => chip.getContent()))
+      expect(chipTextsBefore.some((text) => (text ?? '').includes('Apples'))).toBe(true)
+
+      fixture.componentInstance['displayedColumnKeys'].set(['amount'])
+      fixture.detectChanges()
+
+      const chipTextsAfter = await Promise.all((await filterView.getChips()).map((chip) => chip.getContent()))
+      expect(chipTextsAfter.some((text) => (text ?? '').includes('Apples'))).toBe(true)
+
+      const chips = await filterView.getChips()
+      for (const chip of chips) {
+        if (((await chip.getContent()) ?? '').includes('Apples')) {
+          await chip.clickRemove()
+        }
+      }
+      expect(stateService.filters()).toEqual([])
     })
   })
 })

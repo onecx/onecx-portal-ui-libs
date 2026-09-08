@@ -146,6 +146,33 @@
       "REMOVE_FILTER_TITLE": "Filter löschen",
       "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
     },
+    "ADD_FILTER": {
+      "TOGGLE_BUTTON": {
+        "LABEL": "Filter hinzufügen",
+        "ARIA_LABEL": "Neuen Filter hinzufügen",
+        "DETAIL": "Neuen Filter hinzufügen"
+      },
+      "COLUMN": {
+        "LABEL": "Spalte",
+        "ARIA_LABEL": "Spalte, nach der gefiltert wird",
+        "PLACEHOLDER": "Spalte auswählen"
+      },
+      "VALUE": {
+        "LABEL": "Wert",
+        "ARIA_LABEL": "Wert, nach dem gefiltert wird",
+        "PLACEHOLDER": "Wert auswählen"
+      },
+      "APPLY_BUTTON": {
+        "LABEL": "Anwenden",
+        "ARIA_LABEL": "Ausgewählten Filter anwenden",
+        "DETAIL": "Ausgewählten Filter anwenden"
+      },
+      "CANCEL_BUTTON": {
+        "LABEL": "Abbrechen",
+        "ARIA_LABEL": "Hinzufügen eines Filters abbrechen",
+        "DETAIL": "Hinzufügen eines Filters abbrechen"
+      }
+    },
     "PANEL_TITLE": "Filter"
   },
   "OCX_SEARCH_HEADER": {
