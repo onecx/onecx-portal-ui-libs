@@ -45,6 +45,10 @@ Depending on the commits included for a release in the `main` branch, the versio
 
 To find out more on pre-releases with semantic-release, please refer https://semantic-release.gitbook.io/semantic-release/recipes/release-workflow/pre-releases[here].
 
+## OneCX peer dependency pinning
+
+`@onecx/*` peer dependencies declared in `libs/*/package.json` are pinned to exact versions (no `^` or other semver range) rather than caret ranges. These exact pins help prevent and detect package-manager version drift, but the Host Application and remotes still need to declare the intended shared dependencies and runtime version behavior in their Module Federation configuration. `release-script.sh` maintains this pinning automatically by rewriting all `@onecx/*` peer dependency versions to the new release version, without a `^` prefix, on every release.
+
 # Migrating to Angular 19, PrimeNG 19 and OneCX v6
 
 Run the following commands in your project's terminal and follow the instructions:
