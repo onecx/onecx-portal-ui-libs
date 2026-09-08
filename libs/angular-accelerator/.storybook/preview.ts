@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/angular'
 import { InitializeOptions, initialize, mswDecorator } from 'msw-storybook-addon'
-import { patchPrimeNgAutoFocus } from '../src/lib/patch/primng-auto-focus-patch'
+import { patchPrimeNgAutoFocus } from '../src/lib/utils/primeng-autofocus-patch'
 
 // Stories import PrimeNG modules directly (e.g. `primeng/table`) and never load
 // AngularAcceleratorModule, so the module-file side effect that applies the
