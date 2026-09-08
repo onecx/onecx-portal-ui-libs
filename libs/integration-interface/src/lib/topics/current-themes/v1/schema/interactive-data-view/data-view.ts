@@ -1,4 +1,3 @@
-import z from 'zod';
 import { themeSchemaRegistry } from '../registry';
 import { DataListGridSchema } from '../data-list-grid/data-list-grid';
 import { dataTable } from '../data-table/data-table';
