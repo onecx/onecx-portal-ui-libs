@@ -53,6 +53,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly inactiveColumnsLabelKey = input<string>('')
 
   readonly hasActiveColumns = computed(() => this.displayedColumnsModel().length > 0)
+  readonly draggableColumnGroupSelectorDialog = input<boolean>(true)
 
   @Input()
   set frozenActionColumn(value: boolean) {
