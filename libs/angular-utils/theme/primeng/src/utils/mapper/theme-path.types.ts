@@ -119,6 +119,9 @@ export type ThemePath =
   | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
   | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
   | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
+  | `usages.menu.${LeafPaths<NonNullable<Usages['menu']>>}`
+  | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
+  | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 

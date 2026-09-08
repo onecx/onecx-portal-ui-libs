@@ -1,9 +1,7 @@
-import z from 'zod';
-import { border, withRef, bg, color } from '../primitives';
-import { themeSchemaRegistry } from '../registry';
 import { DataListGridSchema } from '../data-list-grid/data-list-grid';
 import { dataTable } from '../data-table/data-table';
 import { DataviewSchema } from '../dataview/dataview';
+import { themeSchemaRegistry } from '../registry';
 
 export class DataViewSchema {
   static readonly schema = DataviewSchema.schema.extend({

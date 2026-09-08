@@ -1,7 +1,6 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
 import { panelmenu } from './panelmenu'
 import { PanelMenuSchema } from './panelmenu/panelmenu'
-import { PanelMenuSettingsSchema } from './panelmenu/settings'
 import { PanelMenuHeaderSchema } from './panelmenu/header'
 import { PanelMenuContentSchema } from './panelmenu/content'
 import { PanelMenuItemSchema } from './panelmenu/item'

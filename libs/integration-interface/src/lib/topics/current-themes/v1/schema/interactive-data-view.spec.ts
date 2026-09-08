@@ -4,7 +4,6 @@ import { InteractiveDataViewSchema } from './interactive-data-view/interactive-d
 import { FilterViewSchema } from './interactive-data-view/filter-view'
 import { FilterViewChipSchema } from './interactive-data-view/filter-view-chip'
 import { FilterViewChipRemoveIconButtonSchema } from './interactive-data-view/filter-view-chip-remove-icon-button'
-import { DataViewSchema } from './interactive-data-view/data-view'
 import { CustomGroupColumnSelectorSchema } from './interactive-data-view/custom-group-column-selector'
 import { CustomGroupColumnSelectorSkeletonSchema } from './interactive-data-view/custom-group-column-selector-skeleton'
 
