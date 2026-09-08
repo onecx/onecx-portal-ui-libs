@@ -21,5 +21,5 @@ export class MultiselectListItemsSchema {
       emptyMessage: (MultiselectEmptyMessageSchema.schema as typeof MultiselectEmptyMessageSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'multiselectListItems' })
+    .register(themeSchemaRegistry, { id: 'multiselectListItems', axis: 'none' })
 }

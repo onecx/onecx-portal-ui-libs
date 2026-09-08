@@ -40,7 +40,7 @@ export const menubarSettings = z
     showDivider: withRef(z.boolean()).optional(),
     showBackdrop: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSettings' })
+  .register(themeSchemaRegistry, { id: 'menubarSettings', axis: 'none' })
 
 export const menubarBaseSeverityStyles = z
   .object({
@@ -51,19 +51,19 @@ export const menubarBaseSeverityStyles = z
     shadow: withRef(z.string()).default(DEFAULT_MENUBAR_SHADOW),
     icon: icon.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarBaseSeverityStyles' })
+  .register(themeSchemaRegistry, { id: 'menubarBaseSeverityStyles', axis: 'none' })
 
 export const menubarSeverityWithCursor = menubarBaseSeverityStyles
   .extend({
     cursor: withRef(z.string()).default('pointer'),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSeverityWithCursor' })
+  .register(themeSchemaRegistry, { id: 'menubarSeverityWithCursor', axis: 'none' })
 
 export const menubarSeverityWithSize = menubarBaseSeverityStyles
   .extend({
     size: withRef(z.string()).default('2.5rem'),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSeverityWithSize' })
+  .register(themeSchemaRegistry, { id: 'menubarSeverityWithSize', axis: 'none' })
 
 export const menubarItem = z
   .object({
@@ -89,7 +89,7 @@ export const menubarItem = z
     focusRing: borderWithShadow.optional(),
     tooltip: tooltip.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarItem' })
+  .register(themeSchemaRegistry, { id: 'menubarItem', axis: 'none' })
 
 export const menubarSubmenuScreenSettings = z
   .object({
@@ -99,7 +99,7 @@ export const menubarSubmenuScreenSettings = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSubmenuScreenSettings' })
+  .register(themeSchemaRegistry, { id: 'menubarSubmenuScreenSettings', axis: 'none' })
 
 export const menubarSubmenu = z
   .object({
@@ -122,11 +122,11 @@ export const menubarSubmenu = z
     maxWidth: withRef(z.string()).default('20rem'),
     screenSettings: (menubarSubmenuScreenSettings as typeof menubarSubmenuScreenSettings).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'menubarSubmenu' })
+  .register(themeSchemaRegistry, { id: 'menubarSubmenu', axis: 'none' })
 
 export const menubarSeparator = border
   .default(DEFAULT_MENUBAR_BORDER)
-  .register(themeSchemaRegistry, { id: 'menubarSeparator' })
+  .register(themeSchemaRegistry, { id: 'menubarSeparator', axis: 'none' })
 
 //todo: when p-button schema is added use it instead of menubarMobileButton schema
 export const menubarMobileButton = z
@@ -147,7 +147,7 @@ export const menubarMobileButton = z
     }),
     focusRing: borderWithShadow.default(DEFAULT_MENUBAR_FOCUS_RING),
   })
-  .register(themeSchemaRegistry, { id: 'menubarMobileButton' })
+  .register(themeSchemaRegistry, { id: 'menubarMobileButton', axis: 'none' })
 
 export const menubar = z
   .object({
@@ -171,4 +171,4 @@ export const menubar = z
       }),
     }),
   })
-  .register(themeSchemaRegistry, { id: 'menubar' })
+  .register(themeSchemaRegistry, { id: 'menubar', axis: 'none' })

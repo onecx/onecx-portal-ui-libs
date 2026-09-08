@@ -26,5 +26,5 @@ export class DataviewFooterSchema {
       ...this.tokens,
       paginator: (DataviewPaginatorSchema.schema as typeof DataviewPaginatorSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataviewFooter' })
+    .register(themeSchemaRegistry, { id: 'dataviewFooter', axis: 'none' })
 }

@@ -14,5 +14,5 @@ export class TabsSettingsSchema {
         showNavigators: withRef(z.boolean()).default(true),
         scrollStrategy: withRef(z.union([z.enum(['nearest', 'center']), z.literal(false)])).default('nearest'),
     })
-    .register(themeSchemaRegistry, { id: 'tabsSettings' })
+    .register(themeSchemaRegistry, { id: 'tabsSettings', axis: 'none' })
 }

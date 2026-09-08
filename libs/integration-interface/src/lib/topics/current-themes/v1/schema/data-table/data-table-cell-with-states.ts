@@ -97,7 +97,7 @@ export class DataTableCellWithStatesSchema {
       selected: z.object({...this.selectedTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableCellWithStates' });
+    .register(themeSchemaRegistry, { id: 'dataTableCellWithStates', axis: 'none' });
 }
 
 export const dataTableCellWithStates = DataTableCellWithStatesSchema.schema;

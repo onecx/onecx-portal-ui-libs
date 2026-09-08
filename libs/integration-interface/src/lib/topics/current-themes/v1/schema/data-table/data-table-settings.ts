@@ -8,4 +8,4 @@ export const dataTableSettings = z
     actionColumnPosition: withRef(z.enum(['start', 'end'])).default('end'),
     actionColumnSticky: withRef(z.boolean()).default(false),
   })
-  .register(themeSchemaRegistry, { id: 'dataTableSettings' });
+  .register(themeSchemaRegistry, { id: 'dataTableSettings', axis: 'none' });

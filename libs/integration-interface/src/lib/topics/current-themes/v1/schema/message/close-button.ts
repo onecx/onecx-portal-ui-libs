@@ -30,5 +30,5 @@ export class CloseButtonMessageSchema {
       primary: PrimaryCloseMessageSchema.schema as typeof PrimaryCloseMessageSchema.schema,
       secondary: SecondaryCloseMessageSchema.schema as typeof SecondaryCloseMessageSchema.schema,
     })
-    .register(themeSchemaRegistry, { id: 'messageCloseButton' })
+    .register(themeSchemaRegistry, { id: 'messageCloseButton', axis: 'child' })
 }

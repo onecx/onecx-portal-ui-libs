@@ -32,5 +32,5 @@ export class TabsTabListSchema {
         ...this.tokens,
         content: (TabsListContentSchema.schema as typeof TabsListContentSchema.schema).prefault({}),
         })
-        .register(themeSchemaRegistry, { id: "tabsTabList" })
+        .register(themeSchemaRegistry, { id: "tabsTabList", axis: 'none' })
 }

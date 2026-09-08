@@ -6,5 +6,5 @@ import { themeSchemaRegistry } from '../registry'
  * Schema for picklist control button allowing users to move items between the source and target lists in the picklist component.
  */
 export class PicklistControlButtonSchema {
-  static readonly schema = z.object({}).register(themeSchemaRegistry, { id: 'picklistControlButton' })
+  static readonly schema = z.object({}).register(themeSchemaRegistry, { id: 'picklistControlButton', axis: 'none' })
 }

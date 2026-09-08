@@ -93,7 +93,7 @@ export class DataTableHeaderRowSchema {
       focus: z.object({...this.focusTokens}).prefault({}),
       focusRing: z.object({...this.focusRingTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableHeaderRow' });
+    .register(themeSchemaRegistry, { id: 'dataTableHeaderRow', axis: 'none' });
 }
 
 export const dataTableHeaderRow = DataTableHeaderRowSchema.schema;

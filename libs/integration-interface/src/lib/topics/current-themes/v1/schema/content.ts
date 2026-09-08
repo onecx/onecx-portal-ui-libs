@@ -14,7 +14,7 @@ export const contentTitle = z
       style: '{{primitives.font.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'contentTitle' })
+  .register(themeSchemaRegistry, { id: 'contentTitle', axis: 'none' })
 export const content = z
   .object({
     background: z
@@ -43,4 +43,4 @@ export const content = z
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
     title: (contentTitle as typeof contentTitle).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'content' })
+  .register(themeSchemaRegistry, { id: 'content', axis: 'none' })

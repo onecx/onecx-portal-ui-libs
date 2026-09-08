@@ -38,7 +38,7 @@ export class DataTableStylesSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'dataTableStyles' });
+    .register(themeSchemaRegistry, { id: 'dataTableStyles', axis: 'none' });
 }
 
 export const dataTableStyles = DataTableStylesSchema.schema;

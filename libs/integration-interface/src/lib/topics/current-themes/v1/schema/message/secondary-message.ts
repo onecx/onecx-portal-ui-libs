@@ -257,5 +257,5 @@ export class SecondaryMessageSchema {
     .object({
       ...this.severityTokens,
     })
-    .register(themeSchemaRegistry, { id: 'secondaryMessage' })
+    .register(themeSchemaRegistry, { id: 'secondaryMessage', axis: 'child' })
 }

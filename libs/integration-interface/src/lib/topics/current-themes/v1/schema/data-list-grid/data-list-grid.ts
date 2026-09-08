@@ -33,7 +33,7 @@ export class DataListGridSchema {
         DataListGridItemRowSchema.schema as typeof DataListGridItemRowSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataListGrid' });
+    .register(themeSchemaRegistry, { id: 'dataListGrid', axis: 'none' });
 }
 
 export const dataListGrid = DataListGridSchema.schema;

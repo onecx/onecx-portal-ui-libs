@@ -7,5 +7,5 @@ export class FieldsetSettingsSchema {
       toggleable: z.boolean().default(true),
       collapsed: z.boolean().default(true),
     })
-    .register(themeSchemaRegistry, { id: 'fieldsetSettings' })
+    .register(themeSchemaRegistry, { id: 'fieldsetSettings', axis: 'none' })
 }

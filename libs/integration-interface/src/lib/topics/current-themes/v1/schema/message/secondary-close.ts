@@ -204,6 +204,6 @@ export class SecondaryCloseMessageSchema {
 
   static readonly schema = (SecondaryCloseMessageSchema.close as typeof SecondaryCloseMessageSchema.close).register(
     themeSchemaRegistry,
-    { id: 'secondaryMessageCloseButton' }
+    { id: 'secondaryMessageCloseButton', axis: 'child' }
   )
 }

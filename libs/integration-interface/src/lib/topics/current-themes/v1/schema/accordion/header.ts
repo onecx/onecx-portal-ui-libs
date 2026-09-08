@@ -120,5 +120,5 @@ export class AccordionHeaderSchema {
         })
         .prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'accordionHeader' })
+    .register(themeSchemaRegistry, { id: 'accordionHeader', axis: 'child' })
 }

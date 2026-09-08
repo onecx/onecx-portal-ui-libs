@@ -9,5 +9,5 @@ export class MessageSettingsSchema {
       delay: withRef(z.number()).default(300),
       showMultiple: withRef(z.boolean()).default(true),
     })
-    .register(themeSchemaRegistry, { id: 'messageSettings' })
+    .register(themeSchemaRegistry, { id: 'messageSettings', axis: 'child' })
 }

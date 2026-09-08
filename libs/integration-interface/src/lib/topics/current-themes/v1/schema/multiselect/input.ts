@@ -88,5 +88,5 @@ export class MultiselectInputSchema {
       focus: this.focusTokens.prefault({}),
       active: this.activeTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectInput' })
+    .register(themeSchemaRegistry, { id: 'multiselectInput', axis: 'none' })
 }

@@ -11,7 +11,7 @@ export const loadingIndicatorOverlay = z
       .union([bg, withRef(z.string())])
       .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
   })
-  .register(themeSchemaRegistry, { id: 'loadingIndicatorOverlay' })
+  .register(themeSchemaRegistry, { id: 'loadingIndicatorOverlay', axis: 'none' })
 
 export const loadingIndicatorSpinner = z
   .object({
@@ -25,11 +25,11 @@ export const loadingIndicatorSpinner = z
       .prefault({}),
     animationDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
   })
-  .register(themeSchemaRegistry, { id: 'loadingIndicatorSpinner' })
+  .register(themeSchemaRegistry, { id: 'loadingIndicatorSpinner', axis: 'none' })
 
 export const loadingIndicator = z
   .object({
     overlay: (loadingIndicatorOverlay as typeof loadingIndicatorOverlay).prefault({}),
     spinner: (loadingIndicatorSpinner as typeof loadingIndicatorSpinner).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'loadingIndicator' })
+  .register(themeSchemaRegistry, { id: 'loadingIndicator', axis: 'none' })

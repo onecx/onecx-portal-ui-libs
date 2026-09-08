@@ -46,5 +46,5 @@ export class MessageSchema {
       primary: (PrimaryMessageSchema.schema as typeof PrimaryMessageSchema.schema).prefault({}),
       secondary: (SecondaryMessageSchema.schema as typeof SecondaryMessageSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'message' })
+    .register(themeSchemaRegistry, { id: 'message', axis: 'none' })
 }

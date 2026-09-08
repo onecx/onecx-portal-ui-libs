@@ -12,7 +12,7 @@ export const rippleSettings = z
     centered: withRef(z.boolean()).default(false),
     radius: withRef(z.number()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'rippleSettings' })
+  .register(themeSchemaRegistry, { id: 'rippleSettings', axis: 'none' })
 
 export const ripple = z
   .object({
@@ -21,4 +21,4 @@ export const ripple = z
       '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'
     ),
   })
-  .register(themeSchemaRegistry, { id: 'ripple' })
+  .register(themeSchemaRegistry, { id: 'ripple', axis: 'none' })

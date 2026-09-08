@@ -159,5 +159,5 @@ export class PanelMenuHeaderSchema {
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenuHeader' })
+    .register(themeSchemaRegistry, { id: 'panelmenuHeader', axis: 'none' })
 }

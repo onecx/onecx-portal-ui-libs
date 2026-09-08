@@ -18,5 +18,5 @@ export class TabsViewportSchema {
         .object({
             ...this.tokens,
         })
-        .register(themeSchemaRegistry, { id: 'tabsViewport' })
+        .register(themeSchemaRegistry, { id: 'tabsViewport', axis: 'none' })
 }   

@@ -11,5 +11,5 @@ export class TabsNavButtonSchema {
   static readonly schema = z.object({
     nextIcon: withRef(z.string()).default('{{primitives.icon.arrowRight}}'),
     prevIcon: withRef(z.string()).default('{{primitives.icon.arrowLeft}}'),
-  }).register(themeSchemaRegistry, { id: 'tabsNavButton' })
+  }).register(themeSchemaRegistry, { id: 'tabsNavButton', axis: 'none' })
 }

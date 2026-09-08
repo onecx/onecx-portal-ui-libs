@@ -11,7 +11,7 @@ export const tooltipSettings = z
     showDelay: withRef(z.number()).default(0),
     hideDelay: withRef(z.number()).default(0),
   })
-  .register(themeSchemaRegistry, { id: 'tooltipSettings' })
+  .register(themeSchemaRegistry, { id: 'tooltipSettings', axis: 'none' })
 
 export const tooltip = z
   .object({
@@ -32,4 +32,4 @@ export const tooltip = z
       .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
     color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
   })
-  .register(themeSchemaRegistry, { id: 'tooltip' })
+  .register(themeSchemaRegistry, { id: 'tooltip', axis: 'none' })

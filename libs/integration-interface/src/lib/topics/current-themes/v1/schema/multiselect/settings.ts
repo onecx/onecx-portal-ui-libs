@@ -21,5 +21,5 @@ export class MultiselectSettingsSchema {
       display: withRef(z.enum(['chip', 'comma'])).optional(),
       maxSelectedLabels: withRef(z.number()).optional(),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectSettings' })
+    .register(themeSchemaRegistry, { id: 'multiselectSettings', axis: 'none' })
 }

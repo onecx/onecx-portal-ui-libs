@@ -13,13 +13,13 @@ export const carouselSettings = z
     circular: withRef(z.boolean()).default(false),
     autoplayInterval: withRef(z.number()).default(0),
   })
-  .register(themeSchemaRegistry, { id: 'carouselSettings' })
+  .register(themeSchemaRegistry, { id: 'carouselSettings', axis: 'none' })
 
 export const carouselTransition = z
   .object({
     duration: withRef(z.string()).default('{{primitives.transition.duration}}'),
   })
-  .register(themeSchemaRegistry, { id: 'carouselTransition' })
+  .register(themeSchemaRegistry, { id: 'carouselTransition', axis: 'none' })
 
 export const carouselContainer = bgContrast
   .extend({
@@ -36,13 +36,13 @@ export const carouselContainer = bgContrast
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselContainer' })
+  .register(themeSchemaRegistry, { id: 'carouselContainer', axis: 'none' })
 
 export const carouselContent = z
   .object({
     gap: withRef(z.string()).default('{{primitives.space.md}}'),
   })
-  .register(themeSchemaRegistry, { id: 'carouselContent' })
+  .register(themeSchemaRegistry, { id: 'carouselContent', axis: 'none' })
 
 // Navigation button hover state — same tokens as default (bg, contrast, border)
 export const carouselNavigationButtonHover = z
@@ -59,7 +59,7 @@ export const carouselNavigationButtonHover = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonHover' })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonHover', axis: 'none' })
 
 // Navigation button active state — same tokens as default (bg, contrast, border)
 export const carouselNavigationButtonActive = z
@@ -76,7 +76,7 @@ export const carouselNavigationButtonActive = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonActive' })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonActive', axis: 'none' })
 
 // Navigation button focus state — same tokens as default (bg, contrast, border)
 export const carouselNavigationButtonFocus = z
@@ -93,7 +93,7 @@ export const carouselNavigationButtonFocus = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonFocus' })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButtonFocus', axis: 'none' })
 
 // Navigation button — default state tokens + nested states (hover, active, focus)
 // focusRing is at the variant level, NOT inside state objects.
@@ -123,7 +123,7 @@ export const carouselNavigationButton = bgContrast
     active: (carouselNavigationButtonActive as typeof carouselNavigationButtonActive).prefault({}),
     focus: (carouselNavigationButtonFocus as typeof carouselNavigationButtonFocus).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'carouselNavigationButton' })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButton', axis: 'none' })
 
 // Indicator hover state — same tokens as default (bg, contrast, border)
 export const carouselIndicatorHover = z
@@ -140,7 +140,7 @@ export const carouselIndicatorHover = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselIndicatorHover' })
+  .register(themeSchemaRegistry, { id: 'carouselIndicatorHover', axis: 'none' })
 
 // Indicator active state — same tokens as default (bg, contrast, border)
 export const carouselIndicatorActive = z
@@ -157,7 +157,7 @@ export const carouselIndicatorActive = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselIndicatorActive' })
+  .register(themeSchemaRegistry, { id: 'carouselIndicatorActive', axis: 'none' })
 
 // Indicator focus state — same tokens as default (bg, contrast, border)
 export const carouselIndicatorFocus = z
@@ -174,7 +174,7 @@ export const carouselIndicatorFocus = z
       offset: '{{primitives.border.offset.none}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'carouselIndicatorFocus' })
+  .register(themeSchemaRegistry, { id: 'carouselIndicatorFocus', axis: 'none' })
 
 // Indicator — default state tokens (bg, contrast, border, width, height, focusRing) + nested states
 // focusRing is at the variant level, NOT inside state objects.
@@ -205,7 +205,7 @@ export const carouselIndicator = bgContrast
     active: (carouselIndicatorActive as typeof carouselIndicatorActive).prefault({}),
     focus: (carouselIndicatorFocus as typeof carouselIndicatorFocus).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'carouselIndicator' })
+  .register(themeSchemaRegistry, { id: 'carouselIndicator', axis: 'none' })
 
 export const carousel = z
   .object({
@@ -216,4 +216,4 @@ export const carousel = z
     navigationButton: (carouselNavigationButton as typeof carouselNavigationButton).prefault({}),
     indicator: (carouselIndicator as typeof carouselIndicator).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'carousel' })
+  .register(themeSchemaRegistry, { id: 'carousel', axis: 'none' })

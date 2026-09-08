@@ -25,5 +25,5 @@ export class TabsActiveBarSchema {
         .object({
             ...this.tokens,
         })
-        .register(themeSchemaRegistry, { id: 'tabsActiveBar' })
+        .register(themeSchemaRegistry, { id: 'tabsActiveBar', axis: 'none' })
 }

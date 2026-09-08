@@ -33,7 +33,7 @@ export const togglebuttonSettings = z
   .object({
     // Component-specific settings can be added here if needed
   })
-  .register(themeSchemaRegistry, { id: 'togglebuttonSettings' })
+  .register(themeSchemaRegistry, { id: 'togglebuttonSettings', axis: 'none' })
 
 // Default (unchecked) interaction states
 export const hoverTogglebuttonTokens = z.object({
@@ -271,4 +271,4 @@ export const togglebutton = z
     // Content child-element
     content: contentTogglebuttonTokens.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'togglebutton' })
+  .register(themeSchemaRegistry, { id: 'togglebutton', axis: 'none' })

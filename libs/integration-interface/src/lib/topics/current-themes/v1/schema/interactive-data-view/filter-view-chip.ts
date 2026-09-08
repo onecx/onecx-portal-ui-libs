@@ -102,7 +102,7 @@ export class FilterViewChipSchema {
       hover: z.object({...this.hoverTokens,}).prefault({}),
       disabled: z.object({...this.disabledTokens,}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'filterViewChip' });
+    .register(themeSchemaRegistry, { id: 'filterViewChip', axis: 'none' });
 }
 
 export const filterViewChip = FilterViewChipSchema.schema;

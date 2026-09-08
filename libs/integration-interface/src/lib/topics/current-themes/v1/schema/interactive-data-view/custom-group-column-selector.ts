@@ -34,7 +34,7 @@ export class CustomGroupColumnSelectorSchema {
         CustomGroupColumnSelectorSkeletonSchema.schema as typeof CustomGroupColumnSelectorSkeletonSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'customGroupColumnSelector' });
+    .register(themeSchemaRegistry, { id: 'customGroupColumnSelector', axis: 'none' });
 }
 
 export const customGroupColumnSelector = CustomGroupColumnSelectorSchema.schema;
