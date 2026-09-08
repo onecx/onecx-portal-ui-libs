@@ -148,6 +148,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() contentStyleClass: string | undefined
   @Input() expandable = false
   @Input() frozenExpandColumn = false
+  @Input() draggableColumnGroupSelectorDialog = true
   @Input() expandedRows: Row[] | string[] | number[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   primeNgTableCell: TemplateRef<any> | undefined
