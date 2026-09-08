@@ -29,6 +29,8 @@ import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { searchHeader } from './schema/search-header'
+import { content } from './schema/content'
+import { dataview } from './schema/dataview'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -59,6 +61,8 @@ type UsagesInput = {
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeader>
   searchHeader?: z.input<typeof searchHeader>
+  content?: z.input<typeof content>
+  dataview?: z.input<typeof dataview>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -91,6 +95,8 @@ const usages: z.ZodType<UsagesInput> = z
     breadcrumb: (breadcrumb as typeof breadcrumb).optional(),
     pageHeader: (pageHeader as typeof pageHeader).optional(),
     searchHeader: (searchHeader as typeof searchHeader).optional(),
+    content: (content as typeof content).optional(),
+    dataview: (dataview as typeof dataview).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 

@@ -293,7 +293,8 @@ describe('search header schema - should test - ', () => {
     const value = result?.searchResetPanel
     expectExactUndefinedTokens(value, SearchHeaderSchema.searchResetPanel.shape, [])
     expectExactTokens(value, {
-      padding: '{{primitives.space.md}}',
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
       alignItems: 'center',
     })
   })

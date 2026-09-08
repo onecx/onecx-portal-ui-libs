@@ -13,7 +13,8 @@ export class SearchHeaderSchema {
   })
 
   static readonly searchResetPanel = z.object({
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
     alignItems: withRef(z.string()).default('center'),
   })
 

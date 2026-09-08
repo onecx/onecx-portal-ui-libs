@@ -21,6 +21,8 @@ import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
 import { pageHeaderCssRules } from './usages/page-header.rules'
 import { searchHeaderCssRules } from './usages/search-header.rules'
+import { contentCssRules } from './usages/content.rules'
+import { dataviewCssRules } from './usages/dataview.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -45,4 +47,6 @@ export const usageCssRules: CssRule[] = [
   ...panelmenuCssRules,
   ...pageHeaderCssRules,
   ...searchHeaderCssRules
+  ...contentCssRules,
+  ...dataviewCssRules,
 ]
