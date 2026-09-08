@@ -138,6 +138,96 @@ describe('CustomGroupColumnSelectorComponent', () => {
     })
   })
 
+  describe('hasActiveColumns computed property', () => {
+    it('should return false when displayedColumnsModel is empty', () => {
+      component.displayedColumnsModel.set([])
+
+      expect(component.hasActiveColumns()).toBe(false)
+    })
+
+    it('should return true when displayedColumnsModel has columns', () => {
+      const c1 = makeColumn('c1')
+      component.displayedColumnsModel.set([c1])
+
+      expect(component.hasActiveColumns()).toBe(true)
+    })
+  })
+
+  describe('syncColumnModels', () => {
+    it('should resynchronize computed state after PickList mutates arrays in place', () => {
+      const c1 = makeColumn('c1')
+      const c2 = makeColumn('c2')
+
+      component.displayedColumnsModel.set([c1])
+      component.hiddenColumnsModel.set([c2])
+
+      expect(component.hasActiveColumns()).toBe(true)
+
+      // Simulate an in-place empty transfer from active -> inactive
+      component.displayedColumnsModel().splice(0, 1)
+      component.hiddenColumnsModel().push(c1)
+      expect(component.hasActiveColumns()).toBe(true)
+
+      component.syncColumnModels()
+
+      expect(component.displayedColumnsModel()).toEqual([])
+      expect(component.hiddenColumnsModel()).toEqual([c2, c1])
+      expect(component.hasActiveColumns()).toBe(false)
+
+      // Simulate an in-place reactivation from inactive -> active
+      component.hiddenColumnsModel().splice(1, 1)
+      component.displayedColumnsModel().push(c1)
+      expect(component.hasActiveColumns()).toBe(false)
+
+      component.syncColumnModels()
+
+      expect(component.displayedColumnsModel()).toEqual([c1])
+      expect(component.hiddenColumnsModel()).toEqual([c2])
+      expect(component.hasActiveColumns()).toBe(true)
+    })
+  })
+
+  describe('onSaveClick with empty active columns guard', () => {
+    it('should not emit columnSelectionChanged when displayedColumnsModel is empty', () => {
+      const c1 = makeColumn('c1')
+      component.displayedColumns.set([c1])
+
+      // First open the dialog to set visible = true
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      expect(component.visible()).toBe(true)
+
+      // Then clear the displayedColumnsModel
+      component.displayedColumnsModel.set([])
+
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
+      const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(component.visible()).toBe(true) // Should not close dialog
+      expect(columnChangedSpy).not.toHaveBeenCalled()
+      expect(stateSpy).not.toHaveBeenCalled()
+    })
+
+    it('should not emit when displayedColumnsModel is empty even if displayedColumns was not empty', () => {
+      const c1 = makeColumn('c1')
+      component.displayedColumns.set([c1])
+
+      // First open the dialog
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      expect(component.visible()).toBe(true)
+
+      // Then clear the displayedColumnsModel
+      component.displayedColumnsModel.set([])
+
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(columnChangedSpy).not.toHaveBeenCalled()
+    })
+  })
+
   describe('constructor effect', () => {
     it('should emit componentStateChanged when displayedColumns changes (effect)', () => {
       fixture.componentRef.setInput('frozenActionColumn', true)
