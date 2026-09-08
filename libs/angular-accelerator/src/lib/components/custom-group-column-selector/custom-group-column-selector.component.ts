@@ -63,6 +63,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() inactiveColumnsLabelKey = ''
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
+  @Input() draggableColumnGroupSelectorDialog = true
 
   @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
   @Output() actionColumnConfigChanged: EventEmitter<ActionColumnChangedEvent> = new EventEmitter()
