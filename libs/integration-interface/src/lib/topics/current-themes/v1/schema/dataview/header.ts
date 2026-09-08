@@ -26,5 +26,5 @@ export class DataviewHeaderSchema {
       ...this.tokens,
       paginator: (DataviewPaginatorSchema.schema as typeof DataviewPaginatorSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataviewHeader' })
+    .register(themeSchemaRegistry, { id: 'dataviewHeader', axis: 'none' })
 }

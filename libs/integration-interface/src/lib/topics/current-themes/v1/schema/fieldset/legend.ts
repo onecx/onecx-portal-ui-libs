@@ -102,5 +102,5 @@ export class LegendSchema {
       disabled: this.disabledTokens.prefault({}),
       toggleIcon: this.iconTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'legend' })
+    .register(themeSchemaRegistry, { id: 'legend', axis: 'none' })
 }

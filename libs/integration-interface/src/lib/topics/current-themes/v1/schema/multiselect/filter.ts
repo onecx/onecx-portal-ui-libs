@@ -29,5 +29,5 @@ export class MultiselectFilterSchema {
         ...this.defaultFilterIcon,
       }),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectFilter' })
+    .register(themeSchemaRegistry, { id: 'multiselectFilter', axis: 'none' })
 }

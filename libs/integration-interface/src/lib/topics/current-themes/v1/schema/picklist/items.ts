@@ -21,5 +21,5 @@ export class PicklistPanelItemsSchema {
       item: (PicklistPanelItemSchema.schema as typeof PicklistPanelItemSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'picklistPanelItems' })
+    .register(themeSchemaRegistry, { id: 'picklistPanelItems', axis: 'none' })
 }

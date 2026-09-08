@@ -20,5 +20,5 @@ export class MultiselectGroupHeaderSchema {
       paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
       paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectGroupHeader' })
+    .register(themeSchemaRegistry, { id: 'multiselectGroupHeader', axis: 'none' })
 }

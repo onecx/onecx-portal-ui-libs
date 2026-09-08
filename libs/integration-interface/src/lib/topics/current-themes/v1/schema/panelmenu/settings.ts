@@ -11,5 +11,5 @@ export class PanelMenuSettingsSchema {
     .object({
       multiple: withRef(z.boolean()).default(false),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenuSettings' })
+    .register(themeSchemaRegistry, { id: 'panelmenuSettings', axis: 'none' })
 }

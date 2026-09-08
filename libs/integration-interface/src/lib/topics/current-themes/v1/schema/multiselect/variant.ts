@@ -14,5 +14,5 @@ export class MultiselectVariantSchema {
       ).prefault({}),
       overlay: (MultiselectOverlaySchema.schema as typeof MultiselectOverlaySchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectVariant' })
+    .register(themeSchemaRegistry, { id: 'multiselectVariant', axis: 'none' })
 }

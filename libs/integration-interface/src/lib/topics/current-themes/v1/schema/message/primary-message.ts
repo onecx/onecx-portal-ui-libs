@@ -249,5 +249,5 @@ export class PrimaryMessageSchema {
       ...this.severityTokens,
     })
     .prefault({})
-    .register(themeSchemaRegistry, { id: 'primaryMessage' })
+    .register(themeSchemaRegistry, { id: 'primaryMessage', axis: 'child' })
 }

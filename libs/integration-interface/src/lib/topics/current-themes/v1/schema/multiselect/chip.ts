@@ -74,5 +74,5 @@ export class MultiselectChipSchema {
         MultiselectChipRemoveIconButtonSchema.schema as typeof MultiselectChipRemoveIconButtonSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectChip' })
+    .register(themeSchemaRegistry, { id: 'multiselectChip', axis: 'none' })
 }

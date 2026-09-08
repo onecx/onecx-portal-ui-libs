@@ -26,5 +26,5 @@ export class TabsListContentSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: "tabsListContent" })
+    .register(themeSchemaRegistry, { id: "tabsListContent", axis: 'none' })
 }

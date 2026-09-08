@@ -17,5 +17,5 @@ export class MultiselectEmptyMessageSchema {
       }),
       color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectEmptyMessage' })
+    .register(themeSchemaRegistry, { id: 'multiselectEmptyMessage', axis: 'none' })
 }

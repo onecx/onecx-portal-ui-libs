@@ -9,7 +9,7 @@ const icon = z
     url: z.string().optional(),
     content: z.string().optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dropdownIcon' })
+  .register(themeSchemaRegistry, { id: 'dropdownIcon', axis: 'none' })
 
 export const settings = z
   .object({
@@ -30,14 +30,14 @@ export const settings = z
     appendTo: withRef(z.enum(['self', 'body'])).optional(),
     lazyLoading: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dropdownSettings' })
+  .register(themeSchemaRegistry, { id: 'dropdownSettings', axis: 'none' })
 
 export const stateVariant = bgContrast
   .extend({
     border: border.optional(),
     triggerIcon: icon.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dropdownStateVariant' })
+  .register(themeSchemaRegistry, { id: 'dropdownStateVariant', axis: 'none' })
 
 const optionalStateVariant = (stateVariant as typeof stateVariant).optional()
 
@@ -49,7 +49,7 @@ export const stateVariants = z
     focus: optionalStateVariant,
     expanded: optionalStateVariant,
   })
-  .register(themeSchemaRegistry, { id: 'dropdownStateVariants' })
+  .register(themeSchemaRegistry, { id: 'dropdownStateVariants', axis: 'none' })
 
 export const container = bgContrast
   .extend({
@@ -64,21 +64,21 @@ export const container = bgContrast
     width: withRef(z.string()).optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownContainer' })
+  .register(themeSchemaRegistry, { id: 'dropdownContainer', axis: 'none' })
 
 export const overlay = bgContrast
   .extend({
     border: borderWithShadow.optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownOverlay' })
+  .register(themeSchemaRegistry, { id: 'dropdownOverlay', axis: 'none' })
 
 export const list = font
   .extend({
     space: space.optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownList' })
+  .register(themeSchemaRegistry, { id: 'dropdownList', axis: 'none' })
 
 const tokenString = withRef(z.string()).optional()
 
@@ -123,7 +123,7 @@ export const option = z
     group: groupedOption,
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownOption' })
+  .register(themeSchemaRegistry, { id: 'dropdownOption', axis: 'none' })
 
 export const clear = z
   .object({
@@ -138,7 +138,7 @@ export const clear = z
       .optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownClear' })
+  .register(themeSchemaRegistry, { id: 'dropdownClear', axis: 'none' })
 
 export const checkmark = z
   .object({
@@ -146,7 +146,7 @@ export const checkmark = z
     space: space.optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownCheckmark' })
+  .register(themeSchemaRegistry, { id: 'dropdownCheckmark', axis: 'none' })
 
 export const empty = z
   .object({
@@ -157,7 +157,7 @@ export const empty = z
       .optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownEmpty' })
+  .register(themeSchemaRegistry, { id: 'dropdownEmpty', axis: 'none' })
 
 export const dropdown = z
   .object({
@@ -170,4 +170,4 @@ export const dropdown = z
     checkmark,
     empty,
   })
-  .register(themeSchemaRegistry, { id: 'dropdown' })
+  .register(themeSchemaRegistry, { id: 'dropdown', axis: 'none' })

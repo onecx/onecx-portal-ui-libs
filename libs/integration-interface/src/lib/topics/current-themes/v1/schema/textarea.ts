@@ -66,7 +66,7 @@ export const textareaSettings = z
     variant: withRef(z.enum(['filled', 'outlined'])).optional(),
     fluid: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'textareaSettings' })
+  .register(themeSchemaRegistry, { id: 'textareaSettings', axis: 'none' })
 
 export const textareaSize = z
   .object({
@@ -74,7 +74,7 @@ export const textareaSize = z
     paddingX: withRef(z.string()).optional(),
     paddingY: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'textareaSize' })
+  .register(themeSchemaRegistry, { id: 'textareaSize', axis: 'none' })
 
 // Border with shadow — reused across all variant levels
 const borderToken = borderWithShadow.default(borderDefaults)
@@ -100,7 +100,7 @@ export const textareaStyles = z
     placeholderColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     cursor: withRef(z.string()).default('pointer'),
   })
-  .register(themeSchemaRegistry, { id: 'textareaStyles' })
+  .register(themeSchemaRegistry, { id: 'textareaStyles', axis: 'none' })
 
 // Hover state for default variant
 export const hoverTextareaStyles = z
@@ -117,7 +117,7 @@ export const hoverTextareaStyles = z
       style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'hoverTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'hoverTextareaStyles', axis: 'none' })
 
 // Active state for default variant
 export const activeTextareaStyles = z
@@ -133,7 +133,7 @@ export const activeTextareaStyles = z
       style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'activeTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'activeTextareaStyles', axis: 'none' })
 
 // Focus state for default variant
 export const focusTextareaStyles = z
@@ -149,7 +149,7 @@ export const focusTextareaStyles = z
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'focusTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'focusTextareaStyles', axis: 'none' })
 
 // Disabled state for default variant
 export const disabledTextareaStyles = z
@@ -166,7 +166,7 @@ export const disabledTextareaStyles = z
       style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'disabledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'disabledTextareaStyles', axis: 'none' })
 
 // Invalid state for default variant
 export const invalidTextareaStyles = z
@@ -182,7 +182,7 @@ export const invalidTextareaStyles = z
       style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'invalidTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'invalidTextareaStyles', axis: 'none' })
 
 // Filled variant default styles
 export const filledTextareaStyles = z
@@ -200,7 +200,7 @@ export const filledTextareaStyles = z
     }),
     focusRing: borderWithShadow.optional().default(focusRingDefaults),
   })
-  .register(themeSchemaRegistry, { id: 'filledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'filledTextareaStyles', axis: 'none' })
 
 // Hover state for filled variant
 export const hoverFilledTextareaStyles = z
@@ -216,7 +216,7 @@ export const hoverFilledTextareaStyles = z
       style: '{{primitives.variant.primary.state.hover.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'hoverFilledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'hoverFilledTextareaStyles', axis: 'none' })
 
 // Active state for filled variant
 export const activeFilledTextareaStyles = z
@@ -232,7 +232,7 @@ export const activeFilledTextareaStyles = z
       style: '{{primitives.variant.primary.state.active.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'activeFilledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'activeFilledTextareaStyles', axis: 'none' })
 
 // Focus state for filled variant
 export const focusFilledTextareaStyles = z
@@ -248,7 +248,7 @@ export const focusFilledTextareaStyles = z
       style: '{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'focusFilledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'focusFilledTextareaStyles', axis: 'none' })
 
 // Disabled state for filled variant
 export const disabledFilledTextareaStyles = z
@@ -264,7 +264,7 @@ export const disabledFilledTextareaStyles = z
       style: '{{primitives.variant.primary.state.disabled.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'disabledFilledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'disabledFilledTextareaStyles', axis: 'none' })
 
 // Invalid state for filled variant
 export const invalidFilledTextareaStyles = z
@@ -276,7 +276,7 @@ export const invalidFilledTextareaStyles = z
       style: '{{primitives.variant.primary.state.invalid.defaultSeverity.border.style}}',
     }),
   })
-  .register(themeSchemaRegistry, { id: 'invalidFilledTextareaStyles' })
+  .register(themeSchemaRegistry, { id: 'invalidFilledTextareaStyles', axis: 'none' })
 
 // Filled variant with all states
 export const filledTextareaStateWithStates = z
@@ -299,7 +299,7 @@ export const filledTextareaStateWithStates = z
     invalid: (invalidFilledTextareaStyles as typeof invalidFilledTextareaStyles).prefault({}),
     focusRing: borderWithShadow.optional().default(focusRingDefaults),
   })
-  .register(themeSchemaRegistry, { id: 'filledTextareaStateWithStates' })
+  .register(themeSchemaRegistry, { id: 'filledTextareaStateWithStates', axis: 'none' })
 
 export const textarea = z
   .object({
@@ -323,4 +323,4 @@ export const textarea = z
     focusRing: borderWithShadow.optional().default(focusRingDefaults),
     filled: (filledTextareaStateWithStates as typeof filledTextareaStateWithStates).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'textarea' })
+  .register(themeSchemaRegistry, { id: 'textarea', axis: 'none' })

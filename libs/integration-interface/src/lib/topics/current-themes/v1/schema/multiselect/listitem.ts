@@ -67,5 +67,5 @@ export class MultiselectListItemSchema {
       focus: this.focusTokens.prefault({}),
       selected: this.selectedTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectListItem' })
+    .register(themeSchemaRegistry, { id: 'multiselectListItem', axis: 'none' })
 }

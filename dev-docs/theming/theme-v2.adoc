@@ -51,6 +51,27 @@ ThemeProperties = {
 
 The Shell determines which version to use based on the `versions` array published alongside the theme data.
 
+[#schema-node-marker-and-axis-metadata]
+== Schema Node Marker and Axis Metadata
+
+`themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries a mandatory `axis` field on every registered schema node, with values `variant`, `state`, `severity`, `child`, or `none`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `stateVariants`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition or settings sub-schema nested inside a parent component, such as `messageCloseButton` or `accordionHeader`. `none` marks a structural pass-through wrapper that is not itself an axis-group or child boundary, such as `severityVariantGroup` or `variantWithStates`.
+
+link:{schema_root}/schema/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a build-time walker over the `theme` schema, and the precomputed constant `themeAxisMetadata`, both re-exported from the `integration-interface` package's public entry point. Each `LeafAxisMetadata` entry has: `leafPath` (the dot-joined path from schema root to the leaf), `variants` (the applicable named-variant keys), `states` (the applicable named-state keys), `severities` (the applicable named-severity keys), and `groups` (the ordered, innermost-first list of axis-group and child boundaries crossed on the path to this leaf, each with `kind`, `memberName`, and `groupPath`).
+
+[source,typescript]
+----
+themeAxisMetadata['v2.primitives.variant.primary.state.hover.severity.success.bg.color']
+// {
+//   leafPath: 'v2.primitives.variant.primary.state.hover.severity.success.bg.color',
+//   variants: ['primary'],
+//   states: ['hover'],
+//   severities: ['success'],
+//   groups: [ ... ],
+// }
+----
+
+This metadata is tenant-independent, derived purely from schema shape at module load, and contains no per-tenant or per-theme instance values. It is the contract the Shell runtime expands into CSS fallback chains, tracked under parent issue 545.
+
 [#primitives]
 == Primitives
 
