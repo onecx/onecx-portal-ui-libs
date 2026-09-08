@@ -28,9 +28,9 @@ import { panelmenu } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
-import { searchHeader } from './schema/search-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { searchHeader } from './schema/search-header'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -60,7 +60,6 @@ type UsagesInput = {
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeader>
-  searchHeader?: z.input<typeof searchHeader>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }

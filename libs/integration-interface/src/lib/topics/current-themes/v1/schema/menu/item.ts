@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, color, font, withRef } from '../primitives'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
 
 export class MenuItemSchema {
   static readonly iconFocus = {
@@ -67,6 +67,14 @@ export class MenuItemSchema {
     border: border.pick({ color: true, radius: true }).default({
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       radius: '{{primitives.border.radius.md}}',
+    }),
+    focusRing: borderWithShadow.default({
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+      width: '{{primitives.focusRing.width.md}}',
+      offset: '{{primitives.focusRing.offset.md}}',
+      radius: '{{primitives.focusRing.radius.md}}',
+      shadow: '{{primitives.focusRing.shadow.md}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
     }),
     label: z
       .object({

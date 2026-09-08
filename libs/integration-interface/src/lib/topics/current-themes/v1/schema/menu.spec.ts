@@ -24,6 +24,14 @@ const MENU_ITEM_BASE_TOKENS = {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     radius: '{{primitives.border.radius.md}}',
   },
+  focusRing: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    width: '{{primitives.focusRing.width.md}}',
+    offset: '{{primitives.focusRing.offset.md}}',
+    radius: '{{primitives.focusRing.radius.md}}',
+    shadow: '{{primitives.focusRing.shadow.md}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  },
   label: {
     font: {
       family: '{{primitives.font.family}}',
@@ -88,7 +96,7 @@ describe('menu schema - should validate following default tokens', () => {
         settings: expect.any(Object),
         item: expect.any(Object),
         submenuLabel: expect.any(Object),
-        submenuIcon: expect.any(Object),
+        submenuIconButton: expect.any(Object),
         separator: expect.any(Object),
       })
     })
@@ -166,7 +174,8 @@ describe('menu schema - should validate following default tokens', () => {
       expectExactTokens(value?.submenuLabel, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-        padding: '{{primitives.spacing.sm}}',
+        paddingX: '{{primitives.spacing.sm}}',
+        paddingY: '{{primitives.spacing.sm}}',
         font: {
           size: '{{primitives.font.size}}',
           weight: '{{primitives.font.weight.normal}}',
@@ -175,12 +184,12 @@ describe('menu schema - should validate following default tokens', () => {
     })
   })
 
-  describe('submenuIcon', () => {
+  describe('submenuIconButton', () => {
     it('base tokens', () => {
       const value = MenuSchema.schema.safeParse({}).data
 
-      expectExactUndefinedTokens(value?.submenuIcon, MenuSchema.submenuIcon.shape, [])
-      expectExactTokens(value?.submenuIcon, {
+      expectExactUndefinedTokens(value?.submenuIconButton, MenuSchema.submenuIconButton.shape, [])
+      expectExactTokens(value?.submenuIconButton, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         focus: {
           color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',

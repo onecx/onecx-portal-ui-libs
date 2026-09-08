@@ -46,7 +46,7 @@ export const usageCssRules: CssRule[] = [
   ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
   ...pageHeaderCssRules,
-  ...searchHeaderCssRules
+  ...searchHeaderCssRules,
   ...contentCssRules,
   ...dataviewCssRules,
 ]

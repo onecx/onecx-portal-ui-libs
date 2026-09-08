@@ -5,14 +5,15 @@ import { expectExactTokens, expectExactUndefinedTokens, expectUndefinedTokens } 
 const BREADCRUMB_ITEM_BASE_TOKENS = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-  border: { radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}' },
+  border: {
+    radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+    width: '{{primitives.border.width.md}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+  },
   gap: '{{primitives.space.sm}}',
   icon: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
     size: '{{primitives.icon.md}}',
-    hover: {
-      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-    },
   },
   label: {
     font: {
@@ -27,6 +28,8 @@ const BREADCRUMB_ITEM_BASE_TOKENS = {
     radius: '{{primitives.focusRing.radius.md}}',
     shadow: '{{primitives.focusRing.shadow.md}}',
   },
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
 }
 describe('breadcrumb schema', () => {
   it('parses an empty object', () => {
@@ -75,6 +78,7 @@ describe('breadcrumb schema', () => {
       expectExactUndefinedTokens(value, BreadcrumbSchema.separator.shape, [])
       expectExactTokens(value, {
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+        width: '{{primitives.border.width.md}}',
       })
     })
   })
@@ -109,6 +113,9 @@ describe('breadcrumb schema', () => {
         border: {
           color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
         },
+        icon: {
+          color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+        },
       })
     })
 
@@ -124,7 +131,10 @@ describe('breadcrumb schema', () => {
         color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
         border: {
           color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-        }
+        },
+        icon: {
+          color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+        },
       })
     })
 
@@ -141,6 +151,9 @@ describe('breadcrumb schema', () => {
         border: {
           color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
         },
+        icon: {
+          color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
+        },
       })
     })
 
@@ -156,6 +169,9 @@ describe('breadcrumb schema', () => {
         color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
         border: {
           color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+        },
+        icon: {
+          color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
         },
       })
     })

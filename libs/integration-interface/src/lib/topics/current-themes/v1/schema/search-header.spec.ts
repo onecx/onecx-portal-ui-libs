@@ -43,11 +43,13 @@ describe('search header schema - should inherit following tokens from page-heade
         width: '{{primitives.border.width.md}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+        shadow: '{{primitives.shadow.md}}',
       },
-      padding: '{{primitives.space.md}}',
-      shadow: '{{primitives.shadow.md}}',
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
       background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-      margin: '{{primitives.space.md}}',
+      marginX: '{{primitives.space.md}}',
+      marginY: '{{primitives.space.md}}',
       layout: expect.any(Object), // from search header schema
       controls: expect.any(Object), // from search header schema
       searchResetPanel: expect.any(Object), // from search header schema
@@ -155,10 +157,8 @@ describe('search header schema - should inherit following tokens from page-heade
       expectExactTokens(value, {
         padding: '{{primitives.space.md}}',
         gap: '{{primitives.space.md}}',
-        alignment: {
-          horizontal: 'center',
-          vertical: 'middle',
-        },
+        alignItems: 'center',
+        justifyContent: 'center',
       })
     })
   })
@@ -266,36 +266,35 @@ describe('search header schema - should inherit following tokens from page-heade
       })
     })
   })
-})
-
-describe('search header schema - should test - ', () => {
-  it('layout tokens', () => {
-    const result = SearchHeaderSchema.schema.safeParse({})?.data
-    const value = result?.layout
-    expectExactUndefinedTokens(value, SearchHeaderSchema.layout.shape, [])
-    expectExactTokens(value, {
-      rowGap: '{{primitives.space.md}}',
-      columnGap: '{{primitives.space.md}}',
+  describe('search header schema - should test - ', () => {
+    it('layout tokens', () => {
+      const result = SearchHeaderSchema.schema.safeParse({})?.data
+      const value = result?.layout
+      expectExactUndefinedTokens(value, SearchHeaderSchema.layout.shape, [])
+      expectExactTokens(value, {
+        rowGap: '{{primitives.space.md}}',
+        columnGap: '{{primitives.space.md}}',
+      })
     })
-  })
 
-  it('control tokens', () => {
-    const result = SearchHeaderSchema.schema.safeParse({})?.data
-    const value = result?.controls
-    expectExactUndefinedTokens(value, SearchHeaderSchema.controls.shape, [])
-    expectExactTokens(value, {
-      gap: '{{primitives.space.md}}',
+    it('control tokens', () => {
+      const result = SearchHeaderSchema.schema.safeParse({})?.data
+      const value = result?.controls
+      expectExactUndefinedTokens(value, SearchHeaderSchema.controls.shape, [])
+      expectExactTokens(value, {
+        gap: '{{primitives.space.md}}',
+      })
     })
-  })
 
-  it('search reset panel tokens', () => {
-    const result = SearchHeaderSchema.schema.safeParse({})?.data
-    const value = result?.searchResetPanel
-    expectExactUndefinedTokens(value, SearchHeaderSchema.searchResetPanel.shape, [])
-    expectExactTokens(value, {
-      paddingX: '{{primitives.space.md}}',
-      paddingY: '{{primitives.space.md}}',
-      alignItems: 'center',
+    it('search reset panel tokens', () => {
+      const result = SearchHeaderSchema.schema.safeParse({})?.data
+      const value = result?.searchResetPanel
+      expectExactUndefinedTokens(value, SearchHeaderSchema.searchResetPanel.shape, [])
+      expectExactTokens(value, {
+        paddingX: '{{primitives.space.md}}',
+        paddingY: '{{primitives.space.md}}',
+        alignItems: 'center',
+      })
     })
   })
 })

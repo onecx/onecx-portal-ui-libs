@@ -1,6 +1,6 @@
 import z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { bg, border, color, font, withRef } from '../primitives'
+import { bg, border, color, font, icon, withRef } from '../primitives'
 
 export class PageHeaderContentSchema {
   static readonly tokens = {
@@ -23,13 +23,17 @@ export class PageHeaderContentSchema {
 
   static readonly detailInfoIcon = z.object({
     color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    icon: z
-      .object({
-        size: withRef(z.string()).default('{{primitives.icon.md}}'),
+    icon: icon
+      .pick({ size: true })
+      .extend({
         width: withRef(z.string()).default('1rem'),
         height: withRef(z.string()).default('1rem'),
       })
-      .prefault({}),
+      .default({
+        size: '{{primitives.icon.md}}',
+        width: '1rem',
+        height: '1rem',
+      }),
     padding: z
       .object({
         right: withRef(z.string()).default('{{primitives.space.md}}'),

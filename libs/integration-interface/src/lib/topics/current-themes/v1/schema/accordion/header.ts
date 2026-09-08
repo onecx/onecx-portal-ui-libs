@@ -94,24 +94,10 @@ export class AccordionHeaderSchema {
   }
 
   private static readonly firstLastTokens = {
-    border: z
-      .object({
-        radius: z
-          .union([
-            withRef(z.string()),
-            z
-              .object({
-                top: z.string().optional(),
-                right: z.string().optional(),
-                bottom: z.string().optional(),
-                left: z.string().optional(),
-              })
-              .prefault({}),
-          ])
-          .prefault({}),
-        width: z.string().optional().default('{{primitives.border.width.md}}'),
-      })
-      .prefault({}),
+    border: border.pick({ radius: true, width: true }).default({
+      radius: '{{primitives.border.radius.md}}',
+      width: '{{primitives.border.width.md}}',
+    }),
   }
 
   static readonly schema = z

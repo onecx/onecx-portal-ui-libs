@@ -43,11 +43,13 @@ describe('page header schema - should validate following tokens', () => {
         width: '{{primitives.border.width.md}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
         radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
+        shadow: '{{primitives.shadow.md}}',
       },
-      padding: '{{primitives.space.md}}',
-      shadow: '{{primitives.shadow.md}}',
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
       background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-      margin: '{{primitives.space.md}}',
+      marginX: '{{primitives.space.md}}',
+      marginY: '{{primitives.space.md}}',
     })
   })
   describe('Breadcrumb Wrapper', () => {
@@ -152,10 +154,8 @@ describe('page header schema - should validate following tokens', () => {
       expectExactTokens(value, {
         padding: '{{primitives.space.md}}',
         gap: '{{primitives.space.md}}',
-        alignment: {
-          horizontal: 'center',
-          vertical: 'middle',
-        },
+        alignItems: 'center',
+        justifyContent: 'center',
       })
     })
   })

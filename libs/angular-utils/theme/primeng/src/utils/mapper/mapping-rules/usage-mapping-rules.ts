@@ -22,6 +22,7 @@ import { selectbuttonMappingRules } from './usages/selectbutton.rules'
 import { rippleMappingRules } from './usages/ripple.rules'
 import { panelmenuMappingRules } from './usages/panelmenu.rules'
 import { menuMappingRules } from './usages/menu.rules'
+import { breadcrumbRules } from './usages/breadcrumb.rules'
 import { dataviewMappingRules } from './usages/dataview.rules'
 
 export const usageMappingRules: MappingRule[] = [
@@ -49,5 +50,6 @@ export const usageMappingRules: MappingRule[] = [
   ...rippleMappingRules,
   ...panelmenuMappingRules,
   ...menuMappingRules,
+  ...breadcrumbRules,
   ...dataviewMappingRules,
 ]
