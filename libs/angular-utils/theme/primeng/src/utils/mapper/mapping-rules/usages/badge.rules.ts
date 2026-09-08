@@ -10,154 +10,148 @@ export const badgeMappingRules: MappingRule[] = [
 
   // Default variant - root properties
   {
-    from: 'usages.badge.defaultVariant.border.radius',
+    from: 'usages.badge.border.radius',
     to: 'components.badge.root.borderRadius',
   },
   {
-    from: 'usages.badge.defaultVariant.font.size',
+    from: 'usages.badge.font.size',
     to: 'components.badge.root.fontSize',
   },
   {
-    from: 'usages.badge.defaultVariant.font.weight',
+    from: 'usages.badge.font.weight',
     to: 'components.badge.root.fontWeight',
   },
   {
-    from: 'usages.badge.defaultVariant.padding',
+    from: 'usages.badge.padding',
     to: 'components.badge.root.padding',
   },
-
-  // Default variant - default size
   {
-    from: 'usages.badge.defaultVariant.defaultVariant.fontSize',
-    to: 'components.badge.root.fontSize',
-  },
-  {
-    from: 'usages.badge.defaultVariant.defaultVariant.minWidth',
+    from: 'usages.badge.minWidth',
     to: 'components.badge.root.minWidth',
   },
   {
-    from: 'usages.badge.defaultVariant.defaultVariant.height',
+    from: 'usages.badge.height',
     to: 'components.badge.root.height',
   },
 
-  // Default variant - size variants
+  // Named size variants
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.sm.fontSize',
+    from: 'usages.badge.sm.fontSize',
     to: 'components.badge.sm.fontSize',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.sm.minWidth',
+    from: 'usages.badge.sm.minWidth',
     to: 'components.badge.sm.minWidth',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.sm.height',
+    from: 'usages.badge.sm.height',
     to: 'components.badge.sm.height',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.lg.fontSize',
+    from: 'usages.badge.lg.fontSize',
     to: 'components.badge.lg.fontSize',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.lg.minWidth',
+    from: 'usages.badge.lg.minWidth',
     to: 'components.badge.lg.minWidth',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.lg.height',
+    from: 'usages.badge.lg.height',
     to: 'components.badge.lg.height',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.xl.fontSize',
+    from: 'usages.badge.xl.fontSize',
     to: 'components.badge.xl.fontSize',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.xl.minWidth',
+    from: 'usages.badge.xl.minWidth',
     to: 'components.badge.xl.minWidth',
   },
   {
-    from: 'usages.badge.defaultVariant.sizeVariant.xl.height',
+    from: 'usages.badge.xl.height',
     to: 'components.badge.xl.height',
   },
 
-  // Severity variant - primary
+  // Color variant - primary
   {
-    from: 'usages.badge.variant.primary.background',
+    from: 'usages.badge.primary.background',
     to: 'components.badge.primary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.primary.color',
+    from: 'usages.badge.primary.color',
     to: 'components.badge.primary.color',
     transform: toColorString,
   },
 
-  // Severity variant - secondary
+  // Color variant - secondary
   {
-    from: 'usages.badge.variant.secondary.background',
+    from: 'usages.badge.secondary.background',
     to: 'components.badge.secondary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.secondary.color',
+    from: 'usages.badge.secondary.color',
     to: 'components.badge.secondary.color',
     transform: toColorString,
   },
 
-  // Severity variant - success
+  // Color variant - success
   {
-    from: 'usages.badge.variant.success.background',
+    from: 'usages.badge.success.background',
     to: 'components.badge.success.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.success.color',
+    from: 'usages.badge.success.color',
     to: 'components.badge.success.color',
     transform: toColorString,
   },
 
-  // Severity variant - info
+  // Color variant - info
   {
-    from: 'usages.badge.variant.info.background',
+    from: 'usages.badge.info.background',
     to: 'components.badge.info.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.info.color',
+    from: 'usages.badge.info.color',
     to: 'components.badge.info.color',
     transform: toColorString,
   },
 
-  // Severity variant - warning
+  // Color variant - warning
   {
-    from: 'usages.badge.variant.warning.background',
+    from: 'usages.badge.warning.background',
     to: 'components.badge.warn.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.warning.color',
+    from: 'usages.badge.warning.color',
     to: 'components.badge.warn.color',
     transform: toColorString,
   },
 
-  // Severity variant - danger
+  // Color variant - danger
   {
-    from: 'usages.badge.variant.danger.background',
+    from: 'usages.badge.danger.background',
     to: 'components.badge.danger.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.danger.color',
+    from: 'usages.badge.danger.color',
     to: 'components.badge.danger.color',
     transform: toColorString,
   },
 
-  // Severity variant - contrast
+  // Color variant - contrast
   {
-    from: 'usages.badge.variant.contrast.background',
+    from: 'usages.badge.contrast.background',
     to: 'components.badge.contrast.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.variant.contrast.color',
+    from: 'usages.badge.contrast.color',
     to: 'components.badge.contrast.color',
     transform: toColorString,
   },
