@@ -37,7 +37,10 @@ export interface Action {
   label?: string
   labelKey?: string
   icon?: string
+  variant?: "primary" | "secondary" | "contrast"
+  severity?: "success" | "info" | "warn" | "danger"
   iconPos?: 'left' | 'right' | 'top' | 'bottom'
+  size: 'small' | 'medium' | 'large'
   /**
    * Permission for this action. If the current user does not have this permission, the action will not be shown.
    */

@@ -1,6 +1,6 @@
 import z from "zod"
 import { themeSchemaRegistry } from "../registry"
-import { bg, color, focusRingShape, withRef } from "../primitives"
+import { bg, color, withRef } from "../primitives"
 import { TabsPanelSchema } from "./panel"
 import { TabsViewportSchema } from "./viewport"
 import { TabsSettingsSchema } from "./settings"
