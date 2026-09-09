@@ -67,6 +67,8 @@
             (onClick)="onActionClick(action)"
             [disabled]="action.disabled ? action.disabled : false"
             [loading]="action.loading ?? false"
+            [severity]="action.severity ?? 'info'"
+            [size]="action.size ?? 'medium'"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
@@ -133,7 +135,7 @@
             tooltipPosition="top"
           >
             @if (item.icon) {
-            <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true"></i>
+            <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true" class="object-detail-icon"></i>
             } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
