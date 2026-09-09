@@ -47,7 +47,7 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
-  private readonly themeService = inject(ThemeService)
+  private readonly themeService = inject(ThemeService, { optional: true })
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -317,22 +317,24 @@ export class DataViewComponent implements OnInit {
       }
     })
 
-    asObservable(this.themeService.currentThemes$)
-      .pipe(
-        switchMap((theme) =>
-          from(themeVersionAvailable(2, this.injector)).pipe(
-            filter(Boolean),
-            map(() => theme)
-          )
-        ),
-        takeUntilDestroyed()
-      )
-      .subscribe((theme) => {
-        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
-        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
-        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
-        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
-      })
+    if (this.themeService) {
+      asObservable(this.themeService.currentThemes$)
+        .pipe(
+          switchMap((theme) =>
+            from(themeVersionAvailable(2, this.injector)).pipe(
+              filter(Boolean),
+              map(() => theme)
+            )
+          ),
+          takeUntilDestroyed()
+        )
+        .subscribe((theme) => {
+          const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+          this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+          this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+          this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+        })
+    }
   }
 
   ngOnInit(): void {

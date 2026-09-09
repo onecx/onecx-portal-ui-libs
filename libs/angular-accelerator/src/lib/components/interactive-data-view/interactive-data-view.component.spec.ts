@@ -1,4 +1,5 @@
 import { SlotService } from '@onecx/angular-remote-components'
+import { ThemeService } from '@onecx/angular-integration-interface'
 import { TestBed } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
@@ -19,18 +20,29 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
   }
 
-  const createComponent = (slotDefined = true) => {
+  const createComponent = (slotDefined = true, themeService: ThemeService | null = null) => {
     const slotService = {
       isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(slotDefined).asObservable()),
     } as unknown as SlotService
 
     TestBed.configureTestingModule({
-      providers: [{ provide: SlotService, useValue: slotService }],
+      providers: [
+        { provide: SlotService, useValue: slotService },
+        { provide: ThemeService, useValue: themeService },
+      ],
     })
 
     const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())
     return { component, slotService }
   }
+
+  it('should construct without ThemeService and use hardcoded defaults', () => {
+    const { component } = createComponent()
+
+    expect(component.checkboxColumnPositionResolved()).toBe('left')
+    expect(component.frozenActionColumnResolved()).toBe(false)
+    expect(component.actionColumnPositionResolved()).toBe('right')
+  })
 
   describe('component state aggregation (componentStateChanged)', () => {
     it('should startWith column-group + custom-group state when column group component is NOT defined', () => {

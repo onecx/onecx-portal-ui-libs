@@ -83,7 +83,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   private readonly userService = inject(UserService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   private readonly liveAnnouncer = inject(LiveAnnouncer)
-  private readonly themeService = inject(ThemeService)
+  private readonly themeService = inject(ThemeService, { optional: true })
 
   FilterType = FilterType
   TemplateType = TemplateType
@@ -576,22 +576,24 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    asObservable(this.themeService.currentThemes$)
-      .pipe(
-        switchMap((theme) =>
-          from(themeVersionAvailable(2, this.injector)).pipe(
-            filter(Boolean),
-            map(() => theme)
-          )
-        ),
-        takeUntilDestroyed()
-      )
-      .subscribe((theme) => {
-        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
-        this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
-        this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
-        this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
-      })
+    if (this.themeService) {
+      asObservable(this.themeService.currentThemes$)
+        .pipe(
+          switchMap((theme) =>
+            from(themeVersionAvailable(2, this.injector)).pipe(
+              filter(Boolean),
+              map(() => theme)
+            )
+          ),
+          takeUntilDestroyed()
+        )
+        .subscribe((theme) => {
+          const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+          this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+          this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+          this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+        })
+    }
   }
 
   ngOnInit(): void {
