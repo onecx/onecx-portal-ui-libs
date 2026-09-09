@@ -206,4 +206,5 @@ export const inputDefaults = {
 
 export const input = applyDefaultsRecursive(inputShape, inputDefaults).register(themeSchemaRegistry, {
   id: 'input',
+  axis: 'none',
 })

@@ -97,5 +97,5 @@ export class BreadcrumbItemSchema {
       disabled: (this.itemDisabled as typeof this.itemDisabled).prefault({}),
       active: (this.itemActive as typeof this.itemActive).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'breadcrumbItem' })
+    .register(themeSchemaRegistry, { id: 'breadcrumbItem', axis: 'none' })
 }

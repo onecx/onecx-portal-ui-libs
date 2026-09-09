@@ -35,5 +35,5 @@ export class PageHeaderSchema {
       header: (PageHeaderTitleBarSchema.schema as typeof PageHeaderTitleBarSchema.schema).prefault({}),
       content: (PageHeaderContentSchema.schema as typeof PageHeaderContentSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'pageHeader' })
+    .register(themeSchemaRegistry, { id: 'pageHeader', axis: 'none' })
 }
