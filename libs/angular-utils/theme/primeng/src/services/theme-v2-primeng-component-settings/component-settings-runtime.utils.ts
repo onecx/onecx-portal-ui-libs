@@ -6,9 +6,9 @@ import { ThemePropertiesV2 } from '@onecx/integration-interface'
  * react to explicit input changes plus component teardown.
  */
 export type PrimeNgPatchableComponent = {
-  onChanges?: (changes: Record<string, SimpleChange<any>>) => unknown
-  onAfterContentInit?: () => unknown
-  onDestroy?: () => unknown
+  ngOnChanges?: (changes: Record<string, SimpleChange<any>>) => unknown
+  ngAfterContentInit?: () => unknown
+  ngOnDestroy?: () => unknown
 }
 
 /**
@@ -99,24 +99,28 @@ export class PrimeNgComponentSettingsRuntime<
     }
 
     const { componentType } = this.config
-    const originalOnChanges = componentType.prototype.onChanges
-    const originalOnAfterContentInit = componentType.prototype.onAfterContentInit
-    const originalOnDestroy = componentType.prototype.onDestroy
-    const runtime = this
+    const originalOnChanges = componentType.prototype.ngOnChanges
+    const originalOnAfterContentInit = componentType.prototype.ngAfterContentInit
+    const originalOnDestroy = componentType.prototype.ngOnDestroy
+    const recordExplicitInputs = (instance: TComponent, changes: Record<string, SimpleChange<any>>) =>
+      this.recordExplicitInputs(instance, changes)
+    const registerInstance = (instance: TComponent) => this.registerInstance(instance)
+    const applySettings = (instance: TComponent) => this.applySettings(instance)
+    const unregisterInstance = (instance: TComponent) => this.unregisterInstance(instance)
 
-    componentType.prototype.onChanges = function (changes: Record<string, SimpleChange<any>>) {
-      runtime.recordExplicitInputs(this as TComponent, changes)
+    componentType.prototype.ngOnChanges = function (changes: Record<string, SimpleChange<any>>) {
+      recordExplicitInputs(this as TComponent, changes)
       return originalOnChanges?.call(this, changes)
     }
 
-    componentType.prototype.onAfterContentInit = function () {
-      runtime.registerInstance(this as TComponent)
-      runtime.applySettings(this as TComponent)
+    componentType.prototype.ngAfterContentInit = function () {
+      registerInstance(this as TComponent)
+      applySettings(this as TComponent)
       return originalOnAfterContentInit?.call(this)
     }
 
-    componentType.prototype.onDestroy = function () {
-      runtime.unregisterInstance(this as TComponent)
+    componentType.prototype.ngOnDestroy = function () {
+      unregisterInstance(this as TComponent)
       return originalOnDestroy?.call(this)
     }
 
@@ -149,7 +153,7 @@ export class PrimeNgComponentSettingsRuntime<
    * Explicit inputs take precedence over theme defaults.
    *
    * @param instance Component instance whose inputs changed.
-   * @param changes Angular simple-change map passed to `onChanges`.
+  * @param changes Angular simple-change map passed to `ngOnChanges`.
    * @returns No return value.
    */
   private recordExplicitInputs(instance: TComponent, changes: Record<string, unknown>): void {
