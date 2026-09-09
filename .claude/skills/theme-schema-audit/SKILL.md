@@ -1,0 +1,1 @@
+.agent/skills/theme-schema-audit/SKILL.md
