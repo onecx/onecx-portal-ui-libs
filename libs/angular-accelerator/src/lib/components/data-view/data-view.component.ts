@@ -105,9 +105,9 @@ export class DataViewComponent implements OnInit {
   frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
   actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
 
-  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
-  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
-  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+  checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)

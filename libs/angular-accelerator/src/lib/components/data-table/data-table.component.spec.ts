@@ -473,8 +473,8 @@ describe('DataTableComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumnActual()).toBe(false)
-      expect(component.actionColumnPositionActual()).toBe('right')
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -525,8 +525,8 @@ describe('DataTableComponent', () => {
       } as CurrentThemes)
       await flushAsync(fixture)
 
-      expect(component.frozenActionColumnActual()).toBe(true)
-      expect(component.actionColumnPositionActual()).toBe('left')
+      expect(component.frozenActionColumnResolved()).toBe(true)
+      expect(component.actionColumnPositionResolved()).toBe('left')
       expect(await dataTable.getActionColumnHeader('right')).toBe(null)
       expect(await dataTable.getActionColumn('right')).toBe(null)
 
@@ -557,7 +557,7 @@ describe('DataTableComponent', () => {
       } as CurrentThemes)
       await flushAsync(fixture)
 
-      expect(component.checkboxColumnPositionActual()).toBe('right')
+      expect(component.checkboxColumnPositionResolved()).toBe('right')
       expect(await dataTable.getSelectionColumnHeader('left')).toBe(null)
       expect(await dataTable.getSelectionColumn('left')).toBe(null)
       expect(await dataTable.getSelectionColumnHeader('right')).toBeTruthy()
@@ -586,8 +586,8 @@ describe('DataTableComponent', () => {
       fixture.componentRef.setInput('actionColumnPosition', 'right')
       await flushAsync(fixture)
 
-      expect(component.frozenActionColumnActual()).toBe(false)
-      expect(component.actionColumnPositionActual()).toBe('right')
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -619,7 +619,7 @@ describe('DataTableComponent', () => {
       fixture.componentRef.setInput('checkboxColumnPosition', 'left')
       await flushAsync(fixture)
 
-      expect(component.checkboxColumnPositionActual()).toBe('left')
+      expect(component.checkboxColumnPositionResolved()).toBe('left')
       expect(await dataTable.getSelectionColumnHeader('right')).toBe(null)
       expect(await dataTable.getSelectionColumn('right')).toBe(null)
       expect(await dataTable.getSelectionColumnHeader('left')).toBeTruthy()

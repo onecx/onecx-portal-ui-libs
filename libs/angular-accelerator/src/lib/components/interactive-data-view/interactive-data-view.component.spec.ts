@@ -569,8 +569,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
 
-      expect(component.frozenActionColumnActual()).toBe(true)
-      expect(component.actionColumnPositionActual()).toBe('left')
+      expect(component.frozenActionColumnResolved()).toBe(true)
+      expect(component.actionColumnPositionResolved()).toBe('left')
     })
   })
 

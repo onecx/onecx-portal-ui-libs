@@ -160,9 +160,9 @@ export class InteractiveDataViewComponent implements OnInit {
   frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
   actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
 
-  checkboxColumnPositionActual = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
-  frozenActionColumnActual = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
-  actionColumnPositionActual = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+  checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
@@ -613,8 +613,8 @@ export class InteractiveDataViewComponent implements OnInit {
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
         startWith({
           actionColumnConfig: {
-            frozen: this.frozenActionColumnActual(),
-            position: this.actionColumnPositionActual(),
+            frozen: this.frozenActionColumnResolved(),
+            position: this.actionColumnPositionResolved(),
           },
           displayedColumns: this.displayedColumns(),
           activeColumnGroupKey: this.selectedGroupKey(),
