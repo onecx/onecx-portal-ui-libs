@@ -24,7 +24,7 @@ import { SlotService } from '@onecx/angular-remote-components'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { asObservable, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, filter, from, map, startWith, switchMap, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -494,11 +494,17 @@ export class InteractiveDataViewComponent implements OnInit {
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
-    asObservable(this.themeService.currentThemes$).pipe(takeUntilDestroyed())
-      .subscribe(async (theme) => {
-        if (!(await themeVersionAvailable(2, this.injector))) {
-          return
-        }
+    asObservable(this.themeService.currentThemes$)
+      .pipe(
+        switchMap((theme) =>
+          from(themeVersionAvailable(2, this.injector)).pipe(
+            filter(Boolean),
+            map(() => theme)
+          )
+        ),
+        takeUntilDestroyed()
+      )
+      .subscribe((theme) => {
         const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
         this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
         this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)

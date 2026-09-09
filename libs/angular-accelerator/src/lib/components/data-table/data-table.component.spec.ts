@@ -538,6 +538,55 @@ describe('DataTableComponent', () => {
       expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
     })
 
+    it('should ignore an older theme when its availability check resolves last', async () => {
+      let resolveOlderTheme!: (available: boolean) => void
+      let resolveNewerTheme!: (available: boolean) => void
+      const olderThemeAvailable = new Promise<boolean>((resolve) => (resolveOlderTheme = resolve))
+      const newerThemeAvailable = new Promise<boolean>((resolve) => (resolveNewerTheme = resolve))
+      themeVersionAvailableMock
+        .mockReturnValueOnce(olderThemeAvailable)
+        .mockReturnValueOnce(newerThemeAvailable)
+
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  actionColumnSticky: true,
+                  actionColumnPosition: 'start',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+      currentThemes$.next({
+        properties: {
+          v2: {
+            usages: {
+              table: {
+                settings: {
+                  actionColumnSticky: false,
+                  actionColumnPosition: 'end',
+                },
+              },
+            },
+          },
+        },
+      } as CurrentThemes)
+
+      resolveNewerTheme(true)
+      await flushAsync(fixture)
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
+
+      resolveOlderTheme(true)
+      await flushAsync(fixture)
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
+    })
+
     it('should apply checkbox column defaults from themed table settings', async () => {
       themeVersionAvailableMock.mockResolvedValue(true)
       component.selectionChanged.subscribe(() => undefined)

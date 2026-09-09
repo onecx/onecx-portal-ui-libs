@@ -26,7 +26,7 @@ import { ThemeService, UserService } from '@onecx/angular-integration-interface'
 import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
-import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, debounceTime, filter, firstValueFrom, from, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -576,11 +576,17 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    asObservable(this.themeService.currentThemes$).pipe(takeUntilDestroyed())
-      .subscribe(async (theme) => {
-        if (!(await themeVersionAvailable(2, this.injector))) {
-          return
-        }
+    asObservable(this.themeService.currentThemes$)
+      .pipe(
+        switchMap((theme) =>
+          from(themeVersionAvailable(2, this.injector)).pipe(
+            filter(Boolean),
+            map(() => theme)
+          )
+        ),
+        takeUntilDestroyed()
+      )
+      .subscribe((theme) => {
         const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
         this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
         this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
