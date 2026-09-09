@@ -27,7 +27,6 @@ import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
 import { MultiSelectItem } from 'primeng/multiselect'
 import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
-import { CurrentThemes } from '@onecx/integration-interface'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -37,7 +36,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { HAS_PERMISSION_CHECKER, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, asObservable, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
@@ -577,9 +576,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
-    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
-    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
+    asObservable(this.themeService.currentThemes$).pipe(takeUntilDestroyed())
       .subscribe(async (theme) => {
         if (!(await themeVersionAvailable(2, this.injector))) {
           return

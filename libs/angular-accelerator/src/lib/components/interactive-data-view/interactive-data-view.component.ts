@@ -22,10 +22,9 @@ import {
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import { mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
+import { asObservable, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { PrimeTemplate } from 'primeng/api'
 import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
-import { CurrentThemes } from '@onecx/integration-interface'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -159,10 +158,15 @@ export class InteractiveDataViewComponent implements OnInit {
   checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
   frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
   actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  private readonly dialogActionColumnOverride = signal<ActionColumnChangedEvent | undefined>(undefined)
 
   checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
-  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
-  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+  frozenActionColumnResolved = computed(
+    () => this.frozenActionColumn() ?? this.dialogActionColumnOverride()?.frozenActionColumn ?? this.frozenActionColumnThemeSetting() ?? false
+  )
+  actionColumnPositionResolved = computed(
+    () => this.actionColumnPosition() ?? this.dialogActionColumnOverride()?.actionColumnPosition ?? this.actionColumnPositionThemeSetting() ?? 'right'
+  )
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
@@ -490,9 +494,7 @@ export class InteractiveDataViewComponent implements OnInit {
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())
 
-    // currentThemes$ is an `Observable | Topic` union; cast to Observable so rxjs
-    // operators typecheck. Topic.pipe delegates to asObservable() at runtime.
-    ;(this.themeService.currentThemes$ as Observable<CurrentThemes>).pipe(takeUntilDestroyed())
+    asObservable(this.themeService.currentThemes$).pipe(takeUntilDestroyed())
       .subscribe(async (theme) => {
         if (!(await themeVersionAvailable(2, this.injector))) {
           return
@@ -733,8 +735,7 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.frozenActionColumnThemeSetting.set(event.frozenActionColumn)
-    this.actionColumnPositionThemeSetting.set(event.actionColumnPosition)
+    this.dialogActionColumnOverride.set(event)
   }
 
   onRowSelectionChange(event: Row[]) {
