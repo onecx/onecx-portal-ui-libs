@@ -15,7 +15,13 @@ import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbu
 import { calendarNavigationSelectorShape, calendarNavigationSelectorDefaults } from './navigationselector'
 import { calendarPanelHeaderShape, calendarPanelHeaderDefaults } from './panelheader'
 import { calendarPickerCellShape, calendarPickerCellDefaults } from './pickercell'
-import { calendarViewShape, calendarViewDefaults, CalendarViewCellFieldName } from './view'
+import {
+  calendarViewShape,
+  calendarViewDefaults,
+  calendarDayViewShape,
+  calendarDayViewDefaults,
+  CalendarViewCellFieldName,
+} from './view'
 import { calendarWeekDayLabelShape, calendarWeekDayLabelDefaults } from './weekdaylabel'
 import { calendarTodayShape, calendarTodayDefaults } from './today'
 import { calendarDatePanelShape, calendarDatePanelDefaults } from './datepanel'
@@ -226,8 +232,8 @@ describe('calendar schema', () => {
     })
   })
 
-  describe.each<CalendarViewCellFieldName>(['dateCell', 'monthCell', 'yearCell'])(
-    'view with cell field "%s" (dayView, monthView, yearView)',
+  describe.each<CalendarViewCellFieldName>(['monthCell', 'yearCell'])(
+    'view with cell field "%s" (monthView, yearView)',
     (fieldName) => {
       const shape = calendarViewShape(fieldName)
       const defaults = calendarViewDefaults(fieldName)
@@ -252,8 +258,45 @@ describe('calendar schema', () => {
         expect(defaults[fieldName]).toBe(calendarPickerCellDefaults)
         expect(innerSchema(shapeAt(shape, [fieldName]))).toBe(calendarPickerCellShape)
       })
+
+      it('does not carry a weekDayLabel token (day-view only)', () => {
+        expect(at(schema.parse({}), [fieldName])).toBeDefined()
+        expect((defaults as Record<string, unknown>)['weekDayLabel']).toBeUndefined()
+      })
     }
   )
+
+  describe('day view (dateCell + weekDayLabel)', () => {
+    const shape = calendarDayViewShape
+    const defaults = calendarDayViewDefaults
+    const schema = applyDefaultsRecursive(shape, defaults)
+
+    it('parses an empty object', () => {
+      expect(schema.safeParse({}).success).toBe(true)
+    })
+
+    it('shape and defaults stay in sync', () => {
+      expectDefaultsMatchShape(shape, defaults)
+    })
+
+    it('resolves the expected default token tree', () => {
+      expect(schema.parse({})).toMatchSnapshot()
+    })
+
+    it('wires the cell field to the shared picker-cell shape/defaults by reference', () => {
+      expect(defaults['dateCell']).toBe(calendarPickerCellDefaults)
+      expect(innerSchema(shapeAt(shape, ['dateCell']))).toBe(calendarPickerCellShape)
+    })
+
+    it('extends the generic dateCell view shape/defaults with weekDayLabel, unlike monthView/yearView', () => {
+      // The weekday header row (Mon/Tue/...) is only rendered in date-cell mode, so it is
+      // added on top of the shared calendarViewShape('dateCell')/calendarViewDefaults('dateCell')
+      // rather than modeled generically for all three views.
+      expect(at(schema.parse({}), ['weekDayLabel'])).toBeDefined()
+      expect(innerSchema(shapeAt(shape, ['weekDayLabel']))).toBe(calendarWeekDayLabelShape)
+      expect(defaults['weekDayLabel']).toBe(calendarWeekDayLabelDefaults)
+    })
+  })
 
   // ------------------------------------------------------------------
   // Static leaf nodes (flat, no default slots)
@@ -369,6 +412,14 @@ describe('calendar schema', () => {
 
     it('shape and defaults stay in sync', () => {
       expectDefaultsMatchShape(calendarDatePanelShape, calendarDatePanelDefaults)
+    })
+
+    it('nests weekDayLabel inside dayView, not as a flat sibling of dayView/monthView/yearView', () => {
+      const resolved = schema.parse({})
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'weekDayLabel'])).toBeUndefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'dayView', 'weekDayLabel'])).toBeDefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'monthView', 'weekDayLabel'])).toBeUndefined()
+      expect(at(resolved, ['defaultVariant', 'defaultState', 'yearView', 'weekDayLabel'])).toBeUndefined()
     })
   })
 

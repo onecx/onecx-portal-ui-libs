@@ -478,3 +478,43 @@ brought in line with that precedent:
 - This is a breaking change to the calendar schema's shape (removes 5 previously-optional root keys).
   Since no consumer referenced them and they always resolved to `undefined`/empty by default, there is
   no behavioral impact on any existing theme.
+
+### Nesting weekDayLabel inside dayView (2026-09-08)
+
+`weekDayLabel` (the Mon/Tue/… header row above the day grid) previously sat as a flat sibling of
+`dayView`/`monthView`/`yearView` inside `calendarDatePanelStateShape` — even though PrimeNG only
+renders the weekday header row in date-cell mode; month/year views have no equivalent. It is now
+nested inside `dayView` only:
+
+- **`view.ts`** — added `calendarDayViewShape`/`calendarDayViewDefaults`, extending the generic
+  `calendarViewShape('dateCell')`/`calendarViewDefaults('dateCell')` with an extra `weekDayLabel` key
+  (reusing the existing `calendarWeekDayLabelShape`/`calendarWeekDayLabelDefaults`, now imported here
+  instead of in `datepanel.ts`). The generic `calendarViewShape`/`calendarViewDefaults` functions are
+  unchanged and still back `monthView`/`yearView` as before.
+- **`datepanel.ts`** — removed the flat `weekDayLabel` key from `calendarDatePanelStateShape`/
+  `calendarDatePanelDefaults`; `dayView` now uses `calendarDayViewShape`/`calendarDayViewDefaults`
+  instead of the generic `calendarViewShape('dateCell')`/`calendarViewDefaults('dateCell')`. Removed
+  the now-unused `weekdaylabel` import.
+- **`calendar.spec.ts`** — narrowed the `describe.each` view block to `['monthCell', 'yearCell']`
+  (asserting neither carries a `weekDayLabel` key) and added a dedicated `day view (dateCell +
+weekDayLabel)` describe block for `calendarDayViewShape`/`calendarDayViewDefaults`, including a
+  by-reference wiring check for the nested `weekDayLabel`. Added an invariant to the `date panel`
+  describe block asserting `weekDayLabel` resolves at `dayView.weekDayLabel` and is absent at the
+  panel's own state root and at `monthView`/`yearView`. The standalone `week day label` describe block
+  (testing `calendarWeekDayLabelShape`/`calendarWeekDayLabelDefaults` directly) is unchanged.
+- **Token path change:** `datePanel.defaultVariant.defaultState.weekDayLabel.*` →
+  `datePanel.defaultVariant.defaultState.dayView.weekDayLabel.*`. This is a breaking change to the
+  calendar schema's shape.
+- **Known consumer:** `libs/angular-utils/theme/primeng/src/utils/mapper/mapping-rules/usages/calendar/calendar.rules.ts`
+  references `usages.calendar.panel.datePanel.weekDayLabel.*` (padding/fontWeight/color). However,
+  that file's `from` paths already diverge from the real nested schema elsewhere in the same file
+  (e.g. `usages.calendar.panel.datePanel.dateCell.*` instead of the actual
+  `datePanel.defaultVariant.defaultState.dayView.dateCell...`, and no `defaultVariant`/`defaultState`
+  segments anywhere) — indicating these mapping rules are generated/maintained against a decoupled,
+  simplified path convention (likely tied to a separately-versioned `@onecx/integration-interface`
+  release) rather than this in-repo schema source directly. Left unchanged here; flagged as a
+  follow-up for whoever owns syncing that mapper against the next `integration-interface` release.
+- **Verified:** `calendar.spec.ts` — 83 tests pass, 15 snapshots (3 old `dateCell`/`monthCell`/`yearCell`
+  view snapshots replaced by 2 `monthCell`/`yearCell` snapshots + 1 new day-view snapshot; root
+  snapshot updated to reflect the new nesting). Full `integration-interface` suite: 387/388 passing,
+  same single pre-existing unrelated failure (`message.spec.ts`).

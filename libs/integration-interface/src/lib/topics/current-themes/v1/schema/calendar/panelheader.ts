@@ -8,7 +8,7 @@ import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbu
  * header. It is a static text element (no own variant/state tree), so its
  * tokens sit flat — analogous to `today` and `timeSeparator`.
  */
-export const calendarYearMonthNavShape = z.object({
+const calendarYearMonthNavShape = z.object({
   gap: withRef(z.string()).optional(),
   font: font.pick({ weight: true, size: true }).optional(),
   color: color.optional(),

@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { withRef } from '../primitives'
 import { calendarPickerCellShape, calendarPickerCellDefaults } from './pickercell'
+import { calendarWeekDayLabelShape, calendarWeekDayLabelDefaults } from './weekdaylabel'
 
 export type CalendarViewCellFieldName = 'dateCell' | 'monthCell' | 'yearCell'
 
@@ -24,4 +25,21 @@ export function calendarViewDefaults(cellFieldName: CalendarViewCellFieldName): 
     margin: '{{primitives.space.md}}',
     [cellFieldName]: calendarPickerCellDefaults,
   }
+}
+
+/**
+ * Shape for the day view specifically. PrimeNG only renders the weekday header row
+ * (`.p-datepicker-weekday`) in date-cell mode — month/year views have no equivalent — so
+ * `weekDayLabel` is added here rather than in the shared `calendarViewShape`/`monthView`/`yearView`.
+ */
+export const calendarDayViewShape = calendarViewShape('dateCell').extend({
+  weekDayLabel: calendarWeekDayLabelShape.prefault({}),
+})
+
+/**
+ * Default tokens for the day view (dateCell view + its weekday header row).
+ */
+export const calendarDayViewDefaults: Record<string, unknown> = {
+  ...calendarViewDefaults('dateCell'),
+  weekDayLabel: calendarWeekDayLabelDefaults,
 }
