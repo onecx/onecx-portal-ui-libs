@@ -127,5 +127,5 @@ export class MenuItemSchema {
         })
         .prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'menu-item' })
+    .register(themeSchemaRegistry, { id: 'menu-item', axis: 'none' })
 }

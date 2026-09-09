@@ -1,9 +1,9 @@
 import * as z from 'zod'
 import { introspectThemeAxisMetadata, themeAxisMetadata } from './axis-metadata'
 import { theme } from '../current-themes.schema'
-import { colorVariants, severityVariants, stateVariants, themeRef } from './primitives'
-import { themeSchemaRegistry } from './registry'
-import { MessageSettingsSchema } from './message/settings'
+import { colorVariants, severityVariants, stateVariants, themeRef } from '../schema/primitives'
+import { themeSchemaRegistry } from '../schema/registry'
+import { MessageSettingsSchema } from '../schema/message/settings'
 
 // Leaf paths are rooted at the top-level `theme` schema, which nests the v2 token
 // schema under the `v2` key (theme = { v2: themePropertiesV2, v1: record }).
@@ -61,6 +61,46 @@ describe('per-leaf axis metadata', () => {
     expect(entry.states).toEqual([])
     expect(entry.severities).toEqual([])
     expect(entry.groups).toEqual([])
+  })
+})
+
+// The public contract is that the walker emits an entry for *every* leaf token. Enum- and
+// array-valued leaves (e.g. the interactive-data-view `sortDirection`, `layout`, and
+// `pageSizes` settings) must be captured too — they are tokens a tenant sets, and dropping
+// them would leave consumers unable to build complete per-leaf fallback metadata.
+describe('per-leaf axis metadata for non-scalar leaves', () => {
+  const metadata = introspectThemeAxisMetadata(theme)
+  const IDS_SETTINGS = 'v2.usages.interactiveDataView.settings'
+
+  it('captures enum-valued leaves (sortDirection, layout)', () => {
+    expect(metadata[`${IDS_SETTINGS}.sortDirection`]).toBeDefined()
+    expect(metadata[`${IDS_SETTINGS}.layout`]).toBeDefined()
+  })
+
+  it('captures array-valued leaves (pageSizes)', () => {
+    expect(metadata[`${IDS_SETTINGS}.pageSizes`]).toBeDefined()
+  })
+
+  it('records the interactive-data-view settings leaves with no axis names (settings is a pass-through)', () => {
+    // `interactiveDataView.settings` is an unregistered `z.object` (axis 'none'), so its
+    // enum/array leaves carry no variant/state/severity names or axis-group boundaries —
+    // but they are still emitted, which is the regression the leaf-coverage fix guards.
+    const entry = metadata[`${IDS_SETTINGS}.sortDirection`]
+    expect(entry.variants).toEqual([])
+    expect(entry.states).toEqual([])
+    expect(entry.severities).toEqual([])
+    expect(entry.groups).toEqual([])
+  })
+})
+
+describe('leaf detection (synthetic)', () => {
+  it('records enum and array nodes as leaves', () => {
+    const synthetic = z.object({
+      enumLeaf: z.enum(['a', 'b']),
+      arrayLeaf: z.array(z.number()),
+    })
+    const metadata = introspectThemeAxisMetadata(synthetic)
+    expect(Object.keys(metadata).sort()).toEqual(['arrayLeaf', 'enumLeaf'])
   })
 })
 

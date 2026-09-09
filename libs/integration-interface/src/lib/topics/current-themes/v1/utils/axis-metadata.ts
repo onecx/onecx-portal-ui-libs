@@ -4,9 +4,13 @@
  * The Theme V2 schema mixes four structurally indistinguishable kinds of plain-object
  * nodes — named color **variants**, interaction **states**, **severities**, and
  * **child**-component compositions. Each node is classified with an `axis` marker in
- * `themeSchemaRegistry` (see `registry.ts`). This module walks the full `theme` schema
- * and derives, for every leaf token, the variant / state / severity names that apply to
- * it and the ordered chain of axis-group and child boundaries the leaf passes through.
+ * `themeSchemaRegistry` (see `schema/registry.ts`). This module walks the full `theme`
+ * schema and derives, for every leaf token, the variant / state / severity names that
+ * apply to it and the ordered chain of axis-group and child boundaries the leaf passes
+ * through.
+ *
+ * This is a build-time utility that introspects the schema; it carries no schema shape of
+ * its own and is kept out of `schema/` so it does not read as a theme token schema.
  *
  * Usage example:
  * ```ts
@@ -28,7 +32,7 @@
  */
 
 import * as z from 'zod'
-import { themeSchemaRegistry } from './registry'
+import { themeSchemaRegistry } from '../schema/registry'
 import { theme } from '../current-themes.schema'
 
 /** The four classifying axis kinds a schema node can be. */
@@ -114,10 +118,15 @@ function resolveSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
   return unwrapThemeRefUnion(unwrapWrapperChain(schema))
 }
 
-/** A leaf is a scalar or a union (e.g. a `withRef` scalar union that resolved to a scalar). */
+/**
+ * A leaf is a terminal token — a scalar (string/number/boolean), an enum, an array, or a
+ * union (e.g. a `withRef` scalar union that resolved to a scalar). Enum and array values
+ * (e.g. `sortDirection`, `layout`, `pageSizes`) are leaf tokens too, so they must be
+ * captured here; otherwise consumers cannot build complete per-leaf fallback metadata.
+ */
 function isLeaf(schema: z.ZodTypeAny): boolean {
   const type = getDefType(schema)
-  return type === 'string' || type === 'number' || type === 'boolean' || type === 'union'
+  return type === 'string' || type === 'number' || type === 'boolean' || type === 'enum' || type === 'array' || type === 'union'
 }
 
 function makeGroup(kind: AxisKind, memberName: string, path: string[]): AxisGroupInfo {
@@ -133,6 +142,13 @@ function walk(
   severities: string[],
   out: Record<string, LeafAxisMetadata>
 ): void {
+  // Skip shape values that are not Zod schemas (e.g. raw constants added via
+  // `.extend({ width: '1rem' })`); they are baked-in values, not themable tokens,
+  // so they carry no axis metadata and have no `_zod` def to introspect.
+  if (schema === null || schema === undefined || typeof schema !== 'object' || !('_zod' in schema)) {
+    return
+  }
+
   const resolved = resolveSchema(schema)
 
   if (isLeaf(resolved)) {

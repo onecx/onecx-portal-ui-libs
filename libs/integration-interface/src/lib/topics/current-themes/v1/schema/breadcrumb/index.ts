@@ -30,5 +30,5 @@ export class BreadcrumbSchema {
       item: (BreadcrumbItemSchema.schema as typeof BreadcrumbItemSchema.schema).prefault({}),
       separator: this.separator.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'breadcrumb' })
+    .register(themeSchemaRegistry, { id: 'breadcrumb', axis: 'none' })
 }

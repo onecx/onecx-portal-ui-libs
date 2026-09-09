@@ -63,5 +63,5 @@ export class MenuSchema {
       }),
       separator: this.separator.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'menu' })
+    .register(themeSchemaRegistry, { id: 'menu', axis: 'none' })
 }
