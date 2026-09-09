@@ -17,10 +17,7 @@ import {
   viewChild,
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, filter, from, map, startWith, switchMap, timestamp } from 'rxjs'
-import { ThemeService } from '@onecx/angular-integration-interface'
-import { asObservable, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -33,6 +30,7 @@ import {
 } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
+import { useAcceleratorTableThemeDefaults } from '../../utils/accelerator-table-theme-defaults.utils'
 
 export type RowListGridData = ListGridData & Row
 
@@ -47,7 +45,6 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
 })
 export class DataViewComponent implements OnInit {
   private readonly injector = inject(Injector)
-  private readonly themeService = inject(ThemeService, { optional: true })
 
   dataListGridComponent = viewChild(DataListGridComponent)
 
@@ -100,9 +97,10 @@ export class DataViewComponent implements OnInit {
   frozenActionColumn = input<boolean | undefined>(undefined)
   actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
 
-  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
-  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
-  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
+  checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+  frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
+  actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
 
   checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
   frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
@@ -317,24 +315,6 @@ export class DataViewComponent implements OnInit {
       }
     })
 
-    if (this.themeService) {
-      asObservable(this.themeService.currentThemes$)
-        .pipe(
-          switchMap((theme) =>
-            from(themeVersionAvailable(2, this.injector)).pipe(
-              filter(Boolean),
-              map(() => theme)
-            )
-          ),
-          takeUntilDestroyed()
-        )
-        .subscribe((theme) => {
-          const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
-          this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
-          this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
-          this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
-        })
-    }
   }
 
   ngOnInit(): void {

@@ -2,7 +2,6 @@ import {
   Component,
   DestroyRef,
   EventEmitter,
-  Injector,
   Input,
   OnInit,
   Output,
@@ -21,10 +20,8 @@ import {
   viewChild,
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
-import { ThemeService } from '@onecx/angular-integration-interface'
-import { asObservable, mapAcceleratorTableSettings, mapThemeUsageSettings, themeVersionAvailable } from '@onecx/angular-utils'
 import { PrimeTemplate } from 'primeng/api'
-import { Observable, ReplaySubject, combineLatest, filter, from, map, startWith, switchMap, timestamp } from 'rxjs'
+import { Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -46,8 +43,9 @@ import { Row, Sort } from '../data-table/data-table.component'
 import { DataViewComponent, DataViewComponentState, RowListGridData } from '../data-view/data-view.component'
 import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/filter-view.component'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
+import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
+import { useAcceleratorTableThemeDefaults } from '../../utils/accelerator-table-theme-defaults.utils'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
 
@@ -72,8 +70,6 @@ export interface ColumnGroupData {
 export class InteractiveDataViewComponent implements OnInit {
   private readonly slotService = inject(SlotService)
   private readonly destroyRef = inject(DestroyRef)
-  private readonly injector = inject(Injector)
-  private readonly themeService = inject(ThemeService, { optional: true })
 
   dataViewComponent = viewChild(DataViewComponent)
 
@@ -155,9 +151,10 @@ export class InteractiveDataViewComponent implements OnInit {
   frozenActionColumn = input<boolean | undefined>(undefined)
   actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
 
-  checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
-  frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
-  actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
+  checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+  frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
+  actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
   private readonly dialogActionColumnOverride = signal<ActionColumnChangedEvent | undefined>(undefined)
 
   checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
@@ -493,25 +490,6 @@ export class InteractiveDataViewComponent implements OnInit {
       this.triggerGroupSelectionChanged(event)
     })
     this.destroyRef.onDestroy(() => subscription.unsubscribe())
-
-    if (this.themeService) {
-      asObservable(this.themeService.currentThemes$)
-        .pipe(
-          switchMap((theme) =>
-            from(themeVersionAvailable(2, this.injector)).pipe(
-              filter(Boolean),
-              map(() => theme)
-            )
-          ),
-          takeUntilDestroyed()
-        )
-        .subscribe((theme) => {
-          const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
-          this.checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
-          this.frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
-          this.actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
-        })
-    }
 
     effect(() => {
       this.registerEventListenerForDataView()

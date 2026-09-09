@@ -20,7 +20,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
   }
 
-  const createComponent = (slotDefined = true, themeService: ThemeService | null = null) => {
+  const createComponent = (slotDefined = true) => {
     const slotService = {
       isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(slotDefined).asObservable()),
     } as unknown as SlotService
@@ -28,7 +28,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: SlotService, useValue: slotService },
-        { provide: ThemeService, useValue: themeService },
+        { provide: ThemeService, useValue: null },
       ],
     })
 
