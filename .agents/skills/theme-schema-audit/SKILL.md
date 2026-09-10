@@ -647,137 +647,59 @@ unchanged during Step 8 and that test coverage is added next, in Step 10.
 ### Step 10 — Test the resolved default values
 
 Once Step 8's structural changes are implemented and confirmed, add automated tests that lock in the
-**exact key/value pairs** produced by `parse({})` for every node — replacing, not patching, any
-pre-existing spec files for this component. Legacy spec files are not a source of truth here: the
-moment a schema is restructured they are frequently stale, and this step supersedes them rather than
-evolving them incrementally.
+**exact key/value pairs** produced by `parse({})` for the component as a whole — replacing, not
+patching, any pre-existing spec files for this component. Legacy spec files are not a source of
+truth here: the moment a schema is restructured they are frequently stale, and this step supersedes
+them rather than evolving them incrementally.
 
-#### Strategy: snapshot the values, hand-assert the invariants
+#### Test only the top-level component — no per-subcomponent tests
 
-**The value tree → Jest snapshots.** Hand-writing the full literal resolved-token object duplicates
-values that already live in the component's own defaults exports, and that duplication is exactly
-what goes stale after a restructure. Snapshotting `parse({})` (`toMatchSnapshot()`) instead captures
-every exact key/value pair automatically, shows a reviewable diff on any change, and (with `--ci`)
-forces a conscious accept of that diff — without duplicating any values by hand.
+Test **only the assembled top-level schema** (`schema/<component>/<component>.ts`'s exported
+schema/defaults), never individual subcomponent files. A single, small, fixed set of tests is
+enough, and it stays fixed regardless of how many subcomponent schema files the component is split
+across or how deep the tree gets:
 
-**The structural/policy invariants from this audit → explicit assertions.** A snapshot diff proves
-values changed, not _why_ they're allowed to. Encode the decisions this audit actually made as
-small, explicit, greppable assertions:
+- **Parses successfully** — `expect(<component>.safeParse({}).success).toBe(true)`.
+- **Resolves the expected default token tree** — `expect(<component>.parse({})).toMatchSnapshot()`
+  on the **full** `parse({})` result (not scoped to `defaultVariant` or any other sub-key). Scoping
+  the snapshot to a sub-key risks silently excluding root-level siblings that carry their own baked
+  default (e.g. a `transitionDuration`-style scalar) — snapshotting the whole parsed object avoids
+  that class of gap entirely, with no extra assertions needed to compensate.
+- **Shape/defaults parity** — `expectDefaultsMatchShape(<component>, <component>Defaults)` (from
+  `schema/test-utils.ts`), called once, on the top-level schema and its top-level defaults export.
 
-- **Parses successfully** — `expect(result.success).toBe(true)` for `parse({})`.
-- **Shape/defaults parity** — a small reusable helper in `schema/test-utils.ts`
-  (`expectDefaultsMatchShape`) that walks the defaults tree and asserts every key exists on the
-  corresponding shape. Catches wiring bugs (typos, renames) that are a different failure mode than
-  a value regression.
-- **Nested-path assertions** — `integration-interface`'s tsconfig sets
-  `noPropertyAccessFromIndexSignature`, so the inferred `parse({})` return type (an index-signature
-  record) can't be dot-chained (`parsed.defaultVariant.foo` is a compile error). Use the shared
-  `at(o, path)` and `expectLeafAtTokenPath(parsed, tokenPath, expected)` helpers from
-  `schema/test-utils.ts` instead of re-declaring a local path-walker per spec file — they're
-  reused across every component's spec (e.g. `calendar.spec.ts`, `input.spec.ts`) and are the
-  single place to fix or extend that walking logic.
-- **No grouping-wrapper keys** — `expectNoGroupingWrapperKeys(schema)` (also in
-  `schema/test-utils.ts`) recursively asserts no nested object in a shape tree is keyed
-  `variant`/`state`/`severity` — those must always be flat sibling keys, never a wrapping category
-  object.
-- **Shared-shape reuse by reference** — `objectShape`/`shapeAt`/`innerSchema` (also in
-  `schema/test-utils.ts`) unwrap `ZodPrefault`/`ZodDefault` wrappers to walk or compare the
-  underlying shape tree, for asserting an Option-1 (extends) child reuses a shared shape/defaults
-  object by identity rather than a structurally-similar copy.
-- **The mandatory baseline default (Step 7)** exists at the conceptual
-  `defaultVariant.defaultState.defaultSeverity` path for every node that declares those levels.
-- **No unused `defaultState`/`defaultSeverity` wrappers** — a node with no states/severities of its
-  own exposes its tokens as flat fields, not wrapped in an empty `defaultState`/`defaultSeverity`
-  key. Assert this directly for at least one static child (e.g. `expect(child).not.toHaveProperty
-('defaultState')`).
-- **Tokens that were intentionally left undefined (Step 7's "X" cases)** are actually absent from
-  the parsed defaults for that named variant/state/severity — i.e. the fallback mechanism is what
-  supplies the value, not a duplicated literal. Assert this for at least the load-bearing cases
-  called out in the Step 7 table (e.g. a named variant/state that should inherit rather than
-  override).
-- **Consolidation wiring (Step 3)** — for an Option-1 (extends) child, assert its shape/defaults
-  actually include the generic usage's fields (e.g. by checking a representative inherited token
-  resolves, or by asserting shared references where the implementation reuses the generic usage's
-  exported shape/defaults object by identity). For an Option-2 (independent) child, assert it does
-  **not** carry the generic usage's full token set — only its own declared fields.
-- **Dependency placement (Step 2)** — a child's own tree is reachable at the path implied by its
-  confirmed dependency level (e.g. a `state`-dependent child is reachable under each parent
-  variant × state combination, not only once at the parent root).
-
-Keep this invariant set small and pointed — one assertion per confirmed decision — and let the
-snapshot carry the rest of the value tree.
-
-#### Avoid duplicate snapshotting across the hierarchy
-
-`parse({})` on a composite node returns its children's fully resolved subtrees inline. If every
-level of the component tree also gets its own `toMatchSnapshot()`, the same literal values end up
-serialized 3–4+ times over (once at the leaf's own `describe`, again inside its parent's snapshot,
-again inside the grandparent's, again inside the root's) — a real calendar schema's snapshot file
-grew to ~8,000 lines this way before being trimmed to ~1,500 with zero loss of coverage. Avoid this:
-
-- **Snapshot only at leaf level** — a subcomponent whose own `describe` block already runs
-  `toMatchSnapshot()` on its resolved values does not need a second snapshot taken of it again
-  inside a parent or ancestor's snapshot. Composite/consumer nodes (a node whose own children each
-  already have their own leaf-level snapshot) should skip `toMatchSnapshot()` entirely and rely on
-  the structural/reference invariants above (children reachable at the expected path, shared shapes
-  wired by reference, etc.) — those already catch wiring regressions; a snapshot there would only
-  ever re-diff data that's already diffed at the leaf.
-- **Scope the root snapshot to `defaultVariant` only** — `expect(parsed['defaultVariant']).toMatch
-Snapshot()`, not `expect(parsed).toMatchSnapshot()`. This matters even when the 5 named color
-  variants aren't modeled at all (see "Modeling the 5 canonical color variants" — the common case),
-  since `parsed` may still carry other root-level keys (e.g. `settings`) that add no unique
-  information to a value snapshot. When the 5 named variants _are_ modeled, they carry no baked
-  defaults unless Step 7 says otherwise, so they resolve to empty-shape skeletons — including them
-  in the root snapshot would only repeat that same empty structure 5 more times.
-- When in doubt, ask: "does this node's own describe block introduce any literal value that isn't
-  already captured by one of its children's snapshots?" If no, it doesn't need its own snapshot.
+That's the entire spec file — three tests, one `describe` block, no nested `describe`s per
+subcomponent, no hand-written structural/reference/wiring assertions (no `expectLeafAtTokenPath`,
+no `expectNoGroupingWrapperKeys`, no `shapeAt`/`innerSchema` identity checks, no per-child "parses an
+empty object" duplicated per subcomponent). The snapshot is the single source of truth for every
+resolved value in the tree, and it's cheap to review as a diff on every change; anything more
+granular than that duplicates what the snapshot already captures, in a form that's more expensive to
+maintain and easier to let drift.
 
 #### Where to put the tests
 
 Use **exactly one spec file per component**, regardless of how many subcomponent schema files it's
 split across: `schema/<component>/<component>.spec.ts` for multi-file components, or
-`schema/<component>.spec.ts` for single-file components. Organize with one `describe` block per
-subcomponent (root first, then each child in the same stable order used in Step 1), rather than a
-separate `.spec.ts` per subcomponent file.
+`schema/<component>.spec.ts` for single-file components.
 
-- The root `describe` is a thin integration check: "parses an empty object", **one snapshot scoped
-  to `parsed['defaultVariant']` only** (not the full `parsed` object — see "Avoid duplicate
-  snapshotting across the hierarchy" above), and the component-level invariants (mandatory baseline
-  default through the root, top-level consolidation/dependency checks).
-- Each **leaf** subcomponent (one with no children of its own that get their own `describe`) gets
-  its own nested `describe`, testing its own shape/defaults in isolation via
-  `applyDefaultsRecursive(<subcomponent>Shape, <subcomponent>Defaults).parse({})`, with its own
-  "parses an empty object" check, an `expectDefaultsMatchShape` check, its own snapshot, and the
-  node-level invariants that apply to it.
-- Each **composite** subcomponent (one whose children already have their own leaf-level `describe`
-  and snapshot) still gets its own nested `describe` for its "parses an empty object",
-  `expectDefaultsMatchShape`, and node-level/wiring invariants — but **skips its own
-  `toMatchSnapshot()`**, since its resolved value is already fully captured, nested, inside an
-  ancestor's snapshot (ultimately the root's).
-- For an Option-1 (extends) generic child, give it a `describe` that asserts it reuses the generic
-  usage's exports (reference/identity or resolved-token equality for a representative field) rather
-  than re-snapshotting the generic usage's whole tree again.
 - Delete any legacy top-level facade spec (`schema/<component>.spec.ts` alongside a
   `schema/<component>/` directory) rather than keeping a second file.
+- Delete any pre-existing per-subcomponent `describe` blocks, invariant assertions, or imports of
+  subcomponent shape/defaults exports — the new spec only imports the top-level schema and defaults.
 
 The result is exactly one `.spec.ts` file (and one generated `__snapshots__/*.snap` file) per
-component, regardless of how many subcomponent schema files it's implemented across.
+component, with exactly three tests in it, regardless of how many subcomponent schema files it's
+implemented across.
 
 #### Example: calendar schema
 
 Applying this to `schema/calendar/`, the entire component's tests live in a single
-`schema/calendar/calendar.spec.ts`, with one `describe` per subcomponent:
+`schema/calendar/calendar.spec.ts`:
 
 ```typescript
 // schema/calendar/calendar.spec.ts
-import { applyDefaultsRecursive } from '../defaults-helper'
-import { expectDefaultsMatchShape, at } from '../test-utils'
-import { calendar } from './calendar'
-import { calendarInputShape, calendarInputDefaults } from './input'
-import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
-import { calendarPanelHeaderDefaults } from './panelheader'
-import { calendarPickerCellShape, calendarPickerCellDefaults } from './pickercell'
-// ... one import per remaining subcomponent file
+import { expectDefaultsMatchShape } from '../test-utils'
+import { calendar, calendarDefaults } from './calendar'
 
 describe('calendar schema', () => {
   const parsed = calendar.parse({})
@@ -787,102 +709,11 @@ describe('calendar schema', () => {
   })
 
   it('resolves the expected default token tree', () => {
-    // The calendar schema models only `defaultVariant` (no named color variants — see
-    // "Modeling the 5 canonical color variants" above), so scoping the snapshot to
-    // `defaultVariant` captures the entire resolved tree.
-    expect(parsed['defaultVariant']).toMatchSnapshot()
+    expect(parsed).toMatchSnapshot()
   })
 
-  it('resolves a baseline leaf through the mandatory default path', () => {
-    // The calendar input extends the generic input usage (Option 1), so its baseline
-    // background is the generic input's own default-path background.
-    expect(
-      at(parsed, ['defaultVariant', 'input', 'defaultVariant', 'defaultState', 'defaultSeverity', 'background'])
-    ).toStrictEqual('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}')
-  })
-
-  it('does not model the 5 named color variants (primary/secondary/tertiary/quaternary/quinary)', () => {
-    for (const variant of ['primary', 'secondary', 'tertiary', 'quaternary', 'quinary']) {
-      expect(parsed[variant]).toBeUndefined()
-    }
-  })
-
-  it('omits defaultVariant/defaultState/defaultSeverity wrappers for a static child with no variant/state/severity of its own', () => {
-    // `today` (inside the date panel) declares no variant/state/severity tree of its own at
-    // all — its tokens (`background`, `color`) sit as flat fields directly on the parent
-    // (`datePanel`'s state block), never wrapped in an empty `defaultVariant`/`defaultState`/
-    // `defaultSeverity` key. `datePanel` itself does declare states, so it keeps its own wrapper.
-    const today = at(parsed, [
-      'defaultVariant',
-      'panel',
-      'defaultVariant',
-      'defaultState',
-      'datePanel',
-      'defaultVariant',
-      'defaultState',
-      'today',
-    ])
-
-    expect(today.background).toBeDefined()
-    expect(today).not.toHaveProperty('defaultVariant')
-    expect(today).not.toHaveProperty('defaultState')
-    expect(today).not.toHaveProperty('defaultSeverity')
-  })
-
-  describe('input (Option 1 — extends the generic input usage)', () => {
-    const schema = applyDefaultsRecursive(calendarInputShape, calendarInputDefaults)
-    const resolved = schema.parse({})
-
-    it('parses an empty object', () => {
-      expect(schema.safeParse({}).success).toBe(true)
-    })
-    it('shape and defaults stay in sync', () => {
-      expectDefaultsMatchShape(calendarInputShape, calendarInputDefaults)
-    })
-    it('resolves the expected default token tree', () => {
-      expect(resolved).toMatchSnapshot()
-    })
-    it('inherits the generic input static tokens (e.g. focusRing) inside the baseline severity block, not at the node root', () => {
-      // A shallow .extend() can't re-nest the generic input's severity blocks: the generic
-      // usage's own static tokens stay exactly where that usage put them (inside
-      // defaultVariant.defaultState.defaultSeverity) — this is the "resolved-token
-      // equality/reference" check an Option-1 (extends) child needs, proving it actually
-      // reuses the generic usage's tree rather than silently dropping it.
-      expect(at(resolved, ['defaultVariant', 'defaultState', 'defaultSeverity', 'focusRing'])).toBeDefined()
-      expect(resolved['focusRing']).toBeUndefined()
-    })
-  })
-
-  describe('panel button (shared: calendarIconButton, navButton, timePickerButton)', () => {
-    const schema = applyDefaultsRecursive(calendarPanelButtonShape, calendarPanelButtonDefaults)
-    const resolved = schema.parse({})
-
-    it('parses an empty object', () => {
-      expect(schema.safeParse({}).success).toBe(true)
-    })
-    it('shape and defaults stay in sync', () => {
-      expectDefaultsMatchShape(calendarPanelButtonShape, calendarPanelButtonDefaults)
-    })
-    it('resolves the expected default token tree', () => {
-      expect(resolved).toMatchSnapshot()
-    })
-  })
-
-  describe('panel header (composite consumer of the shared panel button)', () => {
-    // No toMatchSnapshot() here — panelHeader's resolved value (including navButton's tokens)
-    // is already captured, nested, inside the root's `defaultVariant` snapshot above, and
-    // navButton's own tokens are separately captured by the "panel button" describe's snapshot.
-    it('reuses the shared navButton defaults by reference', () => {
-      // No `defaultSeverity` wrapper here — panelHeader declares no named severities of its own.
-      expect(calendarPanelHeaderDefaults.defaultVariant.defaultState.navButton).toBe(calendarPanelButtonDefaults)
-    })
-    // ... one describe block per remaining subcomponent (inputicon, navigationselector,
-    // pickercell, view for each of dateCell/monthCell/yearCell, weekdaylabel,
-    // today, datepanel, multimonthdivider, timeseperator, timepicker, footerbutton for
-    // todayButton/clearButton, footerbuttonbar, panel, settings) — leaf nodes (pickercell,
-    // panelbutton, timeseperator, etc.) keep their own snapshot; composite/consumer nodes
-    // (datepanel, timepicker, footerbuttonbar, panel) skip toMatchSnapshot() and assert
-    // reference equality / child wiring instead.
+  it('shape and defaults stay in sync', () => {
+    expectDefaultsMatchShape(calendar, calendarDefaults)
   })
 })
 ```
@@ -893,13 +724,12 @@ describe('calendar schema', () => {
 
 #### Running the tests
 
-Generate the initial snapshots by running the library's test task (`nx test
-integration-interface`), review the generated `__snapshots__/*.snap` diff like any other code
-change, and commit it alongside the schema change. Never hand-edit `.snap` files — always regenerate
-them from the code.
+Generate the initial snapshot by running the library's test task (`nx test integration-interface`),
+review the generated `__snapshots__/*.snap` diff like any other code change, and commit it alongside
+the schema change. Never hand-edit `.snap` files — always regenerate them from the code.
 
 #### Reflect testing outcomes in the audit report
 
 Update `docs/theme-schema-audits/<component>.md` (from Step 9) with a short "Testing" section
 noting which spec files were added/replaced, which legacy spec files were removed, and confirmation
-that `nx test integration-interface` passes with the new/updated snapshots committed.
+that `nx test integration-interface` passes with the new/updated snapshot committed.
