@@ -1145,7 +1145,7 @@ describe('DataListGridComponent', () => {
             expect(callbackSpy).not.toHaveBeenCalled()
           })
         })
-    
+
         it('should execute actionCallback when no routerLink is provided', async () => {
           userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
           const spy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
@@ -1281,17 +1281,17 @@ describe('DataListGridComponent', () => {
             labelKey: 'CUSTOM_ACTION_KEY',
           },
         ])
-        
+
         component.setSelectedItem(mockData[0])
         fixture.detectChanges()
         await fixture.whenStable()
 
         const menuItems = await firstValueFrom(component.gridMenuItems$)
-        
-        const customMenuItem = menuItems.find(item => item.label === 'CUSTOM_ACTION_KEY')
+
+        const customMenuItem = menuItems.find((item) => item.label === 'CUSTOM_ACTION_KEY')
         expect(customMenuItem).toBeTruthy()
-                expect(customMenuItem?.routerLink).toBe('/test-route')
-                expect(customMenuItem?.command).toBeUndefined()
+        expect(customMenuItem?.routerLink).toBe('/test-route')
+        expect(customMenuItem?.command).toBeUndefined()
       })
     })
   })
@@ -1346,6 +1346,19 @@ describe('DataListGridComponent', () => {
     })
 
     describe('should announce "no results found" when data is empty', () => {
+      it('should render the empty message', async () => {
+        fixture.componentRef.setInput('data', [])
+        fixture.componentRef.setInput('emptyResultsMessage', 'No items available')
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        const emptyMessage = fixture.nativeElement.querySelector('.ocx-data-list-grid-empty-message')
+
+        expect(emptyMessage).not.toBeNull()
+        expect(emptyMessage.textContent.trim()).toBe('No items available')
+      })
+
       it('de', async () => {
         translateService.use('de')
 
