@@ -39,8 +39,10 @@
       } }
     </div>
   </ng-template>
-  <ng-template pTemplate="empty">
-    <span>{{ emptyResultsMessage || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span>
+  <ng-template #emptymessage>
+    <span class="ocx-data-list-grid-empty-message"
+      >{{ emptyResultsMessage() || ("OCX_DATA_LIST_GRID.EMPTY_RESULT" | translate) }}</span
+    >
   </ng-template>
 </p-dataView>
 } }
@@ -192,8 +194,7 @@
             [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
             [attr.name]="'data-list-action-button'"
           ></button>
-          }
-          } } @if (hasVisibleOverflowMenuItems(item) | async) {
+          } } } @if (hasVisibleOverflowMenuItems(item) | async) {
           <p-menu #menu [model]="(overflowListMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
