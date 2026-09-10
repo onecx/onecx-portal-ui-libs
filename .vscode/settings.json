@@ -1,5 +1,5 @@
 {
-  "chat.promptFilesRecommendations": {
-    "resourceLangId == markdown": true
-  },
+    "chat.promptFilesRecommendations": {
+        "resourceLangId == markdown": true
+    }
 }
