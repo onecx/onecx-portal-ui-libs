@@ -1,5 +1,8 @@
 import { AutoFocus } from 'primeng/autofocus'
 
+// Call this on in remoteModule ngOnBootstrap or constructor to apply the PrimeNG AutoFocus patch.
+// It normalizes PrimeNG's buggy `autofocus === false` comparison so an unset (undefined/null) `autofocus` input no longer stamps a stray `autofocus="true"` on inner native elements — covering deeply-nested
+// Explicit `autofocus="true"` still works. 
 export function patchPrimeNgAutoFocus(): void {
   // Fast, class-scoped idempotency guard.
   const autoFocusClass = AutoFocus as unknown as { __onecxAutofocusPatched?: boolean }
@@ -28,6 +31,6 @@ export function patchPrimeNgAutoFocus(): void {
       return original.call(this)
     }
   } catch (err) {
-    console.warn('[OneCX PatchPrimeNgAutoFocus] patchPrimeNgAutoFocus failed; PrimeNG autofocus behavior unchanged.', err)
+    console.error('[OneCX PatchPrimeNgAutoFocus] patchPrimeNgAutoFocus failed; PrimeNG autofocus behavior unchanged.', err)
   }
 }

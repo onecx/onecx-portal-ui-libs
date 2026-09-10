@@ -1,5 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule} from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -30,7 +30,7 @@ import {
   provideTranslationPathFromMeta,
   MultiLanguageMissingTranslationHandler,
   DynamicLocaleId,
-  localeLoaders
+  localeLoaders,
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
@@ -53,21 +53,15 @@ import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from 'primeng/api'
 import { OcxTooltipDirective } from './directives/tooltip.directive'
-import { patchPrimeNgAutoFocus } from './utils/primeng-autofocus-patch'
-
-// Apply the PrimeNG AutoFocus patch as soon as this module file is evaluated (module-eval timing, so it runs before any PrimeNG component builds its host directives). 
-// It normalizes PrimeNG's buggy `autofocus === false` comparison so an unset (undefined/null) `autofocus` input no longer stamps a stray `autofocus="true"` on inner native elements — covering deeply-nested
-// Explicit `autofocus="true"` still works. 
-patchPrimeNgAutoFocus()
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
 function appInitializer(userService: UserService) {
   return async () => {
-    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)));
-    try{
-      await localeLoaders[lang]?.().then(data => registerLocaleData(data.default ?? data))
-    }catch (error) {
+    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)))
+    try {
+      await localeLoaders[lang]?.().then((data) => registerLocaleData(data.default ?? data))
+    } catch (error) {
       console.warn(`Could not load locale data for '${lang}'. Angular pipes may not format correctly.`, error)
     }
   }
@@ -82,7 +76,7 @@ function appInitializer(userService: UserService) {
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
-    OcxTooltipDirective
+    OcxTooltipDirective,
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -176,7 +170,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxTooltipDirective
+    OcxTooltipDirective,
   ],
 })
 export class AngularAcceleratorModule {}
