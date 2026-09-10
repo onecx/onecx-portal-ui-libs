@@ -1353,10 +1353,10 @@ describe('DataListGridComponent', () => {
 
         await fixture.whenStable()
 
-        const emptyMessage = fixture.nativeElement.querySelector('.ocx-data-list-grid-empty-message')
+        const emptyMessage = await listGrid.getEmptyMessage()
 
         expect(emptyMessage).not.toBeNull()
-        expect(emptyMessage.textContent.trim()).toBe('No items available')
+        expect((await emptyMessage?.text())?.trim()).toBe('No items available')
       })
 
       it('de', async () => {
