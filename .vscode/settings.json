@@ -2,5 +2,4 @@
   "chat.promptFilesRecommendations": {
     "resourceLangId == markdown": true
   },
-  "i18next.i18nPaths": "/Users/sweisz/Documents/Capgemini_Local/Dev/_Projects/onecx/Repos/forked/onecx-portal-ui-libs/libs/angular-accelerator/assets/i18n,/Users/sweisz/Documents/Capgemini_Local/Dev/_Projects/onecx/Repos/forked/onecx-portal-ui-libs/libs/angular-utils/assets/i18n,/Users/sweisz/Documents/Capgemini_Local/Dev/_Projects/onecx/Repos/forked/onecx-portal-ui-libs/libs/react-utils/assets/i18n"
 }
