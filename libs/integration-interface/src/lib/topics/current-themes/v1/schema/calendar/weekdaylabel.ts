@@ -1,19 +1,23 @@
-import z from 'zod'
-import { withRef, color, font } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
+import { color, font, withRef } from '../primitives'
 
 /**
- * Calendar week day label schema.
+ * Calendar week day label shape.
  */
-export class CalendarWeekDayLabelSchema {
-  static readonly schema = z
-    .object({
-      padding: withRef(z.string()).default('{{primitives.space.xs}}'),
-      font: font.pick({ weight: true, size: true }).default({
-        weight: '{{primitives.font.weight.bold}}',
-        size: '{{primitives.font.size}}',
-      }),
-      color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarWeekDayLabel' })
+export const calendarWeekDayLabelShape = z.object({
+  padding: withRef(z.string()).optional(),
+  font: font.pick({ weight: true, size: true }).optional(),
+  color: color.optional(),
+})
+
+/**
+ * Default tokens for the week day label.
+ */
+export const calendarWeekDayLabelDefaults = {
+  padding: '{{primitives.space.xs}}',
+  font: {
+    weight: '{{primitives.font.weight.bold}}',
+    size: '{{primitives.font.size}}',
+  },
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
 }
