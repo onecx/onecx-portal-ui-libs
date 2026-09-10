@@ -8,13 +8,16 @@ type PatchableAutoFocusClass = typeof AutoFocus & { __onecxAutofocusPatched?: bo
 // Real native elements so tests reflect actual pAutoFocus usage (e.g. p-button, p-inputtext, a plain span).
 const createAutoFocusInstance = (
   autofocus: boolean | null | undefined,
-  tagName: 'button' | 'input' | 'span' = 'span'
-) =>
-  ({
+  options: { tagName?: 'button' | 'input' | 'span'; focused?: boolean } = {}
+) => {
+  const { tagName = 'span', focused = true } = options
+  return {
     autofocus,
-    focused: true, // skips the inherited autoFocus() side effect so the test stays focused on the patch
+    focused,
+    autoFocus: jest.fn(),
     host: { nativeElement: document.createElement(tagName) },
-  }) as unknown as AutoFocus
+  } as unknown as AutoFocus
+}
 
 const getHostElement = (instance: AutoFocus) => instance.host.nativeElement as HTMLElement
 
@@ -57,21 +60,29 @@ describe('patchPrimeNgAutoFocus', () => {
     })
 
     it.each([
-      { label: 'true on a <button>', input: true, tagName: 'button' as const, expectedAutofocus: true },
-      { label: 'false on an <input>', input: false, tagName: 'input' as const, expectedAutofocus: false },
-      { label: 'null on a <span>', input: null, tagName: 'span' as const, expectedAutofocus: false },
-      { label: 'undefined on a <button>', input: undefined, tagName: 'button' as const, expectedAutofocus: false },
+      { label: 'true on a <button>', input: true, tagName: 'button' as const, expectedAttribute: true },
+      { label: 'false on an <input>', input: false, tagName: 'input' as const, expectedAttribute: false },
+      { label: 'null on a <span>', input: null, tagName: 'span' as const, expectedAttribute: false },
+      { label: 'undefined on a <button>', input: undefined, tagName: 'button' as const, expectedAttribute: false },
     ])(
-      'should apply autofocus only when explicitly true or false ($label)',
-      ({ input, tagName, expectedAutofocus }) => {
-        const instance = createAutoFocusInstance(input, tagName)
+      'should set the autofocus attribute only when explicitly true ($label)',
+      ({ input, tagName, expectedAttribute }) => {
+        const instance = createAutoFocusInstance(input, { tagName })
 
         proto.onAfterContentChecked?.call(instance)
 
-        expect(instance.autofocus).toBe(expectedAutofocus)
-        expect(getHostElement(instance).hasAttribute('autofocus')).toBe(expectedAutofocus)
+        expect(instance.autofocus).toBe(input) // the patch no longer mutates the input value
+        expect(getHostElement(instance).hasAttribute('autofocus')).toBe(expectedAttribute)
       }
     )
+
+    it('should call autoFocus() when not yet focused', () => {
+      const instance = createAutoFocusInstance(true, { focused: false })
+
+      proto.onAfterContentChecked?.call(instance)
+
+      expect(instance.autoFocus).toHaveBeenCalledTimes(1)
+    })
 
     it('should not wrap onAfterContentChecked again when called more than once', () => {
       const patchedOnce = proto.onAfterContentChecked
