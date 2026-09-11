@@ -30,6 +30,7 @@ import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { searchHeader } from './schema/search-header'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -92,6 +93,7 @@ const usages: z.ZodType<UsagesInput> = z
     menu: (menu as typeof menu).optional(),
     breadcrumb: (breadcrumb as typeof breadcrumb).optional(),
     pageHeader: (pageHeader as typeof pageHeader).optional(),
+    searchHeader: (searchHeader as typeof searchHeader).optional(),
     content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
   })
