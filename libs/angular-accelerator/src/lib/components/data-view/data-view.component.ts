@@ -347,7 +347,7 @@ export class DataViewComponent implements OnInit {
     effect(() => {
       const filters = this.stateService.filters()
       if (filters) {
-        this.filtered.emit(filters)
+        queueMicrotask(() => this.filtered.emit(filters))
       }
     })
 
@@ -355,34 +355,36 @@ export class DataViewComponent implements OnInit {
       const sortField = this.stateService.sortColumn()
       const sortDirection = this.stateService.sortDirection()
       if (sortField && sortDirection) {
-        this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection })
+        queueMicrotask(() => this.sorted.emit({ sortColumn: sortField, sortDirection: sortDirection }))
       }
     })
 
     effect(() => {
       const page = this.stateService.activePage()
       if (page !== undefined) {
-        this.pageChanged.emit(page)
+        queueMicrotask(() => this.pageChanged.emit(page))
       }
     })
 
     effect(() => {
       const pageSize = this.stateService.pageSize()
       if (pageSize !== undefined) {
-        this.pageSizeChanged.emit(pageSize)
+        queueMicrotask(() => this.pageSizeChanged.emit(pageSize))
       }
     })
 
     effect(() => {
-      this.componentStateChanged.emit({
-        filters: this.stateService.filters(),
-        sorting: {
-          sortColumn: this.stateService.sortColumn(),
-          sortDirection: this.stateService.sortDirection(),
-        },
-        selectedRows: this.stateService.selectedRows(),
-        activePage: this.stateService.activePage(),
-        pageSize: this.stateService.pageSize(),
+      queueMicrotask(() => {
+        this.componentStateChanged.emit({
+          filters: this.stateService.filters(),
+          sorting: {
+            sortColumn: this.stateService.sortColumn(),
+            sortDirection: this.stateService.sortDirection(),
+          },
+          selectedRows: this.stateService.selectedRows(),
+          activePage: this.stateService.activePage(),
+          pageSize: this.stateService.pageSize(),
+        })
       })
     })
   }
