@@ -1,5 +1,5 @@
 import { CommonModule, registerLocaleData } from '@angular/common'
-import { APP_INITIALIZER, LOCALE_ID, NgModule} from '@angular/core'
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -30,7 +30,7 @@ import {
   provideTranslationPathFromMeta,
   MultiLanguageMissingTranslationHandler,
   DynamicLocaleId,
-  localeLoaders
+  localeLoaders,
 } from '@onecx/angular-utils'
 import { SrcDirective } from './directives/src.directive'
 import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.directive'
@@ -58,10 +58,10 @@ export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMi
 
 function appInitializer(userService: UserService) {
   return async () => {
-    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)));
-    try{
-      await localeLoaders[lang]?.().then(data => registerLocaleData(data.default ?? data))
-    }catch (error) {
+    const lang = await firstValueFrom(userService.lang$.pipe(skip(1)))
+    try {
+      await localeLoaders[lang]?.().then((data) => registerLocaleData(data.default ?? data))
+    } catch (error) {
       console.warn(`Could not load locale data for '${lang}'. Angular pipes may not format correctly.`, error)
     }
   }
@@ -76,7 +76,7 @@ function appInitializer(userService: UserService) {
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
-    OcxTooltipDirective
+    OcxTooltipDirective,
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -170,7 +170,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
-    OcxTooltipDirective
+    OcxTooltipDirective,
   ],
 })
 export class AngularAcceleratorModule {}
