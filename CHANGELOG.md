@@ -1,3 +1,20 @@
+## [8.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.10.0...v8.11.0) (2026-09-11)
+
+### Features
+
+* Add per-button severity support to dialog buttons (v8) ([#1676](https://github.com/onecx/onecx-portal-ui-libs/issues/1676)) ([a161b0e](https://github.com/onecx/onecx-portal-ui-libs/commit/a161b0e03a4a64f2cb387c6ca46f9ac6edd6333b)), closes [#1665](https://github.com/onecx/onecx-portal-ui-libs/issues/1665)
+* extend shared config blacklist with React runtime subpaths and onecx subpaths ([#1614](https://github.com/onecx/onecx-portal-ui-libs/issues/1614)) ([0c4d01f](https://github.com/onecx/onecx-portal-ui-libs/commit/0c4d01f871bb72ebc66d65518117626ad7d22146))
+
+### Bug Fixes
+
+* pin [@onecx](https://github.com/onecx) peer dependency versions exactly instead of caret ranges (v8 backport) ([#1695](https://github.com/onecx/onecx-portal-ui-libs/issues/1695)) ([cf699a7](https://github.com/onecx/onecx-portal-ui-libs/commit/cf699a7118829abde18fbbf58ca22642b7d116b6)), closes [#1690](https://github.com/onecx/onecx-portal-ui-libs/issues/1690)
+* update empty message template in data list grid component ([#1705](https://github.com/onecx/onecx-portal-ui-libs/issues/1705)) ([#1709](https://github.com/onecx/onecx-portal-ui-libs/issues/1709)) ([eb3be40](https://github.com/onecx/onecx-portal-ui-libs/commit/eb3be40e056b4869869ac61f2de33e57531efdc1))
+* update js-yaml versions to 4.3.1 or 3.15.1 - v8 ([#1653](https://github.com/onecx/onecx-portal-ui-libs/issues/1653)) ([00d29d7](https://github.com/onecx/onecx-portal-ui-libs/commit/00d29d7c1e18841655acea43b656f138f0b6947c))
+* v8 draggable dialog in ocx-column-group-selector ([#1699](https://github.com/onecx/onecx-portal-ui-libs/issues/1699)) ([cb3e406](https://github.com/onecx/onecx-portal-ui-libs/commit/cb3e40661b3a4c1019818fc7b8fd69eaece8dcc2))
+* v8 filter column translation issues ([#1632](https://github.com/onecx/onecx-portal-ui-libs/issues/1632)) ([3f91ee2](https://github.com/onecx/onecx-portal-ui-libs/commit/3f91ee26e57ffdae8231836d9576aa6c9277ce34))
+* v8 primeng autofocus issue ([#1706](https://github.com/onecx/onecx-portal-ui-libs/issues/1706)) ([2e7c2ba](https://github.com/onecx/onecx-portal-ui-libs/commit/2e7c2baf893b25e4a0d33356def06214657ea3b3))
+* v8-portal-message-service changes to warn ([#1642](https://github.com/onecx/onecx-portal-ui-libs/issues/1642)) ([f704fd2](https://github.com/onecx/onecx-portal-ui-libs/commit/f704fd2be3b93977608c7c769f6295788ff10b64))
+
 ## [8.10.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.9.0...v8.10.0) (2026-07-21)
 
 ### Features
