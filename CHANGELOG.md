@@ -1,3 +1,17 @@
+## [7.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.2...v7.13.0) (2026-09-11)
+
+### Features
+
+* Add per-button severity support to dialog buttons (v7) ([#1677](https://github.com/onecx/onecx-portal-ui-libs/issues/1677)) ([bba1de5](https://github.com/onecx/onecx-portal-ui-libs/commit/bba1de57dfb3e34ccf59e41e7a571dda99c7ff1b)), closes [#1665](https://github.com/onecx/onecx-portal-ui-libs/issues/1665)
+
+### Bug Fixes
+
+* pin [@onecx](https://github.com/onecx) peer dependency versions exactly instead of caret ranges (v7 backport) ([#1694](https://github.com/onecx/onecx-portal-ui-libs/issues/1694)) ([1e85368](https://github.com/onecx/onecx-portal-ui-libs/commit/1e8536829c449dfb8cb4f723d84a60167936aa47)), closes [#1690](https://github.com/onecx/onecx-portal-ui-libs/issues/1690)
+* update dependency to patched version for security vulnerability ([#1674](https://github.com/onecx/onecx-portal-ui-libs/issues/1674)) ([6068e93](https://github.com/onecx/onecx-portal-ui-libs/commit/6068e937871703c6c8dce34b8008d93d869ba959))
+* update empty message template in data list grid component ([#1710](https://github.com/onecx/onecx-portal-ui-libs/issues/1710)) ([0fa0079](https://github.com/onecx/onecx-portal-ui-libs/commit/0fa0079ebb8e57bf6d715c73f595b7e7c9b2b4a4))
+* v6 draggable dialog in ocx-column-group-selector ([#1698](https://github.com/onecx/onecx-portal-ui-libs/issues/1698)) ([3b74d7a](https://github.com/onecx/onecx-portal-ui-libs/commit/3b74d7a5b8c4b7ec904496968ee49965c99fa061))
+* v7 primng autofocus bug patch added ([#1702](https://github.com/onecx/onecx-portal-ui-libs/issues/1702)) ([0e6904e](https://github.com/onecx/onecx-portal-ui-libs/commit/0e6904e1d4d5591447a4ec7be82038282735ed53))
+
 ## [7.12.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.1...v7.12.2) (2026-08-26)
 
 ### Bug Fixes
