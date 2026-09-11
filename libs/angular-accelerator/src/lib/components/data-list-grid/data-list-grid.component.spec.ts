@@ -1124,6 +1124,19 @@ describe('DataListGridComponent', () => {
     });
 
     describe('should announce "no results found" when data is empty', () => {
+      it('should render the empty message', async () => {
+        fixture.componentRef.setInput('data', [])
+        fixture.componentRef.setInput('emptyResultsMessage', 'No items available')
+        fixture.detectChanges()
+
+        await fixture.whenStable()
+
+        const emptyMessage = await listGrid.getEmptyMessage()
+
+        expect(emptyMessage).not.toBeNull()
+        expect((await emptyMessage?.text())?.trim()).toBe('No items available')
+      })
+
       it('de', async () => {
         translateService.use('de');
 
