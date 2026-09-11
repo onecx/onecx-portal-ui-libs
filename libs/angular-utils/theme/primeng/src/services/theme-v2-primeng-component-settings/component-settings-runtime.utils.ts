@@ -13,9 +13,11 @@ export type PrimeNgPatchableComponent = {
 
 /**
  * Constructor-like shape used to access the component prototype for runtime patching.
+ * `name` is the constructor's runtime name, used only for diagnostic messages.
  */
 export type PrimeNgComponentType<TComponent extends PrimeNgPatchableComponent> = {
   prototype: TComponent
+  name?: string
 }
 
 /**
@@ -91,6 +93,14 @@ export class PrimeNgComponentSettingsRuntime<
   /**
    * Patches the component prototype exactly once to observe explicit inputs and lifecycle events.
    *
+   * This relies on PrimeNG's documented `BaseComponent` hook convention: the base class defines
+   * `ngOnChanges`/`ngAfterContentInit`/`ngOnDestroy` that delegate to the unprefixed
+   * `onChanges`/`onAfterContentInit`/`onDestroy` hooks (PrimeNG currently pins `primeng@21.1.3`).
+   * If a component type has never defined an `onAfterContentInit` hook, the convention does not
+   * apply, so this bridge would patch a lifecycle method that PrimeNG never calls and themed
+   * defaults would silently stop being applied. Warn once at patch time so a future PrimeNG
+   * upgrade that renames or removes the convention fails loudly instead of silently.
+   *
    * @returns No return value.
    */
   private patchRuntime(): void {
@@ -99,6 +109,15 @@ export class PrimeNgComponentSettingsRuntime<
     }
 
     const { componentType } = this.config
+
+    if (typeof (componentType.prototype as Record<string, unknown>)['onAfterContentInit'] !== 'function') {
+      console.warn(
+        `[PrimeNgComponentSettingsRuntime] ${componentType.name ?? 'component'} does not define an ` +
+          'onAfterContentInit hook, so theme-mapped input defaults will not be applied to it. This ' +
+          'usually means the component no longer follows PrimeNG BaseComponent hook conventions.'
+      )
+    }
+
     const originalOnChanges = componentType.prototype.ngOnChanges
     const originalOnAfterContentInit = componentType.prototype.ngAfterContentInit
     const originalOnDestroy = componentType.prototype.ngOnDestroy
@@ -151,6 +170,12 @@ export class PrimeNgComponentSettingsRuntime<
   /**
    * Records which tracked inputs were explicitly provided on a component instance.
    * Explicit inputs take precedence over theme defaults.
+   *
+   * An input becomes explicit the moment it appears in a `changes` map and stays explicit for the
+   * instance's lifetime: the set is additive-only and is never shrunk. So once a consumer binds an
+   * input even once (e.g. `[circular]="x"`), later removing the binding or letting the bound value
+   * become `undefined` will not restore theme defaults for that instance. This is intentional —
+   * "explicit is sticky" — so a deliberate override is never clobbered by a transient `undefined`.
    *
    * @param instance Component instance whose inputs changed.
   * @param changes Angular simple-change map passed to `ngOnChanges`.

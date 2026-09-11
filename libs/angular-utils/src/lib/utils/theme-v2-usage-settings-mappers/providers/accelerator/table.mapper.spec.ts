@@ -1,4 +1,4 @@
-import { acceleratorTableSettingsMapper, mapAcceleratorTableSettings } from './table.mapper'
+import { mapAcceleratorTableSettings } from './table.mapper'
 
 describe('mapAcceleratorTableSettings', () => {
   it('should map table usage settings to accelerator table input defaults', () => {
@@ -25,7 +25,4 @@ describe('mapAcceleratorTableSettings', () => {
     })
   })
 
-  it('should expose the same mapper through the provider registry alias', () => {
-    expect(acceleratorTableSettingsMapper).toBe(mapAcceleratorTableSettings)
-  })
 })

@@ -36,6 +36,15 @@ export class CarouselComponentSettingsService {
   /**
    * Recomputes PrimeNG Carousel internals after themed settings changed at runtime.
    *
+   * This is a deliberate duplication of PrimeNG's own `ngOnChanges`/`ngAfterContentInit` refresh
+   * logic, pinned to the Carousel internal API surface of `primeng@21.1.3` (`allowAutoplay`,
+   * `startAutoplay`, `stopAutoplay`, `setCloneItems`, `createStyle`, `calculatePosition`, `cd`).
+   * The optional chaining (`?.()`) is intentional so an unexpected shape degrades gracefully, but
+   * it also means a future PrimeNG rename/remove of any of these members fails SILENTLY here. The
+   * integration test in theme-config.service.spec.ts ("should apply carousel settings to real
+   * PrimeNG carousel instances") is the guard: it drives a real Carousel end-to-end and must be
+   * re-verified (and this list updated) whenever PrimeNG is upgraded.
+   *
    * @param instance Carousel instance whose internal derived state must be refreshed.
    * @returns No return value.
    */

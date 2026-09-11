@@ -8,6 +8,16 @@ interface TestDefaults {
 }
 
 describe('PrimeNgComponentSettingsRuntime', () => {
+  let warnSpy: jest.SpyInstance
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+  })
+
+  afterEach(() => {
+    warnSpy.mockRestore()
+  })
+
   it('should apply initial defaults, preserve lifecycle hooks, and stop updating after teardown', async () => {
     const onChanges = jest.fn()
     const onAfterContentInit = jest.fn()
@@ -75,5 +85,40 @@ describe('PrimeNgComponentSettingsRuntime', () => {
     runtime.applyThemeProperties({})
     expect(instance.themed).toBe('updated-theme')
     expect(refreshInstance).toHaveBeenCalledTimes(1)
+  })
+
+  it('should warn once when the component prototype does not follow the BaseComponent hook convention', () => {
+    class BrokenComponent {
+      ngOnChanges(): void {
+        // PrimeNG base-class hook present, but no onAfterContentInit delegate.
+      }
+    }
+
+    new PrimeNgComponentSettingsRuntime<BrokenComponent, TestDefaults>({
+      componentType: BrokenComponent,
+      trackedKeys: ['themed', 'explicit'],
+      resolveDefaults: () => ({ themed: 'a', explicit: 'b' }),
+      refreshInstance: () => undefined,
+    })
+
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy.mock.calls[0][0]).toContain('BrokenComponent')
+  })
+
+  it('should not warn when the component defines the onAfterContentInit hook', () => {
+    class HookedComponent {
+      onAfterContentInit(): void {
+        // Declaring the PrimeNG hook signals the convention applies.
+      }
+    }
+
+    new PrimeNgComponentSettingsRuntime<HookedComponent, TestDefaults>({
+      componentType: HookedComponent,
+      trackedKeys: ['themed', 'explicit'],
+      resolveDefaults: () => ({ themed: 'a', explicit: 'b' }),
+      refreshInstance: () => undefined,
+    })
+
+    expect(warnSpy).not.toHaveBeenCalled()
   })
 })

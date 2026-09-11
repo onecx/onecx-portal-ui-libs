@@ -21,8 +21,6 @@ export * from './lib/utils/get-load-remote-entry-options.utils'
 export * from './lib/utils/theme-version-available.utils'
 export * from './lib/utils/theme-usage-settings.utils'
 export * from './lib/utils/as-observable.utils'
-export * from './lib/utils/theme-v2-usage-settings-mappers/helpers'
-export * from './lib/utils/theme-v2-usage-settings-mappers/types'
 export * from './lib/utils/theme-v2-usage-settings-mappers/providers/accelerator/table.mapper'
 export * from './lib/utils/theme-v2-usage-settings-mappers/providers/primeng/carousel.mapper'
 

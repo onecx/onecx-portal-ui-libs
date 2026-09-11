@@ -1,6 +1,15 @@
 import { ThemeUsageSettings } from '@onecx/integration-interface'
 import { defineUsageSettingsMapper, asBoolean, asEnum, asNumber } from '../../helpers'
 
+/**
+ * Component input defaults derived from the `carousel` theme usage settings, applied to PrimeNG
+ * Carousel instances by CarouselComponentSettingsService when the corresponding input isn't
+ * explicitly set.
+ *
+ * This shape is kept in sync by convention with the PrimeNG Carousel input declarations. Since the
+ * interface is a pure type with no runtime shape, a spec asserts the mapper's target keys stay a
+ * subset of the inputs Carousel actually declares to catch drift early.
+ */
 export interface PrimeNgCarouselInputDefaults {
   orientation?: 'horizontal' | 'vertical'
   showIndicators?: boolean
@@ -34,5 +43,3 @@ export const mapPrimeNgCarouselSettings = defineUsageSettingsMapper<
     transform: asNumber,
   },
 })
-
-export const primeNgCarouselSettingsMapper = mapPrimeNgCarouselSettings
