@@ -1,0 +1,222 @@
+import { SimpleChange } from '@angular/core'
+import { ThemePropertiesV2 } from '@onecx/integration-interface'
+
+/**
+ * Minimal lifecycle surface required to patch a PrimeNG component instance and
+ * react to explicit input changes plus component teardown.
+ */
+export type PrimeNgPatchableComponent = {
+  ngOnChanges?: (changes: Record<string, SimpleChange<any>>) => unknown
+  ngAfterContentInit?: () => unknown
+  ngOnDestroy?: () => unknown
+}
+
+/**
+ * Constructor-like shape used to access the component prototype for runtime patching.
+ * `name` is the constructor's runtime name, used only for diagnostic messages.
+ */
+export type PrimeNgComponentType<TComponent extends PrimeNgPatchableComponent> = {
+  prototype: TComponent
+  name?: string
+}
+
+/**
+ * Configuration required to connect resolved theme settings to a specific PrimeNG component type.
+ *
+ * @template TComponent PrimeNG component instance type being patched.
+ * @template TDefaults Object shape of theme-mapped input defaults.
+ */
+export interface PrimeNgComponentSettingsRuntimeConfig<
+  TComponent extends PrimeNgPatchableComponent,
+  TDefaults extends object,
+> {
+  /** PrimeNG component class whose prototype should be patched. */
+  componentType: PrimeNgComponentType<TComponent>
+  /** Input keys tracked for explicit instance overrides and theme default application. */
+  trackedKeys: readonly (keyof TDefaults)[]
+  /** Resolves theme properties into component input defaults. */
+  resolveDefaults: (properties: ThemePropertiesV2) => Partial<TDefaults>
+  /** Recomputes any component internals that depend on the patched inputs. */
+  refreshInstance: (instance: TComponent) => void
+}
+
+type RuntimeState<TComponent extends PrimeNgPatchableComponent, TDefaults extends object> = {
+  patched: boolean
+  activeInstances: Set<TComponent>
+  explicitInputs: WeakMap<TComponent, Set<keyof TDefaults>>
+}
+
+/**
+ * Reusable runtime bridge that applies theme-mapped defaults to PrimeNG component instances.
+ *
+ * It patches the component lifecycle once, tracks explicit instance inputs, and
+ * applies only those theme defaults that were not explicitly provided.
+ *
+ * @template TComponent PrimeNG component instance type being patched.
+ * @template TDefaults Object shape of theme-mapped input defaults.
+ */
+export class PrimeNgComponentSettingsRuntime<
+  TComponent extends PrimeNgPatchableComponent,
+  TDefaults extends object,
+> {
+  private currentDefaults: Partial<TDefaults> = {}
+  private readonly state: RuntimeState<TComponent, TDefaults> = {
+    patched: false,
+    activeInstances: new Set<TComponent>(),
+    explicitInputs: new WeakMap<TComponent, Set<keyof TDefaults>>(),
+  }
+
+  /**
+   * Creates a runtime bridge for one PrimeNG component type and patches its prototype.
+   *
+   * @param config Runtime configuration describing how theme defaults map onto component instances.
+   */
+  constructor(private readonly config: PrimeNgComponentSettingsRuntimeConfig<TComponent, TDefaults>) {
+    this.patchRuntime()
+  }
+
+  /**
+   * Resolves the current theme properties into component defaults and reapplies them
+   * to all active component instances.
+   *
+   * @param properties Resolved V2 theme properties for the current runtime context.
+   * @returns No return value.
+   */
+  applyThemeProperties(properties: ThemePropertiesV2): void {
+    this.currentDefaults = this.config.resolveDefaults(properties)
+
+    for (const instance of this.state.activeInstances) {
+      this.applySettings(instance, true)
+    }
+  }
+
+  /**
+   * Patches the component prototype exactly once to observe explicit inputs and lifecycle events.
+   *
+   * This relies on PrimeNG's documented `BaseComponent` hook convention: the base class defines
+   * `ngOnChanges`/`ngAfterContentInit`/`ngOnDestroy` that delegate to the unprefixed
+   * `onChanges`/`onAfterContentInit`/`onDestroy` hooks (PrimeNG currently pins `primeng@21.1.3`).
+   * If a component type has never defined an `onAfterContentInit` hook, the convention does not
+   * apply, so this bridge would patch a lifecycle method that PrimeNG never calls and themed
+   * defaults would silently stop being applied. Warn once at patch time so a future PrimeNG
+   * upgrade that renames or removes the convention fails loudly instead of silently.
+   *
+   * @returns No return value.
+   */
+  private patchRuntime(): void {
+    if (this.state.patched) {
+      return
+    }
+
+    const { componentType } = this.config
+
+    if (typeof (componentType.prototype as Record<string, unknown>)['onAfterContentInit'] !== 'function') {
+      console.warn(
+        `[PrimeNgComponentSettingsRuntime] ${componentType.name ?? 'component'} does not define an ` +
+          'onAfterContentInit hook, so theme-mapped input defaults will not be applied to it. This ' +
+          'usually means the component no longer follows PrimeNG BaseComponent hook conventions.'
+      )
+    }
+
+    const originalOnChanges = componentType.prototype.ngOnChanges
+    const originalOnAfterContentInit = componentType.prototype.ngAfterContentInit
+    const originalOnDestroy = componentType.prototype.ngOnDestroy
+    const recordExplicitInputs = (instance: TComponent, changes: Record<string, SimpleChange<any>>) =>
+      this.recordExplicitInputs(instance, changes)
+    const registerInstance = (instance: TComponent) => this.registerInstance(instance)
+    const applySettings = (instance: TComponent) => this.applySettings(instance)
+    const unregisterInstance = (instance: TComponent) => this.unregisterInstance(instance)
+
+    componentType.prototype.ngOnChanges = function (changes: Record<string, SimpleChange<any>>) {
+      recordExplicitInputs(this as TComponent, changes)
+      return originalOnChanges?.call(this, changes)
+    }
+
+    componentType.prototype.ngAfterContentInit = function () {
+      registerInstance(this as TComponent)
+      applySettings(this as TComponent)
+      return originalOnAfterContentInit?.call(this)
+    }
+
+    componentType.prototype.ngOnDestroy = function () {
+      unregisterInstance(this as TComponent)
+      return originalOnDestroy?.call(this)
+    }
+
+    this.state.patched = true
+  }
+
+  /**
+   * Tracks a live component instance so future theme changes can update it.
+   *
+   * @param instance Component instance entering its active lifecycle.
+   * @returns No return value.
+   */
+  private registerInstance(instance: TComponent): void {
+    this.state.activeInstances.add(instance)
+  }
+
+  /**
+   * Removes a component instance from runtime tracking and clears explicit-input metadata.
+   *
+   * @param instance Component instance leaving its active lifecycle.
+   * @returns No return value.
+   */
+  private unregisterInstance(instance: TComponent): void {
+    this.state.activeInstances.delete(instance)
+    this.state.explicitInputs.delete(instance)
+  }
+
+  /**
+   * Records which tracked inputs were explicitly provided on a component instance.
+   * Explicit inputs take precedence over theme defaults.
+   *
+   * An input becomes explicit the moment it appears in a `changes` map and stays explicit for the
+   * instance's lifetime: the set is additive-only and is never shrunk. So once a consumer binds an
+   * input even once (e.g. `[circular]="x"`), later removing the binding or letting the bound value
+   * become `undefined` will not restore theme defaults for that instance. This is intentional —
+   * "explicit is sticky" — so a deliberate override is never clobbered by a transient `undefined`.
+   *
+   * @param instance Component instance whose inputs changed.
+  * @param changes Angular simple-change map passed to `ngOnChanges`.
+   * @returns No return value.
+   */
+  private recordExplicitInputs(instance: TComponent, changes: Record<string, unknown>): void {
+    const explicitInputs = this.state.explicitInputs.get(instance) ?? new Set<keyof TDefaults>()
+
+    for (const key of Object.keys(changes)) {
+      if (this.config.trackedKeys.includes(key as keyof TDefaults)) {
+        explicitInputs.add(key as keyof TDefaults)
+      }
+    }
+
+    this.state.explicitInputs.set(instance, explicitInputs)
+  }
+
+  /**
+   * Applies unresolved theme defaults to a component instance when that input was not explicitly set.
+   *
+   * @param instance Component instance receiving theme defaults.
+   * @param refreshAfterApply When true, refreshes component internals if at least one value changed.
+   * @returns No return value.
+   */
+  private applySettings(instance: TComponent, refreshAfterApply = false): void {
+    const explicitInputs = this.state.explicitInputs.get(instance) ?? new Set<keyof TDefaults>()
+    let hasChanges = false
+
+    for (const key of this.config.trackedKeys) {
+      const value = this.currentDefaults[key]
+
+      if (value === undefined || explicitInputs.has(key) || (instance as Record<string, unknown>)[key as string] === value) {
+        continue
+      }
+
+      ;(instance as Record<string, unknown>)[key as string] = value
+      hasChanges = true
+    }
+
+    if (refreshAfterApply && hasChanges) {
+      this.config.refreshInstance(instance)
+    }
+  }
+}

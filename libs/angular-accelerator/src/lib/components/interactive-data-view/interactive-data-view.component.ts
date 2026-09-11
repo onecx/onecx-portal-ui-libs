@@ -45,6 +45,7 @@ import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
+import { useAcceleratorTableThemeDefaults } from '../../utils/accelerator-table-theme-defaults.utils'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
 
@@ -146,8 +147,24 @@ export class InteractiveDataViewComponent implements OnInit {
       []
     )
   })
-  frozenActionColumn = model<boolean>(false)
-  actionColumnPosition = model<'left' | 'right'>('right')
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+
+  private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
+  checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+  frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
+  actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
+  private readonly dialogActionColumnOverride = signal<ActionColumnChangedEvent | undefined>(undefined)
+
+  checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnResolved = computed(
+    () => this.frozenActionColumn() ?? this.dialogActionColumnOverride()?.frozenActionColumn ?? this.frozenActionColumnThemeSetting() ?? false
+  )
+  actionColumnPositionResolved = computed(
+    () => this.actionColumnPosition() ?? this.dialogActionColumnOverride()?.actionColumnPosition ?? this.actionColumnPositionThemeSetting() ?? 'right'
+  )
+
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
@@ -584,8 +601,8 @@ export class InteractiveDataViewComponent implements OnInit {
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
         startWith({
           actionColumnConfig: {
-            frozen: this.frozenActionColumn(),
-            position: this.actionColumnPosition(),
+            frozen: this.frozenActionColumnResolved(),
+            position: this.actionColumnPositionResolved(),
           },
           displayedColumns: this.displayedColumns(),
           activeColumnGroupKey: this.selectedGroupKey(),
@@ -704,8 +721,7 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.frozenActionColumn.set(event.frozenActionColumn)
-    this.actionColumnPosition.set(event.actionColumnPosition)
+    this.dialogActionColumnOverride.set(event)
   }
 
   onRowSelectionChange(event: Row[]) {

@@ -4,10 +4,11 @@ import { ThemeService } from './theme.service'
 import { ShellCapabilityService } from './shell-capability.service'
 
 const createTopic = () => ({ destroy: jest.fn() })
+const createCurrentThemesTopic = () => ({ destroy: jest.fn() })
 
 jest.mock('@onecx/integration-interface', () => ({
   CurrentThemeTopic: jest.fn(() => createTopic()),
-  CurrentThemesTopic: jest.fn(() => createTopic()),
+  CurrentThemesTopic: jest.fn(() => createCurrentThemesTopic()),
   ShellCapability: {
     CURRENT_THEMES_TOPIC: 'currentThemesTopic',
   },
@@ -64,11 +65,12 @@ describe('ThemeService', () => {
     it('should destroy currentThemes$ topic on destroy', () => {
       hasCapabilityMock.mockReturnValue(true)
 
-      const topic = service.currentThemes$ as any
+      service.currentThemes$
+      const topic = service._currentThemes$
 
       service.ngOnDestroy()
 
-      expect(topic.destroy).toHaveBeenCalledTimes(1)
+      expect(topic?.destroy).toHaveBeenCalledTimes(1)
     })
 
     it('should fall back to currentTheme$ mapped to v1 when capability is missing', async () => {
@@ -77,7 +79,7 @@ describe('ThemeService', () => {
       const theme = { name: 'theme-a', properties: { foo: 'bar' } }
       service.currentTheme$ = Object.assign(of(theme), { destroy: jest.fn() }) as any
 
-      const result = await firstValueFrom(service.currentThemes$ as any)
+      const result = await firstValueFrom(service.currentThemes$)
 
       expect(loggerErrorSpy).toHaveBeenCalled()
       expect(result).toEqual({
@@ -93,7 +95,7 @@ describe('ThemeService', () => {
       const theme = { name: 'theme-b' }
       service.currentTheme$ = Object.assign(of(theme), { destroy: jest.fn() }) as any
 
-      const result = await firstValueFrom(service.currentThemes$ as any)
+      const result = await firstValueFrom(service.currentThemes$)
 
       expect(result).toEqual({
         ...theme,

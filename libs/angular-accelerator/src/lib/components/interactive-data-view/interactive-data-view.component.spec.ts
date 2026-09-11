@@ -1,4 +1,5 @@
 import { SlotService } from '@onecx/angular-remote-components'
+import { ThemeService } from '@onecx/angular-integration-interface'
 import { TestBed } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
@@ -25,12 +26,23 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     } as unknown as SlotService
 
     TestBed.configureTestingModule({
-      providers: [{ provide: SlotService, useValue: slotService }],
+      providers: [
+        { provide: SlotService, useValue: slotService },
+        { provide: ThemeService, useValue: null },
+      ],
     })
 
     const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())
     return { component, slotService }
   }
+
+  it('should construct without ThemeService and use hardcoded defaults', () => {
+    const { component } = createComponent()
+
+    expect(component.checkboxColumnPositionResolved()).toBe('left')
+    expect(component.frozenActionColumnResolved()).toBe(false)
+    expect(component.actionColumnPositionResolved()).toBe('right')
+  })
 
   describe('component state aggregation (componentStateChanged)', () => {
     it('should startWith column-group + custom-group state when column group component is NOT defined', () => {
@@ -560,16 +572,32 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(sortedSpy).toHaveBeenCalledWith(event)
     })
 
-    it('should update action column config onActionColumnConfigChange', () => {
+    it('should preserve dialog action column overrides across theme updates', () => {
       const { component } = createComponent(true)
 
-      component.frozenActionColumn.set(false)
-      component.actionColumnPosition.set('right' as any)
-
+      component.frozenActionColumnThemeSetting.set(false)
+      component.actionColumnPositionThemeSetting.set('right')
       component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
 
-      expect(component.frozenActionColumn()).toBe(true)
-      expect(component.actionColumnPosition()).toBe('left' as any)
+      expect(component.frozenActionColumnResolved()).toBe(true)
+      expect(component.actionColumnPositionResolved()).toBe('left')
+
+      component.frozenActionColumnThemeSetting.set(false)
+      component.actionColumnPositionThemeSetting.set('right')
+
+      expect(component.frozenActionColumnResolved()).toBe(true)
+      expect(component.actionColumnPositionResolved()).toBe('left')
+    })
+
+    it('should prefer explicit action column inputs over dialog overrides', () => {
+      const { component } = createComponent(true)
+
+      setInputSignal(component, 'frozenActionColumn', false)
+      setInputSignal(component, 'actionColumnPosition', 'right')
+      component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
+
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
     })
   })
 
