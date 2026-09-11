@@ -32,5 +32,5 @@ export class DataviewSchema {
       content: (DataviewContentSchema.schema as typeof DataviewContentSchema.schema).prefault({}),
       footer: (DataviewFooterSchema.schema as typeof DataviewFooterSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataview' })
+    .register(themeSchemaRegistry, { id: 'dataview', axis: 'none' })
 }

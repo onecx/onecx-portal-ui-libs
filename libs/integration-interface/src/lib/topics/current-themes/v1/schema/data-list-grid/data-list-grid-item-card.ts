@@ -76,7 +76,7 @@ export class DataListGridItemCardSchema {
         ...this.focusTokens,
       }).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataListGridItemCard' });
+    .register(themeSchemaRegistry, { id: 'dataListGridItemCard', axis: 'none' });
 }
 
 export const dataListGridItemCard = DataListGridItemCardSchema.schema;

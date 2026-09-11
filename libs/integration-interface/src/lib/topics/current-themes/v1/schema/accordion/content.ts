@@ -20,5 +20,5 @@ export class AccordionContentSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'accordionContent' })
+    .register(themeSchemaRegistry, { id: 'accordionContent', axis: 'child' })
 }

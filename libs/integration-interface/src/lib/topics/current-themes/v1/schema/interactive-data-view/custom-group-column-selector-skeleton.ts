@@ -19,7 +19,7 @@ export class CustomGroupColumnSelectorSkeletonSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'customGroupColumnSelectorSkeleton' });
+    .register(themeSchemaRegistry, { id: 'customGroupColumnSelectorSkeleton', axis: 'none' });
 }
 
 export const customGroupColumnSelectorSkeleton = CustomGroupColumnSelectorSkeletonSchema.schema;

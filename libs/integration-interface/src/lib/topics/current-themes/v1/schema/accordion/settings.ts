@@ -13,5 +13,5 @@ export class AccordionSettingsSchema {
     .object({
       ...this.token,
     })
-    .register(themeSchemaRegistry, { id: 'accordionSettings' })
+    .register(themeSchemaRegistry, { id: 'accordionSettings', axis: 'child' })
 }

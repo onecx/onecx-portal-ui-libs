@@ -10,7 +10,7 @@ export const badgeSettings = z
     badgeSize: withRef(z.string()).optional(),
     size: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badgeSettings' })
+  .register(themeSchemaRegistry, { id: 'badgeSettings', axis: 'none' })
 
 // Base badge style (size-specific properties)
 export const badgeSizeStyle = z
@@ -19,7 +19,7 @@ export const badgeSizeStyle = z
     minWidth: withRef(z.string()).optional(),
     height: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badgeSizeStyle' })
+  .register(themeSchemaRegistry, { id: 'badgeSizeStyle', axis: 'none' })
 
 // Badge style with size variants
 export const badgeStyleWithSizeVariants = z
@@ -40,7 +40,7 @@ export const badgeStyleWithSizeVariants = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badgeStyleWithSizeVariants' })
+  .register(themeSchemaRegistry, { id: 'badgeStyleWithSizeVariants', axis: 'none' })
 
 const colorVariant = (severity: string) => ({
   background: `{{primitives.variant.primary.defaultState.defaultVariant.${severity}.bg}}`,
@@ -113,4 +113,4 @@ export const badge = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badge' })
+  .register(themeSchemaRegistry, { id: 'badge', axis: 'none' })

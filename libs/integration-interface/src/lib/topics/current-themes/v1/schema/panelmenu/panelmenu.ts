@@ -28,5 +28,5 @@ export class PanelMenuSchema {
       header: PanelMenuHeaderSchema.schema.prefault({}),
       content: PanelMenuContentSchema.schema.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenu' })
+    .register(themeSchemaRegistry, { id: 'panelmenu', axis: 'none' })
 }

@@ -160,5 +160,5 @@ export class PanelMenuItemSchema {
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenuItem' })
+    .register(themeSchemaRegistry, { id: 'panelmenuItem', axis: 'none' })
 }

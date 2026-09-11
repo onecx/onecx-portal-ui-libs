@@ -100,5 +100,5 @@ export class TabsTabSchema {
             active: this.tabActiveStateTokens.prefault({}),
             disabled: this.tabDisabledStateTokens.prefault({}),
         })
-        .register(themeSchemaRegistry, { id: 'tabsTab' })
+        .register(themeSchemaRegistry, { id: 'tabsTab', axis: 'none' })
 }

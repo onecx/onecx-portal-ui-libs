@@ -25,5 +25,5 @@ export class PicklistPanelHeaderSchema {
         weight: '{{primitives.font.weight}}',
       }),
     })
-    .register(themeSchemaRegistry, { id: 'picklistPanelHeader' })
+    .register(themeSchemaRegistry, { id: 'picklistPanelHeader', axis: 'none' })
 }

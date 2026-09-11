@@ -13,5 +13,5 @@ export class MultiselectSchema {
       filled: (MultiselectVariantSchema.schema as typeof MultiselectVariantSchema.schema).prefault({}),
       ...MultiselectVariantSchema.schema.shape,
     })
-    .register(themeSchemaRegistry, { id: 'multiselect' })
+    .register(themeSchemaRegistry, { id: 'multiselect', axis: 'none' })
 }

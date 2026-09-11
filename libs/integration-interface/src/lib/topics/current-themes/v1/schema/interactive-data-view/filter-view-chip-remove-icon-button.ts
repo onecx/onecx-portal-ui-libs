@@ -73,7 +73,7 @@ export class FilterViewChipRemoveIconButtonSchema {
         ...this.focusTokens,
       }).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'filterViewChipRemoveIconButton' });
+    .register(themeSchemaRegistry, { id: 'filterViewChipRemoveIconButton', axis: 'none' });
 }
 
 export const filterViewChipRemoveIconButton = FilterViewChipRemoveIconButtonSchema.schema;

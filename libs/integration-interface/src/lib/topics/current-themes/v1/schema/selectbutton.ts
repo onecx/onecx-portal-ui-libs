@@ -9,7 +9,7 @@ export const selectbuttonSettings = z
     size: withRef(z.enum(['sm', 'md', 'lg'])).default('md'),
     multiple: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'selectbuttonSettings' })
+  .register(themeSchemaRegistry, { id: 'selectbuttonSettings', axis: 'none' })
 
 export const selectbutton = z
   .object({
@@ -24,4 +24,4 @@ export const selectbutton = z
     }),
     button: (togglebutton as typeof togglebutton).prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'selectbutton' })
+  .register(themeSchemaRegistry, { id: 'selectbutton', axis: 'none' })

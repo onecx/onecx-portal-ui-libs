@@ -16,5 +16,5 @@ export class AccordionPanelSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'accordionPanel' })
+    .register(themeSchemaRegistry, { id: 'accordionPanel', axis: 'child' })
 }

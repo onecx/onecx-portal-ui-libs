@@ -91,5 +91,5 @@ export class PageHeaderContentSchema {
       ...this.tokens,
       ...this.objectPanel,
     })
-    .register(themeSchemaRegistry, { id: 'pageHeaderContent' })
+    .register(themeSchemaRegistry, { id: 'pageHeaderContent', axis: 'none' })
 }

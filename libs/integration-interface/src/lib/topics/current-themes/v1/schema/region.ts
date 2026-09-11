@@ -13,7 +13,7 @@ export const fontWithDefaults = z
     ),
     style: withRef(z.string()).default("{{primitives.font.style}}"),
   })
-  .register(themeSchemaRegistry, { id: "fontWithDefaults" });
+  .register(themeSchemaRegistry, { id: "fontWithDefaults", axis: 'none' });
 
   /**
    * Contains settings that should be applied to the current theme region (e.g. body or slot group). Contains stuff like background color, typography etc.
@@ -22,4 +22,4 @@ export const region = z
   .object({
     font: fontWithDefaults.optional(),
   })
-  .register(themeSchemaRegistry, { id: "region" });
+  .register(themeSchemaRegistry, { id: "region", axis: 'none' });

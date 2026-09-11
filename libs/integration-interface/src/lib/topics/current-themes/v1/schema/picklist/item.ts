@@ -88,5 +88,5 @@ export class PicklistPanelItemSchema {
       focus: this.focusTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'picklistPanelItem' })
+    .register(themeSchemaRegistry, { id: 'picklistPanelItem', axis: 'none' })
 }

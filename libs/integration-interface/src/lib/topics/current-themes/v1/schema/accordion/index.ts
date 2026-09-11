@@ -26,5 +26,5 @@ export class AccordionSchema {
       header: AccordionHeaderSchema.schema.prefault({}),
       content: AccordionContentSchema.schema.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'accordion' })
+    .register(themeSchemaRegistry, { id: 'accordion', axis: 'none' })
 }
