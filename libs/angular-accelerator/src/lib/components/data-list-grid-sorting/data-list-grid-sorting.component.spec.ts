@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
@@ -121,6 +122,18 @@ describe('DataListGridSortingComponent', () => {
       fixture.detectChanges()
 
       expect(setSortColumnSpy).toHaveBeenCalledWith('name')
+    })
+  })
+
+  describe('autofocus', () => {
+    it('should have autofocus property on p-select set to false', () => {
+      fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'Name', sortable: true })])
+      fixture.detectChanges()
+
+      const pSelectDebugEl = fixture.debugElement.query(By.css('p-select'))
+      expect(pSelectDebugEl).toBeTruthy()
+      // Check that the autofocus input property is set to false
+      expect(pSelectDebugEl.componentInstance.autofocus).toBe(false)
     })
   })
 })
