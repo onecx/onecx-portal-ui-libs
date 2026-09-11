@@ -1,3 +1,15 @@
+## [6.27.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.2...v6.27.3) (2026-09-11)
+
+### Bug Fixes
+
+* double action callback and storybook imports ([#1661](https://github.com/onecx/onecx-portal-ui-libs/issues/1661)) ([5a43cde](https://github.com/onecx/onecx-portal-ui-libs/commit/5a43cde72c10701f5e9b69bcddcc0fb426d56d5e))
+* update empty message template in data list grid component ([#1711](https://github.com/onecx/onecx-portal-ui-libs/issues/1711)) ([6a8491e](https://github.com/onecx/onecx-portal-ui-libs/commit/6a8491ec63dd9c16617dbabbbb5bc1846d4e70b3))
+* v6 draggable dialog in ocx-column-group-selector ([#1697](https://github.com/onecx/onecx-portal-ui-libs/issues/1697)) ([155b271](https://github.com/onecx/onecx-portal-ui-libs/commit/155b2718ace8e210e73b9dc7fe2e158b6fe0220e))
+
+### Chores
+
+* **deps:** update dependency to patched version for security vulnerability-v6 ([#1675](https://github.com/onecx/onecx-portal-ui-libs/issues/1675)) ([fdd2252](https://github.com/onecx/onecx-portal-ui-libs/commit/fdd2252a184be090e831d70649c3d263498d5209))
+
 ## [6.27.2](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.1...v6.27.2) (2026-08-18)
 
 ### Bug Fixes
