@@ -18,17 +18,17 @@ export const tabpanelRules: MappingRule[] = [
     to: 'components.tabs.tabpanel.padding',
   },
 
-  // ─── Tabpanel focus ring (inherited from tabs-level focusRing) ────────────
+  // ─── Tabpanel focus ring (inherited from tab-level focusRing) ─────────────
   {
-    from: 'usages.tabs.focusRing.width',
+    from: 'usages.tabs.tab.focusRing.width',
     to: 'components.tabs.tabpanel.focusRing.width',
   },
   {
-    from: 'usages.tabs.focusRing.shadow',
+    from: 'usages.tabs.tab.focusRing.shadow',
     to: 'components.tabs.tabpanel.focusRing.shadow',
   },
-    {
-    from: 'usages.tabs.focusRing.offset',
+  {
+    from: 'usages.tabs.tab.focusRing.offset',
     to: 'components.tabs.tabpanel.focusRing.offset',
   },
 ];

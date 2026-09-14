@@ -21,7 +21,8 @@ export const loadingIndicatorSpinner = z
         color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
         trackColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
         width: withRef(z.string()).default('{{primitives.border.width.md}}'),
-      }),
+      })
+      .prefault({}),
     animationDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
   })
   .register(themeSchemaRegistry, { id: 'loadingIndicatorSpinner' })

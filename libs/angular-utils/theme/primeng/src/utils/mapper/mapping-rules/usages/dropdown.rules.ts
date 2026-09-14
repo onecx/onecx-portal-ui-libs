@@ -189,7 +189,7 @@ const DROPDOWN_LIST: MappingRule[] = [
 
 const DROPDOWN_OPTION: MappingRule[] = [
   {
-    from: 'usages.dropdown.option.states.focus.bg',
+    from: 'usages.dropdown.option.focus.bg',
     to: 'components.select.option.focusBackground',
     transform: toColorString,
   },
@@ -209,7 +209,7 @@ const DROPDOWN_OPTION: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.dropdown.option.states.focus.contrast',
+    from: 'usages.dropdown.option.focus.contrast',
     to: 'components.select.option.focusColor',
     transform: toColorString,
   },
@@ -245,25 +245,20 @@ const DROPDOWN_OPTION: MappingRule[] = [
 
 const DROPDOWN_MISC: MappingRule[] = [
 	{
-		from: 'usages.dropdown.clear.icon.color',
-		to: 'components.select.clearIcon.color',
-		transform: toColorString,
-	},
-	{
 		from: 'usages.dropdown.checkmark.color',
 		to: 'components.select.checkmark.color',
 		transform: toColorString,
 	},
 	{
-		from: 'usages.dropdown.checkmark.gutter.start',
+		from: 'usages.dropdown.checkmark.space.sm',
 		to: 'components.select.checkmark.gutterStart',
 	},
 	{
-		from: 'usages.dropdown.checkmark.gutter.end',
+		from: 'usages.dropdown.checkmark.space.md',
 		to: 'components.select.checkmark.gutterEnd',
 	},
 	{
-		from: 'usages.dropdown.empty.message.padding',
+		from: 'usages.dropdown.empty.message.md',
 		to: 'components.select.emptyMessage.padding',
 	},
 ]
