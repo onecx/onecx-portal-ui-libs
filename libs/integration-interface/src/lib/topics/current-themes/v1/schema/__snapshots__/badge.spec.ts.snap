@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`badge schema resolves the expected default token tree 1`] = `
+Object {
+  "border": Object {
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+    "offset": "{{primitives.border.offset.none}}",
+    "radius": "{{primitives.radius.full}}",
+    "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+    "width": "{{primitives.border.width.none}}",
+  },
+  "contrast": Object {
+    "background": "{{primitives.variant.primary.defaultState.severity.contrast.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.severity.contrast.contrast}}",
+  },
+  "danger": Object {
+    "background": "{{primitives.variant.primary.defaultState.severity.danger.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.severity.danger.contrast}}",
+  },
+  "dot": Object {
+    "size": "0.5rem",
+  },
+  "font": Object {
+    "size": "{{primitives.font.size}}",
+    "weight": "{{primitives.font.weight}}",
+  },
+  "height": "1.5rem",
+  "info": Object {
+    "background": "{{primitives.variant.primary.defaultState.severity.info.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.severity.info.contrast}}",
+  },
+  "lg": Object {
+    "fontSize": "{{primitives.font.size}}",
+    "height": "1.75rem",
+    "minWidth": "1.75rem",
+  },
+  "minWidth": "1.5rem",
+  "padding": "{{primitives.space.sm}}",
+  "primary": Object {
+    "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+  },
+  "secondary": Object {
+    "background": "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+    "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+  },
+  "sm": Object {
+    "fontSize": "{{primitives.font.size}}",
+    "height": "1.25rem",
+    "minWidth": "1.25rem",
+  },
+  "success": Object {
+    "background": "{{primitives.variant.primary.defaultState.severity.success.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.severity.success.contrast}}",
+  },
+  "warning": Object {
+    "background": "{{primitives.variant.primary.defaultState.severity.warning.bg}}",
+    "color": "{{primitives.variant.primary.defaultState.severity.warning.contrast}}",
+  },
+  "xl": Object {
+    "fontSize": "{{primitives.font.size}}",
+    "height": "2rem",
+    "minWidth": "2rem",
+  },
+}
+`;

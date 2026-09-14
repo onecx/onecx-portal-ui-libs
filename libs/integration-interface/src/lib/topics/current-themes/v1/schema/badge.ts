@@ -1,9 +1,11 @@
 /**
- * This file defines the schema for badge theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
+ * This file defines the schema for badge theming. It, by default, uses primitives for default
+ * values but allows overriding any of them with custom values.
  */
 import * as z from 'zod'
 import { bg, border, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { applyDefaultsRecursive } from './defaults-helper'
 
 export const badgeSettings = z
   .object({
@@ -12,18 +14,23 @@ export const badgeSettings = z
   })
   .register(themeSchemaRegistry, { id: 'badgeSettings' })
 
-export const badgeDot = z
-  .object({
-    size: withRef(z.string()).default('0.5rem'),
-  })
-  .register(themeSchemaRegistry, { id: 'badgeDot' })
+export const badgeDotShape = z.object({
+  size: withRef(z.string()).optional(),
+})
 
-const badgeSizeStyle = z
-  .object({
-    fontSize: withRef(z.string()).optional(),
-    minWidth: withRef(z.string()).optional(),
-    height: withRef(z.string()).optional(),
-  })
+export const badgeDotDefaults = {
+  size: '0.5rem',
+}
+
+export const badgeDot = applyDefaultsRecursive(badgeDotShape, badgeDotDefaults).register(themeSchemaRegistry, {
+  id: 'badgeDot',
+})
+
+export const badgeSizeShape = z.object({
+  fontSize: withRef(z.string()).optional(),
+  minWidth: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+})
 
 const badgeBaseDefaults = {
   font: {
@@ -68,32 +75,52 @@ const colorVariant = (variant: string, severity?: string) => ({
   color: `{{primitives.variant.${variant}.defaultState.${severity ? `severity.${severity}` : 'defaultSeverity'}.contrast}}`,
 })
 
-const badgeColorVariant = (def: { background: string; color: string }) =>
-  z
-    .object({
-      background: z.union([bg, withRef(z.string())]).default(def.background),
-      color: color.default(def.color),
-    })
-    .prefault({})
-
-export const badge = z
+export const badgeColorVariantShape = z
   .object({
-    settings: (badgeSettings as typeof badgeSettings).optional(),
-    dot: (badgeDot as typeof badgeDot).prefault({}),
-    font: font.default(badgeBaseDefaults.font),
-    border: border.default(badgeBaseDefaults.border),
-    padding: withRef(z.string()).default(badgeBaseDefaults.padding),
-    minWidth: withRef(z.string()).default(BADGE_DEFAULT_SIZE.minWidth),
-    height: withRef(z.string()).default(BADGE_DEFAULT_SIZE.height),
-    sm: badgeSizeStyle.default(BADGE_SM_SIZE),
-    lg: badgeSizeStyle.default(BADGE_LG_SIZE),
-    xl: badgeSizeStyle.default(BADGE_XL_SIZE),
-    primary: badgeColorVariant(colorVariant('primary')),
-    secondary: badgeColorVariant(colorVariant('secondary')),
-    success: badgeColorVariant(colorVariant('primary', 'success')),
-    info: badgeColorVariant(colorVariant('primary', 'info')),
-    warning: badgeColorVariant(colorVariant('primary', 'warning')),
-    danger: badgeColorVariant(colorVariant('primary', 'danger')),
-    contrast: badgeColorVariant(colorVariant('primary', 'contrast')),
+    background: z.union([bg, withRef(z.string())]).optional(),
+    color: color.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badge' })
+  .prefault({})
+
+export const badgeShape = z.object({
+  settings: badgeSettings.optional(),
+  dot: badgeDotShape.prefault({}),
+  font: font.optional(),
+  border: border.optional(),
+  padding: withRef(z.string()).optional(),
+  minWidth: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  sm: badgeSizeShape.optional(),
+  lg: badgeSizeShape.optional(),
+  xl: badgeSizeShape.optional(),
+  primary: badgeColorVariantShape.optional(),
+  secondary: badgeColorVariantShape.optional(),
+  success: badgeColorVariantShape.optional(),
+  info: badgeColorVariantShape.optional(),
+  warning: badgeColorVariantShape.optional(),
+  danger: badgeColorVariantShape.optional(),
+  contrast: badgeColorVariantShape.optional(),
+})
+
+export const badgeDefaults = {
+  dot: badgeDotDefaults,
+  font: badgeBaseDefaults.font,
+  border: badgeBaseDefaults.border,
+  padding: badgeBaseDefaults.padding,
+  minWidth: BADGE_DEFAULT_SIZE.minWidth,
+  height: BADGE_DEFAULT_SIZE.height,
+  sm: BADGE_SM_SIZE,
+  lg: BADGE_LG_SIZE,
+  xl: BADGE_XL_SIZE,
+  primary: colorVariant('primary'),
+  secondary: colorVariant('secondary'),
+  success: colorVariant('primary', 'success'),
+  info: colorVariant('primary', 'info'),
+  warning: colorVariant('primary', 'warning'),
+  danger: colorVariant('primary', 'danger'),
+  contrast: colorVariant('primary', 'contrast'),
+}
+
+export const badge = applyDefaultsRecursive(badgeShape, badgeDefaults).register(themeSchemaRegistry, {
+  id: 'badge',
+})
