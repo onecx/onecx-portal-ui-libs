@@ -7,7 +7,7 @@ import {
   type LeafFallbackMetadata,
 } from './axis-metadata'
 import { theme } from '../current-themes.schema'
-import { colorVariants, severityVariants, stateVariants, themeRef } from '../schema/primitives'
+import { colorVariants, severityVariants, states, themeRef } from '../schema/primitives'
 import { themeSchemaRegistry } from '../schema/registry'
 import { MessageSettingsSchema } from '../schema/message/settings'
 import { input } from '../schema/input'
@@ -27,16 +27,16 @@ describe('schema node marker', () => {
     expect(entry?.axis).toEqual('severity')
   })
 
-  it('classifies stateVariants as state', () => {
-    const entry = themeSchemaRegistry.get(stateVariants)
+  it('classifies states as state', () => {
+    const entry = themeSchemaRegistry.get(states)
     expect(entry).toBeDefined()
     expect(entry?.axis).toEqual('state')
   })
 
-  it('classifies messageSettings as child', () => {
+  it('classifies messageSettings as a structural pass-through (axis de-assigned)', () => {
     const entry = themeSchemaRegistry.get(MessageSettingsSchema.schema)
     expect(entry).toBeDefined()
-    expect(entry?.axis).toEqual('child')
+    expect(entry?.axis).toBeUndefined()
   })
 
   it('classifies the flattened input root as a variant container', () => {
@@ -272,10 +272,10 @@ describe('child boundary detection (synthetic)', () => {
     ])
   })
 
-  it('omits a leaf nested inside a `axis: child` terminal node (message close width)', () => {
-    // `message.close` (messageCloseButton) is a legacy `axis: 'child'` terminal node, not a
-    // relaxed axis: `width` is a pass-through key, so the leaf crosses no variant/state/
-    // severity member and carries no fallback metadata.
+  it('omits a leaf nested inside a structural pass-through node (message close width)', () => {
+    // `message.close` (messageCloseButton) is a structural pass-through node (its axis is
+    // de-assigned): `width` crosses no variant/state/severity member, so the leaf carries no
+    // fallback metadata.
     expect(themeAxisMetadata['v2.usages.message.close.width']).toBeUndefined()
   })
 })

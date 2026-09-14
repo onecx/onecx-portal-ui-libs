@@ -287,7 +287,7 @@ export const severityVariantGroup = z
 // Named interaction-state container: the set of states a variant can appear in
 // (hover, active, selected, focus, invalid, disabled). Classified as the `state`
 // axis for build-time introspection so per-leaf metadata can record which states apply.
-export const stateVariants = z
+export const states = z
   .object({
     hover: severityVariantGroup.optional(),
     active: severityVariantGroup.optional(),
@@ -296,12 +296,12 @@ export const stateVariants = z
     invalid: severityVariantGroup.optional(),
     disabled: severityVariantGroup.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'stateVariants', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'states', axis: 'state' })
 
 export const variantWithStates = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
-    state: stateVariants.optional(),
+    state: states.optional(),
   })
   .register(themeSchemaRegistry, { id: 'variantWithStates' })
 

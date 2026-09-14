@@ -54,19 +54,24 @@ The Shell determines which version to use based on the `versions` array publishe
 [#schema-node-marker-and-axis-metadata]
 == Schema Node Marker and Axis Metadata
 
-`themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries a mandatory `axis` field on every registered schema node, with values `variant`, `state`, `severity`, `child`, or `none`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `stateVariants`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition or settings sub-schema nested inside a parent component, such as `messageCloseButton` or `accordionHeader`. `none` marks a structural pass-through wrapper that is not itself an axis-group or child boundary, such as `severityVariantGroup` or `variantWithStates`.
+`themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries an optional `axis` field on registered schema nodes, with values `variant`, `state`, `severity`, `child`, or `setting`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `states`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition sub-schema nested inside a parent component. `setting` marks a settings sub-schema. A node with no `axis` is a structural pass-through wrapper that is not itself an axis boundary, such as `severityVariantGroup` or `variantWithStates`.
 
-link:{schema_root}/schema/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a build-time walker over the `theme` schema, and the precomputed constant `themeAxisMetadata`, both re-exported from the `integration-interface` package's public entry point. Each `LeafAxisMetadata` entry has: `leafPath` (the dot-joined path from schema root to the leaf), `variants` (the applicable named-variant keys), `states` (the applicable named-state keys), `severities` (the applicable named-severity keys), and `groups` (the ordered, innermost-first list of axis-group and child boundaries crossed on the path to this leaf, each with `kind`, `memberName`, and `groupPath`).
+link:{schema_root}/utils/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a build-time walker over the `theme` schema, and the precomputed constant `themeAxisMetadata`, both re-exported from the `integration-interface` package's public entry point. `themeAxisMetadata` is keyed by the leaf's dot-joined path from the schema root. Each `LeafFallbackMetadata` entry holds `scopes`, the ordered innermost-first list of fallback scopes the leaf passes through. Each `Scope` has `scopePath` (the dot-joined path to the scope's variant-root anchor) and `entries` (the innermost-first relaxed-axis entries, severity then state then variant), each with `kind` and `segments` (the relative key-segment delta from the previous entry to this member, not a cumulative path).
 
 [source,typescript]
 ----
 themeAxisMetadata['v2.primitives.variant.primary.state.hover.severity.success.bg.color']
 // {
-//   leafPath: 'v2.primitives.variant.primary.state.hover.severity.success.bg.color',
-//   variants: ['primary'],
-//   states: ['hover'],
-//   severities: ['success'],
-//   groups: [ ... ],
+//   scopes: [
+//     {
+//       scopePath: 'v2.primitives',
+//       entries: [
+//         { kind: 'severity', segments: ['severity', 'success'] },
+//         { kind: 'state', segments: ['state', 'hover'] },
+//         { kind: 'variant', segments: ['variant', 'primary'] },
+//       ],
+//     },
+//   ],
 // }
 ----
 

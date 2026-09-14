@@ -73,7 +73,7 @@ export class MessageSizeSchema {
         }),
       })
       .default(MESSAGE_SM_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeSm', axis: 'child' }),
+      .register(themeSchemaRegistry, { id: 'messageSizeSm' }),
     md: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_MD_DEFAULTS.padding).optional(),
@@ -84,7 +84,7 @@ export class MessageSizeSchema {
         }),
       })
       .default(MESSAGE_MD_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeMd', axis: 'child' }),
+      .register(themeSchemaRegistry, { id: 'messageSizeMd' }),
     lg: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_LG_DEFAULTS.padding).optional(),
@@ -95,7 +95,7 @@ export class MessageSizeSchema {
         }),
       })
       .default(MESSAGE_LG_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeLg', axis: 'child' }),
+      .register(themeSchemaRegistry, { id: 'messageSizeLg' }),
     xl: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_XL_DEFAULTS.padding).optional(),
@@ -106,6 +106,6 @@ export class MessageSizeSchema {
         }),
       })
       .default(MESSAGE_XL_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeXl', axis: 'child' }),
+      .register(themeSchemaRegistry, { id: 'messageSizeXl' }),
   }
 }

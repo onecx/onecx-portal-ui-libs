@@ -10,7 +10,7 @@ export const badgeSettings = z
     badgeSize: withRef(z.string()).optional(),
     size: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'badgeSettings', axis: 'setting' })
+  .register(themeSchemaRegistry, { id: 'badgeSettings' })
 
 // Base badge style (size-specific properties)
 export const badgeSizeStyle = z
@@ -38,7 +38,7 @@ export const badgeStyleWithSizeVariants = z
         lg: badgeSizeStyle.optional(),
         xl: badgeSizeStyle.optional(),
       })
-      .register(themeSchemaRegistry, { id: 'badgeSizeVariant', axis: 'variant' })
+      .register(themeSchemaRegistry, { id: 'badgeSizeVariant' })
       .optional(),
   })
   .register(themeSchemaRegistry, { id: 'badgeStyleWithSizeVariants' })
@@ -57,7 +57,7 @@ export const badge = z
       .object({
         size: withRef(z.string()).default('0.5rem'),
       })
-      .register(themeSchemaRegistry, { id: 'badgeDot', axis: 'child' })
+      .register(themeSchemaRegistry, { id: 'badgeDot' })
       .optional(),
 
     // Default variant (severity = default, size = default)
@@ -113,7 +113,8 @@ export const badge = z
         danger: badgeStyleWithSizeVariants.optional().default(colorVariant('danger')),
         contrast: badgeStyleWithSizeVariants.optional().default(colorVariant('contrast')),
       })
-      .register(themeSchemaRegistry, { id: 'badgeVariant', axis: 'severity' })
+      .register(themeSchemaRegistry, { id: 'badgeVariant' })
       .optional(),
   })
+  // TODO(axis-metadata): badge severity/variant axes are not valid; re-derive once the classification is confirmed.
   .register(themeSchemaRegistry, { id: 'badge' })
