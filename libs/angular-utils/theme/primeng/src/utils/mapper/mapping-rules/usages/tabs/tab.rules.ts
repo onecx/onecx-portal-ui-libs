@@ -65,17 +65,17 @@ export const tabRules: MappingRule[] = [
     transform: toColorString,
   },
 
-  // ─── Tab focus ring (inherited from tabs-level focusRing) ──────────────────
+  // ─── Tab focus ring ────────────────────────────────────────────────────────
   {
-    from: 'usages.tabs.focusRing.width',
+    from: 'usages.tabs.tab.focusRing.width',
     to: 'components.tabs.tab.focusRing.width',
   },
   {
-    from: 'usages.tabs.focusRing.shadow',
+    from: 'usages.tabs.tab.focusRing.shadow',
     to: 'components.tabs.tab.focusRing.shadow',
   },
-    {
-    from: 'usages.tabs.focusRing.offset',
+  {
+    from: 'usages.tabs.tab.focusRing.offset',
     to: 'components.tabs.tab.focusRing.offset',
   },
 
@@ -86,11 +86,15 @@ export const tabRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.activeBar.size',
+    from: 'usages.tabs.tab.activeBar.height',
     to: 'components.tabs.activeBar.height',
   },
+  // NOTE: the theme exposes `activeBar.position` (a direction: top/bottom/left/right)
+  // and `activeBar.positionOffset` (a distance from the edge). PrimeNG only models a
+  // `bottom` distance, so the offset maps here; the direction itself is not expressible
+  // as a preset token (would need a CSS rule to support top/left/right placement).
   {
-    from: 'usages.tabs.tab.activeBar.bottom',
+    from: 'usages.tabs.tab.activeBar.positionOffset',
     to: 'components.tabs.activeBar.bottom',
   },
 ];

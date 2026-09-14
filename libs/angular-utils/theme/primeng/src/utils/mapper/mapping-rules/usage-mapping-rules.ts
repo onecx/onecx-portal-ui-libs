@@ -21,6 +21,9 @@ import { interactiveDataViewMappingRules } from './usages/interactive-dataview.r
 import { selectbuttonMappingRules } from './usages/selectbutton.rules'
 import { rippleMappingRules } from './usages/ripple.rules'
 import { panelmenuMappingRules } from './usages/panelmenu.rules'
+import { menuMappingRules } from './usages/menu.rules'
+import { breadcrumbRules } from './usages/breadcrumb.rules'
+import { dataviewMappingRules } from './usages/dataview.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -45,5 +48,8 @@ export const usageMappingRules: MappingRule[] = [
   ...accordionMappingRules,
   ...selectbuttonMappingRules,
   ...rippleMappingRules,
-   ...panelmenuMappingRules,
+  ...panelmenuMappingRules,
+  ...menuMappingRules,
+  ...breadcrumbRules
+  ...dataviewMappingRules,
 ]

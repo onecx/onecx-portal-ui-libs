@@ -5,10 +5,10 @@ import { border, withRef } from '../primitives'
 export class AccordionPanelSchema {
   private static readonly tokens = {
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    border: border.pick({ width: true, color: true, style: true }).default({
+    border: border.pick({ color: true, width: true, style: true }).default({
       width: '{{primitives.border.width.md}}',
-      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
     }),
   }
 
