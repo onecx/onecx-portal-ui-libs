@@ -10,7 +10,7 @@ export const calendarRules: MappingRule[] = [
 
   // ─── Week Day ─────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.weekDayLabel.padding',
+    from: 'usages.calendar.panel.datePanel.dayView.weekDayLabel.padding',
     to: 'components.datepicker.weekDay.padding',
   },
   {
@@ -18,7 +18,7 @@ export const calendarRules: MappingRule[] = [
     to: 'components.datepicker.weekDay.fontWeight',
   },
   {
-    from: 'usages.calendar.panel.datePanel.weekDayLabel.color',
+    from: 'usages.calendar.panel.datePanel.dayView.weekDayLabel.color',
     to: 'components.datepicker.weekDay.color',
     transform: toColorString,
   },
