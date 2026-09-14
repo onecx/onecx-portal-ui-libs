@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
+import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { ColumnType } from '../../model/column-type.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import type { Filter } from '../../model/filter.model'
+import { FilterType } from '../../model/filter.model'
 import { of, take } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
 import { PopoverModule } from 'primeng/popover'
@@ -33,7 +35,15 @@ describe('FilterViewComponent (class logic)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
-      imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
+      imports: [
+        CommonModule,
+        FormsModule,
+        TranslateModule.forRoot(),
+        ButtonModule,
+        PopoverModule,
+        TooltipModule,
+        AddFilterDialogComponent,
+      ],
       providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
@@ -147,6 +157,41 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
+  })
+
+  it('should open the add filter dialog for a given column in onAddFilter', () => {
+    component.onAddFilter('c2')
+    expect(component.addFilterDialogVisible()).toBe(true)
+    expect(component.addFilterDialogPreselectColumnId()).toBe('c2')
+  })
+
+  it('should replace the EQUALS filters of the added column on onAddFilterDialogAdded', () => {
+    stateService.filters.set([
+      { columnId: 'c1', value: 'old', filterType: FilterType.EQUALS } as Filter,
+      { columnId: 'c1', value: 'keepNotEmpty', filterType: FilterType.IS_NOT_EMPTY } as Filter,
+      { columnId: 'c2', value: 'other' } as Filter,
+    ])
+
+    component.onAddFilterDialogAdded([
+      { columnId: 'c1', value: 'a', filterType: FilterType.EQUALS } as Filter,
+      { columnId: 'c1', value: 'b', filterType: FilterType.EQUALS } as Filter,
+    ])
+
+    const result = stateService.filters()
+    const c1Equals = result.filter((f) => f.columnId === 'c1' && f.filterType === FilterType.EQUALS)
+    expect(c1Equals.map((f) => f.value)).toEqual(['a', 'b'])
+    // non-EQUALS filters on the same column are preserved
+    expect(result.some((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)).toBe(true)
+    // other columns are untouched
+    expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
+  })
+
+  it('should reflect dialog visibility in onAddFilterDialogVisibleChange', () => {
+    component.onAddFilter()
+    expect(component.addFilterDialogVisible()).toBe(true)
+
+    component.onAddFilterDialogVisibleChange(false)
+    expect(component.addFilterDialogVisible()).toBe(false)
   })
 
   it('should focus trigger when trigger id is ocxFilterViewShowMore', () => {

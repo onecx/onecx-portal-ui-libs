@@ -16,6 +16,7 @@ import { DataLayoutSelectionComponent } from '../data-layout-selection/data-layo
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataListGridSortingComponent } from '../data-list-grid-sorting/data-list-grid-sorting.component'
 import { FilterViewComponent } from '../filter-view/filter-view.component'
+import { AddFilterDialogComponent } from '../filter-view/add-filter-dialog/add-filter-dialog.component'
 import { TableModule } from 'primeng/table'
 import { ButtonModule } from 'primeng/button'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -119,7 +120,8 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ChipModule,
         SkeletonModule,
         TooltipModule,
-        OcxTooltipDirective
+        OcxTooltipDirective,
+        AddFilterDialogComponent
       ],
     }),
   ],

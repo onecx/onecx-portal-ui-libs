@@ -27,6 +27,7 @@ import { Button } from 'primeng/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
+import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -102,6 +103,9 @@ export class FilterViewComponent {
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
+
+  readonly addFilterDialogVisible = signal(false)
+  readonly addFilterDialogPreselectColumnId = signal<string | undefined>(undefined)
 
   readonly filterViewNoSelection = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
@@ -264,6 +268,32 @@ export class FilterViewComponent {
   onFilterDelete(row: Row) {
     const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
+  }
+
+  onAddFilter(columnId?: string) {
+    this.addFilterDialogPreselectColumnId.set(columnId)
+    this.addFilterDialogVisible.set(true)
+  }
+
+  onAddFilterDialogVisibleChange(visible: boolean) {
+    this.addFilterDialogVisible.set(visible)
+  }
+
+  /**
+   * Applies the filters produced by the Add Filter dialog. The dialog always
+   * emits filters for a single column, so the previous EQUALS filters of that
+   * column are replaced by the newly selected values - the same behaviour as
+   * the multi-select column header filter in the Table mode.
+   */
+  onAddFilterDialogAdded(newFilters: Filter[]) {
+    const currentFilters = this.stateService.filters()
+    const columnIds = newFilters.map((f) => f.columnId)
+
+    this.stateService.filters.set([
+      ...currentFilters.filter((f) => !columnIds.includes(f.columnId) || f.filterType === FilterType.IS_NOT_EMPTY),
+      ...newFilters,
+    ])
+    this.addFilterDialogVisible.set(false)
   }
 
   focusTrigger() {
