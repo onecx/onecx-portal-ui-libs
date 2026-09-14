@@ -23,7 +23,7 @@ export const dialogSettings = z
     maximizable: withRef(z.boolean()).optional(),
     resizable: withRef(z.boolean()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dialogSettings', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'dialogSettings' })
 
 export const dialog = z
   .object({
@@ -66,4 +66,4 @@ export const dialog = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'dialog', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'dialog' })

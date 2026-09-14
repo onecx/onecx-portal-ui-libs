@@ -20,5 +20,5 @@ export class DataviewSettingsSchema {
     .object({
       ...this.settings,
     })
-    .register(themeSchemaRegistry, { id: 'dataviewSettings', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'dataviewSettings' })
 }

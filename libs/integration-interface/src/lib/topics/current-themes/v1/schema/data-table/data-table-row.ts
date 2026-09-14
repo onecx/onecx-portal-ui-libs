@@ -109,7 +109,7 @@ export class DataTableRowSchema {
       selected: z.object({...this.selectedTokens}).prefault({}),
       focusRing: z.object({...this.focusRingTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableRow', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTableRow' });
 }
 
 export const dataTableRow = DataTableRowSchema.schema;

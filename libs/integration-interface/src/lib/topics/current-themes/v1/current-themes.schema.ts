@@ -95,7 +95,7 @@ const usages: z.ZodType<UsagesInput> = z
     content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'usages', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'usages' })
 
 type PrimitivesInput = z.input<typeof primitives>
 
@@ -112,7 +112,7 @@ const regionOverride: z.ZodOptional<z.ZodType<RegionOverrideInput>> = z
     usages: usages.optional(),
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'regionOverride', axis: 'none' }) as any
+  .register(themeSchemaRegistry, { id: 'regionOverride' }) as any
 
 const regionOverrides = z
   .object({
@@ -125,7 +125,7 @@ const regionOverrides = z
     footer: regionOverride as typeof regionOverride,
   })
   .optional()
-  .register(themeSchemaRegistry, { id: 'regionOverrides', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'regionOverrides' })
 
 export const themePropertiesV2 = z
   .object({
@@ -133,14 +133,14 @@ export const themePropertiesV2 = z
     usages: usages.optional(),
     regionOverrides: regionOverrides as typeof regionOverrides,
   })
-  .register(themeSchemaRegistry, { id: 'themePropertiesV2', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'themePropertiesV2' })
 
 export const theme = z
   .object({
     v2: themePropertiesV2.optional(),
     v1: z.record(z.string(), z.record(z.string(), z.string())).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'theme', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'theme' })
 
 export const regionKeys = ['header', 'subHeader', 'bodyStart', 'bodyHeader', 'bodyFooter', 'bodyEnd', 'footer'] as const
 export type RegionOverridesInput = Partial<Record<(typeof regionKeys)[number], RegionOverrideInput>>

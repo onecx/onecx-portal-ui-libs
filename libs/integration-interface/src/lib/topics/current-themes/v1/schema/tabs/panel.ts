@@ -27,5 +27,5 @@ export class TabsPanelSchema {
         .object({
         ...this.tokens,
         })
-        .register(themeSchemaRegistry, { id: 'tabsPanel', axis: 'none' })
+        .register(themeSchemaRegistry, { id: 'tabsPanel' })
 }

@@ -67,5 +67,5 @@ export class MultiselectCheckboxSchema {
       focus: this.focusTokens.prefault({}),
       selected: this.selectedTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectCheckbox', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'multiselectCheckbox' })
 }

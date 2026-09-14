@@ -27,7 +27,7 @@ export class DataTableSchema {
         DataTableColumnTitleSchema.schema as typeof DataTableColumnTitleSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTable', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTable' });
 }
 
 export const dataTable = DataTableSchema.schema;

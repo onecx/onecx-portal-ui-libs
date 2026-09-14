@@ -5,11 +5,14 @@ import * as z from 'zod'
 // breaks when the integration-interface module is loaded more than once
 // in the same realm (e.g. via Module Federation with `singleton: false`).
 
-// Local registry used to assign an id and an axis marker to theme schemas without polluting z.globalRegistry.
-// `axis` classifies a schema node for build-time axis introspection (see axis-metadata.ts): `variant` marks a named
-// color-variant container such as `colorVariants`, `state` marks a named interaction-state container such as
-// `stateVariants`, `severity` marks a named severity-level container such as `severityVariants`, `child` marks a
-// component-composition or settings sub-schema nested inside a parent component, and `none` marks a structural
-// pass-through wrapper that is not itself an axis-group or child boundary, such as `severityVariantGroup` or
-// `variantWithStates`.
-export const themeSchemaRegistry = z.registry<{ id: string; axis: 'variant' | 'state' | 'severity' | 'child' | 'none' }>()
+// Local registry that assigns each theme schema an `id` and an optional `axis` marker consumed
+// by the build-time axis introspection (see axis-metadata.ts). `axis` classifies a node's keys:
+// `variant` / `state` / `severity` mark the named-member containers, `child` marks a
+// component-composition sub-schema, and `setting` marks a settings sub-schema. A node with no
+// `axis` is a structural pass-through wrapper. The optional `child` flag marks a node as a
+// child boundary so the parent's walker re-roots classification of its own keys by its own `axis`.
+export const themeSchemaRegistry = z.registry<{
+  id: string
+  axis?: 'variant' | 'state' | 'severity' | 'child' | 'setting'
+  child?: boolean
+}>()

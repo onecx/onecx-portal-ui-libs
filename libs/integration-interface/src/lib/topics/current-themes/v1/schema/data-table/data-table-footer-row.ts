@@ -119,7 +119,7 @@ export class DataTableFooterRowSchema {
       focus: z.object({...this.focusTokens}).prefault({}),
       focusRing: z.object({...this.focusRingTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableFooterRow', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTableFooterRow' });
 }
 
 export const dataTableFooterRow = DataTableFooterRowSchema.schema;

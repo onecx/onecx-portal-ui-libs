@@ -71,7 +71,6 @@ export const calendarDefaults = {
  */
 export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(themeSchemaRegistry, {
   id: 'calendar',
-  axis: 'none',
 })
 
 // Backward-compatible facade for consumers that import `CalendarSchema.schema`

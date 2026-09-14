@@ -30,7 +30,7 @@ export class DataListGridSortingSchema {
         DataListGridSortingButtonSchema.schema as typeof DataListGridSortingButtonSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataListGridSorting', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataListGridSorting' });
 }
 
 export const dataListGridSorting = DataListGridSortingSchema.schema;

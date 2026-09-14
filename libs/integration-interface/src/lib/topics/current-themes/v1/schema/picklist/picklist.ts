@@ -33,5 +33,5 @@ export class PicklistSchema {
       ).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'picklist', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'picklist' })
 }

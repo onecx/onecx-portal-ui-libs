@@ -20,5 +20,5 @@ export class PicklistSettingsSchema {
       autoOptionFocus: withRef(z.boolean()).optional(),
       breakpoint: withRef(z.string()).optional(),
     })
-    .register(themeSchemaRegistry, { id: 'picklistSettings', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'picklistSettings' })
 }

@@ -31,5 +31,5 @@ export class MultiselectOverlaySchema {
       listItems: (MultiselectListItemsSchema.schema as typeof MultiselectListItemsSchema.schema).prefault({}),
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'multiselectOverlay', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'multiselectOverlay' })
 }

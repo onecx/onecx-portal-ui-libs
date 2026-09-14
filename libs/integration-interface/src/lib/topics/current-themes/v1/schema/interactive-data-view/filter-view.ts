@@ -36,7 +36,7 @@ export class FilterViewSchema {
       ...this.tokens,
       chip: (FilterViewChipSchema.schema as typeof FilterViewChipSchema.schema).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'filterView', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'filterView' });
 }
 
 export const filterView = FilterViewSchema.schema;

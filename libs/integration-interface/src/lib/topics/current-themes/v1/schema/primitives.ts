@@ -12,7 +12,7 @@ import { themeSchemaRegistry } from './registry'
 export const themeRef = z
   .string()
   .regex(/^\{\{[\w.]+\}\}$/)
-  .register(themeSchemaRegistry, { id: 'themeRef', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'themeRef' })
 
 // Allows any typed schema value to alternatively be a theme reference string.
 // Use this wrapper for non-string scalar types (enums, booleans) — they would otherwise
@@ -28,7 +28,7 @@ const borderWidthSizes = z
     md: withRef(z.string()).optional(),
     lg: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'borderWidthSizes', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'borderWidthSizes' })
 
 // Named shadow tokens map to CSS box-shadow values at different elevation levels.
 // Components reference these tokens for consistent elevation (e.g. cards, dialogs, dropdowns).
@@ -40,7 +40,7 @@ export const shadowSizes = z
     lg: withRef(z.string()).optional(),
     xl: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'shadowSizes', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'shadowSizes' })
 
 // Named icon size tokens map to CSS width/height values for icons at different sizes.
 // Components reference these tokens for consistent icon sizing (e.g. buttons, inputs, menus).
@@ -51,7 +51,7 @@ export const iconSizes = z
     lg: withRef(z.string()).optional(),
     xl: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'iconSizes', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'iconSizes' })
 
 // Named border-radius tokens. Components reference these via semantic size names
 // rather than hard-coded pixel values, enabling global shape changes from one place.
@@ -64,7 +64,7 @@ export const radiusSizes = z
     xl: withRef(z.string()).optional(),
     full: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'radiusSizes', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'radiusSizes' })
 
 export const borderCommonShape = {
   width: z
@@ -93,7 +93,7 @@ export const borderShape = z
   .object({
     ...borderCommonShape,
   })
-  .register(themeSchemaRegistry, { id: 'borderShape', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'borderShape' })
 
 // Layout tokens control structural constraints like content max-width and section gaps.
 // Useful for theming applications that need different layout densities (compact vs. comfortable).
@@ -114,7 +114,7 @@ export const layout = z
     // Default justification of content inside layout sections / grid columns
     justifyContent: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'layout', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'layout' })
 
 // screen variants scale used for padding, margin, and gap tokens across components on different specific device sizes.
 // Defining it here allows components to reference e.g. screenVariants.md instead of a hard-coded value.
@@ -125,7 +125,7 @@ export const screenSettings = z
     md: layout.optional(),
     lg: layout.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'screenSettings', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'screenSettings' })
 
 // Spacing scale used for padding, margin, and gap tokens across components.
 // Defining it here allows components to reference e.g. space.md instead of a hard-coded value.
@@ -138,7 +138,7 @@ export const space = z
     xl: withRef(z.string()).optional(),
     xxl: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'space', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'space' })
 
 export const bg = z
   .object({
@@ -148,7 +148,7 @@ export const bg = z
     size: withRef(z.string()).optional(),
     repeat: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'bg', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'bg' })
 
 export const border = z
   .object({
@@ -168,20 +168,20 @@ export const border = z
     offset: withRef(z.string()).optional(),
     radius: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'border', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'border' })
 
 export const borderWithShadow = border
   .extend({
     shadow: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'borderWithShadow', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'borderWithShadow' })
 
 // The global focus-ring primitive maps to a single PrimeNG `semantic.focusRing` value,
 // so its width/offset/shadow/radius are scalar CSS values (or refs to them) — matching
 // `borderWithShadow`, which is used by every per-component and per-severity focus ring.
 // (`borderCommonShape` above uses named-size objects, which are valid for per-component
 // borders but not for the focus-ring primitive.)
-export const focusRingShape = borderWithShadow.register(themeSchemaRegistry, { id: 'focusRingShape', axis: 'none' })
+export const focusRingShape = borderWithShadow.register(themeSchemaRegistry, { id: 'focusRingShape' })
 
 export const bgContrast = z.object({
   bg: z.union([bg, withRef(z.string())]).optional(),
@@ -228,7 +228,7 @@ export const fontShape = z
       ])
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'fontShape', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'fontShape' })
 
 // Defined here (before primitives) so it can be referenced in the primitives object.
 // Also used further below in usages/blockStyles for per-component typography overrides.
@@ -241,7 +241,7 @@ export const font = z
     letterSpacing: withRef(z.string()).optional(),
     style: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'font', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'font' })
 
 export const icon = z
   .object({
@@ -253,7 +253,7 @@ export const icon = z
     paddingX: withRef(z.string()).optional(),
     paddingY: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'icon', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'icon' })
 
 export const severityStyles = bgContrast
   .extend({
@@ -261,7 +261,7 @@ export const severityStyles = bgContrast
     focusRing: borderWithShadow.optional(),
     cursor: withRef(z.string()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'severityStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'severityStyles' })
 
 // Per-named-level style overrides. Each severity level maps to a severityStyles block
 // (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, warning, danger, and contrast cases.
@@ -282,7 +282,7 @@ export const severityVariantGroup = z
     defaultSeverity: severityStyles.optional(),
     severity: severityVariants.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'severityVariantGroup', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'severityVariantGroup' })
 
 // Named interaction-state container: the set of states a variant can appear in
 // (hover, active, selected, focus, invalid, disabled). Classified as the `state`
@@ -303,7 +303,7 @@ export const variantWithStates = bgContrast
     defaultState: severityVariantGroup.optional(),
     state: stateVariants.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'variantWithStates', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'variantWithStates' })
 
 type ColorVariantsShape = {
   primary: z.ZodOptional<typeof variantWithStates>
@@ -322,7 +322,9 @@ const colorVariantsShape: ColorVariantsShape = {
   // TODO: Add a link variant to all components that support link display (e.g. buttons)
 }
 
-export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants', axis: 'variant' })
+export const colorVariants = z
+  .object(colorVariantsShape)
+  .register(themeSchemaRegistry, { id: 'colorVariants', axis: 'variant' })
 
 export const area = variantWithStates.extend({})
 
@@ -338,13 +340,13 @@ const areasShape: AreasShape = {
   overlay: area.optional(),
 }
 
-export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'areas', axis: 'none' })
+export const areas = z.object(areasShape).register(themeSchemaRegistry, { id: 'areas' })
 
 export const transition = z
   .object({
     duration: withRef(z.number()).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'transition', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'transition' })
 
 type PrimitivesShape = {
   defaultVariant: z.ZodOptional<typeof variantWithStates>
@@ -380,4 +382,7 @@ const primitivesShape: PrimitivesShape = {
   transition: (transition as typeof transition).optional(),
 }
 
-export const primitives = z.object(primitivesShape).optional().register(themeSchemaRegistry, { id: 'primitives', axis: 'none' })
+export const primitives = z
+  .object(primitivesShape)
+  .optional()
+  .register(themeSchemaRegistry, { id: 'primitives' })
