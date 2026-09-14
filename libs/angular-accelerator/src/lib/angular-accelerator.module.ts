@@ -39,6 +39,7 @@ import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.direc
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
+import { AddFilterDialogComponent } from './components/filter-view/add-filter-dialog/add-filter-dialog.component'
 import { TemplateDirective } from './directives/template.directive'
 import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
@@ -79,7 +80,8 @@ function appInitializer(userService: UserService) {
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
-    OcxTooltipDirective
+    OcxTooltipDirective,
+    AddFilterDialogComponent
   ],
   declarations: [
     ColumnGroupSelectionComponent,
