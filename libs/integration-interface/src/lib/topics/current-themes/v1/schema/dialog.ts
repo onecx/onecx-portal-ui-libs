@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { bg, bgContrast, border, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { applyDefaultsRecursive } from './defaults-helper'
 
 export const dialogSettings = z
   .object({
@@ -25,51 +26,85 @@ export const dialogSettings = z
   })
   .register(themeSchemaRegistry, { id: 'dialogSettings' })
 
-export const dialogRoot = bgContrast
-  .extend({
-    bg: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    contrast: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    border: border.default({
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-      width: '{{primitives.border.width.none}}',
-      radius: '{{primitives.border.radius.md}}',
-      offset: '{{primitives.border.offset.none}}',
-    }),
-    radius: withRef(z.string()).default('{{primitives.radius.md}}'),
-    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-  })
-  .register(themeSchemaRegistry, { id: 'dialogRoot' })
+export const dialogRootShape = bgContrast.extend({
+  bg: z.union([bg, withRef(z.string())]).optional(),
+  contrast: color.optional(),
+  border: border.optional(),
+  radius: withRef(z.string()).optional(),
+  shadow: withRef(z.string()).optional(),
+})
 
-export const dialog = z
-  .object({
-    settings: (dialogSettings as typeof dialogSettings).optional(),
-    root: (dialogRoot as typeof dialogRoot).prefault({}),
-    header: z
-      .object({
-        padding: withRef(z.string()).default('{{primitives.space.md}}'),
-        gap: withRef(z.string()).default('{{primitives.space.sm}}'),
-        alignItems: withRef(z.string()).default('center'),
-        justifyContent: withRef(z.string()).default('space-between'),
-      })
-      .prefault({}),
-    title: z
-      .object({
-        fontSize: withRef(z.string()).default('{{primitives.font.size}}'),
-        fontWeight: withRef(z.string()).default('{{primitives.font.weight}}'),
-      })
-      .prefault({}),
-    content: z
-      .object({
-        padding: withRef(z.string()).default('{{primitives.space.md}}'),
-      })
-      .prefault({}),
-    footer: z
-      .object({
-        padding: withRef(z.string()).default('{{primitives.space.md}}'),
-        gap: withRef(z.string()).default('{{primitives.space.sm}}'),
-        justifyContent: withRef(z.string()).default('flex-end'),
-      })
-      .prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'dialog' })
+export const dialogRootDefaults = {
+  bg: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+  contrast: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+  border: {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.none}}',
+    radius: '{{primitives.border.radius.md}}',
+    offset: '{{primitives.border.offset.none}}',
+  },
+  radius: '{{primitives.radius.md}}',
+  shadow: '{{primitives.shadow.md}}',
+}
+
+export const dialogRoot = applyDefaultsRecursive(dialogRootShape, dialogRootDefaults).register(themeSchemaRegistry, {
+  id: 'dialogRoot',
+})
+
+const dialogHeaderShape = z.object({
+  padding: withRef(z.string()).optional(),
+  gap: withRef(z.string()).optional(),
+  alignItems: withRef(z.string()).optional(),
+  justifyContent: withRef(z.string()).optional(),
+})
+
+const dialogTitleShape = z.object({
+  fontSize: withRef(z.string()).optional(),
+  fontWeight: withRef(z.string()).optional(),
+})
+
+const dialogContentShape = z.object({
+  padding: withRef(z.string()).optional(),
+})
+
+const dialogFooterShape = z.object({
+  padding: withRef(z.string()).optional(),
+  gap: withRef(z.string()).optional(),
+  justifyContent: withRef(z.string()).optional(),
+})
+
+export const dialogShape = z.object({
+  settings: (dialogSettings as typeof dialogSettings).optional(),
+  root: dialogRootShape.prefault({}),
+  header: dialogHeaderShape.prefault({}),
+  title: dialogTitleShape.prefault({}),
+  content: dialogContentShape.prefault({}),
+  footer: dialogFooterShape.prefault({}),
+})
+
+export const dialogDefaults = {
+  root: dialogRootDefaults,
+  header: {
+    padding: '{{primitives.space.md}}',
+    gap: '{{primitives.space.sm}}',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontSize: '{{primitives.font.size}}',
+    fontWeight: '{{primitives.font.weight}}',
+  },
+  content: {
+    padding: '{{primitives.space.md}}',
+  },
+  footer: {
+    padding: '{{primitives.space.md}}',
+    gap: '{{primitives.space.sm}}',
+    justifyContent: 'flex-end',
+  },
+}
+
+export const dialog = applyDefaultsRecursive(dialogShape, dialogDefaults).register(themeSchemaRegistry, {
+  id: 'dialog',
+})

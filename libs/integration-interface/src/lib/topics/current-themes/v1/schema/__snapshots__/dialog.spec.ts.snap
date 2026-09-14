@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`dialog schema resolves the expected default token tree 1`] = `
+Object {
+  "content": Object {
+    "padding": "{{primitives.space.md}}",
+  },
+  "footer": Object {
+    "gap": "{{primitives.space.sm}}",
+    "justifyContent": "flex-end",
+    "padding": "{{primitives.space.md}}",
+  },
+  "header": Object {
+    "alignItems": "center",
+    "gap": "{{primitives.space.sm}}",
+    "justifyContent": "space-between",
+    "padding": "{{primitives.space.md}}",
+  },
+  "root": Object {
+    "bg": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.md}}",
+      "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "contrast": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+    "radius": "{{primitives.radius.md}}",
+    "shadow": "{{primitives.shadow.md}}",
+  },
+  "title": Object {
+    "fontSize": "{{primitives.font.size}}",
+    "fontWeight": "{{primitives.font.weight}}",
+  },
+}
+`;
