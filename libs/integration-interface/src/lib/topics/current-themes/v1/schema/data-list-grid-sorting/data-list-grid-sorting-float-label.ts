@@ -46,7 +46,7 @@ export class DataListGridSortingFloatLabelSchema {
         ...this.activeTokens,
       }).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataListGridSortingFloatLabel', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataListGridSortingFloatLabel' });
 }
 
 export const dataListGridSortingFloatLabel = DataListGridSortingFloatLabelSchema.schema;

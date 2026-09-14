@@ -13,7 +13,7 @@ export class DataTableColumnTitleSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'dataTableColumnTitle', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTableColumnTitle' });
 }
 
 export const dataTableColumnTitle = DataTableColumnTitleSchema.schema;

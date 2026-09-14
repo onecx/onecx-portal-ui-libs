@@ -42,7 +42,7 @@ export class InteractiveDataViewSchema {
         CustomGroupColumnSelectorSchema.schema as typeof CustomGroupColumnSelectorSchema.schema
       ).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'interactiveDataView', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'interactiveDataView' });
 }
 
 export const interactiveDataView = InteractiveDataViewSchema.schema;

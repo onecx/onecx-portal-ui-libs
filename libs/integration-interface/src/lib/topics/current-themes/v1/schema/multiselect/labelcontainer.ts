@@ -154,5 +154,5 @@ export class MultiselectLabelContainerSchema {
       invalid: this.invalidTokens.prefault({}),
       disabled: this.disabledTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectLabelContainer', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'multiselectLabelContainer' })
 }

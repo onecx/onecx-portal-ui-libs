@@ -10,7 +10,7 @@ export class DataViewSchema {
       ).prefault({}),
       dataTable: (dataTable as typeof dataTable).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataView', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataView' });
 }
 
 export const dataView = DataViewSchema.schema;

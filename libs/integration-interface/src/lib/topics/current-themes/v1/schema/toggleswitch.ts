@@ -9,7 +9,7 @@ export const toggleswitchSettings = z
   .object({
     // Component-specific settings can be added here if needed
   })
-  .register(themeSchemaRegistry, { id: "toggleswitchSettings", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "toggleswitchSettings" });
 
 export const toggleswitchFocusRing = z
   .object({
@@ -19,7 +19,7 @@ export const toggleswitchFocusRing = z
     offset: withRef(z.string()).default("{{primitives.focusRing.offset}}"),
     shadow: withRef(z.string()).default("{{primitives.focusRing.shadow}}"),
   })
-  .register(themeSchemaRegistry, { id: "toggleswitchFocusRing", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "toggleswitchFocusRing" });
 
 export const toggleswitchColors = z
   .object({
@@ -28,14 +28,14 @@ export const toggleswitchColors = z
       .default("{{primitives.area.surface.defaultState.defaultVariant.bg}}"),
     borderColor: color.default("{{primitives.border.defaultVariant.color}}"),
   })
-  .register(themeSchemaRegistry, { id: "toggleswitchColors", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "toggleswitchColors" });
 
 export const toggleswitchHandleColors = z
   .object({
     background: color.default("{{primitives.area.surface.defaultState.defaultVariant.contrast}}"),
     color: color.optional(),
   })
-  .register(themeSchemaRegistry, { id: "toggleswitchHandleColors", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "toggleswitchHandleColors" });
 
 export const toggleswitch = z
   .object({
@@ -141,4 +141,4 @@ export const toggleswitch = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: "toggleswitch", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "toggleswitch" });

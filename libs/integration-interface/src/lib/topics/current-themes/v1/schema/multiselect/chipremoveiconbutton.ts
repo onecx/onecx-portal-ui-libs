@@ -30,5 +30,5 @@ export class MultiselectChipRemoveIconButtonSchema {
       ...this.defaultStateTokens,
       focus: this.focusTokens.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'multiselectChipRemoveIconButton', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'multiselectChipRemoveIconButton' })
 }

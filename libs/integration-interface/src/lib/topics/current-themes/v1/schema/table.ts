@@ -24,7 +24,7 @@ export const blockStyles = bgContrast
     }),
     textAlign: withRef(z.string()).default('left'),
   })
-  .register(themeSchemaRegistry, { id: 'blockStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'blockStyles' })
 
 export const tableStyles = blockStyles
   .extend({
@@ -37,7 +37,7 @@ export const tableStyles = blockStyles
     // visual separation from the surrounding page surface.
     shadow: withRef(z.string()).default('{{primitives.shadow.none}}'),
   })
-  .register(themeSchemaRegistry, { id: 'tableStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'tableStyles' })
 
 export const tableSettings = z
   .object({
@@ -45,7 +45,7 @@ export const tableSettings = z
     actionColumnPosition: withRef(z.enum(['start', 'end'])).default('end'),
     actionColumnSticky: withRef(z.boolean()).default(false),
   })
-  .register(themeSchemaRegistry, { id: 'tableSettings', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'tableSettings' })
 
 export const tableCellStyles = blockStyles
   .extend({
@@ -56,7 +56,7 @@ export const tableCellStyles = blockStyles
     // Useful for cells with constrained width (e.g. description or name columns).
     truncate: withRef(z.boolean()).default(false),
   })
-  .register(themeSchemaRegistry, { id: 'tableCellStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'tableCellStyles' })
 
 export const cellWithStates = z
   .object({
@@ -70,7 +70,7 @@ export const cellWithStates = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'cellWithStates', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'cellWithStates' })
 
 export const tableRowStyles = blockStyles
   .extend({
@@ -79,7 +79,7 @@ export const tableRowStyles = blockStyles
     height: withRef(z.string()).optional(),
     cell: (cellWithStates as typeof cellWithStates).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'tableRowStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'tableRowStyles' })
 
 export const rowWithStates = z
   .object({
@@ -93,7 +93,7 @@ export const rowWithStates = z
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'rowWithStates', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'rowWithStates' })
 
 export const iconBaseStyles = z
   .object({
@@ -103,25 +103,25 @@ export const iconBaseStyles = z
     color: color.default('{{primitives.icon.defaultVariant.color}}'),
     backgroundColor: color.default('{{primitives.icon.defaultVariant.bg}}'),
   })
-  .register(themeSchemaRegistry, { id: 'iconBaseStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'iconBaseStyles' })
 
 export const sortAscendingIconStyles = iconBaseStyles
   .extend({
     icon: withRef(z.string()).default('onecx:sort-ascending'),
   })
-  .register(themeSchemaRegistry, { id: 'sortAscendingIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'sortAscendingIconStyles' })
 
 export const sortDescendingIconStyles = iconBaseStyles
   .extend({
     icon: withRef(z.string()).default('onecx:sort-descending'),
   })
-  .register(themeSchemaRegistry, { id: 'sortDescendingIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'sortDescendingIconStyles' })
 
 export const sortDefaultIconStyles = iconBaseStyles
   .extend({
     icon: withRef(z.string()).default('onecx:sort-default'),
   })
-  .register(themeSchemaRegistry, { id: 'sortDefaultIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'sortDefaultIconStyles' })
 
 export const sortIconStyles = z
   .object({
@@ -129,26 +129,26 @@ export const sortIconStyles = z
     descending: sortDescendingIconStyles.optional(),
     default: sortDefaultIconStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'sortIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'sortIconStyles' })
 
 export const filterOnIconStyles = iconBaseStyles
   .extend({
     icon: withRef(z.string()).default('onecx:filter-on'),
   })
-  .register(themeSchemaRegistry, { id: 'filterOnIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'filterOnIconStyles' })
 
 export const filterOffIconStyles = iconBaseStyles
   .extend({
     icon: withRef(z.string()).default('onecx:filter-off'),
   })
-  .register(themeSchemaRegistry, { id: 'filterOffIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'filterOffIconStyles' })
 
 export const filterIconStyles = z
   .object({
     on: filterOnIconStyles.optional(),
     off: filterOffIconStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'filterIconStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'filterIconStyles' })
 
 export const headerRowWithStates = rowWithStates
   .extend({
@@ -179,14 +179,14 @@ export const headerRowWithStates = rowWithStates
       })
       .optional(),
   })
-  .register(themeSchemaRegistry, { id: 'headerRowWithStates', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'headerRowWithStates' })
 
 export const alternatingRowStyles = z
   .object({
     odd: (rowWithStates as typeof rowWithStates).optional(),
     even: (rowWithStates as typeof rowWithStates).optional(),
   })
-  .register(themeSchemaRegistry, { id: 'alternatingRowStyles', axis: 'none' })
+  .register(themeSchemaRegistry, { id: 'alternatingRowStyles' })
 
 type TableRowShape = {
   defaultState: z.ZodOptional<typeof alternatingRowStyles>
@@ -212,7 +212,7 @@ const tableRowShape: TableRowShape = {
     .optional(),
 }
 
-export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow', axis: 'none' })
+export const tableRow = z.object(tableRowShape).register(themeSchemaRegistry, { id: 'tableRow' })
 
 type TableShape = {
   settings: z.ZodOptional<typeof tableSettings>
@@ -230,4 +230,4 @@ const tableShape: TableShape = {
   row: (tableRow as typeof tableRow).optional(),
 }
 
-export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table', axis: 'none' })
+export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table' })

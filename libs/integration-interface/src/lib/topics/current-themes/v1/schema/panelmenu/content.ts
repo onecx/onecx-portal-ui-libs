@@ -25,5 +25,5 @@ export class PanelMenuContentSchema {
       }),
       item: PanelMenuItemSchema.schema.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenuContent', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'panelmenuContent' })
 }

@@ -7,7 +7,7 @@ export const fontSourceDefinition = z
     format: z.string().optional(),
     local: z.string().optional(),
   })
-  .register(themeSchemaRegistry, { id: "fontSourceDefinition", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "fontSourceDefinition" });
 
 export const fontDefinition = z
   .object({
@@ -29,6 +29,6 @@ export const fontDefinition = z
     lineGapOverride: z.string().optional(),
     sizeAdjust: z.string().optional(),
   })
-  .register(themeSchemaRegistry, { id: "fontDefinition", axis: 'none' });
+  .register(themeSchemaRegistry, { id: "fontDefinition" });
 
-export const fontDefinitions = z.array(fontDefinition).register(themeSchemaRegistry, { id: "fontDefinitions", axis: 'none' });
+export const fontDefinitions = z.array(fontDefinition).register(themeSchemaRegistry, { id: "fontDefinitions" });

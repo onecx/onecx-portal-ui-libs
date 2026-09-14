@@ -24,5 +24,5 @@ export class DataviewContentSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'dataviewContent', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'dataviewContent' })
 }

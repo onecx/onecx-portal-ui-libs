@@ -14,15 +14,15 @@ export const diagramTextStyles = z
             weight: "{{primitives.font.weight.regular}}"
         })
     })
-    .register(themeSchemaRegistry, { id: "diagramTextStyles", axis: 'none' });
+    .register(themeSchemaRegistry, { id: "diagramTextStyles" });
 
 export const diagramSettings = z.object({
     size: withRef(z.enum(["small", "large"])).default("large")
 })
-    .register(themeSchemaRegistry, { id: "diagramSettings", axis: 'none' })
+    .register(themeSchemaRegistry, { id: "diagramSettings" })
 
 
-export const selectButtonStyles = bgContrast.optional().register(themeSchemaRegistry, { id: "diagramSelectButtonState", axis: 'none' })
+export const selectButtonStyles = bgContrast.optional().register(themeSchemaRegistry, { id: "diagramSelectButtonState" })
 
 type SelectButtonStateInput = {
     defaultState?: z.input<typeof selectButtonStyles>
@@ -46,7 +46,7 @@ export const selectButtonState: z.ZodType<SelectButtonStateInput> = z
             })
             .optional(),
     })
-    .register(themeSchemaRegistry, { id: 'selectButtonWithStates', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'selectButtonWithStates' })
 
 export const selectButton = z.object({
     icon: iconBaseStyles.optional(),
@@ -55,7 +55,7 @@ export const selectButton = z.object({
     bgContrast: bgContrast.optional(),
     selectButtonState: (selectButtonState as typeof selectButtonState)
 })
-    .register(themeSchemaRegistry, { id: "diagramSelectButton", axis: 'none' })
+    .register(themeSchemaRegistry, { id: "diagramSelectButton" })
 
 export const container = z.object({
     bgContrast: bgContrast.default({
@@ -68,7 +68,7 @@ export const container = z.object({
         contrast: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
     })
 })
-    .register(themeSchemaRegistry, { id: "diagramContainer", axis: 'none' })
+    .register(themeSchemaRegistry, { id: "diagramContainer" })
 
 export const diagram = z.object({
     settings: (diagramSettings as typeof diagramSettings).optional(),
@@ -78,4 +78,4 @@ export const diagram = z.object({
     container: (container as typeof container).optional(),
     footer: (diagramTextStyles as typeof diagramTextStyles).optional(),
 })
-    .register(themeSchemaRegistry, { id: "diagram", axis: 'none' })
+    .register(themeSchemaRegistry, { id: "diagram" })

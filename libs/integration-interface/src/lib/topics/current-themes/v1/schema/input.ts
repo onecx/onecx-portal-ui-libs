@@ -50,22 +50,26 @@ const inputSeverityShape = z.object({
   color: color.optional(),
   border: borderWithShadow.optional(),
   placeholder: inputPlaceholder.optional(),
-})
+}).register(themeSchemaRegistry, { id: 'inputSeverityShape' })
 
 /** A single state block (default severity only). */
-const inputStateShape = z.object({
-  defaultSeverity: inputSeverityShape.prefault({}),
-})
+const inputStateShape = z
+  .object({
+    defaultSeverity: inputSeverityShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'inputStateShape', axis: 'severity' })
 
 /** A single variant: defaultState plus the named states. */
-const inputVariantShape = z.object({
-  defaultState: inputStateShape.prefault({}),
-  hover: inputStateShape.prefault({}),
-  focus: inputStateShape.prefault({}),
-  active: inputStateShape.prefault({}),
-  disabled: inputStateShape.prefault({}),
-  invalid: inputStateShape.prefault({}),
-})
+const inputVariantShape = z
+  .object({
+    defaultState: inputStateShape.prefault({}),
+    hover: inputStateShape.prefault({}),
+    focus: inputStateShape.prefault({}),
+    active: inputStateShape.prefault({}),
+    disabled: inputStateShape.prefault({}),
+    invalid: inputStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'inputVariantShape', axis: 'state' })
 
 /**
  * Pure input shape: the outlined baseline (`defaultVariant`) and the `filled` custom variant.
@@ -204,7 +208,10 @@ export const inputDefaults = {
 // EXPORT — shape + defaults applied once
 // ------------------------------------------------------------------
 
+// Input is flattened (no `variant`/`state` wrappers, unlike primitives `variantWithStates`):
+// the root's own keys are variants, each variant's keys are states, each state's key is the
+// severity. The axis containers are therefore the root (variant) and the two inner blocks.
 export const input = applyDefaultsRecursive(inputShape, inputDefaults).register(themeSchemaRegistry, {
   id: 'input',
-  axis: 'none',
+  axis: 'variant',
 })

@@ -73,7 +73,7 @@ export class DataListGridSortingButtonSchema {
         ...this.focusTokens,
       }).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataListGridSortingButton', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataListGridSortingButton' });
 }
 
 export const dataListGridSortingButton = DataListGridSortingButtonSchema.schema;

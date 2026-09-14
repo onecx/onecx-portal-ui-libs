@@ -42,7 +42,7 @@ export class DataTableSortIconStylesSchema {
       active: z.object({...this.activeTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableSortIconStyles', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTableSortIconStyles' });
 }
 
 export const dataTableSortIconStyles = DataTableSortIconStylesSchema.schema;
@@ -86,7 +86,7 @@ export class DataTableFilterIconStylesSchema {
       active: z.object({...this.activeTokens}).prefault({}),
       focus: z.object({...this.focusTokens}).prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'dataTableFilterIconStyles', axis: 'none' });
+    .register(themeSchemaRegistry, { id: 'dataTableFilterIconStyles' });
 }
 
 export const dataTableFilterIconStyles = DataTableFilterIconStylesSchema.schema;

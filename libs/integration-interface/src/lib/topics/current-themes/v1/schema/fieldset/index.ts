@@ -41,5 +41,5 @@ export class FieldsetSchema {
       settings: FieldsetSettingsSchema.schema.prefault({}),
       legend: LegendSchema.schema.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'fieldset', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'fieldset' })
 }

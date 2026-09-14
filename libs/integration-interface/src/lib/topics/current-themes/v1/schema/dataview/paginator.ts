@@ -34,5 +34,5 @@ export class DataviewPaginatorSchema {
     .object({
       ...this.tokens,
     })
-    .register(themeSchemaRegistry, { id: 'dataviewPaginator', axis: 'none' })
+    .register(themeSchemaRegistry, { id: 'dataviewPaginator' })
 }
