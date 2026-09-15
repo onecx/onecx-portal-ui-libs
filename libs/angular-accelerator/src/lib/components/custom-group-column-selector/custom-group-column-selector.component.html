@@ -30,6 +30,7 @@
   @let resolvedActiveColumnsLabel = activeColumnsLabel || (activeColumnsLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
   @let resolvedInactiveColumnsLabel = inactiveColumnsLabel || (inactiveColumnsLabelKey | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
   <p-pickList
+    autofocus="false"
     [source]="displayedColumnsModel"
     [target]="hiddenColumnsModel"
     [sourceHeader]="resolvedActiveColumnsLabel"
@@ -67,6 +68,7 @@
           id="frozenActionColumn"
           name="frozen-action-column-select-button"
           [allowEmpty]="false"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
@@ -81,6 +83,7 @@
           id="actionColumnPosition"
           name="action-column-position-select-button"
           [allowEmpty]="false"
+          autofocus="false"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>

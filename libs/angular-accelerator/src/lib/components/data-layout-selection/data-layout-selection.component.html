@@ -4,6 +4,7 @@
       [options]="viewingLayouts"
       [(ngModel)]="selectedViewLayout"
       optionLabel="id"
+      autofocus="false"
       (onChange)="onDataViewLayoutChange($event.value)"
       >
       <ng-template #item let-item>
