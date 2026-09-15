@@ -2,8 +2,8 @@ import * as z from 'zod'
 import {
   assertAxisContiguity,
   DEFAULT_SEGMENTS,
+  deriveLeafAxisMetadata,
   introspectThemeAxisMetadata,
-  themeAxisMetadata,
   type LeafFallbackMetadata,
 } from './axis-metadata'
 import { theme } from '../current-themes.schema'
@@ -63,11 +63,12 @@ describe('baseline default segments', () => {
 // sibling and a named `variant` (colorVariants) container, each holding states and severities.
 // A scope is anchored at the `v2.primitives` variant root, and entries are emitted
 // innermost-first with **relative** segment deltas (the variant delta from the scope anchor,
-// the state delta from the variant, the severity delta from the state).
+// the state delta from the variant, the severity delta from the state). These cases derive the
+// leaf on demand (the B2 runtime path) and assert its structure directly.
 describe('per-leaf axis metadata (primitives)', () => {
   it('records severity, state, and variant for a named-variant hover leaf (innermost-first)', () => {
     const hoverSuccessBgColor = 'v2.primitives.variant.primary.state.hover.severity.success.bg.color'
-    const entry = themeAxisMetadata[hoverSuccessBgColor]
+    const entry = deriveLeafAxisMetadata(theme, hoverSuccessBgColor)!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.primitives',
@@ -82,7 +83,7 @@ describe('per-leaf axis metadata (primitives)', () => {
 
   it('records a named severity on the defaultVariant baseline leaf', () => {
     const severityOverrideBgColor = 'v2.primitives.defaultVariant.defaultState.severity.success.bg.color'
-    const entry = themeAxisMetadata[severityOverrideBgColor]
+    const entry = deriveLeafAxisMetadata(theme, severityOverrideBgColor)!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.primitives',
@@ -97,7 +98,7 @@ describe('per-leaf axis metadata (primitives)', () => {
 
   it('records all-default entries on the fully-baseline leaf', () => {
     const baselineBgColor = 'v2.primitives.defaultVariant.defaultState.defaultSeverity.bg.color'
-    const entry = themeAxisMetadata[baselineBgColor]
+    const entry = deriveLeafAxisMetadata(theme, baselineBgColor)!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.primitives',
@@ -112,7 +113,7 @@ describe('per-leaf axis metadata (primitives)', () => {
 
   it('records a named severity on the default-state of a named variant', () => {
     const defaultStateInfoBgColor = 'v2.primitives.variant.primary.defaultState.severity.info.bg.color'
-    const entry = themeAxisMetadata[defaultStateInfoBgColor]
+    const entry = deriveLeafAxisMetadata(theme, defaultStateInfoBgColor)!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.primitives',
@@ -131,7 +132,7 @@ describe('per-leaf axis metadata (primitives)', () => {
     // only, with no variant entry — so the `defaultState` member's delta spans the anchor across
     // the structural `area`/`canvas` keys, measured from the `v2.primitives` scope anchor.
     const areaCanvasBgColor = 'v2.primitives.area.canvas.defaultState.defaultSeverity.bg.color'
-    const entry = themeAxisMetadata[areaCanvasBgColor]
+    const entry = deriveLeafAxisMetadata(theme, areaCanvasBgColor)!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.primitives',
@@ -145,8 +146,8 @@ describe('per-leaf axis metadata (primitives)', () => {
 
   it('omits a static leaf that crosses no relaxed axis member', () => {
     // `font.family` sits directly under the primitives object (axis none) and never crosses
-    // a variant/state/severity member, so there is nothing to relax and no metadata is emitted.
-    expect(themeAxisMetadata['v2.primitives.font.family']).toBeUndefined()
+    // a variant/state/severity member, so there is nothing to relax and no metadata is derived.
+    expect(deriveLeafAxisMetadata(theme, 'v2.primitives.font.family')).toBeUndefined()
   })
 })
 
@@ -159,7 +160,7 @@ describe('per-leaf axis metadata for the input usage', () => {
     `v2.usages.input.${variant}.${state}.defaultSeverity.background.color`
 
   it('records the fully-baseline leaf with single-segment default entries', () => {
-    const entry = themeAxisMetadata[inputBg('defaultVariant', 'defaultState')]
+    const entry = deriveLeafAxisMetadata(theme, inputBg('defaultVariant', 'defaultState'))!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.usages.input',
@@ -173,7 +174,7 @@ describe('per-leaf axis metadata for the input usage', () => {
   })
 
   it('records the named state on a state leaf', () => {
-    const entry = themeAxisMetadata[inputBg('defaultVariant', 'hover')]
+    const entry = deriveLeafAxisMetadata(theme, inputBg('defaultVariant', 'hover'))!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.usages.input',
@@ -187,7 +188,7 @@ describe('per-leaf axis metadata for the input usage', () => {
   })
 
   it('records the custom `filled` variant as the variant member', () => {
-    const entry = themeAxisMetadata[inputBg('filled', 'defaultState')]
+    const entry = deriveLeafAxisMetadata(theme, inputBg('filled', 'defaultState'))!
     expect(entry.scopes).toEqual([
       {
         scopePath: 'v2.usages.input',
@@ -209,12 +210,12 @@ describe('per-leaf axis metadata for setting-only leaves', () => {
   const IDS_SETTINGS = 'v2.usages.interactiveDataView.settings'
 
   it('omits the enum-valued setting leaves (no relaxed axis crossed)', () => {
-    expect(themeAxisMetadata[`${IDS_SETTINGS}.sortDirection`]).toBeUndefined()
-    expect(themeAxisMetadata[`${IDS_SETTINGS}.layout`]).toBeUndefined()
+    expect(deriveLeafAxisMetadata(theme, `${IDS_SETTINGS}.sortDirection`)).toBeUndefined()
+    expect(deriveLeafAxisMetadata(theme, `${IDS_SETTINGS}.layout`)).toBeUndefined()
   })
 
   it('omits the array-valued setting leaf (pageSizes)', () => {
-    expect(themeAxisMetadata[`${IDS_SETTINGS}.pageSizes`]).toBeUndefined()
+    expect(deriveLeafAxisMetadata(theme, `${IDS_SETTINGS}.pageSizes`)).toBeUndefined()
   })
 })
 
@@ -276,7 +277,7 @@ describe('child boundary detection (synthetic)', () => {
     // `message.close` (messageCloseButton) is a structural pass-through node (its axis is
     // de-assigned): `width` crosses no variant/state/severity member, so the leaf carries no
     // fallback metadata.
-    expect(themeAxisMetadata['v2.usages.message.close.width']).toBeUndefined()
+    expect(deriveLeafAxisMetadata(theme, 'v2.usages.message.close.width')).toBeUndefined()
   })
 })
 
@@ -285,7 +286,7 @@ describe('child boundary detection (synthetic)', () => {
 describe('entry ordering (innermost-first)', () => {
   it('orders severity before state before variant for a full-axis leaf', () => {
     const hoverSuccessBgColor = 'v2.primitives.variant.primary.state.hover.severity.success.bg.color'
-    const entry = themeAxisMetadata[hoverSuccessBgColor]
+    const entry = deriveLeafAxisMetadata(theme, hoverSuccessBgColor)!
     const kinds = entry.scopes[0].entries.map((e) => e.kind)
     expect(kinds).toEqual(['severity', 'state', 'variant'])
   })
@@ -298,7 +299,7 @@ describe('entry ordering (innermost-first)', () => {
 describe('relative-delta composition', () => {
   it('reconstructs the member prefix by splicing entries onto the scope anchor', () => {
     const hoverSuccessBgColor = 'v2.primitives.variant.primary.state.hover.severity.success.bg.color'
-    const entry = themeAxisMetadata[hoverSuccessBgColor]
+    const entry = deriveLeafAxisMetadata(theme, hoverSuccessBgColor)!
     const scope = entry.scopes[0]
     const segmentsByKind: Record<'variant' | 'state' | 'severity', string[]> = {
       variant: scope.entries.find((e) => e.kind === 'variant')!.segments,
@@ -314,13 +315,27 @@ describe('relative-delta composition', () => {
   })
 })
 
-describe('precomputed export', () => {
-  it('matches a fresh introspection of the same schema for a sampled leaf', () => {
-    const hoverSuccessBgColor = 'v2.primitives.variant.primary.state.hover.severity.success.bg.color'
-    const inputBgColor = 'v2.usages.input.defaultVariant.hover.defaultSeverity.background.color'
-    const fresh = introspectThemeAxisMetadata(theme)
-    expect(themeAxisMetadata[hoverSuccessBgColor]).toEqual(fresh[hoverSuccessBgColor])
-    expect(themeAxisMetadata[inputBgColor]).toEqual(fresh[inputBgColor])
+// B2 drops the eagerly-shipped metadata blob: the on-demand per-leaf derivation must agree with
+// the full-walk introspection, so callers get identical structure without the import-time walk.
+describe('on-demand derivation', () => {
+  it('matches a full-walk introspection of the same schema for sampled leaves', () => {
+    const leaves = [
+      'v2.primitives.variant.primary.state.hover.severity.success.bg.color',
+      'v2.usages.input.defaultVariant.hover.defaultSeverity.background.color',
+    ]
+    const full = introspectThemeAxisMetadata(theme)
+    for (const leaf of leaves) {
+      expect(deriveLeafAxisMetadata(theme, leaf)).toEqual(full[leaf])
+    }
+  })
+
+  it('returns undefined for a path that is not a fallback leaf', () => {
+    expect(deriveLeafAxisMetadata(theme, 'v2.primitives.variant.primary.nope')).toBeUndefined()
+  })
+
+  it('is deterministic (repeated lookups return equal structure)', () => {
+    const leaf = 'v2.primitives.variant.primary.state.hover.severity.success.bg.color'
+    expect(deriveLeafAxisMetadata(theme, leaf)).toEqual(deriveLeafAxisMetadata(theme, leaf))
   })
 })
 
@@ -345,14 +360,13 @@ describe('introspection edge cases', () => {
 })
 
 // The contiguity invariant (per the theme-schema-audit skill, Step 5/7): within a scope, a
-// severity entry implies a state entry. The test suite is the canonical enforcement — the
-// source no longer asserts at import, so a non-contiguous subtree fails CI here rather than
-// crashing the `integration-interface` import. A state entry does NOT imply a variant entry:
-// structural subtrees (e.g. the `area`/`canvas` leaves) model state + severity without a
-// variant member.
+// severity entry implies a state entry. The test suite is the canonical enforcement — a
+// non-contiguous subtree fails CI here rather than crashing the `integration-interface` import.
+// A state entry does NOT imply a variant entry: structural subtrees (e.g. the `area`/`canvas`
+// leaves) model state + severity without a variant member.
 describe('axis contiguity assertion', () => {
   it('enforces contiguity for the real in-scope primitives and input subtrees', () => {
-    expect(() => assertAxisContiguity(themeAxisMetadata, ['v2.primitives', 'v2.usages.input'])).not.toThrow()
+    expect(() => assertAxisContiguity(introspectThemeAxisMetadata(theme), ['v2.primitives', 'v2.usages.input'])).not.toThrow()
   })
 
   it('throws on a severity entry without an enclosing state entry', () => {
