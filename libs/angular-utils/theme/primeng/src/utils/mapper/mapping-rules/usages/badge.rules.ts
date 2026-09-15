@@ -8,33 +8,33 @@ export const badgeMappingRules: MappingRule[] = [
     to: 'components.badge.dot.size',
   },
 
-  // Default variant - root properties
+  // Default variant / default severity - root properties
   {
-    from: 'usages.badge.border.radius',
+    from: 'usages.badge.defaultVariant.defaultSeverity.border.radius',
     to: 'components.badge.root.borderRadius',
   },
   {
-    from: 'usages.badge.font.size',
+    from: 'usages.badge.defaultVariant.defaultSeverity.font.size',
     to: 'components.badge.root.fontSize',
   },
   {
-    from: 'usages.badge.font.weight',
+    from: 'usages.badge.defaultVariant.defaultSeverity.font.weight',
     to: 'components.badge.root.fontWeight',
   },
   {
-    from: 'usages.badge.padding',
+    from: 'usages.badge.defaultVariant.defaultSeverity.padding',
     to: 'components.badge.root.padding',
   },
   {
-    from: 'usages.badge.minWidth',
+    from: 'usages.badge.defaultVariant.defaultSeverity.minWidth',
     to: 'components.badge.root.minWidth',
   },
   {
-    from: 'usages.badge.height',
+    from: 'usages.badge.defaultVariant.defaultSeverity.height',
     to: 'components.badge.root.height',
   },
 
-  // Named size variants
+  // Root-level size overrides
   {
     from: 'usages.badge.sm.fontSize',
     to: 'components.badge.sm.fontSize',
@@ -72,86 +72,86 @@ export const badgeMappingRules: MappingRule[] = [
     to: 'components.badge.xl.height',
   },
 
-  // Color variant - primary
+  // Severity tag - primary
   {
-    from: 'usages.badge.primary.background',
+    from: 'usages.badge.defaultVariant.primary.background',
     to: 'components.badge.primary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.primary.color',
+    from: 'usages.badge.defaultVariant.primary.color',
     to: 'components.badge.primary.color',
     transform: toColorString,
   },
 
-  // Color variant - secondary
+  // Severity tag - secondary
   {
-    from: 'usages.badge.secondary.background',
+    from: 'usages.badge.defaultVariant.secondary.background',
     to: 'components.badge.secondary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.secondary.color',
+    from: 'usages.badge.defaultVariant.secondary.color',
     to: 'components.badge.secondary.color',
     transform: toColorString,
   },
 
-  // Color variant - success
+  // Severity tag - success
   {
-    from: 'usages.badge.success.background',
+    from: 'usages.badge.defaultVariant.success.background',
     to: 'components.badge.success.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.success.color',
+    from: 'usages.badge.defaultVariant.success.color',
     to: 'components.badge.success.color',
     transform: toColorString,
   },
 
-  // Color variant - info
+  // Severity tag - info
   {
-    from: 'usages.badge.info.background',
+    from: 'usages.badge.defaultVariant.info.background',
     to: 'components.badge.info.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.info.color',
+    from: 'usages.badge.defaultVariant.info.color',
     to: 'components.badge.info.color',
     transform: toColorString,
   },
 
-  // Color variant - warning
+  // Severity tag - warning (mapped to PrimeNG's `warn` key)
   {
-    from: 'usages.badge.warning.background',
+    from: 'usages.badge.defaultVariant.warning.background',
     to: 'components.badge.warn.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.warning.color',
+    from: 'usages.badge.defaultVariant.warning.color',
     to: 'components.badge.warn.color',
     transform: toColorString,
   },
 
-  // Color variant - danger
+  // Severity tag - danger
   {
-    from: 'usages.badge.danger.background',
+    from: 'usages.badge.defaultVariant.danger.background',
     to: 'components.badge.danger.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.danger.color',
+    from: 'usages.badge.defaultVariant.danger.color',
     to: 'components.badge.danger.color',
     transform: toColorString,
   },
 
-  // Color variant - contrast
+  // Severity tag - contrast
   {
-    from: 'usages.badge.contrast.background',
+    from: 'usages.badge.defaultVariant.contrast.background',
     to: 'components.badge.contrast.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.contrast.color',
+    from: 'usages.badge.defaultVariant.contrast.color',
     to: 'components.badge.contrast.color',
     transform: toColorString,
   },

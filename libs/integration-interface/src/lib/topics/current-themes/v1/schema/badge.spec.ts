@@ -1,6 +1,6 @@
 import { expectDefaultsMatchShape } from './test-utils'
 
-import { badge, badgeDefaults, badgeShape } from './badge'
+import { badge, badgeShape, badgeDefaults } from './badge'
 
 describe('badge schema', () => {
   const parsed = badge.parse({})
