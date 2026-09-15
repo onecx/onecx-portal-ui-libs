@@ -9,9 +9,12 @@ Object {
     "gap": "{{primitives.space.sm}}",
     "justifyContent": "flex-end",
     "padding": "{{primitives.space.md}}",
+    "primaryActionButton": Object {},
+    "secondaryActionButton": Object {},
   },
   "header": Object {
     "alignItems": "center",
+    "closeButton": Object {},
     "gap": "{{primitives.space.sm}}",
     "justifyContent": "space-between",
     "padding": "{{primitives.space.md}}",
@@ -28,6 +31,13 @@ Object {
     "contrast": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
     "radius": "{{primitives.radius.md}}",
     "shadow": "{{primitives.shadow.md}}",
+  },
+  "settings": Object {
+    "closable": true,
+    "dismissableMask": false,
+    "draggable": true,
+    "modal": false,
+    "resizable": true,
   },
   "title": Object {
     "fontSize": "{{primitives.font.size}}",
