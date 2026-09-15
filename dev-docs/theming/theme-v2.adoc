@@ -56,11 +56,11 @@ The Shell determines which version to use based on the `versions` array publishe
 
 `themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries an optional `axis` field on registered schema nodes, with values `variant`, `state`, `severity`, `child`, or `setting`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `states`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition sub-schema nested inside a parent component. `setting` marks a settings sub-schema. A node with no `axis` is a structural pass-through wrapper that is not itself an axis boundary, such as `severityVariantGroup` or `variantWithStates`.
 
-link:{schema_root}/utils/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a build-time walker over the `theme` schema, and the precomputed constant `themeAxisMetadata`, both re-exported from the `integration-interface` package's public entry point. `themeAxisMetadata` is keyed by the leaf's dot-joined path from the schema root. Each `LeafFallbackMetadata` entry holds `scopes`, the ordered innermost-first list of fallback scopes the leaf passes through. Each `Scope` has `scopePath` (the dot-joined path to the scope's variant-root anchor) and `entries` (the innermost-first relaxed-axis entries, severity then state then variant), each with `kind` and `segments` (the relative key-segment delta from the previous entry to this member, not a cumulative path).
+link:{schema_root}/utils/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a full-walk over the `theme` schema, `deriveLeafAxisMetadata`, which derives a single leaf's structure on demand, and `AXES_OUTER_TO_INNER`, the relaxed axes in their outermost-first path order; link:{schema_root}/utils/resolve-leaf-fallback.ts[resolve-leaf-fallback.ts] exports `resolveLeafFallback`, which maps a theme variable name to its nearest single-step fallback variable. All are re-exported from the `integration-interface` package's public entry point. Each `LeafFallbackMetadata` entry holds `scopes`, the ordered innermost-first list of fallback scopes the leaf passes through. Each `Scope` has `scopePath` (the dot-joined path to the scope's variant-root anchor) and `entries` (the innermost-first relaxed-axis entries, severity then state then variant), each with `kind` and `segments` (the relative key-segment delta from the previous entry to this member, not a cumulative path).
 
 [source,typescript]
 ----
-themeAxisMetadata['v2.primitives.variant.primary.state.hover.severity.success.bg.color']
+deriveLeafAxisMetadata(theme, 'v2.primitives.variant.primary.state.hover.severity.success.bg.color')
 // {
 //   scopes: [
 //     {
@@ -73,9 +73,12 @@ themeAxisMetadata['v2.primitives.variant.primary.state.hover.severity.success.bg
 //     },
 //   ],
 // }
+//
+// resolveLeafFallback('--onecx-theme-primitives-variant-primary-state-hover-severity-success-bg-color')
+// '--onecx-theme-primitives-variant-primary-defaultState-severity-success-bg-color'
 ----
 
-This metadata is tenant-independent, derived purely from schema shape at module load, and contains no per-tenant or per-theme instance values. It is the contract the Shell runtime expands into CSS fallback chains, tracked under parent issue 545.
+This metadata is tenant-independent, derived purely from schema shape, and contains no per-tenant or per-theme instance values. It is the contract the Shell runtime expands into CSS fallback chains, tracked under parent issue 545.
 
 [#primitives]
 == Primitives
