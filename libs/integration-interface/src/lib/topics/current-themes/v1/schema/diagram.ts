@@ -78,4 +78,5 @@ export const diagram = z.object({
     container: (container as typeof container).optional(),
     footer: (diagramTextStyles as typeof diagramTextStyles).optional(),
 })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: "diagram" })

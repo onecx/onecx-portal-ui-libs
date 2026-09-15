@@ -271,4 +271,5 @@ export const togglebutton = z
     // Content child-element
     content: contentTogglebuttonTokens.prefault({}),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'togglebutton' })
