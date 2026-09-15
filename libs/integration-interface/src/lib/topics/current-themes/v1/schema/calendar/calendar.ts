@@ -69,6 +69,7 @@ export const calendarDefaults = {
  * Only keys present in `calendarDefaults` get `.default()`.
  * All other keys stay optional (filled by fallback mechanism).
  */
+// TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
 export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(themeSchemaRegistry, {
   id: 'calendar',
 })

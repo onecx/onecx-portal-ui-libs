@@ -230,4 +230,5 @@ const tableShape: TableShape = {
   row: (tableRow as typeof tableRow).optional(),
 }
 
+// TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
 export const table = z.object(tableShape).register(themeSchemaRegistry, { id: 'table' })

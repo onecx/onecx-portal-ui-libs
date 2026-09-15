@@ -46,5 +46,6 @@ export class MessageSchema {
       primary: (PrimaryMessageSchema.schema as typeof PrimaryMessageSchema.schema).prefault({}),
       secondary: (SecondaryMessageSchema.schema as typeof SecondaryMessageSchema.schema).prefault({}),
     })
+    // TODO(axis-metadata): message child axes are not valid; re-derive once the classification is confirmed.
     .register(themeSchemaRegistry, { id: 'message' })
 }

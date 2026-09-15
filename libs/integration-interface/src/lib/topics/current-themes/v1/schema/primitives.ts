@@ -273,7 +273,7 @@ export const severityVariants = z
     danger: severityStyles.optional(),
     contrast: severityStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'severityVariants' })
+  .register(themeSchemaRegistry, { id: 'severityVariants', axis: 'severity' })
 
 // A single interaction-state group: a baseline style (defaultVariant) and per-level severity overrides (variants).
 // Used as the type for variantWithStates.defaultState and each state entry.
@@ -284,19 +284,24 @@ export const severityVariantGroup = z
   })
   .register(themeSchemaRegistry, { id: 'severityVariantGroup' })
 
+// Named interaction-state container: the set of states a variant can appear in
+// (hover, active, selected, focus, invalid, disabled). Classified as the `state`
+// axis for build-time introspection so per-leaf metadata can record which states apply.
+export const states = z
+  .object({
+    hover: severityVariantGroup.optional(),
+    active: severityVariantGroup.optional(),
+    selected: severityVariantGroup.optional(),
+    focus: severityVariantGroup.optional(),
+    invalid: severityVariantGroup.optional(),
+    disabled: severityVariantGroup.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'states', axis: 'state' })
+
 export const variantWithStates = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
-    state: z
-      .object({
-        hover: severityVariantGroup.optional(),
-        active: severityVariantGroup.optional(),
-        selected: severityVariantGroup.optional(),
-        focus: severityVariantGroup.optional(),
-        invalid: severityVariantGroup.optional(),
-        disabled: severityVariantGroup.optional(),
-      })
-      .optional(),
+    state: states.optional(),
   })
   .register(themeSchemaRegistry, { id: 'variantWithStates' })
 
@@ -317,7 +322,9 @@ const colorVariantsShape: ColorVariantsShape = {
   // TODO: Add a link variant to all components that support link display (e.g. buttons)
 }
 
-export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants' })
+export const colorVariants = z
+  .object(colorVariantsShape)
+  .register(themeSchemaRegistry, { id: 'colorVariants', axis: 'variant' })
 
 export const area = variantWithStates.extend({})
 
@@ -375,4 +382,7 @@ const primitivesShape: PrimitivesShape = {
   transition: (transition as typeof transition).optional(),
 }
 
-export const primitives = z.object(primitivesShape).optional().register(themeSchemaRegistry, { id: 'primitives' })
+export const primitives = z
+  .object(primitivesShape)
+  .optional()
+  .register(themeSchemaRegistry, { id: 'primitives' })

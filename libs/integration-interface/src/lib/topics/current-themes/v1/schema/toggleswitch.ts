@@ -141,4 +141,5 @@ export const toggleswitch = z
       })
       .optional(),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: "toggleswitch" });
