@@ -63,5 +63,6 @@ export class MenuSchema {
       }),
       separator: this.separator.prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'menu' })
 }
