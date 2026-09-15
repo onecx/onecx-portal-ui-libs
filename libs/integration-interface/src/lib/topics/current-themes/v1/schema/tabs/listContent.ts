@@ -1,7 +1,6 @@
-import { withRef, bg, color, border } from "../primitives"
+import { withRef, bg, border } from "../primitives"
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { TabsTabSchema } from "./tab"
 
 /**
  * Tabs list content component schema definition. Represents the content area of the tabs list containing tabs.

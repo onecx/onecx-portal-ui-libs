@@ -1,17 +1,18 @@
-import z from 'zod'
-import { bg, withRef, color } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
+import { bg, color, withRef } from '../primitives'
 
 /**
- * Calendar schema for the today cell in the calendar date panel.
+ * Shape for the today cell in the calendar date panel.
  */
-export class CalendarTodaySchema {
-  static readonly schema = z
-    .object({
-      background: z
-        .union([bg, withRef(z.string())])
-        .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
-      color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarToday' })
+export const calendarTodayShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+})
+
+/**
+ * Default tokens for the today cell.
+ */
+export const calendarTodayDefaults = {
+  background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
 }

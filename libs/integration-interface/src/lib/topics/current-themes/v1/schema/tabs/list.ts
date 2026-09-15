@@ -1,7 +1,6 @@
-import { withRef, bg, color, icon, border } from "../primitives"
+import { withRef, bg, color, border } from "../primitives"
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { TabsNavButtonSchema } from "./navButton"
 import { TabsListContentSchema } from "./listContent"
 
 
