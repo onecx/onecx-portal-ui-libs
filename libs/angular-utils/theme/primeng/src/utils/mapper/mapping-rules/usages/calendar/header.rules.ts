@@ -4,32 +4,32 @@ import { toColorString } from '../../../mapper.utils'
 export const headerRules: MappingRule[] = [
   // ─── Header ───────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.header.background',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.background',
     to: 'components.datepicker.header.background',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.border.color',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.border.color',
     to: 'components.datepicker.header.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.color',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.color',
     to: 'components.datepicker.header.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.padding',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.padding',
     to: 'components.datepicker.header.padding',
   },
 
   // ─── Title ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.header.gap',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.gap',
     to: 'components.datepicker.title.gap',
   },
   {
-    from: 'usages.calendar.panel.header.selectMonth.font.weight',
+    from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.selectMonth.defaultVariant.defaultState.font.weight',
     to: 'components.datepicker.title.fontWeight',
   },
 ]

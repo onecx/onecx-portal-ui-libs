@@ -107,7 +107,10 @@ class ObjectDetailItemHarness extends ContentContainerComponentHarness {
   }
 
   async getIcon() {
-    return (await this.getIconElement())?.getAttribute('class')
+    const iconElement = await this.getIconElement()
+    if (!iconElement) return undefined
+    const classes = await iconElement.getAttribute('class')
+    return classes?.split(/\s+/).filter((c) => c && c !== 'object-detail-icon').join(' ') || undefined
   }
 
   async getLabelTooltipContent(): Promise<string | null> {
