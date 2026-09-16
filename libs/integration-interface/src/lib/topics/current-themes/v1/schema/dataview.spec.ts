@@ -1,7 +1,7 @@
 import { expectExactTokens, expectExactUndefinedTokens } from './test-utils'
 import { dataview } from './dataview'
 import { DataviewSchema } from './dataview/dataview'
-import { DataviewSettingsSchema } from './dataview/settings'
+// import { DataviewSettingsSchema } from './dataview/settings'
 import { DataviewHeaderSchema } from './dataview/header'
 import { DataviewContentSchema } from './dataview/content'
 import { DataviewFooterSchema } from './dataview/footer'
