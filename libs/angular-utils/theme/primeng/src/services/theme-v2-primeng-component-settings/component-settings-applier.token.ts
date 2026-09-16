@@ -28,7 +28,7 @@ export interface PrimeNgComponentSettingsApplier {
  * logic and consume the resolved per-field settings directly, so routing them through this
  * PrimeNG-only registry would be a mismatch.
  */
-export const PRIME_NG_COMPONENT_SETTINGS_APPLIERS = new InjectionToken<readonly PrimeNgComponentSettingsApplier[]>(
+export const PRIMENG_COMPONENT_SETTINGS_APPLIERS = new InjectionToken<readonly PrimeNgComponentSettingsApplier[]>(
   'PRIME_NG_COMPONENT_SETTINGS_APPLIERS',
   {
     providedIn: 'root',
