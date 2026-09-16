@@ -4,7 +4,7 @@ import { toColorString } from '../../../mapper.utils';
 export const baseRules: MappingRule[] = [
   // ─── Root ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.root.transitionDuration',
+    from: 'usages.calendar.transitionDuration',
     to: 'components.datepicker.root.transitionDuration',
   },
 
@@ -29,7 +29,7 @@ export const baseRules: MappingRule[] = [
     to: 'components.datepicker.panel.borderRadius',
   },
   {
-    from: 'usages.calendar.panel.shadow',
+    from: 'usages.calendar.panel.border.shadow',
     to: 'components.datepicker.panel.shadow',
   },
   {

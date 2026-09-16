@@ -62,24 +62,24 @@ export const toggleswitchMappingRules: MappingRule[] = [
 
   // Root - checked state
   {
-    from: 'usages.toggleswitch.variant.checked.defaultState.background',
+    from: 'usages.toggleswitch.state.checked.background',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.variant.checked.defaultState.borderColor',
+    from: 'usages.toggleswitch.state.checked.borderColor',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedBorderColor',
     transform: toColorString,
   },
 
   // Root - checked + hover state
   {
-    from: 'usages.toggleswitch.variant.checked.state.hover.background',
+    from: 'usages.toggleswitch.state.checked.hover.background',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedHoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.variant.checked.state.hover.borderColor',
+    from: 'usages.toggleswitch.state.checked.hover.borderColor',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedHoverBorderColor',
     transform: toColorString,
   },
@@ -157,24 +157,24 @@ export const toggleswitchMappingRules: MappingRule[] = [
 
   // Handle - checked state
   {
-    from: 'usages.toggleswitch.handle.variant.checked.defaultState.background',
+    from: 'usages.toggleswitch.handle.state.checked.background',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.handle.variant.checked.defaultState.color',
+    from: 'usages.toggleswitch.handle.state.checked.color',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedColor',
     transform: toColorString,
   },
 
   // Handle - checked + hover state
   {
-    from: 'usages.toggleswitch.handle.variant.checked.state.hover.background',
+    from: 'usages.toggleswitch.handle.state.checked.hover.background',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.handle.variant.checked.state.hover.color',
+    from: 'usages.toggleswitch.handle.state.checked.hover.color',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverColor',
     transform: toColorString,
   },
