@@ -1,6 +1,6 @@
-import { expectDefaultsMatchShape } from './test-utils'
+import { expectDefaultsMatchShape, expectExactUndefinedTokens } from './test-utils'
 
-import { badge, badgeShape, badgeDefaults } from './badge'
+import { badge, badgeShape, badgeDefaults, badgeSizeShape, badgeDotShape } from './badge'
 
 describe('badge schema', () => {
   const parsed = badge.parse({})
@@ -15,5 +15,15 @@ describe('badge schema', () => {
 
   it('shape and defaults stay in sync', () => {
     expectDefaultsMatchShape(badgeShape, badgeDefaults)
+  })
+
+  describe('special tokens (sizes + dot)', () => {
+    it.each(['sm', 'lg', 'xl'] as const)('%s tokens all have a default value', (size) => {
+      expectExactUndefinedTokens(parsed[size] as object | undefined, badgeSizeShape.shape, [])
+    })
+
+    it('dot tokens all have a default value', () => {
+      expectExactUndefinedTokens(parsed['dot'] as object | undefined, badgeDotShape.shape, [])
+    })
   })
 })

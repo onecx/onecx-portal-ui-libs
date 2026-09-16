@@ -32,13 +32,13 @@ const badgeVariantShape = z.object({
   contrast: badgeSeverityOverrideShape.prefault({}),
 })
 
-const badgeSizeShape = z.object({
+export const badgeSizeShape = z.object({
   fontSize: withRef(z.string()).optional(),
   minWidth: withRef(z.string()).optional(),
   height: withRef(z.string()).optional(),
 })
 
-const badgeDotShape = z.object({
+export const badgeDotShape = z.object({
   size: withRef(z.string()).optional(),
 })
 
