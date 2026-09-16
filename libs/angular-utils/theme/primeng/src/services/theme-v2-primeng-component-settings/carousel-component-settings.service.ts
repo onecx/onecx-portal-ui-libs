@@ -7,14 +7,10 @@ import { PrimeNgComponentThemingSettingsRuntime } from './component-settings-run
 type PrimeNgCarouselDefaults = ReturnType<typeof mapPrimeNgCarouselSettings>
 
 /**
- * Applies themed settings defaults to PrimeNG Carousel component instances.
- *
- * It delegates the generic runtime patching mechanics to `PrimeNgComponentThemingSettingsRuntime`
- * and keeps only the Carousel-specific refresh behavior in this service.
+ * Applies Carousel-specific settings from resolved theme properties to live PrimeNG Carousel
+ * instances.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CarouselComponentSettingsService {
   private readonly runtime = new PrimeNgComponentThemingSettingsRuntime<Carousel, PrimeNgCarouselDefaults>({
     componentType: Carousel,
@@ -24,55 +20,54 @@ export class CarouselComponentSettingsService {
   })
 
   /**
-   * Applies resolved theme properties to all active PrimeNG Carousel instances.
+   * Applies the settings carried by the resolved theme properties.
    *
    * @param properties Resolved V2 theme properties for the current runtime context.
-   * @returns No return value.
    */
   applyThemeProperties(properties: ThemePropertiesV2): void {
     this.runtime.applyThemeProperties(properties)
   }
 
   /**
-   * Recomputes PrimeNG Carousel internals after themed settings changed at runtime.
+   * Recomputes the Carousel derived state that depends on the inputs the theme can set
+   * (orientation, showIndicators, showNavigators, circular, autoplayInterval).
    *
-   * This is a deliberate duplication of PrimeNG's own `ngOnChanges`/`ngAfterContentInit` refresh
-   * logic, pinned to the Carousel internal API surface of `primeng@21.1.3` (`allowAutoplay`,
-   * `startAutoplay`, `stopAutoplay`, `setCloneItems`, `createStyle`, `calculatePosition`, `cd`).
-   * The optional chaining (`?.()`) is intentional so an unexpected shape degrades gracefully, but
-   * it also means a future PrimeNG rename/remove of any of these members fails SILENTLY here. The
-   * integration test in theme-config.service.spec.ts ("should apply carousel settings to real
-   * PrimeNG carousel instances") is the guard: it drives a real Carousel end-to-end and must be
-   * re-verified (and this list updated) whenever PrimeNG is upgraded.
+   * PrimeNG does not expose a single method that recomputes these inputs: its `onChanges` only
+   * reacts to `value`, `numVisible` and `numScroll`, so a later theme change does not reach the
+   * instance through PrimeNG's own lifecycle. The recompute is therefore performed by invoking the
+   * public methods PrimeNG already provides, mirroring what its `onAfterContentInit` runs on a
+   * fresh instance:
    *
-   * @param instance Carousel instance whose internal derived state must be refreshed.
-   * @returns No return value.
+   * - the autoplay interval is reconciled explicitly, because a live instance must (re)start or
+   *   stop its own timer; PrimeNG has no method that updates a running interval in place;
+   * - `setCloneItems`, `createStyle` and `calculatePosition` rebuild the circular layout, the item
+   *   flex sizing and the viewport position;
+   * - `markForCheck` triggers change detection for the template-driven inputs (orientation class,
+   *   indicator and navigator visibility).
+   *
+   * Every member used here is part of the public `Carousel` surface, so no cast or defensive
+   * optional chaining is required. Should a future PrimeNG release rename or remove any of them,
+   * this method fails to compile against the upgraded types, surfacing the change at build time.
+   * The end-to-end behaviour is covered by the "should apply carousel settings to real PrimeNG
+   * carousel instances" test in theme-config.service.spec.ts.
+   *
+   * @param instance Live Carousel instance to recompute.
    */
   private refreshInstance(instance: Carousel): void {
-    const internalInstance = instance as Carousel & {
-      cd: { markForCheck: () => void }
-      allowAutoplay?: boolean
-      createStyle?: () => void
-      calculatePosition?: () => void
-      startAutoplay?: () => void
-      stopAutoplay?: (changeAllow?: boolean) => void
-      setCloneItems?: () => void
-    }
+    instance.allowAutoplay = !!instance.autoplayInterval
 
-    internalInstance.allowAutoplay = !!internalInstance.autoplayInterval
-
-    if (internalInstance.autoplayInterval) {
-      internalInstance.startAutoplay?.()
+    if (instance.autoplayInterval) {
+      instance.startAutoplay()
     } else {
-      internalInstance.stopAutoplay?.(false)
+      instance.stopAutoplay(false)
     }
 
-    if (internalInstance.circular && internalInstance.value) {
-      internalInstance.setCloneItems?.()
+    if (instance.circular && instance.value) {
+      instance.setCloneItems()
     }
 
-    internalInstance.createStyle?.()
-    internalInstance.calculatePosition?.()
-    internalInstance.cd.markForCheck()
+    instance.createStyle()
+    instance.calculatePosition()
+    instance.cd.markForCheck()
   }
 }
