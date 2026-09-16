@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core'
 import { ThemePropertiesV2 } from '@onecx/integration-interface'
 import { mapPrimeNgCarouselSettings, mapThemeUsageSettings } from '@onecx/angular-utils'
 import { Carousel } from 'primeng/carousel'
-import { PrimeNgComponentSettingsRuntime } from './component-settings-runtime.utils'
+import { PrimeNgComponentThemingSettingsRuntime } from './component-settings-runtime.utils'
 
 type PrimeNgCarouselDefaults = ReturnType<typeof mapPrimeNgCarouselSettings>
 
 /**
  * Applies themed settings defaults to PrimeNG Carousel component instances.
  *
- * It delegates the generic runtime patching mechanics to `PrimeNgComponentSettingsRuntime`
+ * It delegates the generic runtime patching mechanics to `PrimeNgComponentThemingSettingsRuntime`
  * and keeps only the Carousel-specific refresh behavior in this service.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class CarouselComponentSettingsService {
-  private readonly runtime = new PrimeNgComponentSettingsRuntime<Carousel, PrimeNgCarouselDefaults>({
+  private readonly runtime = new PrimeNgComponentThemingSettingsRuntime<Carousel, PrimeNgCarouselDefaults>({
     componentType: Carousel,
     trackedKeys: mapPrimeNgCarouselSettings.targetKeys,
     resolveDefaults: (properties) => mapThemeUsageSettings(properties, 'carousel', mapPrimeNgCarouselSettings) ?? {},

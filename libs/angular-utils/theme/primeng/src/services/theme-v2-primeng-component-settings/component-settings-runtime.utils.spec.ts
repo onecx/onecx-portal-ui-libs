@@ -1,21 +1,28 @@
 import { AfterContentInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { PrimeNgComponentSettingsRuntime } from './component-settings-runtime.utils'
+import { PrimeNgComponentThemingSettingsRuntime } from './component-settings-runtime.utils'
+import * as loggerUtils from '../../utils/logger.utils'
 
 interface TestDefaults {
   themed: string
   explicit: string
 }
 
-describe('PrimeNgComponentSettingsRuntime', () => {
-  let warnSpy: jest.SpyInstance
+describe('PrimeNgComponentThemingSettingsRuntime', () => {
+  let warnSpy: jest.Mock
 
   beforeEach(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    warnSpy = jest.fn()
+    jest.spyOn(loggerUtils, 'createLogger').mockReturnValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: warnSpy,
+      error: jest.fn(),
+    })
   })
 
   afterEach(() => {
-    warnSpy.mockRestore()
+    jest.restoreAllMocks()
   })
 
   it('should apply initial defaults, preserve lifecycle hooks, and stop updating after teardown', async () => {
@@ -54,7 +61,7 @@ describe('PrimeNgComponentSettingsRuntime', () => {
     })
     class HostComponent {}
 
-    const runtime = new PrimeNgComponentSettingsRuntime<TestComponent, TestDefaults>({
+    const runtime = new PrimeNgComponentThemingSettingsRuntime<TestComponent, TestDefaults>({
       componentType: TestComponent,
       trackedKeys: ['themed', 'explicit'],
       resolveDefaults: () => defaults,
@@ -94,7 +101,7 @@ describe('PrimeNgComponentSettingsRuntime', () => {
       }
     }
 
-    new PrimeNgComponentSettingsRuntime<BrokenComponent, TestDefaults>({
+    new PrimeNgComponentThemingSettingsRuntime<BrokenComponent, TestDefaults>({
       componentType: BrokenComponent,
       trackedKeys: ['themed', 'explicit'],
       resolveDefaults: () => ({ themed: 'a', explicit: 'b' }),
@@ -112,7 +119,7 @@ describe('PrimeNgComponentSettingsRuntime', () => {
       }
     }
 
-    new PrimeNgComponentSettingsRuntime<HookedComponent, TestDefaults>({
+    new PrimeNgComponentThemingSettingsRuntime<HookedComponent, TestDefaults>({
       componentType: HookedComponent,
       trackedKeys: ['themed', 'explicit'],
       resolveDefaults: () => ({ themed: 'a', explicit: 'b' }),

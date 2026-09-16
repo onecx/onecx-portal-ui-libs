@@ -39,7 +39,7 @@ import {
   useStyleForMfe,
   useStyleForRc,
 } from '@onecx/angular-utils/style'
-import { PRIME_NG_COMPONENT_SETTINGS_APPLIERS } from './theme-v2-primeng-component-settings/component-settings-applier.token'
+import { PRIMENG_COMPONENT_SETTINGS_APPLIERS } from './theme-v2-primeng-component-settings/component-settings-applier.token'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
@@ -97,7 +97,7 @@ export class ThemeConfigService {
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
   private readonly options = inject(THEME_OPTIONS)
   private readonly injector = inject(Injector)
-  private readonly componentSettingsAppliers = inject(PRIME_NG_COMPONENT_SETTINGS_APPLIERS)
+  private readonly componentSettingsAppliers = inject(PRIMENG_COMPONENT_SETTINGS_APPLIERS)
 
   constructor() {
     this.themeService.currentThemes$.subscribe(async (theme) => {

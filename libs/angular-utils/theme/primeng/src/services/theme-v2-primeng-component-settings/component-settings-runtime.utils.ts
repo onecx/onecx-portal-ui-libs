@@ -1,5 +1,6 @@
 import { SimpleChange } from '@angular/core'
 import { ThemePropertiesV2 } from '@onecx/integration-interface'
+import { createLogger } from '../../utils/logger.utils'
 
 /**
  * Minimal lifecycle surface required to patch a PrimeNG component instance and
@@ -26,7 +27,7 @@ export type PrimeNgComponentType<TComponent extends PrimeNgPatchableComponent> =
  * @template TComponent PrimeNG component instance type being patched.
  * @template TDefaults Object shape of theme-mapped input defaults.
  */
-export interface PrimeNgComponentSettingsRuntimeConfig<
+export interface PrimeNgComponentThemingSettingsRuntimeConfig<
   TComponent extends PrimeNgPatchableComponent,
   TDefaults extends object,
 > {
@@ -55,10 +56,11 @@ type RuntimeState<TComponent extends PrimeNgPatchableComponent, TDefaults extend
  * @template TComponent PrimeNG component instance type being patched.
  * @template TDefaults Object shape of theme-mapped input defaults.
  */
-export class PrimeNgComponentSettingsRuntime<
+export class PrimeNgComponentThemingSettingsRuntime<
   TComponent extends PrimeNgPatchableComponent,
   TDefaults extends object,
 > {
+  private readonly logger = createLogger('PrimeNgComponentThemingSettingsRuntime')
   private currentDefaults: Partial<TDefaults> = {}
   private readonly state: RuntimeState<TComponent, TDefaults> = {
     patched: false,
@@ -71,7 +73,7 @@ export class PrimeNgComponentSettingsRuntime<
    *
    * @param config Runtime configuration describing how theme defaults map onto component instances.
    */
-  constructor(private readonly config: PrimeNgComponentSettingsRuntimeConfig<TComponent, TDefaults>) {
+  constructor(private readonly config: PrimeNgComponentThemingSettingsRuntimeConfig<TComponent, TDefaults>) {
     this.patchRuntime()
   }
 
@@ -111,8 +113,8 @@ export class PrimeNgComponentSettingsRuntime<
     const { componentType } = this.config
 
     if (typeof (componentType.prototype as Record<string, unknown>)['onAfterContentInit'] !== 'function') {
-      console.warn(
-        `[PrimeNgComponentSettingsRuntime] ${componentType.name ?? 'component'} does not define an ` +
+      this.logger.warn(
+        `${componentType.name ?? 'component'} does not define an ` +
           'onAfterContentInit hook, so theme-mapped input defaults will not be applied to it. This ' +
           'usually means the component no longer follows PrimeNG BaseComponent hook conventions.'
       )

@@ -21,7 +21,7 @@ export interface PrimeNgComponentSettingsApplier {
  * live component input defaults.
  *
  * This registry is for PrimeNG-native components only: they are themed by monkey-patching the
- * PrimeNG prototype (see `PrimeNgComponentSettingsRuntime`), which is something this library can
+ * PrimeNG prototype (see `PrimeNgComponentThemingSettingsRuntime`), which is something this library can
  * do because the components are not owned here.
  *
  * OneCX/accelerator-owned components are deliberately NOT registered here. They own their theming
