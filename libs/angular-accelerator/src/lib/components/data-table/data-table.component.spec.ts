@@ -10,22 +10,25 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { DataTableComponent, Row } from './data-table.component'
-import { HAS_PERMISSION_CHECKER, themeVersionAvailable } from '@onecx/angular-utils'
-import { ThemeService, UserService } from '@onecx/angular-integration-interface'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { UserService } from '@onecx/angular-integration-interface'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
-import { CurrentThemes } from '@onecx/integration-interface'
 
-jest.mock('@onecx/angular-utils', () => ({
-  ...jest.requireActual('@onecx/angular-utils'),
-  themeVersionAvailable: jest.fn(),
-}))
-
-const themeVersionAvailableMock = jest.mocked(themeVersionAvailable)
+jest.mock('../../utils/accelerator-table-theme-defaults.utils', () => {
+  const { signal } = jest.requireActual('@angular/core')
+  return {
+    useAcceleratorTableThemeDefaults: jest.fn(() => ({
+      checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+      frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),
+      actionColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+    })),
+  }
+})
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -35,14 +38,6 @@ describe('DataTableComponent', () => {
   let unselectedCheckBoxes: PTableCheckboxHarness[]
   let selectedCheckBoxes: PTableCheckboxHarness[]
   let router: Router
-  let currentThemes$: BehaviorSubject<CurrentThemes>
-
-  const flushAsync = async (fixture: ComponentFixture<DataTableComponent>) => {
-    for (let i = 0; i < 5; i++) {
-      fixture.detectChanges()
-      await Promise.resolve()
-    }
-  }
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -228,21 +223,12 @@ describe('DataTableComponent', () => {
     },
   ]
   beforeEach(async () => {
-    themeVersionAvailableMock.mockResolvedValue(false)
-    currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
-
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent],
       imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
-        {
-          provide: ThemeService,
-          useValue: {
-            currentThemes$,
-          },
-        },
         {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
@@ -506,24 +492,10 @@ describe('DataTableComponent', () => {
     })
 
     it('should apply action column defaults from themed table settings', async () => {
-      themeVersionAvailableMock.mockResolvedValue(true)
       component.viewTableRow.subscribe((event) => console.log(event))
-
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  actionColumnSticky: true,
-                  actionColumnPosition: 'start',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
-      await flushAsync(fixture)
+      component.frozenActionColumnThemeSetting.set(true)
+      component.actionColumnPositionThemeSetting.set('left')
+      fixture.detectChanges()
 
       expect(component.frozenActionColumnResolved()).toBe(true)
       expect(component.actionColumnPositionResolved()).toBe('left')
@@ -538,73 +510,10 @@ describe('DataTableComponent', () => {
       expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
     })
 
-    it('should ignore an older theme when its availability check resolves last', async () => {
-      let resolveOlderTheme!: (available: boolean) => void
-      let resolveNewerTheme!: (available: boolean) => void
-      const olderThemeAvailable = new Promise<boolean>((resolve) => (resolveOlderTheme = resolve))
-      const newerThemeAvailable = new Promise<boolean>((resolve) => (resolveNewerTheme = resolve))
-      themeVersionAvailableMock
-        .mockReturnValueOnce(olderThemeAvailable)
-        .mockReturnValueOnce(newerThemeAvailable)
-
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  actionColumnSticky: true,
-                  actionColumnPosition: 'start',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  actionColumnSticky: false,
-                  actionColumnPosition: 'end',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
-
-      resolveNewerTheme(true)
-      await flushAsync(fixture)
-      expect(component.frozenActionColumnResolved()).toBe(false)
-      expect(component.actionColumnPositionResolved()).toBe('right')
-
-      resolveOlderTheme(true)
-      await flushAsync(fixture)
-      expect(component.frozenActionColumnResolved()).toBe(false)
-      expect(component.actionColumnPositionResolved()).toBe('right')
-    })
-
     it('should apply checkbox column defaults from themed table settings', async () => {
-      themeVersionAvailableMock.mockResolvedValue(true)
       component.selectionChanged.subscribe(() => undefined)
-
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  checkboxColumnPosition: 'end',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
-      await flushAsync(fixture)
+      component.checkboxColumnPositionThemeSetting.set('right')
+      fixture.detectChanges()
 
       expect(component.checkboxColumnPositionResolved()).toBe('right')
       expect(await dataTable.getSelectionColumnHeader('left')).toBe(null)
@@ -614,26 +523,12 @@ describe('DataTableComponent', () => {
     })
 
     it('should prefer explicit action column inputs over themed table settings', async () => {
-      themeVersionAvailableMock.mockResolvedValue(true)
       component.viewTableRow.subscribe((event) => console.log(event))
-
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  actionColumnSticky: true,
-                  actionColumnPosition: 'start',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
+      component.frozenActionColumnThemeSetting.set(true)
+      component.actionColumnPositionThemeSetting.set('left')
       fixture.componentRef.setInput('frozenActionColumn', false)
       fixture.componentRef.setInput('actionColumnPosition', 'right')
-      await flushAsync(fixture)
+      fixture.detectChanges()
 
       expect(component.frozenActionColumnResolved()).toBe(false)
       expect(component.actionColumnPositionResolved()).toBe('right')
@@ -649,24 +544,10 @@ describe('DataTableComponent', () => {
     })
 
     it('should prefer explicit checkbox column input over themed table settings', async () => {
-      themeVersionAvailableMock.mockResolvedValue(true)
       component.selectionChanged.subscribe(() => undefined)
-
-      currentThemes$.next({
-        properties: {
-          v2: {
-            usages: {
-              table: {
-                settings: {
-                  checkboxColumnPosition: 'end',
-                },
-              },
-            },
-          },
-        },
-      } as CurrentThemes)
+      component.checkboxColumnPositionThemeSetting.set('right')
       fixture.componentRef.setInput('checkboxColumnPosition', 'left')
-      await flushAsync(fixture)
+      fixture.detectChanges()
 
       expect(component.checkboxColumnPositionResolved()).toBe('left')
       expect(await dataTable.getSelectionColumnHeader('right')).toBe(null)

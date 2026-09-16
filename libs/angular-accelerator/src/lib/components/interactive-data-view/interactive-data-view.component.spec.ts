@@ -1,10 +1,20 @@
 import { SlotService } from '@onecx/angular-remote-components'
-import { ThemeService } from '@onecx/angular-integration-interface'
 import { TestBed } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+
+jest.mock('../../utils/accelerator-table-theme-defaults.utils', () => {
+  const { signal } = jest.requireActual('@angular/core')
+  return {
+    useAcceleratorTableThemeDefaults: jest.fn(() => ({
+      checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+      frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),
+      actionColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+    })),
+  }
+})
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -26,10 +36,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     } as unknown as SlotService
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: SlotService, useValue: slotService },
-        { provide: ThemeService, useValue: null },
-      ],
+      providers: [{ provide: SlotService, useValue: slotService }],
     })
 
     const component = TestBed.runInInjectionContext(() => new InteractiveDataViewComponent())

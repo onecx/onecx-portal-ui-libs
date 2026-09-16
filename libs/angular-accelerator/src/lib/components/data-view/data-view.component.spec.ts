@@ -18,17 +18,16 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
-import { ThemeService } from '@onecx/angular-integration-interface'
-import { themeVersionAvailable } from '@onecx/angular-utils'
-import { CurrentThemes } from '@onecx/integration-interface'
-import { BehaviorSubject } from 'rxjs'
-
-jest.mock('@onecx/angular-utils', () => ({
-  ...jest.requireActual('@onecx/angular-utils'),
-  themeVersionAvailable: jest.fn(),
-}))
-
-const themeVersionAvailableMock = jest.mocked(themeVersionAvailable)
+jest.mock('../../utils/accelerator-table-theme-defaults.utils', () => {
+  const { signal } = jest.requireActual('@angular/core')
+  return {
+    useAcceleratorTableThemeDefaults: jest.fn(() => ({
+      checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+      frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),
+      actionColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+    })),
+  }
+})
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -44,7 +43,6 @@ describe('DataViewComponent', () => {
   let component: DataViewComponent
   let fixture: ComponentFixture<DataViewComponent>
   let dataViewHarness: DataViewHarness
-  let currentThemes$: BehaviorSubject<CurrentThemes>
 
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
@@ -216,21 +214,12 @@ describe('DataViewComponent', () => {
   ]
 
   beforeEach(async () => {
-    themeVersionAvailableMock.mockResolvedValue(false)
-    currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
-
     await TestBed.configureTestingModule({
       declarations: [DataViewComponent, DataListGridComponent, DataTableComponent],
       imports: [DataViewModule, AngularAcceleratorModule, RouterModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
-        {
-          provide: ThemeService,
-          useValue: {
-            currentThemes$,
-          },
-        },
         {
           provide: ActivatedRoute,
           useValue: {
