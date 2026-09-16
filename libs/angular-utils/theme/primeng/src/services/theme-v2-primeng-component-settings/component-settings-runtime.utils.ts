@@ -3,8 +3,23 @@ import { ThemePropertiesV2 } from '@onecx/integration-interface'
 import { createLogger } from '../../utils/logger.utils'
 
 /**
- * Minimal lifecycle surface required to patch a PrimeNG component instance and
- * react to explicit input changes plus component teardown.
+ * Lifecycle surface the runtime bridge wraps on a PrimeNG component instance.
+ *
+ * The three methods correspond to the points at which themed defaults are applied and the
+ * instance's membership is managed:
+ *
+ * - `ngOnChanges`        records which tracked inputs were bound explicitly and re-applies
+ *                        themed defaults when inputs change at runtime.
+ * - `ngAfterContentInit` registers a newly created instance and applies themed defaults to it
+ *                        for the first time.
+ * - `ngOnDestroy`        removes the instance so subsequent theme changes no longer target it.
+ *
+ * Every member is optional because the bridge wraps whatever is present through optional
+ * chaining (`originalOnX?.call(...)`). A component that extends PrimeNG's `BaseComponent`
+ * inherits all three methods, so the complete surface is available in practice. The type is
+ * deliberately structural and does not require inheriting `BaseComponent`, which lets the
+ * bridge wrap non-Angular PrimeNG component types and keeps working if a future PrimeNG
+ * version reorganises the base class.
  */
 export type PrimeNgPatchableComponent = {
   ngOnChanges?: (changes: Record<string, SimpleChange<any>>) => unknown
@@ -95,13 +110,35 @@ export class PrimeNgComponentThemingSettingsRuntime<
   /**
    * Patches the component prototype exactly once to observe explicit inputs and lifecycle events.
    *
-   * This relies on PrimeNG's documented `BaseComponent` hook convention: the base class defines
-   * `ngOnChanges`/`ngAfterContentInit`/`ngOnDestroy` that delegate to the unprefixed
-   * `onChanges`/`onAfterContentInit`/`onDestroy` hooks (PrimeNG currently pins `primeng@21.1.3`).
-   * If a component type has never defined an `onAfterContentInit` hook, the convention does not
-   * apply, so this bridge would patch a lifecycle method that PrimeNG never calls and themed
-   * defaults would silently stop being applied. Warn once at patch time so a future PrimeNG
-   * upgrade that renames or removes the convention fails loudly instead of silently.
+   * ### Approach
+   *
+   * The bridge wraps the three Angular lifecycle methods the framework calls on the instance,
+   * because it cannot reach into PrimeNG to alter its internals. Each original method is preserved
+   * and invoked by the wrapper, so PrimeNG's own behaviour is fully retained.
+   *
+   * ### Guard condition
+   *
+   * A guard is applied to `ngAfterContentInit` only, because it is the hook that carries the core
+   * function of the bridge: registering a newly created instance and applying themed defaults to it
+   * for the first time. If that hook does not fire, instances receive no themed defaults at all,
+   * which is the silent failure mode the bridge is intended to avoid.
+   *
+   * The check is performed on the unprefixed `onAfterContentInit` member of the prototype rather
+   * than on the `ng*` method. The `ng*` methods are declared on `BaseComponent` and inherited by
+   * every PrimeNG component, so testing for them would always pass and provide no signal. The
+   * unprefixed `onAfterContentInit` is the observable marker that the component participates in the
+   * `BaseComponent` on* hook convention that wires `ngAfterContentInit` into the component, and its
+   * absence is the structural signal that the component no longer follows that convention. The
+   * warning is emitted once per component type at patch time, so a future PrimeNG release that
+   * renames or removes the convention is reported in the log rather than theming nothing silently.
+   *
+   * `ngOnChanges` is intentionally not guarded. It is inherited from `BaseComponent` and invoked by
+   * Angular whenever any `@Input` changes, so it fires for all PrimeNG components in practice. An
+   * absent `ngOnChanges` degrades only live-update fidelity rather than disabling the feature: the
+   * instance still receives themed defaults once at `ngAfterContentInit`, but is no longer refreshed
+   * as inputs change and loses the explicit-input tracking that protects consumer-bound inputs from
+   * later theme overrides. That outcome is a partial degradation, so it does not warrant a warning in
+   * the same way a broken `ngAfterContentInit` does.
    *
    * @returns No return value.
    */
