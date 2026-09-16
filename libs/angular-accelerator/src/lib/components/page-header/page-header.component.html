@@ -58,6 +58,7 @@
           tooltipPosition="top"
           tooltipEvent="hover"
         >
+          <!-- No 'medium' fallback for [size]: PrimeNG Button has no medium size, so undefined → default (standard) size -->
           <p-button
             [id]="action.id"
             [icon]="action.icon ?? ''"
@@ -68,7 +69,7 @@
             [disabled]="action.disabled ? action.disabled : false"
             [loading]="action.loading ?? false"
             [severity]="action.severity ?? 'info'"
-            [size]="action.size ?? 'medium'"
+            [size]="action.size"
             [attr.name]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
             [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"

@@ -11,8 +11,12 @@ import { calendarTimePickerShape, calendarTimePickerDefaults } from './timepicke
  * The panel's children (header, date panel, etc.) sit inside the state block. No named
  * severities exist for this node, so tokens sit directly here instead of behind a
  * `defaultSeverity` wrapper.
+ *
+ * Exported (not just module-local) so that `calendarPanelShape` below can reference it
+ * by name in tsc's declaration emit. If it were a private const, tsc would inline its
+ * large inferred type into `calendarPanelShape`'s declaration and fail with TS7056.
  */
-const calendarPanelStateShape = z.object({
+export const calendarPanelStateShape = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
   color: color.optional(),
   border: borderWithShadow.optional(),
@@ -27,10 +31,35 @@ const calendarPanelStateShape = z.object({
 })
 
 /**
- * Shape for the calendar panel including header and date panel.
- * All keys are optional — defaults are applied at the calendar schema level.
+ * One state block of the calendar panel, wrapped as a prefaulted schema.
+ * Named so the panel shape below can reference it by `typeof` — keeping the panel
+ * shape's declared type a compact set of name references instead of inlining
+ * `calendarPanelStateShape`'s large type three times.
  */
-export const calendarPanelShape = z.object({
+type CalendarPanelStatePrefault = z.ZodPrefault<typeof calendarPanelStateShape>
+
+/**
+ * Static shape of the calendar panel.
+ *
+ * Explicitly annotated (mirroring `table.ts`) so tsc emits a compact, name-referencing
+ * type alias rather than inlining the fully-inferred type — which, because the panel state
+ * block (nesting header, datePanel, timePicker, multiMonthDivider, footerButtonBar) is
+ * repeated across the three states, would exceed TS7056's max serializable length.
+ *
+ * Crucially this keeps the *real* shape (not `unknown`), so the theme mapper's
+ * `ThemePath` oracle can still resolve nested `usages.calendar.defaultVariant.panel.*`
+ * leaf paths from `z.input<typeof calendar>`.
+ */
+type CalendarPanelVariantShape = {
+  defaultState: CalendarPanelStatePrefault
+  hover: CalendarPanelStatePrefault
+  focus: CalendarPanelStatePrefault
+}
+type CalendarPanelShape = {
+  defaultVariant: z.ZodPrefault<z.ZodObject<CalendarPanelVariantShape>>
+}
+
+export const calendarPanelShape: z.ZodObject<CalendarPanelShape> = z.object({
   defaultVariant: z.object({
     defaultState: calendarPanelStateShape.prefault({}),
     hover: calendarPanelStateShape.prefault({}),

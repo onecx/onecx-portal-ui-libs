@@ -90,10 +90,21 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  * Constrains `MappingRule.from` / `CssDeclaration.from` so typos are caught
  * at compile time. Depth covers the deepest real path:
  * `usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top`.
+ *
+ * **Exception — calendar:** `usages.calendar.*` is intentionally unconstrained and is
+ * validated at runtime by `resolveThemeRefs` (a bad path resolves to `undefined`) and by
+ * the mapper's own tests, rather than by this type oracle. The calendar input tree —
+ * three panel states (default/hover/focus), each nesting header/datePanel/timePicker/
+ * multiMonthDivider/footerButtonBar, plus day/month/year views and their cells — is deep
+ * and wide enough that even `LeafPaths<Usages['calendar'], 1>` overflows ngc's
+ * (ng-packagr partial-compilation) instantiation budget (TS2589), which is stricter than
+ * plain `tsc`. Capping the depth does not help: the overflow is in enumerating the
+ * calendar type itself, not in recursing. This mirrors the existing unconstrained
+ * `semantic.*` paths, which are likewise not captured by a single published type.
  */
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
-  | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
+  | `usages.calendar.${string}` // tree too deep for ngc — see docblock above
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
   | `usages.menubar.${LeafPaths<NonNullable<Usages['menubar']>>}`

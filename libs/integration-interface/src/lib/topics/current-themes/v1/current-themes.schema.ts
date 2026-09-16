@@ -1,35 +1,36 @@
 import * as z from 'zod'
-import { dialog } from './schema/dialog'
-import { menubar } from './schema/menubar'
+import { dialog, dialogSettings } from './schema/dialog'
+import { menubar, menubarSettings } from './schema/menubar'
 import { primitives } from './schema/primitives'
-import { badge } from './schema/badge'
+import { badge, badgeSettings } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
-import { tooltip } from './schema/tooltip'
-import { carousel } from './schema/carousel'
-import { toggleswitch } from './schema/toggleswitch'
+import { table, tableSettings } from './schema/table'
+import { tooltip, tooltipSettings } from './schema/tooltip'
+import { carousel, carouselSettings } from './schema/carousel'
+import { toggleswitch, toggleswitchSettings } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
 import { fieldset } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
-import { textarea } from './schema/textarea'
+import { diagram, diagramSettings } from './schema/diagram'
+import { dropdown, settings as dropdownSettings } from './schema/dropdown'
+import { textarea, textareaSettings } from './schema/textarea'
 import { input } from './schema/input'
 import { picklist } from './schema/picklist'
-import { togglebutton } from './schema/togglebutton'
+import { togglebutton, togglebuttonSettings } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
-import { selectbutton } from './schema/selectbutton'
+import { selectbutton, selectbuttonSettings } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
-import { ripple } from './schema/ripple'
+import { ripple, rippleSettings } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { calendarSettingsShape } from './schema/calendar/settings'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -150,6 +151,56 @@ export type ThemePropertiesV2 = {
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
 }
+
+export type ThemeUsageName = keyof UsagesInput
+
+/**
+ * Flat map of each settings-bearing usage to the *input* type of its `settings` sub-schema.
+ *
+ * Each usage declares `settings: (<flat settings schema>).optional()` — a small, separate schema
+ * (e.g. `tableSettings`, `carouselSettings`) that is entirely independent of that usage's deep
+ * token tree (`row`, `header`, variant/state wrappers, …). Sourcing the settings type from these
+ * flat schemas (rather than from `z.input<typeof <usage>>['settings']`) avoids walking the deep
+ * tree, which is what overflows TS's instantiation-depth budget (TS2589) under ng-packagr's
+ * partial-compilation mode once usages such as `table`/`calendar` nest their state wrappers.
+ *
+ * This is type-identical to `z.input<typeof <usage>>['settings']`, because the usage's
+ * `settings` field *is* exactly this flat schema.
+ */
+type UsageSettingsSchemas = {
+  badge: z.input<typeof badgeSettings>
+  carousel: z.input<typeof carouselSettings>
+  dialog: z.input<typeof dialogSettings>
+  dropdown: z.input<typeof dropdownSettings>
+  menubar: z.input<typeof menubarSettings>
+  table: z.input<typeof tableSettings>
+  toggleswitch: z.input<typeof toggleswitchSettings>
+  togglebutton: z.input<typeof togglebuttonSettings>
+  selectbutton: z.input<typeof selectbuttonSettings>
+  tooltip: z.input<typeof tooltipSettings>
+  textarea: z.input<typeof textareaSettings>
+  diagram: z.input<typeof diagramSettings>
+  ripple: z.input<typeof rippleSettings>
+  calendar: z.input<typeof calendarSettingsShape>
+}
+
+/**
+ * Names of the usages that define a `settings` block.
+ *
+ * A flat `keyof` over the shallow {@link UsageSettingsSchemas} map — deliberately NOT a mapped
+ * type over `UsagesInput` (whose members are the full, deep `z.input` types). Evaluating the deep
+ * members to test for a `settings` key is exactly what exceeds TS's depth budget under ngc.
+ */
+export type ThemeUsageNameWithSettings = keyof UsageSettingsSchemas
+
+/**
+ * The `settings` object type of a usage, or `never` for usages without a `settings` block.
+ *
+ * A plain indexed access into the shallow {@link UsageSettingsSchemas} map. Indexed access with a
+ * (possibly generic) type argument is deferred, so this never materializes a deep usage type; it
+ * resolves to a single flat settings type when a concrete usage name is substituted.
+ */
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsSchemas[TUsage]
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

@@ -1,112 +1,118 @@
 import type { MappingRule } from '../../../mapper.types'
 import { toColorString } from '../../../mapper.utils'
 
+// Restructured calendar token paths. Panel-level tokens live under the panel's
+// variant/state block; date cells under their own variant/state blocks.
+const PANEL = 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState'
+const DATE_PANEL = `${PANEL}.datePanel.defaultVariant.defaultState`
+const DATE_CELL = `${DATE_PANEL}.dayView.dateCell.defaultVariant`
+
 export const calendarRules: MappingRule[] = [
   // ─── Day View ─────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.dayView.margin',
+    from: `${DATE_PANEL}.dayView.margin`,
     to: 'components.datepicker.dayView.margin',
   },
 
   // ─── Week Day ─────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.dayView.weekDayLabel.padding',
+    from: `${DATE_PANEL}.dayView.weekDayLabel.padding`,
     to: 'components.datepicker.weekDay.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.weekDayLabel.font.weight',
+    from: `${DATE_PANEL}.dayView.weekDayLabel.font.weight`,
     to: 'components.datepicker.weekDay.fontWeight',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dayView.weekDayLabel.color',
+    from: `${DATE_PANEL}.dayView.weekDayLabel.color`,
     to: 'components.datepicker.weekDay.color',
     transform: toColorString,
   },
 
   // ─── Date ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.color',
+    from: `${DATE_CELL}.defaultState.color`,
     to: 'components.datepicker.date.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.hover.background',
+    from: `${DATE_CELL}.hover.background`,
     to: 'components.datepicker.date.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.hover.color',
+    from: `${DATE_CELL}.hover.color`,
     to: 'components.datepicker.date.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.selected.rangeSelectedBackground',
+    from: `${DATE_CELL}.selected.rangeSelectedBackground`,
     to: 'components.datepicker.date.rangeSelectedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.width',
+    from: `${DATE_CELL}.defaultState.width`,
     to: 'components.datepicker.date.width',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.height',
+    from: `${DATE_CELL}.defaultState.height`,
     to: 'components.datepicker.date.height',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.border.radius',
+    from: `${DATE_CELL}.defaultState.border.radius`,
     to: 'components.datepicker.date.borderRadius',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.padding',
+    from: `${DATE_CELL}.defaultState.padding`,
     to: 'components.datepicker.date.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.width',
+    from: `${DATE_CELL}.focus.border.width`,
     to: 'components.datepicker.date.focusRing.width',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.style',
+    from: `${DATE_CELL}.focus.border.style`,
     to: 'components.datepicker.date.focusRing.style',
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.color',
+    from: `${DATE_CELL}.focus.border.color`,
     to: 'components.datepicker.date.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.datePanel.dateCell.focus.border.offset',
+    from: `${DATE_CELL}.focus.border.offset`,
     to: 'components.datepicker.date.focusRing.offset',
   },
 
   // ─── Month View ───────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.monthView.margin',
+    from: `${DATE_PANEL}.monthView.margin`,
     to: 'components.datepicker.monthView.margin',
   },
 
   // ─── Month ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.monthCell.padding',
+    from: `${DATE_PANEL}.monthView.monthCell.defaultVariant.defaultState.padding`,
     to: 'components.datepicker.month.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.monthCell.border.radius',
+    from: `${DATE_PANEL}.monthView.monthCell.defaultVariant.defaultState.border.radius`,
     to: 'components.datepicker.month.borderRadius',
   },
 
   // ─── Year View ────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.yearView.margin',
+    from: `${DATE_PANEL}.yearView.margin`,
     to: 'components.datepicker.yearView.margin',
   },
 
   // ─── Year ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.datePanel.yearCell.padding',
+    from: `${DATE_PANEL}.yearView.yearCell.defaultVariant.defaultState.padding`,
     to: 'components.datepicker.year.padding',
   },
   {
-    from: 'usages.calendar.panel.datePanel.yearCell.border.radius',
+    from: `${DATE_PANEL}.yearView.yearCell.defaultVariant.defaultState.border.radius`,
     to: 'components.datepicker.year.borderRadius',
   },
 ]

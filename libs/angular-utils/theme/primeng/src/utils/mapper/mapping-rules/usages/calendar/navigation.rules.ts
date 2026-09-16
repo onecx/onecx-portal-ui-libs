@@ -1,65 +1,71 @@
 import type { MappingRule } from '../../../mapper.types'
 import { toColorString } from '../../../mapper.utils'
 
+// Selectors live in the panel header block, each with their own variant/state tree.
+const PANEL = 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState'
+const HEADER = `${PANEL}.header.defaultVariant.defaultState`
+const SELECT_MONTH = `${HEADER}.selectMonth.defaultVariant`
+const SELECT_YEAR = `${HEADER}.selectYear.defaultVariant`
+
 export const navigationRules: MappingRule[] = [
   // ─── Select Month ─────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.header.selectMonth.hover.background',
+    from: `${SELECT_MONTH}.hover.background`,
     to: 'components.datepicker.selectMonth.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectMonth.color',
+    from: `${SELECT_MONTH}.defaultState.color`,
     to: 'components.datepicker.selectMonth.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectMonth.hover.color',
+    from: `${SELECT_MONTH}.hover.color`,
     to: 'components.datepicker.selectMonth.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectMonth.padding',
+    from: `${SELECT_MONTH}.defaultState.padding`,
     to: 'components.datepicker.selectMonth.padding',
   },
   {
-    from: 'usages.calendar.panel.header.selectMonth.border.radius',
+    from: `${SELECT_MONTH}.defaultState.border.radius`,
     to: 'components.datepicker.selectMonth.borderRadius',
   },
 
   // ─── Select Year ──────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.header.selectYear.hover.background',
+    from: `${SELECT_YEAR}.hover.background`,
     to: 'components.datepicker.selectYear.hoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectYear.color',
+    from: `${SELECT_YEAR}.defaultState.color`,
     to: 'components.datepicker.selectYear.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectYear.hover.color',
+    from: `${SELECT_YEAR}.hover.color`,
     to: 'components.datepicker.selectYear.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.header.selectYear.padding',
+    from: `${SELECT_YEAR}.defaultState.padding`,
     to: 'components.datepicker.selectYear.padding',
   },
   {
-    from: 'usages.calendar.panel.header.selectYear.border.radius',
+    from: `${SELECT_YEAR}.defaultState.border.radius`,
     to: 'components.datepicker.selectYear.borderRadius',
   },
 
   // ─── Group / MultiMonthDivider ────────────────────────────────────────────
   {
-    from: 'usages.calendar.multiMonthDivider.border.color',
+    from: `${PANEL}.multiMonthDivider.border.color`,
     to: 'components.datepicker.group.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.multiMonthDivider.gap',
+    from: `${PANEL}.multiMonthDivider.gap`,
     to: 'components.datepicker.group.gap',
   },
 ]

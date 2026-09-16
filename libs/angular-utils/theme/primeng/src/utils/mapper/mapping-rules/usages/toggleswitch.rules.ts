@@ -62,24 +62,24 @@ export const toggleswitchMappingRules: MappingRule[] = [
 
   // Root - checked state
   {
-    from: 'usages.toggleswitch.state.checked.background',
+    from: 'usages.toggleswitch.variant.checked.defaultState.background',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.state.checked.borderColor',
+    from: 'usages.toggleswitch.variant.checked.defaultState.borderColor',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedBorderColor',
     transform: toColorString,
   },
 
   // Root - checked + hover state
   {
-    from: 'usages.toggleswitch.state.checked.hover.background',
+    from: 'usages.toggleswitch.variant.checked.state.hover.background',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedHoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.state.checked.hover.borderColor',
+    from: 'usages.toggleswitch.variant.checked.state.hover.borderColor',
     to: 'components.toggleswitch.colorScheme.{mode}.root.checkedHoverBorderColor',
     transform: toColorString,
   },
@@ -155,26 +155,28 @@ export const toggleswitchMappingRules: MappingRule[] = [
     transform: toColorString,
   },
 
-  // Handle - checked state
+  // Handle - checked state. The schema no longer models a distinct checked
+  // handle state (only default/hover/disabled), so the on-state handle reuses
+  // the default handle appearance; only its position changes.
   {
-    from: 'usages.toggleswitch.handle.state.checked.background',
+    from: 'usages.toggleswitch.handle.defaultState.background',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.handle.state.checked.color',
+    from: 'usages.toggleswitch.handle.defaultState.color',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedColor',
     transform: toColorString,
   },
 
-  // Handle - checked + hover state
+  // Handle - checked + hover state (reuses the plain hover handle appearance)
   {
-    from: 'usages.toggleswitch.handle.state.checked.hover.background',
+    from: 'usages.toggleswitch.handle.state.hover.background',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.toggleswitch.handle.state.checked.hover.color',
+    from: 'usages.toggleswitch.handle.state.hover.color',
     to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverColor',
     transform: toColorString,
   },

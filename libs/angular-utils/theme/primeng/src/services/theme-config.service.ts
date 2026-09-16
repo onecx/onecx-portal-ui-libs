@@ -14,7 +14,6 @@ import {
   ThemePropertiesV2,
   CurrentThemes,
   RegionOverridesInput,
-  regionKeys,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -22,7 +21,14 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT, THEME_MAX_VERSION, themeVersionAvailable } from '@onecx/angular-utils'
+import {
+  mergeDeep,
+  REMOTE_COMPONENT_CONFIG,
+  REMOTE_COMPONENT_CONTEXT,
+  resolveThemePropertiesV2,
+  THEME_MAX_VERSION,
+  themeVersionAvailable,
+} from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom } from 'rxjs'
@@ -236,23 +242,10 @@ export class ThemeConfigService {
   }): Promise<ThemePropertiesV2> {
     const slotGroupName = this.rcContext ? ((await firstValueFrom(this.rcContext))?.slotGroupName) : undefined
     const regionName = slotGroupName ? this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput : undefined
-    const regionOverrides = theme.properties.regionOverrides
-
-    if (regionName && regionOverrides) {
-      if (!regionKeys.includes(regionName)) {
-        throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
-      }
-      const region = regionOverrides[regionName]
-      const regionPrimitives = region?.primitives ?? {}
-      const regionUsages = region?.usages ?? {}
-
-      return {
-        primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
-        usages: mergeDeep(theme.properties.usages, regionUsages)
-      }
-    } else {
-      return theme.properties
-    }
+    // Delegate to the shared resolver: inlining the region override lookup here would force
+    // instantiation of the full UsagesInput type (incl. the deep calendar tree) and overflow
+    // ngc's instantiation budget (TS2589). The util resolves the region override the same way.
+    return resolveThemePropertiesV2(theme.properties, { regionName }) ?? theme.properties
   }
 
   private dashToCamelCase(value: string): string {

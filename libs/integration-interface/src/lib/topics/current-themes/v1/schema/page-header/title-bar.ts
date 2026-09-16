@@ -37,8 +37,8 @@ export class PageHeaderTitleBarSchema {
     icon: icon
       .pick({ size: true })
       .extend({
-        width: '1rem',
-        height: '1rem',
+        width: withRef(z.string()).default('1rem'),
+        height: withRef(z.string()).default('1rem'),
       })
       .default({
         size: '{{primitives.icon.md}}',

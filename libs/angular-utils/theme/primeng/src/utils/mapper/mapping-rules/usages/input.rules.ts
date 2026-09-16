@@ -1,142 +1,155 @@
 import type { MappingRule } from '../../mapper.types'
 import { toColorString } from '../../mapper.utils'
 
+// Restructured input token paths:
+// usages.input.{defaultVariant|filled}.{state}.defaultSeverity.{tokens}
+const INPUT = 'usages.input'
+const D = `${INPUT}.defaultVariant.defaultState.defaultSeverity`
+const HOVER = `${INPUT}.defaultVariant.hover.defaultSeverity`
+const FOCUS = `${INPUT}.defaultVariant.focus.defaultSeverity`
+const DISABLED = `${INPUT}.defaultVariant.disabled.defaultSeverity`
+const INVALID = `${INPUT}.defaultVariant.invalid.defaultSeverity`
+const FILLED = `${INPUT}.filled.defaultState.defaultSeverity`
+const FILLED_HOVER = `${INPUT}.filled.hover.defaultSeverity`
+const FILLED_FOCUS = `${INPUT}.filled.focus.defaultSeverity`
+const FOCUS_RING = `${FOCUS}.focusRing`
+
 export const inputMappingRules: MappingRule[] = [
   {
-    from: 'usages.input.background',
+    from: `${D}.background`,
     to: 'components.inputtext.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.input.color',
+    from: `${D}.color`,
     to: 'components.inputtext.root.color',
     transform: toColorString,
   },
   {
-    from: 'usages.input.disabled.background',
+    from: `${DISABLED}.background`,
     to: 'components.inputtext.root.disabledBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.input.disabled.color',
+    from: `${DISABLED}.color`,
     to: 'components.inputtext.root.disabledColor',
     transform: toColorString,
   },
 
   {
-    from: 'usages.input.filled.background',
+    from: `${FILLED}.background`,
     to: 'components.inputtext.root.filledBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.input.filled.hover.background',
+    from: `${FILLED_HOVER}.background`,
     to: 'components.inputtext.root.filledHoverBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.input.filled.focus.background',
+    from: `${FILLED_FOCUS}.background`,
     to: 'components.inputtext.root.filledFocusBackground',
     transform: toColorString,
   },
 
   {
-    from: 'usages.input.border.color',
+    from: `${D}.border.color`,
     to: 'components.inputtext.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.hover.border.color',
+    from: `${HOVER}.border.color`,
     to: 'components.inputtext.root.hoverBorderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.focus.border.color',
+    from: `${FOCUS}.border.color`,
     to: 'components.inputtext.root.focusBorderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.invalid.border.color',
+    from: `${INVALID}.border.color`,
     to: 'components.inputtext.root.invalidBorderColor',
     transform: toColorString,
   },
 
   {
-    from: 'usages.input.focusRing.width',
+    from: `${FOCUS_RING}.width`,
     to: 'components.inputtext.root.focusRing.width',
   },
   {
-    from: 'usages.input.focusRing.style',
+    from: `${FOCUS_RING}.style`,
     to: 'components.inputtext.root.focusRing.style',
   },
   {
-    from: 'usages.input.focusRing.color',
+    from: `${FOCUS_RING}.color`,
     to: 'components.inputtext.root.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.input.focusRing.offset',
+    from: `${FOCUS_RING}.offset`,
     to: 'components.inputtext.root.focusRing.offset',
   },
   {
-    from: 'usages.input.focusRing.shadow',
+    from: `${FOCUS_RING}.shadow`,
     to: 'components.inputtext.root.focusRing.shadow',
   },
 
   {
-    from: 'usages.input.placeholder.color',
+    from: `${D}.placeholder.color`,
     to: 'components.inputtext.root.placeholderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.input.invalid.placeholder.color',
+    from: `${INVALID}.placeholder.color`,
     to: 'components.inputtext.root.invalidPlaceholderColor',
     transform: toColorString,
   },
 
   {
-    from: 'usages.input.border.shadow',
+    from: `${D}.border.shadow`,
     to: 'components.inputtext.root.shadow',
   },
   {
-    from: 'usages.input.padding.x',
+    from: `${D}.padding.x`,
     to: 'components.inputtext.root.paddingX',
   },
   {
-    from: 'usages.input.padding.y',
+    from: `${D}.padding.y`,
     to: 'components.inputtext.root.paddingY',
   },
   {
-    from: 'usages.input.border.radius',
+    from: `${D}.border.radius`,
     to: 'components.inputtext.root.borderRadius',
   },
 
   {
-    from: 'usages.input.transition.duration',
+    from: `${D}.transitionDuration`,
     to: 'components.inputtext.root.transitionDuration',
   },
 
   {
-    from: 'usages.input.sizes.sm.fontSize',
+    from: `${D}.sm.fontSize`,
     to: 'components.inputtext.root.sm.fontSize',
   },
   {
-    from: 'usages.input.sizes.sm.padding.x',
+    from: `${D}.sm.padding.x`,
     to: 'components.inputtext.root.sm.paddingX',
   },
   {
-    from: 'usages.input.sizes.sm.padding.y',
+    from: `${D}.sm.padding.y`,
     to: 'components.inputtext.root.sm.paddingY',
   },
   {
-    from: 'usages.input.sizes.lg.fontSize',
+    from: `${D}.lg.fontSize`,
     to: 'components.inputtext.root.lg.fontSize',
   },
   {
-    from: 'usages.input.sizes.lg.padding.x',
+    from: `${D}.lg.padding.x`,
     to: 'components.inputtext.root.lg.paddingX',
   },
   {
-    from: 'usages.input.sizes.lg.padding.y',
+    from: `${D}.lg.padding.y`,
     to: 'components.inputtext.root.lg.paddingY',
   },
 ]

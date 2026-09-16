@@ -40,7 +40,10 @@ export interface Action {
   variant?: "primary" | "secondary" | "contrast"
   severity?: "success" | "info" | "warn" | "danger"
   iconPos?: 'left' | 'right' | 'top' | 'bottom'
-  size: 'small' | 'medium' | 'large'
+  // PrimeNG Button's `size` input only accepts 'small' | 'large' (PrimeNG 21+ has no 'medium').
+  // Kept optional: when omitted, the button falls back to PrimeNG's default (standard) size,
+  // which is the same as the previous 'medium' behaviour.
+  size?: 'small' | 'large'
   /**
    * Permission for this action. If the current user does not have this permission, the action will not be shown.
    */

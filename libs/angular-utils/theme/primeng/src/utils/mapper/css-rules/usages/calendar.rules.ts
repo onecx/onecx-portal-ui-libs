@@ -4,6 +4,12 @@ import type { CssRule } from '../../mapper.types'
 // Add a CssRule entry only when the property genuinely cannot be expressed
 // via a mapping rule. See dev-docs/theming/theme-v2.adoc § Adding a New CSS Rule.
 
+// Restructured calendar token paths.
+const PANEL = 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState'
+const HEADER = `${PANEL}.header.defaultVariant.defaultState`
+const DATE_CELL = `${PANEL}.datePanel.defaultVariant.defaultState.dayView.dateCell.defaultVariant`
+const TIME_PICKER = `${PANEL}.timePicker.defaultVariant.defaultState`
+
 export const calendarCssRules: CssRule[] = [
   // gap between title elements (month/year)
   {
@@ -11,7 +17,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.panel.header.gap',
+        from: `${HEADER}.yearMonthNav.gap`,
       },
     ],
   },
@@ -21,11 +27,11 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.multiMonthDivider.gap',
+        from: `${PANEL}.multiMonthDivider.gap`,
       },
       {
         property: 'margin-top',
-        from: 'usages.calendar.panel.headerGap',
+        from: `${PANEL}.headerGap`,
       },
     ],
   },
@@ -35,7 +41,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.calendar.panel.datePanel.dateCell.selected.inRangeBackground',
+        from: `${DATE_CELL}.selected.inRangeBackground`,
       },
     ],
   },
@@ -45,11 +51,11 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.timePicker.gap',
+        from: `${TIME_PICKER}.gap`,
       },
       {
         property: 'margin',
-        from: 'usages.calendar.timePicker.margin',
+        from: `${TIME_PICKER}.margin`,
       },
     ],
   },
@@ -58,7 +64,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.timePicker.buttonGap',
+        from: `${TIME_PICKER}.buttonGap`,
       },
     ],
   },

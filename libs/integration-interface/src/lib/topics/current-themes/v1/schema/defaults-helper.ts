@@ -13,14 +13,14 @@ import * as z from 'zod'
  *   const schemaWithDefaults = applyDefaultsRecursive(shape, defaults)
  *   // → { a: z.string().default('hello'), b: z.string().optional() }
  */
-export function applyDefaultsRecursive(
-  shape: z.ZodObject,
+export function applyDefaultsRecursive<Shape extends z.ZodRawShape>(
+  shape: z.ZodObject<Shape>,
   defaults: Record<string, unknown>
-): z.ZodObject<Record<string, z.ZodTypeAny>> {
+): z.ZodObject<Shape> {
   const newShape: Record<string, z.ZodTypeAny> = {}
 
   for (const key of Object.keys(shape.shape)) {
-    const fieldSchema = shape.shape[key]
+    const fieldSchema = shape.shape[key as keyof Shape] as unknown as z.ZodTypeAny
     if (!(key in defaults)) {
       // No default — keep the original schema as-is (optional)
       newShape[key] = fieldSchema
@@ -36,7 +36,10 @@ export function applyDefaultsRecursive(
       typeof defaultValue === 'object' &&
       !Array.isArray(defaultValue)
     ) {
-      newShape[key] = applyDefaultsRecursive(fieldSchema, defaultValue as Record<string, unknown>)
+      newShape[key] = applyDefaultsRecursive(
+        fieldSchema as z.ZodObject<z.ZodRawShape>,
+        defaultValue as Record<string, unknown>
+      )
       continue
     }
 
@@ -44,5 +47,8 @@ export function applyDefaultsRecursive(
     newShape[key] = fieldSchema.default(defaultValue as never)
   }
 
-  return z.object(newShape)
+  // The shape is structurally identical to the input `shape` at runtime — we only
+  // swapped individual field schemas for their `.default(...)` equivalents — so it
+  // is safe to recover the static `Shape` type that `z.object(newShape)` cannot infer.
+  return z.object(newShape) as unknown as z.ZodObject<Shape>
 }

@@ -1,6 +1,10 @@
 import type { MappingRule } from '../../../mapper.types';
 import { toColorString } from '../../../mapper.utils';
 
+// The calendar's panel tokens live under `defaultVariant.panel.defaultVariant.defaultState`
+// (the restructured variant/state tree). Every panel-level token below sits in that block.
+const PANEL = 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState';
+
 export const baseRules: MappingRule[] = [
   // ─── Root ─────────────────────────────────────────────────────────────────
   {
@@ -10,30 +14,30 @@ export const baseRules: MappingRule[] = [
 
   // ─── Panel ────────────────────────────────────────────────────────────────
   {
-    from: 'usages.calendar.panel.background',
+    from: `${PANEL}.background`,
     to: 'components.datepicker.panel.background',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.border.color',
+    from: `${PANEL}.border.color`,
     to: 'components.datepicker.panel.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.color',
+    from: `${PANEL}.color`,
     to: 'components.datepicker.panel.color',
     transform: toColorString,
   },
   {
-    from: 'usages.calendar.panel.border.radius',
+    from: `${PANEL}.border.radius`,
     to: 'components.datepicker.panel.borderRadius',
   },
   {
-    from: 'usages.calendar.panel.border.shadow',
+    from: `${PANEL}.border.shadow`,
     to: 'components.datepicker.panel.shadow',
   },
   {
-    from: 'usages.calendar.panel.padding',
+    from: `${PANEL}.padding`,
     to: 'components.datepicker.panel.padding',
   },
 ];
