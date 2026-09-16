@@ -26,5 +26,6 @@ export class AccordionSchema {
       header: AccordionHeaderSchema.schema.prefault({}),
       content: AccordionContentSchema.schema.prefault({}),
     })
+    // TODO(axis-metadata): accordion child axes are not valid; re-derive once the classification is confirmed.
     .register(themeSchemaRegistry, { id: 'accordion' })
 }

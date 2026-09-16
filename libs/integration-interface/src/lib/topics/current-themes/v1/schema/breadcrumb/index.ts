@@ -30,5 +30,6 @@ export class BreadcrumbSchema {
       item: (BreadcrumbItemSchema.schema as typeof BreadcrumbItemSchema.schema).prefault({}),
       separator: this.separator.prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'breadcrumb' })
 }

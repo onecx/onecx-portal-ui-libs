@@ -24,4 +24,5 @@ export const selectbutton = z
     }),
     button: (togglebutton as typeof togglebutton).prefault({}),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'selectbutton' })

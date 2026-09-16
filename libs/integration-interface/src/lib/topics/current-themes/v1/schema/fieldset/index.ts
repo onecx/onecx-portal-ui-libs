@@ -41,5 +41,6 @@ export class FieldsetSchema {
       settings: FieldsetSettingsSchema.schema.prefault({}),
       legend: LegendSchema.schema.prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'fieldset' })
 }

@@ -32,4 +32,5 @@ export const loadingIndicator = z
     overlay: (loadingIndicatorOverlay as typeof loadingIndicatorOverlay).prefault({}),
     spinner: (loadingIndicatorSpinner as typeof loadingIndicatorSpinner).prefault({}),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'loadingIndicator' })

@@ -43,4 +43,5 @@ export const content = z
     shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
     title: (contentTitle as typeof contentTitle).prefault({}),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'content' })

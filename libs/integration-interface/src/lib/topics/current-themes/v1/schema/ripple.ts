@@ -21,4 +21,5 @@ export const ripple = z
       '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'
     ),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'ripple' })

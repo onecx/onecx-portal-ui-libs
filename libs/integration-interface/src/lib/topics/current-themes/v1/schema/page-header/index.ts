@@ -35,5 +35,6 @@ export class PageHeaderSchema {
       header: (PageHeaderTitleBarSchema.schema as typeof PageHeaderTitleBarSchema.schema).prefault({}),
       content: (PageHeaderContentSchema.schema as typeof PageHeaderContentSchema.schema).prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'pageHeader' })
 }

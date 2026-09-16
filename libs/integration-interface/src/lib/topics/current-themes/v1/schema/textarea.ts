@@ -323,4 +323,5 @@ export const textarea = z
     focusRing: borderWithShadow.optional().default(focusRingDefaults),
     filled: (filledTextareaStateWithStates as typeof filledTextareaStateWithStates).prefault({}),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'textarea' })

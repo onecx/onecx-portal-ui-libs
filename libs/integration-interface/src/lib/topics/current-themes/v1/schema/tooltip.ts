@@ -32,4 +32,5 @@ export const tooltip = z
       .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
     color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
   })
+  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'tooltip' })

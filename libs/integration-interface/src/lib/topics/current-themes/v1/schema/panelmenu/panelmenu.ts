@@ -28,5 +28,6 @@ export class PanelMenuSchema {
       header: PanelMenuHeaderSchema.schema.prefault({}),
       content: PanelMenuContentSchema.schema.prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'panelmenu' })
 }

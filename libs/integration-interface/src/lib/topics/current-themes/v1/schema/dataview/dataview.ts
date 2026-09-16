@@ -32,5 +32,6 @@ export class DataviewSchema {
       content: (DataviewContentSchema.schema as typeof DataviewContentSchema.schema).prefault({}),
       footer: (DataviewFooterSchema.schema as typeof DataviewFooterSchema.schema).prefault({}),
     })
+    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'dataview' })
 }
