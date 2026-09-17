@@ -1,5 +1,5 @@
 import { ThemeUsageSettings } from '@onecx/integration-interface'
-import { defineUsageSettingsMapper, asBoolean, mapValues } from '../../helpers'
+import { defineUsageSettingsMapper, asBoolean, mapValues } from '../../../helpers'
 
 /**
  * Component input defaults derived from the `table` theme usage settings, applied by

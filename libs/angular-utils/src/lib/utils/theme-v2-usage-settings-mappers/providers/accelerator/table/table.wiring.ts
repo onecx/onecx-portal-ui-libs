@@ -1,14 +1,23 @@
-import { DestroyRef, Injector, assertInInjectionContext, inject, signal } from '@angular/core'
+import { assertInInjectionContext, DestroyRef, inject, Injector, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { ThemeService } from '@onecx/angular-integration-interface'
-import {
-  asObservable,
-  mapAcceleratorTableSettings,
-  mapThemeUsageSettings,
-  themeVersionAvailable,
-} from '@onecx/angular-utils'
 import { filter, from, map, switchMap } from 'rxjs'
 
+import { asObservable } from '../../../helpers'
+import { themeVersionAvailable } from '../../../../theme-version-available.utils'
+import { mapThemeUsageSettings } from '../../../../theme-usage-settings.utils'
+import { mapAcceleratorTableSettings } from './table.mapper'
+
+/**
+ * Composable that exposes the `table` theme usage settings as reactive defaults for the
+ * accelerator table-family components, so the table components (which live in
+ * `@onecx/angular-accelerator`) only need to consume the returned signals.
+ *
+ * It subscribes to the current themes, gates on theme V2 being available, maps the resolved
+ * `table` usage settings via {@link mapAcceleratorTableSettings}, and mirrors each mapped value
+ * into a signal. Each returned signal stays `undefined` until a V2 theme with table settings
+ * arrives, and the subscription is torn down with the calling component's injection context.
+ */
 export function useAcceleratorTableThemeDefaults() {
   assertInInjectionContext(useAcceleratorTableThemeDefaults)
 

@@ -1,8 +1,23 @@
+import { Observable } from 'rxjs'
+
 import {
   ThemeUsageSettingsMapDefinition,
   ThemeUsageSettingsDefinitionMapper,
   ThemeUsageSettingsTransform,
 } from './types'
+
+/**
+ * Returns the RxJS Observable exposed by an RxJS Observable or OneCX Topic.
+ *
+ * Used by the wiring composables so they can subscribe to a theme observable that may be
+ * either a plain `Observable` or a `Topic`-wrapped one without a runtime type guard.
+ *
+ * @param source Source exposing an observable view.
+ * @returns The source as an RxJS Observable.
+ */
+export function asObservable<T>(source: Observable<T> | { asObservable(): Observable<T> }): Observable<T> {
+  return 'asObservable' in source ? source.asObservable() : source
+}
 
 /**
  * Converts a raw schema value into a boolean when the value is already boolean-typed.

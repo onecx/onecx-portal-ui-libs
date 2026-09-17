@@ -19,9 +19,10 @@ import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 
-jest.mock('../../utils/accelerator-table-theme-defaults.utils', () => {
+jest.mock('@onecx/angular-utils', () => {
   const { signal } = jest.requireActual('@angular/core')
   return {
+    ...jest.requireActual('@onecx/angular-utils'),
     useAcceleratorTableThemeDefaults: jest.fn(() => ({
       checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
       frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),

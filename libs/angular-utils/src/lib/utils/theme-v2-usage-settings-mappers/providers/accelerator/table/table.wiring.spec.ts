@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { CurrentThemes } from '@onecx/integration-interface'
-import { themeVersionAvailable } from '@onecx/angular-utils'
+import { themeVersionAvailable } from '../../../../theme-version-available.utils'
 import { BehaviorSubject } from 'rxjs'
 
-import { useAcceleratorTableThemeDefaults } from './accelerator-table-theme-defaults.utils'
+import { useAcceleratorTableThemeDefaults } from './table.wiring'
 
-jest.mock('@onecx/angular-utils', () => ({
-  ...jest.requireActual('@onecx/angular-utils'),
+jest.mock('../../../../theme-version-available.utils', () => ({
   themeVersionAvailable: jest.fn(),
 }))
 

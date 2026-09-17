@@ -30,7 +30,7 @@ import {
 } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent, DataTableComponentState, Row, Sort } from '../data-table/data-table.component'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { useAcceleratorTableThemeDefaults } from '../../utils/accelerator-table-theme-defaults.utils'
+import { useAcceleratorTableThemeDefaults } from '@onecx/angular-utils'
 
 export type RowListGridData = ListGridData & Row
 

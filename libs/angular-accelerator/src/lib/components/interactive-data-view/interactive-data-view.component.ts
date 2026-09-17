@@ -45,7 +45,7 @@ import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
-import { useAcceleratorTableThemeDefaults } from '../../utils/accelerator-table-theme-defaults.utils'
+import { useAcceleratorTableThemeDefaults } from '@onecx/angular-utils'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
 

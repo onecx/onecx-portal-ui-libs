@@ -24,5 +24,4 @@ describe('mapAcceleratorTableSettings', () => {
       actionColumnPosition: undefined,
     })
   })
-
 })

@@ -1,4 +1,5 @@
 export { defineUsageSettingsMapper } from './helpers'
 export * from './types'
-export * from './providers/accelerator/table.mapper'
+export * from './providers/accelerator/table/table.mapper'
+export * from './providers/accelerator/table/table.wiring'
 export * from './providers/primeng/carousel.mapper'
