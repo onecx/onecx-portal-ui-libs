@@ -9,19 +9,19 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.background' },
-      { property: 'color', from: 'usages.button.focus.color' },
-      { property: 'border-color', from: 'usages.button.focus.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.defaultSeverity.border.color' },
     ],
   },
 
-  // ─── Primary Disabled State ────────────────────────────────────────────────
+  // ─── Primary Disabled State ─────────────────────────────────────────
   {
     selector: '.p-button:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.background' },
-      { property: 'color', from: 'usages.button.disabled.color' },
-      { property: 'border-color', from: 'usages.button.disabled.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.defaultSeverity.border.color' },
     ],
   },
 
@@ -29,9 +29,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-info:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.info.background' },
-      { property: 'color', from: 'usages.button.focus.info.color' },
-      { property: 'border-color', from: 'usages.button.focus.info.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.info.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.info.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.info.border.color' },
     ],
   },
 
@@ -39,9 +39,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-success:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.success.background' },
-      { property: 'color', from: 'usages.button.focus.success.color' },
-      { property: 'border-color', from: 'usages.button.focus.success.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.success.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.success.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.success.border.color' },
     ],
   },
 
@@ -49,9 +49,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-warning:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.warning.background' },
-      { property: 'color', from: 'usages.button.focus.warning.color' },
-      { property: 'border-color', from: 'usages.button.focus.warning.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.warning.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.warning.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.warning.border.color' },
     ],
   },
 
@@ -59,9 +59,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-danger:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.danger.background' },
-      { property: 'color', from: 'usages.button.focus.danger.color' },
-      { property: 'border-color', from: 'usages.button.focus.danger.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.danger.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.danger.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.danger.border.color' },
     ],
   },
 
@@ -69,9 +69,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-contrast:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.focus.contrast.background' },
-      { property: 'color', from: 'usages.button.focus.contrast.color' },
-      { property: 'border-color', from: 'usages.button.focus.contrast.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.contrast.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.contrast.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.contrast.border.color' },
     ],
   },
 
@@ -79,9 +79,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-info:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.info.background' },
-      { property: 'color', from: 'usages.button.disabled.info.color' },
-      { property: 'border-color', from: 'usages.button.disabled.info.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.border.color' },
     ],
   },
 
@@ -89,9 +89,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-success:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.success.background' },
-      { property: 'color', from: 'usages.button.disabled.success.color' },
-      { property: 'border-color', from: 'usages.button.disabled.success.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.success.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.success.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.success.border.color' },
     ],
   },
 
@@ -99,9 +99,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-warning:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.warning.background' },
-      { property: 'color', from: 'usages.button.disabled.warning.color' },
-      { property: 'border-color', from: 'usages.button.disabled.warning.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.warning.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.warning.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.warning.border.color' },
     ],
   },
 
@@ -109,9 +109,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-danger:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.danger.background' },
-      { property: 'color', from: 'usages.button.disabled.danger.color' },
-      { property: 'border-color', from: 'usages.button.disabled.danger.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.danger.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.danger.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.danger.border.color' },
     ],
   },
 
@@ -119,9 +119,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-contrast:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.disabled.contrast.background' },
-      { property: 'color', from: 'usages.button.disabled.contrast.color' },
-      { property: 'border-color', from: 'usages.button.disabled.contrast.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.contrast.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.contrast.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.contrast.border.color' },
     ],
   },
 
@@ -129,35 +129,40 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-secondary:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.secondary.focus.background' },
-      { property: 'color', from: 'usages.button.secondary.focus.color' },
-      { property: 'border-color', from: 'usages.button.secondary.focus.border.color' },
+      { property: 'background', from: 'usages.button.secondary.defaultVariant.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.secondary.defaultVariant.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.secondary.defaultVariant.focus.defaultSeverity.border.color' },
     ],
   },
 
-  // ─── Secondary Disabled State ──────────────────────────────────────────────
+  // ─── Secondary Disabled State ──────────────────────────────────────
   {
     selector: '.p-button-secondary:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.secondary.disabled.background' },
-      { property: 'color', from: 'usages.button.secondary.disabled.color' },
-      { property: 'border-color', from: 'usages.button.secondary.disabled.border.color' },
+      { property: 'background', from: 'usages.button.secondary.defaultVariant.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.secondary.defaultVariant.disabled.defaultSeverity.color' },
+      {
+        property: 'border-color',
+        from: 'usages.button.secondary.defaultVariant.disabled.defaultSeverity.border.color',
+      },
     ],
   },
 
   // ─── Rounded Shape ─────────────────────────────────────────────────────────
   {
     selector: '.p-button-rounded',
-    declarations: [{ property: 'border-radius', from: 'usages.button.rounded.border.radius' }],
+    declarations: [
+      { property: 'border-radius', from: 'usages.button.defaultVariant.rounded.defaultState.defaultSeverity.border.radius' },
+    ],
   },
 
   // ─── Rounded Focus ─────────────────────────────────────────────────────────
   {
     selector: '.p-button-rounded:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.rounded.focus.background' },
-      { property: 'color', from: 'usages.button.rounded.focus.color' },
-      { property: 'border-color', from: 'usages.button.rounded.focus.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.rounded.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.rounded.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.rounded.focus.defaultSeverity.border.color' },
     ],
   },
 
@@ -165,9 +170,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-rounded:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.rounded.disabled.background' },
-      { property: 'color', from: 'usages.button.rounded.disabled.color' },
-      { property: 'border-color', from: 'usages.button.rounded.disabled.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.rounded.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.rounded.disabled.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.rounded.disabled.defaultSeverity.border.color' },
     ],
   },
 
@@ -175,10 +180,10 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-icon-only',
     declarations: [
-      { property: 'background', from: 'usages.button.iconOnly.background' },
-      { property: 'color', from: 'usages.button.iconOnly.color' },
-      { property: 'border-color', from: 'usages.button.iconOnly.border.color' },
-      { property: 'border-radius', from: 'usages.button.iconOnly.border.radius' },
+      { property: 'background', from: 'usages.button.defaultVariant.iconOnly.defaultState.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.iconOnly.defaultState.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.iconOnly.defaultState.defaultSeverity.border.color' },
+      { property: 'border-radius', from: 'usages.button.defaultVariant.iconOnly.defaultState.defaultSeverity.border.radius' },
     ],
   },
 
@@ -186,9 +191,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-icon-only:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.iconOnly.focus.background' },
-      { property: 'color', from: 'usages.button.iconOnly.focus.color' },
-      { property: 'border-color', from: 'usages.button.iconOnly.focus.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.iconOnly.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.iconOnly.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.iconOnly.focus.defaultSeverity.border.color' },
     ],
   },
 
@@ -196,9 +201,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-icon-only:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.iconOnly.disabled.background' },
-      { property: 'color', from: 'usages.button.iconOnly.disabled.color' },
-      { property: 'border-color', from: 'usages.button.iconOnly.disabled.border.color' },
+      { property: 'background', from: 'usages.button.defaultVariant.iconOnly.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.iconOnly.disabled.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.iconOnly.disabled.defaultSeverity.border.color' },
     ],
   },
 
@@ -206,10 +211,13 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-secondary.p-button-icon-only',
     declarations: [
-      { property: 'background', from: 'usages.button.secondary.iconOnly.background' },
-      { property: 'color', from: 'usages.button.secondary.iconOnly.color' },
-      { property: 'border-color', from: 'usages.button.secondary.iconOnly.border.color' },
-      { property: 'border-radius', from: 'usages.button.secondary.iconOnly.border.radius' },
+      { property: 'background', from: 'usages.button.secondary.iconOnly.defaultState.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.defaultState.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.defaultState.defaultSeverity.border.color' },
+      {
+        property: 'border-radius',
+        from: 'usages.button.secondary.iconOnly.defaultState.defaultSeverity.border.radius',
+      },
     ],
   },
 
@@ -217,9 +225,9 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-secondary.p-button-icon-only:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.secondary.iconOnly.focus.background' },
-      { property: 'color', from: 'usages.button.secondary.iconOnly.focus.color' },
-      { property: 'border-color', from: 'usages.button.secondary.iconOnly.focus.border.color' },
+      { property: 'background', from: 'usages.button.secondary.iconOnly.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.focus.defaultSeverity.border.color' },
     ],
   },
 
@@ -227,26 +235,26 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-secondary.p-button-icon-only:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.secondary.iconOnly.disabled.background' },
-      { property: 'color', from: 'usages.button.secondary.iconOnly.disabled.color' },
-      { property: 'border-color', from: 'usages.button.secondary.iconOnly.disabled.border.color' },
+      { property: 'background', from: 'usages.button.secondary.iconOnly.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.secondary.iconOnly.disabled.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.secondary.iconOnly.disabled.defaultSeverity.border.color' },
     ],
   },
 
   // ─── Raised Shadow ─────────────────────────────────────────────────────────
   {
     selector: '.p-button-raised',
-    declarations: [{ property: 'box-shadow', from: 'usages.button.raised.border.shadow' }],
+    declarations: [{ property: 'box-shadow', from: 'usages.button.defaultVariant.raised.defaultState.defaultSeverity.border.shadow' }],
   },
 
   // ─── Raised Focus ──────────────────────────────────────────────────────────
   {
     selector: '.p-button-raised:not(:disabled):focus',
     declarations: [
-      { property: 'background', from: 'usages.button.raised.focus.background' },
-      { property: 'color', from: 'usages.button.raised.focus.color' },
-      { property: 'border-color', from: 'usages.button.raised.focus.border.color' },
-      { property: 'box-shadow', from: 'usages.button.raised.focus.border.shadow' },
+      { property: 'background', from: 'usages.button.defaultVariant.raised.focus.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.raised.focus.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.raised.focus.defaultSeverity.border.color' },
+      { property: 'box-shadow', from: 'usages.button.defaultVariant.raised.focus.defaultSeverity.border.shadow' },
     ],
   },
 
@@ -254,10 +262,10 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-raised:disabled',
     declarations: [
-      { property: 'background', from: 'usages.button.raised.disabled.background' },
-      { property: 'color', from: 'usages.button.raised.disabled.color' },
-      { property: 'border-color', from: 'usages.button.raised.disabled.border.color' },
-      { property: 'box-shadow', from: 'usages.button.raised.disabled.border.shadow' },
+      { property: 'background', from: 'usages.button.defaultVariant.raised.disabled.defaultSeverity.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.raised.disabled.defaultSeverity.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.raised.disabled.defaultSeverity.border.color' },
+      { property: 'box-shadow', from: 'usages.button.defaultVariant.raised.disabled.defaultSeverity.border.shadow' },
     ],
   },
 
@@ -265,10 +273,10 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button',
     declarations: [
-      { property: 'font-weight', from: 'usages.button.font.weight' },
-      { property: 'line-height', from: 'usages.button.font.lineHeight' },
-      { property: 'letter-spacing', from: 'usages.button.font.letterSpacing' },
-      { property: 'font-style', from: 'usages.button.font.style' },
+      { property: 'font-weight', from: 'usages.button.defaultVariant.font.weight' },
+      { property: 'line-height', from: 'usages.button.defaultVariant.font.lineHeight' },
+      { property: 'letter-spacing', from: 'usages.button.defaultVariant.font.letterSpacing' },
+      { property: 'font-style', from: 'usages.button.defaultVariant.font.style' },
     ],
   },
 
@@ -276,11 +284,11 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-sm',
     declarations: [
-      { property: 'font-size', from: 'usages.button.sm.font.size' },
-      { property: 'padding-left', from: 'usages.button.sm.paddingX' },
-      { property: 'padding-right', from: 'usages.button.sm.paddingX' },
-      { property: 'padding-top', from: 'usages.button.sm.paddingY' },
-      { property: 'padding-bottom', from: 'usages.button.sm.paddingY' },
+      { property: 'font-size', from: 'usages.button.defaultVariant.sm.font.size' },
+      { property: 'padding-left', from: 'usages.button.defaultVariant.sm.paddingX' },
+      { property: 'padding-right', from: 'usages.button.defaultVariant.sm.paddingX' },
+      { property: 'padding-top', from: 'usages.button.defaultVariant.sm.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.defaultVariant.sm.paddingY' },
     ],
   },
 
@@ -288,11 +296,11 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button-lg',
     declarations: [
-      { property: 'font-size', from: 'usages.button.lg.font.size' },
-      { property: 'padding-left', from: 'usages.button.lg.paddingX' },
-      { property: 'padding-right', from: 'usages.button.lg.paddingX' },
-      { property: 'padding-top', from: 'usages.button.lg.paddingY' },
-      { property: 'padding-bottom', from: 'usages.button.lg.paddingY' },
+      { property: 'font-size', from: 'usages.button.defaultVariant.lg.font.size' },
+      { property: 'padding-left', from: 'usages.button.defaultVariant.lg.paddingX' },
+      { property: 'padding-right', from: 'usages.button.defaultVariant.lg.paddingX' },
+      { property: 'padding-top', from: 'usages.button.defaultVariant.lg.paddingY' },
+      { property: 'padding-bottom', from: 'usages.button.defaultVariant.lg.paddingY' },
     ],
   },
 

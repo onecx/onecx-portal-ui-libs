@@ -51,7 +51,7 @@ export const usageMappingRules: MappingRule[] = [
   ...rippleMappingRules,
   ...panelmenuMappingRules,
   ...menuMappingRules,
-  ...breadcrumbRules
+  ...breadcrumbRules,
   ...dataviewMappingRules,
   ...buttonMappingRules,
 ]
