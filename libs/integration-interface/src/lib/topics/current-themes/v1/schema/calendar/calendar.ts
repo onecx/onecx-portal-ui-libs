@@ -32,6 +32,26 @@ const calendarShape = z.object({
   transitionDuration: withRef(z.number()).optional(),
 })
 
+/**
+ * Concrete input type for the calendar usage.
+ *
+ * The runtime schema is built through `applyDefaultsRecursive`, whose return
+ * type is the loose `z.ZodObject<Record<string, z.ZodTypeAny>>` — exporting the
+ * inferred shape directly exceeds the compiler's serialization limit (TS7056).
+ * This hand-written alias mirrors the shape's leaves (delegating the deep
+ * sub-trees to each component's own `z.input`) so `ThemePath` generation in the
+ * mapper can reference a concrete type instead of the loose record.
+ */
+export type CalendarShapeInput = {
+  settings?: z.input<typeof calendarSettingsShape>
+  defaultVariant?: {
+    input?: z.input<typeof calendarInputShape>
+    panel?: z.input<typeof calendarPanelShape>
+    calendarIconButton?: z.input<typeof calendarPanelButtonShape>
+  }
+  transitionDuration?: number | string
+}
+
 // ------------------------------------------------------------------
 // DEFAULTS — composed from per-component defaults
 // ------------------------------------------------------------------

@@ -14,10 +14,11 @@ import { fieldset } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
 import { textarea } from './schema/textarea'
-import { input } from './schema/input'
+import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
+import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
@@ -46,10 +47,10 @@ type UsagesInput = {
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
-  input?: z.input<typeof input>
+  input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
-  calendar?: z.input<typeof calendar>
+  calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataView>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>

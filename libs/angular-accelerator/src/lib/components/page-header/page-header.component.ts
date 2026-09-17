@@ -37,10 +37,10 @@ export interface Action {
   label?: string
   labelKey?: string
   icon?: string
-  variant?: "primary" | "secondary" | "contrast"
-  severity?: "success" | "info" | "warn" | "danger"
+  variant?: 'primary' | 'secondary' | 'contrast'
+  severity?: 'success' | 'info' | 'warn' | 'danger'
   iconPos?: 'left' | 'right' | 'top' | 'bottom'
-  size: 'small' | 'medium' | 'large'
+  size?: 'small' | 'large'
   /**
    * Permission for this action. If the current user does not have this permission, the action will not be shown.
    */
@@ -326,11 +326,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
+
+      this.translateService
+        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+        .subscribe((ariaLabel) => {
+          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+        })
+
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }
