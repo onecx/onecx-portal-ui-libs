@@ -43,19 +43,6 @@ describe('useAcceleratorTableThemeDefaults', () => {
     })
   })
 
-  it('leaves signals undefined when ThemeService is not provided', () => {
-    TestBed.resetTestingModule()
-    TestBed.configureTestingModule({
-      providers: [{ provide: ThemeService, useValue: null }],
-    })
-    const { checkboxColumnPositionThemeSetting, frozenActionColumnThemeSetting, actionColumnPositionThemeSetting } =
-      call()
-
-    expect(checkboxColumnPositionThemeSetting()).toBeUndefined()
-    expect(frozenActionColumnThemeSetting()).toBeUndefined()
-    expect(actionColumnPositionThemeSetting()).toBeUndefined()
-  })
-
   it('does not apply any settings while theme V2 is unavailable', async () => {
     const result = call()
     publishTheme({ actionColumnSticky: true, actionColumnPosition: 'start', checkboxColumnPosition: 'end' })

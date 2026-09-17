@@ -24,29 +24,26 @@ export function useAcceleratorTableThemeDefaults() {
   const checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
   const frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
   const actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
-  const themeService = inject(ThemeService, { optional: true })
+  const themeService = inject(ThemeService)
+  const injector = inject(Injector)
+  const destroyRef = inject(DestroyRef)
 
-  if (themeService) {
-    const injector = inject(Injector)
-    const destroyRef = inject(DestroyRef)
-
-    asObservable(themeService.currentThemes$)
-      .pipe(
-        switchMap((theme) =>
-          from(themeVersionAvailable(2, injector)).pipe(
-            filter(Boolean),
-            map(() => theme)
-          )
-        ),
-        takeUntilDestroyed(destroyRef)
-      )
-      .subscribe((theme) => {
-        const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
-        checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
-        frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
-        actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
-      })
-  }
+  asObservable(themeService.currentThemes$)
+    .pipe(
+      switchMap((theme) =>
+        from(themeVersionAvailable(2, injector)).pipe(
+          filter(Boolean),
+          map(() => theme)
+        )
+      ),
+      takeUntilDestroyed(destroyRef)
+    )
+    .subscribe((theme) => {
+      const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+      checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+      frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+      actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+    })
 
   return {
     checkboxColumnPositionThemeSetting,
