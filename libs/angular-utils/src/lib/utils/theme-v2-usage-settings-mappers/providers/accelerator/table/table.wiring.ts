@@ -5,7 +5,7 @@ import { filter, from, map, switchMap } from 'rxjs'
 
 import { asObservable } from '../../../helpers'
 import { themeVersionAvailable } from '../../../../theme-version-available.utils'
-import { mapThemeUsageSettings } from '../../../../theme-usage-settings.utils'
+import { mapThemeUsageSettings } from '../../../usage-settings.utils'
 import { mapAcceleratorTableSettings } from './table.mapper'
 
 /**

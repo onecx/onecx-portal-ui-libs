@@ -14,6 +14,7 @@ import {
   ThemePropertiesV2,
   CurrentThemes,
   RegionOverridesInput,
+  regionKeys,
 } from '@onecx/integration-interface'
 import { Base } from 'primeng/base'
 import { PrimeNG } from 'primeng/config'
@@ -25,7 +26,6 @@ import {
   mergeDeep,
   REMOTE_COMPONENT_CONFIG,
   REMOTE_COMPONENT_CONTEXT,
-  resolveThemePropertiesV2,
   THEME_MAX_VERSION,
   themeVersionAvailable,
 } from '@onecx/angular-utils'
@@ -246,7 +246,24 @@ export class ThemeConfigService {
   }): Promise<ThemePropertiesV2> {
     const slotGroupName = this.rcContext ? ((await firstValueFrom(this.rcContext))?.slotGroupName) : undefined
     const regionName = slotGroupName ? this.dashToCamelCase(slotGroupName) as keyof RegionOverridesInput : undefined
-    return resolveThemePropertiesV2(theme.properties, { regionName }) ?? theme.properties
+    const regionOverrides = theme.properties.regionOverrides
+
+    if (regionName && regionOverrides) {
+      if (!regionKeys.includes(regionName)) {
+        throw new Error(`Invalid slot group name: ${slotGroupName}. Expected one of: ${regionKeys.join(', ')}`)
+      }
+      const region = regionOverrides[regionName]
+      const regionPrimitives = region?.primitives ?? {}
+      const regionUsages = region?.usages ?? {}
+
+      return {
+        ...theme.properties,
+        primitives: mergeDeep(theme.properties.primitives ?? {}, regionPrimitives),
+        usages: mergeDeep(theme.properties.usages ?? {}, regionUsages),
+      }
+    } else {
+      return theme.properties
+    }
   }
 
   private dashToCamelCase(value: string): string {
