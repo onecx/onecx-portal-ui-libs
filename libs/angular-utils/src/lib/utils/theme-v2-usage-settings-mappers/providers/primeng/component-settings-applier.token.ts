@@ -1,6 +1,6 @@
 import { inject, InjectionToken } from '@angular/core'
 import { ThemePropertiesV2 } from '@onecx/integration-interface'
-import { CarouselComponentSettingsService } from './carousel-component-settings.service'
+import { CarouselComponentSettingsService } from './carousel/carousel-component-settings.service'
 
 /**
  * Applies resolved theme properties to one PrimeNG component family.

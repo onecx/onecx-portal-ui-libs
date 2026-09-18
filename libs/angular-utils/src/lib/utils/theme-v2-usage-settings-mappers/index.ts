@@ -12,4 +12,8 @@ export * from './usage-settings.utils'
 // Provider mappers.
 export * from './providers/accelerator/table/table.mapper'
 export * from './providers/accelerator/table/table.wiring'
-export * from './providers/primeng/carousel.mapper'
+export * from './providers/primeng/carousel/carousel.mapper'
+
+// PrimeNG runtime apply bridge (monkey-patches PrimeNG prototypes) + its DI applier registry.
+export * from './providers/primeng/component-settings-applier.token'
+export * from './providers/primeng/carousel/carousel-component-settings.service'

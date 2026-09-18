@@ -1,5 +1,5 @@
 import { ThemeUsageSettings } from '@onecx/integration-interface'
-import { defineUsageSettingsMapper, asBoolean, asEnum, asNumber } from '../../helpers'
+import { defineUsageSettingsMapper, asBoolean, asEnum, asNumber } from '../../../helpers'
 
 /**
  * Component input defaults derived from the `carousel` theme usage settings, applied to PrimeNG

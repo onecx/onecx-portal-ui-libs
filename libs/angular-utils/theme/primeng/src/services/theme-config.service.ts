@@ -39,7 +39,7 @@ import {
   useStyleForMfe,
   useStyleForRc,
 } from '@onecx/angular-utils/style'
-import { PRIMENG_COMPONENT_SETTINGS_APPLIERS } from './theme-v2-primeng-component-settings/component-settings-applier.token'
+import { PRIMENG_COMPONENT_SETTINGS_APPLIERS } from '@onecx/angular-utils'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 

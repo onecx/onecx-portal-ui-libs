@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core'
 import { ThemePropertiesV2 } from '@onecx/integration-interface'
-import { mapPrimeNgCarouselSettings, mapThemeUsageSettings } from '@onecx/angular-utils'
+import { mapThemeUsageSettings } from '../../../usage-settings.utils'
+import { mapPrimeNgCarouselSettings } from './carousel.mapper'
 import { Carousel } from 'primeng/carousel'
-import { PrimeNgComponentThemingSettingsRuntime } from './component-settings-runtime.utils'
+import { PrimeNgComponentThemingSettingsRuntime } from '../component-settings-runtime.utils'
 
 type PrimeNgCarouselDefaults = ReturnType<typeof mapPrimeNgCarouselSettings>
 

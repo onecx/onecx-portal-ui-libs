@@ -1,7 +1,7 @@
 import { AfterContentInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { PrimeNgComponentThemingSettingsRuntime } from './component-settings-runtime.utils'
-import * as loggerUtils from '../../utils/logger.utils'
+import * as loggerUtils from '../../../logger.utils'
 
 interface TestDefaults {
   themed: string

@@ -1,6 +1,6 @@
 import { SimpleChange } from '@angular/core'
 import { ThemePropertiesV2 } from '@onecx/integration-interface'
-import { createLogger } from '../../utils/logger.utils'
+import { createLogger } from '../../../logger.utils'
 
 /**
  * Lifecycle surface the runtime bridge wraps on a PrimeNG component instance.
