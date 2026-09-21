@@ -1,7 +1,9 @@
 ---
 name: add-theme-usage
-description: Adds a new "usage" to the OneCX Theme V2 system — the per-component token group that themes a single PrimeNG component. The typical invocation is the user pasting a PrimeNG docs URL like `https://primeng.org/<component>`. Handles Zod schema creation in `integration-interface`, mapping rules in `angular-utils` and CSS-rules scaffolding.
+description: 'DEPRECATED. Adds a new "usage" to the OneCX Theme V2 system — the per-component token group that themes a single PrimeNG component. The typical invocation is the user pasting a PrimeNG docs URL like `https://primeng.org/<component>`. Handles Zod schema creation in `integration-interface`, mapping rules in `angular-utils` and CSS-rules scaffolding.'
 ---
+
+> **⚠️ DEPRECATED:** This skill is no longer maintained. It is kept for reference only.
 
 # Add a Theme V2 Usage
 

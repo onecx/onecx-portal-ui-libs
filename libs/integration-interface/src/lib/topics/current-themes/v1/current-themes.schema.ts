@@ -3,6 +3,7 @@ import { dialog } from './schema/dialog'
 import { menubar } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
+import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { table } from './schema/table'
 import { tooltip } from './schema/tooltip'
@@ -13,6 +14,7 @@ import { themeSchemaRegistry } from './schema/registry'
 import { fieldset } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
+import { dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
@@ -34,7 +36,7 @@ import { dataview } from './schema/dataview'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
-  badge?: z.input<typeof badge>
+  badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
   table?: z.input<typeof table>
@@ -42,7 +44,7 @@ type UsagesInput = {
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldset>
   diagram?: z.input<typeof diagram>
-  dropdown?: z.input<typeof dropdown>
+  dropdown?: z.input<typeof dropdownShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
