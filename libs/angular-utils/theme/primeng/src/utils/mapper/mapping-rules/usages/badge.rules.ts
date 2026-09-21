@@ -8,150 +8,156 @@ export const badgeMappingRules: MappingRule[] = [
     to: 'components.badge.dot.size',
   },
 
-  // Default variant / default severity - root properties
+  // Default variant - root properties
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.border.radius',
+    from: 'usages.badge.defaultVariant.border.radius',
     to: 'components.badge.root.borderRadius',
   },
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.font.size',
+    from: 'usages.badge.defaultVariant.font.size',
     to: 'components.badge.root.fontSize',
   },
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.font.weight',
+    from: 'usages.badge.defaultVariant.font.weight',
     to: 'components.badge.root.fontWeight',
   },
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.padding',
+    from: 'usages.badge.defaultVariant.padding',
     to: 'components.badge.root.padding',
   },
+
+  // Default variant - default size
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.minWidth',
+    from: 'usages.badge.defaultVariant.defaultVariant.fontSize',
+    to: 'components.badge.root.fontSize',
+  },
+  {
+    from: 'usages.badge.defaultVariant.defaultVariant.minWidth',
     to: 'components.badge.root.minWidth',
   },
   {
-    from: 'usages.badge.defaultVariant.defaultSeverity.height',
+    from: 'usages.badge.defaultVariant.defaultVariant.height',
     to: 'components.badge.root.height',
   },
 
-  // Root-level size overrides
+  // Default variant - size variants
   {
-    from: 'usages.badge.sm.fontSize',
+    from: 'usages.badge.defaultVariant.sizeVariant.sm.fontSize',
     to: 'components.badge.sm.fontSize',
   },
   {
-    from: 'usages.badge.sm.minWidth',
+    from: 'usages.badge.defaultVariant.sizeVariant.sm.minWidth',
     to: 'components.badge.sm.minWidth',
   },
   {
-    from: 'usages.badge.sm.height',
+    from: 'usages.badge.defaultVariant.sizeVariant.sm.height',
     to: 'components.badge.sm.height',
   },
   {
-    from: 'usages.badge.lg.fontSize',
+    from: 'usages.badge.defaultVariant.sizeVariant.lg.fontSize',
     to: 'components.badge.lg.fontSize',
   },
   {
-    from: 'usages.badge.lg.minWidth',
+    from: 'usages.badge.defaultVariant.sizeVariant.lg.minWidth',
     to: 'components.badge.lg.minWidth',
   },
   {
-    from: 'usages.badge.lg.height',
+    from: 'usages.badge.defaultVariant.sizeVariant.lg.height',
     to: 'components.badge.lg.height',
   },
   {
-    from: 'usages.badge.xl.fontSize',
+    from: 'usages.badge.defaultVariant.sizeVariant.xl.fontSize',
     to: 'components.badge.xl.fontSize',
   },
   {
-    from: 'usages.badge.xl.minWidth',
+    from: 'usages.badge.defaultVariant.sizeVariant.xl.minWidth',
     to: 'components.badge.xl.minWidth',
   },
   {
-    from: 'usages.badge.xl.height',
+    from: 'usages.badge.defaultVariant.sizeVariant.xl.height',
     to: 'components.badge.xl.height',
   },
 
-  // Severity tag - primary
+  // Severity variant - primary
   {
-    from: 'usages.badge.defaultVariant.primary.background',
+    from: 'usages.badge.variant.primary.background',
     to: 'components.badge.primary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.primary.color',
+    from: 'usages.badge.variant.primary.color',
     to: 'components.badge.primary.color',
     transform: toColorString,
   },
 
-  // Severity tag - secondary
+  // Severity variant - secondary
   {
-    from: 'usages.badge.defaultVariant.secondary.background',
+    from: 'usages.badge.variant.secondary.background',
     to: 'components.badge.secondary.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.secondary.color',
+    from: 'usages.badge.variant.secondary.color',
     to: 'components.badge.secondary.color',
     transform: toColorString,
   },
 
-  // Severity tag - success
+  // Severity variant - success
   {
-    from: 'usages.badge.defaultVariant.success.background',
+    from: 'usages.badge.variant.success.background',
     to: 'components.badge.success.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.success.color',
+    from: 'usages.badge.variant.success.color',
     to: 'components.badge.success.color',
     transform: toColorString,
   },
 
-  // Severity tag - info
+  // Severity variant - info
   {
-    from: 'usages.badge.defaultVariant.info.background',
+    from: 'usages.badge.variant.info.background',
     to: 'components.badge.info.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.info.color',
+    from: 'usages.badge.variant.info.color',
     to: 'components.badge.info.color',
     transform: toColorString,
   },
 
-  // Severity tag - warning (mapped to PrimeNG's `warn` key)
+  // Severity variant - warning
   {
-    from: 'usages.badge.defaultVariant.warning.background',
+    from: 'usages.badge.variant.warning.background',
     to: 'components.badge.warn.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.warning.color',
+    from: 'usages.badge.variant.warning.color',
     to: 'components.badge.warn.color',
     transform: toColorString,
   },
 
-  // Severity tag - danger
+  // Severity variant - danger
   {
-    from: 'usages.badge.defaultVariant.danger.background',
+    from: 'usages.badge.variant.danger.background',
     to: 'components.badge.danger.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.danger.color',
+    from: 'usages.badge.variant.danger.color',
     to: 'components.badge.danger.color',
     transform: toColorString,
   },
 
-  // Severity tag - contrast
+  // Severity variant - contrast
   {
-    from: 'usages.badge.defaultVariant.contrast.background',
+    from: 'usages.badge.variant.contrast.background',
     to: 'components.badge.contrast.background',
     transform: toColorString,
   },
   {
-    from: 'usages.badge.defaultVariant.contrast.color',
+    from: 'usages.badge.variant.contrast.color',
     to: 'components.badge.contrast.color',
     transform: toColorString,
   },

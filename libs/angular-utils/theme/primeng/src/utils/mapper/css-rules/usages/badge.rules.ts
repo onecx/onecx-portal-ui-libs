@@ -10,11 +10,11 @@ export const badgeCssRules: CssRule[] = [
         declarations: [
             {
                 property: 'font-size',
-                from: 'usages.badge.defaultVariant.defaultSeverity.font.size',
+                from: 'usages.badge.defaultVariant.defaultVariant.fontSize',
             },
             {
                 property: 'color',
-                from: 'usages.badge.defaultVariant.primary.color',
+                from: 'usages.badge.variant.primary.color',
             }
         ]
     }
