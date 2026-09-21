@@ -35,8 +35,12 @@ Verified against `libs/angular-utils/theme/primeng/src/utils/mapper/`:
   and pulls the mask's background directly from `primitives.area.overlay.…bg`.
 
 No consumer references the new `closeButton` / `primaryActionButton` /
-`secondaryActionButton` slots today. They are intentional placeholders — see
-Step 3.
+`secondaryActionButton` slots or `content.fontSize` today. The button slots
+are intentional placeholders (see Step 3); `content.fontSize` mirrors
+`title.fontSize` so body text is themable even before a consumer wires it up.
+`content.input` / `content.textarea` were *not* added — a dialog's content is a
+free-form region, so nesting form children there was rejected as speculative
+structure (see the Step 1 note on PR #1703).
 
 ## Step 1: Children
 
@@ -53,7 +57,7 @@ dialog
 ├── header                         (layout)
 │   └── closeButton                (icon-button placeholder)
 ├── title                          (typography)
-├── content                        (padding)
+├── content                        (padding + fontSize)
 └── footer                         (layout)
     ├── primaryActionButton        (button placeholder — save/apply role)
     └── secondaryActionButton      (button placeholder — cancel role)
@@ -69,6 +73,21 @@ Not modelled this run: `mask`, `headerActions`, `maximizeButton`,
 `minimizeButton`. The mask is themed globally via `primitives.area.overlay`
 (no per-dialog override needed). The others aren't referenced by any consumer
 today.
+
+**Content input/textarea — deliberately not modelled (PR #1703 review).**
+A dialog's `content` region is free-form in PrimeNG — the developer drops any
+template content in (form fields, images, tables, plain text, ...), so it has
+no fixed intrinsic children like `header`/`footer` do. Pre-reserving
+`content.input` / `content.textarea` as empty placeholders was considered and
+rejected: they would parse to `{}`, no consumer reads them, and they'd be
+speculative structure for the (uncommon) form-in-dialog case — the same
+"don't add unused keys just in case" rule that applies to the 5 canonical
+variant keys. `content.fontSize` *is* added, because body-text sizing is a
+real themable concern regardless of what the content holds. If a specific
+dialog later needs its own content-form theming, the consumer can reference
+the existing generic `input` / `textarea` usages (Option 2, cf. the table's
+paginator dropdown), and a real `content.input` with real tokens can be added
+then.
 
 ## Step 2: Dependencies
 
@@ -101,7 +120,7 @@ introduced anywhere in the dialog tree.
 | `header`                       | specific | Structural to dialog. |
 | `header.closeButton`           | generic (Opt. 1, placeholder) | Will extend the future `button` usage. Empty shape today (see `dialogButtonShape`), TODO comment in place. |
 | `title`                        | specific | Text tokens only. |
-| `content`                      | specific | Padding only. |
+| `content`                      | specific | Layout + `fontSize` typography token. Free-form region — no intrinsic input/textarea children (see Step 1 note on PR #1703). |
 | `footer`                       | specific | Layout only. |
 | `footer.primaryActionButton`   | generic (Opt. 1, placeholder) | Same shared placeholder shape as `closeButton`. |
 | `footer.secondaryActionButton` | generic (Opt. 1, placeholder) | Same shared placeholder shape. |
@@ -119,7 +138,7 @@ nodes with tokens):
 - `root`: bg, contrast, border, radius, shadow.
 - `header`: padding, gap, alignItems, justifyContent.
 - `title`: fontSize, fontWeight.
-- `content`: padding.
+- `content`: padding, fontSize.
 - `footer`: padding, gap, justifyContent.
 - Button placeholders: no fields yet.
 
@@ -176,6 +195,7 @@ concrete value in the parsed tree rather than falling back.
 | `title.fontSize` | | `{{primitives.font.size}}` |
 | `title.fontWeight` | | `{{primitives.font.weight}}` |
 | `content.padding` | | `{{primitives.space.md}}` |
+| `content.fontSize` | | `{{primitives.font.size}}` |
 | `footer.padding` | | `{{primitives.space.md}}` |
 | `footer.gap` | | `{{primitives.space.sm}}` |
 | `footer.justifyContent` | | `flex-end` |
@@ -221,9 +241,11 @@ by the skill. Test updates happened in Step 10.
   `libs/integration-interface/src/lib/topics/current-themes/v1/schema/__snapshots__/dialog.spec.ts.snap`
   regenerated for the new tree.
 - Snapshot delta vs the 2026-09-14 revision: adds `header.closeButton: {}`,
-  `footer.primaryActionButton: {}`, `footer.secondaryActionButton: {}`, and a
-  `settings` object with the 5 curated behavioural flags. All other paths
-  unchanged.
+  `footer.primaryActionButton: {}`, `footer.secondaryActionButton: {}`,
+  `content.fontSize`, and a `settings` object with the 5 curated behavioural
+  flags. (`content.input` / `content.textarea` were considered and rejected —
+  no form children are added to the free-form content region; see Step 1.) All
+  other paths unchanged.
 
 Execution:
 
@@ -240,6 +262,10 @@ Execution:
 - Added `header.closeButton`, `footer.primaryActionButton`,
   `footer.secondaryActionButton` as placeholder generic children (all reuse
   the shared placeholder shape).
+- Added `content.fontSize` (mirrors `title.fontSize`) and reserved
+  `content.input` / `content.textarea` as placeholder generic children
+  (Option 1, per review on PR #1703), to be extended by the existing
+  `input` / `textarea` usages once a consumer themes them.
 - Simplified `dialogRootShape` to a plain `z.object` (removed redundant
   `bgContrast.extend`).
 - Narrowed `settings` from 18 unconsumed optional pass-throughs to 5 curated

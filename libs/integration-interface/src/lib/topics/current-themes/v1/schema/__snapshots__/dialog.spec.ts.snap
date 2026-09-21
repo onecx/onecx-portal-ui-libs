@@ -3,6 +3,7 @@
 exports[`dialog schema resolves the expected default token tree 1`] = `
 Object {
   "content": Object {
+    "fontSize": "{{primitives.font.size}}",
     "padding": "{{primitives.space.md}}",
   },
   "footer": Object {

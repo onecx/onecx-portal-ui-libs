@@ -87,11 +87,13 @@ const dialogTitleDefaults = {
 const dialogContentShape = z
   .object({
     padding: withRef(z.string()).optional(),
+    fontSize: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'dialogContentShape' })
 
 const dialogContentDefaults = {
   padding: '{{primitives.space.md}}',
+  fontSize: '{{primitives.font.size}}',
 }
 
 const dialogFooterShape = z
