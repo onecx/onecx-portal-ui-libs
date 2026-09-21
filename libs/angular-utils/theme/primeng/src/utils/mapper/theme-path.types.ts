@@ -8,7 +8,7 @@ import type { ComponentsDesignTokens } from '@primeuix/themes/types'
  * Each recursion step indexes into this tuple to decrement the counter.
  * When the counter reaches `never`, recursion stops.
  */
-type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 /**
  * Removes index signatures from a type, keeping only explicitly declared keys.
@@ -88,12 +88,14 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  * instantiation small enough to stay within TS's instantiation budget.
  *
  * Constrains `MappingRule.from` / `CssDeclaration.from` so typos are caught
- * at compile time. Depth covers the deepest real path:
- * `usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top`.
+ * at compile time. Depth covers the deepest real paths, which sit under the
+ * restructured calendar tree (its `usages.calendar` branch uses depth 13 to
+ * reach `…dateCell.defaultVariant.focus.border.width`); all other usages use
+ * the default depth of 11.
  */
 export type ThemePath =
   | `primitives.${LeafPaths<NonNullable<Primitives>>}`
-  | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>>}`
+  | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>, 13>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
   | `usages.menubar.${LeafPaths<NonNullable<Usages['menubar']>>}`

@@ -6,27 +6,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.hover.background'
+        from: 'usages.input.defaultVariant.hover.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.hover.color'
+        from: 'usages.input.defaultVariant.hover.defaultSeverity.color',
       },
       {
         property: 'border-color',
-        from: 'usages.input.hover.border.color'
+        from: 'usages.input.defaultVariant.hover.defaultSeverity.border.color',
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.hover.border.shadow'
+        from: 'usages.input.defaultVariant.hover.defaultSeverity.border.shadow',
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.padding.x'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.x',
       },
       {
         property: 'padding-block',
-        from: 'usages.input.padding.y'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.y',
       },
     ],
   },
@@ -35,7 +35,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.hover.placeholder.color'
+        from: 'usages.input.defaultVariant.hover.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -44,27 +44,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.focus.background'
+        from: 'usages.input.defaultVariant.focus.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.focus.color'
+        from: 'usages.input.defaultVariant.focus.defaultSeverity.color',
       },
       {
         property: 'border-color',
-        from: 'usages.input.focus.border.color'
+        from: 'usages.input.defaultVariant.focus.defaultSeverity.border.color',
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.focus.border.shadow'
+        from: 'usages.input.defaultVariant.focus.defaultSeverity.border.shadow',
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.padding.x'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.x',
       },
       {
         property: 'padding-block',
-        from: 'usages.input.padding.y'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.y',
       },
     ],
   },
@@ -73,7 +73,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.focus.placeholder.color'
+        from: 'usages.input.defaultVariant.focus.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -82,27 +82,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.disabled.background'
+        from: 'usages.input.defaultVariant.disabled.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.disabled.color'
+        from: 'usages.input.defaultVariant.disabled.defaultSeverity.color',
       },
       {
         property: 'border-color',
-        from: 'usages.input.disabled.border.color'
+        from: 'usages.input.defaultVariant.disabled.defaultSeverity.border.color',
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.disabled.border.shadow'
+        from: 'usages.input.defaultVariant.disabled.defaultSeverity.border.shadow',
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.padding.x'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.x',
       },
       {
         property: 'padding-block',
-        from: 'usages.input.padding.y'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.y',
       },
     ],
   },
@@ -111,7 +111,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.disabled.placeholder.color'
+        from: 'usages.input.defaultVariant.disabled.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -120,27 +120,27 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.invalid.background'
+        from: 'usages.input.defaultVariant.invalid.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.invalid.color'
+        from: 'usages.input.defaultVariant.invalid.defaultSeverity.color',
       },
       {
         property: 'border-color',
-        from: 'usages.input.invalid.border.color'
+        from: 'usages.input.defaultVariant.invalid.defaultSeverity.border.color',
       },
       {
         property: 'box-shadow',
-        from: 'usages.input.invalid.border.shadow'
+        from: 'usages.input.defaultVariant.invalid.defaultSeverity.border.shadow',
       },
       {
         property: 'padding-inline',
-        from: 'usages.input.padding.x'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.x',
       },
       {
         property: 'padding-block',
-        from: 'usages.input.padding.y'
+        from: 'usages.input.defaultVariant.defaultState.defaultSeverity.padding.y',
       },
     ],
   },
@@ -149,7 +149,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.invalid.placeholder.color'
+        from: 'usages.input.defaultVariant.invalid.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -159,11 +159,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.background'
+        from: 'usages.input.filled.defaultState.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.filled.color'
+        from: 'usages.input.filled.defaultState.defaultSeverity.color',
       },
     ],
   },
@@ -172,7 +172,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.placeholder.color'
+        from: 'usages.input.filled.defaultState.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -181,11 +181,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.hover.background'
+        from: 'usages.input.filled.hover.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.filled.hover.color'
+        from: 'usages.input.filled.hover.defaultSeverity.color',
       },
     ],
   },
@@ -194,7 +194,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.hover.placeholder.color'
+        from: 'usages.input.filled.hover.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -203,11 +203,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.focus.background'
+        from: 'usages.input.filled.focus.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.filled.focus.color'
+        from: 'usages.input.filled.focus.defaultSeverity.color',
       },
     ],
   },
@@ -216,7 +216,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.focus.placeholder.color'
+        from: 'usages.input.filled.focus.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -225,11 +225,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.disabled.background'
+        from: 'usages.input.filled.disabled.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.filled.disabled.color'
+        from: 'usages.input.filled.disabled.defaultSeverity.color',
       },
     ],
   },
@@ -238,7 +238,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.disabled.placeholder.color'
+        from: 'usages.input.filled.disabled.defaultSeverity.placeholder.color',
       },
     ],
   },
@@ -247,11 +247,11 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.input.filled.invalid.background'
+        from: 'usages.input.filled.invalid.defaultSeverity.background',
       },
       {
         property: 'color',
-        from: 'usages.input.filled.invalid.color'
+        from: 'usages.input.filled.invalid.defaultSeverity.color',
       },
     ],
   },
@@ -260,7 +260,7 @@ export const inputCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.input.filled.invalid.placeholder.color'
+        from: 'usages.input.filled.invalid.defaultSeverity.placeholder.color',
       },
     ],
   },
