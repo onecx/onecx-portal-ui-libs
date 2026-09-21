@@ -6,7 +6,7 @@ export const dropdownCssRules: CssRule[] = [
     declarations: [
       {
         property: 'border-radius',
-        from: 'usages.dropdown.option.border.radius',
+        from: 'usages.dropdown.option.defaultState.border.radius',
       },
     ],
   },
@@ -15,11 +15,11 @@ export const dropdownCssRules: CssRule[] = [
     declarations: [
       {
         property: 'font-weight',
-        from: 'usages.dropdown.option.font.weight',
+        from: 'usages.dropdown.option.defaultState.font.weight',
       },
       {
         property: 'font-size',
-        from: 'usages.dropdown.option.font.size',
+        from: 'usages.dropdown.option.defaultState.font.size',
       },
     ],
   },
