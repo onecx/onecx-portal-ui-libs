@@ -50,7 +50,7 @@ export class CarouselComponentSettingsService {
    * optional chaining is required. Should a future PrimeNG release rename or remove any of them,
    * this method fails to compile against the upgraded types, surfacing the change at build time.
    * The end-to-end behaviour is covered by the "should apply carousel settings to real PrimeNG
-   * carousel instances" test in theme-config.service.spec.ts.
+   * carousel instances" test in carousel-component-settings.service.spec.ts.
    *
    * @param instance Live Carousel instance to recompute.
    */

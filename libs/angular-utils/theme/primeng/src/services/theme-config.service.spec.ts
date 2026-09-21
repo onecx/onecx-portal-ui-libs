@@ -18,9 +18,7 @@ jest.mock('../utils/mapper/mapper', () => ({
   mapThemeToPreset: jest.fn(),
 }))
 
-import { Component } from '@angular/core'
 import { TestBed, fakeAsync, tick } from '@angular/core/testing'
-import { By } from '@angular/platform-browser'
 import {
   IS_ADVANCED_THEMING,
   SLOT_GROUP_PREFIX,
@@ -51,7 +49,6 @@ import {
   OverrideType,
   ThemeOverride,
 } from '@onecx/integration-interface'
-import { Carousel, CarouselModule } from 'primeng/carousel'
 import { UseStyle } from 'primeng/usestyle'
 import { ReplaySubject } from 'rxjs'
 
@@ -125,15 +122,6 @@ const THEME_V2_MOCK: CurrentThemes = {
       }
     }
   }
-}
-
-@Component({
-  standalone: true,
-  imports: [CarouselModule],
-  template: '<p-carousel [value]="items"></p-carousel>',
-})
-class CarouselHostComponent {
-  items = [{ id: 1 }, { id: 2 }]
 }
 
 describe('ThemeConfigService', () => {
@@ -305,44 +293,6 @@ describe('ThemeConfigService', () => {
       expect(appId).toBe('app-id')
       expect(options).toEqual({ type: 'mfe' })
     }))
-
-    it('should apply carousel settings to real PrimeNG carousel instances', async () => {
-      configure({}, [], [CarouselHostComponent])
-      TestBed.inject(ThemeConfigService)
-
-      const fixture = TestBed.createComponent(CarouselHostComponent)
-      fixture.detectChanges()
-
-      currentThemes$.publish({
-        ...themeV2,
-        properties: {
-          v2: {
-            primitives: {},
-            usages: {
-              carousel: {
-                settings: {
-                  orientation: 'vertical',
-                  showIndicators: false,
-                  showNavigators: false,
-                  circular: true,
-                  autoplayInterval: 2500,
-                },
-              },
-            },
-          },
-        },
-      } as unknown as CurrentThemes)
-
-      await flushAsync()
-      fixture.detectChanges()
-
-      const carousel = fixture.debugElement.query(By.directive(Carousel)).componentInstance as Carousel
-      expect(carousel.orientation).toBe('vertical')
-      expect(carousel.showIndicators).toBe(false)
-      expect(carousel.showNavigators).toBe(false)
-      expect(carousel.circular).toBe(true)
-      expect(carousel.autoplayInterval).toBe(2500)
-    })
 
     it('should merge PRIMENG overrides when advanced theming is enabled via token', fakeAsync(() => {
       const overrides: ThemeOverride[] = [
