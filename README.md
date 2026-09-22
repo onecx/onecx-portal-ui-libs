@@ -1,5 +1,7 @@
 # onecx-portal-ui-libs
 
+Test Theme workflow
+
 OneCx portal UI libraries
 
 # Changelog
