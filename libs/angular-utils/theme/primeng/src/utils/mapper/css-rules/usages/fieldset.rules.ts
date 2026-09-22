@@ -6,15 +6,15 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.legend.toggleIcon.color',
+        from: 'usages.fieldset.legend.defaultState.toggleIcon.color',
       },
       {
         property: 'width',
-        from: 'usages.fieldset.legend.toggleIcon.width',
+        from: 'usages.fieldset.legend.defaultState.toggleIcon.width',
       },
       {
         property: 'height',
-        from: 'usages.fieldset.legend.toggleIcon.height',
+        from: 'usages.fieldset.legend.defaultState.toggleIcon.height',
       },
     ],
   },
@@ -23,7 +23,7 @@ const FIELDSET_TOGGLE_ICON: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.legend.toggleIcon.hover.color',
+        from: 'usages.fieldset.legend.hover.toggleIcon.color',
       },
     ],
   },
@@ -35,7 +35,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.legend.color', // when legend is text only
+        from: 'usages.fieldset.legend.defaultState.color', // when legend is text only
       },
     ],
   },
@@ -44,7 +44,7 @@ const FIELDSET_LEGEND_LABEL: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.fieldset.legend.color', // when legend is button
+        from: 'usages.fieldset.legend.defaultState.color', // when legend is button
       },
     ],
   },
