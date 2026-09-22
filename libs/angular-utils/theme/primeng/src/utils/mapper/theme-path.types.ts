@@ -118,13 +118,7 @@ export type ThemePath =
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
   | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
-  | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
-  | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
-  | `usages.panelmenu.${LeafPaths<NonNullable<Usages['panelmenu']>>}`
-  | `usages.menu.${LeafPaths<NonNullable<Usages['menu']>>}`
-  | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
-  | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
-  | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
+  | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}``
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
