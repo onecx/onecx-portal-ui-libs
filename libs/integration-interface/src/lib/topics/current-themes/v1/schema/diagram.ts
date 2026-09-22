@@ -1,81 +1,127 @@
-/**
- * This file defines the schema for carousel theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
- */
-import * as z from "zod";
-import { bgContrast, font, withRef } from "./primitives";
-import { themeSchemaRegistry } from "./registry";
-import { iconBaseStyles } from "./table";
+import * as z from 'zod'
+import { applyDefaultsRecursive } from './defaults-helper'
+import { bg, border, color, font, withRef } from './primitives'
+import { themeSchemaRegistry } from './registry'
 
-export const diagramTextStyles = z
-    .object({
-        font: font.default({
-            family: "{{primitives.font.family}}",
-            size: "{{primitives.font.size.md}}",
-            weight: "{{primitives.font.weight.regular}}"
-        })
-    })
-    .register(themeSchemaRegistry, { id: "diagramTextStyles" });
-
-export const diagramSettings = z.object({
-    size: withRef(z.enum(["small", "large"])).default("large")
+export const diagramTextShape = z.object({
+    font: font.optional(),
 })
-    .register(themeSchemaRegistry, { id: "diagramSettings" })
 
+export const diagramContainerShape = z.object({
+    background: z.union([bg, withRef(z.string())]).optional(),
+    color: color.optional(),
+})
 
-export const selectButtonStyles = bgContrast.optional().register(themeSchemaRegistry, { id: "diagramSelectButtonState" })
+const diagramSelectButtonIconShape = z.object({
+    color: color.optional(),
+})
 
-type SelectButtonStateInput = {
-    defaultState?: z.input<typeof selectButtonStyles>
-    state?: {
-        hover?: z.input<typeof selectButtonStyles>
-        active?: z.input<typeof selectButtonStyles>
-        selected?: z.input<typeof selectButtonStyles>
-        focus?: z.input<typeof selectButtonStyles>
-    }
+const diagramSelectButtonStateShape = z.object({
+    background: z.union([bg, withRef(z.string())]).optional(),
+    border: border.optional(),
+    color: color.optional(),
+    icon: diagramSelectButtonIconShape.optional(),
+})
+
+const diagramSelectButtonButtonShape = diagramSelectButtonStateShape.extend({
+    hover: diagramSelectButtonStateShape.optional(),
+    selected: diagramSelectButtonStateShape.optional(),
+    focus: diagramSelectButtonStateShape.optional(),
+})
+
+export const diagramSelectButtonShape = z.object({
+    gap: withRef(z.string()).optional(),
+    border: border.optional(),
+    button: diagramSelectButtonButtonShape.optional(),
+})
+
+export const diagramShape = z.object({
+    container: diagramContainerShape.optional(),
+    header: diagramTextShape.optional(),
+    description: diagramTextShape.optional(),
+    selectButton: diagramSelectButtonShape.optional(),
+    footer: diagramTextShape.optional(),
+})
+
+const textDefaults = {
+    font: {
+        family: '{{primitives.font.family}}',
+        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight}}',
+    },
 }
 
-export const selectButtonState: z.ZodType<SelectButtonStateInput> = z
-    .object({
-        defaultState: (selectButtonStyles as typeof selectButtonStyles).optional(),
-        state: z
-            .object({
-                hover: (selectButtonStyles as typeof selectButtonStyles).optional(),
-                active: (selectButtonStyles as typeof selectButtonStyles).optional(),
-                selected: (selectButtonStyles as typeof selectButtonStyles).optional(),
-                focus: (selectButtonStyles as typeof selectButtonStyles).optional(),
-            })
-            .optional(),
-    })
-    .register(themeSchemaRegistry, { id: 'selectButtonWithStates' })
-
-export const selectButton = z.object({
-    icon: iconBaseStyles.optional(),
-    border: withRef(z.string()).default("{{primitives.border.defaultVariant.color}}"),
-    borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
-    bgContrast: bgContrast.optional(),
-    selectButtonState: (selectButtonState as typeof selectButtonState)
-})
-    .register(themeSchemaRegistry, { id: "diagramSelectButton" })
-
-export const container = z.object({
-    bgContrast: bgContrast.default({
-        bg: {
-            color: {
-                dark: "{{primitives.area.surface.defaultState.defaultVariant.bg.color.dark}}",
-                light: "{{primitives.area.surface.defaultState.defaultVariant.bg.color.light}}"
-            }
+export const diagramDefaults = {
+    container: {
+        background: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
+        color: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
+    },
+    header: textDefaults,
+    description: textDefaults,
+    selectButton: {
+        gap: '{{primitives.space.xs}}',
+        border: {
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+            style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+            width: '{{primitives.border.width.sm}}',
+            radius: '{{primitives.border.radius.md}}',
         },
-        contrast: "{{primitives.area.surface.defaultState.defaultVariant.contrast}}"
-    })
-})
-    .register(themeSchemaRegistry, { id: "diagramContainer" })
+        button: {
+            background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+            color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+            border: {
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+                style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+                width: '{{primitives.border.width.sm}}',
+                radius: '{{primitives.border.radius.md}}',
+            },
+            icon: {
+                color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+            },
+            hover: {
+                background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+                border: {
+                    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
+                    style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
+                    width: '{{primitives.border.width.sm}}',
+                    radius: '{{primitives.border.radius.md}}',
+                },
+                icon: {
+                    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+                },
+            },
+            selected: {
+                background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+                color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+                border: {
+                    color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
+                    style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
+                    width: '{{primitives.border.width.sm}}',
+                    radius: '{{primitives.border.radius.md}}',
+                },
+                icon: {
+                    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+                },
+            },
+            focus: {
+                background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+                color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+                border: {
+                    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+                    style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+                    width: '{{primitives.border.width.sm}}',
+                    radius: '{{primitives.border.radius.md}}',
+                },
+                icon: {
+                    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+                },
+            },
+        },
+    },
+    footer: textDefaults,
+}
 
-export const diagram = z.object({
-    settings: (diagramSettings as typeof diagramSettings).optional(),
-    header: (diagramTextStyles as typeof diagramTextStyles).optional(),
-    description: (diagramTextStyles as typeof diagramTextStyles).optional(),
-    selectButton: (selectButton as typeof selectButton).optional(),
-    container: (container as typeof container).optional(),
-    footer: (diagramTextStyles as typeof diagramTextStyles).optional(),
+export const diagram = applyDefaultsRecursive(diagramShape, diagramDefaults).register(themeSchemaRegistry, {
+    id: 'diagram',
 })
-    .register(themeSchemaRegistry, { id: "diagram" })
