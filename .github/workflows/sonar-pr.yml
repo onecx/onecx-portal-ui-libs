@@ -130,7 +130,6 @@ jobs:
             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=${{ github.repository_owner }}
-            -Dsonar.scm.disabled=true
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.javascript.coveragePlugin=lcov
             -Dsonar.javascript.lcov.reportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/coverage/lcov.info
