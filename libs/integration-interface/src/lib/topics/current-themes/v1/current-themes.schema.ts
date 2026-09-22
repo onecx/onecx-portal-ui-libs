@@ -28,6 +28,7 @@ import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
@@ -58,7 +59,7 @@ type UsagesInput = {
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
-  panelmenu?: z.input<typeof panelmenu>
+  panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeader>
