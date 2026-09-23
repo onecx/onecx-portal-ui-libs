@@ -134,4 +134,60 @@ export const dataviewCssRules: CssRule[] = [
       },
     ],
   },
+
+  // Paginator navigation button and rows-per-page dropdown wiring
+  {
+    selector: '.p-dataview-paginator-top .p-paginator-element',
+    declarations: [
+      { property: 'border-color', from: 'usages.dataview.header.paginator.button.border.color' },
+      { property: 'border-style', from: 'usages.dataview.header.paginator.button.border.style' },
+      { property: 'border-width', from: 'usages.dataview.header.paginator.button.border.width' },
+      { property: 'border-radius', from: 'usages.dataview.header.paginator.button.border.radius' },
+    ],
+  },
+  {
+    selector: '.p-dataview-paginator-top .p-paginator-element:hover',
+    declarations: [
+      { property: 'border-color', from: 'usages.dataview.header.paginator.button.hover.border.color' },
+      { property: 'border-style', from: 'usages.dataview.header.paginator.button.hover.border.style' },
+    ],
+  },
+  {
+    selector: '.p-dataview-paginator-bottom .p-paginator-element',
+    declarations: [
+      { property: 'border-color', from: 'usages.dataview.footer.paginator.button.border.color' },
+      { property: 'border-style', from: 'usages.dataview.footer.paginator.button.border.style' },
+      { property: 'border-width', from: 'usages.dataview.footer.paginator.button.border.width' },
+      { property: 'border-radius', from: 'usages.dataview.footer.paginator.button.border.radius' },
+    ],
+  },
+  {
+    selector: '.p-dataview-paginator-bottom .p-paginator-element:hover',
+    declarations: [
+      { property: 'border-color', from: 'usages.dataview.footer.paginator.button.hover.border.color' },
+      { property: 'border-style', from: 'usages.dataview.footer.paginator.button.hover.border.style' },
+    ],
+  },
+  {
+    selector: '.p-dataview-paginator-top .p-paginator-rpp-dropdown',
+    declarations: [
+      { property: 'background', from: 'usages.dataview.header.paginator.dropdown.defaultState.background' },
+      { property: 'color', from: 'usages.dataview.header.paginator.dropdown.defaultState.color' },
+      { property: 'border-color', from: 'usages.dataview.header.paginator.dropdown.defaultState.border.color' },
+      { property: 'border-width', from: 'usages.dataview.header.paginator.dropdown.defaultState.border.width' },
+      { property: 'border-radius', from: 'usages.dataview.header.paginator.dropdown.defaultState.border.radius' },
+      { property: 'width', from: 'usages.dataview.header.paginator.dropdown.defaultState.width' },
+    ],
+  },
+  {
+    selector: '.p-dataview-paginator-bottom .p-paginator-rpp-dropdown',
+    declarations: [
+      { property: 'background', from: 'usages.dataview.footer.paginator.dropdown.defaultState.background' },
+      { property: 'color', from: 'usages.dataview.footer.paginator.dropdown.defaultState.color' },
+      { property: 'border-color', from: 'usages.dataview.footer.paginator.dropdown.defaultState.border.color' },
+      { property: 'border-width', from: 'usages.dataview.footer.paginator.dropdown.defaultState.border.width' },
+      { property: 'border-radius', from: 'usages.dataview.footer.paginator.dropdown.defaultState.border.radius' },
+      { property: 'width', from: 'usages.dataview.footer.paginator.dropdown.defaultState.width' },
+    ],
+  },
 ]

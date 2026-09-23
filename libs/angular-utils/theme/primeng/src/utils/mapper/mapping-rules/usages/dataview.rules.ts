@@ -111,4 +111,21 @@ export const dataviewMappingRules: MappingRule[] = [
     from: 'usages.dataview.footer.paginator.border.width',
     to: 'components.dataview.paginatorBottom.borderWidth',
   },
+
+  // Paginator navigation buttons (shared by top and bottom paginator instances)
+  {
+    from: 'usages.dataview.header.paginator.button.icon.color',
+    to: 'components.paginator.navButton.color',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.dataview.header.paginator.button.hover.icon.color',
+    to: 'components.paginator.navButton.hoverColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.dataview.header.paginator.button.disabled.icon.color',
+    to: 'components.paginator.navButton.color',
+    transform: toColorString,
+  },
 ]
