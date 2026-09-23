@@ -7,6 +7,7 @@ import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { table } from './schema/table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
@@ -41,7 +42,7 @@ type UsagesInput = {
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
   table?: z.input<typeof table>
-  tooltip?: z.input<typeof tooltip>
+  tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldset>
   diagram?: z.input<typeof diagram>
