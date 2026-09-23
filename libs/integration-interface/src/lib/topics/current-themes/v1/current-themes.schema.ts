@@ -22,6 +22,7 @@ import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
+import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
@@ -33,6 +34,7 @@ import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { dataviewShape } from './schema/dataview/dataview'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -52,7 +54,7 @@ type UsagesInput = {
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
   calendar?: CalendarShapeInput
-  interactiveDataView?: z.input<typeof interactiveDataView>
+  interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
@@ -63,7 +65,7 @@ type UsagesInput = {
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeader>
   content?: z.input<typeof content>
-  dataview?: z.input<typeof dataview>
+  dataview?: z.input<typeof dataviewShape>
 }
 
 const usages: z.ZodType<UsagesInput> = z
