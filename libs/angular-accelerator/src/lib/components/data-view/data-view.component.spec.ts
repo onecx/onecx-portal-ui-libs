@@ -443,70 +443,78 @@ describe('DataViewComponent', () => {
   })
 
   describe('effects emitting outputs', () => {
-    it('should emit filtered output when filters change', (done) => {
+    it('should emit filtered output when filters change', async () => {
       const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
 
-      component.filtered.subscribe((emittedFilters) => {
-        expect(emittedFilters).toEqual(testFilters)
-        done()
+      const promise = new Promise<void>((resolve) => {
+        component.filtered.subscribe((emittedFilters) => {
+          expect(emittedFilters).toEqual(testFilters)
+          resolve()
+        })
       })
 
       stateService.filters.set(testFilters)
       fixture.detectChanges()
+      await fixture.whenStable()
+      await promise
     })
 
-    it('should emit filtered output when filters has items (filters.length > 0)', () => {
+    it('should emit filtered output when filters has items (filters.length > 0)', async () => {
       const emitSpy = jest.spyOn(component.filtered, 'emit')
       const testFilters = [{ columnId: 'name', filterType: 'stringContains', value: 'test' }] as any
 
       stateService.filters.set(testFilters)
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(emitSpy).toHaveBeenCalledWith(testFilters)
     })
 
-    it('should emit filtered output when filters is empty array (filters.length === 0)', () => {
+    it('should emit filtered output when filters is empty array (filters.length === 0)', async () => {
       const emitSpy = jest.spyOn(component.filtered, 'emit')
       emitSpy.mockClear()
 
       stateService.filters.set([])
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(emitSpy).toHaveBeenCalledWith([])
     })
 
-    it('should emit sorted output when both sortField and sortDirection are set', (done) => {
-      let emitCount = 0
-      component.sorted.subscribe((emittedSort) => {
-        emitCount++
-        if (emitCount === 1) {
+    it('should emit sorted output when both sortField and sortDirection are set', async () => {
+      const promise = new Promise<void>((resolve) => {
+        component.sorted.subscribe((emittedSort) => {
           expect(emittedSort).toEqual({
             sortColumn: 'name',
             sortDirection: DataSortDirection.ASCENDING,
           })
-          done()
-        }
+          resolve()
+        })
       })
 
       fixture.componentRef.setInput('sortField', 'name')
       fixture.componentRef.setInput('sortDirection', DataSortDirection.ASCENDING)
       fixture.detectChanges()
+      await fixture.whenStable()
+      await promise
     })
 
-    it('should not emit pageChanged output when page is undefined', () => {
+    it('should not emit pageChanged output when page is undefined', async () => {
       const emitSpy = jest.spyOn(component.pageChanged, 'emit')
 
       stateService.activePage.set(undefined as any)
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(emitSpy).not.toHaveBeenCalled()
     })
 
-    it('should not emit pageSizeChanged output when pageSize is undefined', () => {
+    it('should not emit pageSizeChanged output when pageSize is undefined', async () => {
       const emitSpy = jest.spyOn(component.pageSizeChanged, 'emit')
 
       stateService.pageSize.set(undefined as any)
       fixture.detectChanges()
+      await fixture.whenStable()
 
       expect(emitSpy).not.toHaveBeenCalled()
     })
