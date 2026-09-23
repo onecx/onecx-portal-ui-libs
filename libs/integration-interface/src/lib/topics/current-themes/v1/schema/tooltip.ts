@@ -36,14 +36,14 @@ export const tooltipDefaults = {
     shadow: '{{primitives.shadow.md}}',
     padding: '{{primitives.space.md}}',
     border: {
-      color: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
       width: '{{primitives.border.width.sm}}',
       offset: '{{primitives.border.offset.sm}}',
       radius: '{{primitives.border.radius.md}}',
     },
-    background: '{{primitives.area.overlay.defaultState.defaultVariant.bg}}',
-    color: '{{primitives.area.overlay.defaultState.defaultVariant.contrast}}',
+    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
   },
 }
 

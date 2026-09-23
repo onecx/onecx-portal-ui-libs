@@ -3,15 +3,15 @@
 exports[`tooltip schema resolves the expected default token tree 1`] = `
 Object {
   "defaultVariant": Object {
-    "background": "{{primitives.area.overlay.defaultState.defaultVariant.bg}}",
+    "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
     "border": Object {
-      "color": "{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}",
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
       "offset": "{{primitives.border.offset.sm}}",
       "radius": "{{primitives.border.radius.md}}",
-      "style": "{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}",
+      "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
       "width": "{{primitives.border.width.sm}}",
     },
-    "color": "{{primitives.area.overlay.defaultState.defaultVariant.contrast}}",
+    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
     "gutter": "{{primitives.space.sm}}",
     "maxWidth": "{{primitives.layout.overlayMaxWidth}}",
     "padding": "{{primitives.space.md}}",
