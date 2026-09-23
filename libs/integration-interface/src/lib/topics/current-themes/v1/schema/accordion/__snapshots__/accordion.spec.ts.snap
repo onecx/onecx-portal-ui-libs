@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`accordion schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "panel": Object {
+      "defaultVariant": Object {
+        "active": Object {
+          "header": Object {
+            "defaultVariant": Object {
+              "defaultState": Object {
+                "background": Object {
+                  "color": "{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}",
+                },
+                "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+                "last": Object {
+                  "border": Object {
+                    "radius": "{{primitives.border.radius.md}}",
+                  },
+                },
+                "toggleIcon": Object {
+                  "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+                },
+              },
+            },
+          },
+        },
+        "defaultState": Object {
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+            "width": "{{primitives.border.width.md}}",
+          },
+          "content": Object {
+            "background": Object {
+              "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+            },
+            "border": Object {
+              "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+              "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+              "width": "{{primitives.border.width.md}}",
+            },
+            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+            "padding": "{{primitives.space.md}}",
+          },
+          "header": Object {
+            "defaultVariant": Object {
+              "defaultState": Object {
+                "background": Object {
+                  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+                },
+                "border": Object {
+                  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+                  "radius": "{{primitives.border.radius.md}}",
+                  "width": "{{primitives.border.width.md}}",
+                },
+                "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+                "first": Object {
+                  "border": Object {
+                    "radius": "{{primitives.border.radius.md}}",
+                    "width": "{{primitives.border.width.md}}",
+                  },
+                },
+                "font": Object {
+                  "weight": "{{primitives.font.weight.bold}}",
+                },
+                "last": Object {
+                  "border": Object {
+                    "radius": "{{primitives.border.radius.md}}",
+                    "width": "{{primitives.border.width.md}}",
+                  },
+                },
+                "padding": "{{primitives.space.md}}",
+                "toggleIcon": Object {
+                  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+                },
+              },
+              "focusRing": Object {
+                "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}",
+                "offset": "{{primitives.border.offset.none}}",
+                "radius": "{{primitives.border.radius.md}}",
+                "shadow": "{{primitives.shadow.none}}",
+                "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}",
+                "width": "{{primitives.border.width.md}}",
+              },
+              "hover": Object {
+                "background": Object {
+                  "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}",
+                },
+                "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+                "toggleIcon": Object {
+                  "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
