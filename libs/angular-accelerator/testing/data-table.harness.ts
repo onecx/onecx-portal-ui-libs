@@ -126,4 +126,35 @@ export class DataTableHarness extends ContentContainerComponentHarness {
     }
     await buttons[rowIndex].click()
   }
+
+  // --- Group cell accessors ---
+
+  getGroupCells = this.locatorForAll('td[name="group-cell"]')
+
+  async getGroupCellLabel(index: number): Promise<string> {
+    const cells = await this.getGroupCells()
+    if (index < 0 || index >= cells.length) {
+      throw new Error(`Group cell index ${index} out of range. Found ${cells.length} group cell(s).`)
+    }
+    const el = cells[index]
+    const text = await el.getProperty('textContent')
+    return (text as string).trim()
+  }
+
+  async getGroupCellRowspan(index: number): Promise<number | null> {
+    const cells = await this.getGroupCells()
+    if (index < 0 || index >= cells.length) {
+      throw new Error(`Group cell index ${index} out of range. Found ${cells.length} group cell(s).`)
+    }
+    const attr = await cells[index].getAttribute('rowspan')
+    return attr != null ? Number(attr) : null
+  }
+
+  async getGroupCellScope(index: number): Promise<string | null> {
+    const cells = await this.getGroupCells()
+    if (index < 0 || index >= cells.length) {
+      throw new Error(`Group cell index ${index} out of range. Found ${cells.length} group cell(s).`)
+    }
+    return await cells[index].getAttribute('scope')
+  }
 }

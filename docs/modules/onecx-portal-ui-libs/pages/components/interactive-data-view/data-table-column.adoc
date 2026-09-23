@@ -19,7 +19,90 @@
 | `filterType?` | `FilterType` | Defines which type of filter is used.
 | `predefinedGroupKeys?` | `string[]` | Defines the group set in which the following column is available. Additionally, the `predefinedGroups` can be selected from a dropdown menu at the top of the search results table. If you want your search column to belong only to the default column group, then only add `+FEATURE_SEARCH.PREDEFINED_GROUP.DEFAULT+`.
 | `dateFormat?` | `string` | Allows customization of the date format. Uses Angular DatePipe format.
+| `rowGrouping?` | `DataTableRowGroupingConfig` | Optional single-level row-grouping configuration. Only one column may carry this configuration at a time.
+| `groupCellTemplateKey?` | `string` | Optional `pTemplate` name for a custom group-cell template.
 |===
+
+[#data-table-row-grouping]
+== Row Grouping
+
+Row grouping allows consumers to group table rows by a specific column. The group header cell is rendered with semantic `scope="rowgroup"` and a `rowspan` attribute spanning all rows in the group.
+
+[#data-table-row-grouping-config]
+=== DataTableRowGroupingConfig
+
+The `rowGrouping` property on a `DataTableColumn` accepts a `DataTableRowGroupingConfig`:
+
+[source,typescript]
+----
+export interface DataTableRowGroupingConfig {
+  groupByColumnId: string
+  groupKeyFieldPath: string
+}
+----
+
+* `groupByColumnId` — The column id that provides the grouping column header and label.
+* `groupKeyFieldPath` — A dot-separated field path used to resolve the strict-equality group key. Defaults to `groupByColumnId` if you want the key and label to come from the same field.
+
+[#data-table-row-grouping-example]
+=== Example configuration
+
+[source,typescript]
+----
+const columns: DataTableColumn[] = [
+  {
+    id: 'category',
+    columnType: ColumnType.STRING,
+    nameKey: 'COLUMN.CATEGORY',
+    rowGrouping: {
+      groupByColumnId: 'category',
+      groupKeyFieldPath: 'categoryKey', // nested or distinct field path
+    },
+  },
+  {
+    id: 'name',
+    columnType: ColumnType.STRING,
+    nameKey: 'COLUMN.NAME',
+  },
+]
+----
+
+[#data-table-row-grouping-behavior]
+=== Behavior
+
+* **Strict key equality** — Group membership is determined by strict equality (`===`) on the resolved `groupKeyFieldPath` value. Only `string` and `number` keys are used directly; other values are coerced to strings. This means two groups can share the same visible label but have different strict keys.
+* **First-occurrence group order** — When no active sort is applied, groups appear in the order their first member row appears in the input.
+* **Preserved row order** — Rows retain their original order within each group.
+* **Semantic output** — Group cells render with `scope="rowgroup"` and a `rowspan` equal to the group size. Groups with a single member and groups with empty labels are fully supported.
+* **No-regression** — Tables without `rowGrouping` configuration behave exactly as before.
+
+[#data-table-row-grouping-custom-template]
+=== Custom group-cell template
+
+When `groupCellTemplateKey` is set on the grouping column, a custom template can override the default group-cell rendering. The template receives the following context variables:
+
+* `groupKey` — The resolved strict-equality group key.
+* `groupLabel` — The display label.
+* `groupSize` — Number of rows in the group.
+* `groupIndex` — Zero-based group index.
+* `rowObject` — The first row in the group.
+* `column` — The grouping column definition.
+* `$implicit` — A `DataTableGroupCellTemplateContext` object containing all the above fields.
+
+[#data-table-row-grouping-dt-group-cell-template-context]
+=== DataTableGroupCellTemplateContext
+
+[source,typescript]
+----
+export interface DataTableGroupCellTemplateContext<T> {
+  groupKey: string | number
+  groupLabel: string
+  groupSize: number
+  groupIndex: number
+  rowObject: T
+  column: DataTableColumn
+}
+----
 
 include::partial$column-type.adoc[]
 
