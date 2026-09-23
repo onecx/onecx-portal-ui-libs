@@ -1,25 +1,25 @@
-import z from 'zod';
-import { withRef, bg, border } from '../primitives';
-import { themeSchemaRegistry } from '../registry';
+import * as z from 'zod'
+import { applyDefaultsRecursive } from '../defaults-helper'
+import { bg, border, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
-export class CustomGroupColumnSelectorSkeletonSchema {
-  private static readonly tokens = {
-    border: border.pick({ radius: true }).default({
-      radius: "{{primitives.border.radius.none}}",
-    }),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    animationBackground: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-  }
+export const customGroupColumnSelectorSkeletonShape = z.object({
+  border: border.pick({ radius: true }).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  animationBackground: z.union([bg, withRef(z.string())]).optional(),
+})
 
-  static readonly schema = z
-    .object({
-      ...this.tokens,
-    })
-    .register(themeSchemaRegistry, { id: 'customGroupColumnSelectorSkeleton' });
+export const customGroupColumnSelectorSkeletonDefaults = {
+  border: { radius: '{{primitives.border.radius.none}}' },
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  animationBackground: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
 }
 
-export const customGroupColumnSelectorSkeleton = CustomGroupColumnSelectorSkeletonSchema.schema;
+export const customGroupColumnSelectorSkeleton = applyDefaultsRecursive(
+  customGroupColumnSelectorSkeletonShape,
+  customGroupColumnSelectorSkeletonDefaults
+).register(themeSchemaRegistry, { id: 'customGroupColumnSelectorSkeleton' })
+
+export class CustomGroupColumnSelectorSkeletonSchema {
+  static readonly schema = customGroupColumnSelectorSkeleton
+}
