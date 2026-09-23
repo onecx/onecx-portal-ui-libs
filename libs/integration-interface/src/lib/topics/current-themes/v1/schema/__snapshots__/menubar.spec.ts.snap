@@ -1,0 +1,200 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`menubar schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "defaultState": Object {
+      "defaultSeverity": Object {
+        "alignItems": "{{primitives.layout.alignItems}}",
+        "background": Object {
+          "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+        },
+        "border": Object {
+          "color": "{{primitives.border.defaultVariant.color}}",
+          "radius": "{{primitives.radius.md}}",
+        },
+        "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+        "gap": "{{primitives.layout.gap}}",
+        "item": Object {
+          "defaultVariant": Object {
+            "defaultState": Object {
+              "defaultSeverity": Object {
+                "background": Object {
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                },
+                "border": Object {
+                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "radius": "{{primitives.radius.md}}",
+                },
+                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "cursor": "pointer",
+                "shadow": "{{primitives.shadow.md}}",
+                "transition": Object {
+                  "duration": "{{primitives.transition.duration}}",
+                },
+              },
+            },
+            "state": Object {
+              "active": Object {
+                "defaultSeverity": Object {
+                  "background": Object {
+                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  },
+                  "border": Object {
+                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "radius": "{{primitives.radius.md}}",
+                  },
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "cursor": "pointer",
+                  "shadow": "{{primitives.shadow.md}}",
+                  "transition": Object {
+                    "duration": "{{primitives.transition.duration}}",
+                  },
+                },
+              },
+              "focus": Object {
+                "defaultSeverity": Object {
+                  "background": Object {
+                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  },
+                  "border": Object {
+                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "radius": "{{primitives.radius.md}}",
+                  },
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "cursor": "pointer",
+                  "shadow": "{{primitives.shadow.md}}",
+                  "transition": Object {
+                    "duration": "{{primitives.transition.duration}}",
+                  },
+                },
+              },
+            },
+          },
+          "gap": "{{primitives.space.sm}}",
+          "padding": "{{primitives.space.md}}",
+        },
+        "mobileButton": Object {
+          "defaultVariant": Object {
+            "defaultState": Object {
+              "defaultSeverity": Object {
+                "background": Object {
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                },
+                "border": Object {
+                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "radius": "{{primitives.radius.md}}",
+                },
+                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "shadow": "{{primitives.shadow.md}}",
+                "size": "2.5rem",
+                "transition": Object {
+                  "duration": "{{primitives.transition.duration}}",
+                },
+              },
+            },
+            "state": Object {
+              "hover": Object {
+                "defaultSeverity": Object {
+                  "background": Object {
+                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  },
+                  "border": Object {
+                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "radius": "{{primitives.radius.md}}",
+                  },
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "cursor": "pointer",
+                  "shadow": "{{primitives.shadow.md}}",
+                  "size": "2.5rem",
+                  "transition": Object {
+                    "duration": "{{primitives.transition.duration}}",
+                  },
+                },
+              },
+            },
+          },
+          "focusRing": Object {
+            "color": "{{primitives.border.defaultVariant.color}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "width": "{{primitives.border.defaultVariant.width}}",
+          },
+        },
+        "padding": "{{primitives.layout.padding}}",
+        "separator": Object {
+          "color": "{{primitives.border.defaultVariant.color}}",
+          "radius": "{{primitives.radius.md}}",
+        },
+        "submenu": Object {
+          "defaultVariant": Object {
+            "defaultState": Object {
+              "defaultSeverity": Object {
+                "background": Object {
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                },
+                "border": Object {
+                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "radius": "{{primitives.radius.md}}",
+                },
+                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "shadow": "{{primitives.shadow.md}}",
+                "transition": Object {
+                  "duration": "{{primitives.transition.duration}}",
+                },
+              },
+            },
+            "state": Object {
+              "active": Object {
+                "defaultSeverity": Object {
+                  "background": Object {
+                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  },
+                  "border": Object {
+                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "radius": "{{primitives.radius.md}}",
+                  },
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "cursor": "pointer",
+                  "shadow": "{{primitives.shadow.md}}",
+                  "transition": Object {
+                    "duration": "{{primitives.transition.duration}}",
+                  },
+                },
+              },
+              "focus": Object {
+                "defaultSeverity": Object {
+                  "background": Object {
+                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  },
+                  "border": Object {
+                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "radius": "{{primitives.radius.md}}",
+                  },
+                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "cursor": "pointer",
+                  "shadow": "{{primitives.shadow.md}}",
+                  "transition": Object {
+                    "duration": "{{primitives.transition.duration}}",
+                  },
+                },
+              },
+            },
+          },
+          "gap": "{{primitives.space.sm}}",
+          "maxWidth": "20rem",
+          "minWidth": "10rem",
+          "padding": "{{primitives.space.md}}",
+          "screenSettings": Object {
+            "xs": Object {
+              "indent": "{{primitives.space.md}}",
+            },
+          },
+        },
+        "transition": Object {
+          "duration": "{{primitives.transition.duration}}",
+        },
+      },
+    },
+  },
+}
+`;
