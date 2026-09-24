@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import localeDE from '@angular/common/locales/de'
 import { NgModule, inject } from '@angular/core'
 import { provideTranslateLoader, provideTranslateService, TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -45,7 +45,7 @@ const STORYBOOK_TRANSLATION_PROVIDERS = [
   imports: [],
   providers: [
     provideAppStateServiceMock(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideTranslateService({
       loader: provideTranslateLoader(OnecxTranslateLoader),
     }),

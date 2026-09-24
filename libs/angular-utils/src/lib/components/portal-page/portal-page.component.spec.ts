@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -18,7 +18,7 @@ describe('PortalPageComponent', () => {
       providers: [
         provideAngularUtils(),
         { provide: PermissionService, useValue: { hasPermission: jest.fn() } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideUserServiceMock(),
         provideAppStateServiceMock(),
         provideTranslateTestingService({
@@ -86,7 +86,7 @@ describe('PortalPageComponent host projection', () => {
       imports: [PortalPageComponent, HostComponent],
       providers: [
         provideAngularUtils(),
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideUserServiceMock(),
         provideAppStateServiceMock(),
         { provide: PermissionService, useValue: { hasPermission: jest.fn() } },

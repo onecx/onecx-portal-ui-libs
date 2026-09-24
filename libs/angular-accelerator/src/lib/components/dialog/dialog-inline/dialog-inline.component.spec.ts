@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { PrimeIcons } from 'primeng/api'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -17,6 +17,7 @@ import { DialogInlineComponent } from './dialog-inline.component'
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ocx-dialog-inline>
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -37,6 +38,7 @@ const config: ButtonDialogConfig = {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <ocx-dialog-inline [config]="this.buttonDialogConfig">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -47,6 +49,7 @@ class TestHostWithConfigComponent {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <ocx-dialog-inline (resultEmitter)="handleResult($event)">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,

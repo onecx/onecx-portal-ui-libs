@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ElementRef, Input, inject } from '@angular/core'
+import { AfterContentInit, Component, ElementRef, Input, inject, ChangeDetectionStrategy } from '@angular/core'
 import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
 import { MessageService } from 'primeng/api'
 import { createLogger } from '../../utils/logger.utils'
@@ -12,6 +12,7 @@ import { createLogger } from '../../utils/logger.utils'
       <p-toast [style]="{ 'word-break': 'break-word' }"></p-toast>
     </ng-content>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./standalone-shell-viewport.component.scss'],
 })
 export class StandaloneShellViewportComponent implements AfterContentInit {

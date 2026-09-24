@@ -6,6 +6,7 @@ import {
   ViewChildren,
   ViewContainerRef,
   inject,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TemplateDirective } from './template.directive'
@@ -13,6 +14,7 @@ import { TemplateDirective } from './template.directive'
 @Component({
   standalone: false,
   selector: 'ocx-test-component',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ng-template ocxTemplate="header"><p>header</p></ng-template>
     <ng-template ocxTemplate="content"><p>content</p></ng-template>
     <ng-template #footer><p>footer</p></ng-template>`,
