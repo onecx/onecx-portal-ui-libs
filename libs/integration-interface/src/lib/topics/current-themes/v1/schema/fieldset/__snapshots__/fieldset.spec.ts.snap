@@ -9,7 +9,8 @@ Object {
       "weight": "{{primitives.font.weight}}",
     },
     "gap": "{{primitives.space.md}}",
-    "padding": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
   },
   "defaultVariant": Object {
     "background": Object {
@@ -20,12 +21,13 @@ Object {
       "radius": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}",
     },
     "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-    "padding": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
     "transition": Object {
       "duration": "{{primitives.transition.duration}}",
     },
   },
-  "legend": Object {
+  "legendButton": Object {
     "active": Object {
       "background": Object {
         "color": "{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}",
@@ -59,7 +61,8 @@ Object {
         "weight": "{{primitives.font.weight}}",
       },
       "gap": "{{primitives.space.md}}",
-      "padding": "{{primitives.space.md}}",
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
       "toggleIcon": Object {
         "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
         "height": "{{primitives.icon.size}}",
@@ -99,7 +102,6 @@ Object {
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
       "toggleIcon": Object {
         "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-        "rotate": "0deg",
       },
     },
   },

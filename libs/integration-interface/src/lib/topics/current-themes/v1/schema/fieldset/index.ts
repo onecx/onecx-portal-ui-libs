@@ -5,7 +5,8 @@ import { themeSchemaRegistry } from '../registry'
 import { FieldsetSettingsSchema } from './settings'
 
 const contentShape = z.object({
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
   gap: withRef(z.string()).optional(),
   font: font.pick({ weight: true, family: true, size: true }).optional(),
 })
@@ -15,14 +16,14 @@ const toggleIconShape = z.object({
   color: withRef(z.string()).optional(),
   width: withRef(z.string()).optional(),
   height: withRef(z.string()).optional(),
-  rotate: withRef(z.string()).optional(),
 })
 
-const legendStateShape = z.object({
+const legendButtonStateShape = z.object({
   background: bg.pick({ color: true }).optional(),
   color: withRef(z.string()).optional(),
   border: border.optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
   gap: withRef(z.string()).optional(),
   font: font.pick({ weight: true, family: true, size: true }).optional(),
   focusRing: border.optional(),
@@ -30,19 +31,20 @@ const legendStateShape = z.object({
   toggleIcon: toggleIconShape.prefault({}),
 })
 
-const legendShape = z.object({
-  defaultState: legendStateShape.prefault({}),
-  hover: legendStateShape.prefault({}),
-  focus: legendStateShape.prefault({}),
-  active: legendStateShape.prefault({}),
-  disabled: legendStateShape.prefault({}),
+const legendButtonShape = z.object({
+  defaultState: legendButtonStateShape.prefault({}),
+  hover: legendButtonStateShape.prefault({}),
+  focus: legendButtonStateShape.prefault({}),
+  active: legendButtonStateShape.prefault({}),
+  disabled: legendButtonStateShape.prefault({}),
 })
 
 const fieldsetVariantShape = z.object({
   background: bg.pick({ color: true }).optional(),
   border: border.pick({ color: true, radius: true }).optional(),
   color: withRef(z.string()).optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
   transition: transition.pick({ duration: true }).optional(),
 })
 
@@ -50,7 +52,7 @@ export const fieldsetShape = z.object({
   defaultVariant: fieldsetVariantShape.prefault({}),
   content: contentShape.prefault({}),
   settings: FieldsetSettingsSchema.schema.prefault({}),
-  legend: legendShape.prefault({}),
+  legendButton: legendButtonShape.prefault({}),
 })
 
 export const fieldsetDefaults = {
@@ -61,11 +63,13 @@ export const fieldsetDefaults = {
       radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
     },
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
     transition: { duration: '{{primitives.transition.duration}}' },
   },
   content: {
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
     gap: '{{primitives.space.md}}',
     font: {
       size: '{{primitives.font.size}}',
@@ -73,7 +77,7 @@ export const fieldsetDefaults = {
       family: '{{primitives.font.family}}',
     },
   },
-  legend: {
+  legendButton: {
     defaultState: {
       background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -84,7 +88,8 @@ export const fieldsetDefaults = {
         offset: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.offset}}',
         style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       },
-      padding: '{{primitives.space.md}}',
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
       gap: '{{primitives.space.md}}',
       font: {
         size: '{{primitives.font.size}}',
@@ -109,8 +114,7 @@ export const fieldsetDefaults = {
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
       border: { color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}' },
       toggleIcon: {
-        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-        rotate: '0deg',
+        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'
       },
     },
     focus: {
