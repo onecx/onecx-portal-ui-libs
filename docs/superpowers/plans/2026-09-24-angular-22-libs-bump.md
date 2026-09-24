@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Bump the onecx-portal-ui-libs Nx monorepo from Angular 21 to Angular 22.0.0, Nx 22.3.3 to 23.2.1, and TypeScript 5.9.3 to 6.0.0, via one coordinated `nx migrate 23.2.1` → `npm install` → `nx migrate --run-migrations` pass, apply the official Angular `OnPush`-by-default codemod wholesale, and bump `@angular/*` peerDependency ranges in the 11 published libs that declare them.
+**Goal:** Bump the onecx-portal-ui-libs Nx monorepo from Angular 21 to Angular 22.0.0, Nx 22.3.3 to 23.2.1, and TypeScript 5.9.3 to 6.0.0, via one coordinated `nx migrate 23.2.1` → `npm install` → `nx migrate --run-migrations` pass, apply the official Angular `change-detection-eager` migration (adds `changeDetection: ChangeDetectionStrategy.Eager`) wholesale, and bump `@angular/*` peerDependency ranges in the 11 published libs that declare them.
 
-**Architecture:** This is a dependency/tooling migration, not a feature change. The repo root is a single npm workspace managed by Nx with per-lib `package.json`/`project.json` under `libs/*`. The migration is executed with Nx's built-in migration tool: `nx migrate 23.2.1` rewrites root `package.json` version ranges for the `@nx/*` packages and regenerates `migrations.json`; the remaining Angular/TypeScript/tooling package versions are set directly to fixed target values in the same file; `npm install` installs the new dependency graph with two named override widenings applied unconditionally; `nx migrate --run-migrations` executes every codemod listed in `migrations.json`, including the Angular core `OnPush`-by-default schematic bundled with the `@angular/core` 22.0.0 migration package. Task 2 bumps `@angular/*` peerDependency ranges from `^21.0.0` to `^22.0.0` in the 11 published libs that declare an `@angular/*` peerDependency. Task 3 bumps `angular-integration-interface`'s own `typescript` peerDependency from `^5.5.4` to `^6.0.0`. Task 4 runs the existing `nx run-many` lint/test/build targets and applies a fixed, enumerated set of source edits to keep every currently-passing spec passing under `OnPush`.
+**Architecture:** This is a dependency/tooling migration, not a feature change. The repo root is a single npm workspace managed by Nx with per-lib `package.json`/`project.json` under `libs/*`. The migration is executed with Nx's built-in migration tool: `nx migrate 23.2.1` rewrites root `package.json` version ranges for the `@nx/*` packages and regenerates `migrations.json`; the remaining Angular/TypeScript/tooling package versions are set directly to fixed target values in the same file; `npm install` installs the new dependency graph with two named override widenings applied unconditionally; `nx migrate --run-migrations` executes every codemod listed in `migrations.json`, including the `change-detection-eager` schematic bundled with the `@angular/core` 22.0.0 migration package, which sets `changeDetection: ChangeDetectionStrategy.Eager` on every component that lacked an explicit `changeDetection` property. Task 2 bumps `@angular/*` peerDependency ranges from `^21.0.0` to `^22.0.0` in the 11 published libs that declare an `@angular/*` peerDependency. Task 3 bumps `angular-integration-interface`'s own `typescript` peerDependency from `^5.5.4` to `^6.0.0`. Task 4 runs the existing `nx run-many` lint/test/build targets and applies a fixed, enumerated set of source edits to keep every currently-passing spec passing under the applied `ChangeDetectionStrategy.Eager` change-detection strategy.
 
 **Tech Stack:** Nx 22.3.3→23.2.1, Angular 21.1.6→22.0.0, TypeScript 5.9.3→6.0.0, ng-packagr ^21.0.1→^22.0.0, jest-preset-angular ^16.0.0→^16.2.0, @storybook/angular ^10.2.15→^10.6.0, npm (package-lock.json), Jest 30, ESLint 9 (`.eslintrc.json` plus `eslint.config.cjs` in `libs/angular-linter-rules` and `libs/ngrx-linter-rules`).
 
@@ -18,7 +18,7 @@
 - Final `ng-packagr` version is `22.0.0`.
 - Final `jest-preset-angular` version is `16.2.0`.
 - Final `@storybook/angular` version is `10.6.0`; the framework package stays `@storybook/angular`.
-- The bundled Angular `OnPush`-by-default migration schematic (shipped with the `@angular/core` 22.0.0 upgrade inside `nx migrate --run-migrations`) is applied wholesale and unmodified to every `@Component` decorator lacking an explicit `changeDetection` property, across every file matching `libs/*/src/**/*.component.ts`. No component is manually reviewed or excluded.
+- The bundled Angular `change-detection-eager` migration schematic (shipped with the `@angular/core` 22.0.0 upgrade inside `nx migrate --run-migrations`, factory `change-detection-eager.cjs#migrate`) is applied wholesale and unmodified to every `@Component` decorator lacking an explicit `changeDetection` property, across every file matching `libs/*/src/**/*.component.ts`. It adds `changeDetection: ChangeDetectionStrategy.Eager` (and the `ChangeDetectionStrategy` import from `@angular/core`). In `@angular/core` 22 `Eager` is a valid `ChangeDetectionStrategy` member (equivalent to the deprecated `Default`). No component is manually reviewed or excluded.
 - `@angular/*` peerDependency ranges move from `^21.0.0` to `^22.0.0` in exactly these 11 files: `libs/angular-accelerator/package.json`, `libs/angular-auth/package.json`, `libs/angular-integration-interface/package.json`, `libs/angular-remote-components/package.json`, `libs/angular-standalone-shell/package.json`, `libs/angular-testing/package.json`, `libs/angular-utils/package.json`, `libs/angular-webcomponents/package.json`, `libs/ngrx-accelerator/package.json`, `libs/ngrx-integration-interface/package.json`, `libs/shell-auth/package.json`. No other `libs/*/package.json` file is edited.
 - `libs/angular-integration-interface/package.json`'s `typescript` peerDependency moves from `^5.5.4` to `^6.0.0`.
 - After the migration, `npx nx run-many -t lint`, `npx nx run-many -t test --no-interactive`, and `npx nx run-many -t build` each exit with code 0.
@@ -27,8 +27,8 @@
 
 ## Review Focus
 
-- Jest specs whose assertions run immediately after a state mutation without an explicit `fixture.detectChanges()` call stop reflecting DOM updates once the target component becomes `OnPush`; Task 4 Step 2 runs the full suite once to produce the concrete failing-file list, and Task 4 Step 3 applies the fix to exactly that enumerated list.
-- The Angular `OnPush`-by-default schematic skips components that already declare an explicit `changeDetection` property; Task 1 Step 7 greps for the remainder of components without `changeDetection` after the codemod runs and records the exact list for audit, with zero as the expected count.
+- Jest specs whose assertions run immediately after a state mutation without an explicit `fixture.detectChanges()` call may stop reflecting DOM updates once the target component's change-detection strategy changes; Task 4 Step 2 runs the full suite once to produce the concrete failing-file list, and Task 4 Step 3 applies the fix to exactly that enumerated list.
+- The Angular `change-detection-eager` schematic skips components that already declare an explicit `changeDetection` property; Task 1 Step 7 greps for the remainder of components without `changeDetection` after the codemod runs and records the exact list for audit, with zero as the expected count.
 - `libs/angular-testing/package.json` declares `@angular/cdk` as a peerDependency and is a published lib; Task 2 Step 6 bumps it explicitly so the acceptance criterion is satisfied without omission.
 - The root `package.json` `overrides` block pins `esbuild` and `happy-dom` to fixed ranges that predate the Angular 22 dependency graph; Task 1 Step 5 widens both override entries to fixed target values unconditionally, before running `npm install`, rather than reacting to an install failure.
 - `libs/react-auth/package.json`, `libs/react-integration-interface/package.json`, `libs/react-remote-components/package.json`, `libs/react-utils/package.json`, and `libs/react-webcomponents/package.json` declare only `react`/`react-dom`/`@onecx/*` peerDependencies with no `@angular/*` entries; Task 2 Step 7 runs `git diff --stat -- libs/*/package.json` and confirms none of these five files appear in the output.
@@ -46,7 +46,7 @@
 - Modify: `libs/angular-accelerator/tsconfig.lib.json`, `libs/angular-auth/tsconfig.lib.json`, `libs/angular-integration-interface/tsconfig.lib.json`, `libs/angular-remote-components/tsconfig.lib.json`, `libs/angular-standalone-shell/tsconfig.lib.json`, `libs/angular-testing/tsconfig.lib.json`, `libs/angular-utils/tsconfig.lib.json`, `libs/angular-webcomponents/tsconfig.lib.json`, `libs/ngrx-accelerator/tsconfig.lib.json`, `libs/ngrx-integration-interface/tsconfig.lib.json` (the `set-isolated-modules-22-3-0` migration sets `isolatedModules: true` in each)
 - Modify: `libs/angular-accelerator/jest.config.ts`, `libs/angular-auth/jest.config.ts`, `libs/angular-integration-interface/jest.config.ts`, `libs/angular-remote-components/jest.config.ts`, `libs/angular-standalone-shell/jest.config.ts`, `libs/angular-testing/jest.config.ts`, `libs/angular-utils/jest.config.ts`, `libs/angular-webcomponents/jest.config.ts`, `libs/ngrx-accelerator/jest.config.ts`, `libs/ngrx-integration-interface/jest.config.ts` (the `update-jest-preset-angular-setup` migration rewrites the `jest-preset-angular/setup-jest` import to the `setupZoneTestEnv` function form)
 - Modify: files under `libs/angular-accelerator/.storybook/` (the `update-22-1-0-migrate-storybook-v10` migration adjusts Storybook v10 addon configuration for the one lib in this workspace that exposes a `build-storybook` target)
-- Modify: every file matching `libs/*/src/**/*.component.ts` across `libs/accelerator`, `libs/angular-accelerator`, `libs/angular-auth`, `libs/angular-integration-interface`, `libs/angular-remote-components`, `libs/angular-standalone-shell`, `libs/angular-testing`, `libs/angular-utils`, `libs/angular-webcomponents`, `libs/ngrx-accelerator`, `libs/ngrx-integration-interface`, `libs/shell-auth` — the `OnPush`-by-default schematic adds `changeDetection: ChangeDetectionStrategy.OnPush` to every `@Component` decorator lacking an explicit `changeDetection` property and adds the `ChangeDetectionStrategy` import from `@angular/core` where missing
+- Modify: every file matching `libs/*/src/**/*.component.ts` across `libs/accelerator`, `libs/angular-accelerator`, `libs/angular-auth`, `libs/angular-integration-interface`, `libs/angular-remote-components`, `libs/angular-standalone-shell`, `libs/angular-testing`, `libs/angular-utils`, `libs/angular-webcomponents`, `libs/ngrx-accelerator`, `libs/ngrx-integration-interface`, `libs/shell-auth` — the `change-detection-eager` schematic adds `changeDetection: ChangeDetectionStrategy.Eager` to every `@Component` decorator lacking an explicit `changeDetection` property and adds the `ChangeDetectionStrategy` import from `@angular/core` where missing
 
 **Dependencies:** None — this is the first task.
 
@@ -130,12 +130,12 @@ npm install
 ```
 Expected: exit code 0, `package-lock.json` rewritten.
 
-- [ ] **Step 7: Run the Nx-driven migrations, including the OnPush-by-default codemod**
+- [ ] **Step 7: Run the Nx-driven migrations, including the change-detection-eager codemod**
 
 ```bash
 npx nx migrate --run-migrations
 ```
-Expected: exit code 0. Each migration entry in `migrations.json` runs and prints a success line. Component files across `libs/*` gain `changeDetection: ChangeDetectionStrategy.OnPush`; `tsconfig.lib.json` files gain `isolatedModules: true`; `jest.config.ts` files have their `jest-preset-angular/setup-jest` import rewritten to `setupZoneTestEnv`; `tsconfig.base.json` has `moduleResolution` and `lib` updated.
+Expected: exit code 0. Each migration entry in `migrations.json` runs and prints a success line. Component files across `libs/*` gain `changeDetection: ChangeDetectionStrategy.Eager`; `tsconfig.lib.json` files gain `isolatedModules: true`; `jest.config.ts` files have their `jest-preset-angular/setup-jest` import rewritten to `setupZoneTestEnv`; `tsconfig.base.json` has `moduleResolution` and `lib` updated.
 
 - [ ] **Step 8: Record the components remaining without an explicit `changeDetection` property**
 
@@ -163,10 +163,11 @@ git add -A
 git commit -m "chore: bump Nx to 23.2.1 and Angular to 22.0.0 via nx migrate --run-migrations
 
 Applies the coordinated nx migrate 23.2.1 pass (npm install + nx migrate
---run-migrations), including the official OnPush-by-default Angular
-schematic across all components lacking an explicit changeDetection,
-and the companion TypeScript 6.0.0, ng-packagr 22.0.0,
-jest-preset-angular 16.2.0, and @storybook/angular 10.6.0 bumps.
+--run-migrations), including the official change-detection-eager Angular
+schematic (changeDetection: ChangeDetectionStrategy.Eager) across all
+components lacking an explicit changeDetection, and the companion
+TypeScript 6.0.0, ng-packagr 22.0.0, jest-preset-angular 16.2.0, and
+@storybook/angular 10.6.0 bumps.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
 ```
@@ -348,7 +349,7 @@ Expected: all three commands exit with code 0.
 
 ```bash
 git add -- $(cat /tmp/failing-specs-list.txt)
-git commit -m "test: add fixture.detectChanges() calls for OnPush change detection after Angular 22 bump
+git commit -m "test: add fixture.detectChanges() calls for changed change-detection strategy after Angular 22 bump
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
 ```
