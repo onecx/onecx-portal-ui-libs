@@ -59,17 +59,17 @@ export const togglebuttonMappingRules: MappingRule[] = [
 
   // Root colors — checked
   {
-    from: 'usages.togglebutton.checked.defaultState.background',
+    from: 'usages.togglebutton.defaultVariant.selected.background',
     to: 'components.togglebutton.colorScheme.{mode}.root.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.checked.defaultState.color',
+    from: 'usages.togglebutton.defaultVariant.selected.color',
     to: 'components.togglebutton.colorScheme.{mode}.root.checkedColor',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.checked.defaultState.border.color',
+    from: 'usages.togglebutton.defaultVariant.selected.border.color',
     to: 'components.togglebutton.colorScheme.{mode}.root.checkedBorderColor',
     transform: toColorString,
   },
@@ -98,43 +98,46 @@ export const togglebuttonMappingRules: MappingRule[] = [
     transform: toColorString,
   },
 
-  // Icon colors
+  // Icon colors 
   {
-    from: 'usages.togglebutton.defaultVariant.icon.defaultState.color',
+    from: 'usages.togglebutton.defaultVariant.defaultState.icon.color',
     to: 'components.togglebutton.colorScheme.{mode}.icon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.defaultVariant.icon.hover.color',
+    from: 'usages.togglebutton.defaultVariant.hover.icon.color',
     to: 'components.togglebutton.colorScheme.{mode}.icon.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.checked.icon.defaultState.color',
+    from: 'usages.togglebutton.defaultVariant.selected.icon.color',
     to: 'components.togglebutton.colorScheme.{mode}.icon.checkedColor',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.defaultVariant.icon.disabled.color',
+    from: 'usages.togglebutton.defaultVariant.disabled.icon.color',
     to: 'components.togglebutton.colorScheme.{mode}.icon.disabledColor',
     transform: toColorString,
   },
 
-  // Content sub-element
-  { from: 'usages.togglebutton.defaultVariant.content.padding', to: 'components.togglebutton.content.padding' },
+  // Content sub-element (also lives inside each owning state)
   {
-    from: 'usages.togglebutton.defaultVariant.content.border.radius',
+    from: 'usages.togglebutton.defaultVariant.defaultState.content.padding',
+    to: 'components.togglebutton.content.padding',
+  },
+  {
+    from: 'usages.togglebutton.defaultVariant.defaultState.content.border.radius',
     to: 'components.togglebutton.content.borderRadius',
   },
   { from: 'usages.togglebutton.sm.content.padding', to: 'components.togglebutton.content.sm.padding' },
   { from: 'usages.togglebutton.lg.content.padding', to: 'components.togglebutton.content.lg.padding' },
   {
-    from: 'usages.togglebutton.checked.content.background',
+    from: 'usages.togglebutton.defaultVariant.selected.content.background',
     to: 'components.togglebutton.colorScheme.{mode}.content.checkedBackground',
     transform: toColorString,
   },
   {
-    from: 'usages.togglebutton.checked.content.shadow',
+    from: 'usages.togglebutton.defaultVariant.selected.content.shadow',
     to: 'components.togglebutton.colorScheme.{mode}.content.checkedShadow',
   },
 ]

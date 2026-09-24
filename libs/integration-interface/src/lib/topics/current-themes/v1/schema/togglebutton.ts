@@ -17,36 +17,8 @@ const togglebuttonSettingsShape = z.object({
   fluid: withRef(z.boolean()).optional(),
 })
 
-// Background/color/border(color) tokens that vary per interaction state.
-const togglebuttonStateShape = z.object({
-  background: z.union([bg, withRef(z.string())]).optional(),
-  color: color.optional(),
-  border: border.optional(),
-})
-
-// Invalid only ever changes the border color.
-const togglebuttonInvalidShape = z.object({
-  border: border.pick({ color: true }).optional(),
-})
-
-const togglebuttonIconStateShape = z.object({
-  color: color.optional(),
-})
-
-const togglebuttonIconStatesShape = z.object({
-  defaultState: togglebuttonIconStateShape.prefault({}),
-  hover: togglebuttonIconStateShape.prefault({}),
-  disabled: togglebuttonIconStateShape.prefault({}),
-})
-
-// `checked` icon has no hover token — see the module-level note on hover.
-const togglebuttonIconCheckedStatesShape = z.object({
-  defaultState: togglebuttonIconStateShape.prefault({}),
-  disabled: togglebuttonIconStateShape.prefault({}),
-})
-
 // Content is the inner wrapper span. Padding/radius are constant across
-// variants; only `checked` swaps in a distinct background + shadow.
+// states; only `selected` swaps in a distinct background + shadow.
 const togglebuttonContentShape = z.object({
   padding: withRef(z.string()).optional(),
   border: border.pick({ radius: true }).optional(),
@@ -54,22 +26,38 @@ const togglebuttonContentShape = z.object({
   shadow: withRef(z.string()).optional(),
 })
 
+const togglebuttonIconShape = z.object({
+  color: color.optional(),
+})
+
+// Background/color/border(color) tokens that vary per interaction state,
+// plus the `content`/`icon` children nested inside their owning state —
+// mirrors `dropdown`'s `triggerIcon`, which lives inside each state block
+// (`defaultState.triggerIcon`, `hover.triggerIcon`, ...), not the reverse.
+const togglebuttonStateShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: border.optional(),
+  content: togglebuttonContentShape.prefault({}),
+  icon: togglebuttonIconShape.prefault({}),
+})
+
+// Invalid only ever changes the border color — no content/icon token exists.
+const togglebuttonInvalidShape = z.object({
+  border: border.pick({ color: true }).optional(),
+})
+
+// `checked` maps onto the canonical `selected` state (see `primitives.ts`'s
+// `variantWithStates.state.selected`) — a sibling of `hover`/`disabled`/
+// `invalid`, not a separate variant. This also removes the need to duplicate
+// `disabled`/`invalid` defaults across two variants: there is only ever one
+// variant (`defaultVariant`), and `selected` is just another one of its states.
 const togglebuttonVariantShape = z.object({
   defaultState: togglebuttonStateShape.prefault({}),
   hover: togglebuttonStateShape.prefault({}),
   disabled: togglebuttonStateShape.prefault({}),
   invalid: togglebuttonInvalidShape.prefault({}),
-  content: togglebuttonContentShape.prefault({}),
-  icon: togglebuttonIconStatesShape.prefault({}),
-})
-
-// `checked` variant has no `hover` — see the module-level note.
-const togglebuttonCheckedVariantShape = z.object({
-  defaultState: togglebuttonStateShape.prefault({}),
-  disabled: togglebuttonStateShape.prefault({}),
-  invalid: togglebuttonInvalidShape.prefault({}),
-  content: togglebuttonContentShape.prefault({}),
-  icon: togglebuttonIconCheckedStatesShape.prefault({}),
+  selected: togglebuttonStateShape.prefault({}),
 })
 
 const togglebuttonSizeShape = z.object({
@@ -88,7 +76,6 @@ export const togglebuttonShape = z.object({
   focusRing: borderWithShadow.optional(),
 
   defaultVariant: togglebuttonVariantShape.prefault({}),
-  checked: togglebuttonCheckedVariantShape.prefault({}),
 
   sm: togglebuttonSizeShape.prefault({}),
   lg: togglebuttonSizeShape.prefault({}),
@@ -97,36 +84,6 @@ export const togglebuttonShape = z.object({
 // ------------------------------------------------------------------
 // DEFAULTS
 // ------------------------------------------------------------------
-
-// Shared by both `defaultVariant.disabled` and `checked.disabled` — PrimeNG
-// applies a single `:disabled` rule regardless of checked state.
-const disabledStateDefaults = {
-  background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-  border: {
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-  },
-}
-
-// Shared by both `defaultVariant.invalid` and `checked.invalid` — PrimeNG
-// applies a single `.p-invalid` rule regardless of checked state.
-const invalidStateDefaults = {
-  border: {
-    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
-  },
-}
-
-// Shared by both `defaultVariant.icon.disabled` and `checked.icon.disabled`.
-const iconDisabledStateDefaults = {
-  color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-}
-
-const contentBaselineDefaults = {
-  padding: '{{primitives.space.xs}}',
-  border: {
-    radius: '{{primitives.border.radius.sm}}',
-  },
-}
 
 export const togglebuttonDefaults = {
   padding: '{{primitives.space.sm}}',
@@ -156,45 +113,51 @@ export const togglebuttonDefaults = {
         offset: '{{primitives.border.offset.none}}',
         radius: '{{primitives.border.radius.md}}',
       },
+      content: {
+        padding: '{{primitives.space.xs}}',
+        border: {
+          radius: '{{primitives.border.radius.sm}}',
+        },
+      },
+      icon: {
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      },
     },
     hover: {
       background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-    },
-    disabled: disabledStateDefaults,
-    invalid: invalidStateDefaults,
-    content: contentBaselineDefaults,
-    icon: {
-      defaultState: {
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-      },
-      hover: {
+      icon: {
         color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
       },
-      disabled: iconDisabledStateDefaults,
     },
-  },
-
-  checked: {
-    defaultState: {
+    disabled: {
+      background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      border: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+      },
+      icon: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      },
+    },
+    invalid: {
+      border: {
+        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+      },
+    },
+    selected: {
       background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
       color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
       border: {
         color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
       },
-    },
-    disabled: disabledStateDefaults,
-    invalid: invalidStateDefaults,
-    content: {
-      ...contentBaselineDefaults,
-      background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
-      shadow: '{{primitives.shadow.sm}}',
-    },
-    icon: {
-      defaultState: {
+      content: {
+        background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+        shadow: '{{primitives.shadow.sm}}',
+      },
+      icon: {
         color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
       },
-      disabled: iconDisabledStateDefaults,
     },
   },
 

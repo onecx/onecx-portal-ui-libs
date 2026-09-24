@@ -2,50 +2,7 @@
 
 exports[`togglebutton schema resolves the expected default token tree 1`] = `
 Object {
-  "checked": Object {
-    "content": Object {
-      "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
-      "border": Object {
-        "radius": "{{primitives.border.radius.sm}}",
-      },
-      "padding": "{{primitives.space.xs}}",
-      "shadow": "{{primitives.shadow.sm}}",
-    },
-    "defaultState": Object {
-      "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
-      "border": Object {
-        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}",
-      },
-      "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
-    },
-    "disabled": Object {
-      "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
-      "border": Object {
-        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
-      },
-      "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-    },
-    "icon": Object {
-      "defaultState": Object {
-        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
-      },
-      "disabled": Object {
-        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-      },
-    },
-    "invalid": Object {
-      "border": Object {
-        "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
-      },
-    },
-  },
   "defaultVariant": Object {
-    "content": Object {
-      "border": Object {
-        "radius": "{{primitives.border.radius.sm}}",
-      },
-      "padding": "{{primitives.space.xs}}",
-    },
     "defaultState": Object {
       "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
       "border": Object {
@@ -56,6 +13,15 @@ Object {
         "width": "{{primitives.border.width.sm}}",
       },
       "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "content": Object {
+        "border": Object {
+          "radius": "{{primitives.border.radius.sm}}",
+        },
+        "padding": "{{primitives.space.xs}}",
+      },
+      "icon": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      },
     },
     "disabled": Object {
       "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
@@ -63,25 +29,34 @@ Object {
         "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
       },
       "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+      "icon": Object {
+        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+      },
     },
     "hover": Object {
       "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-    },
-    "icon": Object {
-      "defaultState": Object {
-        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      },
-      "disabled": Object {
-        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
-      },
-      "hover": Object {
+      "icon": Object {
         "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
       },
     },
     "invalid": Object {
       "border": Object {
         "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+      },
+    },
+    "selected": Object {
+      "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}",
+      },
+      "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+      "content": Object {
+        "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+        "shadow": "{{primitives.shadow.sm}}",
+      },
+      "icon": Object {
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
       },
     },
   },
