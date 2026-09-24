@@ -15,7 +15,7 @@ import {
   effect,
   inject,
   input,
-  model,
+  linkedSignal,
   output,
   signal,
   untracked,
@@ -192,7 +192,12 @@ export class InteractiveDataViewComponent implements OnInit {
     this.stateService.selectedRows.set(value)
   }
 
-  displayedColumnKeys = model<string[]>([])
+  // `displayedColumnKeys` is a writable model, but `linkedSignal(input(...))` trips NG8110
+  // (`input()` may only be a direct member initializer), so the input lives in its own member and is
+  // aliased to `displayedColumnKeys` so external `setInput('displayedColumnKeys')` targets it.
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  readonly displayedColumnKeysInput = input<string[]>([], { alias: 'displayedColumnKeys' })
+  displayedColumnKeys = linkedSignal(this.displayedColumnKeysInput)
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return columnKeys

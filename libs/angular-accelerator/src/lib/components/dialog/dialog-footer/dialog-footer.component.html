@@ -16,12 +16,12 @@
       pButton
       [icon]="dialogData().config.secondaryButtonDetails!.icon ?? ''"
       (click)="secondaryButtonAction()"
-      [label]="dialogData().config.secondaryButtonDetails!.key | translate:dialogData().config.secondaryButtonDetails?.parameters"
+      [label]="dialogData().config.secondaryButtonDetails!.key | translate:$safeNavigationMigration(dialogData().config.secondaryButtonDetails?.parameters)"
       [disabled]="secondaryButtonDisabled$ | async"
       [ocxTooltip]="dialogData().config.secondaryButtonDetails!.tooltipKey ? (dialogData().config.secondaryButtonDetails!.tooltipKey | translate) : null"
       [tooltipPosition]="dialogData().config.secondaryButtonDetails?.tooltipPosition ?? ''"
-      [attr.aria-label]="dialogData().config.secondaryButtonDetails!.key | translate:dialogData().config.secondaryButtonDetails?.parameters"
-      [severity]="dialogData().config.secondaryButtonDetails?.severity"
+      [attr.aria-label]="dialogData().config.secondaryButtonDetails!.key | translate:$safeNavigationMigration(dialogData().config.secondaryButtonDetails?.parameters)"
+      [severity]="$safeNavigationMigration(dialogData().config.secondaryButtonDetails?.severity)"
     ></button>
     }
   </div>
@@ -33,12 +33,12 @@
       autofocus
       [icon]="dialogData().config.primaryButtonDetails!.icon ?? ''"
       (click)="primaryButtonAction()"
-      [label]="dialogData().config.primaryButtonDetails!.key | translate:dialogData().config.primaryButtonDetails?.parameters"
+      [label]="dialogData().config.primaryButtonDetails!.key | translate:$safeNavigationMigration(dialogData().config.primaryButtonDetails?.parameters)"
       [disabled]="primaryButtonDisabled$ | async"
       [ocxTooltip]="dialogData().config.primaryButtonDetails!.tooltipKey ? (dialogData().config.primaryButtonDetails!.tooltipKey | translate) : null"
       [tooltipPosition]="dialogData().config.primaryButtonDetails?.tooltipPosition ?? ''"
-      [attr.aria-label]="dialogData().config.primaryButtonDetails!.key | translate:dialogData().config.primaryButtonDetails?.parameters"
-      [severity]="dialogData().config.primaryButtonDetails?.severity"
+      [attr.aria-label]="dialogData().config.primaryButtonDetails!.key | translate:$safeNavigationMigration(dialogData().config.primaryButtonDetails?.parameters)"
+      [severity]="$safeNavigationMigration(dialogData().config.primaryButtonDetails?.severity)"
     ></button>
   </div>
 </div>
