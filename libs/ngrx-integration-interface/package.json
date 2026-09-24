@@ -7,7 +7,7 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/core": "^21.0.0",
+    "@angular/core": "^22.0.0",
     "@ngrx/store": "^21.0.0",
     "@onecx/angular-integration-interface": "9.0.0-rc.13",
     "@onecx/integration-interface": "9.0.0-rc.13",
