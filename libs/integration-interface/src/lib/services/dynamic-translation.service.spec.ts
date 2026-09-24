@@ -10,6 +10,15 @@ import { DynamicTranslationService, TranslationContext } from './dynamic-transla
 import { DynamicTranslationsMessageType } from '../topics/dynamic-translations/v1/dynamic-translations.model';
 import { ensureProperty, FakeTopic } from '@onecx/accelerator';
 import { ShellCapability } from '../models/shell-capability.model';
+// Re-spread the real semver into a writable ESM mock object so `satisfies` can be
+// spied on under the TS 6.0 CJS-namespace interop (properties of the raw module
+// namespace are no longer configurable, which breaks jest.spyOn). Marking it
+// __esModule makes `import * as semver` resolve to this shared object rather than
+// a getter-only namespace wrapper, so the spy is visible to the source too.
+jest.mock('semver', () => {
+  const actual = jest.requireActual('semver');
+  return { ...actual, __esModule: true, default: { ...actual } };
+});
 import * as semver from 'semver';
 import { LIB_NAME } from '../../version';
 
