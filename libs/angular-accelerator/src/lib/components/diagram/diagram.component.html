@@ -13,7 +13,7 @@
 <div class="flex justify-content-center pb-2">
   <p-selectbutton [options]="shownDiagramTypes()" [ngModel]="selectedDiagramType()" optionLabel="id"
     (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false"
-    [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate">
+    [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate" [autofocus]="false">
     <ng-template #item let-item>
       <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
       <span class="sr-only" [attr.id]="'ocx-' + uniqueInstanceId + '-' + item.id">{{item.label ? item.label : item.labelKey | translate}}</span>

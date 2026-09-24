@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
+import { FormsModule } from '@angular/forms'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
 describe('DataLayoutSelectionComponent', () => {
@@ -11,9 +15,8 @@ describe('DataLayoutSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
-      imports: [TranslateModule.forRoot()],
-      providers: [DataViewStateService],
-      schemas: [],
+      imports: [AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot()],
+      providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
@@ -24,6 +27,18 @@ describe('DataLayoutSelectionComponent', () => {
   it('should create', () => {
     fixture.detectChanges()
     expect(component).toBeTruthy()
+  })
+
+  describe('autofocus', () => {
+    it('should have autofocus property on p-selectbutton set to false', () => {
+      fixture.componentRef.setInput('supportedViewLayouts', ['grid', 'list', 'table'])
+      fixture.detectChanges()
+
+      const pSelectButtonDebugEl = fixture.debugElement.query(By.css('p-selectbutton'))
+      expect(pSelectButtonDebugEl).toBeTruthy()
+      // Check that the autofocus input property is set to false
+      expect(pSelectButtonDebugEl.componentInstance.autofocus).toBe(false)
+    })
   })
 
   describe('constructor effect (layout -> selectedViewLayout)', () => {
