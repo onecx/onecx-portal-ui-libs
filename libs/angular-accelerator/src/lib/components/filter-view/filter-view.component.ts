@@ -10,6 +10,7 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -47,6 +48,7 @@ export interface FilterViewComponentState {
   selector: 'ocx-filter-view',
   templateUrl: './filter-view.component.html',
   styleUrls: ['./filter-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [DataViewStateService],
 })
 export class FilterViewComponent {

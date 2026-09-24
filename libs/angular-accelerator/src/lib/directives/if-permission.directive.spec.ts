@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -14,6 +14,7 @@ import * as loggerUtils from '../utils/logger.utils'
 @Component({
   selector: 'ocx-simple',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div id="visibleDiv" *ocxIfPermission="'test-permission'">Visible</div> `,
 })
 class SimpleComponent {}
@@ -22,6 +23,7 @@ class SimpleComponent {}
 @Component({
   selector: 'ocx-simple',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfPermission="['test-permission', 'second-permission']">Visible</div> `,
 })
 class MultiplePermissionComponent {}
@@ -30,6 +32,7 @@ class MultiplePermissionComponent {}
 @Component({
   selector: 'ocx-with-else',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div id="visibleDiv" *ocxIfPermission="'test-permission'; elseTemplate: elseBlock">Visible with Else</div>
     <ng-template #elseBlock>
@@ -43,6 +46,7 @@ class WithElseTemplateComponent {}
 @Component({
   selector: 'ocx-on-missing-disabled',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfPermission="'test-disabled'; onMissingPermission: 'disable'">Disabled</div>`,
 })
 class OnMissingDisabledComponent {}
@@ -51,6 +55,7 @@ class OnMissingDisabledComponent {}
 @Component({
   selector: 'ocx-with-provided',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfPermission="'provided-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -61,6 +66,7 @@ class WithProvidedPermissionsComponent {}
 @Component({
   selector: 'ocx-with-missing-provided',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfPermission="'missing-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -71,6 +77,7 @@ class WithMissingProvidedPermissionsComponent {}
 @Component({
   selector: 'ocx-with-undefined',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfPermission="">Show not show</div>`,
 })
 class WithUndefinedPermissionComponent {}
@@ -79,6 +86,7 @@ class WithUndefinedPermissionComponent {}
 @Component({
   selector: 'ocx-negate-simple',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfNotPermission="'test-permission'">Visible</div> `,
 })
 class NegateSimpleComponent {}
@@ -87,6 +95,7 @@ class NegateSimpleComponent {}
 @Component({
   selector: 'ocx-negate-with-else',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div *ocxIfNotPermission="'missing-permission'; elseTemplate: elseBlock">Hidden</div>
     <ng-template #elseBlock><div>Else Block</div></ng-template>
@@ -98,6 +107,7 @@ class NegateWithElseTemplateComponent {}
 @Component({
   selector: 'ocx-negate-on-missing-disabled',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfNotPermission="'test-disabled'; onMissingPermission: 'disable'">Disabled</div>`,
 })
 class NegateOnMissingDisabledComponent {}
@@ -106,6 +116,7 @@ class NegateOnMissingDisabledComponent {}
 @Component({
   selector: 'ocx-negate-with-provided',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfNotPermission="'provided-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -116,6 +127,7 @@ class NegateWithProvidedPermissionsComponent {}
 @Component({
   selector: 'ocx-negate-with-missing-provided',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfNotPermission="'missing-permission'; permissions: ['provided-permission']">
     Show with provided-permission
   </div>`,
@@ -126,6 +138,7 @@ class NegateWithMissingProvidedPermissionsComponent {}
 @Component({
   selector: 'ocx-negate-with-undefined',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div *ocxIfNotPermission="">Show not show</div>`,
 })
 class NegateWithUndefinedPermissionComponent {}

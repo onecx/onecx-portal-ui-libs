@@ -20,6 +20,7 @@ import {
   signal,
   untracked,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
 import { PrimeTemplate } from 'primeng/api'
@@ -67,6 +68,7 @@ export interface ColumnGroupData {
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: DataViewStateService,

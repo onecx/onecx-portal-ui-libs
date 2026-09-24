@@ -20,6 +20,7 @@ import {
   signal,
   untracked,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import { Router } from '@angular/router'
@@ -82,6 +83,7 @@ export interface DataTableComponentState {
   selector: 'ocx-data-table',
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: DataViewStateService,

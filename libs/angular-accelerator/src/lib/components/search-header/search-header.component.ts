@@ -15,6 +15,7 @@ import {
   signal,
   untracked,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
@@ -60,6 +61,7 @@ export interface SearchConfigData {
   standalone: false,
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [],
 })
 export class SearchHeaderComponent {

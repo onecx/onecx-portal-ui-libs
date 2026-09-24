@@ -17,12 +17,13 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
-@Component({ standalone: false, template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestRouteComponent {}
 
 describe('DataTableComponent', () => {

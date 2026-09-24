@@ -12,6 +12,7 @@ import {
   input,
   signal,
   model,
+  ChangeDetectionStrategy
 } from '@angular/core'
 
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -43,6 +44,7 @@ export type RemoteComponentOutput = OutputEmitterRef<any> | EventEmitter<any>
   standalone: false,
   selector: 'ocx-slot',
   template: ``,
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[attr.name]': 'name()',
   },

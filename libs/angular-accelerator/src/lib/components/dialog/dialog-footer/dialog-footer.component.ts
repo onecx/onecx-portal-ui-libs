@@ -9,6 +9,7 @@ import {
   viewChild,
   viewChildren,
   output,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
@@ -41,6 +42,7 @@ export const defaultDialogData: ButtonDialogData = {
   standalone: false,
   selector: 'ocx-dialog-footer',
   templateUrl: './dialog-footer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, output, signal, OnDestroy } from '@angular/core'
+import { Component, computed, effect, input, model, output, signal, OnDestroy, ChangeDetectionStrategy } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
 import { PrimeIcons } from 'primeng/api'
@@ -52,6 +52,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   standalone: false,
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnDestroy {

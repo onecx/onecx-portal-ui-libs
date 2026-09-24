@@ -15,6 +15,7 @@ import {
   model,
   output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -90,6 +91,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, AfterViewInit {

@@ -1,8 +1,8 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentHarness, HarnessLoader } from '@angular/cdk/testing'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { BasicDirective } from './basic.directive'
@@ -43,6 +43,7 @@ class HostInsideSearchHeaderHarness extends ComponentHarness {
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-search-header>
       <ng-template ocxBasic>
@@ -66,6 +67,7 @@ class HostInsideSearchHeaderComponent {
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template ocxBasic>
       <div id="basic-content">Basic Content</div>
@@ -107,7 +109,7 @@ describe('BasicDirective', () => {
         ],
         imports: [AngularAcceleratorModule],
         providers: [
-          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClient(withXhr(), withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideTranslateTestingService({}),
           provideRouter([]),

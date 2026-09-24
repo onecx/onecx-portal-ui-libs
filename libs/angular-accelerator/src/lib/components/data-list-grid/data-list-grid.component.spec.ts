@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -27,7 +27,8 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
 
-@Component({ standalone: false, template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
