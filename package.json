@@ -26,11 +26,11 @@
     "@module-federation/enhanced": "^2.5.0",
     "@module-federation/runtime-core": "^2.5.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@ngrx/effects": "^21.0.1",
-    "@ngrx/operators": "^21.0.1",
-    "@ngrx/router-store": "^21.0.1",
-    "@ngrx/store": "^21.0.1",
-    "@ngrx/store-devtools": "^21.0.1",
+    "@ngrx/effects": "^22.0.1",
+    "@ngrx/operators": "^22.0.1",
+    "@ngrx/router-store": "^22.0.1",
+    "@ngrx/store": "^22.0.1",
+    "@ngrx/store-devtools": "^22.0.1",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@phenomnomnominal/tsquery": "^6",
@@ -174,7 +174,15 @@
       "minimatch": "^3.1.5"
     },
     "js-yaml@^3.0.0": "3.15.1",
-    "js-yaml@^4.0.0": "4.3.1"
+    "js-yaml@^4.0.0": "4.3.1",
+    "primeng": {
+      "@angular/cdk": "$@angular/cdk",
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core",
+      "@angular/forms": "$@angular/forms",
+      "@angular/platform-browser": "$@angular/platform-browser",
+      "@angular/router": "$@angular/router"
+    }
   },
   "nx": {
     "includedScripts": []
