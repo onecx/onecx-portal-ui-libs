@@ -7,6 +7,7 @@ import { menubarMappingRules } from './usages/menubar.rules'
 import { tooltipMappingRules } from './usages/tooltip.rules'
 import { fieldsetMappingRules } from './usages/fieldset.rules'
 import { diagramMappingRules } from './usages/diagram.rules'
+import { groupByCountDiagramMappingRules } from './usages/group-by-count-diagram.rules'
 import { carouselMappingRules } from './usages/carousel.rules'
 import { toggleswitchMappingRules } from './usages/toggleswitch.rules'
 import { tabsMappingRules } from './usages/tabs.rules'
@@ -38,6 +39,7 @@ export const usageMappingRules: MappingRule[] = [
   ...tabsMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
+  ...groupByCountDiagramMappingRules,
   ...inputMappingRules,
   ...dropdownMappingRules,
   ...textareaMappingRules,

@@ -5,6 +5,7 @@ import { calendarCssRules } from './usages/calendar.rules'
 import { datatableCssRules } from './usages/datatable.rules'
 import { fieldsetCssRules } from './usages/fieldset.rules'
 import { diagramCssRules } from './usages/diagram.rules'
+import { groupByCountDiagramCssRules } from './usages/group-by-count-diagram.rules'
 import { dialogCssRules } from './usages/dialog.rules'
 import { menubarCssRules } from './usages/menubar.rules'
 import { toggleswitchCssRules } from './usages/toggleswitch.rules'
@@ -29,6 +30,7 @@ export const usageCssRules: CssRule[] = [
   ...datatableCssRules,
   ...fieldsetCssRules,
   ...diagramCssRules,
+  ...groupByCountDiagramCssRules,
   ...dialogCssRules,
   ...tabsCssRules,
   ...dropdownCssRules,

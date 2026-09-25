@@ -5,11 +5,11 @@ const CONTAINER: CssRule = {
   declarations: [
     {
       property: 'background',
-      from: 'usages.diagram.container.bgContrast.bg',
+      from: 'usages.diagram.container.background',
     },
     {
       property: 'color',
-      from: 'usages.diagram.container.bgContrast.contrast',
+      from: 'usages.diagram.container.color',
     },
   ],
 }
@@ -19,11 +19,11 @@ const PCHART_CONTAINER: CssRule = {
   declarations: [
     {
       property: 'background',
-      from: 'usages.diagram.container.bgContrast.bg',
+      from: 'usages.diagram.container.background',
     },
     {
       property: 'color',
-      from: 'usages.diagram.container.bgContrast.contrast',
+      from: 'usages.diagram.container.color',
     },
   ],
 }
@@ -63,90 +63,39 @@ const DESCRIPTION: CssRule = {
   ],
 }
 
-const SELECT_BUTTON_ICON: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-button-icon',
+const SELECT_BUTTON_ROOT: CssRule = {
+  selector: 'ocx-diagram .p-selectbutton',
   declarations: [
     {
-      property: 'color',
-      from: 'usages.diagram.selectButton.icon.color',
-    },
-  ],
-}
-
-const SELECT_BUTTON: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-togglebutton-content',
-  declarations: [
-    {
-      property: 'background-color',
-      from: 'usages.diagram.selectButton.bgContrast.bg',
+      property: 'gap',
+      from: 'usages.diagram.selectButton.gap',
     },
     {
       property: 'border-color',
-      from: 'usages.diagram.selectButton.border',
+      from: 'usages.diagram.selectButton.border.color',
     },
     {
-      property: 'color',
-      from: 'usages.diagram.selectButton.bgContrast.contrast',
+      property: 'border-style',
+      from: 'usages.diagram.selectButton.border.style',
+    },
+    {
+      property: 'border-width',
+      from: 'usages.diagram.selectButton.border.width',
+    },
+    {
+      property: 'border-radius',
+      from: 'usages.diagram.selectButton.border.radius',
+    },
+    {
+      property: 'padding-left',
+      from: 'usages.diagram.selectButton.paddingX',
+    },
+    {
+      property: 'padding-right',
+      from: 'usages.diagram.selectButton.paddingY',
     },
   ],
 }
-
-const SELECT_BUTTON_STATES_HOVER: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-togglebutton-content:hover',
-  declarations: [
-    {
-      property: 'background-color',
-      from: 'usages.diagram.selectButton.bgContrast.bg',
-    },
-    {
-      property: 'color',
-      from: 'usages.diagram.selectButton.bgContrast.contrast',
-    }
-  ]
-}
-
-const SELECT_BUTTON_STATES_ACTIVE: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-togglebutton-content:active',
-  declarations: [
-    {
-      property: 'background-color',
-      from: 'usages.diagram.selectButton.bgContrast.bg',
-    },
-    {
-      property: 'color',
-      from: 'usages.diagram.selectButton.bgContrast.contrast',
-    }
-  ]
-}
-
-const SELECT_BUTTON_STATES_SELECTED: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-togglebutton-content:selected',
-  declarations: [
-    {
-      property: 'background-color',
-      from: 'usages.diagram.selectButton.bgContrast.bg',
-    },
-    {
-      property: 'color',
-      from: 'usages.diagram.selectButton.bgContrast.contrast',
-    }
-  ]
-}
-
-const SELECT_BUTTON_STATES_FOCUS: CssRule = {
-  selector: 'ocx-diagram .p-selectbutton .p-togglebutton-content:focus',
-  declarations: [
-    {
-      property: 'background-color',
-      from: 'usages.diagram.selectButton.bgContrast.bg',
-    },
-    {
-      property: 'color',
-      from: 'usages.diagram.selectButton.bgContrast.contrast',
-    }
-  ]
-}
-
 const FOOTER: CssRule = {
   selector: 'ocx-diagram .footer',
   declarations: [
@@ -169,11 +118,6 @@ export const diagramCssRules: CssRule[] = [
   PCHART_CONTAINER,
   HEADER,
   DESCRIPTION,
-  SELECT_BUTTON_ICON,
-  SELECT_BUTTON,
-  SELECT_BUTTON_STATES_HOVER,
-  SELECT_BUTTON_STATES_ACTIVE,
-  SELECT_BUTTON_STATES_SELECTED,
-  SELECT_BUTTON_STATES_FOCUS,
+  SELECT_BUTTON_ROOT,
   FOOTER,
 ]
