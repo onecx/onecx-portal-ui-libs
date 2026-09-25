@@ -2,7 +2,6 @@ import * as z from 'zod'
 import { applyDefaultsRecursive } from './defaults-helper'
 import { bg, border, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
-import { selectbutton } from './selectbutton'
 
 export const diagramTextShape = z.object({
   font: font.optional(),
