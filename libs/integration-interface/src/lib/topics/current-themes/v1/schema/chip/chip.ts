@@ -3,7 +3,7 @@ import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, border, borderWithShadow, color, icon, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
-const filterViewChipSettingsShape = z.object({
+const chipSettingsShape = z.object({
   unstyled: withRef(z.boolean()).optional(),
   disabled: withRef(z.boolean()).optional(),
   removable: withRef(z.boolean()).optional(),
@@ -51,8 +51,8 @@ const iconFontDefaults = {
   style: '{{primitives.font.style}}',
 }
 
-export const filterViewChipShape = z.object({
-  settings: filterViewChipSettingsShape.optional(),
+export const chipShape = z.object({
+  settings: chipSettingsShape.optional(),
   border: border.optional(),
   focusRing: borderWithShadow.optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
@@ -78,7 +78,7 @@ export const filterViewChipShape = z.object({
     .optional(),
 })
 
-export const filterViewChipDefaults = {
+export const chipDefaults = {
   settings: { unstyled: false, disabled: false, removable: false },
   border: borderDefaults,
   focusRing: focusRingDefaults,
@@ -107,11 +107,8 @@ export const filterViewChipDefaults = {
   },
 }
 
-export const filterViewChip = applyDefaultsRecursive(filterViewChipShape, filterViewChipDefaults).register(
-  themeSchemaRegistry,
-  { id: 'filterViewChip' }
-)
+export const chip = applyDefaultsRecursive(chipShape, chipDefaults).register(themeSchemaRegistry, { id: 'chip' })
 
-export class FilterViewChipSchema {
-  static readonly schema = filterViewChip
+export class ChipSchema {
+  static readonly schema = chip
 }

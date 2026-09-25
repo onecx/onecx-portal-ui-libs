@@ -3,23 +3,22 @@ import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, border, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
-export const customGroupColumnSelectorSkeletonShape = z.object({
+export const skeletonShape = z.object({
   border: border.pick({ radius: true }).optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
   animationBackground: z.union([bg, withRef(z.string())]).optional(),
 })
 
-export const customGroupColumnSelectorSkeletonDefaults = {
+export const skeletonDefaults = {
   border: { radius: '{{primitives.border.radius.none}}' },
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
   animationBackground: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
 }
 
-export const customGroupColumnSelectorSkeleton = applyDefaultsRecursive(
-  customGroupColumnSelectorSkeletonShape,
-  customGroupColumnSelectorSkeletonDefaults
-).register(themeSchemaRegistry, { id: 'customGroupColumnSelectorSkeleton' })
+export const skeleton = applyDefaultsRecursive(skeletonShape, skeletonDefaults).register(themeSchemaRegistry, {
+  id: 'skeleton',
+})
 
-export class CustomGroupColumnSelectorSkeletonSchema {
-  static readonly schema = customGroupColumnSelectorSkeleton
+export class SkeletonSchema {
+  static readonly schema = skeleton
 }

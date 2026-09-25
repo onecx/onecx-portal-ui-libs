@@ -3,10 +3,6 @@ import { withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { applyDefaultsRecursive } from '../defaults-helper'
 import { interactiveDataViewContainerDefaults, interactiveDataViewContainerShape } from './container'
-import { filterViewChipDefaults, filterViewChipShape } from './filter-view-chip'
-import { dataTable } from '../data-table/data-table'
-
-const dataTableShape = z.object(dataTable.shape)
 
 const filterViewSettingsShape = z.object({
   filterViewEnabled: withRef(z.boolean()).optional(),
@@ -16,8 +12,6 @@ const filterViewSettingsShape = z.object({
 
 export const filterViewShape = interactiveDataViewContainerShape.extend({
   settings: filterViewSettingsShape.optional(),
-  chip: filterViewChipShape.optional(),
-  dataTable: dataTableShape.optional(),
 })
 
 export const filterViewDefaults = {
@@ -27,8 +21,6 @@ export const filterViewDefaults = {
     filterViewDisplayMode: 'button',
     maxDisplayedChips: 3,
   },
-  chip: filterViewChipDefaults,
-  dataTable: dataTable.parse({}),
 }
 
 export const filterView = applyDefaultsRecursive(filterViewShape, filterViewDefaults).register(themeSchemaRegistry, {

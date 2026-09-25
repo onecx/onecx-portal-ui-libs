@@ -125,6 +125,11 @@ export type ThemePath =
   | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
   | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
+  | `usages.chip.${LeafPaths<NonNullable<Usages['chip']>>}`
+  | `usages.customGroupColumnSelector.${LeafPaths<NonNullable<Usages['customGroupColumnSelector']>>}`
+  | `usages.dataListGrid.${LeafPaths<NonNullable<Usages['dataListGrid']>>}`
+  | `usages.paginator.${LeafPaths<NonNullable<Usages['paginator']>>}`
+  | `usages.skeleton.${LeafPaths<NonNullable<Usages['skeleton']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**

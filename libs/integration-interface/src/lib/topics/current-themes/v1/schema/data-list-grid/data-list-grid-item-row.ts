@@ -1,7 +1,7 @@
 import * as z from 'zod'
-import { applyDefaultsRecursive } from '../../defaults-helper'
-import { bg, border, borderWithShadow, color, withRef } from '../../primitives'
-import { themeSchemaRegistry } from '../../registry'
+import { applyDefaultsRecursive } from '../defaults-helper'
+import { bg, border, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 const defaultBorderDefaults = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',

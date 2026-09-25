@@ -2,7 +2,16 @@ import * as z from 'zod'
 import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, border, color, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
-import { dataviewPaginatorDefaults, dataviewPaginatorShape } from './paginator'
+
+const paginatorShape = z.object({
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+})
+
+const paginatorDefaults = {
+  paddingX: '{{primitives.space.sm}}',
+  paddingY: '{{primitives.space.sm}}',
+}
 
 export const dataviewHeaderDefaults = {
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
@@ -17,7 +26,7 @@ export const dataviewHeaderDefaults = {
   paddingX: '{{primitives.space.md}}',
   paddingY: '{{primitives.space.md}}',
   gap: '{{primitives.space.md}}',
-  paginator: dataviewPaginatorDefaults,
+  paginator: paginatorDefaults,
 }
 
 export const dataviewHeaderShape = z.object({
@@ -27,7 +36,7 @@ export const dataviewHeaderShape = z.object({
   paddingX: withRef(z.string()).optional(),
   paddingY: withRef(z.string()).optional(),
   gap: withRef(z.string()).optional(),
-  paginator: dataviewPaginatorShape.optional(),
+  paginator: paginatorShape.optional(),
 })
 
 export const dataviewHeader = applyDefaultsRecursive(dataviewHeaderShape, dataviewHeaderDefaults).register(themeSchemaRegistry, {

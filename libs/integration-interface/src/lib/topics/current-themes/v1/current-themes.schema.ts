@@ -35,6 +35,11 @@ import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 import { dataviewShape } from './schema/dataview/dataview'
+import { chip, chipShape } from './schema/chip'
+import { customGroupColumnSelector, customGroupColumnSelectorShape } from './schema/custom-group-column-selector'
+import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
+import { paginator, paginatorShape } from './schema/paginator'
+import { skeleton, skeletonShape } from './schema/skeleton'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -66,6 +71,11 @@ type UsagesInput = {
   pageHeader?: z.input<typeof pageHeader>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataviewShape>
+  chip?: z.input<typeof chipShape>
+  customGroupColumnSelector?: z.input<typeof customGroupColumnSelectorShape>
+  dataListGrid?: z.input<typeof dataListGridShape>
+  paginator?: z.input<typeof paginatorShape>
+  skeleton?: z.input<typeof skeletonShape>
 }
 
 const usages: z.ZodType<UsagesInput> = z
@@ -99,6 +109,11 @@ const usages: z.ZodType<UsagesInput> = z
     pageHeader: (pageHeader as typeof pageHeader).optional(),
     content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
+    chip: (chip as typeof chip).optional(),
+    customGroupColumnSelector: (customGroupColumnSelector as typeof customGroupColumnSelector).optional(),
+    dataListGrid: (dataListGrid as typeof dataListGrid).optional(),
+    paginator: (paginator as typeof paginator).optional(),
+    skeleton: (skeleton as typeof skeleton).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 

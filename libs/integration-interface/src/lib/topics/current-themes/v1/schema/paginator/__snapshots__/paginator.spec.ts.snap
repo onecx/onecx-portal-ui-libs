@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`paginator schema resolves the expected default token tree 1`] = `
+Object {
+  "button": Object {
+    "active": Object {
+      "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
+    },
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "radius": "{{primitives.border.radius.md}}",
+    },
+    "hover": Object {
+      "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+    },
+  },
+  "input": Object {
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.md}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.sm}}",
+    },
+    "icon": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    },
+  },
+  "paddingX": "{{primitives.space.sm}}",
+  "paddingY": "{{primitives.space.sm}}",
+}
+`;

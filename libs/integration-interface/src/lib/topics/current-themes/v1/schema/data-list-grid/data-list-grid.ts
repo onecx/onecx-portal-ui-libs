@@ -1,7 +1,7 @@
 import * as z from 'zod'
-import { applyDefaultsRecursive } from '../../defaults-helper'
-import { bg, border, color, withRef } from '../../primitives'
-import { themeSchemaRegistry } from '../../registry'
+import { applyDefaultsRecursive } from '../defaults-helper'
+import { bg, border, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { dataListGridItemCardDefaults, dataListGridItemCardShape } from './data-list-grid-item-card'
 import { dataListGridItemRowDefaults, dataListGridItemRowShape } from './data-list-grid-item-row'
 

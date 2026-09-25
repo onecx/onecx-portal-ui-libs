@@ -1,24 +1,15 @@
 import * as z from 'zod'
 import { applyDefaultsRecursive } from '../../defaults-helper'
-import { bg, border, color, withRef } from '../../primitives'
+import { bg, border, withRef } from '../../primitives'
 import { themeSchemaRegistry } from '../../registry'
 import { dataListGridSortingButtonDefaults, dataListGridSortingButtonShape } from './data-list-grid-sorting-button'
-import {
-  dataListGridSortingDropdownDefaults,
-  dataListGridSortingDropdownShape,
-} from './data-list-grid-sorting-dropdown'
-import {
-  dataListGridSortingFloatLabelDefaults,
-  dataListGridSortingFloatLabelShape,
-} from './data-list-grid-sorting-float-label'
 
 export const dataListGridSortingShape = z.object({
   border: border.pick({ color: true, width: true, radius: true }).optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
-  color: color.optional(),
-  space: withRef(z.string()).optional(),
-  floatLabel: dataListGridSortingFloatLabelShape.optional(),
-  dropdown: dataListGridSortingDropdownShape.optional(),
+  gap: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
   button: dataListGridSortingButtonShape.optional(),
 })
 
@@ -29,10 +20,9 @@ export const dataListGridSortingDefaults = {
     radius: '{{primitives.radius.sm}}',
   },
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-  space: '{{primitives.space.md}}',
-  floatLabel: dataListGridSortingFloatLabelDefaults,
-  dropdown: dataListGridSortingDropdownDefaults,
+  gap: '{{primitives.space.md}}',
+  paddingX: '{{primitives.space.sm}}',
+  paddingY: '{{primitives.space.sm}}',
   button: dataListGridSortingButtonDefaults,
 }
 
