@@ -11,7 +11,7 @@ import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
-import { fieldset } from './schema/fieldset'
+import { fieldset, fieldsetShape } from './schema/fieldset'
 import { diagram } from './schema/diagram'
 import { dropdown } from './schema/dropdown'
 import { dropdownShape } from './schema/dropdown'
@@ -43,7 +43,7 @@ type UsagesInput = {
   table?: z.input<typeof table>
   tooltip?: z.input<typeof tooltip>
   carousel?: z.input<typeof carousel>
-  fieldset?: z.input<typeof fieldset>
+  fieldset?: z.input<typeof fieldsetShape>
   diagram?: z.input<typeof diagram>
   dropdown?: z.input<typeof dropdownShape>
   tabs?: z.input<typeof tabs>
@@ -77,7 +77,7 @@ const usages: z.ZodType<UsagesInput> = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
+    fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
