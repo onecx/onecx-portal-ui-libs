@@ -3,7 +3,7 @@ import { themeSchemaRegistry } from '../registry'
 import { applyDefaultsRecursive } from '../defaults-helper'
 import { accordionPanelDefaults, accordionPanelShape } from './panel'
 
-const accordionShape = z.object({
+export const accordionShape = z.object({
   defaultVariant: z
     .object({
       panel: accordionPanelShape.prefault({}),
