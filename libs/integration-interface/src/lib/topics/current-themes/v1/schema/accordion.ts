@@ -1,3 +1,1 @@
-import { AccordionSchema } from './accordion/index'
-
-export const accordion = AccordionSchema.schema
+export { accordion, AccordionSchema } from './accordion/index'
