@@ -11,11 +11,10 @@ import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
-import { fieldset } from './schema/fieldset'
 import { diagram, diagramShape } from './schema/diagram'
 import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
-import { dropdown } from './schema/dropdown'
-import { dropdownShape } from './schema/dropdown'
+import { fieldset, fieldsetShape } from './schema/fieldset'
+import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
@@ -44,7 +43,7 @@ type UsagesInput = {
   table?: z.input<typeof table>
   tooltip?: z.input<typeof tooltip>
   carousel?: z.input<typeof carousel>
-  fieldset?: z.input<typeof fieldset>
+  fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
   diagram?: z.input<typeof diagramShape>
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
@@ -79,7 +78,7 @@ const usages: z.ZodType<UsagesInput> = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
+    fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
     groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
