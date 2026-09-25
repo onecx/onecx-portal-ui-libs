@@ -5,7 +5,7 @@ import { expectExactTokens, expectExactUndefinedTokens, expectUndefinedTokens } 
 const BREADCRUMB_ITEM_BASE_TOKENS = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   background: { color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' },
-  border: { 
+  border: {
     radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
     width: '{{primitives.border.width.md}}',
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',

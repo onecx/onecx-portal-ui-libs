@@ -10,7 +10,6 @@ export class MenuItemSchema {
   static readonly iconHover = {
     color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
   }
-
   static readonly icon = {
     color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
     focus: z
