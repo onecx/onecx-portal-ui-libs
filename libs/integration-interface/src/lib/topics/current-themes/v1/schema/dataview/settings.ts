@@ -1,24 +1,37 @@
-import z from 'zod'
+import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
 import { withRef } from '../primitives'
 
-export class DataviewSettingsSchema {
-  static readonly settings = {
-    paginator: withRef(z.boolean()).default(false),
-    pageLinks: withRef(z.number()).default(5),
-    paginatorPosition: withRef(z.enum(['top', 'bottom', 'both'])).default('bottom'),
-    alwaysShowPaginator: withRef(z.boolean()).default(true),
-    paginatorDropdownScrollHeight: withRef(z.string()).default('200px'),
-    showCurrentPageReport: withRef(z.boolean()).default(false),
-    showJumpToPageDropdown: withRef(z.boolean()).default(false),
-    showFirstLastIcon: withRef(z.boolean()).default(true),
-    showPageLinks: withRef(z.boolean()).default(true),
-    loading: withRef(z.boolean()).default(false),
-  }
+export const dataviewSettingsShape = z.object({
+  paginator: withRef(z.boolean()).optional(),
+  pageLinks: withRef(z.number()).optional(),
+  paginatorPosition: withRef(z.enum(['top', 'bottom', 'both'])).optional(),
+  alwaysShowPaginator: withRef(z.boolean()).optional(),
+  paginatorDropdownScrollHeight: withRef(z.string()).optional(),
+  showCurrentPageReport: withRef(z.boolean()).optional(),
+  showJumpToPageDropdown: withRef(z.boolean()).optional(),
+  showFirstLastIcon: withRef(z.boolean()).optional(),
+  showPageLinks: withRef(z.boolean()).optional(),
+  loading: withRef(z.boolean()).optional(),
+})
 
-  static readonly schema = z
-    .object({
-      ...this.settings,
-    })
-    .register(themeSchemaRegistry, { id: 'dataviewSettings' })
+export const dataviewSettingsDefaults = {
+  paginator: false,
+  pageLinks: 5,
+  paginatorPosition: 'bottom',
+  alwaysShowPaginator: true,
+  paginatorDropdownScrollHeight: '200px',
+  showCurrentPageReport: false,
+  showJumpToPageDropdown: false,
+  showFirstLastIcon: true,
+  showPageLinks: true,
+  loading: false,
 }
+
+export const dataviewSettings = dataviewSettingsShape
+
+export class DataviewSettingsSchema {
+  static readonly schema = dataviewSettings
+}
+
+void themeSchemaRegistry

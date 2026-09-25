@@ -1,7 +1,7 @@
 import * as z from 'zod'
-import { applyDefaultsRecursive } from '../defaults-helper'
-import { bg, border, borderWithShadow, color, withRef } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import { applyDefaultsRecursive } from '../../defaults-helper'
+import { border, color, icon, withRef } from '../../primitives'
+import { themeSchemaRegistry } from '../../registry'
 
 const defaultBorderDefaults = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
@@ -27,6 +27,15 @@ const focusBorderDefaults = {
   offset: '{{primitives.border.offset.none}}',
 }
 
+const focusRingShape = z.object({
+  color: color.optional(),
+  style: withRef(z.string()).optional(),
+  width: withRef(z.string()).optional(),
+  radius: withRef(z.string()).optional(),
+  offset: withRef(z.string()).optional(),
+  shadow: withRef(z.string()).optional(),
+})
+
 const focusRingDefaults = {
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
   style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
@@ -36,46 +45,50 @@ const focusRingDefaults = {
   shadow: '{{primitives.focusRing.shadow.none}}',
 }
 
-const itemRowStateShape = z.object({
+export const dataListGridSortingButtonShape = z.object({
   border: border.optional(),
-  background: z.union([bg, withRef(z.string())]).optional(),
-  color: color.optional(),
-  paddingX: withRef(z.string()).optional(),
-  paddingY: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
+  focusRing: focusRingShape.optional(),
+  icon: icon.optional(),
+  hover: z
+    .object({
+      border: border.optional(),
+      icon: icon.pick({ color: true }).optional(),
+    })
+    .optional(),
+  focus: z
+    .object({
+      border: border.optional(),
+      focusRing: focusRingShape.optional(),
+    })
+    .optional(),
 })
 
-export const dataListGridItemRowShape = itemRowStateShape.extend({
-  hover: itemRowStateShape.partial().optional(),
-  focus: itemRowStateShape.partial().optional(),
-})
-
-export const dataListGridItemRowDefaults = {
+export const dataListGridSortingButtonDefaults = {
   border: defaultBorderDefaults,
-  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-  paddingX: '{{primitives.space.sm}}',
-  paddingY: '{{primitives.space.sm}}',
-  gap: '{{primitives.space.sm}}',
+  focusRing: focusRingDefaults,
+  icon: {
+    size: '{{primitives.iconSizes.sm}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    content: '',
+    url: '',
+  },
   hover: {
     border: hoverBorderDefaults,
-    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    icon: {
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    },
   },
   focus: {
     border: focusBorderDefaults,
-    background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
     focusRing: focusRingDefaults,
   },
 }
 
-export const dataListGridItemRow = applyDefaultsRecursive(
-  dataListGridItemRowShape,
-  dataListGridItemRowDefaults
-).register(themeSchemaRegistry, { id: 'dataListGridItemRow' })
+export const dataListGridSortingButton = applyDefaultsRecursive(
+  dataListGridSortingButtonShape,
+  dataListGridSortingButtonDefaults
+).register(themeSchemaRegistry, { id: 'dataListGridSortingButton' })
 
-export class DataListGridItemRowSchema {
-  static readonly schema = dataListGridItemRow
+export class DataListGridSortingButtonSchema {
+  static readonly schema = dataListGridSortingButton
 }
