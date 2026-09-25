@@ -5,7 +5,15 @@
  * @jest-environment node
  */
 
-import * as fs from 'fs'
+// Re-spread the real node:fs into a writable ESM mock so `existsSync` can be spied
+// on under the TS 6.0 CJS-namespace interop (raw-namespace props are no longer
+// configurable, which breaks jest.spyOn). Importing via the same 'node:fs'
+// specifier the source uses keeps spec and source on one shared mock object.
+jest.mock('node:fs', () => {
+  const actual = jest.requireActual('node:fs')
+  return { ...actual, __esModule: true, default: { ...actual } }
+})
+import * as fs from 'node:fs'
 import {
   getOneCXSharedLibraryConfig,
   onecxPackageFilter,

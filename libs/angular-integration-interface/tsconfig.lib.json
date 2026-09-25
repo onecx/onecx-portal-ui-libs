@@ -17,5 +17,17 @@
     "**/*.stories.ts",
     "jest.config.ts"
   ],
-  "include": ["**/*.ts", "mocks/**/*", "src/**/*"]
+  "include": [
+    "**/*.ts",
+    "mocks/**/*",
+    "src/**/*"
+  ],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }

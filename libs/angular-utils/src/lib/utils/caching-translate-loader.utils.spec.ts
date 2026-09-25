@@ -1,4 +1,4 @@
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { Injector } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
@@ -14,7 +14,7 @@ describe('CachingTranslateLoader', () => {
     await TestBed.configureTestingModule({
     declarations: [],
     imports: [],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+    providers: [provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()]
 }).compileComponents()
     http = TestBed.inject(HttpClient)
     translationCache = TestBed.inject(TranslationCacheService)

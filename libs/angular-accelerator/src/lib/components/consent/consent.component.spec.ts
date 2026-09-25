@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core'
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TranslationObject, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
@@ -30,6 +30,7 @@ class FakeTranslateLoader implements TranslateLoader {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-consent
       [url]="url()"

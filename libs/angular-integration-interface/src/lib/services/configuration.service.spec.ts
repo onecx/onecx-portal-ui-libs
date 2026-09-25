@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ConfigurationService } from './configuration.service'
 import { FakeTopic } from '@onecx/accelerator'
@@ -23,7 +23,7 @@ describe('ConfigurationService', () => {
     await TestBed.configureTestingModule({
       declarations: [],
       imports: [],
-      providers: [ConfigurationService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+      providers: [ConfigurationService, provideHttpClient(withXhr(), withInterceptorsFromDi()), provideHttpClientTesting()],
     }).compileComponents()
     configuration = TestBed.inject(ConfigurationService)
     ;(configuration as any).config$ = new FakeTopic<Config>()

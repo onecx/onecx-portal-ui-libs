@@ -3,7 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import {
@@ -222,7 +222,7 @@ describe('DataViewComponent', () => {
             },
           },
         },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         TooltipStyle,
@@ -260,7 +260,7 @@ describe('DataViewComponent', () => {
           provideTranslateTestingService(TRANSLATIONS),
           provideUserServiceMock(),
           { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
-          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClient(withXhr(), withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideAppStateServiceMock(),
           TooltipStyle,

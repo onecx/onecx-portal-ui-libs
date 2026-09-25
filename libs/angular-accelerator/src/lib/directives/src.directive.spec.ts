@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { of, throwError } from 'rxjs'
@@ -10,6 +10,7 @@ import * as loggerUtils from '../utils/logger.utils'
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<img id="img" [ocxSrc]="src" (error)="onError()" />`,
 })
 class HostComponent {

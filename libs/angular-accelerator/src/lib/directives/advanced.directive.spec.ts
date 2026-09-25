@@ -1,9 +1,9 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { HarnessLoader } from '@angular/cdk/testing'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AdvancedDirective } from './advanced.directive'
@@ -16,6 +16,7 @@ import { provideRouter } from '@angular/router'
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-search-header>
       <ng-template ocxAdvanced>
@@ -35,6 +36,7 @@ class HostInsideSearchHeaderComponent {
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template ocxAdvanced>
       <div id="advanced-content">Advanced Content</div>
@@ -71,7 +73,7 @@ describe('AdvancedDirective', () => {
         declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, AdvancedDirective],
         imports: [AngularAcceleratorModule],
         providers: [
-          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClient(withXhr(), withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideTranslateTestingService({}),
           provideRouter([]),

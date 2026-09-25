@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input } from '@angular/core'
+import { Component, OnInit, inject, input, ChangeDetectionStrategy } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { of, switchMap, tap } from 'rxjs'
 import { CommonModule } from '@angular/common'
@@ -12,6 +12,7 @@ import { createLogger } from '../../utils/logger.utils'
   templateUrl: './portal-page.component.html',
   styleUrls: ['./portal-page.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CommonModule, TranslateModule],
 })
 export class PortalPageComponent implements OnInit {

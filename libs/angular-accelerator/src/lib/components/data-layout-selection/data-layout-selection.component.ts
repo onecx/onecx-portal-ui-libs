@@ -1,4 +1,4 @@
-import { Component, computed, inject, Input, input, OnInit, output } from '@angular/core'
+import { Component, computed, inject, Input, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core'
 import { PrimeIcons } from 'primeng/api'
 import { PrimeIcon } from '../../utils/primeicon.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -45,6 +45,7 @@ export interface DataLayoutSelectionComponentState {
   standalone: false,
   selector: 'ocx-data-layout-selection',
   templateUrl: './data-layout-selection.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./data-layout-selection.component.scss'],
 })
 export class DataLayoutSelectionComponent implements OnInit {

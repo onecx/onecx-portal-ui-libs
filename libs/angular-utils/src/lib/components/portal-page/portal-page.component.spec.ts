@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -6,7 +6,7 @@ import { provideAngularUtils } from '../../providers/angular-utils.providers'
 import { PortalPageComponent } from './portal-page.component'
 import { PermissionService } from '../../services/permission.service'
 import { of } from 'rxjs'
-import { Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component } from '@angular/core'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -18,7 +18,7 @@ describe('PortalPageComponent', () => {
       providers: [
         provideAngularUtils(),
         { provide: PermissionService, useValue: { hasPermission: jest.fn() } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideUserServiceMock(),
         provideAppStateServiceMock(),
         provideTranslateTestingService({
@@ -67,6 +67,7 @@ describe('PortalPageComponent', () => {
 describe('PortalPageComponent host projection', () => {
   @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [PortalPageComponent],
     template: `
       <ocx-portal-page [permission]="permission">
@@ -86,7 +87,7 @@ describe('PortalPageComponent host projection', () => {
       imports: [PortalPageComponent, HostComponent],
       providers: [
         provideAngularUtils(),
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideUserServiceMock(),
         provideAppStateServiceMock(),
         { provide: PermissionService, useValue: { hasPermission: jest.fn() } },

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TranslateService } from '@ngx-translate/core'
@@ -162,7 +162,7 @@ describe('GroupByCountDiagramComponent', () => {
       declarations: [GroupByCountDiagramComponent, DiagramComponent],
       imports: [AngularAcceleratorModule, OcxTooltipDirective],
       providers: [
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideTranslateTestingService({
           en: require('./../../../../assets/i18n/en.json'),
