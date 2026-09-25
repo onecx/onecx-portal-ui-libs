@@ -48,8 +48,8 @@ export const diagramDefaults = {
   header: textDefaults,
   description: textDefaults,
   selectButton: {
-    paddingX: withRef(z.string()).default('{{primitives.space.xs}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.xs}}'),
+    paddingX: '{{primitives.space.xs}}',
+    paddingY: '{{primitives.space.xs}}',
   },
   footer: textDefaults,
 }
