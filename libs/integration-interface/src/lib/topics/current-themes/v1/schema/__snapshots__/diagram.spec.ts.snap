@@ -5,6 +5,8 @@ Object {
   "container": Object {
     "background": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
     "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
+    "paddingX": "{{primitives.space.xs}}",
+    "paddingY": "{{primitives.space.xs}}",
   },
   "description": Object {
     "font": Object {
@@ -28,65 +30,110 @@ Object {
     },
   },
   "selectButton": Object {
-    "border": Object {
-      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
-      "radius": "{{primitives.border.radius.md}}",
-      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
-      "width": "{{primitives.border.width.sm}}",
+    "paddingX": ZodDefault {
+      "def": Object {
+        "defaultValue": "{{primitives.space.xs}}",
+        "innerType": ZodUnion {
+          "def": Object {
+            "options": Array [
+              ZodString {
+                "def": Object {
+                  "type": "string",
+                },
+                "type": "string",
+              },
+              ZodString {
+                "def": Object {
+                  "checks": Array [
+                    $ZodCheckRegex {},
+                  ],
+                  "type": "string",
+                },
+                "register": [Function],
+                "type": "string",
+              },
+            ],
+            "type": "union",
+          },
+          "default": [Function],
+          "options": Array [
+            ZodString {
+              "def": Object {
+                "type": "string",
+              },
+              "type": "string",
+            },
+            ZodString {
+              "def": Object {
+                "checks": Array [
+                  $ZodCheckRegex {},
+                ],
+                "type": "string",
+              },
+              "register": [Function],
+              "type": "string",
+            },
+          ],
+          "type": "union",
+        },
+        "type": "default",
+      },
+      "removeDefault": [Function],
+      "type": "default",
+      "unwrap": [Function],
     },
-    "button": Object {
-      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-      "border": Object {
-        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
-        "radius": "{{primitives.border.radius.md}}",
-        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
-        "width": "{{primitives.border.width.sm}}",
+    "paddingY": ZodDefault {
+      "def": Object {
+        "defaultValue": "{{primitives.space.xs}}",
+        "innerType": ZodUnion {
+          "def": Object {
+            "options": Array [
+              ZodString {
+                "def": Object {
+                  "type": "string",
+                },
+                "type": "string",
+              },
+              ZodString {
+                "def": Object {
+                  "checks": Array [
+                    $ZodCheckRegex {},
+                  ],
+                  "type": "string",
+                },
+                "register": [Function],
+                "type": "string",
+              },
+            ],
+            "type": "union",
+          },
+          "default": [Function],
+          "options": Array [
+            ZodString {
+              "def": Object {
+                "type": "string",
+              },
+              "type": "string",
+            },
+            ZodString {
+              "def": Object {
+                "checks": Array [
+                  $ZodCheckRegex {},
+                ],
+                "type": "string",
+              },
+              "register": [Function],
+              "type": "string",
+            },
+          ],
+          "type": "union",
+        },
+        "type": "default",
       },
-      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      "focus": Object {
-        "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
-        "border": Object {
-          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-          "radius": "{{primitives.border.radius.md}}",
-          "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-          "width": "{{primitives.border.width.sm}}",
-        },
-        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
-        "icon": Object {
-          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
-        },
-      },
-      "hover": Object {
-        "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
-        "border": Object {
-          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-          "radius": "{{primitives.border.radius.md}}",
-          "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-          "width": "{{primitives.border.width.sm}}",
-        },
-        "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-        "icon": Object {
-          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
-        },
-      },
-      "icon": Object {
-        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-      },
-      "selected": Object {
-        "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
-        "border": Object {
-          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}",
-          "radius": "{{primitives.border.radius.md}}",
-          "style": "{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}",
-          "width": "{{primitives.border.width.sm}}",
-        },
-        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
-        "icon": Object {
-          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
-        },
-      },
+      "removeDefault": [Function],
+      "type": "default",
+      "unwrap": [Function],
     },
-    "gap": "{{primitives.space.xs}}",
   },
 }
 `;
