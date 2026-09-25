@@ -6,7 +6,7 @@ import { provideAngularUtils } from '../../providers/angular-utils.providers'
 import { PortalPageComponent } from './portal-page.component'
 import { PermissionService } from '../../services/permission.service'
 import { of } from 'rxjs'
-import { Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component } from '@angular/core'
 
 describe('PortalPageComponent', () => {
   let component: PortalPageComponent
@@ -67,6 +67,7 @@ describe('PortalPageComponent', () => {
 describe('PortalPageComponent host projection', () => {
   @Component({
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [PortalPageComponent],
     template: `
       <ocx-portal-page [permission]="permission">
