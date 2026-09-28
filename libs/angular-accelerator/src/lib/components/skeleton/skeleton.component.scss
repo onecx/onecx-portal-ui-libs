@@ -1,0 +1,31 @@
+:host {
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+  margin: 0.75rem 0;
+  background-color: var(--ocx-skeleton-background, var(--p-surface-200));
+  border-radius: var(--p-content-border-radius);
+}
+
+:host.ocx-skeleton-circle {
+  border-radius: 50%;
+}
+
+.ocx-skeleton-shimmer {
+  display: none;
+}
+
+:host.ocx-skeleton-animated .ocx-skeleton-shimmer {
+  display: block;
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--ocx-skeleton-highlight, rgba(255, 255, 255, 0.4)), transparent);
+  animation: ocx-skeleton-shimmer 1.5s infinite;
+}
+
+@keyframes ocx-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -78,7 +78,7 @@
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
+      } } } @if (hasVisibleOverflowMenuItems(rowObject, (permittedOverflowActions$ | async) ?? [])) {
       <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
       <button
         pButton
@@ -230,7 +230,7 @@
       </td>
       } } @placeholder {
       <td [attr.colspan]="columns.length">
-        <p-skeleton />
+        <ocx-skeleton width="100%" />
       </td>
       } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>

@@ -49,6 +49,7 @@ import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { OcxSkeletonComponent } from './components/skeleton/skeleton.component'
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from 'primeng/api'
@@ -113,6 +114,7 @@ function appInitializer(userService: UserService) {
     DialogContentComponent,
     DialogInlineComponent,
     DialogMessageContentComponent,
+    OcxSkeletonComponent,
   ],
   providers: [
     providePermissionChecker(),
@@ -171,6 +173,7 @@ function appInitializer(userService: UserService) {
     DialogInlineComponent,
     DialogMessageContentComponent,
     OcxTooltipDirective,
+    OcxSkeletonComponent,
   ],
 })
 export class AngularAcceleratorModule {}
