@@ -13,7 +13,7 @@ const accordionHeaderStateShape = z.object({
   color: color.optional(),
   background: bg.pick({ color: true }).optional(),
   padding: withRef(z.string()).optional(),
-  font: font.pick({ weight: true }).optional(),
+  font: font.pick({ weight: true, size: true}).optional(),
   border: border.pick({ radius: true, width: true, color: true }).optional(),
   toggleIcon: accordionToggleIconShape.prefault({}),
   first: accordionHeaderPositionShape.prefault({}),
