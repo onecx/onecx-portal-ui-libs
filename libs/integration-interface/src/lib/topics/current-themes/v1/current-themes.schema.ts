@@ -5,7 +5,7 @@ import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
+import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
@@ -40,7 +40,7 @@ type UsagesInput = {
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
-  table?: z.input<typeof table>
+  dataTable?: z.input<typeof dataTableShape>
   tooltip?: z.input<typeof tooltip>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
@@ -73,7 +73,7 @@ const usages: z.ZodType<UsagesInput> = z
     badge: (badge as typeof badge).optional(),
     menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
+    dataTable: (dataTable as typeof dataTableShape).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),

@@ -2,9 +2,8 @@
  * This file defines the schema for carousel theming. It, by default, uses primitives for default values but allows overriding any of them with custom values.
  */
 import * as z from "zod";
-import { bgContrast, font, withRef } from "./primitives";
+import { bgContrast, font, icon, withRef } from "./primitives";
 import { themeSchemaRegistry } from "./registry";
-import { iconBaseStyles } from "./table";
 
 export const diagramTextStyles = z
     .object({
@@ -49,7 +48,7 @@ export const selectButtonState: z.ZodType<SelectButtonStateInput> = z
     .register(themeSchemaRegistry, { id: 'selectButtonWithStates' })
 
 export const selectButton = z.object({
-    icon: iconBaseStyles.optional(),
+    icon: icon.optional(),
     border: withRef(z.string()).default("{{primitives.border.defaultVariant.color}}"),
     borderRadius: withRef(z.string()).default("{{primitives.radius.md}}"),
     bgContrast: bgContrast.optional(),
