@@ -29,6 +29,7 @@ import {
   Observable,
   combineLatest,
   debounceTime,
+  distinctUntilChanged,
   filter,
   first,
   firstValueFrom,
@@ -163,9 +164,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   set sortColumn(value: string) {
     this?._sortColumn$.next(value)
   }
-  columnTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
-  columnHeaderTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
+  columnTemplates$: Observable<Record<string, TemplateRef<any> | null>>
+  columnFilterTemplates$: Observable<Record<string, TemplateRef<any> | null>>
+  columnHeaderTemplates$: Observable<Record<string, TemplateRef<any> | null>>
   _columns$ = new BehaviorSubject<DataTableColumn[]>([])
   @Input()
   get columns(): DataTableColumn[] {
@@ -173,21 +174,6 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
   set columns(value: DataTableColumn[]) {
     this._columns$.next(value)
-    const obs = value.map((c) => this.getTemplate(c, TemplateType.CELL))
-    const filterObs = value.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
-    const headerObs = value.map((c) => this.getTemplate(c, TemplateType.HEADER))
-
-    this.columnTemplates$ = combineLatest(obs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
-      debounceTime(50)
-    )
-    this.columnFilterTemplates$ = combineLatest(filterObs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]])))
-    )
-    this.columnHeaderTemplates$ = combineLatest(headerObs).pipe(
-      map((values) => Object.fromEntries(value.map((c, i) => [c.id, values[i]]))),
-      debounceTime(50)
-    )
   }
   @Input() clientSideFiltering = true
   @Input() clientSideSorting = true
@@ -451,8 +437,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   expandedRowIds$ = new BehaviorSubject<(string | number)[]>([])
   expandedRowKeys: Record<string, boolean> = {}
 
-  private cachedOverflowActions$: Observable<DataAction[]>
-  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+  permittedOverflowActions$: Observable<DataAction[]>
 
   constructor() {
     const locale = inject(LOCALE_ID)
@@ -480,8 +465,43 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    this.cachedOverflowActions$ = this.overflowActions$.pipe(
-      shareReplay(1) // Cache the last emitted value
+    this.permittedOverflowActions$ = this.overflowActions$.pipe(
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      shareReplay({ bufferSize: 1, refCount: true })
+    )
+
+    // Template resolution only depends on column id and type, so other column changes must not trigger it
+    const templateColumns$ = this._columns$.pipe(
+      distinctUntilChanged(
+        (prev, curr) =>
+          prev.length === curr.length &&
+          prev.every((c, i) => c.id === curr[i].id && c.columnType === curr[i].columnType)
+      )
+    )
+    const availableTemplates$ = combineLatest([this.templates$, this.viewTemplates$, this.parentTemplates$]).pipe(
+      map(([t, vt, pt]) => [...(t ?? []), ...(vt ?? []), ...(pt ?? [])])
+    )
+    const templatesByColumnId = (templateType: TemplateType) =>
+      combineLatest([templateColumns$, availableTemplates$]).pipe(
+        map(([columns, templates]) =>
+          Object.fromEntries(
+            columns.map((c) => [
+              c.id,
+              (templateType === TemplateType.CELL && this._cell) || this.resolveTemplate(templates, c, templateType),
+            ])
+          )
+        )
+      )
+    this.columnTemplates$ = templatesByColumnId(TemplateType.CELL).pipe(
+      debounceTime(50),
+      shareReplay({ bufferSize: 1, refCount: true })
+    )
+    this.columnFilterTemplates$ = templatesByColumnId(TemplateType.FILTERCELL).pipe(
+      shareReplay({ bufferSize: 1, refCount: true })
+    )
+    this.columnHeaderTemplates$ = templatesByColumnId(TemplateType.HEADER).pipe(
+      debounceTime(50),
+      shareReplay({ bufferSize: 1, refCount: true })
     )
   }
 
@@ -899,11 +919,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowActions$.pipe(
-      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
-      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
-    )
+  hasVisibleOverflowMenuItems(row: any, permittedActions: DataAction[]): boolean {
+    return permittedActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField))
   }
 
   isDate(value: Date | string | number) {
@@ -1032,27 +1049,33 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
   getTemplate(column: DataTableColumn, templateType: TemplateType): Observable<TemplateRef<any> | null> {
     const templatesData = this.templatesDataMap[templateType]
+    const cacheKey = `${column.id}_${column.columnType}`
 
-    if (!templatesData.templatesObservables[column.id]) {
-      templatesData.templatesObservables[column.id] = combineLatest([
+    if (!templatesData.templatesObservables[cacheKey]) {
+      templatesData.templatesObservables[cacheKey] = combineLatest([
         this.templates$,
         this.viewTemplates$,
         this.parentTemplates$,
       ]).pipe(
-        map(([t, vt, pt]) => {
-          const templates = [...(t ?? []), ...(vt ?? []), ...(pt ?? [])]
-          const columnTemplate = findTemplate(
-            templates,
-            templatesData.idSuffix.map((suffix) => column.id + suffix)
-          )?.template
-          if (columnTemplate) {
-            return columnTemplate
-          }
-          return this.getColumnTypeTemplate(templates, column.columnType, templateType)
-        })
+        map(([t, vt, pt]) => this.resolveTemplate([...(t ?? []), ...(vt ?? []), ...(pt ?? [])], column, templateType)),
+        shareReplay({ bufferSize: 1, refCount: true })
       )
     }
-    return templatesData.templatesObservables[column.id]
+    return templatesData.templatesObservables[cacheKey]
+  }
+
+  private resolveTemplate(
+    templates: PrimeTemplate[],
+    column: DataTableColumn,
+    templateType: TemplateType
+  ): TemplateRef<any> | null {
+    const templatesData = this.templatesDataMap[templateType]
+    return (
+      findTemplate(
+        templates,
+        templatesData.idSuffix.map((suffix) => column.id + suffix)
+      )?.template ?? this.getColumnTypeTemplate(templates, column.columnType, templateType)
+    )
   }
 
   resolveFieldData(object: any, key: any) {

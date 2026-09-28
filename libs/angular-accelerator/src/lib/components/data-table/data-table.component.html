@@ -78,7 +78,7 @@
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
+      } } } @if (hasVisibleOverflowMenuItems(rowObject, (permittedOverflowActions$ | async) ?? [])) {
       <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
       <button
         pButton
@@ -162,7 +162,7 @@
       </th>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
-      } @for (column of columns; track column) { 
+      } @for (column of columns; track column.id) { 
       <th scope="col">
         @if (columnHeaderTemplates[column.id]; as columnHeaderTemplate){
           <ng-container
@@ -213,22 +213,22 @@
       </td>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      } @for (column of columns; track column) {
+      } @defer (on viewport) { @for (column of columns; track column.id) {
       <td>
-        @defer(on viewport){ @if (columnTemplates[column.id]) {
+        @if (columnTemplates[column.id]; as cellTemplate) {
         <ng-container
-          [ngTemplateOutlet]="
-                _cell ? _cell: columnTemplates[column.id]
-              "
+          [ngTemplateOutlet]="cellTemplate"
           [ngTemplateOutletContext]="{
                   rowObject: rowObject,
                   column: column,
               }"
         >
         </ng-container>
-        } } @placeholder {
-        <p-skeleton width="3rem" />
         }
+      </td>
+      } } @placeholder {
+      <td [attr.colspan]="columns.length">
+        <p-skeleton width="3rem" />
       </td>
       } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
