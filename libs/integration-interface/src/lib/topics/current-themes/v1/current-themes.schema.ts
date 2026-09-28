@@ -34,6 +34,7 @@ import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -62,7 +63,7 @@ type UsagesInput = {
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
-  pageHeader?: z.input<typeof pageHeader>
+  pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }

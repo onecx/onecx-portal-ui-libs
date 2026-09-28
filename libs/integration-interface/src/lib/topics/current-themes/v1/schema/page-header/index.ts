@@ -1,39 +1,70 @@
-import z from 'zod'
+import * as z from 'zod'
+
+import { applyDefaultsRecursive } from '../defaults-helper'
+import { bg, borderWithShadow, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
+import { PageHeaderContentSchema } from './content'
 import { PageHeaderSettingsSchema } from './settings'
 import { PageHeaderTitleBarSchema } from './title-bar'
-import { withRef, bg, borderWithShadow } from '../primitives'
-import { PageHeaderContentSchema } from './content'
+
+const breadcrumbWrapperShape = z.object({
+  padding: withRef(z.string()).optional(),
+  margin: withRef(z.string()).optional(),
+})
+
+export const pageHeaderShape = z.object({
+  border: borderWithShadow
+    .pick({
+      width: true,
+      color: true,
+      radius: true,
+      shadow: true,
+    })
+    .optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  background: bg.pick({ color: true }).optional(),
+  marginX: withRef(z.string()).optional(),
+  marginY: withRef(z.string()).optional(),
+  settings: PageHeaderSettingsSchema.schema.prefault({}),
+  breadcrumbWrapper: breadcrumbWrapperShape.prefault({}),
+  header: PageHeaderTitleBarSchema.schema.prefault({}),
+  content: PageHeaderContentSchema.schema.prefault({}),
+})
+
+export const pageHeaderDefaults = {
+  border: {
+    width: '{{primitives.border.width.md}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    radius: '{{primitives.radius.md}}',
+    shadow: '{{primitives.shadow.md}}',
+  },
+
+  paddingX: '{{primitives.space.md}}',
+
+  paddingY: '{{primitives.space.md}}',
+
+  background: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
+  },
+
+  marginX: '{{primitives.space.md}}',
+
+  marginY: '{{primitives.space.md}}',
+
+  breadcrumbWrapper: {
+    padding: '{{primitives.space.md}}',
+    margin: '{{primitives.space.md}}',
+  },
+}
+
+export const pageHeader = applyDefaultsRecursive(
+  pageHeaderShape,
+  pageHeaderDefaults
+).register(themeSchemaRegistry, {
+  id: 'pageHeader',
+})
 
 export class PageHeaderSchema {
-  private static readonly tokens = {
-    border: borderWithShadow.pick({ width: true, color: true, radius: true, shadow: true }).default({
-      width: '{{primitives.border.width.md}}',
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      radius: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}',
-      shadow: '{{primitives.shadow.md}}',
-    }),
-    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-    background: bg
-      .pick({ color: true })
-      .default({ color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}' }),
-    marginX: withRef(z.string()).default('{{primitives.space.md}}'),
-    marginY: withRef(z.string()).default('{{primitives.space.md}}'),
-  }
-
-  static readonly schema = z
-    .object({
-      ...this.tokens,
-      settings: (PageHeaderSettingsSchema.schema as typeof PageHeaderSettingsSchema.schema).prefault({}),
-      breadcrumbWrapper: z
-        .object({
-          padding: withRef(z.string()).optional().default('{{primitives.space.md}}'),
-          margin: withRef(z.string()).optional().default('{{primitives.space.md}}'),
-        })
-        .prefault({}),
-      header: (PageHeaderTitleBarSchema.schema as typeof PageHeaderTitleBarSchema.schema).prefault({}),
-      content: (PageHeaderContentSchema.schema as typeof PageHeaderContentSchema.schema).prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'pageHeader' })
+  static readonly schema = pageHeader
 }

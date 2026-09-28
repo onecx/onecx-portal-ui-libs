@@ -22,7 +22,7 @@ export const pageHeaderCssRules: CssRule[] = [
   {
     selector: '.onecx-page-header .title-bar',
     declarations: [
-      { property: 'color', from: 'usages.pageHeader.header.color' },
+      { property: 'color', from: 'usages.pageHeader.' },
       { property: 'background-color', from: 'usages.pageHeader.header.background.color' },
       { property: 'padding', from: 'usages.pageHeader.header.padding' },
       { property: 'gap', from: 'usages.pageHeader.header.gap' },
@@ -57,7 +57,7 @@ export const pageHeaderCssRules: CssRule[] = [
   {
     selector: '.onecx-page-header .figure .figure-image img',
     declarations: [
-      { property: 'width', from: 'usages.pageHeader.header.titleIcon.image.width' },
+      { property: 'width', from: 'usages.pageHeader.header.titleIcon.width' },
       { property: 'height', from: 'usages.pageHeader.header.titleIcon.image.height' },
     ],
   },
