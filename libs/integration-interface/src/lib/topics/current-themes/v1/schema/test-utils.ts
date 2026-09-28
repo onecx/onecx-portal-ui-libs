@@ -14,9 +14,14 @@
  * expectDefaultsMatchShape — recursively verifies that every key present in a
  * defaults tree also exists in the corresponding zod shape, catching wiring
  * bugs (typos, renames) independently of the resolved token values.
+ *
+ * collectAxisScopes / expectAxes — collect the variant/state/severity keys of every
+ * fallback scope under a usage and assert them per component.
  */
 
 import * as z from 'zod'
+import { introspectThemeAxisMetadata } from '../utils/axis-metadata'
+import { theme } from '../current-themes.schema'
 
 export function expectTokens(o: object | undefined, expectedTokens: Record<string, any>) {
   for (const [key, expected] of Object.entries(expectedTokens)) {
@@ -55,4 +60,36 @@ export function expectDefaultsMatchShape(shape: z.ZodObject, defaults: Record<st
       expectDefaultsMatchShape(fieldSchema, value as Record<string, unknown>)
     }
   }
+}
+
+export type Axes = { variant?: string[]; state?: string[]; severity?: string[] }
+
+/** Maps every scope path under `usagePath` to the variant/state/severity keys its leaves pass through. */
+export function collectAxisScopes(usagePath: string): Map<string, Axes> {
+  const scopes = new Map<string, Axes>()
+  for (const [leafPath, metadata] of Object.entries(introspectThemeAxisMetadata(theme))) {
+    if (!leafPath.startsWith(`${usagePath}.`)) continue
+    for (const { scopePath, entries } of metadata.scopes) {
+      const axes = scopes.get(scopePath) ?? {}
+      for (const { kind, segments } of entries) {
+        axes[kind] = [...new Set(axes[kind]).add(segments.join('.'))].sort()
+      }
+      scopes.set(scopePath, axes)
+    }
+  }
+  return scopes
+}
+
+/**
+ * Asserts every scope whose path ends with `scopeName` (a component may repeat, e.g. per parent
+ * state) has exactly the expected keys. Key order in `expected` does not matter.
+ */
+export function expectAxes(scopes: Map<string, Axes>, scopeName: string, expected: Axes) {
+  const occurrences = [...scopes]
+    .filter(([path]) => path === scopeName || path.endsWith(`.${scopeName}`))
+    .map(([, axes]) => axes)
+  const sorted = Object.fromEntries(Object.entries(expected).map(([kind, keys]) => [kind, [...keys].sort()]))
+
+  expect(occurrences.length).toBeGreaterThan(0)
+  occurrences.forEach((axes) => expect(axes).toEqual(sorted))
 }
