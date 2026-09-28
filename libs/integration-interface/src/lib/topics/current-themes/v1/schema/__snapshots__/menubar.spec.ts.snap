@@ -7,26 +7,32 @@ Object {
       "defaultSeverity": Object {
         "alignItems": "{{primitives.layout.alignItems}}",
         "background": Object {
-          "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+          "color": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
         },
         "border": Object {
-          "color": "{{primitives.border.defaultVariant.color}}",
+          "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
           "radius": "{{primitives.radius.md}}",
+          "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
         },
-        "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+        "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
         "gap": "{{primitives.layout.gap}}",
         "item": Object {
           "defaultVariant": Object {
             "defaultState": Object {
               "defaultSeverity": Object {
                 "background": Object {
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
                 },
                 "border": Object {
-                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                  "offset": "{{primitives.border.offset.none}}",
                   "radius": "{{primitives.radius.md}}",
+                  "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                  "width": "{{primitives.border.width.sm}}",
                 },
-                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
                 "cursor": "pointer",
                 "shadow": "{{primitives.shadow.md}}",
                 "transition": Object {
@@ -37,14 +43,15 @@ Object {
             "state": Object {
               "active": Object {
                 "defaultSeverity": Object {
-                  "background": Object {
-                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-                  },
+                  "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
                   "border": Object {
-                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
                     "radius": "{{primitives.radius.md}}",
+                    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.sm}}",
                   },
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
                   "cursor": "pointer",
                   "shadow": "{{primitives.shadow.md}}",
                   "transition": Object {
@@ -54,14 +61,15 @@ Object {
               },
               "focus": Object {
                 "defaultSeverity": Object {
-                  "background": Object {
-                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-                  },
+                  "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
                   "border": Object {
-                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
                     "radius": "{{primitives.radius.md}}",
+                    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.sm}}",
                   },
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
                   "cursor": "pointer",
                   "shadow": "{{primitives.shadow.md}}",
                   "transition": Object {
@@ -79,13 +87,16 @@ Object {
             "defaultState": Object {
               "defaultSeverity": Object {
                 "background": Object {
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
                 },
                 "border": Object {
-                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                  "offset": "{{primitives.border.offset.none}}",
                   "radius": "{{primitives.radius.md}}",
+                  "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                  "width": "{{primitives.border.width.sm}}",
                 },
-                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
                 "shadow": "{{primitives.shadow.md}}",
                 "size": "2.5rem",
                 "transition": Object {
@@ -97,13 +108,16 @@ Object {
               "hover": Object {
                 "defaultSeverity": Object {
                   "background": Object {
-                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
                   },
                   "border": Object {
-                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
                     "radius": "{{primitives.radius.md}}",
+                    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.sm}}",
                   },
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
                   "cursor": "pointer",
                   "shadow": "{{primitives.shadow.md}}",
                   "size": "2.5rem",
@@ -115,14 +129,17 @@ Object {
             },
           },
           "focusRing": Object {
-            "color": "{{primitives.border.defaultVariant.color}}",
-            "shadow": "{{primitives.shadow.md}}",
-            "width": "{{primitives.border.defaultVariant.width}}",
+            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+            "offset": "{{primitives.focusRing.offset.md}}",
+            "radius": "{{primitives.focusRing.radius.md}}",
+            "shadow": "{{primitives.focusRing.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+            "width": "{{primitives.focusRing.width.md}}",
           },
         },
         "padding": "{{primitives.layout.padding}}",
         "separator": Object {
-          "color": "{{primitives.border.defaultVariant.color}}",
+          "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
           "radius": "{{primitives.radius.md}}",
         },
         "submenu": Object {
@@ -130,13 +147,16 @@ Object {
             "defaultState": Object {
               "defaultSeverity": Object {
                 "background": Object {
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
                 },
                 "border": Object {
-                  "color": "{{primitives.border.defaultVariant.color}}",
+                  "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                  "offset": "{{primitives.border.offset.none}}",
                   "radius": "{{primitives.radius.md}}",
+                  "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                  "width": "{{primitives.border.width.sm}}",
                 },
-                "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
                 "shadow": "{{primitives.shadow.md}}",
                 "transition": Object {
                   "duration": "{{primitives.transition.duration}}",
@@ -146,14 +166,15 @@ Object {
             "state": Object {
               "active": Object {
                 "defaultSeverity": Object {
-                  "background": Object {
-                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-                  },
+                  "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
                   "border": Object {
-                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
                     "radius": "{{primitives.radius.md}}",
+                    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.sm}}",
                   },
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
                   "cursor": "pointer",
                   "shadow": "{{primitives.shadow.md}}",
                   "transition": Object {
@@ -163,14 +184,15 @@ Object {
               },
               "focus": Object {
                 "defaultSeverity": Object {
-                  "background": Object {
-                    "color": "{{primitives.area.surface.defaultState.defaultVariant.bg}}",
-                  },
+                  "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
                   "border": Object {
-                    "color": "{{primitives.border.defaultVariant.color}}",
+                    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+                    "offset": "{{primitives.border.offset.none}}",
                     "radius": "{{primitives.radius.md}}",
+                    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+                    "width": "{{primitives.border.width.sm}}",
                   },
-                  "color": "{{primitives.area.surface.defaultState.defaultVariant.contrast}}",
+                  "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
                   "cursor": "pointer",
                   "shadow": "{{primitives.shadow.md}}",
                   "transition": Object {

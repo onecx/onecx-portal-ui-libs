@@ -5,19 +5,22 @@ import { tooltip } from './tooltip'
 import { applyDefaultsRecursive } from './defaults-helper'
 
 const DEFAULT_MENUBAR_BORDER = {
-  color: '{{primitives.border.defaultVariant.color}}',
+  color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
   radius: '{{primitives.radius.md}}',
+  style: '{{primitives.area.surface.defaultState.defaultSeverity.border.style}}',
+  width: '{{primitives.border.width.sm}}',
+  offset: '{{primitives.border.offset.none}}',
 }
 
 const DEFAULT_MENUBAR_BACKGROUND = {
-  color: '{{primitives.area.surface.defaultState.defaultVariant.bg}}',
+  color: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
 }
 
 const DEFAULT_MENUBAR_TRANSITION = {
   duration: '{{primitives.transition.duration}}',
 }
 
-const DEFAULT_MENUBAR_COLOR = '{{primitives.area.surface.defaultState.defaultVariant.contrast}}'
+const DEFAULT_MENUBAR_COLOR = '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}'
 
 const DEFAULT_MENUBAR_ALIGN_ITEMS = '{{primitives.layout.alignItems}}'
 
@@ -27,10 +30,23 @@ const DEFAULT_MENUBAR_GAP = '{{primitives.layout.gap}}'
 
 const DEFAULT_MENUBAR_SHADOW = '{{primitives.shadow.md}}'
 
+const DEFAULT_MENUBAR_FOCUS_STATE = {
+  background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+}
+
+const DEFAULT_MENUBAR_ACTIVE_STATE = {
+  background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
+}
+
 const DEFAULT_MENUBAR_FOCUS_RING = {
-  color: '{{primitives.border.defaultVariant.color}}',
-  width: '{{primitives.border.defaultVariant.width}}',
-  shadow: '{{primitives.shadow.md}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+  width: '{{primitives.focusRing.width.md}}',
+  offset: '{{primitives.focusRing.offset.md}}',
+  radius: '{{primitives.focusRing.radius.md}}',
+  shadow: '{{primitives.focusRing.shadow.md}}',
 }
 
 const menubarSettingsShape = z.object({
@@ -179,12 +195,14 @@ export const menubarDefaults = {
               focus: {
                 defaultSeverity: {
                   ...menubarBaseSeverityDefaults,
+                  ...DEFAULT_MENUBAR_FOCUS_STATE,
                   cursor: 'pointer',
                 },
               },
               active: {
                 defaultSeverity: {
                   ...menubarBaseSeverityDefaults,
+                  ...DEFAULT_MENUBAR_ACTIVE_STATE,
                   cursor: 'pointer',
                 },
               },
@@ -204,12 +222,14 @@ export const menubarDefaults = {
               active: {
                 defaultSeverity: {
                   ...menubarBaseSeverityDefaults,
+                  ...DEFAULT_MENUBAR_ACTIVE_STATE,
                   cursor: 'pointer',
                 },
               },
               focus: {
                 defaultSeverity: {
                   ...menubarBaseSeverityDefaults,
+                  ...DEFAULT_MENUBAR_FOCUS_STATE,
                   cursor: 'pointer',
                 },
               },
@@ -226,7 +246,7 @@ export const menubarDefaults = {
           },
         },
         separator: {
-          color: '{{primitives.border.defaultVariant.color}}',
+          color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
           radius: '{{primitives.radius.md}}',
         },
         mobileButton: {
