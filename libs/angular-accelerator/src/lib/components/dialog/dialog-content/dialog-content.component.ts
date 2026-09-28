@@ -1,6 +1,6 @@
 import { Component, ComponentRef, OnDestroy, OnInit, ViewContainerRef, inject, viewChild, ChangeDetectionStrategy } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { ButtonDialogData } from '../../../model/button-dialog'
 import { DialogMessageContentComponent } from '../dialog-message-content/dialog-message-content.component'
 import {

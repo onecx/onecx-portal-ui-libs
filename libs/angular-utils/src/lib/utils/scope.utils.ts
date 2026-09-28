@@ -216,7 +216,7 @@ export async function getScopeIdentifier(
 }
 
 // If scope rule is not supported, its wrapped via supports rule to be handled by the polyfill
-export function scopePrimengCss(css: string, scopeId: string) {
+export function scopeOptimusCss(css: string, scopeId: string) {
   const isScopeSupported = isCssScopeRuleSupported()
   if (scopeId === '') {
     return isScopeSupported
@@ -245,8 +245,8 @@ export function scopePrimengCss(css: string, scopeId: string) {
   }
 }
 
-// Primeng variables have --p- prefix and style scoping requires each scope to have its own version of such variable
-export function replacePrimengPrefix(css: string, scopeId: string) {
+// Optimus variables have --p- prefix and style scoping requires each scope to have its own version of such variable
+export function replaceOptimusPrefix(css: string, scopeId: string) {
   if (scopeId === '') {
     return css
   }

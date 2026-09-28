@@ -11,7 +11,7 @@ import {
   output,
   ChangeDetectionStrategy
 } from '@angular/core'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { BehaviorSubject, Observable, map, withLatestFrom } from 'rxjs'
 import {
   ButtonDialogButtonDetails,

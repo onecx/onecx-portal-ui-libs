@@ -1,5 +1,5 @@
-import { AutoFocus } from 'primeng/autofocus'
-import { patchPrimeNgAutoFocus } from './primeng-autofocus-patch.utils'
+import { AutoFocus } from '@openng/optimus-ui/autofocus'
+import { patchOptimusAutoFocus } from './optimus-autofocus-patch.utils'
 
 type AutoFocusHook = (this: AutoFocus) => void
 type PatchableAutoFocusPrototype = { onAfterContentChecked?: AutoFocusHook }
@@ -21,7 +21,7 @@ const createAutoFocusInstance = (
 
 const getHostElement = (instance: AutoFocus) => instance.host.nativeElement as HTMLElement
 
-describe('patchPrimeNgAutoFocus', () => {
+describe('patchOptimusAutoFocus', () => {
   const proto = AutoFocus.prototype as unknown as PatchableAutoFocusPrototype
   const patchableClass = AutoFocus as PatchableAutoFocusClass
   let originalOnAfterContentChecked: AutoFocusHook
@@ -31,7 +31,7 @@ describe('patchPrimeNgAutoFocus', () => {
   })
 
   afterEach(() => {
-    // Restore PrimeNG's untouched prototype method so tests don't leak patch state into each other.
+    // Restore Optimus's untouched prototype method so tests don't leak patch state into each other.
     Object.defineProperty(proto, 'onAfterContentChecked', {
       value: originalOnAfterContentChecked,
       writable: true,
@@ -40,8 +40,8 @@ describe('patchPrimeNgAutoFocus', () => {
     delete patchableClass.__onecxAutofocusPatched
   })
 
-  describe('unpatched PrimeNG behavior (documents the bug this patch works around)', () => {
-    // If this test starts failing, PrimeNG has fixed the underlying bug and this patch can likely be removed.
+  describe('unpatched Optimus behavior (documents the bug this patch works around)', () => {
+    // If this test starts failing, Optimus has fixed the underlying bug and this patch can likely be removed.
     it.each([
       ['undefined', undefined],
       ['null', null],
@@ -54,9 +54,9 @@ describe('patchPrimeNgAutoFocus', () => {
     })
   })
 
-  describe('patched PrimeNG behavior', () => {
+  describe('patched Optimus behavior', () => {
     beforeEach(() => {
-      patchPrimeNgAutoFocus()
+      patchOptimusAutoFocus()
     })
 
     it.each([
@@ -87,7 +87,7 @@ describe('patchPrimeNgAutoFocus', () => {
     it('should not wrap onAfterContentChecked again when called more than once', () => {
       const patchedOnce = proto.onAfterContentChecked
 
-      patchPrimeNgAutoFocus()
+      patchOptimusAutoFocus()
 
       expect(proto.onAfterContentChecked).toBe(patchedOnce)
     })
@@ -97,7 +97,7 @@ describe('patchPrimeNgAutoFocus', () => {
     // Assigning undefined (rather than deleting the own property) avoids falling through to BaseComponent's inherited hook.
     proto.onAfterContentChecked = undefined
 
-    patchPrimeNgAutoFocus()
+    patchOptimusAutoFocus()
 
     expect(proto.onAfterContentChecked).toBeUndefined()
   })
@@ -109,6 +109,6 @@ describe('patchPrimeNgAutoFocus', () => {
       configurable: true,
     })
 
-    expect(() => patchPrimeNgAutoFocus()).not.toThrow()
+    expect(() => patchOptimusAutoFocus()).not.toThrow()
   })
 })

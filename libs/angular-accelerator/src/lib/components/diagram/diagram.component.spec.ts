@@ -5,9 +5,9 @@ import { FormsModule } from '@angular/forms'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
-import { PrimeIcons } from 'primeng/api'
+import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DiagramHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
@@ -43,7 +43,7 @@ describe('DiagramComponent', () => {
     window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorPrimeNgModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorOptimusModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [
         provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -127,14 +127,14 @@ describe('DiagramComponent', () => {
     const expectedDiagramLayouts: DiagramLayouts[] = [
       {
         id: 'diagram-pie',
-        icon: PrimeIcons.CHART_PIE,
+        icon: OpenngIcons.CHART_PIE,
         layout: DiagramType.PIE,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
         labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
       },
       {
         id: 'diagram-horizontal-bar',
-        icon: PrimeIcons.BARS,
+        icon: OpenngIcons.BARS,
         layout: DiagramType.HORIZONTAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
         labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
@@ -186,21 +186,21 @@ describe('DiagramComponent', () => {
     const allDiagramLayouts: DiagramLayouts[] = [
       {
         id: 'diagram-pie',
-        icon: PrimeIcons.CHART_PIE,
+        icon: OpenngIcons.CHART_PIE,
         layout: DiagramType.PIE,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
         labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
       },
       {
         id: 'diagram-horizontal-bar',
-        icon: PrimeIcons.BARS,
+        icon: OpenngIcons.BARS,
         layout: DiagramType.HORIZONTAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
         labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
       },
       {
         id: 'diagram-vertical-bar',
-        icon: PrimeIcons.CHART_BAR,
+        icon: OpenngIcons.CHART_BAR,
         layout: DiagramType.VERTICAL_BAR,
         tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
         labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
