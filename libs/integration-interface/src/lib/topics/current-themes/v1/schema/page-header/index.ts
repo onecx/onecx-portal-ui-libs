@@ -1,11 +1,10 @@
 import * as z from 'zod'
-
 import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, borderWithShadow, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
-import { PageHeaderContentSchema } from './content'
-import { PageHeaderSettingsSchema } from './settings'
-import { PageHeaderTitleBarSchema } from './title-bar'
+import { pageHeaderContentDefaults, pageHeaderContentShape } from './content'
+import { pageHeaderSettingsDefaults, pageHeaderSettingsShape } from './settings'
+import { pageHeaderTitleBarDefaults, pageHeaderTitleBarShape } from './title-bar'
 
 const breadcrumbWrapperShape = z.object({
   padding: withRef(z.string()).optional(),
@@ -26,10 +25,10 @@ export const pageHeaderShape = z.object({
   background: bg.pick({ color: true }).optional(),
   marginX: withRef(z.string()).optional(),
   marginY: withRef(z.string()).optional(),
-  settings: PageHeaderSettingsSchema.schema.prefault({}),
+  settings: pageHeaderSettingsShape.prefault({}),
   breadcrumbWrapper: breadcrumbWrapperShape.prefault({}),
-  header: PageHeaderTitleBarSchema.schema.prefault({}),
-  content: PageHeaderContentSchema.schema.prefault({}),
+  header: pageHeaderTitleBarShape.prefault({}),
+  content: pageHeaderContentShape.prefault({}),
 })
 
 export const pageHeaderDefaults = {
@@ -39,29 +38,23 @@ export const pageHeaderDefaults = {
     radius: '{{primitives.radius.md}}',
     shadow: '{{primitives.shadow.md}}',
   },
-
   paddingX: '{{primitives.space.md}}',
-
   paddingY: '{{primitives.space.md}}',
-
   background: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
   },
-
   marginX: '{{primitives.space.md}}',
-
   marginY: '{{primitives.space.md}}',
-
+  settings: pageHeaderSettingsDefaults,
   breadcrumbWrapper: {
     padding: '{{primitives.space.md}}',
     margin: '{{primitives.space.md}}',
   },
+  header: pageHeaderTitleBarDefaults,
+  content: pageHeaderContentDefaults,
 }
 
-export const pageHeader = applyDefaultsRecursive(
-  pageHeaderShape,
-  pageHeaderDefaults
-).register(themeSchemaRegistry, {
+export const pageHeader = applyDefaultsRecursive(pageHeaderShape, pageHeaderDefaults).register(themeSchemaRegistry, {
   id: 'pageHeader',
 })
 

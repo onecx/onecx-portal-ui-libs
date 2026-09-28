@@ -16,9 +16,7 @@ const subtitleShape = z.object({
 
 const titleIconShape = z.object({
   color: color.optional(),
-
   background: bg.pick({ color: true }).optional(),
-
   icon: icon
     .pick({ size: true })
     .extend({
@@ -26,7 +24,6 @@ const titleIconShape = z.object({
       height: withRef(z.string()).optional(),
     })
     .prefault({}),
-
   image: z
     .object({
       size: withRef(z.string()).optional(),
@@ -109,12 +106,12 @@ export const pageHeaderTitleBarDefaults = {
   },
 }
 
-export const pageHeaderTitleBar = applyDefaultsRecursive(
-  pageHeaderTitleBarShape,
-  pageHeaderTitleBarDefaults
-).register(themeSchemaRegistry, {
-  id: 'pageHeaderTitleBar',
-})
+export const pageHeaderTitleBar = applyDefaultsRecursive(pageHeaderTitleBarShape, pageHeaderTitleBarDefaults).register(
+  themeSchemaRegistry,
+  {
+    id: 'pageHeaderTitleBar',
+  }
+)
 
 export class PageHeaderTitleBarSchema {
   static readonly schema = pageHeaderTitleBar
