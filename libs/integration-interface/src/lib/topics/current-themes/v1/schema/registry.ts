@@ -8,11 +8,15 @@ import * as z from 'zod'
 // Local registry that assigns each theme schema an `id` and an optional `axis` marker consumed
 // by the build-time axis introspection (see axis-metadata.ts). `axis` classifies a node's keys:
 // `variant` / `state` / `severity` mark the named-member containers, `child` marks a
-// component-composition sub-schema, and `setting` marks a settings sub-schema. A node with no
-// `axis` is a structural pass-through wrapper. The optional `child` flag marks a node as a
-// child boundary so the parent's walker re-roots classification of its own keys by its own `axis`.
+// component-composition sub-schema, and `setting` marks a settings sub-schema (never an axis
+// member of its parent, like `none`). A node with no
+// `axis` is a structural pass-through wrapper. `none` explicitly opts a node out of its parent's
+// axis: it is never classified as a variant/state/severity member (even under an axis container)
+// and does not open a scope, e.g. a static token sitting next to variant keys. The optional
+// `child` flag marks a node as a child boundary so the parent's walker re-roots classification
+// of its own keys by its own `axis`.
 export const themeSchemaRegistry = z.registry<{
   id: string
-  axis?: 'variant' | 'state' | 'severity' | 'child' | 'setting'
+  axis?: 'variant' | 'state' | 'severity' | 'child' | 'setting' | 'none'
   child?: boolean
 }>()

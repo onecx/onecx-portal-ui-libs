@@ -20,10 +20,11 @@ describe('resolveLeafFallback', () => {
 
   it('resolves a nested component leaf from the innermost scope, holding the outer scope', () => {
     // The calendar's own `defaultVariant` is at its default, so the innermost (input) scope
-    // relaxes first — only its `state` moves, `filled` and the calendar scope stay put.
+    // relaxes first — only its `state` moves; the `filled` variant and the calendar scope stay
+    // put (the input root is marked as the variant container, so `filled` is held, not dropped).
     const varName = '--onecx-theme-usages-calendar-defaultVariant-input-filled-hover-defaultSeverity-background-color'
     expect(resolveLeafFallback(varName)).toBe(
-      '--onecx-theme-usages-calendar-defaultVariant-input-defaultState-defaultSeverity-background-color',
+      '--onecx-theme-usages-calendar-defaultVariant-input-filled-defaultState-defaultSeverity-background-color',
     )
   })
 

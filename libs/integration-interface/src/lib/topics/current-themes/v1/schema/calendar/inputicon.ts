@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for calendar input icons (leaf tokens). No named severities
@@ -17,14 +18,16 @@ const calendarIconStateShape = z.object({
 /**
  * Shape of the calendar input icon variant slot (states).
  */
-const calendarIconVariantShape = z.object({
-  defaultState: calendarIconStateShape.prefault({}),
-  hover: calendarIconStateShape.prefault({}),
-  focus: calendarIconStateShape.prefault({}),
-  disabled: calendarIconStateShape.prefault({}),
-  invalid: calendarIconStateShape.prefault({}),
-  active: calendarIconStateShape.prefault({}),
-})
+const calendarIconVariantShape = z
+  .object({
+    defaultState: calendarIconStateShape.prefault({}),
+    hover: calendarIconStateShape.prefault({}),
+    focus: calendarIconStateShape.prefault({}),
+    disabled: calendarIconStateShape.prefault({}),
+    invalid: calendarIconStateShape.prefault({}),
+    active: calendarIconStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarIconVariantShape', axis: 'state' })
 
 /**
  * Shape for icon styles used in the calendar input field.
@@ -32,11 +35,16 @@ const calendarIconVariantShape = z.object({
  * `defaultVariant.defaultState.defaultSeverity`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarIconShape = z.object({
-  focusRing: borderWithShadow.optional(),
+export const calendarIconShape = z
+  .object({
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'calendarIconFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: calendarIconVariantShape.prefault({}),
-})
+    defaultVariant: calendarIconVariantShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarIconShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar input icon.
