@@ -1,12 +1,11 @@
 import { expectDefaultsMatchShape } from './test-utils'
+import { diagram, diagramDefaults } from './diagram'
 
-import { tooltip, tooltipDefaults } from './tooltip'
-
-describe('tooltip schema', () => {
-  const parsed = tooltip.parse({})
+describe('diagram schema', () => {
+  const parsed = diagram.parse({})
 
   it('parses an empty object', () => {
-    expect(tooltip.safeParse({}).success).toBe(true)
+    expect(diagram.safeParse({}).success).toBe(true)
   })
 
   it('resolves the expected default token tree', () => {
@@ -14,6 +13,6 @@ describe('tooltip schema', () => {
   })
 
   it('shape and defaults stay in sync', () => {
-    expectDefaultsMatchShape(tooltip, tooltipDefaults)
+    expectDefaultsMatchShape(diagram, diagramDefaults)
   })
 })

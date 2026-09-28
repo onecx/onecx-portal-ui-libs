@@ -7,14 +7,15 @@ import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
+import { diagram, diagramShape } from './schema/diagram'
+import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
 import { fieldset, fieldsetShape } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
-import { dropdownShape } from './schema/dropdown'
+import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
@@ -41,11 +42,12 @@ type UsagesInput = {
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
   dataTable?: z.input<typeof dataTableShape>
-  tooltip?: z.input<typeof tooltip>
+  tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
-  diagram?: z.input<typeof diagram>
   dropdown?: z.input<typeof dropdownShape>
+  diagram?: z.input<typeof diagramShape>
+  groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
@@ -79,6 +81,7 @@ const usages: z.ZodType<UsagesInput> = z
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
+    groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
