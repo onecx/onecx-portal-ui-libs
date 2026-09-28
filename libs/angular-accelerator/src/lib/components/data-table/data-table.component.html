@@ -213,9 +213,9 @@
       </td>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      } @for (column of columns; track column) {
+      } @defer (on viewport) { @for (column of columns; track column) {
       <td>
-        @defer(on viewport){ @if (columnTemplates[column.id]) {
+        @if (columnTemplates[column.id]) {
         <ng-container
           [ngTemplateOutlet]="
                 _cell ? _cell: columnTemplates[column.id]
@@ -226,9 +226,11 @@
               }"
         >
         </ng-container>
-        } } @placeholder {
-        <p-skeleton width="3rem" />
         }
+      </td>
+      } } @placeholder {
+      <td [attr.colspan]="columns.length">
+        <p-skeleton />
       </td>
       } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>

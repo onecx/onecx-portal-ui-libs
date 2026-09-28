@@ -14,12 +14,14 @@
 >
   <ng-template #grid let-rows>
     <div class="grid grid-cols-12 gap-4">
-      @for (item of rows; track item) {
+      @for (item of rows; track item) { @defer (on viewport; on idle){
       <ng-container
         [ngTemplateOutlet]="_gridItem ? _gridItem : defaultGridItem"
         [ngTemplateOutletContext]="{$implicit:item}"
       ></ng-container>
-      }
+      } @placeholder {
+      <div style="width: 100%; height: 80px"></div>
+      } }
     </div>
   </ng-template>
   <ng-template #list let-rows>
@@ -216,7 +218,7 @@
         ></ng-container>
       </div>
       <div class="flex flex-wrap">
-        @for (col of getFilteredColumns(); track col) {
+        @defer (on viewport) { @for (col of getFilteredColumns(); track col) {
         <div class="w-12rem my-2 mr-2">
           <div class="font-bold" [ocxTooltipOnOverflow]="col.nameKey | translate" tooltipPosition="top">
             {{ col.nameKey | translate }}
@@ -225,7 +227,6 @@
             [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
             tooltipPosition="top"
           >
-            @defer(on viewport;){
             <ng-container
               [ngTemplateOutlet]="_listValue ? _listValue: defaultListValue"
               [ngTemplateOutletContext]="{
@@ -235,10 +236,11 @@
                 }"
             >
             </ng-container>
-            } @placeholder {
-            <p-skeleton width="5rem" />
-            }
           </div>
+        </div>
+        } } @placeholder {
+        <div class="w-12rem my-2 mr-2">
+          <p-skeleton />
         </div>
         }
       </div>
