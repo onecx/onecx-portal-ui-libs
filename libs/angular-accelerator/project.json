@@ -6,22 +6,22 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "copyPrimelocaleTranslations": {
+    "copyOptimuslocaleTranslations": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "mkdir -p libs/angular-accelerator/tmp/primelocale",
-          "cp node_modules/primelocale/de.json libs/angular-accelerator/tmp/primelocale/",
-          "cp node_modules/primelocale/en.json libs/angular-accelerator/tmp/primelocale/",
-          "sed -i 's/\"de\":/\"primeng\":/' libs/angular-accelerator/tmp/primelocale/de.json",
-          "sed -i 's/\"en\":/\"primeng\":/' libs/angular-accelerator/tmp/primelocale/en.json"
+          "mkdir -p libs/angular-accelerator/tmp/optimuslocale",
+          "cp node_modules/@openng/optimus-ui-locale/de.json libs/angular-accelerator/tmp/optimuslocale/",
+          "cp node_modules/@openng/optimus-ui-locale/en.json libs/angular-accelerator/tmp/optimuslocale/",
+          "sed -i 's/\"de\":/\"optimus\":/' libs/angular-accelerator/tmp/optimuslocale/de.json",
+          "sed -i 's/\"en\":/\"optimus\":/' libs/angular-accelerator/tmp/optimuslocale/en.json"
         ],
         "parallel": false
       }
     },
     "build": {
       "executor": "@nx/angular:package",
-      "dependsOn": ["^build", "copyPrimelocaleTranslations"],
+      "dependsOn": ["^build", "copyOptimuslocaleTranslations"],
       "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
       "defaultConfiguration": "production",
       "options": {
@@ -76,7 +76,7 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeicons/primeicons.css",
+          "node_modules/@openng/icons/openng-icons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
           "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",
@@ -98,7 +98,7 @@
         "browserTarget": "angular-accelerator:build-storybook",
         "compodoc": false,
         "styles": [
-          "node_modules/primeicons/primeicons.css",
+          "node_modules/@openng/icons/openng-icons.css",
           "libs/angular-accelerator/assets/styles.scss",
           "libs/angular-accelerator/.storybook/theme_defaults.scss",
           "libs/angular-accelerator/src/lib/directives/loading-indicator.directive.scss",

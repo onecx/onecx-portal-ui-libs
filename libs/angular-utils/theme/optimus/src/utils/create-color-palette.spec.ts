@@ -8,7 +8,7 @@ import {
 interface ColorPalette {
   [key: number]: string
 }
-const primeNGCyanColorPalette: ColorPalette = {
+const optimusCyanColorPalette: ColorPalette = {
   50: '#ecfeff',
   100: '#cffafe',
   200: '#a5f3fc',
@@ -22,7 +22,7 @@ const primeNGCyanColorPalette: ColorPalette = {
   950: '#083344',
 }
 
-const primeNGRedColorPalette: ColorPalette = {
+const optimusRedColorPalette: ColorPalette = {
   50: '#fef2f2',
   100: '#fee2e2',
   200: '#fecaca',
@@ -35,7 +35,7 @@ const primeNGRedColorPalette: ColorPalette = {
   900: '#7f1d1d',
   950: '#450a0a',
 }
-const primeNGOrangeColorPalette: ColorPalette = {
+const optimusOrangeColorPalette: ColorPalette = {
   50: '#fff7ed',
   100: '#ffedd5',
   200: '#fed7aa',
@@ -49,7 +49,7 @@ const primeNGOrangeColorPalette: ColorPalette = {
   950: '#431407',
 }
 
-const primeNGGreenColorPalette: ColorPalette = {
+const optimusGreenColorPalette: ColorPalette = {
   50: '#f0fdf4',
   100: '#dcfce7',
   200: '#bbf7d0',
@@ -86,37 +86,37 @@ describe('createPalette', () => {
   const maximumDifference = 50
   const paletteKeys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
   it('should create a cyan palette with adjusted colors', () => {
-    const primaryColor = primeNGCyanColorPalette[500]
+    const primaryColor = optimusCyanColorPalette[500]
     const palette = createPalette(primaryColor, standardColorAdjustment)
     paletteKeys.forEach((key: number) => {
-      console.log('###', key, colorDelta(palette[key], primeNGCyanColorPalette[key]))
-      expect(colorDelta(palette[key], primeNGCyanColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
+      console.log('###', key, colorDelta(palette[key], optimusCyanColorPalette[key]))
+      expect(colorDelta(palette[key], optimusCyanColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
     })
   })
 
   it('should create a red color palette with adjusted colors', () => {
-    const primaryColor = primeNGRedColorPalette[500]
+    const primaryColor = optimusRedColorPalette[500]
     const palette = createPalette(primaryColor, standardColorAdjustment)
     paletteKeys.forEach((key: number) => {
-      expect(colorDelta(palette[key], primeNGRedColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
+      expect(colorDelta(palette[key], optimusRedColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
     })
   })
 
   it('should create an orange color palette with adjusted colors', () => {
-    const primaryColor = primeNGOrangeColorPalette[500]
+    const primaryColor = optimusOrangeColorPalette[500]
     const palette = createPalette(primaryColor, standardColorAdjustment)
 
     paletteKeys.forEach((key: number) => {
-      expect(colorDelta(palette[key], primeNGOrangeColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
+      expect(colorDelta(palette[key], optimusOrangeColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
     })
   })
 
   it('should create a green color palette with adjusted colors', () => {
-    const primaryColor = primeNGGreenColorPalette[500]
+    const primaryColor = optimusGreenColorPalette[500]
     const palette = createPalette(primaryColor, standardColorAdjustment)
 
     paletteKeys.forEach((key: number) => {
-      expect(colorDelta(palette[key], primeNGGreenColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
+      expect(colorDelta(palette[key], optimusGreenColorPalette[key])).toBeLessThanOrEqual(maximumDifference)
     })
   })
   it('should calculate the euclidic distance correctly', () => {

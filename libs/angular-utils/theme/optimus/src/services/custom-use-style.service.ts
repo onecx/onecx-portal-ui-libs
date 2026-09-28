@@ -1,5 +1,5 @@
 import { inject, Injectable, Injector, runInInjectionContext } from '@angular/core'
-import { UseStyle } from 'primeng/usestyle'
+import { UseStyle } from '@openng/optimus-ui/usestyle'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { THEME_OVERRIDES, ThemeOverrides } from '../utils/application-config'
 import {
@@ -7,12 +7,12 @@ import {
   getScopeIdentifier,
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
-  replacePrimengPrefix,
-  scopePrimengCss,
+  replaceOptimusPrefix,
+  scopeOptimusCss,
   shellScopeId,
   SKIP_STYLE_SCOPING,
 } from '@onecx/angular-utils'
-import { toVariables } from '@primeuix/styled'
+import { toVariables } from '@openng/optimus-ui-styled'
 import { replaceRootWithScope } from '@onecx/angular-utils/style'
 import { ReplaySubject } from 'rxjs'
 import { createLogger } from '../utils/logger.utils'
@@ -29,11 +29,11 @@ export class CustomUseStyle extends UseStyle {
   constructor() {
     super()
   }
-  // PrimeNg defines CSS variables and styles globally in <style> elements
+  // Optimus defines CSS variables and styles globally in <style> elements
   // Each Application needs to isolate the CSS variables and styles from others
   override use(css: any, options?: any): { id: any; name: any; el: any; css: any } {
     getScopeIdentifier(this.appStateService, this.skipStyleScoping, this.remoteComponentConfig).then((scopeId) => {
-      css = scopePrimengCss(replaceRootWithScope(replacePrimengPrefix(css, scopeId)), scopeId)
+      css = scopeOptimusCss(replaceRootWithScope(replaceOptimusPrefix(css, scopeId)), scopeId)
 
       options = {
         ...options,
@@ -58,8 +58,8 @@ export class CustomUseStyle extends UseStyle {
       if (variablesData.value.length === 0) return
 
       const styleRef = this.createOrRetrieveOverrideElement(scopeId || shellScopeId)
-      const prefixedOverrides = scopePrimengCss(
-        replaceRootWithScope(replacePrimengPrefix(variablesData.css, scopeId)),
+      const prefixedOverrides = scopeOptimusCss(
+        replaceRootWithScope(replaceOptimusPrefix(variablesData.css, scopeId)),
         scopeId
       )
       styleRef.textContent = prefixedOverrides
