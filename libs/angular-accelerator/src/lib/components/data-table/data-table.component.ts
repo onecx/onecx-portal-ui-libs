@@ -953,7 +953,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       [ColumnType.TRANSLATION_KEY]: [
         'translationKeyFilterCell',
         'translationKeyTableFilterCell',
-        'defaultTranslationKeyCell',
+        // filter option labels are already translated
+        'defaultStringCell',
         'translationKeyCell',
         'translationKeyTableCell',
       ],
@@ -1059,9 +1060,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   getRowObjectFromMultiselectItem(value: SelectItem, column: DataTableColumn): Record<string, unknown> {
-    const rowValue = column.columnType === ColumnType.TRANSLATION_KEY ? value.value : value.label
     return {
-      [column.id]: rowValue,
+      [column.id]: value.label,
     }
   }
 
