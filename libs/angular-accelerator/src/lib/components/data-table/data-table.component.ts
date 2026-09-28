@@ -23,7 +23,6 @@ import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, PrimeTemplate, SelectItem } from 'primeng/api'
 import { Menu } from 'primeng/menu'
-import { MultiSelectItem } from 'primeng/multiselect'
 import {
   BehaviorSubject,
   Observable,
@@ -1059,9 +1058,10 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  getRowObjectFromMultiselectItem(value: MultiSelectItem, column: DataTableColumn): Record<string, string | undefined> {
+  getRowObjectFromMultiselectItem(value: SelectItem, column: DataTableColumn): Record<string, unknown> {
+    const rowValue = column.columnType === ColumnType.TRANSLATION_KEY ? value.value : value.label
     return {
-      [column.id]: value.label,
+      [column.id]: rowValue,
     }
   }
 
