@@ -1,75 +1,80 @@
-import z from 'zod'
-import { bg, withRef, color, border, borderWithShadow } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
+import { bg, border, borderWithShadow, color, withRef } from '../primitives'
 
-// TODO: Refactor to relevant tokens from button usage tokens
 /**
- * Panel buttons in the calendar panel (e.g. navigation buttons in panel header) schema.
+ * Shape of a single state block for calendar panel buttons.
+ * No named severities exist for this node, so its tokens sit directly on the state block instead
+ * of behind a `defaultSeverity` wrapper.
  */
-export class CalendarPanelButtonSchema {
-  private static readonly commonTokens = {
-    width: withRef(z.string()).default('2.5rem'),
-    height: withRef(z.string()).default('2.5rem'),
-  }
+const calendarPanelButtonStateShape = z.object({
+  color: z.union([color, withRef(z.string())]).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  border: border.optional(),
+})
 
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.none}}',
+/**
+ * Shape for calendar panel buttons (e.g. navigation buttons in panel header).
+ * Static tokens (width/height, focusRing) sit at the root; the default token path lives under
+ * `defaultVariant.defaultState`.
+ * All keys are optional — defaults are applied at the calendar schema level.
+ */
+export const calendarPanelButtonShape = z.object({
+  width: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  focusRing: borderWithShadow.optional(),
+
+  defaultVariant: z.object({
+    defaultState: calendarPanelButtonStateShape.prefault({}),
+    hover: calendarPanelButtonStateShape.prefault({}),
+    focus: calendarPanelButtonStateShape.prefault({}),
+    active: calendarPanelButtonStateShape.prefault({}),
+    disabled: calendarPanelButtonStateShape.prefault({}),
+  }).prefault({}),
+})
+
+/**
+ * Default tokens for calendar panel buttons.
+ * Shared across navButton, timePickerButton and calendarIconButton.
+ */
+export const calendarPanelButtonDefaults = {
+  width: '2.5rem',
+  height: '2.5rem',
+  focusRing: {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
+    style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
     offset: '{{primitives.border.offset.none}}',
-    radius: '{{primitives.border.radius.md}}',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-    }),
-  }
-
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
-    }),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-    background: z.union([bg, withRef(z.string())]).default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
-    }),
-  })
-
-  private static readonly focusRingTokens = {
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.border.width.md}}',
-      offset: '{{primitives.border.offset.none}}',
-      shadow: '{{primitives.shadow.none}}',
-      radius: '{{primitives.radius.md}}',
-    }),
-  }
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      ...this.focusRingTokens,
-      hover: this.hoverTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'calendarPanelButton' })
+    shadow: '{{primitives.shadow.none}}',
+    radius: '{{primitives.radius.md}}',
+  },
+  defaultVariant: {
+    defaultState: {
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      border: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.none}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
+      },
+    },
+    hover: {
+      background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+    },
+    focus: {
+      border: {
+        color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
+        width: '{{primitives.border.width.md}}',
+      },
+    },
+    active: {
+      background: '{{primitives.area.overlay.state.active.defaultSeverity.bg}}',
+    },
+    disabled: {
+      color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+      background: '{{primitives.area.overlay.state.disabled.defaultSeverity.bg}}',
+    },
+  },
 }

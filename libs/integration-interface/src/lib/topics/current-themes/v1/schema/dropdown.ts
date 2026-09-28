@@ -1,173 +1,304 @@
 import * as z from 'zod'
-import { bgContrast, border, borderWithShadow, color, font, space, transition, withRef } from './primitives'
+import { bg, borderWithShadow, color, font, icon, space, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
-// Todo - remove when page header pr is merged which contains icon primitives
-const icon = z
-  .object({
-    size: withRef(z.string()).optional(),
-    font: font.optional(),
-    url: z.string().optional(),
-    content: z.string().optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'dropdownIcon' })
+import { applyDefaultsRecursive } from './defaults-helper'
 
-export const settings = z
-  .object({
-    fluid: withRef(z.boolean()).optional(),
-    variant: withRef(z.enum(['filled', 'outlined'])).optional(),
-    scrollHeight: withRef(z.string()),
-    filter: withRef(z.boolean()).optional(),
-    readonly: withRef(z.boolean()).optional(),
-    editable: withRef(z.boolean()).optional(),
-    loadingIcon: withRef(z.string()).optional(),
-    filterLocale: withRef(z.string()).optional(),
-    resetFilterOnHide: withRef(z.boolean()),
-    showClear: withRef(z.boolean()).optional(),
-    virtualScroll: withRef(z.boolean()).optional(),
-    virtualScrollItemSize: withRef(z.number()).optional(),
-    selectOnFocus: withRef(z.boolean()),
-    autoOptionFocus: withRef(z.boolean()),
-    appendTo: withRef(z.enum(['self', 'body'])).optional(),
-    lazyLoading: withRef(z.boolean()).optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'dropdownSettings' })
+const dropdownSettingsShape = z.object({
+  fluid: withRef(z.boolean()).optional(),
+  scrollHeight: withRef(z.string()).optional(),
+  filter: withRef(z.boolean()).optional(),
+  readonly: withRef(z.boolean()).optional(),
+  editable: withRef(z.boolean()).optional(),
+  loadingIcon: withRef(z.string()).optional(),
+  filterLocale: withRef(z.string()).optional(),
+  showClear: withRef(z.boolean()).optional(),
+  virtualScroll: withRef(z.boolean()).optional(),
+  virtualScrollItemSize: withRef(z.number()).optional(),
+  selectOnFocus: withRef(z.boolean()).optional(),
+  autoOptionFocus: withRef(z.boolean()).optional(),
+})
 
-export const stateVariant = bgContrast
-  .extend({
-    border: border.optional(),
-    triggerIcon: icon.optional(),
-  })
-  .register(themeSchemaRegistry, { id: 'dropdownStateVariant' })
-
-const optionalStateVariant = (stateVariant as typeof stateVariant).optional()
-
-export const stateVariants = z
-  .object({
-    default: optionalStateVariant,
-    disable: optionalStateVariant,
-    hover: optionalStateVariant,
-    focus: optionalStateVariant,
-    expanded: optionalStateVariant,
-  })
-  .register(themeSchemaRegistry, { id: 'dropdownStateVariants' })
-
-export const container = bgContrast
-  .extend({
-    space: space.optional(),
-    states: (stateVariants as typeof stateVariants).optional(),
-    placeholder: bgContrast.optional(),
-    invalidPlaceholder: bgContrast.optional(),
-    border: borderWithShadow.optional(),
-    focusRing: borderWithShadow.optional(),
-    transition: transition.optional(),
-    font: font.optional(),
-    width: withRef(z.string()).optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownContainer' })
-
-export const overlay = bgContrast
-  .extend({
-    border: borderWithShadow.optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownOverlay' })
-
-export const list = font
-  .extend({
-    space: space.optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownList' })
-
-const tokenString = withRef(z.string()).optional()
-
-const optionTone = bgContrast.optional()
-
-const optionBorder = border.optional()
-
-const optionFont = font.optional()
-
-const optionSelectedFont = font.optional()
-
-const selectedOption = bgContrast
-  .extend({
-    font: optionSelectedFont,
-    focus: optionTone,
-  })
-  .optional()
-
-const groupedOption = bgContrast
-  .extend({
-    font: optionFont,
-    padding: tokenString,
-  })
-  .optional()
-
-export const option = z
-  .object({
+const dropdownContainerStateShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: borderWithShadow.optional(),
+  focusRing: borderWithShadow.optional(),
+  placeholder: z.object({
     color: color.optional(),
-    padding: tokenString,
-    border: optionBorder,
-    font: optionFont,
-    states: z
-      .object({
-        default: bgContrast.optional(),
-        hover: bgContrast.optional(),
-        disabled: bgContrast.optional(),
-        selected: bgContrast.optional(),
-        focus: bgContrast.optional(),
-      })
-      .optional(),
-    selected: selectedOption,
-    group: groupedOption,
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownOption' })
+  }).optional(),
+  invalidPlaceholder: z.object({
+    color: color.optional(),
+  }).optional(),
+  triggerIcon: icon.optional(),
+  width: withRef(z.string()).optional(),
+  font: font.optional(),
+  space: space.optional(),
+})
 
-export const clear = z
-  .object({
-    icon: icon.optional(),
-    states: z
-      .object({
-        default: bgContrast.optional(),
-        hover: bgContrast.optional(),
-        disabled: bgContrast.optional(),
-        focus: bgContrast.optional(),
-      })
-      .optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownClear' })
+const dropdownContainerVariantShape = z.object({
+  defaultState: dropdownContainerStateShape.prefault({}),
+  hover: dropdownContainerStateShape.prefault({}),
+  focus: dropdownContainerStateShape.prefault({}),
+  active: dropdownContainerStateShape.prefault({}),
+  disabled: dropdownContainerStateShape.prefault({}),
+  invalid: dropdownContainerStateShape.prefault({}),
+})
 
-export const checkmark = z
-  .object({
-    color: tokenString,
-    space: space.optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownCheckmark' })
+const dropdownContainerShape = z.object({
+  defaultVariant: dropdownContainerVariantShape.prefault({}),
+  filled: dropdownContainerVariantShape.prefault({}),
+})
 
-export const empty = z
-  .object({
-    message: space
-      .extend({
-        font: font.optional(),
-      })
-      .optional(),
-  })
-  .optional()
-  .register(themeSchemaRegistry, { id: 'dropdownEmpty' })
+const dropdownClearStateShape = z.object({
+  icon: icon.optional(),
+  color: color.optional(),
+})
 
-export const dropdown = z
-  .object({
-    settings: (settings as typeof settings).optional(),
-    container,
-    overlay,
-    list,
-    option,
-    clear,
-    checkmark,
-    empty,
-  })
-  .register(themeSchemaRegistry, { id: 'dropdown' })
+const dropdownClearShape = z.object({
+  defaultState: dropdownClearStateShape.prefault({}),
+  hover: dropdownClearStateShape.prefault({}),
+  focus: dropdownClearStateShape.prefault({}),
+  disabled: dropdownClearStateShape.prefault({}),
+})
+
+const dropdownOverlayShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: borderWithShadow.optional(),
+})
+
+const dropdownListShape = z.object({
+  space: space.optional(),
+  font: font.optional(),
+})
+
+const dropdownOptionStateShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: borderWithShadow.optional(),
+  font: font.optional(),
+  padding: withRef(z.string()).optional(),
+})
+
+const dropdownOptionShape = z.object({
+  defaultState: dropdownOptionStateShape.prefault({}),
+  hover: dropdownOptionStateShape.prefault({}),
+  focus: dropdownOptionStateShape.prefault({}),
+  selected: dropdownOptionStateShape.prefault({}),
+  disabled: dropdownOptionStateShape.prefault({}),
+  group: z
+    .object({
+      background: z.union([bg, withRef(z.string())]).optional(),
+      color: color.optional(),
+      font: font.optional(),
+      padding: withRef(z.string()).optional(),
+    })
+    .prefault({}),
+})
+
+const dropdownCheckmarkShape = z.object({
+  color: color.optional(),
+  space: space.optional(),
+})
+
+const dropdownEmptyShape = z.object({
+  message: z.object({
+    font: font.optional(),
+  }).optional(),
+  space: space.optional(),
+})
+
+export const dropdownShape = z.object({
+  settings: dropdownSettingsShape.optional(),
+  container: dropdownContainerShape.prefault({}),
+  clear: dropdownClearShape.prefault({}),
+  overlay: dropdownOverlayShape.prefault({}),
+  list: dropdownListShape.prefault({}),
+  option: dropdownOptionShape.prefault({}),
+  checkmark: dropdownCheckmarkShape.prefault({}),
+  empty: dropdownEmptyShape.prefault({}),
+})
+
+const dropdownContainerStateTokens = (state: 'defaultState' | 'hover' | 'focus' | 'active' | 'disabled' | 'invalid') => {
+  const ref = state === 'defaultState' ? 'defaultState' : `state.${state}`
+  return {
+    background: `{{primitives.defaultVariant.${ref}.defaultSeverity.bg}}`,
+    color: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
+    border: {
+      color: `{{primitives.defaultVariant.${ref}.defaultSeverity.border.color}}`,
+      style: `{{primitives.defaultVariant.${ref}.defaultSeverity.border.style}}`,
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.md}}',
+      shadow: '{{primitives.shadow.none}}',
+    },
+    focusRing: {
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+      width: '{{primitives.border.width.md}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.radius.md}}',
+      shadow: '{{primitives.shadow.none}}',
+    },
+    placeholder: {
+      color: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
+    },
+    invalidPlaceholder: {
+      color: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
+    },
+    triggerIcon: {
+      color: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
+      size: '{{primitives.icon.size.sm}}',
+      paddingX: '{{primitives.space.sm}}',
+      paddingY: '{{primitives.space.sm}}',
+    },
+    font: {
+      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size}}',
+    },
+    space: {
+      sm: '{{primitives.space.sm}}',
+      md: '{{primitives.space.md}}',
+      lg: '{{primitives.space.lg}}',
+    },
+    width: '{{primitives.space.xl}}',
+  }
+}
+
+const dropdownDefaultVariantDefaults = {
+  defaultState: dropdownContainerStateTokens('defaultState'),
+  hover: dropdownContainerStateTokens('hover'),
+  focus: dropdownContainerStateTokens('focus'),
+  active: dropdownContainerStateTokens('active'),
+  disabled: dropdownContainerStateTokens('disabled'),
+  invalid: dropdownContainerStateTokens('invalid'),
+}
+
+const dropdownFilledVariantDefaults = (state: 'defaultState' | 'hover' | 'focus' | 'active' | 'disabled' | 'invalid') => ({
+  background: `{{primitives.variant.primary.${state}.defaultSeverity.bg}}`,
+  color: `{{primitives.variant.primary.${state}.defaultSeverity.contrast}}`,
+  placeholder: {
+    color: `{{primitives.variant.primary.${state}.defaultSeverity.contrast}}`,
+  },
+  triggerIcon: {
+    color: `{{primitives.variant.primary.${state}.defaultSeverity.contrast}}`,
+    size: '{{primitives.icon.size.sm}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+  },
+})
+
+const dropdownClearStateTokens = (state: 'defaultState' | 'hover' | 'focus' | 'disabled') => ({
+  color: `{{primitives.variant.primary.${state}.defaultSeverity.contrast}}`,
+  icon: {
+    color: `{{primitives.variant.primary.${state}.defaultSeverity.contrast}}`,
+    size: '{{primitives.icon.size.sm}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+  },
+})
+
+const dropdownOptionStateTokens = (
+  state: 'defaultState' | 'hover' | 'focus' | 'selected' | 'disabled'
+): Record<string, unknown> => {
+  const base = state === 'selected' || state === 'focus' ? 'hover' : 'defaultState'
+  return {
+    background: `{{primitives.area.overlay.${base}.defaultSeverity.bg}}`,
+    color: `{{primitives.area.overlay.${base}.defaultSeverity.contrast}}`,
+    font: {
+      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size}}',
+    },
+    padding: '{{primitives.space.md}}',
+  }
+}
+
+export const dropdownDefaults = {
+  settings: {
+    scrollHeight: '{{primitives.space.xl}}',
+  },
+
+  container: {
+    defaultVariant: dropdownDefaultVariantDefaults,
+    filled: {
+      defaultState: dropdownFilledVariantDefaults('defaultState'),
+      hover: dropdownFilledVariantDefaults('hover'),
+      focus: dropdownFilledVariantDefaults('focus'),
+      active: dropdownFilledVariantDefaults('active'),
+      disabled: dropdownFilledVariantDefaults('disabled'),
+      invalid: dropdownFilledVariantDefaults('invalid'),
+    },
+  },
+
+  clear: {
+    defaultState: dropdownClearStateTokens('defaultState'),
+    hover: dropdownClearStateTokens('hover'),
+    focus: dropdownClearStateTokens('focus'),
+    disabled: dropdownClearStateTokens('disabled'),
+  },
+
+  overlay: {
+    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+    border: {
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.md}}',
+      shadow: '{{primitives.shadow.md}}',
+    },
+  },
+
+  list: {
+    space: {
+      md: '{{primitives.space.md}}',
+      sm: '{{primitives.space.sm}}',
+    },
+    font: {
+      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size}}',
+    },
+  },
+
+  option: {
+    defaultState: dropdownOptionStateTokens('defaultState'),
+    hover: dropdownOptionStateTokens('hover'),
+    focus: dropdownOptionStateTokens('focus'),
+    selected: dropdownOptionStateTokens('selected'),
+    disabled: dropdownOptionStateTokens('disabled'),
+    group: {
+      background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      font: {
+        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size}}',
+      },
+      padding: '{{primitives.space.md}}',
+    },
+  },
+
+  checkmark: {
+    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+    space: {
+      sm: '{{primitives.space.sm}}',
+      md: '{{primitives.space.md}}',
+    },
+  },
+
+  empty: {
+    message: {
+      font: {
+        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size}}',
+      },
+    },
+    space: {
+      md: '{{primitives.space.md}}',
+    },
+  },
+}
+
+export const dropdown = applyDefaultsRecursive(dropdownShape, dropdownDefaults).register(themeSchemaRegistry, {
+  id: 'dropdown',
+})

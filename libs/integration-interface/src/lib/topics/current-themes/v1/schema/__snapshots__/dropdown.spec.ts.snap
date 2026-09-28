@@ -1,0 +1,479 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`dropdown schema resolves the expected default token tree 1`] = `
+Object {
+  "checkmark": Object {
+    "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+    "space": Object {
+      "md": "{{primitives.space.md}}",
+      "sm": "{{primitives.space.sm}}",
+    },
+  },
+  "clear": Object {
+    "defaultState": Object {
+      "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+      "icon": Object {
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+        "paddingX": "{{primitives.space.sm}}",
+        "paddingY": "{{primitives.space.sm}}",
+        "size": "{{primitives.icon.size.sm}}",
+      },
+    },
+    "disabled": Object {
+      "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+      "icon": Object {
+        "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+        "paddingX": "{{primitives.space.sm}}",
+        "paddingY": "{{primitives.space.sm}}",
+        "size": "{{primitives.icon.size.sm}}",
+      },
+    },
+    "focus": Object {
+      "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+      "icon": Object {
+        "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+        "paddingX": "{{primitives.space.sm}}",
+        "paddingY": "{{primitives.space.sm}}",
+        "size": "{{primitives.icon.size.sm}}",
+      },
+    },
+    "hover": Object {
+      "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+      "icon": Object {
+        "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+        "paddingX": "{{primitives.space.sm}}",
+        "paddingY": "{{primitives.space.sm}}",
+        "size": "{{primitives.icon.size.sm}}",
+      },
+    },
+  },
+  "container": Object {
+    "defaultVariant": Object {
+      "active": Object {
+        "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+      "defaultState": Object {
+        "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+      "disabled": Object {
+        "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+      "focus": Object {
+        "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+      "hover": Object {
+        "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+      "invalid": Object {
+        "background": "{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.border.offset.none}}",
+          "radius": "{{primitives.radius.md}}",
+          "shadow": "{{primitives.shadow.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+        "invalidPlaceholder": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        },
+        "placeholder": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+        },
+        "space": Object {
+          "lg": "{{primitives.space.lg}}",
+          "md": "{{primitives.space.md}}",
+          "sm": "{{primitives.space.sm}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+        "width": "{{primitives.space.xl}}",
+      },
+    },
+    "filled": Object {
+      "active": Object {
+        "background": "{{primitives.variant.primary.active.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.active.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.active.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.active.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+      "defaultState": Object {
+        "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+      "disabled": Object {
+        "background": "{{primitives.variant.primary.disabled.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.disabled.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+      "focus": Object {
+        "background": "{{primitives.variant.primary.focus.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.focus.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+      "hover": Object {
+        "background": "{{primitives.variant.primary.hover.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.hover.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+      "invalid": Object {
+        "background": "{{primitives.variant.primary.invalid.defaultSeverity.bg}}",
+        "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+        "placeholder": Object {
+          "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+        },
+        "triggerIcon": Object {
+          "color": "{{primitives.variant.primary.invalid.defaultSeverity.contrast}}",
+          "paddingX": "{{primitives.space.sm}}",
+          "paddingY": "{{primitives.space.sm}}",
+          "size": "{{primitives.icon.size.sm}}",
+        },
+      },
+    },
+  },
+  "empty": Object {
+    "message": Object {
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+    },
+    "space": Object {
+      "md": "{{primitives.space.md}}",
+    },
+  },
+  "list": Object {
+    "font": Object {
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+    "space": Object {
+      "md": "{{primitives.space.md}}",
+      "sm": "{{primitives.space.sm}}",
+    },
+  },
+  "option": Object {
+    "defaultState": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+    "disabled": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+    "focus": Object {
+      "background": "{{primitives.area.overlay.hover.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.hover.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+    "group": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+    "hover": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+    "selected": Object {
+      "background": "{{primitives.area.overlay.hover.defaultSeverity.bg}}",
+      "color": "{{primitives.area.overlay.hover.defaultSeverity.contrast}}",
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "padding": "{{primitives.space.md}}",
+    },
+  },
+  "overlay": Object {
+    "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.md}}",
+      "shadow": "{{primitives.shadow.md}}",
+      "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.sm}}",
+    },
+    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+  },
+  "settings": Object {
+    "scrollHeight": "{{primitives.space.xl}}",
+  },
+}
+`;

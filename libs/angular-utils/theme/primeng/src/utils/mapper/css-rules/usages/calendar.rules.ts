@@ -11,7 +11,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.panel.header.gap',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.header.defaultVariant.defaultState.gap',
       },
     ],
   },
@@ -21,11 +21,11 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.multiMonthDivider.gap',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.multiMonthDivider.gap',
       },
       {
         property: 'margin-top',
-        from: 'usages.calendar.panel.headerGap',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.headerGap',
       },
     ],
   },
@@ -35,7 +35,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.calendar.panel.datePanel.dateCell.selected.inRangeBackground',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.datePanel.defaultVariant.defaultState.dayView.dateCell.defaultVariant.selected.inRangeBackground',
       },
     ],
   },
@@ -45,11 +45,11 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.timePicker.gap',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.timePicker.defaultVariant.defaultState.gap',
       },
       {
         property: 'margin',
-        from: 'usages.calendar.timePicker.margin',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.timePicker.defaultVariant.defaultState.margin',
       },
     ],
   },
@@ -58,7 +58,7 @@ export const calendarCssRules: CssRule[] = [
     declarations: [
       {
         property: 'gap',
-        from: 'usages.calendar.timePicker.buttonGap',
+        from: 'usages.calendar.defaultVariant.panel.defaultVariant.defaultState.timePicker.defaultVariant.defaultState.buttonGap',
       },
     ],
   },

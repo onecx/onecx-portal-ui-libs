@@ -79,7 +79,7 @@ export const menuMappingRules: MappingRule[] = [
     to: 'components.menu.item.icon',
   },
   {
-    from: 'usages.menu.submenuLabel.padding',
+    from: 'usages.menu.submenuLabel.paddingX',
     to: 'components.menu.submenuLabel.padding',
   },
   {
@@ -97,16 +97,16 @@ export const menuMappingRules: MappingRule[] = [
     transform: toColorString,
   },
   {
-    from: 'usages.menu.submenuIcon.size',
+    from: 'usages.menu.submenuIconButton.size',
     to: 'components.menubar.submenu.icon.size',
   },
   {
-    from: 'usages.menu.submenuIcon.color',
+    from: 'usages.menu.submenuIconButton.color',
     to: 'components.menubar.submenu.icon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.menu.submenuIcon.focus.color',
+    from: 'usages.menu.submenuIconButton.focus.color',
     to: 'components.menubar.submenu.icon.focusColor',
     transform: toColorString,
   },

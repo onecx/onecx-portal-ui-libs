@@ -3,6 +3,7 @@ import { dialog } from './schema/dialog'
 import { menubar } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
+import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { table } from './schema/table'
 import { tooltip } from './schema/tooltip'
@@ -10,14 +11,16 @@ import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
-import { fieldset } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
+import { diagram, diagramShape } from './schema/diagram'
+import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
+import { fieldset, fieldsetShape } from './schema/fieldset'
+import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
-import { input } from './schema/input'
+import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
+import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
@@ -25,6 +28,7 @@ import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
@@ -34,29 +38,30 @@ import { searchHeader } from './schema/search-header'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
-  badge?: z.input<typeof badge>
+  badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
   table?: z.input<typeof table>
   tooltip?: z.input<typeof tooltip>
   carousel?: z.input<typeof carousel>
-  fieldset?: z.input<typeof fieldset>
-  diagram?: z.input<typeof diagram>
-  dropdown?: z.input<typeof dropdown>
+  fieldset?: z.input<typeof fieldsetShape>
+  dropdown?: z.input<typeof dropdownShape>
+  diagram?: z.input<typeof diagramShape>
+  groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
-  input?: z.input<typeof input>
+  input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
-  calendar?: z.input<typeof calendar>
+  calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataView>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
-  panelmenu?: z.input<typeof panelmenu>
+  panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeader>
@@ -74,8 +79,9 @@ const usages: z.ZodType<UsagesInput> = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
+    fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
+    groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),

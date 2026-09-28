@@ -1,164 +1,90 @@
 import * as z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { bg, color, withRef } from '../primitives'
 
 /**
- * PanelMenu item schema.
- * Represents individual menu items within the panel content.
+ * PanelMenu item (a recursive menu row inside the panel's expanded content).
+ * 
+ * `submenu.indent` (`panelmenu.submenu.indent` upstream) is the item's own child:
+ * it indents the nested `<ul>` wrapping an item's children, whenever the item has any.
  */
-export class PanelMenuItemSchema {
-  private static readonly commonTokens = {
-    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-    gap: withRef(z.string()).default('{{primitives.space.sm}}'),
-    font: font.pick({ family: true, size: true, weight: true }).default({
-      family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
-    }),
-  }
+const panelMenuItemIconShape = z.object({
+  color: color.optional(),
+})
 
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.none}}',
-    offset: '{{primitives.border.offset.none}}',
-    radius: '{{primitives.border.radius.md}}',
-  }
+const panelMenuItemStateShape = z.object({
+  color: color.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  gap: withRef(z.string()).optional(),
+  padding: withRef(z.string()).optional(),
+  borderRadius: withRef(z.string()).optional(),
+  icon: panelMenuItemIconShape.prefault({}),
+  submenuIcon: panelMenuItemIconShape.prefault({}),
+})
 
-  private static readonly iconDefaults = {
-    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
-    rotate: '0deg',
-  }
+const panelMenuItemSubmenuShape = z.object({
+  indent: withRef(z.string()).optional(),
+})
 
-  private static readonly iconHoverDefaults = {
-    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
-    rotate: '0deg',
-  }
-
-  private static readonly iconActiveDefaults = {
-    color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
-    rotate: '0deg',
-  }
-
-  private static readonly iconFocusDefaults = {
-    color: '{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}',
-    rotate: '0deg',
-  }
-
-  private static readonly iconDisabledDefaults = {
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-    rotate: '0deg',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
-    }),
-    focusRing: borderWithShadow.default({
-      color: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultSeverity.focusRing.style}}',
-      width: '{{primitives.border.width.md}}',
-      offset: '{{primitives.border.offset.none}}',
-      radius: '{{primitives.border.radius.md}}',
-      shadow: '{{primitives.shadow.none}}',
-    }),
-    icon: z
-      .object({
-        color: color.default('{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}'),
-        rotate: withRef(z.string()).default('0deg'),
-      })
-      .default(this.iconDefaults),
-  }
-
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.state.hover.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.hover.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.hover.defaultSeverity.border.style}}',
-    }),
-    icon: z
-      .object({
-        color: color.default('{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}'),
-        rotate: withRef(z.string()).default('0deg'),
-      })
-      .default(this.iconHoverDefaults),
-  })
-
-  static readonly activeTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
-      style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
-    }),
-    icon: z
-      .object({
-        color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-        rotate: withRef(z.string()).default('0deg'),
-      })
-      .default(this.iconActiveDefaults),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.state.focus.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.area.overlay.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.area.overlay.state.focus.defaultSeverity.border.style}}',
-    }),
-    icon: z
-      .object({
-        color: color.default('{{primitives.area.overlay.state.focus.defaultSeverity.contrast}}'),
-        rotate: withRef(z.string()).default('0deg'),
-      })
-      .default(this.iconFocusDefaults),
-  })
-
-  static readonly disabledTokens = z.object({
-    ...this.commonTokens,
-    color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
-    }),
-    icon: z
-      .object({
-        color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-        rotate: withRef(z.string()).default('0deg'),
-      })
-      .default(this.iconDisabledDefaults),
-  })
-
-  static readonly schema = z
+export const panelMenuItemShape = z.object({
+  defaultVariant: z
     .object({
-      ...this.defaultStateTokens,
-      hover: this.hoverTokens.prefault({}),
-      active: this.activeTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-      disabled: this.disabledTokens.prefault({}),
+      defaultState: panelMenuItemStateShape.prefault({}),
+      hover: panelMenuItemStateShape.prefault({}),
+      selected: panelMenuItemStateShape.prefault({}),
+      disabled: panelMenuItemStateShape.prefault({}),
     })
-    .register(themeSchemaRegistry, { id: 'panelmenuItem' })
+    .prefault({}),
+  submenu: panelMenuItemSubmenuShape.prefault({}),
+})
+
+/**
+ * Default tokens for the panelmenu item row.
+ */
+export const panelMenuItemDefaults = {
+  defaultVariant: {
+    defaultState: {
+      color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      gap: '{{primitives.space.sm}}',
+      padding: '{{primitives.space.sm}}',
+      borderRadius: '{{primitives.border.radius.md}}',
+      icon: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      },
+      submenuIcon: {
+        color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+      },
+    },
+    hover: {
+      background: '{{primitives.area.overlay.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+      icon: {
+        color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+      },
+      submenuIcon: {
+        color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
+      },
+    },
+    selected: {
+      background: '{{primitives.area.overlay.state.selected.defaultSeverity.bg}}',
+      color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
+      icon: {
+        color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
+      },
+      submenuIcon: {
+        color: '{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}',
+      },
+    },
+    disabled: {
+      color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+      icon: {
+        color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+      },
+      submenuIcon: {
+        color: '{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}',
+      },
+    },
+  },
+  submenu: {
+    indent: '{{primitives.space.md}}',
+  },
 }

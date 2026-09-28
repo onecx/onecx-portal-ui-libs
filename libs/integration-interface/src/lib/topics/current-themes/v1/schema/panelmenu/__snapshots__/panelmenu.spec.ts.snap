@@ -1,0 +1,123 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`panelmenu schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "header": Object {
+      "defaultVariant": Object {
+        "defaultState": Object {
+          "borderRadius": "{{primitives.border.radius.md}}",
+          "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          "gap": "{{primitives.space.sm}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          },
+          "padding": "{{primitives.space.sm}}",
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          },
+        },
+        "disabled": Object {
+          "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          },
+        },
+        "hover": Object {
+          "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+          "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          },
+        },
+        "selected": Object {
+          "background": "{{primitives.area.overlay.state.selected.defaultSeverity.bg}}",
+          "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          },
+        },
+      },
+    },
+    "item": Object {
+      "defaultVariant": Object {
+        "defaultState": Object {
+          "borderRadius": "{{primitives.border.radius.md}}",
+          "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          "gap": "{{primitives.space.sm}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          },
+          "padding": "{{primitives.space.sm}}",
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+          },
+        },
+        "disabled": Object {
+          "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.disabled.defaultSeverity.contrast}}",
+          },
+        },
+        "hover": Object {
+          "background": "{{primitives.area.overlay.state.hover.defaultSeverity.bg}}",
+          "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
+          },
+        },
+        "selected": Object {
+          "background": "{{primitives.area.overlay.state.selected.defaultSeverity.bg}}",
+          "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          "icon": Object {
+            "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          },
+          "submenuIcon": Object {
+            "color": "{{primitives.area.overlay.state.selected.defaultSeverity.contrast}}",
+          },
+        },
+      },
+      "submenu": Object {
+        "indent": "{{primitives.space.md}}",
+      },
+    },
+    "panel": Object {
+      "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.md}}",
+        "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.sm}}",
+      },
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "first": Object {
+        "borderWidth": "{{primitives.border.width.sm}}",
+        "topBorderRadius": "{{primitives.border.radius.md}}",
+      },
+      "last": Object {
+        "borderWidth": "{{primitives.border.width.sm}}",
+        "bottomBorderRadius": "{{primitives.border.radius.md}}",
+      },
+      "padding": "{{primitives.space.xs}}",
+    },
+  },
+  "gap": "{{primitives.space.sm}}",
+  "transitionDuration": "{{primitives.transition.duration}}",
+}
+`;
