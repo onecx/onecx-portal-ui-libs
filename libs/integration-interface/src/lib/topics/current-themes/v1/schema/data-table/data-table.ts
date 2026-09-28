@@ -4,7 +4,7 @@ import { themeSchemaRegistry } from '../registry'
 import { dataTableBaseDefaults, dataTableBaseShape, dataTableColumnTitleDefaults, dataTableColumnTitleShape } from './base'
 import { dataTableFooterDefaults, dataTableFooterShape } from './footer'
 import { dataTableHeaderDefaults, dataTableHeaderShape } from './header'
-import { dataTableAlternatingRowDefaults, dataTableAlternatingRowShape, dataTableRowDefaults, dataTableRowShape } from './row'
+import { dataTableRowDefaults, dataTableRowShape } from './row'
 import { dataTableSettingsDefaults, dataTableSettingsShape } from './settings'
 
 // ---------------------------------------------------------------------------
