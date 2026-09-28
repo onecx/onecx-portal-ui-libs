@@ -6,12 +6,14 @@ import { themeSchemaRegistry } from '../registry'
 
 const titleShape = z.object({
   font: font.pick({ family: true, size: true, weight: true }).optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
 })
 
 const subtitleShape = z.object({
   font: font.pick({ family: true, size: true, weight: true }).optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
 })
 
 const titleIconShape = z.object({
@@ -38,8 +40,9 @@ const titleWrapShape = z.object({
 })
 
 const actionPanelShape = z.object({
-  padding: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+  gap: withRef(z.string()).default('{{primitives.space.md}}'),
   alignItems: withRef(z.string()).optional(),
   justifyContent: withRef(z.string()).optional(),
 })
@@ -47,8 +50,9 @@ const actionPanelShape = z.object({
 export const pageHeaderTitleBarShape = z.object({
   color: color.optional(),
   background: bg.pick({ color: true }).optional(),
-  padding: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+  gap: withRef(z.string()).default('{{primitives.space.md}}'),
   title: titleShape.prefault({}),
   subtitle: subtitleShape.prefault({}),
   titleIcon: titleIconShape.prefault({}),
@@ -61,7 +65,8 @@ export const pageHeaderTitleBarDefaults = {
   background: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
   },
-  padding: '{{primitives.space.md}}',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
   gap: '{{primitives.space.md}}',
   title: {
     font: {
@@ -69,7 +74,8 @@ export const pageHeaderTitleBarDefaults = {
       size: '{{primitives.font.size}}',
       weight: '{{primitives.font.weight}}',
     },
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
   },
   subtitle: {
     font: {
@@ -77,7 +83,8 @@ export const pageHeaderTitleBarDefaults = {
       size: '{{primitives.font.size}}',
       weight: '{{primitives.font.weight}}',
     },
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
   },
   titleIcon: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -99,7 +106,8 @@ export const pageHeaderTitleBarDefaults = {
     alignItems: 'flex-start',
   },
   actionPanel: {
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
     gap: '{{primitives.space.md}}',
     alignItems: 'center',
     justifyContent: 'center',

@@ -13,17 +13,14 @@ const detailIconShape = z.object({
       height: withRef(z.string()).optional(),
     })
     .prefault({}),
-  padding: z
-    .object({
-      left: withRef(z.string()).optional(),
-      right: withRef(z.string()).optional(),
-    })
-    .prefault({}),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
 })
 
 const detailValueShape = z.object({
   color: color.optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   font: font.pick({ family: true, size: true, weight: true }).optional(),
   infoIcon: detailIconShape.prefault({}),
   actionIcon: detailIconShape.prefault({}),
@@ -31,7 +28,8 @@ const detailValueShape = z.object({
 
 const detailLabelShape = z.object({
   color: color.optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   gap: withRef(z.string()).optional(),
   font: font.pick({ family: true, size: true, weight: true }).optional(),
 })
@@ -43,8 +41,14 @@ const objectPanelShape = {
 }
 
 export const pageHeaderContentShape = z.object({
-  padding: withRef(z.string()).optional(),
-  borderTop: border.pick({ width: true, color: true }).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+  border: z.object({
+    top: border.pick({ width: true, color: true }).optional(),
+    bottom: border.pick({ width: true, color: true }).optional(),
+    left: border.pick({ width: true, color: true }).optional(),
+    right: border.pick({ width: true, color: true }).optional(),
+  }).optional(),
   color: color.optional(),
   background: bg.pick({ color: true }).optional(),
   font: font.pick({ family: true, size: true, weight: true }).optional(),
@@ -52,11 +56,26 @@ export const pageHeaderContentShape = z.object({
 })
 
 export const pageHeaderContentDefaults = {
-  padding: '{{primitives.space.md}}',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
   gap: '{{primitives.space.md}}',
-  borderTop: {
-    width: '{{primitives.border.width.md}}',
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+  border: {
+    top: {
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    },
+    bottom: {
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    },
+    left: {
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    },
+    right: {
+      width: '{{primitives.border.width.md}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    },
   },
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   background: {
@@ -70,7 +89,8 @@ export const pageHeaderContentDefaults = {
 
   value: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
     font: {
       family: '{{primitives.font.family}}',
       size: '{{primitives.font.size}}',
@@ -83,9 +103,8 @@ export const pageHeaderContentDefaults = {
         width: '1rem',
         height: '1rem',
       },
-      padding: {
-        right: '{{primitives.space.md}}',
-      },
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
     },
     actionIcon: {
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -94,15 +113,15 @@ export const pageHeaderContentDefaults = {
         width: '1rem',
         height: '1rem',
       },
-      padding: {
-        left: '{{primitives.space.md}}',
-      },
+      paddingX: '{{primitives.space.md}}',
+      paddingY: '{{primitives.space.md}}',
     },
   },
 
   label: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    padding: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
     gap: '{{primitives.space.md}}',
     font: {
       family: '{{primitives.font.family}}',

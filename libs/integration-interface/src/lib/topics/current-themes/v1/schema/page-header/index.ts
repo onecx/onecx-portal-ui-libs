@@ -7,8 +7,10 @@ import { pageHeaderSettingsDefaults, pageHeaderSettingsShape } from './settings'
 import { pageHeaderTitleBarDefaults, pageHeaderTitleBarShape } from './title-bar'
 
 const breadcrumbWrapperShape = z.object({
-  padding: withRef(z.string()).optional(),
-  margin: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
+  marginX: withRef(z.string()).default('{{primitives.space.sm}}'),
+  marginY: withRef(z.string()).default('{{primitives.space.sm}}'),
 })
 
 export const pageHeaderShape = z.object({
@@ -20,11 +22,11 @@ export const pageHeaderShape = z.object({
       shadow: true,
     })
     .optional(),
-  paddingX: withRef(z.string()).optional(),
-  paddingY: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
+  paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   background: bg.pick({ color: true }).optional(),
-  marginX: withRef(z.string()).optional(),
-  marginY: withRef(z.string()).optional(),
+  marginX: withRef(z.string()).default('{{primitives.space.sm}}'),
+  marginY: withRef(z.string()).default('{{primitives.space.sm}}'),
   settings: pageHeaderSettingsShape.prefault({}),
   breadcrumbWrapper: breadcrumbWrapperShape.prefault({}),
   header: pageHeaderTitleBarShape.prefault({}),
@@ -43,12 +45,14 @@ export const pageHeaderDefaults = {
   background: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}',
   },
-  marginX: '{{primitives.space.md}}',
-  marginY: '{{primitives.space.md}}',
+  marginX: '{{primitives.space.sm}}',
+  marginY: '{{primitives.space.sm}}',
   settings: pageHeaderSettingsDefaults,
   breadcrumbWrapper: {
-    padding: '{{primitives.space.md}}',
-    margin: '{{primitives.space.md}}',
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
+    marginX: '{{primitives.space.sm}}',
+    marginY: '{{primitives.space.sm}}',
   },
   header: pageHeaderTitleBarDefaults,
   content: pageHeaderContentDefaults,
