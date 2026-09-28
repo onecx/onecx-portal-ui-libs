@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`searchHeader schema resolves the expected default token tree 1`] = `
+Object {
+  "background": Object {
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+  },
+  "border": Object {
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+    "radius": "{{primitives.radius.md}}",
+    "shadow": "{{primitives.shadow.md}}",
+    "width": "{{primitives.border.width.md}}",
+  },
+  "breadcrumbWrapper": Object {
+    "marginX": "{{primitives.space.sm}}",
+    "marginY": "{{primitives.space.sm}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+  },
+  "content": Object {
+    "background": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+    },
+    "border": Object {
+      "bottom": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "left": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "right": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "top": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "font": Object {
+      "family": "{{primitives.font.family}}",
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+    "gap": "{{primitives.space.md}}",
+    "label": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "family": "{{primitives.font.family}}",
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "gap": "{{primitives.space.md}}",
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+    "value": Object {
+      "actionIcon": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "icon": Object {
+          "height": "1rem",
+          "size": "{{primitives.icon.md}}",
+          "width": "1rem",
+        },
+        "paddingX": "{{primitives.space.md}}",
+        "paddingY": "{{primitives.space.md}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "family": "{{primitives.font.family}}",
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "infoIcon": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "icon": Object {
+          "height": "1rem",
+          "size": "{{primitives.icon.md}}",
+          "width": "1rem",
+        },
+        "paddingX": "{{primitives.space.md}}",
+        "paddingY": "{{primitives.space.md}}",
+      },
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+  },
+  "controls": Object {
+    "gap": "{{primitives.space.md}}",
+  },
+  "header": Object {
+    "actionPanel": Object {
+      "alignItems": "center",
+      "gap": "{{primitives.space.md}}",
+      "justifyContent": "center",
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+    "background": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "gap": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+    "subtitle": Object {
+      "font": Object {
+        "family": "{{primitives.font.family}}",
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+    "title": Object {
+      "font": Object {
+        "family": "{{primitives.font.family}}",
+        "size": "{{primitives.font.size}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+    "titleIcon": Object {
+      "background": Object {
+        "color": "{{primitives.variant.primary.defaultState.defaultSeverity.bg.color}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "icon": Object {
+        "height": "1rem",
+        "size": "{{primitives.icon.md}}",
+        "width": "1rem",
+      },
+      "image": Object {
+        "height": "1rem",
+        "size": "{{primitives.icon.md}}",
+        "width": "1rem",
+      },
+    },
+    "titleWrap": Object {
+      "alignItems": "flex-start",
+    },
+  },
+  "layout": Object {
+    "columnGap": "{{primitives.space.md}}",
+    "rowGap": "{{primitives.space.md}}",
+  },
+  "marginX": "{{primitives.space.sm}}",
+  "marginY": "{{primitives.space.sm}}",
+  "paddingX": "{{primitives.space.md}}",
+  "paddingY": "{{primitives.space.md}}",
+  "searchResetPanel": Object {
+    "alignItems": "center",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+  },
+  "settings": Object {
+    "disableDefaultActions": false,
+    "enableGrid": false,
+    "gridLayoutDesktopColumns": 12,
+    "loading": false,
+    "manualBreadcrumbs": false,
+    "mode": "basic",
+    "showBreadcrumbs": true,
+  },
+}
+`;

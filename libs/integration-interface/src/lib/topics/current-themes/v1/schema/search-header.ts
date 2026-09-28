@@ -1,28 +1,59 @@
-import z from 'zod'
+import * as z from 'zod'
+
+import { applyDefaultsRecursive } from './defaults-helper'
 import { withRef } from './primitives'
-import { PageHeaderSchema } from './page-header/index'
+import { themeSchemaRegistry } from './registry'
+import { pageHeaderShape, pageHeaderDefaults } from './page-header/index'
 
-export class SearchHeaderSchema {
-  static readonly layout = z.object({
-    rowGap: withRef(z.string()).default('{{primitives.space.md}}'),
-    columnGap: withRef(z.string()).default('{{primitives.space.md}}'),
-  })
+const searchHeaderLayoutShape = z.object({
+  rowGap: withRef(z.string()).optional(),
+  columnGap: withRef(z.string()).optional(),
+})
 
-  static readonly controls = z.object({
-    gap: withRef(z.string()).default('{{primitives.space.md}}'),
-  })
-
-  static readonly searchResetPanel = z.object({
-    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-    alignItems: withRef(z.string()).default('center'),
-  })
-
-  static readonly schema = PageHeaderSchema.schema.extend({
-    layout: this.layout.prefault({}),
-    controls: this.controls.prefault({}),
-    searchResetPanel: this.searchResetPanel.prefault({}),
-  })
+const searchHeaderLayoutDefaults = {
+  rowGap: '{{primitives.space.md}}',
+  columnGap: '{{primitives.space.md}}',
 }
 
-export const searchHeader = SearchHeaderSchema.schema.prefault({})
+const searchHeaderControlsShape = z.object({
+  gap: withRef(z.string()).optional(),
+})
+
+const searchHeaderControlsDefaults = {
+  gap: '{{primitives.space.md}}',
+}
+
+const searchResetPanelShape = z.object({
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  alignItems: withRef(z.string()).optional(),
+})
+
+const searchResetPanelDefaults = {
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
+  alignItems: 'center',
+}
+
+export const searchHeaderShape = pageHeaderShape.extend({
+  layout: searchHeaderLayoutShape.prefault({}),
+  controls: searchHeaderControlsShape.prefault({}),
+  searchResetPanel: searchResetPanelShape.prefault({}),
+})
+
+export const searchHeaderDefaults = {
+  ...pageHeaderDefaults,
+  layout: searchHeaderLayoutDefaults,
+  controls: searchHeaderControlsDefaults,
+  searchResetPanel: searchResetPanelDefaults,
+}
+
+export const searchHeader = applyDefaultsRecursive(searchHeaderShape, searchHeaderDefaults).register(
+  themeSchemaRegistry,
+  {
+    id: 'searchHeader',
+  }
+)
+export class SearchHeaderSchema {
+  static readonly schema = searchHeader
+}
