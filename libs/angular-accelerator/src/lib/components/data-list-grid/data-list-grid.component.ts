@@ -25,8 +25,8 @@ import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MfeInfo } from '@onecx/integration-interface'
-import { MenuItem, PrimeIcons, PrimeTemplate } from 'primeng/api'
-import { Menu } from 'primeng/menu'
+import { MenuItem, OpenngIcons, PrimeTemplate } from '@openng/optimus-ui/api'
+import { Menu } from '@openng/optimus-ui/menu'
 import { Observable, combineLatest, debounceTime, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
@@ -737,7 +737,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     if (this.shouldDisplayAction(actionPermissions.viewPermission, this.viewItem, permissions)) {
       menuItems.push({
         label: translations[keys.viewMenuItem],
-        icon: PrimeIcons.EYE,
+        icon: OpenngIcons.EYE,
         command: () => this.viewItem.emit(selectedItem),
         disabled: viewDisabled,
         visible: viewVisible,
@@ -747,7 +747,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     if (this.shouldDisplayAction(actionPermissions.editPermission, this.editItem, permissions)) {
       menuItems.push({
         label: translations[keys.editMenuItem],
-        icon: PrimeIcons.PENCIL,
+        icon: OpenngIcons.PENCIL,
         command: () => this.editItem.emit(selectedItem),
         disabled: editDisabled,
         visible: editVisible,
@@ -757,7 +757,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     if (this.shouldDisplayAction(actionPermissions.deletePermission, this.deleteItem, permissions)) {
       menuItems.push({
         label: translations[keys.deleteMenuItem],
-        icon: PrimeIcons.TRASH,
+        icon: OpenngIcons.TRASH,
         command: () => this.deleteItem.emit(selectedItem),
         disabled: deleteDisabled,
         visible: deleteVisible,

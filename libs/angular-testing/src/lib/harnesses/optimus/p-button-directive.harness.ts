@@ -59,8 +59,8 @@ export class PButtonDirectiveHarness extends ComponentHarness {
   }
 
   /**
-   * Gets the PrimeNG button severity by reading the host element's CSS classes.
-   * PrimeNG applies severity as CSS classes in the format 'p-button-{severity}'.
+   * Gets the Optimus button severity by reading the host element's CSS classes.
+   * Optimus applies severity as CSS classes in the format 'p-button-{severity}'.
    * Returns undefined when no severity class is present (backward compatible with default appearance).
    */
   async getSeverity(): Promise<PButtonSeverity> {

@@ -10,11 +10,11 @@ import {
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { MenuItem, PrimeIcons } from 'primeng/api'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { ButtonModule } from 'primeng/button'
-import { MenuModule } from 'primeng/menu'
-import { TooltipModule } from 'primeng/tooltip'
+import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
+import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { MenuModule } from '@openng/optimus-ui/menu'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { PageHeaderHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../testing'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
@@ -260,7 +260,7 @@ describe('PageHeaderComponent', () => {
           console.log('My Test Action')
         },
         permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
+        icon: OpenngIcons.LOCK,
       },
       {
         label: 'Action with right icon',
@@ -269,7 +269,7 @@ describe('PageHeaderComponent', () => {
           console.log('My Test Action')
         },
         permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
+        icon: OpenngIcons.LOCK,
         iconPos: 'right',
       },
     ])
@@ -289,7 +289,7 @@ describe('PageHeaderComponent', () => {
           console.log('My Test Action')
         },
         permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
+        icon: OpenngIcons.LOCK,
       },
       {
         label: 'Action with right icon',
@@ -298,7 +298,7 @@ describe('PageHeaderComponent', () => {
           console.log('My Test Action')
         },
         permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.LOCK,
+        icon: OpenngIcons.LOCK,
         iconPos: 'right',
       },
     ])
@@ -337,7 +337,7 @@ describe('PageHeaderComponent', () => {
       show: 'always',
       routerLink: '/inline',
       permission: 'TEST#TEST_PERMISSION',
-      icon: PrimeIcons.MAP,
+      icon: OpenngIcons.MAP,
     })
 
     expect(spy).toHaveBeenCalledWith(['/inline'])
@@ -352,7 +352,7 @@ describe('PageHeaderComponent', () => {
         show: 'asOverflow',
         routerLink: '/overflow',
         permission: 'TEST#TEST_PERMISSION',
-        icon: PrimeIcons.MAP,
+        icon: OpenngIcons.MAP,
       },
     ])
 
@@ -575,11 +575,11 @@ describe('PageHeaderComponent', () => {
       {
         label: 'Status',
         value: 'Confirmed',
-        icon: PrimeIcons.CHECK,
+        icon: OpenngIcons.CHECK,
       },
       {
         label: 'Done?',
-        icon: PrimeIcons.EXCLAMATION_CIRCLE,
+        icon: OpenngIcons.EXCLAMATION_CIRCLE,
       },
       {
         label: 'Empty',
@@ -597,11 +597,11 @@ describe('PageHeaderComponent', () => {
     const secondDetail = await pageHeaderHarness.getObjectInfoByLabel('Status')
     expect(await secondDetail?.getLabel()).toEqual('Status')
     expect(await secondDetail?.getValue()).toEqual('Confirmed')
-    expect(await secondDetail?.getIcon()).toEqual(PrimeIcons.CHECK)
+    expect(await secondDetail?.getIcon()).toEqual(OpenngIcons.CHECK)
     const thirdDetail = await pageHeaderHarness.getObjectInfoByLabel('Done?')
     expect(await thirdDetail?.getLabel()).toEqual('Done?')
     expect(await thirdDetail?.getValue()).toEqual('')
-    expect(await thirdDetail?.getIcon()).toEqual(PrimeIcons.EXCLAMATION_CIRCLE)
+    expect(await thirdDetail?.getIcon()).toEqual(OpenngIcons.EXCLAMATION_CIRCLE)
     const fourthDetail = await pageHeaderHarness.getObjectInfoByLabel('Empty')
     expect(await fourthDetail?.getLabel()).toEqual('Empty')
     expect(await fourthDetail?.getValue()).toBeUndefined()

@@ -1,5 +1,5 @@
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
-import { providePrimeNG } from 'primeng/config'
+import { provideOptimus } from '@openng/optimus-ui/config'
 import { provideThemeConfigService } from '../services/theme-config.service'
 import { InjectionToken } from '@angular/core'
 import { provideAppStylesInitializer } from './app-styles-initializer'
@@ -22,7 +22,7 @@ export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
   }
   return [
     provideAnimationsAsync(),
-    providePrimeNG({}),
+    provideOptimus({}),
     provideThemeConfigService(options?.isAdvancedTheming ?? false),
     provideAppStylesInitializer(),
     ...dynamicProviders,
