@@ -245,8 +245,14 @@
       </div>
     </div>
     } @placeholder {
-    <div class="data-list-items p-1">
-      <ocx-skeleton width="100%" height="3rem" />
+    <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
+      <div class="flex flex-wrap">
+        @for (col of getFilteredColumns(); track col.id) {
+        <div class="w-12rem my-2 mr-2">
+          <ocx-skeleton width="100%" />
+        </div>
+        }
+      </div>
     </div>
     }
   </div>

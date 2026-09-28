@@ -192,7 +192,7 @@
   </ng-template>
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
-    <tr>
+    <tr #rowElement>
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -213,7 +213,7 @@
       </td>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      } @defer (on viewport) { @for (column of columns; track column) {
+      } @defer (on viewport(rowElement)) { @for (column of columns; track column) {
       <td>
         @if (columnTemplates[column.id]) {
         <ng-container
@@ -228,11 +228,11 @@
         </ng-container>
         }
       </td>
-      } } @placeholder {
-      <td [attr.colspan]="columns.length">
+      } } @placeholder { @for (column of columns; track column.id) {
+      <td>
         <ocx-skeleton width="100%" />
       </td>
-      } @if (actionColumnPosition === 'right';) {
+      } } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
       }
     </tr>
