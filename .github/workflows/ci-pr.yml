@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - v*
+      - feat/theme-v2
 
 jobs:
   dependency-review-pr:
