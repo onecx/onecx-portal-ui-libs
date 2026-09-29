@@ -31,12 +31,12 @@ import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
-import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 import { searchHeader, searchHeaderShape } from './schema/search-header'
 import { pageHeaderShape } from './schema/page-header/index'
+import { breadcrumb, breadcrumbShape } from './schema/breadcrumb/breadcrumb'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -65,7 +65,7 @@ type UsagesInput = {
   ripple?: z.input<typeof ripple>
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
-  breadcrumb?: z.input<typeof breadcrumb>
+  breadcrumb?: z.input<typeof breadcrumbShape>
   pageHeader?: z.input<typeof pageHeaderShape>
   searchHeader?: z.input<typeof searchHeaderShape>
   content?: z.input<typeof content>
@@ -100,7 +100,7 @@ const usages: z.ZodType<UsagesInput> = z
     ripple: (ripple as typeof ripple).optional(),
     panelmenu: (panelmenu as typeof panelmenu).optional(),
     menu: (menu as typeof menu).optional(),
-    breadcrumb: (breadcrumb as typeof breadcrumb).optional(),
+    breadcrumb: (breadcrumb as typeof breadcrumbShape).optional(),
     pageHeader: (pageHeader as typeof pageHeader).optional(),
     searchHeader: (searchHeader as typeof searchHeader).optional(),
     content: (content as typeof content).optional(),
