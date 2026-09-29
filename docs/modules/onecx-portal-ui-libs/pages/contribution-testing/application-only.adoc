@@ -1,0 +1,29 @@
+:idprefix:
+:idseparator: -
+
+:contribution_testing:      xref:documentation:onecx-portal-ui-libs:contribution-testing/index.adoc[Contribution & Testing]
+:local_only_testing:        xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only testing]
+:integration_testing:       xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration testing]
+
+[#application-only-testing]
+= Application-only Testing
+
+If you've modified an existing OneCX core app (e.g. OneCX Theme UI) and the change is confined to that app, no rebuild of the shell or the libraries is required.
+
+[#testing-the-application]
+== Testing the application
+
+You can use the same options as described in xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.adoc#running-and-testing-applications[Running and Testing Applications]:
+
+* You can follow the xref:documentation:onecx-docs-start:first-app/image_build_automatic.adoc[automatic image build process] and use the build context in `docker-compose.yaml` to build the image from your local application each time you run Docker Compose.
+
+* You can follow the xref:documentation:onecx-docs-start:first-app/image_build_manual.adoc[manual image build process] to build a local image in the application and adjust the .env UI variable to use your local image.
+
+* You can set up your application for hot reloading as described in xref:documentation:onecx-docs-start:first-app/enable_hot_reload.adoc[Hot Reload] for faster development and testing.
+
+[#related]
+== Related
+
+* {contribution_testing}[Contribution & Testing] — the overview and the other verification tiers.
+* {local_only_testing}[Local-only testing] — verifying a change with the library's own unit tests and Storybook.
+* {integration_testing}[Integration testing] — building the libraries locally and copying them into the shell and apps.
