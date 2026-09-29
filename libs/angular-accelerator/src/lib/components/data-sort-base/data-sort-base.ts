@@ -53,7 +53,7 @@ export class DataSortBase {
   }
 
   filterItems(
-    [items, filters, translations]: [RowListGridData[], Filter[], Record<string, Record<string, string>>],
+    [items, filters]: [RowListGridData[], Filter[]],
     clientSideFiltering: boolean
   ): RowListGridData[] {
     if (!clientSideFiltering) {
@@ -67,10 +67,7 @@ export class DataSortBase {
           filters
             .filter((filter) => filter.columnId === filterColumnId)
             .some((filter) => {
-              const value = (
-                translations[filter.columnId]?.[ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()] ||
-                ObjectUtils.resolveFieldData(item, filter.columnId)
-              )?.toString()
+              const value = ObjectUtils.resolveFieldData(item, filter.columnId)?.toString()
               switch (filter.filterType) {
                 case undefined:
                 case FilterType.EQUALS:

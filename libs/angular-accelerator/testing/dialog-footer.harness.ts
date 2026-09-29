@@ -1,4 +1,4 @@
-import { ContentContainerComponentHarness, PButtonDirectiveHarness } from '@onecx/angular-testing'
+import { ContentContainerComponentHarness, PButtonDirectiveHarness, type PButtonSeverity } from '@onecx/angular-testing'
 
 export class DialogFooterHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-dialog-footer'
@@ -36,5 +36,34 @@ export class DialogFooterHarness extends ContentContainerComponentHarness {
 
   async getSecondaryButtonDisabled(): Promise<boolean | undefined> {
     return await (await this.getSecondaryButton())?.getDisabled()
+  }
+
+  async getPrimaryButtonSeverity(): Promise<PButtonSeverity> {
+    return await (await this.getPrimaryButton()).getSeverity()
+  }
+
+  async getSecondaryButtonSeverity(): Promise<PButtonSeverity | undefined> {
+    return await (await this.getSecondaryButton())?.getSeverity()
+  }
+
+  /**
+   * Gets a custom button harness by its ID (optional - returns null if not found)
+   */
+  getCustomButton = (id: string) => this.locatorForOptional(PButtonDirectiveHarness.with({ id }))()
+
+  /**
+   * Gets the severity of a custom button by its ID
+   */
+  async getCustomButtonSeverity(id: string): Promise<PButtonSeverity | undefined> {
+    const button = await this.getCustomButton(id)
+    return button ? await button.getSeverity() : undefined
+  }
+
+  /**
+   * Gets the label of a custom button by its ID
+   */
+  async getCustomButtonLabel(id: string): Promise<string | null | undefined> {
+    const button = await this.getCustomButton(id)
+    return button ? await button.getLabel() : undefined
   }
 }

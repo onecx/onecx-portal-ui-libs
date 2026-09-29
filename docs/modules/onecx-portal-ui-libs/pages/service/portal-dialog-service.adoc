@@ -221,6 +221,44 @@ NOTE: The 'X' button will be always visible if only one button is used for the d
 ==== Add Custom Buttons to The Dialog
 To use buttons other than default ones, use `customButtons` property. It is an array of buttons to be added to the dialog. It is possible to control the alignment of the buttons.
 
+[#button-severity]
+==== Configure Button Severity
+Each button (primary, secondary, and custom buttons) supports an optional `severity` property to control its PrimeNG button appearance. When omitted, the button renders with PrimeNG's default appearance (no explicit severity class).
+
+Allowed severity values (matching PrimeNG's documented button severities):
+* `primary`
+* `secondary`
+* `success`
+* `info`
+* `warn`
+* `help`
+* `danger`
+* `contrast`
+
+Example with severity on primary and secondary buttons:
+[source,javascript]
+----
+this.portalDialogService.openDialog('TITLE_KEY', 'MESSAGE_KEY',
+  { key: 'PRIMARY_KEY', severity: 'danger' },  // primary button with danger severity
+  { key: 'SECONDARY_KEY', severity: 'secondary' }  // secondary button with secondary severity
+).subscribe((stateOnClose) => {
+  // operations when dialog has been closed
+})
+----
+
+Example with severity on custom buttons:
+[source,javascript]
+----
+this.portalDialogService.openDialog('TITLE_KEY', 'MESSAGE_KEY', 'PRIMARY_KEY', 'SECONDARY_KEY', {
+  customButtons: [
+    { id: 'save', key: 'SAVE', alignment: 'right', severity: 'success' },
+    { id: 'delete', key: 'DELETE', alignment: 'right', severity: 'danger' },
+  ]
+}).subscribe((stateOnClose) => {
+  // operations when dialog has been closed
+})
+----
+
 [#buttons-autofocus]
 ==== Control Buttons Autofocus
 To control the autofocus of the dialog, use `autoFocusButton` and `autoFocusButtonCustomId` properties. When not provided, the autofocus will not be applied to any button.

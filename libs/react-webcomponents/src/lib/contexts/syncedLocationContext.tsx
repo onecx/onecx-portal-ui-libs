@@ -10,7 +10,8 @@ import {
 } from 'react'
 import { BrowserRouter, useLocation } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
-import { useTopic, createLogger } from '@onecx/react-integration-interface'
+import { useTopic } from '@onecx/react-integration-interface'
+import { createLogger } from '../utils/logger.utils'
 
 /**
  * React context carrying the current synced location payload.

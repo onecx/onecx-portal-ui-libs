@@ -11,6 +11,7 @@ export class DataListGridHarness extends ContentContainerComponentHarness {
   getGridMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
   getListOverflowMenuButton = this.locatorFor(`[name="data-list-overflow-item-menu-button"]`)
   getListOverflowMenu = this.locatorForOptional(PMenuHarness)
+  getEmptyMessage = this.locatorForOptional('.ocx-data-list-grid-empty-message')
 
   async getDefaultListItems() {
     await waitForDeferredViewsToBeRendered(this)

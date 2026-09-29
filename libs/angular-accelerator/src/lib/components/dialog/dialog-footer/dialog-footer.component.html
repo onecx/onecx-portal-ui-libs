@@ -21,6 +21,7 @@
       [ocxTooltip]="dialogData().config.secondaryButtonDetails!.tooltipKey ? (dialogData().config.secondaryButtonDetails!.tooltipKey | translate) : null"
       [tooltipPosition]="dialogData().config.secondaryButtonDetails?.tooltipPosition ?? ''"
       [attr.aria-label]="dialogData().config.secondaryButtonDetails!.key | translate:dialogData().config.secondaryButtonDetails?.parameters"
+      [severity]="dialogData().config.secondaryButtonDetails?.severity"
     ></button>
     }
   </div>
@@ -37,6 +38,7 @@
       [ocxTooltip]="dialogData().config.primaryButtonDetails!.tooltipKey ? (dialogData().config.primaryButtonDetails!.tooltipKey | translate) : null"
       [tooltipPosition]="dialogData().config.primaryButtonDetails?.tooltipPosition ?? ''"
       [attr.aria-label]="dialogData().config.primaryButtonDetails!.key | translate:dialogData().config.primaryButtonDetails?.parameters"
+      [severity]="dialogData().config.primaryButtonDetails?.severity"
     ></button>
   </div>
 </div>
@@ -53,5 +55,6 @@
     [ocxTooltip]="button.tooltipKey ? (button.tooltipKey | translate) : null"
     [tooltipPosition]="button.tooltipPosition ?? ''"
     [attr.aria-label]="button.key | translate:button.parameters"
+    [severity]="button.severity"
   ></button>
 </ng-template>

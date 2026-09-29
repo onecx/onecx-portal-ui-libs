@@ -49,6 +49,10 @@ This documentation contains information about the libraries, how to install/use 
 
 | **@onecx/ngrx-integration-interface**
 | Integration services and utilities for integrating NgRx state management with OneCX platform services
+
+| xref:onecx-portal-ui-libs:libraries/build-utils.adoc[**@onecx/build-utils**]
+| Provides build utilities for OneCX applications
+|
 |===
 
 For detailed guides on migrations, services and components, visit the xref:documentation:onecx-portal-ui-libs:index.adoc[OneCX Portal UI Libraries guides].

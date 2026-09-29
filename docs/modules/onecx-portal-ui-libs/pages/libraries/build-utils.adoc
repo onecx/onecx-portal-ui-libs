@@ -1,0 +1,16 @@
+:idprefix:
+:idseparator: -
+
+= Library: @onecx/build-utils
+
+[#overview]
+== Overview
+The `@onecx/build-utils` library provides a set of utilities for OneCX applications. It includes helper functions for build tasks, Module Federation library sharing, and other Node.js-related tasks.
+
+Install the library in your project using npm as dev dependency:
+----
+npm install @onecx/build-utils --save-dev
+----
+
+include::build-utils/get-onecx-shared-library-config.adoc[]
+include::build-utils/get-onecx-shared-recommendation.adoc[]

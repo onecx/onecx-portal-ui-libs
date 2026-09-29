@@ -1,3 +1,9 @@
+## [9.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.12...v9.0.0-rc.13) (2026-07-20)
+
+### Features
+
+* add React shared library support with react_XX share scope ([#1607](https://github.com/onecx/onecx-portal-ui-libs/issues/1607)) ([5dd33ea](https://github.com/onecx/onecx-portal-ui-libs/commit/5dd33eacd374169ce9aeb91100a84268080baa7e))
+
 ## [9.0.0-rc.12](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.11...v9.0.0-rc.12) (2026-07-14)
 
 ### Features
