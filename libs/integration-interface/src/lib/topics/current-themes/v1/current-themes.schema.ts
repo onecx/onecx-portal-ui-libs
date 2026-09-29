@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { dialog } from './schema/dialog'
+import { dialog, dialogShape } from './schema/dialog'
 import { menubar } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
@@ -38,7 +38,7 @@ import { dataview } from './schema/dataview'
 import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
-  dialog?: z.input<typeof dialog>
+  dialog?: z.input<typeof dialogShape>
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
