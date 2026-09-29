@@ -1,3 +1,11 @@
+## [7.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.13.0...v7.13.1) (2026-09-29)
+
+### Bug Fixes
+
+* data view performance ([#1746](https://github.com/onecx/onecx-portal-ui-libs/issues/1746)) ([c52f2ef](https://github.com/onecx/onecx-portal-ui-libs/commit/c52f2ef8a7ec6f228b1084662255a9baab5f7878))
+* double translate on multiselect filter ([#1742](https://github.com/onecx/onecx-portal-ui-libs/issues/1742)) ([fe72787](https://github.com/onecx/onecx-portal-ui-libs/commit/fe72787c53fa0119efc04fa998ec00058481963a))
+* tooltip fpr disabled menu items ([#1731](https://github.com/onecx/onecx-portal-ui-libs/issues/1731)) ([8028eda](https://github.com/onecx/onecx-portal-ui-libs/commit/8028eda9b8a7743bd2559f346f1287a47485696e))
+
 ## [7.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.12.2...v7.13.0) (2026-09-11)
 
 ### Features
