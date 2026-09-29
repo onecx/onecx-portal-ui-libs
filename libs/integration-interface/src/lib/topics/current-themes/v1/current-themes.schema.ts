@@ -36,7 +36,7 @@ import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 import { pageHeaderShape } from './schema/page-header/index'
-import { button } from './schema/button'
+import { button, ButtonShapeInput } from './schema/button'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -69,7 +69,10 @@ type UsagesInput = {
   pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
-  button?: z.input<typeof button>
+  // Hand-written concrete type (mirrors `CalendarShapeInput`/`PanelMenuShapeInput`) — the loose
+  // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
+  // `ThemePath`. See `ButtonShapeInput` in schema/button.
+  button?: ButtonShapeInput
 }
 
 const usages: z.ZodType<UsagesInput> = z

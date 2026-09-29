@@ -1,3 +1,5 @@
 import { ButtonSchema } from './button/button'
+import type { ButtonShapeInput } from './button/button'
 
-export const button: typeof ButtonSchema.schema = ButtonSchema.schema
+export const button = ButtonSchema.schema
+export type { ButtonShapeInput }

@@ -16,9 +16,18 @@
  * usage schema itself (those are primitives-only conventions).
  */
 import * as z from 'zod'
+import { badgeShape } from '../badge'
+import { borderWithShadow } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { applyDefaultsRecursive } from '../defaults-helper'
-import { buttonColorVariantDefaults, buttonColorVariantShape } from './color-variant'
+import {
+  buttonColorVariantDefaults,
+  buttonColorVariantShape,
+  buttonFont,
+} from './color-variant'
+import { buttonIconOnlyShape } from './icon-only'
+import { lgButtonShape, mdButtonShape, smButtonShape } from './sizes'
+import { buttonStatefulShape } from './stateful'
 
 // ------------------------------------------------------------------
 // SHAPE — pure, all keys optional, no defaults baked in
@@ -31,6 +40,46 @@ export const buttonShape: z.ZodObject<Record<string, z.ZodTypeAny>> = z
     secondary: buttonColorVariantShape.prefault({}),
   })
   .register(themeSchemaRegistry, { id: 'buttonShape' })
+
+// ------------------------------------------------------------------
+// CONCRETE INPUT TYPE — hand-written for `UsagesInput` / `ThemePath`
+// ------------------------------------------------------------------
+//
+// `button` is built via `applyDefaultsRecursive`, whose return type is the loose
+// `z.ZodObject<Record<string, z.ZodTypeAny>>` — and exporting the inferred
+// `buttonShape` directly exceeds the compiler's serialization limit (TS7056). So
+// `z.input<typeof button>` exposes no concrete keys and `LeafPaths` cannot generate
+// any `usages.button.*` path, collapsing the `usages.button` arm of `ThemePath` and
+// breaking every button mapping/css rule `from:` path.
+//
+// This hand-written alias mirrors `buttonShape`'s leaves, delegating the deep stateful
+// sub-trees to each concrete sub-shape's `z.input` (mirroring `CalendarShapeInput` /
+// `PanelMenuShapeInput`) so `ThemePath` generation can reference a concrete type.
+
+type ButtonColorVariantInput = {
+  font?: z.input<typeof buttonFont>
+  paddingX?: string
+  paddingY?: string
+  focusRing?: z.input<typeof borderWithShadow>
+  defaultVariant?: z.input<typeof buttonStatefulShape>
+  rounded?: z.input<typeof buttonStatefulShape>
+  raised?: z.input<typeof buttonStatefulShape>
+  text?: z.input<typeof buttonStatefulShape>
+  textRaised?: z.input<typeof buttonStatefulShape>
+  outlined?: z.input<typeof buttonStatefulShape>
+  iconOnly?: z.input<typeof buttonIconOnlyShape>
+  sm?: z.input<typeof smButtonShape>
+  md?: z.input<typeof mdButtonShape>
+  lg?: z.input<typeof lgButtonShape>
+  badge?: z.input<typeof badgeShape>
+}
+
+/** Concrete input type for the button usage (see the note above). */
+export type ButtonShapeInput = {
+  defaultVariant?: ButtonColorVariantInput
+  primary?: ButtonColorVariantInput
+  secondary?: ButtonColorVariantInput
+}
 
 // ------------------------------------------------------------------
 // DEFAULTS — plain object mirroring the shape; only keys that should have a

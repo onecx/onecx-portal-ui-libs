@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { badge } from '../badge'
+import { badge, badgeShape } from '../badge'
 import { borderWithShadow, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { buttonStatefulDefaults, buttonStatefulShape } from './stateful'
@@ -7,7 +7,7 @@ import { buttonIconOnlyDefaults, buttonIconOnlyShape } from './icon-only'
 import { lgButtonShape, mdButtonShape, smButtonShape } from './sizes'
 
 // Font for button component — excludes family and size (set globally/individually).
-const buttonFont = font.omit({ family: true, size: true }).default({
+export const buttonFont = font.omit({ family: true, size: true }).default({
   weight: '{{primitives.font.weight}}',
   lineHeight: '{{primitives.font.lineHeight}}',
   letterSpacing: '{{primitives.font.letterSpacing}}',
