@@ -1,5 +1,4 @@
 export interface AiCompletionRequest {
-
     agent: {
         id: string;
         name: string;
