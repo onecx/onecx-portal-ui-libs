@@ -52,4 +52,22 @@ export const dialogCssRules: CssRule[] = [
       },
     ],
   },
+  {
+    selector: '.p-dialog-close-button',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.dialog.header.closeButton.color',
+      },
+    ],
+  },
+  {
+    selector: '.p-dialog-close-button:not(:disabled):hover',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.dialog.header.closeButton.hover.color',
+      },
+    ],
+  },
 ]

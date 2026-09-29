@@ -21,11 +21,6 @@ export const dialogSettingsDefaults = {
   dismissableMask: false,
 }
 
-// TODO: Replace with the generic `button` usage once it exists.
-export const dialogButtonShape = z.object({}).register(themeSchemaRegistry, { id: 'dialogButton' })
-
-export const dialogButtonDefaults = {}
-
 export const dialogRootShape = z
   .object({
     bg: z.union([bg, withRef(z.string())]).optional(),
@@ -54,24 +49,6 @@ export const dialogRoot = applyDefaultsRecursive(dialogRootShape, dialogRootDefa
   id: 'dialogRoot',
 })
 
-const dialogHeaderShape = z
-  .object({
-    padding: withRef(z.string()).optional(),
-    gap: withRef(z.string()).optional(),
-    alignItems: withRef(z.string()).optional(),
-    justifyContent: withRef(z.string()).optional(),
-    closeButton: dialogButtonShape.prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'dialogHeaderShape' })
-
-const dialogHeaderDefaults = {
-  padding: '{{primitives.space.md}}',
-  gap: '{{primitives.space.sm}}',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  closeButton: dialogButtonDefaults,
-}
-
 const dialogTitleShape = z
   .object({
     fontSize: withRef(z.string()).optional(),
@@ -82,6 +59,47 @@ const dialogTitleShape = z
 const dialogTitleDefaults = {
   fontSize: '{{primitives.font.size}}',
   fontWeight: '{{primitives.font.weight}}',
+}
+
+export const dialogButtonShape = z
+  .object({
+    color: color.optional(),
+    background: z.union([bg, withRef(z.string())]).optional(),
+    border: border.optional(),
+    hover: z
+      .object({
+        color: color.optional(),
+        background: z.union([bg, withRef(z.string())]).optional(),
+      })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dialogButtonShape' })
+
+const dialogCloseButtonDefaults = {
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+  hover: {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+  },
+}
+
+const dialogHeaderShape = z
+  .object({
+    padding: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
+    alignItems: withRef(z.string()).optional(),
+    justifyContent: withRef(z.string()).optional(),
+    title: dialogTitleShape.prefault({}),
+    closeButton: dialogButtonShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dialogHeaderShape' })
+
+const dialogHeaderDefaults = {
+  padding: '{{primitives.space.md}}',
+  gap: '{{primitives.space.sm}}',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  title: dialogTitleDefaults,
+  closeButton: dialogCloseButtonDefaults,
 }
 
 const dialogContentShape = z
@@ -110,8 +128,8 @@ const dialogFooterDefaults = {
   padding: '{{primitives.space.md}}',
   gap: '{{primitives.space.sm}}',
   justifyContent: 'flex-end',
-  primaryActionButton: dialogButtonDefaults,
-  secondaryActionButton: dialogButtonDefaults,
+  primaryActionButton: {},
+  secondaryActionButton: {},
 }
 
 export const dialogShape = z
@@ -119,7 +137,6 @@ export const dialogShape = z
     settings: dialogSettingsShape.prefault({}),
     root: dialogRootShape.prefault({}),
     header: dialogHeaderShape.prefault({}),
-    title: dialogTitleShape.prefault({}),
     content: dialogContentShape.prefault({}),
     footer: dialogFooterShape.prefault({}),
   })
@@ -129,7 +146,6 @@ export const dialogDefaults = {
   settings: dialogSettingsDefaults,
   root: dialogRootDefaults,
   header: dialogHeaderDefaults,
-  title: dialogTitleDefaults,
   content: dialogContentDefaults,
   footer: dialogFooterDefaults,
 }

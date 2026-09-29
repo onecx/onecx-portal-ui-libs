@@ -15,10 +15,19 @@ Object {
   },
   "header": Object {
     "alignItems": "center",
-    "closeButton": Object {},
+    "closeButton": Object {
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      "hover": Object {
+        "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      },
+    },
     "gap": "{{primitives.space.sm}}",
     "justifyContent": "space-between",
     "padding": "{{primitives.space.md}}",
+    "title": Object {
+      "fontSize": "{{primitives.font.size}}",
+      "fontWeight": "{{primitives.font.weight}}",
+    },
   },
   "root": Object {
     "bg": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
@@ -39,10 +48,6 @@ Object {
     "draggable": true,
     "modal": false,
     "resizable": true,
-  },
-  "title": Object {
-    "fontSize": "{{primitives.font.size}}",
-    "fontWeight": "{{primitives.font.weight}}",
   },
 }
 `;
