@@ -1,5 +1,4 @@
 import z from 'zod'
-import { themeSchemaRegistry } from '../registry'
 import { font, icon, withRef } from '../primitives'
 
 const MESSAGE_SM_DEFAULTS = {
@@ -72,8 +71,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_SM_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_SM_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeSm' }),
+      .default(MESSAGE_SM_DEFAULTS),
     md: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_MD_DEFAULTS.padding).optional(),
@@ -83,8 +81,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_MD_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_MD_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeMd' }),
+      .default(MESSAGE_MD_DEFAULTS),
     lg: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_LG_DEFAULTS.padding).optional(),
@@ -94,8 +91,7 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_LG_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_LG_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeLg' }),
+      .default(MESSAGE_LG_DEFAULTS),
     xl: z
       .object({
         padding: withRef(z.string()).default(MESSAGE_XL_DEFAULTS.padding).optional(),
@@ -105,7 +101,6 @@ export class MessageSizeSchema {
           icon: icon.pick({ size: true }).default({ size: MESSAGE_XL_DEFAULTS.close.icon.size }),
         }),
       })
-      .default(MESSAGE_XL_DEFAULTS)
-      .register(themeSchemaRegistry, { id: 'messageSizeXl' }),
+      .default(MESSAGE_XL_DEFAULTS),
   }
 }

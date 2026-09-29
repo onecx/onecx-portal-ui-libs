@@ -42,7 +42,6 @@ export class InteractiveDataViewSchema {
         CustomGroupColumnSelectorSchema.schema as typeof CustomGroupColumnSelectorSchema.schema
       ).prefault({}),
     })
-    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'interactiveDataView' });
 }
 

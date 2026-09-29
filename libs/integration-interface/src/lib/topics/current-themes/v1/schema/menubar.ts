@@ -171,5 +171,4 @@ export const menubar = z
       }),
     }),
   })
-  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'menubar' })

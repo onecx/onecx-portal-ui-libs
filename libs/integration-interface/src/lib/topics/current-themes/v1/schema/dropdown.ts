@@ -170,5 +170,4 @@ export const dropdown = z
     checkmark,
     empty,
   })
-  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'dropdown' })

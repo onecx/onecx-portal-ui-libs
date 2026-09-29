@@ -22,5 +22,4 @@ export const region = z
   .object({
     font: fontWithDefaults.optional(),
   })
-  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: "region" });

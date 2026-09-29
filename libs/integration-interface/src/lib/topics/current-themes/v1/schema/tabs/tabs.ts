@@ -33,6 +33,5 @@ export class TabsSchema {
         tab: (TabsTabSchema.schema as typeof TabsTabSchema.schema).prefault({}),
         ...this.tokens,
     })
-    // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
     .register(themeSchemaRegistry, { id: 'tabs' })
 }

@@ -216,5 +216,4 @@ export const carousel = z
     navigationButton: (carouselNavigationButton as typeof carouselNavigationButton).prefault({}),
     indicator: (carouselIndicator as typeof carouselIndicator).prefault({}),
   })
-  // TODO(axis-metadata): axis classification not confirmed; re-derive for this component.
   .register(themeSchemaRegistry, { id: 'carousel' })
