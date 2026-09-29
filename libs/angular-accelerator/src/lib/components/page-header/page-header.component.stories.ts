@@ -100,19 +100,24 @@ const demoActions: Action[] = [
     title: 'Tooltip for some action',
   },
   {
-    label: 'Other action',
-    actionCallback: () => {
-      console.log(`you clicked 'Other Action'`)
-    },
-    show: 'asOverflow',
-  },
-  {
-    label: 'Disabled',
+    label: 'Disabled OverFlow Action',
     actionCallback: () => {
       console.log(`you clicked 'Disabled'`)
     },
     title: 'Tooltip for Disabled',
     disabled: true,
+    icon: PrimeIcons.BRIEFCASE,
+    show: 'asOverflow',
+    disabledTooltip: 'Tooltip for Disabled Button',
+  },
+  {
+    label: 'Other action',
+    actionCallback: () => {
+      console.log(`you clicked 'Other Action'`)
+    },
+    show: 'asOverflow',
+    icon: PrimeIcons.ELLIPSIS_V,
+    title: 'Tooltip for Other action',
   },
   {
     icon: PrimeIcons.BOOK,
@@ -548,5 +553,5 @@ export const TranslationKeysAndParams = {
     actions: demoActions,
     objectDetails: demoFieldsWithTranslationKeys,
     showBreadcrumbs: false,
-  }
+  },
 }

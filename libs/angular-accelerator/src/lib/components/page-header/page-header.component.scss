@@ -98,3 +98,14 @@
 .min-w-120 {
   min-width: 120px !important;
 }
+
+
+// Primng Bug: Tooltip not being shown for disabled menu items
+// Keep the disabled item non-clickable while allowing the <li> to hover
+.p-menu .p-menu-item.p-disabled{
+  pointer-events: auto;
+}
+
+.p-menu .p-menu-item.p-disabled > .p-menu-item-content{
+  pointer-events: none;
+}
