@@ -94,7 +94,25 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  * the default depth of 11.
  */
 export type ThemePath =
-  | `primitives.${LeafPaths<NonNullable<Primitives>, 9>}`
+  // `primitives` is split per sub-tree (like the `usages.*` entries below): the
+  // combined `LeafPaths<Primitives>` union has ~124k members (driven by the
+  // `variant`/`area` color-variant trees), and expanding it in a single template
+  // literal exceeds TS's union-representability budget (TS2590). Each sub-branch
+  // is small enough to compute on its own, so computing them independently keeps
+  // every `LeafPaths` instantiation within budget while yielding the same set.
+  | `primitives.defaultVariant.${LeafPaths<NonNullable<Primitives['defaultVariant']>>}`
+  | `primitives.variant.${LeafPaths<NonNullable<Primitives['variant']>>}`
+  | `primitives.screenSettings.${LeafPaths<NonNullable<Primitives['screenSettings']>>}`
+  | `primitives.area.${LeafPaths<NonNullable<Primitives['area']>>}`
+  | `primitives.shadow.${LeafPaths<NonNullable<Primitives['shadow']>>}`
+  | `primitives.font.${LeafPaths<NonNullable<Primitives['font']>>}`
+  | `primitives.space.${LeafPaths<NonNullable<Primitives['space']>>}`
+  | `primitives.layout.${LeafPaths<NonNullable<Primitives['layout']>>}`
+  | `primitives.radius.${LeafPaths<NonNullable<Primitives['radius']>>}`
+  | `primitives.icon.${LeafPaths<NonNullable<Primitives['icon']>>}`
+  | `primitives.border.${LeafPaths<NonNullable<Primitives['border']>>}`
+  | `primitives.focusRing.${LeafPaths<NonNullable<Primitives['focusRing']>>}`
+  | `primitives.transition.${LeafPaths<NonNullable<Primitives['transition']>>}`
   | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>, 13>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
@@ -106,6 +124,7 @@ export type ThemePath =
   | `usages.tabs.${LeafPaths<NonNullable<Usages['tabs']>>}`
   | `usages.fieldset.${LeafPaths<NonNullable<Usages['fieldset']>>}`
   | `usages.diagram.${LeafPaths<NonNullable<Usages['diagram']>>}`
+  | `usages.groupByCountDiagram.${LeafPaths<NonNullable<Usages['groupByCountDiagram']>>}`
   | `usages.input.${LeafPaths<NonNullable<Usages['input']>>}`
   | `usages.toggleswitch.${LeafPaths<NonNullable<Usages['toggleswitch']>>}`
   | `usages.dropdown.${LeafPaths<NonNullable<Usages['dropdown']>>}`
@@ -116,7 +135,6 @@ export type ThemePath =
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
   | `usages.ripple.${LeafPaths<NonNullable<Usages['ripple']>>}`
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
-  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
   | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
   | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
@@ -125,7 +143,6 @@ export type ThemePath =
   | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
   | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
-  | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
   | `usages.button.${LeafPaths<NonNullable<Usages['button']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 

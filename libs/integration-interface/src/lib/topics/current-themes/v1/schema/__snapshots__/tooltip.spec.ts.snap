@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`tooltip schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.sm}}",
+      "radius": "{{primitives.border.radius.md}}",
+      "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.sm}}",
+    },
+    "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+    "gutter": "{{primitives.space.sm}}",
+    "maxWidth": "{{primitives.layout.overlayMaxWidth}}",
+    "padding": "{{primitives.space.md}}",
+    "shadow": "{{primitives.shadow.md}}",
+  },
+}
+`;
