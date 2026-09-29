@@ -450,8 +450,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   expandedRowIds$ = new BehaviorSubject<(string | number)[]>([])
   expandedRowKeys: Record<string, boolean> = {}
 
-  private cachedOverflowActions$: Observable<DataAction[]>
-  private cachedOverflowMenuItemsVisibility$: Observable<boolean> | undefined
+  permittedOverflowActions$: Observable<DataAction[]>
 
   constructor() {
     const locale = inject(LOCALE_ID)
@@ -479,8 +478,9 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
     this.rowSelectable = this.rowSelectable.bind(this)
 
-    this.cachedOverflowActions$ = this.overflowActions$.pipe(
-      shareReplay(1) // Cache the last emitted value
+    this.permittedOverflowActions$ = this.overflowActions$.pipe(
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      shareReplay({ bufferSize: 1, refCount: true })
     )
   }
 
@@ -898,11 +898,8 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     menu.toggle(event)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowActions$.pipe(
-      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
-      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
-    )
+  hasVisibleOverflowMenuItems(row: any, permittedActions: DataAction[]): boolean {
+    return permittedActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField))
   }
 
   isDate(value: Date | string | number) {

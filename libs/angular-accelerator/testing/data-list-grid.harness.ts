@@ -6,20 +6,45 @@ import { DefaultListItemHarness } from './default-list-item.harness'
 export class DataListGridHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-data-list-grid'
 
-  getDefaultGridItems = this.locatorForAll(DefaultGridItemHarness)
+  private deferredViewsRendered: Promise<void> | undefined
+
+  /**
+   * Deferred views only need to be awaited once per harness instance: once a defer block is
+   * rendered it stays rendered. Caching the promise keeps repeated lookups cheap, as every
+   * wait costs up to two seconds.
+   */
+  private async ensureDeferredViewsRendered() {
+    this.deferredViewsRendered ??= waitForDeferredViewsToBeRendered(this)
+    return await this.deferredViewsRendered
+  }
+
+  async getDefaultGridItems() {
+    await this.ensureDeferredViewsRendered()
+    return await this.locatorForAll(DefaultGridItemHarness)()
+  }
+
   getPaginator = this.locatorFor(PPaginatorHarness)
-  getGridMenuButton = this.locatorFor(`[name="data-grid-item-menu-button"]`)
-  getListOverflowMenuButton = this.locatorFor(`[name="data-list-overflow-item-menu-button"]`)
   getListOverflowMenu = this.locatorForOptional(PMenuHarness)
   getEmptyMessage = this.locatorForOptional('.ocx-data-list-grid-empty-message')
 
+  async getGridMenuButton() {
+    await this.ensureDeferredViewsRendered()
+    return await this.locatorFor(`[name="data-grid-item-menu-button"]`)()
+  }
+
+  async getListOverflowMenuButton() {
+    await this.ensureDeferredViewsRendered()
+    return await this.locatorFor(`[name="data-list-overflow-item-menu-button"]`)()
+  }
+
   async getDefaultListItems() {
-    await waitForDeferredViewsToBeRendered(this)
+    await this.ensureDeferredViewsRendered()
     return await this.locatorForAll(DefaultListItemHarness)()
   }
 
   async getActionButtons(actionButtonType: 'list' | 'grid' | 'grid-hidden') {
     if (actionButtonType === 'list') {
+      await this.ensureDeferredViewsRendered()
       return await this.locatorForAll(`[name="data-list-action-button"], [data-testid="data-list-action-button"]`)()
     } else if (actionButtonType === 'grid-hidden') {
       return await this.documentRootLocatorFactory().locatorForAll(

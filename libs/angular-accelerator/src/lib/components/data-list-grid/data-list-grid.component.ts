@@ -33,6 +33,7 @@ import {
   map,
   mergeMap,
   of,
+  shareReplay,
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
@@ -275,6 +276,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   inlineListActions$: Observable<DataAction[]>
   overflowListActions$: Observable<DataAction[]>
+  permittedOverflowListActions$: Observable<DataAction[]>
   overflowListMenuItems$: Observable<MenuItem[]>
   currentMenuRow$ = new BehaviorSubject<Row | null>(null)
   _additionalActions$ = new BehaviorSubject<DataAction[]>([])
@@ -366,6 +368,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     )
     this.overflowListActions$ = this._additionalActions$.pipe(
       map((actions) => actions.filter((action) => action.showAsOverflow))
+    )
+    this.permittedOverflowListActions$ = this.overflowListActions$.pipe(
+      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
+      shareReplay({ bufferSize: 1, refCount: true })
     )
     this.overflowListMenuItems$ = combineLatest([this.overflowListActions$, this.currentMenuRow$]).pipe(
       switchMap(([actions, row]) =>
@@ -515,11 +521,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     return !!this.resolveFieldData(object, key)
   }
 
-  hasVisibleOverflowMenuItems(row: any) {
-    return this.overflowListActions$.pipe(
-      switchMap((actions) => this.filterActionsBasedOnPermissions(actions)),
-      map((actions) => actions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField)))
-    )
+  hasVisibleOverflowMenuItems(row: any, permittedActions: DataAction[]): boolean {
+    return permittedActions.some((a) => !a.actionVisibleField || this.fieldIsTruthy(row, a.actionVisibleField))
   }
 
   toggleOverflowMenu(event: MouseEvent, menu: Menu, row: Row) {

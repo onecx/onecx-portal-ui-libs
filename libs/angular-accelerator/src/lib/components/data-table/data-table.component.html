@@ -78,7 +78,7 @@
         [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))"
         [attr.name]="'data-table-action-button'"
       ></button>
-      } } } @if (hasVisibleOverflowMenuItems(rowObject) | async) {
+      } } } @if (hasVisibleOverflowMenuItems(rowObject, (permittedOverflowActions$ | async) ?? [])) {
       <p-menu #menu [model]="(overflowMenuItems$ | async) || []" [popup]="true" appendTo="body"></p-menu>
       <button
         pButton
@@ -192,7 +192,7 @@
   </ng-template>
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
-    <tr>
+    <tr #rowElement>
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -213,9 +213,9 @@
       </td>
       } @if (actionColumnPosition === 'left';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
-      } @for (column of columns; track column) {
+      } @defer (on viewport(rowElement)) { @for (column of columns; track column) {
       <td>
-        @defer(on viewport){ @if (columnTemplates[column.id]) {
+        @if (columnTemplates[column.id]) {
         <ng-container
           [ngTemplateOutlet]="
                 _cell ? _cell: columnTemplates[column.id]
@@ -226,11 +226,13 @@
               }"
         >
         </ng-container>
-        } } @placeholder {
-        <p-skeleton width="3rem" />
         }
       </td>
-      } @if (actionColumnPosition === 'right';) {
+      } } @placeholder { @for (column of columns; track column.id) {
+      <td>
+        <ocx-skeleton width="100%" />
+      </td>
+      } } @if (actionColumnPosition === 'right';) {
       <ng-container *ngTemplateOutlet="actionColumn; context: {localRowObject: rowObject}"></ng-container>
       }
     </tr>
