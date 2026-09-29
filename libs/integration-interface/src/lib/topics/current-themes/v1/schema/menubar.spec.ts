@@ -1,12 +1,12 @@
 import { expectDefaultsMatchShape } from './test-utils'
 
-import { tooltip, tooltipDefaults } from './tooltip'
+import { menubar, menubarShape, menubarDefaults } from './menubar'
 
-describe('tooltip schema', () => {
-  const parsed = tooltip.parse({})
+describe('menubar schema', () => {
+  const parsed = menubar.parse({})
 
   it('parses an empty object', () => {
-    expect(tooltip.safeParse({}).success).toBe(true)
+    expect(menubar.safeParse({}).success).toBe(true)
   })
 
   it('resolves the expected default token tree', () => {
@@ -14,6 +14,6 @@ describe('tooltip schema', () => {
   })
 
   it('shape and defaults stay in sync', () => {
-    expectDefaultsMatchShape(tooltip, tooltipDefaults)
+    expectDefaultsMatchShape(menubarShape, menubarDefaults)
   })
 })

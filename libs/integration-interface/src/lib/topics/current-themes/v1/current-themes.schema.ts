@@ -1,20 +1,21 @@
 import * as z from 'zod'
 import { dialog } from './schema/dialog'
-import { menubar } from './schema/menubar'
+import { menubar, menubarShape } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { table } from './schema/table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
-import { fieldset } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
-import { dropdownShape } from './schema/dropdown'
+import { diagram, diagramShape } from './schema/diagram'
+import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
+import { fieldset, fieldsetShape } from './schema/fieldset'
+import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
@@ -29,9 +30,9 @@ import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
+import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
-import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 import { dataviewShape } from './schema/dataview/dataview'
@@ -40,18 +41,20 @@ import { customGroupColumnSelector, customGroupColumnSelectorShape } from './sch
 import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
 import { paginator, paginatorShape } from './schema/paginator'
 import { skeleton, skeletonShape } from './schema/skeleton'
+import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
   badge?: z.input<typeof badgeShape>
-  menubar?: z.input<typeof menubar>
+  menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
   table?: z.input<typeof table>
-  tooltip?: z.input<typeof tooltip>
+  tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
-  fieldset?: z.input<typeof fieldset>
-  diagram?: z.input<typeof diagram>
+  fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
+  diagram?: z.input<typeof diagramShape>
+  groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
@@ -65,10 +68,10 @@ type UsagesInput = {
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof ripple>
-  panelmenu?: z.input<typeof panelmenu>
+  panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
-  pageHeader?: z.input<typeof pageHeader>
+  pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataviewShape>
   chip?: z.input<typeof chipShape>
@@ -88,8 +91,9 @@ const usages: z.ZodType<UsagesInput> = z
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
+    fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
+    groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
