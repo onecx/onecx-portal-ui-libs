@@ -16,8 +16,8 @@ function listSchemaFiles(dir: string): string[] {
 
 const REGISTER_CALL = /register\(themeSchemaRegistry,\s*\{[^}]*\}\)/g
 // `axis` is optional (absent for structural pass-throughs); when present it must be one of the
-// recognized values. `none` is no longer a valid value.
-const VALID_AXIS = /axis:\s*'(variant|state|severity|child|setting)'/
+// recognized values. `none` opts a node out of its parent's axis (distinct from omitting `axis`).
+const VALID_AXIS = /axis:\s*'(variant|state|severity|child|setting|none)'/
 
 // Scanned once at module load so an invalid `axis` value fails the whole suite.
 const violations: { file: string; snippet: string }[] = []

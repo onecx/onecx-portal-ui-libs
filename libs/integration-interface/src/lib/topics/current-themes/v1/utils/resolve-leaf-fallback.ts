@@ -12,6 +12,7 @@ import {
   AXES_OUTER_TO_INNER,
   DEFAULT_KEY,
   DEFAULT_SEGMENTS,
+  FALLBACK_ORDER_DEFAULT,
   deriveLeafAxisMetadata,
   type Entry,
   type RelaxedAxisKind,
@@ -23,7 +24,7 @@ import { theme } from '../current-themes.schema'
 export const THEME_VAR_PREFIX = '--onecx-theme-'
 
 /** The default order in which non-default relaxed axes are relaxed. */
-export const fallbackOrder: RelaxedAxisKind[] = ['state', 'variant', 'severity']
+export const fallbackOrder: RelaxedAxisKind[] = FALLBACK_ORDER_DEFAULT
 
 function toLeafPath(varName: string): string | undefined {
   if (!varName.startsWith(THEME_VAR_PREFIX)) {
