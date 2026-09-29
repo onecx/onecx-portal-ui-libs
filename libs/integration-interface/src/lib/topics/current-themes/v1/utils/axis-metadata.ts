@@ -30,7 +30,7 @@ import * as z from 'zod'
 import { themeSchemaRegistry } from '../schema/registry'
 
 /** The axis a schema node can be registered with. */
-export type AxisKind = 'variant' | 'state' | 'severity' | 'child' | 'setting'
+export type AxisKind = 'variant' | 'state' | 'severity' | 'child' | 'setting' | 'none'
 
 /** The axis kinds that participate in fallback relaxation. */
 export type RelaxedAxisKind = 'variant' | 'state' | 'severity'
@@ -49,6 +49,9 @@ export const DEFAULT_SEGMENTS: Record<RelaxedAxisKind, string[]> = {
  * entry array.
  */
 export const AXES_OUTER_TO_INNER: RelaxedAxisKind[] = ['variant', 'state', 'severity']
+
+/** The default order in which non-default relaxed axes are relaxed. */
+export const FALLBACK_ORDER_DEFAULT: RelaxedAxisKind[] = ['state', 'variant', 'severity']
 
 /** A relaxed-axis member a leaf crosses within one scope. */
 export interface Entry {
@@ -137,11 +140,11 @@ function getAxisAndChildFlag(schema: z.ZodTypeAny): { axis: string | undefined; 
   return { axis: entry !== undefined ? entry.axis : undefined, child: entry !== undefined && entry.child === true }
 }
 
-function isChildBoundary(childSchema: z.ZodTypeAny): boolean {
+function getChildMarker(childSchema: z.ZodTypeAny): { axis: string | undefined; child: boolean } {
   if (isRawConstant(childSchema)) {
-    return false
+    return { axis: undefined, child: false }
   }
-  return getAxisAndChildFlag(resolveSchema(childSchema)).child
+  return getAxisAndChildFlag(resolveSchema(childSchema))
 }
 
 export const DEFAULT_KEY: Record<RelaxedAxisKind, string> = {
@@ -219,8 +222,12 @@ function advanceWalkState(
   depth: number,
   walkState: WalkState
 ): WalkState {
-  if (isChildBoundary(child)) {
+  const marker = getChildMarker(child)
+  if (marker.child) {
     return openScope(walkState, path, depth)
+  }
+  if (marker.axis === 'none' || marker.axis === 'setting') {
+    return walkState
   }
   const kind = classifyKey(axis, key)
   if (kind !== null) {

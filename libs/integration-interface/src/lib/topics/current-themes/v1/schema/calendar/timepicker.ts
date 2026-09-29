@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { border, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
 import { calendarTimeInputShape, calendarTimeInputDefaults } from './timeinput'
 import { calendarTimeSeperatorShape, calendarTimeSeperatorDefaults } from './timeseperator'
@@ -26,15 +27,18 @@ const calendarTimePickerStateShape = z.object({
  * Shape for the calendar time picker.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarTimePickerShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: calendarTimePickerStateShape.prefault({}),
-      hover: calendarTimePickerStateShape.prefault({}),
-      focus: calendarTimePickerStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+export const calendarTimePickerShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarTimePickerStateShape.prefault({}),
+        hover: calendarTimePickerStateShape.prefault({}),
+        focus: calendarTimePickerStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarTimePickerVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarTimePickerShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar time picker.

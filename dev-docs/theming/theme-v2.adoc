@@ -36,8 +36,11 @@ ThemePropertiesV2 = {
   primitives?: PrimitivesInput   // foundational design tokens
   usages?: UsagesInput           // component-specific token groups
   regionOverrides?: RegionOverridesInput  // per-region overrides (early-stage)
+  fallbackOrder?: RelaxedAxisKind[]  // axis relaxation order, defaults to [state, variant, severity]
 }
 ----
+
+`fallbackOrder` names the order in which non-default axes are relaxed when a token falls back to a less specific combo. It defaults to `[state, variant, severity]` (state relaxes first, severity preserved longest); existing themes omitting it are unchanged.
 
 The backend stores both versions side by side:
 
@@ -54,7 +57,7 @@ The Shell determines which version to use based on the `versions` array publishe
 [#schema-node-marker-and-axis-metadata]
 == Schema Node Marker and Axis Metadata
 
-`themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries an optional `axis` field on registered schema nodes, with values `variant`, `state`, `severity`, `child`, or `setting`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `states`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition sub-schema nested inside a parent component. `setting` marks a settings sub-schema. A node with no `axis` is a structural pass-through wrapper that is not itself an axis boundary, such as `severityVariantGroup` or `variantWithStates`.
+`themeSchemaRegistry` (link:{schema_root}/schema/registry.ts[registry.ts]) carries an optional `axis` field on registered schema nodes, with values `variant`, `state`, `severity`, `child`, `setting`, or `none`. `variant` marks a named color-variant container such as `colorVariants`. `state` marks a named interaction-state container such as `states`. `severity` marks a named severity-level container such as `severityVariants`. `child` marks a component-composition sub-schema nested inside a parent component. `setting` marks a settings sub-schema; like `none`, it is never classified as an axis member of its parent. `none` explicitly opts a node out of its parent's axis: it is never classified as a variant, state, or severity member and does not open a scope, such as the calendar input's static `shadow` token next to its variant keys. A node with no `axis` is a structural pass-through wrapper that is not itself an axis boundary, such as `severityVariantGroup` or `variantWithStates`.
 
 link:{schema_root}/utils/axis-metadata.ts[axis-metadata.ts] exports `introspectThemeAxisMetadata`, a full-walk over the `theme` schema, `deriveLeafAxisMetadata`, which derives a single leaf's structure on demand, and `AXES_OUTER_TO_INNER`, the relaxed axes in their outermost-first path order; link:{schema_root}/utils/resolve-leaf-fallback.ts[resolve-leaf-fallback.ts] exports `resolveLeafFallback`, which maps a theme variable name to its nearest single-step fallback variable. All are re-exported from the `integration-interface` package's public entry point. Each `LeafFallbackMetadata` entry holds `scopes`, the ordered innermost-first list of fallback scopes the leaf passes through. Each `Scope` has `scopePath` (the dot-joined path to the scope's variant-root anchor) and `entries` (the innermost-first relaxed-axis entries, severity then state then variant), each with `kind` and `segments` (the relative key-segment delta from the previous entry to this member, not a cumulative path).
 

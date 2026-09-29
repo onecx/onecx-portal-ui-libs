@@ -20,10 +20,11 @@ describe('resolveLeafFallback', () => {
 
   it('resolves a nested component leaf from the innermost scope, holding the outer scope', () => {
     // The calendar's own `defaultVariant` is at its default, so the innermost (input) scope
-    // relaxes first — only its `state` moves, `filled` and the calendar scope stay put.
+    // relaxes first — only its `state` moves; the `filled` variant and the calendar scope stay
+    // put (the input root is marked as the variant container, so `filled` is held, not dropped).
     const varName = '--onecx-theme-usages-calendar-defaultVariant-input-filled-hover-defaultSeverity-background-color'
     expect(resolveLeafFallback(varName)).toBe(
-      '--onecx-theme-usages-calendar-defaultVariant-input-defaultState-defaultSeverity-background-color',
+      '--onecx-theme-usages-calendar-defaultVariant-input-filled-defaultState-defaultSeverity-background-color',
     )
   })
 
@@ -46,5 +47,27 @@ describe('resolveLeafFallback', () => {
 
   it('returns undefined for a leaf path that is not a known fallback leaf', () => {
     expect(resolveLeafFallback('--onecx-theme-primitives-does-not-exist-foo-bar')).toBeUndefined()
+  })
+})
+
+// Follows `resolveLeafFallback` until nothing is left to relax, returning the whole chain (the
+// starting variable first). Usage chains are covered by each usage's axis metadata spec.
+function fallbackChain(varName: string): string[] {
+  const chain = [varName]
+  for (let next = resolveLeafFallback(varName); next !== undefined; next = resolveLeafFallback(next)) {
+    chain.push(next)
+  }
+  return chain
+}
+
+describe('resolveLeafFallback full chain (primitives)', () => {
+  it('relaxes state, then variant, then severity', () => {
+    const varName = '--onecx-theme-primitives-variant-primary-state-hover-severity-success-border-color'
+    expect(fallbackChain(varName)).toEqual([
+      varName,
+      '--onecx-theme-primitives-variant-primary-defaultState-severity-success-border-color',
+      '--onecx-theme-primitives-defaultVariant-defaultState-severity-success-border-color',
+      '--onecx-theme-primitives-defaultVariant-defaultState-defaultSeverity-border-color',
+    ])
   })
 })

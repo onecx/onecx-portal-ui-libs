@@ -281,6 +281,65 @@ describe('child boundary detection (synthetic)', () => {
   })
 })
 
+// An `axis: 'none'` node opts itself out of its parent's axis: a key under a `variant` container
+// is not recorded as a variant member, and no inner scope is opened.
+describe('axis opt-out (synthetic)', () => {
+  const buildSchema = () => {
+    const stateBlock = z.object({ color: z.string() })
+    const variantBlock = z
+      .object({ defaultState: stateBlock, hover: stateBlock })
+      .register(themeSchemaRegistry, { id: 'specOptOutVariant', axis: 'state' })
+    const nested = z.object({ defaultState: stateBlock }).register(themeSchemaRegistry, {
+      id: 'specOptOutNested',
+      axis: 'none',
+    })
+    const root = z
+      .object({
+        defaultVariant: variantBlock,
+        filled: variantBlock,
+        shadow: z.string().register(themeSchemaRegistry, { id: 'specOptOutLeaf', axis: 'none' }).optional(),
+        nested,
+        settings: z
+          .object({ defaultState: z.string() })
+          .register(themeSchemaRegistry, { id: 'specOptOutSettings', axis: 'setting' }),
+      })
+      .register(themeSchemaRegistry, { id: 'specOptOutRoot', axis: 'variant' })
+    return z.object({ comp: root }).register(themeSchemaRegistry, { id: 'specOptOutTop' })
+  }
+
+  it('omits an opted-out leaf sitting next to variant keys', () => {
+    const metadata = introspectThemeAxisMetadata(buildSchema())
+    expect(metadata['comp.shadow']).toBeUndefined()
+  })
+
+  it('does not classify an opted-out object key as a variant member', () => {
+    const metadata = introspectThemeAxisMetadata(buildSchema())
+    expect(metadata['comp.nested.defaultState.color']?.scopes).toEqual([
+      { scopePath: 'comp', entries: [{ kind: 'state', segments: ['nested', 'defaultState'] }] },
+    ])
+  })
+
+  it('does not classify a settings node as a variant member', () => {
+    const metadata = introspectThemeAxisMetadata(buildSchema())
+    expect(metadata['comp.settings.defaultState']?.scopes).toEqual([
+      { scopePath: 'comp', entries: [{ kind: 'state', segments: ['settings', 'defaultState'] }] },
+    ])
+  })
+
+  it('still classifies the sibling variant keys', () => {
+    const metadata = introspectThemeAxisMetadata(buildSchema())
+    expect(metadata['comp.filled.hover.color']?.scopes).toEqual([
+      {
+        scopePath: 'comp',
+        entries: [
+          { kind: 'state', segments: ['hover'] },
+          { kind: 'variant', segments: ['filled'] },
+        ],
+      },
+    ])
+  })
+})
+
 // Within a scope, entries are emitted innermost-first: the severity member precedes the state
 // member, which precedes the variant member.
 describe('entry ordering (innermost-first)', () => {
