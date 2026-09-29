@@ -51,15 +51,19 @@ const iconFontDefaults = {
   style: '{{primitives.font.style}}',
 }
 
-export const chipShape = z.object({
-  settings: chipSettingsShape.optional(),
-  border: border.optional(),
-  focusRing: borderWithShadow.optional(),
-  background: z.union([bg, withRef(z.string())]).optional(),
-  color: color.optional(),
-  paddingX: withRef(z.string()).optional(),
-  paddingY: withRef(z.string()).optional(),
-  icon: icon.optional(),
+// One chip variant: the baseline token set on `defaultState` plus the named
+// `hover`/`disabled` overrides. Both `defaultVariant` and `filled` share this
+// shape; they differ only in which tokens carry a default.
+const chipVariantShape = z.object({
+  defaultState: z.object({
+    border: border.optional(),
+    focusRing: borderWithShadow.optional(),
+    background: z.union([bg, withRef(z.string())]).optional(),
+    color: color.optional(),
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    icon: icon.optional(),
+  }).optional(),
   hover: z
     .object({
       border: border.optional(),
@@ -78,32 +82,63 @@ export const chipShape = z.object({
     .optional(),
 })
 
+export const chipShape = z.object({
+  settings: chipSettingsShape.optional(),
+  defaultVariant: chipVariantShape.optional(),
+  filled: chipVariantShape.optional(),
+})
+
 export const chipDefaults = {
   settings: { unstyled: false, disabled: false, removable: false },
-  border: borderDefaults,
-  focusRing: focusRingDefaults,
-  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-  paddingX: '{{primitives.space.sm}}',
-  paddingY: '{{primitives.space.xs}}',
-  icon: {
-    size: '{{primitives.iconSizes.sm}}',
-    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-    font: iconFontDefaults,
-    content: '',
-    url: '',
+  // The default variant is a flat/ghost chip: the full baseline token set, but
+  // intentionally no `background` — the fill lives on the `filled` variant.
+  defaultVariant: {
+    defaultState: {
+      border: borderDefaults,
+      focusRing: focusRingDefaults,
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      paddingX: '{{primitives.space.sm}}',
+      paddingY: '{{primitives.space.xs}}',
+      icon: {
+        size: '{{primitives.iconSizes.sm}}',
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        font: iconFontDefaults,
+        content: '',
+        url: '',
+      },
+    },
+    hover: {
+      border: hoverBorderDefaults,
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      cursor: 'pointer',
+    },
+    disabled: {
+      border: disabledBorderDefaults,
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      cursor: 'not-allowed',
+    },
   },
-  hover: {
-    border: hoverBorderDefaults,
-    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
-    cursor: 'pointer',
-  },
-  disabled: {
-    border: disabledBorderDefaults,
-    background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-    cursor: 'not-allowed',
+  // The filled variant carries the tokens that differ from the ghost default
+  // variant: the surface fill, the text that contrasts with it, and a border
+  // that can be tuned independently. `hover`/`disabled` re-carry those same
+  // tokens because the fill (and the border/text that sit on it) change with
+  // the state. Everything else falls back from `defaultVariant`.
+  filled: {
+    defaultState: {
+      background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      border: borderDefaults,
+    },
+    hover: {
+      background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      border: hoverBorderDefaults,
+    },
+    disabled: {
+      background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      border: disabledBorderDefaults,
+    },
   },
 }
 

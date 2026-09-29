@@ -2,14 +2,15 @@
 
 exports[`custom-group-column-selector schema resolves the expected default token tree 1`] = `
 Object {
-  "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
   "button": Object {
     "active": Object {
       "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
       "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
     },
-    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
-    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "defaultState": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    },
     "disabled": Object {
       "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
       "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
@@ -19,8 +20,5 @@ Object {
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
     },
   },
-  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
-  "paddingX": "{{primitives.space.sm}}",
-  "paddingY": "{{primitives.space.sm}}",
 }
 `;

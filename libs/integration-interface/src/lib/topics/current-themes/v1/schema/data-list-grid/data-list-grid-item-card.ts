@@ -36,6 +36,7 @@ const focusRingDefaults = {
   shadow: '{{primitives.focusRing.shadow.none}}',
 }
 
+// The tokens shared by every state of a data-list grid item card.
 const itemCardStateShape = z.object({
   border: border.optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
@@ -46,18 +47,21 @@ const itemCardStateShape = z.object({
   focusRing: borderWithShadow.optional(),
 })
 
-export const dataListGridItemCardShape = itemCardStateShape.extend({
+export const dataListGridItemCardShape = z.object({
+  defaultState: itemCardStateShape.optional(),
   hover: itemCardStateShape.partial().optional(),
   focus: itemCardStateShape.partial().optional(),
 })
 
 export const dataListGridItemCardDefaults = {
-  border: defaultBorderDefaults,
-  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-  paddingX: '{{primitives.space.sm}}',
-  paddingY: '{{primitives.space.sm}}',
-  gap: '{{primitives.space.sm}}',
+  defaultState: {
+    border: defaultBorderDefaults,
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+    gap: '{{primitives.space.sm}}',
+  },
   hover: {
     border: hoverBorderDefaults,
     background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',

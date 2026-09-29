@@ -46,18 +46,21 @@ const itemRowStateShape = z.object({
   focusRing: borderWithShadow.optional(),
 })
 
-export const dataListGridItemRowShape = itemRowStateShape.extend({
+export const dataListGridItemRowShape = z.object({
+  defaultState: itemRowStateShape.optional(),
   hover: itemRowStateShape.partial().optional(),
   focus: itemRowStateShape.partial().optional(),
 })
 
 export const dataListGridItemRowDefaults = {
-  border: defaultBorderDefaults,
-  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-  paddingX: '{{primitives.space.sm}}',
-  paddingY: '{{primitives.space.sm}}',
-  gap: '{{primitives.space.sm}}',
+  defaultState: {
+    border: defaultBorderDefaults,
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+    gap: '{{primitives.space.sm}}',
+  },
   hover: {
     border: hoverBorderDefaults,
     background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
