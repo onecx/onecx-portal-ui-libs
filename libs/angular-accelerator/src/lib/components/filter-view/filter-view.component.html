@@ -207,15 +207,7 @@
 </div>
 } }
 
-<ocx-add-filter-dialog
-  [visible]="addFilterDialogVisible()"
-  [columns]="stateService.availableColumns()"
-  [data]="stateService.data()"
-  [existingFilters]="stateService.filters()"
-  [preselectColumnId]="addFilterDialogPreselectColumnId()"
-  (visibleChange)="onAddFilterDialogVisibleChange($event)"
-  (added)="onAddFilterDialogAdded($event)"
-></ocx-add-filter-dialog>
+
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   @if (templates[column.id]; as template) {

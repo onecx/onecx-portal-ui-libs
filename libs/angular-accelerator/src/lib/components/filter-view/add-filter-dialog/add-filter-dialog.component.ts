@@ -1,11 +1,9 @@
 import { CommonModule, formatDate } from '@angular/common'
-import { Component, LOCALE_ID, computed, effect, inject, input, output, signal } from '@angular/core'
+import { Component, LOCALE_ID, computed, effect, inject, input, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { firstValueFrom } from 'rxjs'
+import { Subject, firstValueFrom } from 'rxjs'
 import { SelectItem } from 'primeng/api'
-import { ButtonModule } from 'primeng/button'
-import { DialogModule } from 'primeng/dialog'
 import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectModule } from 'primeng/select'
 import { DataTableColumn } from '../../../model/data-table-column.model'
@@ -13,129 +11,108 @@ import { ColumnType } from '../../../model/column-type.model'
 import { Filter, FilterType } from '../../../model/filter.model'
 import { RowListGridData } from '../../../model/row-list-grid-data.model'
 import { ObjectUtils } from '../../../utils/objectutils'
+import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/portal-dialog.service'
 
 /**
- * Standalone dialog used from the Filter View "Add filter" affordance.
+ * Content component for the Filter View "Add filter" dialog, opened through the
+ * {@link PortalDialogService} (see {@link filter-view.component.ts}).
  *
  * It lets the user pick one column and one or more of the distinct values that
- * column currently holds in the data, and emits the resulting {@link Filter}s on
- * confirm. Appending/replacing those filters on the shared {@link DataViewStateService}
- * is what actually filters the List, Grid and Table layouts, because all of them
- * derive their visible rows from the same client-side filtering logic.
+ * column currently holds in the data. The produced {@link Filter}s are exposed
+ * via the {@link DialogResult} interface and are returned to the caller by the
+ * PortalDialogService on confirm. Appending/replacing those filters on the
+ * shared {@link DataViewStateService} is what actually filters the List, Grid
+ * and Table layouts, because all of them derive their visible rows from the
+ * same client-side filtering logic.
  *
- * The emitted filters always target a single column and use {@link FilterType.EQUALS}.
+ * The produced filters always target a single column and use {@link FilterType.EQUALS}.
  * Values are stored as-is (the raw cell value) so they match the string comparison
  * performed by the client-side filtering, exactly like the column header filter in
- * the Table mode does.
+ * the Table mode does. The dialog's confirm button is kept disabled until at
+ * least one value is selected (see {@link DialogPrimaryButtonDisabled}).
  */
 @Component({
   selector: 'ocx-add-filter-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, ButtonModule, DialogModule, MultiSelectModule, SelectModule],
+  imports: [CommonModule, FormsModule, TranslateModule, MultiSelectModule, SelectModule],
   template: `
-    <p-dialog
-      id="ocxAddFilterDialog"
-      [visible]="visible()"
-      (visibleChange)="onVisibleChange($event)"
-      [modal]="true"
-      [blockScroll]="false"
-      [closeOnEscape]="true"
-      [dismissableMask]="true"
-      [draggable]="true"
-      [style]="{ width: '26rem' }"
-      [closeAriaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL' | translate"
-      [contentStyle]="{ padding: '1rem 1.25rem' }"
-    >
-      <ng-template pTemplate="header">
-        <span id="ocxAddFilterDialogTitle" class="text-xl font-medium">{{
-          'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE' | translate
-        }}</span>
-      </ng-template>
+    @if (column()) {
+    <div class="flex flex-column gap-3">
+      <label class="block text-sm font-medium" for="ocxAddFilterColumnSelect">{{
+        'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_LABEL' | translate
+      }}</label>
+      <p-select
+        id="ocxAddFilterColumnSelect"
+        [autofocus]="true"
+        [options]="columnOptions()"
+        [optionLabel]="'label'"
+        [optionValue]="'value'"
+        [ngModel]="selectedColumnId()"
+        (ngModelChange)="onColumnChange($event)"
+        [showClear]="false"
+        [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_PLACEHOLDER' | translate"
+        [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_ARIA_LABEL' | translate"
+        appendTo="body"
+        class="w-full"
+      ></p-select>
 
-      @if (column()) {
-      <div class="flex flex-column gap-3">
-        <label class="block text-sm font-medium" for="ocxAddFilterColumnSelect">{{
-          'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_LABEL' | translate
-        }}</label>
-        <p-select
-          id="ocxAddFilterColumnSelect"
-          [autofocus]="true"
-          [options]="columnOptions()"
-          [optionLabel]="'label'"
-          [optionValue]="'value'"
-          [ngModel]="selectedColumnId()"
-          (ngModelChange)="onColumnChange($event)"
-          [showClear]="false"
-          [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_PLACEHOLDER' | translate"
-          [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_ARIA_LABEL' | translate"
-          appendTo="body"
-          class="w-full"
-        ></p-select>
-
-        @if (valueOptions(); as values) {
-        <label class="block text-sm font-medium" for="ocxAddFilterValueSelect">{{
-          'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate
-        }}</label>
-        <p-multiSelect
-          id="ocxAddFilterValueSelect"
-          [options]="values"
-          [optionLabel]="'label'"
-          [optionValue]="'value'"
-          [ngModel]="selectedValues()"
-          (ngModelChange)="selectedValues.set($event)"
-          [filter]="true"
-          [showClear]="true"
-          [maxSelectedLabels]="3"
-          [resetFilterOnHide]="true"
-          filterBy="toFilterBy"
-          [emptyFilterMessage]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_EMPTY_MESSAGE' | translate"
-          [filterPlaceHolder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_PLACEHOLDER' | translate"
-          [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_PLACEHOLDER' | translate"
-          [ariaFilterLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_ARIA_LABEL' | translate"
-          appendTo="body"
-          [style]="{ 'min-width': '100%' }"
-          class="w-full"
-        >
-          <ng-template pTemplate="header">
-            <div class="p-3 border-bottom-1 surface-border">
-              {{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_SELECTION_HEADER' | translate }}
-            </div>
-          </ng-template>
-        </p-multiSelect>
-        }
-      </div>
+      @if (valueOptions(); as values) {
+      <label class="block text-sm font-medium" for="ocxAddFilterValueSelect">{{
+        'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate
+      }}</label>
+      <p-multiSelect
+        id="ocxAddFilterValueSelect"
+        [options]="values"
+        [optionLabel]="'label'"
+        [optionValue]="'value'"
+        [ngModel]="selectedValues()"
+        (ngModelChange)="selectedValues.set($event)"
+        [filter]="true"
+        [showClear]="true"
+        [maxSelectedLabels]="3"
+        [resetFilterOnHide]="true"
+        filterBy="toFilterBy"
+        [emptyFilterMessage]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_EMPTY_MESSAGE' | translate"
+        [filterPlaceHolder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_PLACEHOLDER' | translate"
+        [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_PLACEHOLDER' | translate"
+        [ariaFilterLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_ARIA_LABEL' | translate"
+        appendTo="body"
+        [style]="{ 'min-width': '100%' }"
+        class="w-full"
+      >
+        <ng-template pTemplate="header">
+          <div class="p-3 border-bottom-1 surface-border">
+            {{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_SELECTION_HEADER' | translate }}
+          </div>
+        </ng-template>
+      </p-multiSelect>
       }
-
-      <ng-template pTemplate="footer">
-        <p-button
-          [label]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON' | translate"
-          styleClass="p-button-text"
-          (onClick)="onVisibleChange(false)"
-        ></p-button>
-        <p-button
-          id="ocxAddFilterDialogConfirm"
-          [label]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON' | translate"
-          icon="pi pi-plus"
-          iconPos="left"
-          [disabled]="selectedValues().length === 0"
-          (onClick)="onConfirm()"
-        ></p-button>
-      </ng-template>
-    </p-dialog>
+    </div>
+    }
   `,
 })
-export class AddFilterDialogComponent {
+export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogPrimaryButtonDisabled {
   private readonly translateService = inject(TranslateService)
   private readonly locale = inject(LOCALE_ID)
 
-  readonly visible = input<boolean>(false)
   readonly columns = input<DataTableColumn[]>([])
   readonly data = input<RowListGridData[]>([])
   readonly existingFilters = input<Filter[]>([])
   readonly preselectColumnId = input<string | undefined>(undefined)
 
-  readonly added = output<Filter[]>()
-  readonly visibleChange = output<boolean>()
+  /**
+   * Result captured by the PortalDialogService when a dialog button is clicked.
+   * Kept in sync with the selected column and values so that confirming returns
+   * the filters produced for the currently selected column.
+   */
+  dialogResult: Filter[] = []
+
+  /**
+   * Enables/disables the dialog's primary (confirm) button. Emitted whenever the
+   * selected values change; the button is only enabled when at least one value is
+   * selected, mirroring the previous inline confirm button behaviour.
+   */
+  readonly primaryButtonEnabled = new Subject<boolean>()
 
   private readonly columnInitialized = signal(false)
 
@@ -171,27 +148,30 @@ export class AddFilterDialogComponent {
       }
       this.refreshForColumn(id)
     })
-  }
 
-  onVisibleChange(visible: boolean) {
-    this.visibleChange.emit(visible)
+    // Keep the captured result and the primary button state in sync with the
+    // currently selected column and values, so that confirming returns the
+    // filters for the selected column and the confirm button is only enabled
+    // when at least one value is selected.
+    effect(() => {
+      const column = this.column()
+      const values = this.selectedValues()
+      this.dialogResult = column && values.length > 0 ? this.buildFilters(column, values) : []
+      this.primaryButtonEnabled.next(values.length > 0)
+    })
   }
 
   onColumnChange(columnId: string | null) {
     this.selectedColumnId.set(columnId)
   }
 
-  onConfirm() {
-    const column = this.column()
-    const values = this.selectedValues()
-    if (!column || values.length === 0) {
-      return
-    }
-    const newFilters = values.map(
-      (value) => ({ columnId: column.id, value, filterType: FilterType.EQUALS }) satisfies Filter
-    )
-    this.added.emit(newFilters)
-    this.visibleChange.emit(false)
+  /**
+   * Builds the EQUALS filters for the given column and values. Values are stored
+   * as-is (the raw cell value) so they match the string comparison performed by
+   * the client-side filtering.
+   */
+  private buildFilters(column: DataTableColumn, values: unknown[]): Filter[] {
+    return values.map((value) => ({ columnId: column.id, value, filterType: FilterType.EQUALS }) satisfies Filter)
   }
 
   private getColumnById(columnId: string | null): DataTableColumn | null {
