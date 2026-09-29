@@ -148,22 +148,17 @@ export class InteractiveDataViewComponent implements OnInit {
     )
   })
   checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
-  frozenActionColumn = input<boolean | undefined>(undefined)
-  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = model<boolean | undefined>(undefined)
+  actionColumnPosition = model<'left' | 'right' | undefined>(undefined)
 
   private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
   checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
   frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
   actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
-  private readonly dialogActionColumnOverride = signal<ActionColumnChangedEvent | undefined>(undefined)
 
   checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
-  frozenActionColumnResolved = computed(
-    () => this.frozenActionColumn() ?? this.dialogActionColumnOverride()?.frozenActionColumn ?? this.frozenActionColumnThemeSetting() ?? false
-  )
-  actionColumnPositionResolved = computed(
-    () => this.actionColumnPosition() ?? this.dialogActionColumnOverride()?.actionColumnPosition ?? this.actionColumnPositionThemeSetting() ?? 'right'
-  )
+  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
@@ -721,7 +716,8 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   onActionColumnConfigChange(event: ActionColumnChangedEvent) {
-    this.dialogActionColumnOverride.set(event)
+    this.frozenActionColumn.set(event.frozenActionColumn)
+    this.actionColumnPosition.set(event.actionColumnPosition)
   }
 
   onRowSelectionChange(event: Row[]) {

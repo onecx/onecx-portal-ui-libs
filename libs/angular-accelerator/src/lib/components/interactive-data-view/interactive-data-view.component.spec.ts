@@ -597,12 +597,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.actionColumnPositionResolved()).toBe('left')
     })
 
-    it('should prefer explicit action column inputs over dialog overrides', () => {
+    it('should prefer explicit action column values over theme settings', () => {
       const { component } = createComponent(true)
 
-      setInputSignal(component, 'frozenActionColumn', false)
-      setInputSignal(component, 'actionColumnPosition', 'right')
-      component.onActionColumnConfigChange({ frozenActionColumn: true, actionColumnPosition: 'left' } as any)
+      component.frozenActionColumn.set(false)
+      component.actionColumnPosition.set('right')
+      component.frozenActionColumnThemeSetting.set(true)
+      component.actionColumnPositionThemeSetting.set('left')
 
       expect(component.frozenActionColumnResolved()).toBe(false)
       expect(component.actionColumnPositionResolved()).toBe('right')
