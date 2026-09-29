@@ -26,7 +26,6 @@ import type { AiCompletionRequest, AiCompletionResponse } from "./ai-completion.
  * ```
  */
 export class AiCompletionGatherer extends Gatherer<AiCompletionRequest, AiCompletionResponse | null> {
-
     constructor(callback: (request: AiCompletionRequest) => Promise<AiCompletionResponse | null>) {
         super("aiCompletion", 1, callback)
     }
