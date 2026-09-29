@@ -65,7 +65,8 @@ describe('ThemeService', () => {
     it('should destroy currentThemes$ topic on destroy', () => {
       hasCapabilityMock.mockReturnValue(true)
 
-      service.currentThemes$
+      // access the getter to trigger lazy initialization
+      expect(service.currentThemes$).toBeTruthy()
       const topic = service._currentThemes$
 
       service.ngOnDestroy()
