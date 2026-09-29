@@ -35,6 +35,16 @@ export const buttonCssRules: CssRule[] = [
     ],
   },
 
+  // ─── Primary Focus Severity: Help ──────────────────────────────────────────
+  {
+    selector: '.p-button-help:not(:disabled):focus',
+    declarations: [
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.focus.help.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.focus.help.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.focus.help.border.color' },
+    ],
+  },
+
   // ─── Primary Focus Severity: Success ───────────────────────────────────────
   {
     selector: '.p-button-success:not(:disabled):focus',
@@ -82,6 +92,16 @@ export const buttonCssRules: CssRule[] = [
       { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.background' },
       { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.color' },
       { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.info.border.color' },
+    ],
+  },
+
+  // ─── Primary Disabled Severity: Help ───────────────────────────────────────
+  {
+    selector: '.p-button-help:disabled',
+    declarations: [
+      { property: 'background', from: 'usages.button.defaultVariant.defaultVariant.disabled.help.background' },
+      { property: 'color', from: 'usages.button.defaultVariant.defaultVariant.disabled.help.color' },
+      { property: 'border-color', from: 'usages.button.defaultVariant.defaultVariant.disabled.help.border.color' },
     ],
   },
 

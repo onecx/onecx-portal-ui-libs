@@ -71,6 +71,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.defaultVariant.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultVariant.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.defaultVariant.state.active.severity.info.bg}}",
           "border": Object {
@@ -132,6 +142,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultVariant.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.defaultVariant.defaultState.severity.info.bg}}",
@@ -195,6 +215,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.defaultVariant.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.defaultVariant.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -257,6 +287,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultVariant.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.defaultVariant.state.focus.severity.info.bg}}",
           "border": Object {
@@ -318,6 +358,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultVariant.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.defaultVariant.state.hover.severity.info.bg}}",
@@ -395,6 +445,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.iconOnly.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.iconOnly.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.iconOnly.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.iconOnly.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.iconOnly.state.active.severity.info.bg}}",
           "border": Object {
@@ -456,6 +516,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.iconOnly.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.iconOnly.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.iconOnly.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.iconOnly.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.iconOnly.defaultState.severity.info.bg}}",
@@ -519,6 +589,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.iconOnly.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.iconOnly.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.iconOnly.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.iconOnly.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.iconOnly.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -581,6 +661,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.iconOnly.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.iconOnly.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.iconOnly.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.iconOnly.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.iconOnly.state.focus.severity.info.bg}}",
           "border": Object {
@@ -642,6 +732,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.iconOnly.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.iconOnly.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.iconOnly.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.iconOnly.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.iconOnly.state.hover.severity.info.bg}}",
@@ -725,6 +825,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.outlined.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.outlined.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.outlined.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.outlined.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.outlined.state.active.severity.info.bg}}",
           "border": Object {
@@ -786,6 +896,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.outlined.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.outlined.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.outlined.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.outlined.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.outlined.defaultState.severity.info.bg}}",
@@ -849,6 +969,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.outlined.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.outlined.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.outlined.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.outlined.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.outlined.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -911,6 +1041,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.outlined.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.outlined.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.outlined.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.outlined.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.outlined.state.focus.severity.info.bg}}",
           "border": Object {
@@ -972,6 +1112,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.outlined.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.outlined.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.outlined.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.outlined.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.outlined.state.hover.severity.info.bg}}",
@@ -1039,6 +1189,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raised.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raised.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raised.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raised.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raised.state.active.severity.info.bg}}",
           "border": Object {
@@ -1100,6 +1260,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.raised.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raised.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raised.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raised.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raised.defaultState.severity.info.bg}}",
@@ -1163,6 +1333,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raised.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raised.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raised.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raised.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raised.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -1225,6 +1405,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raised.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raised.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raised.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raised.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raised.state.focus.severity.info.bg}}",
           "border": Object {
@@ -1286,6 +1476,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.raised.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raised.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raised.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raised.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raised.state.hover.severity.info.bg}}",
@@ -1351,6 +1551,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.rounded.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.rounded.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.rounded.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.rounded.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.rounded.state.active.severity.info.bg}}",
           "border": Object {
@@ -1412,6 +1622,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.rounded.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.rounded.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.rounded.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.rounded.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.rounded.defaultState.severity.info.bg}}",
@@ -1475,6 +1695,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.rounded.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.rounded.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.rounded.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.rounded.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.rounded.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -1537,6 +1767,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.rounded.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.rounded.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.rounded.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.rounded.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.rounded.state.focus.severity.info.bg}}",
           "border": Object {
@@ -1598,6 +1838,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.rounded.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.rounded.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.rounded.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.rounded.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.rounded.state.hover.severity.info.bg}}",
@@ -1670,6 +1920,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.text.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.text.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.text.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.text.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.text.state.active.severity.info.bg}}",
           "border": Object {
@@ -1731,6 +1991,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.text.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.text.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.text.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.text.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.text.defaultState.severity.info.bg}}",
@@ -1794,6 +2064,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.text.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.text.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.text.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.text.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.text.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -1856,6 +2136,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.text.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.text.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.text.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.text.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.text.state.focus.severity.info.bg}}",
           "border": Object {
@@ -1917,6 +2207,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.text.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.text.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.text.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.text.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.text.state.hover.severity.info.bg}}",
@@ -1982,6 +2282,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raisedText.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raisedText.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raisedText.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raisedText.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raisedText.state.active.severity.info.bg}}",
           "border": Object {
@@ -2043,6 +2353,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.raisedText.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raisedText.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raisedText.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raisedText.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raisedText.defaultState.severity.info.bg}}",
@@ -2106,6 +2426,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raisedText.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raisedText.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raisedText.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raisedText.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raisedText.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -2168,6 +2498,16 @@ Object {
           },
           "color": "{{primitives.defaultVariant.variant.raisedText.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raisedText.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raisedText.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raisedText.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raisedText.state.focus.severity.info.bg}}",
           "border": Object {
@@ -2229,6 +2569,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.defaultVariant.variant.raisedText.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.defaultVariant.variant.raisedText.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.variant.raisedText.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.variant.raisedText.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.defaultVariant.variant.raisedText.state.hover.severity.info.bg}}",
@@ -2332,6 +2682,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.defaultVariant.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.defaultVariant.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.defaultVariant.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.defaultVariant.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.defaultVariant.state.active.severity.info.bg}}",
           "border": Object {
@@ -2393,6 +2753,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.defaultVariant.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.defaultVariant.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.defaultVariant.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.defaultVariant.defaultState.severity.info.bg}}",
@@ -2456,6 +2826,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.defaultVariant.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.defaultVariant.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.defaultVariant.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.defaultVariant.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.defaultVariant.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -2518,6 +2898,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.defaultVariant.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.defaultVariant.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.defaultVariant.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.defaultVariant.state.focus.severity.info.bg}}",
           "border": Object {
@@ -2579,6 +2969,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.defaultVariant.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.defaultVariant.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.defaultVariant.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.defaultVariant.state.hover.severity.info.bg}}",
@@ -2656,6 +3056,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.iconOnly.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.iconOnly.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.iconOnly.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.iconOnly.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.iconOnly.state.active.severity.info.bg}}",
           "border": Object {
@@ -2717,6 +3127,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.iconOnly.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.iconOnly.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.iconOnly.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.iconOnly.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.iconOnly.defaultState.severity.info.bg}}",
@@ -2780,6 +3200,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.iconOnly.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.iconOnly.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.iconOnly.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.iconOnly.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.iconOnly.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -2842,6 +3272,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.iconOnly.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.iconOnly.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.iconOnly.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.iconOnly.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.iconOnly.state.focus.severity.info.bg}}",
           "border": Object {
@@ -2903,6 +3343,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.iconOnly.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.iconOnly.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.iconOnly.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.iconOnly.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.iconOnly.state.hover.severity.info.bg}}",
@@ -2986,6 +3436,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.outlined.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.outlined.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.outlined.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.outlined.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.outlined.state.active.severity.info.bg}}",
           "border": Object {
@@ -3047,6 +3507,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.outlined.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.outlined.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.outlined.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.outlined.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.outlined.defaultState.severity.info.bg}}",
@@ -3110,6 +3580,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.outlined.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.outlined.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.outlined.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.outlined.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.outlined.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -3172,6 +3652,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.outlined.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.outlined.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.outlined.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.outlined.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.outlined.state.focus.severity.info.bg}}",
           "border": Object {
@@ -3233,6 +3723,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.outlined.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.outlined.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.outlined.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.outlined.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.outlined.state.hover.severity.info.bg}}",
@@ -3300,6 +3800,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raised.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raised.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raised.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raised.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raised.state.active.severity.info.bg}}",
           "border": Object {
@@ -3361,6 +3871,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.raised.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raised.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raised.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raised.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raised.defaultState.severity.info.bg}}",
@@ -3424,6 +3944,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raised.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raised.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raised.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raised.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raised.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -3486,6 +4016,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raised.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raised.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raised.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raised.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raised.state.focus.severity.info.bg}}",
           "border": Object {
@@ -3547,6 +4087,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.raised.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raised.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raised.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raised.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raised.state.hover.severity.info.bg}}",
@@ -3612,6 +4162,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.rounded.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.rounded.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.rounded.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.rounded.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.rounded.state.active.severity.info.bg}}",
           "border": Object {
@@ -3673,6 +4233,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.rounded.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.rounded.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.rounded.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.rounded.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.rounded.defaultState.severity.info.bg}}",
@@ -3736,6 +4306,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.rounded.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.rounded.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.rounded.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.rounded.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.rounded.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -3798,6 +4378,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.rounded.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.rounded.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.rounded.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.rounded.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.rounded.state.focus.severity.info.bg}}",
           "border": Object {
@@ -3859,6 +4449,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.rounded.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.rounded.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.rounded.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.rounded.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.rounded.state.hover.severity.info.bg}}",
@@ -3931,6 +4531,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.text.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.text.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.text.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.text.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.text.state.active.severity.info.bg}}",
           "border": Object {
@@ -3992,6 +4602,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.text.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.text.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.text.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.text.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.text.defaultState.severity.info.bg}}",
@@ -4055,6 +4675,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.text.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.text.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.text.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.text.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.text.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -4117,6 +4747,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.text.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.text.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.text.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.text.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.text.state.focus.severity.info.bg}}",
           "border": Object {
@@ -4178,6 +4818,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.text.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.text.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.text.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.text.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.text.state.hover.severity.info.bg}}",
@@ -4243,6 +4893,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raisedText.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raisedText.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raisedText.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raisedText.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raisedText.state.active.severity.info.bg}}",
           "border": Object {
@@ -4304,6 +4964,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.raisedText.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raisedText.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raisedText.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raisedText.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raisedText.defaultState.severity.info.bg}}",
@@ -4367,6 +5037,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raisedText.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raisedText.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raisedText.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raisedText.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raisedText.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -4429,6 +5109,16 @@ Object {
           },
           "color": "{{primitives.variant.primary.variant.raisedText.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raisedText.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raisedText.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raisedText.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raisedText.state.focus.severity.info.bg}}",
           "border": Object {
@@ -4490,6 +5180,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.primary.variant.raisedText.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.primary.variant.raisedText.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.primary.variant.raisedText.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.primary.variant.raisedText.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.primary.variant.raisedText.state.hover.severity.info.bg}}",
@@ -4593,6 +5293,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.defaultVariant.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.defaultVariant.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.defaultVariant.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.defaultVariant.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.defaultVariant.state.active.severity.info.bg}}",
           "border": Object {
@@ -4654,6 +5364,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.defaultVariant.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.defaultVariant.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.defaultVariant.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.defaultVariant.defaultState.severity.info.bg}}",
@@ -4717,6 +5437,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.defaultVariant.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.defaultVariant.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.defaultVariant.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.defaultVariant.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.defaultVariant.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -4779,6 +5509,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.defaultVariant.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.defaultVariant.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.defaultVariant.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.defaultVariant.state.focus.severity.info.bg}}",
           "border": Object {
@@ -4840,6 +5580,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.defaultVariant.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.defaultVariant.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.defaultVariant.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.defaultVariant.state.hover.severity.info.bg}}",
@@ -4917,6 +5667,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.iconOnly.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.iconOnly.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.iconOnly.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.iconOnly.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.iconOnly.state.active.severity.info.bg}}",
           "border": Object {
@@ -4978,6 +5738,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.iconOnly.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.iconOnly.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.iconOnly.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.iconOnly.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.iconOnly.defaultState.severity.info.bg}}",
@@ -5041,6 +5811,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.iconOnly.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.iconOnly.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.iconOnly.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.iconOnly.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.iconOnly.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -5103,6 +5883,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.iconOnly.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.iconOnly.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.iconOnly.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.iconOnly.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.iconOnly.state.focus.severity.info.bg}}",
           "border": Object {
@@ -5164,6 +5954,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.iconOnly.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.iconOnly.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.iconOnly.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.iconOnly.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.iconOnly.state.hover.severity.info.bg}}",
@@ -5247,6 +6047,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.outlined.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.outlined.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.outlined.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.outlined.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.outlined.state.active.severity.info.bg}}",
           "border": Object {
@@ -5308,6 +6118,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.outlined.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.outlined.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.outlined.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.outlined.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.outlined.defaultState.severity.info.bg}}",
@@ -5371,6 +6191,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.outlined.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.outlined.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.outlined.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.outlined.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.outlined.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -5433,6 +6263,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.outlined.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.outlined.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.outlined.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.outlined.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.outlined.state.focus.severity.info.bg}}",
           "border": Object {
@@ -5494,6 +6334,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.outlined.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.outlined.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.outlined.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.outlined.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.outlined.state.hover.severity.info.bg}}",
@@ -5561,6 +6411,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raised.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raised.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raised.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raised.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raised.state.active.severity.info.bg}}",
           "border": Object {
@@ -5622,6 +6482,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.raised.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raised.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raised.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raised.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raised.defaultState.severity.info.bg}}",
@@ -5685,6 +6555,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raised.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raised.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raised.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raised.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raised.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -5747,6 +6627,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raised.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raised.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raised.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raised.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raised.state.focus.severity.info.bg}}",
           "border": Object {
@@ -5808,6 +6698,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.raised.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raised.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raised.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raised.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raised.state.hover.severity.info.bg}}",
@@ -5873,6 +6773,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.rounded.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.rounded.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.rounded.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.rounded.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.rounded.state.active.severity.info.bg}}",
           "border": Object {
@@ -5934,6 +6844,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.rounded.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.rounded.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.rounded.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.rounded.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.rounded.defaultState.severity.info.bg}}",
@@ -5997,6 +6917,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.rounded.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.rounded.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.rounded.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.rounded.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.rounded.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -6059,6 +6989,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.rounded.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.rounded.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.rounded.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.rounded.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.rounded.state.focus.severity.info.bg}}",
           "border": Object {
@@ -6120,6 +7060,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.rounded.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.rounded.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.rounded.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.full}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.rounded.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.rounded.state.hover.severity.info.bg}}",
@@ -6192,6 +7142,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.text.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.text.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.text.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.text.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.text.state.active.severity.info.bg}}",
           "border": Object {
@@ -6253,6 +7213,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.text.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.text.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.text.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.text.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.text.defaultState.severity.info.bg}}",
@@ -6316,6 +7286,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.text.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.text.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.text.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.text.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.text.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -6378,6 +7358,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.text.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.text.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.text.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.text.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.text.state.focus.severity.info.bg}}",
           "border": Object {
@@ -6439,6 +7429,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.text.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.text.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.text.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.none}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.text.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.text.state.hover.severity.info.bg}}",
@@ -6504,6 +7504,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raisedText.state.active.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raisedText.state.active.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raisedText.state.active.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raisedText.state.active.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raisedText.state.active.severity.info.bg}}",
           "border": Object {
@@ -6565,6 +7575,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.raisedText.defaultState.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raisedText.defaultState.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raisedText.defaultState.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raisedText.defaultState.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raisedText.defaultState.severity.info.bg}}",
@@ -6628,6 +7648,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raisedText.state.disabled.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raisedText.state.disabled.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raisedText.state.disabled.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raisedText.state.disabled.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raisedText.state.disabled.severity.info.bg}}",
           "border": Object {
@@ -6690,6 +7720,16 @@ Object {
           },
           "color": "{{primitives.variant.secondary.variant.raisedText.state.focus.defaultSeverity.contrast}}",
         },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raisedText.state.focus.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raisedText.state.focus.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raisedText.state.focus.severity.help.contrast}}",
+        },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raisedText.state.focus.severity.info.bg}}",
           "border": Object {
@@ -6751,6 +7791,16 @@ Object {
             "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           },
           "color": "{{primitives.variant.secondary.variant.raisedText.state.hover.defaultSeverity.contrast}}",
+        },
+        "help": Object {
+          "background": "{{primitives.variant.secondary.variant.raisedText.state.hover.severity.help.bg}}",
+          "border": Object {
+            "color": "{{primitives.variant.secondary.variant.raisedText.state.hover.severity.help.border.color}}",
+            "radius": "{{primitives.radius.md}}",
+            "shadow": "{{primitives.shadow.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.variant.secondary.variant.raisedText.state.hover.severity.help.contrast}}",
         },
         "info": Object {
           "background": "{{primitives.variant.secondary.variant.raisedText.state.hover.severity.info.bg}}",

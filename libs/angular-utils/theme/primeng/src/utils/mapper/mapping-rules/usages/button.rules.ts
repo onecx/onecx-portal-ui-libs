@@ -177,6 +177,53 @@ export const buttonMappingRules: MappingRule[] = [
     transform: toColorString,
   },
 
+  // ─── Severity: Help ────────────────────────────────────────────────────────
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.help.background',
+    to: 'components.button.colorScheme.{mode}.root.help.background',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.help.color',
+    to: 'components.button.colorScheme.{mode}.root.help.color',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.help.border.color',
+    to: 'components.button.colorScheme.{mode}.root.help.borderColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.hover.help.background',
+    to: 'components.button.colorScheme.{mode}.root.help.hoverBackground',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.hover.help.color',
+    to: 'components.button.colorScheme.{mode}.root.help.hoverColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.hover.help.border.color',
+    to: 'components.button.colorScheme.{mode}.root.help.hoverBorderColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.active.help.background',
+    to: 'components.button.colorScheme.{mode}.root.help.activeBackground',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.active.help.color',
+    to: 'components.button.colorScheme.{mode}.root.help.activeColor',
+    transform: toColorString,
+  },
+  {
+    from: 'usages.button.defaultVariant.defaultVariant.active.help.border.color',
+    to: 'components.button.colorScheme.{mode}.root.help.activeBorderColor',
+    transform: toColorString,
+  },
+
   // ─── Severity: Success ─────────────────────────────────────────────────────
   {
     from: 'usages.button.defaultVariant.defaultVariant.defaultState.success.background',

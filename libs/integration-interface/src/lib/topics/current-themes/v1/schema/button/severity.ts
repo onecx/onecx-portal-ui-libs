@@ -2,7 +2,7 @@ import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
-export const BUTTON_SEVERITIES = ['success', 'info', 'warning', 'danger', 'contrast'] as const
+export const BUTTON_SEVERITIES = ['success', 'info', 'help', 'warning', 'danger', 'contrast'] as const
 export type ButtonSeverity = (typeof BUTTON_SEVERITIES)[number]
 
 /** A single (variant, state, severity) leaf token set. */
@@ -24,6 +24,7 @@ export const buttonSeverityGroupShape = z
     defaultSeverity: buttonSeverityLeafShape.prefault({}),
     success: buttonSeverityLeafShape.prefault({}),
     info: buttonSeverityLeafShape.prefault({}),
+    help: buttonSeverityLeafShape.prefault({}),
     warning: buttonSeverityLeafShape.prefault({}),
     danger: buttonSeverityLeafShape.prefault({}),
     contrast: buttonSeverityLeafShape.prefault({}),
@@ -38,7 +39,7 @@ export const buttonSeverityGroupShape = z
 const BORDER_STYLE = '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}'
 
 /**
- * Builds the defaults for one severity group (`defaultSeverity` + 5 named severities),
+ * Builds the defaults for one severity group (`defaultSeverity` + 6 named severities),
  * referencing `primitives.<colorPrefix>.<statePath>.<severitySegment>...`.
  *
  * Only the tokens that genuinely vary at this leaf are set: `color` (varies by severity/state)

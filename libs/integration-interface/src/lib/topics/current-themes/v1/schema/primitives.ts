@@ -264,11 +264,12 @@ export const severityStyles = bgContrast
   .register(themeSchemaRegistry, { id: 'severityStyles' })
 
 // Per-named-level style overrides. Each severity level maps to a severityStyles block
-// (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, warning, danger, and contrast cases.
+// (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, help, warning, danger, and contrast cases.
 export const severityVariants = z
   .object({
     success: severityStyles.optional(),
     info: severityStyles.optional(),
+    help: severityStyles.optional(),
     warning: severityStyles.optional(),
     danger: severityStyles.optional(),
     contrast: severityStyles.optional(),
@@ -311,7 +312,28 @@ export const shapeVariants = z
   })
   .register(themeSchemaRegistry, { id: 'shapeVariants' })
 
-export const variantWithStates = bgContrast
+// Explicit shape annotation so the emitted `.d.ts` references this named type instead of the
+// fully-expanded `.extend()` inference (which exceeds the compiler's type-serialization limit
+// once `severityVariants` carries its full named-severity set).
+type StateGroupShape = {
+  hover: z.ZodOptional<typeof severityVariantGroup>
+  active: z.ZodOptional<typeof severityVariantGroup>
+  selected: z.ZodOptional<typeof severityVariantGroup>
+  focus: z.ZodOptional<typeof severityVariantGroup>
+  invalid: z.ZodOptional<typeof severityVariantGroup>
+  disabled: z.ZodOptional<typeof severityVariantGroup>
+}
+
+type VariantWithStatesShape = {
+  bg: (typeof bgContrast)['shape']['bg']
+  contrast: (typeof bgContrast)['shape']['contrast']
+  defaultState: z.ZodOptional<typeof severityVariantGroup>
+  state: z.ZodOptional<z.ZodObject<StateGroupShape>>
+  defaultVariant: z.ZodOptional<typeof variantStyleAndStates>
+  variant: z.ZodOptional<typeof shapeVariants>
+}
+
+export const variantWithStates: z.ZodObject<VariantWithStatesShape> = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
     state: z
@@ -348,7 +370,7 @@ const colorVariantsShape: ColorVariantsShape = {
 
 export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants' })
 
-export const area = (variantWithStates as typeof variantWithStates).extend({})
+export const area: z.ZodObject<VariantWithStatesShape> = (variantWithStates as typeof variantWithStates).extend({})
 
 type AreasShape = {
   canvas: z.ZodOptional<typeof area>
