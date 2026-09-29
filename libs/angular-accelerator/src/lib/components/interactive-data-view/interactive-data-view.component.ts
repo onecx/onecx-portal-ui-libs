@@ -518,7 +518,6 @@ export class InteractiveDataViewComponent implements OnInit {
   @Output() editItem = observableOutput<RowListGridData>()
   @Output() selectionChanged = observableOutput<Row[]>()
   dataViewLayoutChange = output<'grid' | 'list' | 'table'>()
-  displayedColumnKeysChange = output<string[]>()
 
   pageChanged = output<number>()
   pageSizeChanged = output<number>()
@@ -592,11 +591,6 @@ export class InteractiveDataViewComponent implements OnInit {
         return
       }
       this.pageSizeChanged.emit(pageSize)
-    })
-
-    effect(() => {
-      const displayedColumnKeys = this.displayedColumnKeys()
-      this.displayedColumnKeysChange.emit(displayedColumnKeys)
     })
 
     effect(() => {

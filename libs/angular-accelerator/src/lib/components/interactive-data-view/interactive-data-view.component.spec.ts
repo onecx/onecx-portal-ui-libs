@@ -224,7 +224,6 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
     it('should update column group selection state when groupSelectionChangedSlotEmitter emits undefined', () => {
       const { component } = createComponent(true)
-      const emitSpy = jest.spyOn(component.displayedColumnKeysChange, 'emit')
 
       component.columns = [{ id: 'c1', nameKey: 'G', predefinedGroupKeys: [] } as any]
       component.displayedColumnKeys.set(['c1'])
@@ -236,9 +235,6 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       // When `undefined` is passed, it uses current selectedGroupKey ('sg') as fallback
       expect(component.displayedColumnKeys()).toEqual(['c1'])
       expect(component.stateService.activeColumnGroupKey()).toBe('sg')
-      // Effect emission happens async
-      TestBed.tick()
-      expect(emitSpy).toHaveBeenCalledWith(['c1'])
     })
 
     it('should clear selectedGroupKey on layout change when column group defined and selection is invalid', () => {

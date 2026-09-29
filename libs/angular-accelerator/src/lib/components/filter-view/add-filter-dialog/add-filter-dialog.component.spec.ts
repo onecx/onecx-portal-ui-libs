@@ -10,7 +10,6 @@ import { SelectModule } from 'primeng/select'
 import { AddFilterDialogComponent } from './add-filter-dialog.component'
 import type { DataTableColumn } from '../../../model/data-table-column.model'
 import { ColumnType } from '../../../model/column-type.model'
-import type { Filter } from '../../../model/filter.model'
 import { FilterType } from '../../../model/filter.model'
 
 const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
@@ -156,7 +155,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     expect(component.selectedValues()).toEqual(['2'])
   })
 
-  it('should emit filters for the selected column and values on confirm', async () => {
+  it('should capture filters for the selected column and values in the dialog result', async () => {
     fixture.componentRef.setInput('columns', [
       makeColumn({ id: 'c1', nameKey: 'C1' }),
       makeColumn({ id: 'c2', nameKey: 'C2' }),
@@ -165,31 +164,31 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    let emitted: Filter[] | undefined
-    fixture.componentRef.setInput('visible', true)
-    component.added.subscribe((f) => (emitted = f))
-
     component.selectedValues.set(['a', 'b'])
-    component.onConfirm()
+    fixture.detectChanges() // flush the result-synchronising effect
+    await fixture.whenStable()
 
-    expect(emitted).toEqual([
+    expect(component.dialogResult).toEqual([
       { columnId: 'c1', value: 'a', filterType: FilterType.EQUALS },
       { columnId: 'c1', value: 'b', filterType: FilterType.EQUALS },
     ])
   })
 
-  it('should not emit when no values are selected on confirm', async () => {
+  it('should enable the primary button only when at least one value is selected', async () => {
     fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
     fixture.componentRef.setInput('data', [{ c1: 'a' }])
     fixture.detectChanges()
     await fixture.whenStable()
 
-    let emitted = false
-    component.added.subscribe(() => (emitted = true))
+    const enabledStates: boolean[] = []
+    component.primaryButtonEnabled.subscribe((enabled) => enabledStates.push(enabled))
 
+    component.selectedValues.set(['a'])
+    fixture.detectChanges() // flush the effect that drives primaryButtonEnabled
     component.selectedValues.set([])
-    component.onConfirm()
+    fixture.detectChanges()
 
-    expect(emitted).toBe(false)
+    expect(enabledStates).toContain(true)
+    expect(enabledStates).toContain(false)
   })
 })
