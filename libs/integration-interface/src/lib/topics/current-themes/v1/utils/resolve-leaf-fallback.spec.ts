@@ -49,3 +49,25 @@ describe('resolveLeafFallback', () => {
     expect(resolveLeafFallback('--onecx-theme-primitives-does-not-exist-foo-bar')).toBeUndefined()
   })
 })
+
+// Follows `resolveLeafFallback` until nothing is left to relax, returning the whole chain (the
+// starting variable first). Usage chains are covered by each usage's axis metadata spec.
+function fallbackChain(varName: string): string[] {
+  const chain = [varName]
+  for (let next = resolveLeafFallback(varName); next !== undefined; next = resolveLeafFallback(next)) {
+    chain.push(next)
+  }
+  return chain
+}
+
+describe('resolveLeafFallback full chain (primitives)', () => {
+  it('relaxes state, then variant, then severity', () => {
+    const varName = '--onecx-theme-primitives-variant-primary-state-hover-severity-success-border-color'
+    expect(fallbackChain(varName)).toEqual([
+      varName,
+      '--onecx-theme-primitives-variant-primary-defaultState-severity-success-border-color',
+      '--onecx-theme-primitives-defaultVariant-defaultState-severity-success-border-color',
+      '--onecx-theme-primitives-defaultVariant-defaultState-defaultSeverity-border-color',
+    ])
+  })
+})

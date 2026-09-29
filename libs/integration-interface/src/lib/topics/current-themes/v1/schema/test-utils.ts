@@ -17,10 +17,13 @@
  *
  * collectAxisScopes / expectAxes — collect the variant/state/severity keys of every
  * fallback scope under a usage and assert them per component.
+ *
+ * expectFallback — asserts the resolver's single-step fallback for a leaf path under a usage.
  */
 
 import * as z from 'zod'
 import { introspectThemeAxisMetadata } from '../utils/axis-metadata'
+import { resolveLeafFallback, THEME_VAR_PREFIX } from '../utils/resolve-leaf-fallback'
 import { theme } from '../current-themes.schema'
 
 export function expectTokens(o: object | undefined, expectedTokens: Record<string, any>) {
@@ -92,4 +95,13 @@ export function expectAxes(scopes: Map<string, Axes>, scopeName: string, expecte
 
   expect(occurrences.length).toBeGreaterThan(0)
   occurrences.forEach((axes) => expect(axes).toEqual(sorted))
+}
+
+/**
+ * Asserts the resolver maps the leaf at `from` to the leaf at `to` in one step (`undefined` means no
+ * fallback). Both paths are relative to `usagePath` and are compared as theme variable names.
+ */
+export function expectFallback(usagePath: string, from: string, to: string | undefined) {
+  const toVar = (path: string) => THEME_VAR_PREFIX + `${usagePath}.${path}`.slice('v2.'.length).replace(/\./g, '-')
+  expect(resolveLeafFallback(toVar(from))).toBe(to === undefined ? undefined : toVar(to))
 }
