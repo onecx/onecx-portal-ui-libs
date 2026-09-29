@@ -7,6 +7,7 @@ import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
 import { table } from './schema/table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
@@ -35,6 +36,7 @@ import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
 import { searchHeader } from './schema/search-header'
+import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -42,7 +44,7 @@ type UsagesInput = {
   menubar?: z.input<typeof menubar>
   region?: z.input<typeof region>
   table?: z.input<typeof table>
-  tooltip?: z.input<typeof tooltip>
+  tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
@@ -64,7 +66,7 @@ type UsagesInput = {
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
-  pageHeader?: z.input<typeof pageHeader>
+  pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }
