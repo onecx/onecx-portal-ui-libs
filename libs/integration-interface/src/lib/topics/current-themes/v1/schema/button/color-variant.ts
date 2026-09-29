@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { badge, badgeShape } from '../badge'
+import { badge } from '../badge'
 import { borderWithShadow, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { buttonStatefulDefaults, buttonStatefulShape } from './stateful'
