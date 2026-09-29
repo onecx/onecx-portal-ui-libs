@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { bg, border, color, font, withRef } from '../primitives'
-import { focusRingShape, focusRingTokens, rowDefaultStateTokens, stateBoxTokens, stateTokensShape } from './data-table-base-tokens'
+import { rowDefaultStateTokens } from './data-table-base-tokens'
+import { dataTableCellDefaults, dataTableCellShape } from './cell'
 import { dataTableFilterIconsDefaults, dataTableFilterIconsShape, dataTableSortIconsDefaults, dataTableSortIconsShape } from './icons'
 
 /** A header cell (the column-header box). Carries the sort/filter icon trees. */
@@ -17,26 +18,16 @@ const headerCellShape = z.object({
   filterIcons: dataTableFilterIconsShape.prefault({}),
 })
 
-/** A header row. `defaultState` nests the cell; named states restyle the box. */
+/** A header row: its own box + a nested cell. */
 export const dataTableHeaderShape = z.object({
-  defaultState: headerCellShape.prefault({}),
-  hover: stateTokensShape.prefault({}),
-  active: stateTokensShape.prefault({}),
-  selected: stateTokensShape.prefault({}),
-  focus: stateTokensShape.prefault({}),
-  focusRing: focusRingShape.prefault({}),
+  ...headerCellShape.shape,
+  cell: dataTableCellShape.prefault({}),
 })
 
 /** Header row defaults. */
 export const dataTableHeaderDefaults = {
-  defaultState: {
-    ...rowDefaultStateTokens,
-    sortIcons: dataTableSortIconsDefaults,
-    filterIcons: dataTableFilterIconsDefaults,
-  },
-  hover: stateBoxTokens('hover'),
-  active: stateBoxTokens('active'),
-  selected: stateBoxTokens('selected'),
-  focus: stateBoxTokens('focus'),
-  focusRing: focusRingTokens,
+  ...rowDefaultStateTokens,
+  sortIcons: dataTableSortIconsDefaults,
+  filterIcons: dataTableFilterIconsDefaults,
+  cell: dataTableCellDefaults,
 }

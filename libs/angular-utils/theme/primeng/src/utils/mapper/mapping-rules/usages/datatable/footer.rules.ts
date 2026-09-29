@@ -4,29 +4,29 @@ import { toColorString } from '../../../mapper.utils';
 export const footerRules: MappingRule[] = [
   // ─── Footer row ───────────────────────────────────────────────────────────
   {
-    from: 'usages.dataTable.footer.defaultState.background',
+    from: 'usages.dataTable.footer.background',
     to: 'components.datatable.footer.background',
     transform: toColorString,
   },
   {
-    from: 'usages.dataTable.footer.defaultState.color',
+    from: 'usages.dataTable.footer.color',
     to: 'components.datatable.footer.color',
     transform: toColorString,
   },
   {
-    from: 'usages.dataTable.footer.defaultState.border.color',
+    from: 'usages.dataTable.footer.border.color',
     to: 'components.datatable.footer.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.dataTable.footer.defaultState.border.width',
+    from: 'usages.dataTable.footer.border.width',
     to: 'components.datatable.footer.borderWidth',
     transform: (v) => (typeof v === 'string' ? v : undefined),
   },
   // PrimeNG's footer token takes a single padding value; the vertical axis is
   // handled by the companion CSS rules (padding-top / padding-bottom).
   {
-    from: 'usages.dataTable.footer.defaultState.paddingX',
+    from: 'usages.dataTable.footer.paddingX',
     to: 'components.datatable.footer.padding',
   },
 
