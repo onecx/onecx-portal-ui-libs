@@ -35,7 +35,7 @@ import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
-import { searchHeader } from './schema/search-header'
+import { searchHeader, searchHeaderShape } from './schema/search-header'
 import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
@@ -67,6 +67,7 @@ type UsagesInput = {
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeaderShape>
+  searchHeader?: z.input<typeof searchHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }
