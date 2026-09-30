@@ -14,3 +14,14 @@
     clip: rect(0, 0, 0, 0);
     border: 0;
 }
+
+.filter-view-add-filter {
+    border-style: dashed;
+    border-color: var(--chip-border-color, var(--surface-border));
+    background: transparent;
+    color: var(--text-color-secondary, var(--text-color));
+
+    &.p-button-secondary {
+        border-color: var(--chip-border-color, var(--surface-border));
+    }
+}

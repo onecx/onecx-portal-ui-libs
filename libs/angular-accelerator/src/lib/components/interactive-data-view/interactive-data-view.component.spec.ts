@@ -1,11 +1,29 @@
 import { SlotService } from '@onecx/angular-remote-components'
-import { TestBed } from '@angular/core/testing'
-import { TemplateRef } from '@angular/core'
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { Component, TemplateRef } from '@angular/core'
+import { HarnessLoader } from '@angular/cdk/testing'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
+import { NoopAnimationsModule } from '@angular/platform-browser/animations'
+import { DynamicDialogModule } from 'primeng/dynamicdialog'
+import { provideRouter } from '@angular/router'
+import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import {
+  provideAppStateServiceMock,
+  provideShellCapabilityServiceMock,
+  provideUserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
+import { UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
+import { ColumnType } from '../../model/column-type.model'
+import type { DataTableColumn } from '../../model/data-table-column.model'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { providePortalDialogService } from '../../services/portal-dialog.service'
+import { DialogFooterHarness, InteractiveDataViewHarness } from '../../../../testing'
 import * as loggerUtils from '../../utils/logger.utils'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
@@ -1444,4 +1462,190 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       jest.restoreAllMocks()
     })
   })
+
+  describe('InteractiveDataViewHarness > FilterViewHarness — add filter in any layout (harness-driven)', () => {
+    // Full component render (not the isolated class logic above) so the shared `InteractiveDataViewHarness.getFilterView()`
+    // seam is exercised end to end: real FilterView affordance -> real PortalDialogService dialog -> shared filter state.
+    const makeColumn = (overrides: Partial<DataTableColumn> & { id: string; nameKey: string }): DataTableColumn => ({
+      columnType: ColumnType.STRING,
+      filterable: true,
+      ...overrides,
+    }) as DataTableColumn
+
+    const TRANSLATIONS = {
+      en: {
+        NAME_COL_A: 'Column A',
+        NAME_COL_B: 'Column B',
+        NAME_COL_C: 'Column C',
+        NAME_COL_D: 'Column D',
+        OCX_FILTER_VIEW: {
+          ADD_FILTER: { BUTTON_LABEL: 'Add filter' },
+          NO_FILTERS: 'No filters',
+        },
+        OCX_BUTTON_DIALOG: { CONFIRM: 'Confirm', CANCEL: 'Cancel' },
+      },
+    }
+
+    const slotServiceMock = {
+      isSomeComponentDefinedForSlot: () => new BehaviorSubject<boolean>(false).asObservable(),
+    } as unknown as SlotService
+
+    let fixture: ComponentFixture<InteractiveDataViewComponent>
+    let component: InteractiveDataViewComponent
+    let stateService: DataViewStateService
+    let interactiveHarness: InteractiveDataViewHarness
+    let rootLoader: HarnessLoader
+
+    /** Flush pending microtasks (e.g. the dialog's value-options derivation) and push signal changes into the DOM. */
+    const flush = async () => {
+      await fixture.whenStable()
+      fixture.detectChanges()
+    }
+
+    beforeEach(async () => {
+      await TestBed.configureTestingModule({
+        declarations: [HarnessTestRouteComponent],
+        imports: [AngularAcceleratorModule, NoopAnimationsModule, DynamicDialogModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          provideShellCapabilityServiceMock(),
+          provideAppStateServiceMock(),
+          providePortalDialogService(),
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+          { provide: SlotService, useValue: slotServiceMock },
+          provideRouter([{ path: '**', component: HarnessTestRouteComponent }]),
+          DataViewStateService,
+        ],
+      }).compileComponents()
+
+      fixture = TestBed.createComponent(InteractiveDataViewComponent)
+      component = fixture.componentInstance
+      stateService = TestBed.inject(DataViewStateService)
+
+      // Displayed columns: A and B are shown and filterable, D is shown but not filterable. C is available but hidden.
+      component.columns = [
+        makeColumn({ id: 'colA', nameKey: 'NAME_COL_A' }),
+        makeColumn({ id: 'colB', nameKey: 'NAME_COL_B' }),
+        makeColumn({ id: 'colC', nameKey: 'NAME_COL_C' }),
+        makeColumn({ id: 'colD', nameKey: 'NAME_COL_D', filterable: false }),
+      ]
+      component.layout = 'grid'
+      component.data = [
+        { id: 1, colA: 'alpha', colB: 'one' },
+        { id: 2, colA: 'beta', colB: 'two' },
+        { id: 3, colA: 'alpha', colB: 'one' },
+      ] as any
+      fixture.componentRef.setInput('disableFilterView', false)
+      fixture.componentRef.setInput('filterViewDisplayMode', 'chips')
+      fixture.componentRef.setInput('displayedColumnKeys', ['colA', 'colB', 'colD'])
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      interactiveHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, InteractiveDataViewHarness)
+      rootLoader = TestbedHarnessEnvironment.documentRootLoader(fixture)
+    })
+
+    afterEach(() => {
+      // DynamicDialog appends the dialog to the document body; it would otherwise persist between tests.
+      document.getElementsByTagName('html')[0].innerHTML = ''
+    })
+
+    it('should add a filter from the displayed filterable columns through the dialog and reflect it in the shared state and chips', async () => {
+      const view = await interactiveHarness.getFilterView()
+      if (!view) {
+        throw new Error('Expected the FilterView harness to be present')
+      }
+
+      await view.clickAddFilterButton()
+      await flush()
+
+      // The dialog's column picker only offers the displayed, filterable columns (A and B).
+      // It excludes the hidden column C and the displayed-but-not-filterable column D.
+      const columnSelect = await view.getAddFilterColumnSelect()
+      if (!columnSelect) {
+        throw new Error('Expected the add-filter dialog column select to be open')
+      }
+      const columnItems = await columnSelect.getSelectItems()
+      const columnTexts = (await Promise.all(columnItems.map((item) => item.getText()))).sort()
+      expect(columnTexts).toEqual(['Column A', 'Column B'])
+
+      // Pick column A, then the distinct values already present in the loaded data for that column.
+      await columnItems[columnTexts.indexOf('Column A')].selectItem()
+      await flush()
+
+      const valueSelect = await view.getAddFilterValueSelect()
+      if (!valueSelect) {
+        throw new Error('Expected the add-filter dialog value select to be open')
+      }
+      const valueItems = await valueSelect.getSelectItems()
+      const valueTexts = (await Promise.all(valueItems.map((item) => item.getText()))).sort()
+      expect(valueTexts).toEqual(['alpha', 'beta'])
+
+      await valueItems[valueTexts.indexOf('alpha')].selectItem()
+      await flush()
+
+      // The primary button enables once both a column and a value have been chosen.
+      const dialogFooter = await rootLoader.getHarness(DialogFooterHarness)
+      expect(await dialogFooter.getPrimaryButtonDisabled()).toBe(false)
+      await dialogFooter.clickPrimaryButton()
+      await flush()
+
+      // The chosen filter lands in the shared DataViewStateService (the same signal the table's native
+      // per-column filter row reads and writes, so the two affordances stay in sync).
+      expect(stateService.filters()).toEqual([{ columnId: 'colA', value: 'alpha', filterType: undefined }])
+
+      // ...and it is surfaced as a chip in the FilterView.
+      const chips = await view.getChips()
+      expect(chips.length).toBe(1)
+      const chipText = await chips[0].getContent()
+      expect(chipText).toContain('Column A')
+      expect(chipText).toContain('alpha')
+    })
+
+    it('should still display a filter on a column that is no longer shown (filter display sources available columns)', async () => {
+      // Pre-seed a filter on the hidden column C. The FilterView display reads `availableColumns`
+      // (which still includes C), so the chip is shown even though C is not a displayed column and
+      // would not be offered as an add-filter target.
+      component.filters = [{ columnId: 'colC', value: 'hidden', filterType: undefined }]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const view = await interactiveHarness.getFilterView()
+      if (!view) {
+        throw new Error('Expected the FilterView harness to be present')
+      }
+
+      const chips = await view.getChips()
+      expect(chips.length).toBe(1)
+      const chipText = await chips[0].getContent()
+      expect(chipText).toContain('Column C')
+
+      // The no-filters message is suppressed because a filter is present.
+      expect(await view.getNoFiltersMessage()).toBeNull()
+
+      // The add-filter pill is still available because A and B are displayed and filterable.
+      expect(await view.getAddFilterButton()).toBeTruthy()
+    })
+
+    it('should hide the add-filter affordance when no displayed column is filterable', async () => {
+      // Make the only displayed column non-filterable: nothing can be added to.
+      component.columns = [makeColumn({ id: 'colD', nameKey: 'NAME_COL_D', filterable: false })]
+      fixture.componentRef.setInput('displayedColumnKeys', ['colD'])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const view = await interactiveHarness.getFilterView()
+      if (!view) {
+        throw new Error('Expected the FilterView harness to be present')
+      }
+
+      // Chips mode: the inline "Add filter" pill is absent.
+      expect(await view.getAddFilterButton()).toBeNull()
+    })
+  })
 })
+
+@Component({ standalone: false, template: '' })
+class HarnessTestRouteComponent {}
