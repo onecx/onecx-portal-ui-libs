@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ripple schema resolves the expected default token tree 1`] = `
+Object {
+  "ink": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "opacity": 1,
+  },
+}
+`;
