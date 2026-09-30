@@ -1,274 +1,179 @@
+/**
+ * Schema for the PrimeNG ToggleButton usage.
+ */
 import * as z from 'zod'
-import { bg, color, withRef, font, border, borderWithShadow } from './primitives'
+import { bg, border, borderWithShadow, color, font, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { applyDefaultsRecursive } from './defaults-helper'
 
-// Root level properties
-const defaultFont = {
-  family: '{{primitives.font.family}}',
-  size: '{{primitives.font.size}}',
-  weight: '{{primitives.font.weight}}',
-  lineHeight: '{{primitives.font.lineHeight}}',
-  letterSpacing: '{{primitives.font.letterSpacing}}',
-  style: '{{primitives.font.style}}',
+// ------------------------------------------------------------------
+// SHAPE — all keys optional, no defaults baked in
+// ------------------------------------------------------------------
+
+const togglebuttonSettingsShape = z.object({
+  iconPos: withRef(z.enum(['left', 'right'])).optional(),
+  size: withRef(z.enum(['small', 'large'])).optional(),
+  allowEmpty: withRef(z.boolean()).optional(),
+  fluid: withRef(z.boolean()).optional(),
+})
+
+// Content is the inner wrapper span. Padding/radius are constant across
+// states; only `selected` swaps in a distinct background + shadow.
+const togglebuttonContentShape = z.object({
+  padding: withRef(z.string()).optional(),
+  border: border.pick({ radius: true }).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  shadow: withRef(z.string()).optional(),
+})
+
+const togglebuttonIconShape = z.object({
+  color: color.optional(),
+})
+
+// Background/color/border(color) tokens that vary per interaction state,
+// plus the `content`/`icon` children nested inside their owning state —
+// mirrors `dropdown`'s `triggerIcon`, which lives inside each state block
+// (`defaultState.triggerIcon`, `hover.triggerIcon`, ...), not the reverse.
+const togglebuttonStateShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  border: border.optional(),
+  content: togglebuttonContentShape.prefault({}),
+  icon: togglebuttonIconShape.prefault({}),
+})
+
+// Invalid only ever changes the border color — no content/icon token exists.
+const togglebuttonInvalidShape = z.object({
+  border: border.pick({ color: true }).optional(),
+})
+
+// `checked` maps onto the canonical `selected` state (see `primitives.ts`'s
+// `variantWithStates.state.selected`) — a sibling of `hover`/`disabled`/
+// `invalid`, not a separate variant. This also removes the need to duplicate
+// `disabled`/`invalid` defaults across two variants: there is only ever one
+// variant (`defaultVariant`), and `selected` is just another one of its states.
+const togglebuttonVariantShape = z.object({
+  defaultState: togglebuttonStateShape.prefault({}),
+  hover: togglebuttonStateShape.prefault({}),
+  disabled: togglebuttonStateShape.prefault({}),
+  invalid: togglebuttonInvalidShape.prefault({}),
+  selected: togglebuttonStateShape.prefault({}),
+})
+
+const togglebuttonSizeShape = z.object({
+  padding: withRef(z.string()).optional(),
+  font: font.pick({ size: true }).optional(),
+  content: z.object({ padding: withRef(z.string()).optional() }).prefault({}),
+})
+
+export const togglebuttonShape = z.object({
+  settings: togglebuttonSettingsShape.optional(),
+
+  padding: withRef(z.string()).optional(),
+  gap: withRef(z.string()).optional(),
+  font: font.pick({ size: true, weight: true }).optional(),
+  transitionDuration: withRef(z.string()).optional(),
+  focusRing: borderWithShadow.optional(),
+
+  defaultVariant: togglebuttonVariantShape.prefault({}),
+
+  sm: togglebuttonSizeShape.prefault({}),
+  lg: togglebuttonSizeShape.prefault({}),
+})
+
+// ------------------------------------------------------------------
+// DEFAULTS
+// ------------------------------------------------------------------
+
+export const togglebuttonDefaults = {
+  padding: '{{primitives.space.sm}}',
+  gap: '{{primitives.space.xs}}',
+  font: {
+    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight}}',
+  },
+  transitionDuration: '{{primitives.transition.duration}}',
+  focusRing: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    width: '{{primitives.border.width.md}}',
+    offset: '{{primitives.border.offset.none}}',
+    radius: '{{primitives.radius.md}}',
+    shadow: '{{primitives.shadow.none}}',
+  },
+
+  defaultVariant: {
+    defaultState: {
+      background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      border: {
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+        style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+        width: '{{primitives.border.width.sm}}',
+        offset: '{{primitives.border.offset.none}}',
+        radius: '{{primitives.border.radius.md}}',
+      },
+      content: {
+        padding: '{{primitives.space.xs}}',
+        border: {
+          radius: '{{primitives.border.radius.sm}}',
+        },
+      },
+      icon: {
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      },
+    },
+    hover: {
+      background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      icon: {
+        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+      },
+    },
+    disabled: {
+      background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      border: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
+      },
+      icon: {
+        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
+      },
+    },
+    invalid: {
+      border: {
+        color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
+      },
+    },
+    selected: {
+      background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+      color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+      border: {
+        color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
+      },
+      content: {
+        background: '{{primitives.variant.primary.defaultState.defaultSeverity.bg}}',
+        shadow: '{{primitives.shadow.sm}}',
+      },
+      icon: {
+        color: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
+      },
+    },
+  },
+
+  sm: {
+    padding: '{{primitives.space.xs}}',
+    font: { size: '{{primitives.font.size.sm}}' },
+    content: { padding: '{{primitives.space.xxs}}' },
+  },
+  lg: {
+    padding: '{{primitives.space.md}}',
+    font: { size: '{{primitives.font.size.lg}}' },
+    content: { padding: '{{primitives.space.sm}}' },
+  },
 }
 
-const defaultBorder = {
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-  width: '{{primitives.border.width.sm}}',
-  offset: '{{primitives.border.offset.sm}}',
-  radius: '{{primitives.border.radius.md}}',
-}
-
-const defaultFocusRing = {
-  width: '{{primitives.focusRing.width.md}}',
-  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
-  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
-  offset: '{{primitives.focusRing.offset.md}}',
-  radius: '{{primitives.focusRing.radius.md}}',
-  shadow: '{{primitives.focusRing.shadow.none}}',
-}
-
-export const togglebuttonSettings = z
-  .object({
-    // Component-specific settings can be added here if needed
-  })
-  .register(themeSchemaRegistry, { id: 'togglebuttonSettings' })
-
-// Default (unchecked) interaction states
-export const hoverTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const focusTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const disabledTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const invalidTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-// checked variant
-export const checkedHoverTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.variant.primary.state.hover.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.variant.primary.state.hover.defaultSeverity.border.color}}',
-    style: '{{primitives.variant.primary.state.hover.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const checkedFocusTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.variant.primary.state.focus.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.variant.primary.state.focus.defaultSeverity.border.color}}',
-    style: '{{primitives.variant.primary.state.focus.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const checkedDisabledTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const checkedInvalidTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.state.invalid.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}',
-    style: '{{primitives.defaultVariant.state.invalid.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-})
-
-export const checkedTogglebuttonTokens = z.object({
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.variant.primary.defaultState.defaultSeverity.bg}}'),
-  color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-  border: border.default({
-    color: '{{primitives.variant.primary.defaultState.defaultSeverity.border.color}}',
-    style: '{{primitives.variant.primary.defaultState.defaultSeverity.border.style}}',
-    width: '{{primitives.border.width.sm}}',
-    offset: '{{primitives.border.offset.sm}}',
-    radius: '{{primitives.border.radius.md}}',
-  }),
-  hover: checkedHoverTogglebuttonTokens.prefault({}),
-  focus: checkedFocusTogglebuttonTokens.prefault({}),
-  disabled: checkedDisabledTogglebuttonTokens.prefault({}),
-  invalid: checkedInvalidTogglebuttonTokens.prefault({}),
-})
-
-// icon child-element
-export const iconHoverTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
-})
-
-export const iconFocusTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-})
-
-export const iconDisabledTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-})
-
-export const iconCheckedHoverTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.variant.primary.state.hover.defaultSeverity.contrast}}'),
-})
-
-export const iconCheckedFocusTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.variant.primary.state.focus.defaultSeverity.contrast}}'),
-})
-
-export const iconCheckedDisabledTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}'),
-})
-
-export const iconCheckedTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}'),
-  hover: iconCheckedHoverTogglebuttonTokens.prefault({}),
-  focus: iconCheckedFocusTogglebuttonTokens.prefault({}),
-  disabled: iconCheckedDisabledTogglebuttonTokens.prefault({}),
-})
-
-export const iconTogglebuttonTokens = z.object({
-  color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-  hover: iconHoverTogglebuttonTokens.prefault({}),
-  focus: iconFocusTogglebuttonTokens.prefault({}),
-  disabled: iconDisabledTogglebuttonTokens.prefault({}),
-  checked: iconCheckedTogglebuttonTokens.prefault({}),
-})
-
-// global size variants
-export const smTogglebuttonTokens = z.object({
-  font: font.pick({ size: true }).default({ size: '{{primitives.font.size.sm}}' }),
-  paddingX: withRef(z.string()).default('{{primitives.space.xs}}'),
-  paddingY: withRef(z.string()).default('{{primitives.space.xxs}}'),
-})
-
-export const lgTogglebuttonTokens = z.object({
-  font: font.pick({ size: true }).default({ size: '{{primitives.font.size.lg}}' }),
-  paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-  paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-})
-
-// content child-element
-export const contentTogglebuttonTokens = z.object({
-  paddingX: withRef(z.string()).default('0'),
-  paddingY: withRef(z.string()).default('0'),
-  background: z
-    .union([bg, withRef(z.string())])
-    .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-  border: border.pick({ radius: true }).default({
-    radius: '{{primitives.border.radius.md}}',
-  }),
-  shadow: withRef(z.string()).default('{{primitives.shadow.none}}'),
-})
-
-export const togglebutton = z
-  .object({
-    settings: (togglebuttonSettings as typeof togglebuttonSettings).optional(),
-
-    // Root level properties (default/unchecked state)
-    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.xs}}'),
-    gap: withRef(z.string()).default('{{primitives.space.xs}}'),
-    font: font.default(defaultFont),
-    border: border.default(defaultBorder),
-    transitionDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-
-    // Focus ring
-    focusRing: borderWithShadow.default(defaultFocusRing),
-
-    // Default (unchecked) interaction states
-    hover: hoverTogglebuttonTokens.prefault({}),
-    focus: focusTogglebuttonTokens.prefault({}),
-    disabled: disabledTogglebuttonTokens.prefault({}),
-    invalid: invalidTogglebuttonTokens.prefault({}),
-
-    // checked variant
-    checked: checkedTogglebuttonTokens.prefault({}),
-
-    // global size variants
-    sm: smTogglebuttonTokens.prefault({}),
-    lg: lgTogglebuttonTokens.prefault({}),
-
-    // Icon child-element
-    icon: iconTogglebuttonTokens.prefault({}),
-
-    // Content child-element
-    content: contentTogglebuttonTokens.prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'togglebutton' })
+export const togglebutton = applyDefaultsRecursive(togglebuttonShape, togglebuttonDefaults).register(
+  themeSchemaRegistry,
+  { id: 'togglebutton' }
+)
