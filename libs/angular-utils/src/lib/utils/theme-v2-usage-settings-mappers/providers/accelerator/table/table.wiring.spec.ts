@@ -20,7 +20,7 @@ describe('useAcceleratorTableThemeDefaults', () => {
       properties: {
         v2: {
           usages: {
-            table: { settings },
+            dataTable: { settings },
           },
         },
       },
