@@ -19,6 +19,18 @@ import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
 import { PrimeTemplate } from 'primeng/api'
 
+jest.mock('@onecx/angular-utils', () => {
+  const { signal } = jest.requireActual('@angular/core')
+  return {
+    ...jest.requireActual('@onecx/angular-utils'),
+    useAcceleratorTableThemeDefaults: jest.fn(() => ({
+      checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+      frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),
+      actionColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+    })),
+  }
+})
+
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
   let component: DataTableComponent
@@ -448,8 +460,8 @@ describe('DataTableComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
       expect(await dataTable.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable.getActionColumn('left')).toBe(null)
 
@@ -478,6 +490,71 @@ describe('DataTableComponent', () => {
       expect(leftActionColumn).toBeTruthy()
       expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
       expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+    })
+
+    it('should apply action column defaults from themed table settings', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
+      component.frozenActionColumnThemeSetting.set(true)
+      component.actionColumnPositionThemeSetting.set('left')
+      fixture.detectChanges()
+
+      expect(component.frozenActionColumnResolved()).toBe(true)
+      expect(component.actionColumnPositionResolved()).toBe('left')
+      expect(await dataTable.getActionColumnHeader('right')).toBe(null)
+      expect(await dataTable.getActionColumn('right')).toBe(null)
+
+      const leftActionColumnHeader = await dataTable.getActionColumnHeader('left')
+      const leftActionColumn = await dataTable.getActionColumn('left')
+      expect(leftActionColumnHeader).toBeTruthy()
+      expect(leftActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(leftActionColumnHeader)).toBe(true)
+      expect(await dataTable.columnIsFrozen(leftActionColumn)).toBe(true)
+    })
+
+    it('should apply checkbox column defaults from themed table settings', async () => {
+      component.selectionChanged.subscribe(() => undefined)
+      component.checkboxColumnPositionThemeSetting.set('right')
+      fixture.detectChanges()
+
+      expect(component.checkboxColumnPositionResolved()).toBe('right')
+      expect(await dataTable.getSelectionColumnHeader('left')).toBe(null)
+      expect(await dataTable.getSelectionColumn('left')).toBe(null)
+      expect(await dataTable.getSelectionColumnHeader('right')).toBeTruthy()
+      expect(await dataTable.getSelectionColumn('right')).toBeTruthy()
+    })
+
+    it('should prefer explicit action column inputs over themed table settings', async () => {
+      component.viewTableRow.subscribe((event) => console.log(event))
+      component.frozenActionColumnThemeSetting.set(true)
+      component.actionColumnPositionThemeSetting.set('left')
+      fixture.componentRef.setInput('frozenActionColumn', false)
+      fixture.componentRef.setInput('actionColumnPosition', 'right')
+      fixture.detectChanges()
+
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
+      expect(await dataTable.getActionColumnHeader('left')).toBe(null)
+      expect(await dataTable.getActionColumn('left')).toBe(null)
+
+      const rightActionColumnHeader = await dataTable.getActionColumnHeader('right')
+      const rightActionColumn = await dataTable.getActionColumn('right')
+      expect(rightActionColumnHeader).toBeTruthy()
+      expect(rightActionColumn).toBeTruthy()
+      expect(await dataTable.columnIsFrozen(rightActionColumnHeader)).toBe(false)
+      expect(await dataTable.columnIsFrozen(rightActionColumn)).toBe(false)
+    })
+
+    it('should prefer explicit checkbox column input over themed table settings', async () => {
+      component.selectionChanged.subscribe(() => undefined)
+      component.checkboxColumnPositionThemeSetting.set('right')
+      fixture.componentRef.setInput('checkboxColumnPosition', 'left')
+      fixture.detectChanges()
+
+      expect(component.checkboxColumnPositionResolved()).toBe('left')
+      expect(await dataTable.getSelectionColumnHeader('right')).toBe(null)
+      expect(await dataTable.getSelectionColumn('right')).toBe(null)
+      expect(await dataTable.getSelectionColumnHeader('left')).toBeTruthy()
+      expect(await dataTable.getSelectionColumn('left')).toBeTruthy()
     })
   })
 

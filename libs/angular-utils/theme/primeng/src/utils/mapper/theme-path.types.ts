@@ -100,7 +100,7 @@ export type ThemePath =
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
   | `usages.menubar.${LeafPaths<NonNullable<Usages['menubar']>>}`
   | `usages.region.${LeafPaths<NonNullable<Usages['region']>>}`
-  | `usages.table.${LeafPaths<NonNullable<Usages['table']>>}`
+  | `usages.dataTable.${LeafPaths<NonNullable<Usages['dataTable']>>}`
   | `usages.tooltip.${LeafPaths<NonNullable<Usages['tooltip']>>}`
   | `usages.carousel.${LeafPaths<NonNullable<Usages['carousel']>>}`
   | `usages.tabs.${LeafPaths<NonNullable<Usages['tabs']>>}`
@@ -127,6 +127,11 @@ export type ThemePath =
   | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
   | `usages.searchHeader.${LeafPaths<NonNullable<Usages['searchHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
+  | `usages.chip.${LeafPaths<NonNullable<Usages['chip']>>}`
+  | `usages.customGroupColumnSelector.${LeafPaths<NonNullable<Usages['customGroupColumnSelector']>>}`
+  | `usages.dataListGrid.${LeafPaths<NonNullable<Usages['dataListGrid']>>}`
+  | `usages.paginator.${LeafPaths<NonNullable<Usages['paginator']>>}`
+  | `usages.skeleton.${LeafPaths<NonNullable<Usages['skeleton']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
