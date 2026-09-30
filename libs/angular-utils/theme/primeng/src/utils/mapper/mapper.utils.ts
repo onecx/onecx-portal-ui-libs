@@ -37,7 +37,7 @@ export function setByPath(
  * `--onecx-theme-` prefix. Dots are replaced with hyphens.
  *
  * @example
- * cssVar('usages.table.base.bg') // 'var(--onecx-theme-usages-table-base-bg)'
+ * cssVar('usages.dataTable.base.background') // 'var(--onecx-theme-usages-data-table-base-background)'
  */
 export function cssVar(path: string): string {
   return `var(--onecx-theme-${path.replace(/\./g, '-')})`;

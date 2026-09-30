@@ -1,20 +1,21 @@
 import * as z from 'zod'
 import { dialog } from './schema/dialog'
-import { menubar } from './schema/menubar'
+import { menubar, menubarShape } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
+import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
+import { diagram, diagramShape } from './schema/diagram'
+import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
 import { fieldset, fieldsetShape } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
-import { dropdownShape } from './schema/dropdown'
+import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
@@ -34,18 +35,20 @@ import { breadcrumb } from './schema/breadcrumb'
 import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { pageHeaderShape } from './schema/page-header/index'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
   badge?: z.input<typeof badgeShape>
-  menubar?: z.input<typeof menubar>
+  menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
-  table?: z.input<typeof table>
-  tooltip?: z.input<typeof tooltip>
+  dataTable?: z.input<typeof dataTableShape>
+  tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
-  diagram?: z.input<typeof diagram>
   dropdown?: z.input<typeof dropdownShape>
+  diagram?: z.input<typeof diagramShape>
+  groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
   textarea?: z.input<typeof textarea>
@@ -62,10 +65,12 @@ type UsagesInput = {
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
-  pageHeader?: z.input<typeof pageHeader>
+  pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
   dataview?: z.input<typeof dataview>
 }
+
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
 
 const usages: z.ZodType<UsagesInput> = z
   .object({
@@ -73,12 +78,13 @@ const usages: z.ZodType<UsagesInput> = z
     badge: (badge as typeof badge).optional(),
     menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
+    dataTable: (dataTable as typeof dataTableShape).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
     fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
+    groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
@@ -154,6 +160,14 @@ export type ThemePropertiesV2 = {
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

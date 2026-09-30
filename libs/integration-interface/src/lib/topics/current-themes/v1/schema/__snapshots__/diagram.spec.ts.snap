@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`diagram schema resolves the expected default token tree 1`] = `
+Object {
+  "container": Object {
+    "background": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
+    "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
+    "paddingX": "{{primitives.space.xs}}",
+    "paddingY": "{{primitives.space.xs}}",
+  },
+  "description": Object {
+    "font": Object {
+      "family": "{{primitives.font.family}}",
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+  },
+  "footer": Object {
+    "font": Object {
+      "family": "{{primitives.font.family}}",
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+  },
+  "header": Object {
+    "font": Object {
+      "family": "{{primitives.font.family}}",
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+  },
+  "selectButton": Object {
+    "paddingX": "{{primitives.space.xs}}",
+    "paddingY": "{{primitives.space.xs}}",
+  },
+}
+`;
