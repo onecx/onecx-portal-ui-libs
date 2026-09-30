@@ -8,7 +8,7 @@
 [#local-only-testing]
 = Local-only Testing
 
-If a change is fully covered by the library's own unit tests — for example a pure logic fix with no UI surface — verify it in the *onecx-portal-ui-libs* repository alone. No shell, no application, no local OneCX environment is required.
+If a change is confined to a library, verify logic with the library's unit tests and UI surfaces with Storybook. Library-local verification therefore uses unit tests for logic and Storybook for UI; no shell, no application, and no local OneCX environment are required when those suffice. Verify in the *onecx-portal-ui-libs* repository alone.
 
 [#running-the-tests]
 == Running the tests
