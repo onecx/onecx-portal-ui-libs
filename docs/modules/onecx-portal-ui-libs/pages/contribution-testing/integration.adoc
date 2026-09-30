@@ -13,7 +13,7 @@ If a library change has to be exercised inside the OneCX Shell together with loc
 * Route 1 — shell-wide verification: copy the built libraries to the shell root, the relevant preloader(s), and every app you will run.
 * Route 2 — single-app verification: copy the built libraries only to the one app you will run.
 
-Use route 1 when the shell and more than one application need to verify the change together. Use route 2 when the library change only needs one application to confirm the integration path. Do not mix the routes in one run.
+Use route 1 when the OneCX Shell and/or its relevant preloader(s) must be included in the test run — this applies whether you will exercise the change in a single application or in multiple applications. Use route 2 when the library change can be validated inside a single application and does not require any shell or preloader changes. Do not mix the routes in one run.
 
 [#prerequisites]
 == Prerequisites
