@@ -22,8 +22,8 @@
     (keydown.space)="onResetClicked()"
     [disabled]="resetButtonDisabled()"
     [label]="'OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate"
-    [ariaLabel]="'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate"
-    [ocxTooltip]="'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate"
+    [ariaLabel]="(resetButtonAriaLabelKey() ?? 'OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL') | translate"
+    [ocxTooltip]="(resetButtonDetailKey() ?? 'OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL') | translate"
     tooltipPosition="top"
     tooltipEvent="hover"
   ></p-button>

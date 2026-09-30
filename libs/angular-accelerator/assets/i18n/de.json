@@ -165,8 +165,8 @@
     "HEADER": "Suche",
     "RESET_BUTTON": {
       "TEXT": "Zurücksetzen",
-      "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
-      "DETAIL": "Suchkriterien und Ergebnisse zurücksetzen"
+      "ARIA_LABEL": "Suchkriterien zurücksetzen",
+      "DETAIL": "Suchkriterien zurücksetzen"
     },
     "SEARCH_BUTTON": {
       "TEXT": "Suchen",
