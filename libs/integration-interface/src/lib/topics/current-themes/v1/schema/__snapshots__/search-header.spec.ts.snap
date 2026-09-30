@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`searchHeader schema resolves the expected default token tree 1`] = `
+Object {
+  "controls": Object {
+    "gap": "{{primitives.space.md}}",
+  },
+  "layout": Object {
+    "columnGap": "{{primitives.space.md}}",
+    "rowGap": "{{primitives.space.md}}",
+  },
+  "searchResetPanel": Object {
+    "alignItems": "center",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+  },
+}
+`;

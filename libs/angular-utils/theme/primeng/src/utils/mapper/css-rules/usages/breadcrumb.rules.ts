@@ -6,11 +6,11 @@ export const breadcrumbCssRules: CssRule[] = [
     declarations: [
       {
         property: 'font-weight',
-        from: 'usages.breadcrumb.item.label.font.weight',
+        from: 'usages.breadcrumb.item.defaultVariant.defaultState.label.font.weight',
       },
       {
         property: 'font-size',
-        from: 'usages.breadcrumb.item.label.font.size',
+        from: 'usages.breadcrumb.item.defaultVariant.defaultState.label.font.size',
       },
     ],
   },
