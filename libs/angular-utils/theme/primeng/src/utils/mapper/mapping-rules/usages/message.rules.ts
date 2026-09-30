@@ -16,26 +16,26 @@ const PRIME_SEVERITY: Record<CanonicalSeverity, 'info' | 'success' | 'warn' | 'e
 
 const root: MappingRule[] = [
   {
-    from: 'usages.message.border.radius',
+    from: 'usages.message.defaultVariant.defaultSeverity.border.radius',
     to: 'components.message.root.borderRadius',
   },
   {
-    from: 'usages.message.border.width',
+    from: 'usages.message.defaultVariant.defaultSeverity.border.width',
     to: 'components.message.root.borderWidth',
   },
   {
-    from: 'usages.message.transition.duration',
+    from: 'usages.message.defaultVariant.defaultSeverity.transition.duration',
     to: 'components.message.root.transitionDuration',
   },
 ]
 
 const content: MappingRule[] = [
   {
-    from: 'usages.message.content.padding',
+    from: 'usages.message.defaultVariant.defaultSeverity.content.padding',
     to: 'components.message.content.padding',
   },
   {
-    from: 'usages.message.content.gap',
+    from: 'usages.message.defaultVariant.defaultSeverity.content.gap',
     to: 'components.message.content.gap',
   },
   {
@@ -50,11 +50,11 @@ const content: MappingRule[] = [
 
 const text: MappingRule[] = [
   {
-    from: 'usages.message.text.font.size',
+    from: 'usages.message.defaultVariant.defaultSeverity.text.font.size',
     to: 'components.message.text.fontSize',
   },
   {
-    from: 'usages.message.text.font.weight',
+    from: 'usages.message.defaultVariant.defaultSeverity.text.font.weight',
     to: 'components.message.text.fontWeight',
   },
   {
@@ -69,7 +69,7 @@ const text: MappingRule[] = [
 
 const icon: MappingRule[] = [
   {
-    from: 'usages.message.icon.size',
+    from: 'usages.message.defaultVariant.defaultSeverity.icon.size',
     to: 'components.message.icon.size',
   },
   {
@@ -84,34 +84,34 @@ const icon: MappingRule[] = [
 
 const closeButtonStructural: MappingRule[] = [
   {
-    from: 'usages.message.closeButton.width',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.width',
     to: 'components.message.closeButton.width',
   },
   {
-    from: 'usages.message.closeButton.height',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.height',
     to: 'components.message.closeButton.height',
   },
   {
-    from: 'usages.message.closeButton.border.radius',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.border.radius',
     to: 'components.message.closeButton.borderRadius',
   },
   {
-    from: 'usages.message.closeButton.focusRing.width',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.focusRing.width',
     to: 'components.message.closeButton.focusRing.width',
   },
   {
-    from: 'usages.message.closeButton.focusRing.style',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.focusRing.style',
     to: 'components.message.closeButton.focusRing.style',
   },
   {
-    from: 'usages.message.closeButton.focusRing.offset',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeButton.focusRing.offset',
     to: 'components.message.closeButton.focusRing.offset',
   },
 ]
 
 const closeIcon: MappingRule[] = [
   {
-    from: 'usages.message.closeIcon.size',
+    from: 'usages.message.defaultVariant.defaultSeverity.closeIcon.size',
     to: 'components.message.closeIcon.size',
   },
   {
@@ -126,14 +126,14 @@ const closeIcon: MappingRule[] = [
 
 const outlinedRoot: MappingRule[] = [
   {
-    from: 'usages.message.outlined.border.width',
+    from: 'usages.message.outlined.defaultSeverity.border.width',
     to: 'components.message.outlined.root.borderWidth',
   },
 ]
 
 const simpleRoot: MappingRule[] = [
   {
-    from: 'usages.message.simple.content.padding',
+    from: 'usages.message.simple.defaultSeverity.content.padding',
     to: 'components.message.simple.content.padding',
   },
 ]
@@ -143,36 +143,36 @@ function defaultVariantRules(severity: CanonicalSeverity): MappingRule[] {
   return [
     {
       from: `usages.message.defaultVariant.${severity}.background`,
-      to: `components.message.${prime}.background`,
+      to: `components.message.colorScheme.{mode}.${prime}.background`,
       transform: toColorString,
     },
     {
       from: `usages.message.defaultVariant.${severity}.border.color`,
-      to: `components.message.${prime}.borderColor`,
+      to: `components.message.colorScheme.{mode}.${prime}.borderColor`,
       transform: toColorString,
     },
     {
       from: `usages.message.defaultVariant.${severity}.color`,
-      to: `components.message.${prime}.color`,
+      to: `components.message.colorScheme.{mode}.${prime}.color`,
       transform: toColorString,
     },
     {
       from: `usages.message.defaultVariant.${severity}.shadow`,
-      to: `components.message.${prime}.shadow`,
+      to: `components.message.colorScheme.{mode}.${prime}.shadow`,
     },
     {
       from: `usages.message.defaultVariant.${severity}.closeButton.hover.background`,
-      to: `components.message.${prime}.closeButton.hoverBackground`,
+      to: `components.message.colorScheme.{mode}.${prime}.closeButton.hoverBackground`,
       transform: toColorString,
     },
     {
       from: `usages.message.defaultVariant.${severity}.closeButton.focus.color`,
-      to: `components.message.${prime}.closeButton.focusRing.color`,
+      to: `components.message.colorScheme.{mode}.${prime}.closeButton.focusRing.color`,
       transform: toColorString,
     },
     {
       from: `usages.message.defaultVariant.${severity}.closeButton.focus.shadow`,
-      to: `components.message.${prime}.closeButton.focusRing.shadow`,
+      to: `components.message.colorScheme.{mode}.${prime}.closeButton.focusRing.shadow`,
     },
   ]
 }
@@ -182,12 +182,12 @@ function outlinedSeverityRules(severity: CanonicalSeverity): MappingRule[] {
   return [
     {
       from: `usages.message.outlined.${severity}.color`,
-      to: `components.message.${prime}.outlined.color`,
+      to: `components.message.colorScheme.{mode}.${prime}.outlined.color`,
       transform: toColorString,
     },
     {
       from: `usages.message.outlined.${severity}.border.color`,
-      to: `components.message.${prime}.outlined.borderColor`,
+      to: `components.message.colorScheme.{mode}.${prime}.outlined.borderColor`,
       transform: toColorString,
     },
   ]
@@ -198,7 +198,7 @@ function simpleSeverityRules(severity: CanonicalSeverity): MappingRule[] {
   return [
     {
       from: `usages.message.simple.${severity}.color`,
-      to: `components.message.${prime}.simple.color`,
+      to: `components.message.colorScheme.{mode}.${prime}.simple.color`,
       transform: toColorString,
     },
   ]

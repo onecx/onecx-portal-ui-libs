@@ -2,8 +2,8 @@ import * as z from 'zod'
 import { withRef } from '../primitives'
 
 /**
- * Shape reused by both `sm` and `lg` size overrides. PrimeNG only re-sizes content
- * padding, text font size, icon size, and close icon size — gap has no size variant.
+ * Shape reused by both `sm` and `lg` size overrides. Only content padding, text font size,
+ * icon size, and close icon size scale with size — gap has no size variant.
  */
 export const messageSizeShape = z.object({
   content: z.object({ padding: withRef(z.string()).optional() }).prefault({}),

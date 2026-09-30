@@ -2,8 +2,8 @@ import * as z from 'zod'
 import { withRef } from '../primitives'
 
 /**
- * Message component settings shape. No `.default()` on any field — left to PrimeNG's
- * own component defaults, matching the `add-theme-usage` skill's settings convention.
+ * Message component settings shape. No `.default()` on any field — left to the underlying
+ * component's own defaults, matching the `add-theme-usage` skill's settings convention.
  */
 export const messageSettingsShape = z.object({
   closable: withRef(z.boolean()).optional(),

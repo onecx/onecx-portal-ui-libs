@@ -3,16 +3,21 @@ import { color, withRef } from '../primitives'
 
 type CanonicalSeverity = 'info' | 'success' | 'warning' | 'danger' | 'contrast'
 
+const messageSimpleDefaultSeverityShape = z.object({
+  content: z.object({ padding: withRef(z.string()).optional() }).prefault({}),
+  color: color.optional(),
+})
+
 const messageSimpleSeverityShape = z.object({
   color: color.optional(),
 })
 
 /**
- * `simple` named variant — no background, no border, no shadow; PrimeNG only overrides
- * the root content padding (down to 0) and, per severity, the text color.
+ * `simple` named variant — no background, no border, no shadow; only the root content
+ * padding (down to 0) and, per severity, the text color differ from the filled look.
  */
 export const messageSimpleShape = z.object({
-  content: z.object({ padding: withRef(z.string()).optional() }).prefault({}),
+  defaultSeverity: messageSimpleDefaultSeverityShape.prefault({}),
   info: messageSimpleSeverityShape.prefault({}),
   success: messageSimpleSeverityShape.prefault({}),
   warning: messageSimpleSeverityShape.prefault({}),
@@ -30,7 +35,10 @@ const secondaryDefaults = () => ({
 })
 
 export const messageSimpleDefaults = {
-  content: { padding: '0' },
+  defaultSeverity: {
+    content: { padding: '0' },
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  },
   info: severityDefaults('info'),
   success: severityDefaults('success'),
   warning: severityDefaults('warning'),

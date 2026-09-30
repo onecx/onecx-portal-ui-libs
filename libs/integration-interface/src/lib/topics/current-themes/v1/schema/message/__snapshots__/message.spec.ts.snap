@@ -2,29 +2,6 @@
 
 exports[`message schema resolves the expected default token tree 1`] = `
 Object {
-  "border": Object {
-    "radius": "{{primitives.radius.md}}",
-    "width": "{{primitives.border.width.md}}",
-  },
-  "closeButton": Object {
-    "border": Object {
-      "radius": "{{primitives.radius.full}}",
-    },
-    "focusRing": Object {
-      "offset": "{{primitives.border.offset.none}}",
-      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
-      "width": "{{primitives.border.width.md}}",
-    },
-    "height": "1.75rem",
-    "width": "1.75rem",
-  },
-  "closeIcon": Object {
-    "size": "{{primitives.icon.sm}}",
-  },
-  "content": Object {
-    "gap": "{{primitives.space.sm}}",
-    "padding": "{{primitives.space.sm}}",
-  },
   "defaultVariant": Object {
     "contrast": Object {
       "background": "{{primitives.defaultVariant.defaultState.severity.contrast.bg}}",
@@ -59,6 +36,54 @@ Object {
       },
       "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
       "shadow": "{{primitives.shadow.sm}}",
+    },
+    "defaultSeverity": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "radius": "{{primitives.radius.md}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "closeButton": Object {
+        "border": Object {
+          "radius": "{{primitives.radius.full}}",
+        },
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "focusRing": Object {
+          "offset": "{{primitives.border.offset.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "height": "1.75rem",
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+        },
+        "width": "1.75rem",
+      },
+      "closeIcon": Object {
+        "size": "{{primitives.icon.sm}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "content": Object {
+        "gap": "{{primitives.space.sm}}",
+        "padding": "{{primitives.space.sm}}",
+      },
+      "icon": Object {
+        "size": "{{primitives.icon.md}}",
+      },
+      "shadow": "{{primitives.shadow.sm}}",
+      "text": Object {
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+          "weight": "{{primitives.font.weight}}",
+        },
+      },
+      "transition": Object {
+        "duration": "{{primitives.transition.duration}}",
+      },
     },
     "info": Object {
       "background": "{{primitives.defaultVariant.defaultState.severity.info.bg}}",
@@ -129,9 +154,6 @@ Object {
       "shadow": "{{primitives.shadow.sm}}",
     },
   },
-  "icon": Object {
-    "size": "{{primitives.icon.md}}",
-  },
   "lg": Object {
     "closeIcon": Object {
       "size": "{{primitives.icon.lg}}",
@@ -149,9 +171,6 @@ Object {
     },
   },
   "outlined": Object {
-    "border": Object {
-      "width": "{{primitives.border.width.md}}",
-    },
     "contrast": Object {
       "border": Object {
         "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
@@ -163,6 +182,13 @@ Object {
         "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
       },
       "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+    },
+    "defaultSeverity": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
     },
     "info": Object {
       "border": Object {
@@ -190,14 +216,17 @@ Object {
     },
   },
   "simple": Object {
-    "content": Object {
-      "padding": "0",
-    },
     "contrast": Object {
       "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
     },
     "danger": Object {
       "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+    },
+    "defaultSeverity": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "content": Object {
+        "padding": "0",
+      },
     },
     "info": Object {
       "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
@@ -227,15 +256,6 @@ Object {
         "size": "{{primitives.font.size}}",
       },
     },
-  },
-  "text": Object {
-    "font": Object {
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
-    },
-  },
-  "transition": Object {
-    "duration": "{{primitives.transition.duration}}",
   },
 }
 `;
