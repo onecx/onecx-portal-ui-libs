@@ -1,3 +1,13 @@
+## [6.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.3...v6.28.0) (2026-09-30)
+
+### Features
+
+* add AiCompletionGatherer as transport between consumers and AI provider connector ([#1751](https://github.com/onecx/onecx-portal-ui-libs/issues/1751)) ([#1757](https://github.com/onecx/onecx-portal-ui-libs/issues/1757)) ([1843380](https://github.com/onecx/onecx-portal-ui-libs/commit/1843380b2f71c84427cd2fb79effbee7c898beb5))
+
+### Bug Fixes
+
+* tooltip fpr disabled menu items ([#1732](https://github.com/onecx/onecx-portal-ui-libs/issues/1732)) ([4146e8e](https://github.com/onecx/onecx-portal-ui-libs/commit/4146e8ea7977aef1de89a511ae5fa79430f30bf3))
+
 ## [6.27.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.2...v6.27.3) (2026-09-11)
 
 ### Bug Fixes
