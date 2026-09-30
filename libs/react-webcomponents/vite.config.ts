@@ -41,15 +41,18 @@ export default defineConfig({
           chunkFileNames: '[name].cjs',
         },
       ],
-      external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        'react-router',
-        '@onecx/accelerator',
-        '@onecx/react-integration-interface',
-        '@onecx/integration-interface',
-      ],
+      external: (id: string) =>
+        // Keep all of React external so the consumer's shared copy is used.
+        // Externalizing the subpaths (e.g. react-dom/client) prevents react-dom
+        // from being inlined, which removed the inlined react-dom version guard
+        // that broke module federation.
+        id === 'react' ||
+        id.startsWith('react-dom') ||
+        id.startsWith('react/') ||
+        id === 'react-router' ||
+        id === '@onecx/accelerator' ||
+        id === '@onecx/react-integration-interface' ||
+        id === '@onecx/integration-interface',
     },
   },
 })
