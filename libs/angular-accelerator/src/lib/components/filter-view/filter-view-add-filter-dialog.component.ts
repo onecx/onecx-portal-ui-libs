@@ -31,6 +31,10 @@ export interface AddFilterDialogResult {
  * {@link DialogResult} (to carry the chosen filter) and {@link DialogPrimaryButtonDisabled} (to gate the
  * primary button). It is intentionally layout-agnostic so it can be opened from any data view layout
  * (table, list, grid).
+ *
+ * See ADR `docs/adr/0001-filterview-layout-agnostic-filter-management.md` for the rationale behind the
+ * "pick a displayed column, then a distinct existing value" interaction and why the table's native
+ * per-column filter row is kept alongside this dialog.
  */
 @Component({
   standalone: false,

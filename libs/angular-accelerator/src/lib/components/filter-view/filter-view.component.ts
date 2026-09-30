@@ -287,6 +287,9 @@ export class FilterViewComponent {
    * The dialog lets the user pick a displayed, filterable column and then one of the distinct values that
    * already exist in the loaded data. On confirmation the chosen filter is appended to the shared filter
    * state ({@link DataViewStateService.filters}), coexisting with the table's native per-column filter row.
+   *
+   * See ADR `docs/adr/0001-filterview-layout-agnostic-filter-management.md` for the full rationale of
+   * keeping the table's native filter row and making FilterView additive.
    */
   openAddFilterDialog(): void {
     this.addFilterDialogSubscription?.unsubscribe()
