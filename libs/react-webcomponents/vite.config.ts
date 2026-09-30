@@ -49,6 +49,7 @@ export default defineConfig({
         '@onecx/accelerator',
         '@onecx/react-integration-interface',
         '@onecx/integration-interface',
+        '@r2wc/react-to-web-component',
       ],
     },
   },
