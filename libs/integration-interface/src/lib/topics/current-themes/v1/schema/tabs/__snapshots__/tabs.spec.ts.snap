@@ -1,0 +1,181 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`tabs schema resolves the expected default token tree 1`] = `
+Object {
+  "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+  "gap": "{{primitives.space.md}}",
+  "navButtons": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "focusRing": Object {
+      "color": "{{primitives.focusRing.color}}",
+      "offset": "{{primitives.focusRing.offset}}",
+      "shadow": "{{primitives.focusRing.shadow}}",
+      "style": "{{primitives.focusRing.style}}",
+      "width": "{{primitives.focusRing.width}}",
+    },
+    "hover": Object {
+      "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+    },
+    "nextIcon": "{{primitives.icon.arrowRight}}",
+    "prevIcon": "{{primitives.icon.arrowLeft}}",
+    "width": "2.5rem",
+  },
+  "settings": Object {
+    "lazy": false,
+    "scrollStrategy": "nearest",
+    "selectOnFocus": false,
+    "showNavigators": true,
+    "unstyled": false,
+  },
+  "shadow": "{{primitives.shadow.none}}",
+  "tab": Object {
+    "active": Object {
+      "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.none}}",
+        "style": "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+      "font": Object {
+        "weight": "{{primitives.font.weight}}",
+      },
+    },
+    "activeBar": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "height": "{{primitives.border.width.sm}}",
+      "position": "bottom",
+      "positionOffset": "{{primitives.space.none}}",
+      "shadow": "{{primitives.shadow.none}}",
+      "transition": Object {
+        "duration": "{{primitives.transition.duration}}",
+      },
+    },
+    "alignItems": "{{primitives.layout.alignItems}}",
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "disabled": Object {
+      "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+      "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+      "cursor": "{{primitives.defaultVariant.state.disabled.defaultSeverity.cursor}}",
+    },
+    "focus": Object {
+      "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.none}}",
+        "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+      "font": Object {
+        "weight": "{{primitives.font.weight}}",
+      },
+    },
+    "focusRing": Object {
+      "offset": "{{primitives.focusRing.offset}}",
+      "radius": "{{primitives.focusRing.radius}}",
+      "shadow": "{{primitives.focusRing.shadow}}",
+      "width": "{{primitives.focusRing.width}}",
+    },
+    "gap": "{{primitives.space.md}}",
+    "hover": Object {
+      "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.none}}",
+        "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+      "cursor": "{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}",
+      "font": Object {
+        "weight": "{{primitives.font.weight}}",
+      },
+    },
+    "icon": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "font": Object {
+        "weight": "{{primitives.font.weight}}",
+      },
+      "size": "{{primitives.icon.size.sm}}",
+    },
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+    "tooltip": Object {
+      "defaultVariant": Object {
+        "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+        "border": Object {
+          "color": "{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}",
+          "offset": "{{primitives.border.offset.sm}}",
+          "radius": "{{primitives.border.radius.md}}",
+          "style": "{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}",
+          "width": "{{primitives.border.width.sm}}",
+        },
+        "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+        "gutter": "{{primitives.space.sm}}",
+        "maxWidth": "{{primitives.layout.overlayMaxWidth}}",
+        "padding": "{{primitives.space.md}}",
+        "shadow": "{{primitives.shadow.md}}",
+      },
+    },
+  },
+  "tablist": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "content": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.sm}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "gap": "{{primitives.space.md}}",
+    },
+    "gap": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+  },
+  "tabpanel": Object {
+    "alignItems": "{{primitives.layout.alignItems}}",
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "font": Object {
+      "lineHeight": "{{primitives.font.lineHeight}}",
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+    "justifyContent": "{{primitives.layout.justifyContent}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+  },
+  "viewport": Object {
+    "overscrollBehavior": "contain auto",
+    "scrollBehavior": "smooth",
+    "scrollbarWidth": "none",
+    "webkitScrollbarDisplay": "none",
+  },
+}
+`;
