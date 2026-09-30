@@ -1,0 +1,241 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`message schema resolves the expected default token tree 1`] = `
+Object {
+  "border": Object {
+    "radius": "{{primitives.radius.md}}",
+    "width": "{{primitives.border.width.md}}",
+  },
+  "closeButton": Object {
+    "border": Object {
+      "radius": "{{primitives.radius.full}}",
+    },
+    "focusRing": Object {
+      "offset": "{{primitives.border.offset.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+      "width": "{{primitives.border.width.md}}",
+    },
+    "height": "1.75rem",
+    "width": "1.75rem",
+  },
+  "closeIcon": Object {
+    "size": "{{primitives.icon.sm}}",
+  },
+  "content": Object {
+    "gap": "{{primitives.space.sm}}",
+    "padding": "{{primitives.space.sm}}",
+  },
+  "defaultVariant": Object {
+    "contrast": Object {
+      "background": "{{primitives.defaultVariant.defaultState.severity.contrast.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.contrast.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.severity.contrast.bg}}",
+        },
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+    "danger": Object {
+      "background": "{{primitives.defaultVariant.defaultState.severity.danger.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.danger.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.severity.danger.bg}}",
+        },
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+    "info": Object {
+      "background": "{{primitives.defaultVariant.defaultState.severity.info.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.info.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.severity.info.bg}}",
+        },
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+    "secondary": Object {
+      "background": "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.variant.secondary.state.hover.defaultSeverity.bg}}",
+        },
+      },
+      "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+    "success": Object {
+      "background": "{{primitives.defaultVariant.defaultState.severity.success.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.success.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.severity.success.bg}}",
+        },
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+    "warning": Object {
+      "background": "{{primitives.defaultVariant.defaultState.severity.warning.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.warning.border.color}}",
+      },
+      "closeButton": Object {
+        "focus": Object {
+          "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+          "shadow": "{{primitives.shadow.none}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.severity.warning.bg}}",
+        },
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+      "shadow": "{{primitives.shadow.sm}}",
+    },
+  },
+  "icon": Object {
+    "size": "{{primitives.icon.md}}",
+  },
+  "lg": Object {
+    "closeIcon": Object {
+      "size": "{{primitives.icon.lg}}",
+    },
+    "content": Object {
+      "padding": "{{primitives.space.md}}",
+    },
+    "icon": Object {
+      "size": "{{primitives.icon.lg}}",
+    },
+    "text": Object {
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+      },
+    },
+  },
+  "outlined": Object {
+    "border": Object {
+      "width": "{{primitives.border.width.md}}",
+    },
+    "contrast": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
+    },
+    "danger": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+    },
+    "info": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
+    },
+    "secondary": Object {
+      "border": Object {
+        "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+      },
+      "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+    },
+    "success": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+    },
+    "warning": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+    },
+  },
+  "simple": Object {
+    "content": Object {
+      "padding": "0",
+    },
+    "contrast": Object {
+      "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
+    },
+    "danger": Object {
+      "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+    },
+    "info": Object {
+      "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
+    },
+    "secondary": Object {
+      "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+    },
+    "success": Object {
+      "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+    },
+    "warning": Object {
+      "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+    },
+  },
+  "sm": Object {
+    "closeIcon": Object {
+      "size": "{{primitives.icon.sm}}",
+    },
+    "content": Object {
+      "padding": "{{primitives.space.xs}}",
+    },
+    "icon": Object {
+      "size": "{{primitives.icon.sm}}",
+    },
+    "text": Object {
+      "font": Object {
+        "size": "{{primitives.font.size}}",
+      },
+    },
+  },
+  "text": Object {
+    "font": Object {
+      "size": "{{primitives.font.size}}",
+      "weight": "{{primitives.font.weight}}",
+    },
+  },
+  "transition": Object {
+    "duration": "{{primitives.transition.duration}}",
+  },
+}
+`;

@@ -1,34 +1,39 @@
-import z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { PrimaryCloseMessageSchema } from './primary-close'
-import { SecondaryCloseMessageSchema } from './secondary-close'
+import * as z from 'zod'
+import { bg, color, withRef } from '../primitives'
 
-export class CloseButtonMessageSchema {
-  private static readonly closeBaseTokens = {
-    width: z.string().default('{{primitives.icon.size.md}}'),
-    height: z.string().default('{{primitives.icon.size.md}}'),
-    focusRing: z
-      .object({
-        width: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}'),
-        offset: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.offset}}'),
-        radius: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.radius}}'),
-        style: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}'),
-        shadow: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}'),
-      })
-      .prefault({}),
-    border: z
-      .object({
-        radius: z.string().default('{{primitives.radius.md}}'),
-        width: z.string().default('{{primitives.border.width.md}}'),
-      })
-      .prefault({}),
-  }
-
-  static readonly schema = z
+/**
+ * Structural tokens for the message close button (size, shape, focus-ring geometry).
+ * These do not depend on severity or variant — PrimeNG exposes a single set of them.
+ */
+export const messageCloseButtonShape = z.object({
+  width: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  border: z.object({ radius: withRef(z.string()).optional() }).prefault({}),
+  focusRing: z
     .object({
-      ...this.closeBaseTokens,
-      primary: PrimaryCloseMessageSchema.schema as typeof PrimaryCloseMessageSchema.schema,
-      secondary: SecondaryCloseMessageSchema.schema as typeof SecondaryCloseMessageSchema.schema,
+      width: withRef(z.string()).optional(),
+      style: withRef(z.string()).optional(),
+      offset: withRef(z.string()).optional(),
     })
-    .register(themeSchemaRegistry, { id: 'messageCloseButton' })
+    .prefault({}),
+})
+
+export const messageCloseButtonDefaults = {
+  width: '1.75rem',
+  height: '1.75rem',
+  border: { radius: '{{primitives.radius.full}}' },
+  focusRing: {
+    width: '{{primitives.border.width.md}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    offset: '{{primitives.border.offset.none}}',
+  },
 }
+
+/**
+ * Per-severity close button color tokens — only exist under the filled `defaultVariant`
+ * look (outlined/simple always render a transparent hover, un-tokenized in PrimeNG).
+ */
+export const messageCloseButtonSeverityShape = z.object({
+  hover: z.object({ background: z.union([bg, withRef(z.string())]).optional() }).prefault({}),
+  focus: z.object({ color: color.optional(), shadow: withRef(z.string()).optional() }).prefault({}),
+})
