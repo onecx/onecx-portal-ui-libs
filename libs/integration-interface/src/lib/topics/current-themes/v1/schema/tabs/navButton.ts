@@ -1,15 +1,34 @@
-import { withRef } from '../primitives'
 import * as z from 'zod'
-import { themeSchemaRegistry } from '../registry'
+import { bg, color, focusRingShape, withRef } from '../primitives'
 
-// TODO: Pick relevant tokens from button usage tokens
-/**
- * Schema for tabs navigation button allowing users to move through overflowed tabs in the tabs component.
- */
-export class TabsNavButtonSchema {
+export const tabsNavButtonShape = z.object({
+  nextIcon: withRef(z.string()).optional(),
+  prevIcon: withRef(z.string()).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  width: withRef(z.string()).optional(),
+  hover: z
+    .object({
+      color: color.optional(),
+    })
+    .prefault({}),
+  focusRing: focusRingShape.optional(),
+})
 
-  static readonly schema = z.object({
-    nextIcon: withRef(z.string()).default('{{primitives.icon.arrowRight}}'),
-    prevIcon: withRef(z.string()).default('{{primitives.icon.arrowLeft}}'),
-  }).register(themeSchemaRegistry, { id: 'tabsNavButton' })
+export const tabsNavButtonDefaults = {
+  nextIcon: '{{primitives.icon.arrowRight}}',
+  prevIcon: '{{primitives.icon.arrowLeft}}',
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  width: '2.5rem',
+  hover: {
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+  },
+  focusRing: {
+    width: '{{primitives.focusRing.width}}',
+    style: '{{primitives.focusRing.style}}',
+    color: '{{primitives.focusRing.color}}',
+    offset: '{{primitives.focusRing.offset}}',
+    shadow: '{{primitives.focusRing.shadow}}',
+  },
 }
