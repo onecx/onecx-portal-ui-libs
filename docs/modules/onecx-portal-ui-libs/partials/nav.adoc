@@ -8,10 +8,6 @@
 *** xref:onecx-portal-ui-libs:libraries/angular-utils/cdk.adoc[angular-utils/cdk]
 *** xref:onecx-portal-ui-libs:libraries/build-utils.adoc[build-utils]
 
-** xref:onecx-portal-ui-libs:contribution-testing/index.adoc[Contribution & Testing]
-*** xref:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only]
-*** xref:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration]
-*** xref:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only]
 ** xref:onecx-portal-ui-libs:onecx-compatibility.adoc[Compatibility]
 ** xref:onecx-portal-ui-libs:browser-logging.adoc[Browser Logging]
 
