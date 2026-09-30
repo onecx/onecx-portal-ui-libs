@@ -43,6 +43,7 @@ import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
 import { paginator, paginatorShape } from './schema/paginator'
 import { skeleton, skeletonShape } from './schema/skeleton'
 import { pageHeaderShape } from './schema/page-header/index'
+import { button, ButtonShapeInput } from './schema/button'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
@@ -80,6 +81,10 @@ type UsagesInput = {
   dataListGrid?: z.input<typeof dataListGridShape>
   paginator?: z.input<typeof paginatorShape>
   skeleton?: z.input<typeof skeletonShape>
+  // Hand-written concrete type (mirrors `CalendarShapeInput`/`PanelMenuShapeInput`) — the loose
+  // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
+  // `ThemePath`. See `ButtonShapeInput` in schema/button.
+  button?: ButtonShapeInput
 }
 
 type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
@@ -121,6 +126,7 @@ const usages: z.ZodType<UsagesInput> = z
     dataListGrid: (dataListGrid as typeof dataListGrid).optional(),
     paginator: (paginator as typeof paginator).optional(),
     skeleton: (skeleton as typeof skeleton).optional(),
+    button: (button as typeof button).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
