@@ -5,7 +5,7 @@ import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
+import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
@@ -49,7 +49,7 @@ type UsagesInput = {
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
-  table?: z.input<typeof table>
+  dataTable?: z.input<typeof dataTableShape>
   tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
@@ -82,13 +82,15 @@ type UsagesInput = {
   skeleton?: z.input<typeof skeletonShape>
 }
 
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
+
 const usages: z.ZodType<UsagesInput> = z
   .object({
     dialog: (dialog as typeof dialog).optional(),
     badge: (badge as typeof badge).optional(),
     menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
+    dataTable: (dataTable as typeof dataTableShape).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
@@ -175,6 +177,14 @@ export type ThemePropertiesV2 = {
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2
