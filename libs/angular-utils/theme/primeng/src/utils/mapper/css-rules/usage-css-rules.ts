@@ -23,6 +23,7 @@ import { panelmenuCssRules } from './usages/panelmenu.rules'
 import { pageHeaderCssRules } from './usages/page-header.rules'
 import { contentCssRules } from './usages/content.rules'
 import { dataviewCssRules } from './usages/dataview.rules'
+import { dataListGridCssRules } from './usages/data-list-grid.rules'
 import { buttonCssRules } from './usages/button.rules'
 
 export const usageCssRules: CssRule[] = [
@@ -50,5 +51,6 @@ export const usageCssRules: CssRule[] = [
   ...pageHeaderCssRules,
   ...contentCssRules,
   ...dataviewCssRules,
+  ...dataListGridCssRules,
   ...buttonCssRules,
 ]

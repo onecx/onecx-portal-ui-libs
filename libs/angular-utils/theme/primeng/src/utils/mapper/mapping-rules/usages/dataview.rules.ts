@@ -92,23 +92,4 @@ export const dataviewMappingRules: MappingRule[] = [
     to: 'components.dataview.footer.borderRadius',
   },
 
-  // Paginator (shared schema; maps to the top/bottom paginator sections)
-  {
-    from: 'usages.dataview.header.paginator.border.color',
-    to: 'components.dataview.paginatorTop.borderColor',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.dataview.header.paginator.border.width',
-    to: 'components.dataview.paginatorTop.borderWidth',
-  },
-  {
-    from: 'usages.dataview.footer.paginator.border.color',
-    to: 'components.dataview.paginatorBottom.borderColor',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.dataview.footer.paginator.border.width',
-    to: 'components.dataview.paginatorBottom.borderWidth',
-  },
 ]
