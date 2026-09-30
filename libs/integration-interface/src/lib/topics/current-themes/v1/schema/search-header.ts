@@ -3,7 +3,6 @@ import * as z from 'zod'
 import { applyDefaultsRecursive } from './defaults-helper'
 import { withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
-import { pageHeaderShape, pageHeaderDefaults } from './page-header/index'
 
 const searchHeaderLayoutShape = z.object({
   rowGap: withRef(z.string()).optional(),
@@ -35,14 +34,13 @@ const searchResetPanelDefaults = {
   alignItems: 'center',
 }
 
-export const searchHeaderShape = pageHeaderShape.extend({
+export const searchHeaderShape = z.object({
   layout: searchHeaderLayoutShape.prefault({}),
   controls: searchHeaderControlsShape.prefault({}),
   searchResetPanel: searchResetPanelShape.prefault({}),
 })
 
 export const searchHeaderDefaults = {
-  ...pageHeaderDefaults,
   layout: searchHeaderLayoutDefaults,
   controls: searchHeaderControlsDefaults,
   searchResetPanel: searchResetPanelDefaults,
