@@ -240,4 +240,4 @@ TIP: The steps for running the shell should match the steps for running existing
 
 * {contribution_testing}[Contribution & Testing] — the overview and the other verification tiers.
 * {local_only_testing}[Local-only testing] — verifying a change with the library's own unit tests and Storybook.
-* {application_only_testing}[Application-only testing] — testing a change confined to a single core application.
+* {application_only_testing}[Application-only testing] — testing a change confined to a single OneCX application.
