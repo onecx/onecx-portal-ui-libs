@@ -26,8 +26,11 @@ named-severity slots before its leaf tokens. Shape is itself a variant-dependenc
 `primitives.<colorPrefix>.defaultVariant…` vs `primitives.<colorPrefix>.variant.<shape>…`): the
 plain button sits under its own `defaultVariant` key, a flat sibling of the named shape variants,
 rather than flattened onto the color-variant root. Shape variants are full stateful nodes, not flat
-severity groups. Static leaves (`font`, `paddingX`/`paddingY`, `focusRing`, `sm`/`md`/`lg`) sit
-flat at the color-variant root, siblings of the shape axis.
+severity groups. The `font`/`paddingX`/`paddingY`/`focusRing` leaves live **on the shared severity
+leaf** (every state × severity × shape variant exposes them, exactly as `background`/`color`/
+`border` do) but are **defaulted only on the plain button's baseline leaf**
+(`defaultVariant.defaultState.defaultSeverity`). The `sm`/`md`/`lg` and `badge` leaves remain
+static at the color-variant root, siblings of the shape axis.
 
 ```
 button
@@ -35,16 +38,15 @@ button
    ├─ defaultVariant     [S] (dep: shape)   → the plain button (no shape modifier)
    │     └─ defaultState / hover / active / focus / disabled
    │           └─ defaultSeverity / success / info / warning / danger / contrast
-   │                 └─ {background, color, border{color, style, radius, shadow}}
+   │                 └─ {background, color, border{…}, font, paddingX, paddingY, focusRing}
+   │                      (font/paddingX/paddingY/focusRing defaulted only on the
+   │                       baseline leaf defaultVariant.defaultState.defaultSeverity)
    ├─ rounded            [S] (dep: shape)   → same stateful/severity shape, radius.full / shadow.none
    ├─ raised             [S] (dep: shape)   → same shape, radius.md / shadow.md
    ├─ text               [S] (dep: shape)   → same shape, radius.md / shadow.none
    ├─ textRaised         [S] (dep: shape)   → same shape, radius.md / shadow.md (primitives seg `raisedText`)
    ├─ outlined           [S] (dep: shape)   → same shape, radius.md / shadow.none
    ├─ iconOnly           [S] (dep: shape)   → stateful shape + {width, icon{color, size}}
-   ├─ font               (weight, lineHeight, letterSpacing, style — family/size excluded)
-   ├─ paddingX, paddingY
-   ├─ focusRing          (color, style, width, offset)
    ├─ sm / md / lg       → {font{size}, paddingX, paddingY}   (self-defaulting)
    └─ badge              (static child token)
 ```
@@ -64,8 +66,12 @@ Full leaf path for the plain button, primary color, hover state, danger severity
 3. **States** use a baseline `defaultState` flat sibling of `hover`/`active`/`focus`/`disabled`.
 4. **Severities** use a baseline `defaultSeverity` flat sibling of
    `success`/`info`/`warning`/`danger`/`contrast`.
-5. **Static leaves** (`font`, `paddingX`/`paddingY`, `focusRing`, `sm`/`md`/`lg`, `badge`) stay
-   flat at the color-variant root — siblings of the shape axis, with no `default*` wrapper.
+5. **`sm`/`md`/`lg` and `badge`** stay flat at the color-variant root — siblings of the shape axis,
+   with no `default*` wrapper. **`font`/`paddingX`/`paddingY`/`focusRing`** moved **onto the shared
+   severity leaf** (the same `buttonSeverityLeafShape` that carries `background`/`color`/`border`),
+   following the `defaultState`/`defaultSeverity` axis, and are **defaulted only on the plain
+   button's baseline leaf** (`defaultVariant.defaultState.defaultSeverity`). See the
+   "Leaf-token relocation" note below.
 
 ## Gap list (Step 4) — confirmed rough schema vs. actual `button.ts`
 
@@ -129,18 +135,25 @@ across color variants and states):
 | `outlined` | `{{primitives.radius.md}}` | `{{primitives.shadow.none}}` |
 | `iconOnly` | `{{primitives.radius.md}}` | `{{primitives.shadow.none}}` |
 
-**Static-leaf references** (flat at the color-variant root):
+**Static-leaf references** (at the color-variant root):
 
 | Token | Reference |
 |-------|-----------|
-| `font` | `{{primitives.font.body.weight}}` / `lineHeight` / `letterSpacing` / `style` (family & size excluded) |
-| `paddingX` / `paddingY` | `{{primitives.spacing.base}}` / `{{primitives.spacing.md}}` |
-| `focusRing.color` | `{{primitives.<cv>.defaultState.defaultSeverity.focusRing.color}}` |
-| `focusRing.style` | `{{primitives.<cv>.defaultState.defaultSeverity.focusRing.style}}` |
-| `focusRing.width` | `{{primitives.border.width.sm}}` |
-| `focusRing.offset` | `{{primitives.border.offset.none}}` |
 | `sm`/`md`/`lg` | `{font{size}, paddingX, paddingY}` — self-defaulting, defined once in `sizes.ts`, shared across all color variants |
 | `badge` | self-defaulting child token |
+
+**Baseline-leaf token references** (now on the shared severity leaf; defaulted **only** on the
+plain button's `defaultVariant.defaultState.defaultSeverity`, via `buttonBaselineLeafTokens` in
+`severity.ts`):
+
+| Token | Reference |
+|-------|-----------|
+| `font` | `{{primitives.font.weight}}` / `lineHeight` / `letterSpacing` / `style` (family & size excluded) |
+| `paddingX` / `paddingY` | `{{primitives.space.md}}` / `{{primitives.space.sm}}` |
+| `focusRing.color` | `{{primitives.<cv>.defaultVariant.defaultState.defaultSeverity.focusRing.color}}` |
+| `focusRing.style` | `{{primitives.<cv>.defaultVariant.defaultState.defaultSeverity.focusRing.style}}` |
+| `focusRing.width` | `{{primitives.border.width.sm}}` |
+| `focusRing.offset` | `{{primitives.border.offset.none}}` |
 
 ## Differentiated named-state defaults (Step 5b)
 
@@ -192,6 +205,47 @@ differs from its baseline; tokens that never vary between leaves must not be rep
 **Why no consumer repoint was needed:** the consumer reads 0 of the trimmed tokens, so removing
 their defaults changes no mapping. The trim is a pure reduction of the defaults contract (what
 `button.parse({})` emits), verified against the regenerated snapshot.
+
+### Leaf-token relocation: `font`/`paddingX`/`paddingY`/`focusRing` → severity leaf (2026-09-30)
+
+**Motivation:** the four leaves were flat siblings at the color-variant root
+(e.g. `usages.button.defaultVariant.font`), inconsistent with every other button token that sits
+on the `<colorVariant> → <shapeVariant> → <state> → <severity>` axis. Relocated them onto the
+shared `buttonSeverityLeafShape` so they follow the same `defaultState`/`defaultSeverity` axis as
+`background`/`color`/`border`.
+
+**Placement (decision):** *shared leaf* — the keys are exposed (optional) on
+`buttonSeverityLeafShape`, so every state × severity × shape variant exposes them, exactly as
+`background`/`color`/`border` already do. They are **defaulted only** on the plain button's
+baseline leaf `defaultVariant.defaultState.defaultSeverity` (the named shape variants leave them
+unset, matching how `background`/`color`/`border` behave there).
+
+**Value invariance:** the leaf token defaults are byte-identical to the former color-variant-root
+defaults — only the nesting depth changed. PrimeNG output is therefore unchanged.
+
+**Code:**
+- `severity.ts` — `buttonFont` relocated here from `color-variant.ts` (the leaf shape needs it at
+  module-evaluation time; importing it into the `color-variant → stateful → severity` chain would
+  create a TDZ import cycle). `buttonSeverityLeafShape` gains `font`/`paddingX`/`paddingY`/
+  `focusRing` (all `.optional()`). New `buttonBaselineLeafTokens(colorPrefix)` returns the four
+  leaf defaults (font via `.parse(undefined)`; `focusRing` refs keyed off
+  `<colorPrefix>.defaultVariant.defaultState.defaultSeverity`).
+- `color-variant.ts` — removed the four root fields and the root `font` self-default;
+  `buttonColorVariantDefaults` now deep-merges `buttonBaselineLeafTokens` into the plain-button
+  baseline's `defaultState.defaultSeverity`.
+- `button.ts` — `ButtonColorVariantInput` drops the four root fields (the nested path is
+  auto-generated from `z.input<typeof buttonStatefulShape>`; no hand-written key needed).
+- `button.spec.ts.snap` — regenerated.
+
+**Consumer migration** (`mapper/mapping-rules/usages/button.rules.ts` +
+`mapper/css-rules/usages/button.rules.ts`): 11 `from:` paths moved from the top level to the new
+nested baseline path `usages.button.<cv>.defaultVariant.defaultState.defaultSeverity.{font|
+paddingX|paddingY|focusRing}.*` (the plain-button path nests the color-variant `defaultVariant`
+and the shape-variant `defaultVariant` as siblings). Verified: `tsc --noEmit` clean on both
+`integration-interface` and the primeng theme lib (`from` is typed `ThemePath`), 0 stale top-level
+`usages.button.<cv>.(font|paddingX|paddingY|focusRing)` paths remain repo-wide, and the `sm`/`lg`
+size-variant padding paths (which use `sm`/`lg`, not the baseline leaf) were correctly left
+untouched.
 
 ## Changes applied (Step 6)
 

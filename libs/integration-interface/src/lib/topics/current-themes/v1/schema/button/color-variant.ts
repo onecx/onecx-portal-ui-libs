@@ -1,18 +1,10 @@
 import * as z from 'zod'
 import { badge } from '../badge'
-import { borderWithShadow, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
+import { buttonBaselineLeafTokens } from './severity'
 import { buttonStatefulDefaults, buttonStatefulShape } from './stateful'
 import { buttonIconOnlyDefaults, buttonIconOnlyShape } from './icon-only'
 import { lgButtonShape, mdButtonShape, smButtonShape } from './sizes'
-
-// Font for button component — excludes family and size (set globally/individually).
-export const buttonFont = font.omit({ family: true, size: true }).default({
-  weight: '{{primitives.font.weight}}',
-  lineHeight: '{{primitives.font.lineHeight}}',
-  letterSpacing: '{{primitives.font.letterSpacing}}',
-  style: '{{primitives.font.style}}',
-})
 
 /**
  * Maps a usage-schema shape-variant key to the primitives segment it refers to.
@@ -42,10 +34,6 @@ const SHAPE_VARIANT_PRIMITIVE_SEGMENT = {
  */
 export const buttonColorVariantShape: z.ZodObject<Record<string, z.ZodTypeAny>> = z
   .object({
-    font: buttonFont,
-    paddingX: withRef(z.string()).optional(),
-    paddingY: withRef(z.string()).optional(),
-    focusRing: borderWithShadow.optional(),
     defaultVariant: buttonStatefulShape.prefault({}),
     rounded: buttonStatefulShape.prefault({}),
     raised: buttonStatefulShape.prefault({}),
@@ -61,19 +49,21 @@ export const buttonColorVariantShape: z.ZodObject<Record<string, z.ZodTypeAny>> 
   .register(themeSchemaRegistry, { id: 'buttonColorVariantShape' })
 
 /**
- * The color-independent, self-defaulting leaves of a color variant (`font`, `sm`/`md`/`lg`,
+ * The color-independent, self-defaulting leaves of a color variant (`sm`/`md`/`lg`,
  * `badge`). Their values never depend on the color prefix, so they're captured once from the
  * self-defaulting shapes via `.parse({})` — this keeps the defaults tree in lockstep with the
  * shape and is required because the color-variant field is a `.prefault({})`-wrapped object that
  * `applyDefaultsRecursive` applies verbatim: any key absent from this defaults tree would be
  * dropped from `button.parse({})` (its inner `.default()`/`.prefault()` would never run).
  *
+ * (The former color-variant-root `font`/`paddingX`/`paddingY`/`focusRing` self-defaults now live
+ * on the plain-button baseline leaf — see `buttonBaselineLeafTokens` in `severity.ts`.)
+ *
  * Each leaf is captured with the same `.prefault({})` wrapper the shape applies to its field and
  * resolved via `.parse(undefined)` — the exact "empty input" semantics that populate the field,
  * so the captured defaults stay in lockstep with the shape.
  */
 const selfDefaultingLeafDefaults = {
-  font: (buttonFont as z.ZodTypeAny).parse(undefined),
   sm: (smButtonShape.prefault({}) as z.ZodTypeAny).parse(undefined),
   md: (mdButtonShape.prefault({}) as z.ZodTypeAny).parse(undefined),
   lg: (lgButtonShape.prefault({}) as z.ZodTypeAny).parse(undefined),
@@ -88,20 +78,19 @@ const selfDefaultingLeafDefaults = {
 export function buttonColorVariantDefaults(colorPrefix: string) {
   const rootPrefix = `${colorPrefix}.defaultVariant`
 
+  const baseline = buttonStatefulDefaults(rootPrefix)
+  // The plain (no shape modifier) button carries the self-defaulting `font`/`paddingX`/`paddingY`/
+  // `focusRing` on its baseline leaf — `defaultVariant.defaultState.defaultSeverity` — merged over
+  // the baseline's own `background`/`color`/`border` defaults. The named shape variants below do
+  // not set these leaf tokens (they remain optional on the shared leaf, like `background`/`color`/
+  // `border`).
+  baseline.defaultState.defaultSeverity = {
+    ...baseline.defaultState.defaultSeverity,
+    ...buttonBaselineLeafTokens(colorPrefix),
+  }
+
   return {
-    font: selfDefaultingLeafDefaults.font,
-    defaultVariant: buttonStatefulDefaults(rootPrefix),
-    paddingX: '{{primitives.space.md}}',
-    paddingY: '{{primitives.space.sm}}',
-    // Only the focus-ring tokens that vary per variant are set; `radius`/`shadow` are not
-    // focus-ring-specific design tokens (the ring inherits the variant's radius/shadow) and
-    // nothing downstream reads focusRing.radius/focusRing.shadow, so they're left unset.
-    focusRing: {
-      color: `{{primitives.${rootPrefix}.defaultState.defaultSeverity.focusRing.color}}`,
-      style: `{{primitives.${rootPrefix}.defaultState.defaultSeverity.focusRing.style}}`,
-      width: '{{primitives.border.width.sm}}',
-      offset: '{{primitives.border.offset.none}}',
-    },
+    defaultVariant: baseline,
     rounded: buttonStatefulDefaults(
       `${colorPrefix}.variant.${SHAPE_VARIANT_PRIMITIVE_SEGMENT.rounded}`,
       '{{primitives.radius.full}}'

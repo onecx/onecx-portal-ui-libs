@@ -293,10 +293,10 @@ export const buttonCssRules: CssRule[] = [
   {
     selector: '.p-button',
     declarations: [
-      { property: 'font-weight', from: 'usages.button.defaultVariant.font.weight' },
-      { property: 'line-height', from: 'usages.button.defaultVariant.font.lineHeight' },
-      { property: 'letter-spacing', from: 'usages.button.defaultVariant.font.letterSpacing' },
-      { property: 'font-style', from: 'usages.button.defaultVariant.font.style' },
+      { property: 'font-weight', from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.font.weight' },
+      { property: 'line-height', from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.font.lineHeight' },
+      { property: 'letter-spacing', from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.font.letterSpacing' },
+      { property: 'font-style', from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.font.style' },
     ],
   },
 

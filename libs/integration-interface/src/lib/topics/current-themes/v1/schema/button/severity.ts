@@ -1,9 +1,24 @@
 import * as z from 'zod'
-import { bg, borderWithShadow, color, withRef } from '../primitives'
+import { bg, borderWithShadow, color, font, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 export const BUTTON_SEVERITIES = ['success', 'info', 'help', 'warning', 'danger', 'contrast'] as const
 export type ButtonSeverity = (typeof BUTTON_SEVERITIES)[number]
+
+/**
+ * Font for the button component — excludes family and size (set globally/individually).
+ *
+ * Defined here (in the leaf module) rather than in `color-variant.ts` so the shared
+ * `buttonSeverityLeafShape` can reference it at module-evaluation time without creating a
+ * `color-variant → stateful → severity → color-variant` import cycle (which would leave this
+ * `const` in the TDZ when `severity.ts`'s top-level leaf shape runs).
+ */
+export const buttonFont = font.omit({ family: true, size: true }).default({
+  weight: '{{primitives.font.weight}}',
+  lineHeight: '{{primitives.font.lineHeight}}',
+  letterSpacing: '{{primitives.font.letterSpacing}}',
+  style: '{{primitives.font.style}}',
+})
 
 /** A single (variant, state, severity) leaf token set. */
 export const buttonSeverityLeafShape = z
@@ -11,6 +26,10 @@ export const buttonSeverityLeafShape = z
     background: z.union([bg, withRef(z.string())]).optional(),
     color: color.optional(),
     border: borderWithShadow.optional(),
+    font: buttonFont.optional(),
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    focusRing: borderWithShadow.optional(),
   })
   .register(themeSchemaRegistry, { id: 'buttonSeverityLeafShape' })
 
@@ -69,5 +88,33 @@ export function buttonSeverityGroupDefaults(
   return {
     defaultSeverity: leaf('defaultSeverity'),
     ...Object.fromEntries(BUTTON_SEVERITIES.map((severity) => [severity, leaf(`severity.${severity}`)])),
+  }
+}
+
+/**
+ * The self-defaulting leaf tokens for the plain (no shape modifier) button baseline —
+ * `font`/`paddingX`/`paddingY`/`focusRing`. These land on
+ * `<colorVariant>.defaultVariant.defaultState.defaultSeverity` and are the **only** place
+ * defaulted; the named shape variants expose the same keys (via the shared leaf) but leave
+ * them unset.
+ *
+ * `font` is captured in lockstep with the shape via `.parse(undefined)` (the "empty input"
+ * semantics), mirroring how the color-variant previously self-defaulted its root `font`.
+ */
+export function buttonBaselineLeafTokens(colorPrefix: string) {
+  const rootPrefix = `${colorPrefix}.defaultVariant`
+  return {
+    font: (buttonFont as z.ZodTypeAny).parse(undefined),
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.sm}}',
+    // Only the focus-ring tokens that vary per variant are set; `radius`/`shadow` are not
+    // focus-ring-specific design tokens (the ring inherits the variant's radius/shadow) and
+    // nothing downstream reads focusRing.radius/focusRing.shadow, so they're left unset.
+    focusRing: {
+      color: `{{primitives.${rootPrefix}.defaultState.defaultSeverity.focusRing.color}}`,
+      style: `{{primitives.${rootPrefix}.defaultState.defaultSeverity.focusRing.style}}`,
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.none}}',
+    },
   }
 }

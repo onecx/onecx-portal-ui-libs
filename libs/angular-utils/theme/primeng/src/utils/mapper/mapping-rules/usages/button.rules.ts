@@ -55,20 +55,20 @@ export const buttonMappingRules: MappingRule[] = [
 
   // ─── Primary Button Focus Ring ─────────────────────────────────────────────
   {
-    from: 'usages.button.defaultVariant.focusRing.color',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.color',
     to: 'components.button.colorScheme.{mode}.root.primary.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.button.defaultVariant.focusRing.width',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.width',
     to: 'components.button.root.focusRing.width',
   },
   {
-    from: 'usages.button.defaultVariant.focusRing.style',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.style',
     to: 'components.button.root.focusRing.style',
   },
   {
-    from: 'usages.button.defaultVariant.focusRing.offset',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.focusRing.offset',
     to: 'components.button.root.focusRing.offset',
   },
 
@@ -125,7 +125,7 @@ export const buttonMappingRules: MappingRule[] = [
 
   // ─── Secondary Button Focus Ring ───────────────────────────────────────────
   {
-    from: 'usages.button.secondary.focusRing.color',
+    from: 'usages.button.secondary.defaultVariant.defaultState.defaultSeverity.focusRing.color',
     to: 'components.button.colorScheme.{mode}.root.secondary.focusRing.color',
     transform: toColorString,
   },
@@ -536,11 +536,11 @@ export const buttonMappingRules: MappingRule[] = [
     to: 'components.button.root.borderRadius',
   },
   {
-    from: 'usages.button.defaultVariant.paddingX',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.paddingX',
     to: 'components.button.root.paddingX',
   },
   {
-    from: 'usages.button.defaultVariant.paddingY',
+    from: 'usages.button.defaultVariant.defaultVariant.defaultState.defaultSeverity.paddingY',
     to: 'components.button.root.paddingY',
   },
 
