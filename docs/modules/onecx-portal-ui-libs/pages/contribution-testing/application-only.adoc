@@ -8,7 +8,7 @@
 [#application-only-testing]
 = Application-only Testing
 
-If you've modified an existing OneCX core app (e.g. OneCX Theme UI) and the change is confined to that app, no rebuild of the shell or the libraries is required.
+If you've modified an existing OneCX application (e.g. OneCX Theme UI) and the change is confined to that app, no rebuild of the shell or the libraries is required.
 
 [#testing-the-application]
 == Testing the application

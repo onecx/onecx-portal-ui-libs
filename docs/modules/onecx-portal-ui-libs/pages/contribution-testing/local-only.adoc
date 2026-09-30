@@ -37,11 +37,11 @@ nx run angular-accelerator:storybook
 [#next]
 == When the change needs more than the library's own tests
 
-If the change has to run inside the OneCX Shell and one or more local applications, continue with the {integration_testing}[Integration testing] guide. If it is confined to a single OneCX core application, use the {application_only_testing}[Application-only testing] guide.
+If the change has to run inside the OneCX Shell and one or more local applications, continue with the {integration_testing}[Integration testing] guide. If it is confined to a single OneCX application, use the {application_only_testing}[Application-only testing] guide.
 
 [#related]
 == Related
 
 * {contribution_testing}[Contribution & Testing] — the overview and the other verification tiers.
 * {integration_testing}[Integration testing] — building the libraries locally and copying them into the shell and apps.
-* {application_only_testing}[Application-only testing] — testing a change confined to a single core application.
+* {application_only_testing}[Application-only testing] — testing a change confined to a single application.

@@ -16,7 +16,7 @@ Pick the tier that matches your change and follow it.
 
 * xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only] — the change is fully exercised by the library's own unit tests.
 * xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration] — the change has to run inside the OneCX Shell and one or more local applications.
-* xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only] — the change is confined to a single OneCX core application.
+* xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only] — the change is confined to a single OneCX application.
 
 [#related]
 == Related
