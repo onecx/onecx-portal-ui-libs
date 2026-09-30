@@ -7,16 +7,14 @@
 [#contribution-and-testing]
 = Contribution & Testing
 
-This page describes how to verify a change to the OneCX UI libraries before it is merged. The recipe you need depends on the *scope of the change* — how far the change has to travel to be exercised — not on the kind of change (style, translation, or token-provider changes are covered by the same recipe as any other change in their scope).
-
-Pick the tier that matches your change and follow it.
+This page describes how to verify a change to the OneCX UI libraries before it is merged. Choose the tier by the *scope of the change* — how far the change has to travel to be exercised.
 
 [#which-tier]
 == Which tier is your change?
 
 * xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only] — the change is fully exercised by the library's own unit tests.
-* xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration] — the change has to run inside the OneCX Shell and one or more local applications.
-* xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only] — the change is confined to a single OneCX application.
+* xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration] — the source change is in a library and it must be verified inside the OneCX Shell together with one or more local applications.
+* xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only] — the source change is confined to a single OneCX application.
 
 [#related]
 == Related

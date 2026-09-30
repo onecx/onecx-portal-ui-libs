@@ -10,6 +10,8 @@
 
 If a change is confined to a library, verify logic with the library's unit tests and UI surfaces with Storybook. Library-local verification therefore uses unit tests for logic and Storybook for UI; no shell, no application, and no local OneCX environment are required when those suffice. Verify in the *onecx-portal-ui-libs* repository alone.
 
+If the library change later needs shell or application verification, continue with Integration testing. If the source change is confined to a single OneCX application, use Application-only testing instead.
+
 [#running-the-tests]
 == Running the tests
 
@@ -37,7 +39,7 @@ nx run angular-accelerator:storybook
 [#next]
 == When the change needs more than the library's own tests
 
-If the change has to run inside the OneCX Shell and one or more local applications, continue with the {integration_testing}[Integration testing] guide. If it is confined to a single OneCX application, use the {application_only_testing}[Application-only testing] guide.
+If the source change is a library and it has to run inside the OneCX Shell and one or more local applications, continue with the {integration_testing}[Integration testing] guide. If the source change is confined to a single OneCX application, use the {application_only_testing}[Application-only testing] guide.
 
 [#related]
 == Related
