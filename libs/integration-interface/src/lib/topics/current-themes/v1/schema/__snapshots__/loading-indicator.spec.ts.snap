@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`loadingIndicator schema resolves the expected default token tree 1`] = `
+Object {
+  "overlay": Object {
+    "background": "{{primitives.area.overlay.defaultState.defaultSeverity.bg}}",
+  },
+  "spinner": Object {
+    "animationDuration": "{{primitives.transition.duration}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "trackColor": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "width": "{{primitives.border.width.md}}",
+    },
+    "size": "{{primitives.space.lg}}",
+  },
+}
+`;

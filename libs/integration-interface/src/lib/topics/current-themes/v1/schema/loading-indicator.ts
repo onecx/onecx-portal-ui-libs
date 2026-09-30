@@ -1,35 +1,48 @@
 /**
  * This file defines the schema for the loading indicator theming.
  */
-import z from 'zod'
+import * as z from 'zod'
 import { bg, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { applyDefaultsRecursive } from './defaults-helper'
 
-export const loadingIndicatorOverlay = z
-  .object({
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultSeverity.bg}}'),
-  })
-  .register(themeSchemaRegistry, { id: 'loadingIndicatorOverlay' })
+const loadingIndicatorOverlayShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+})
 
-export const loadingIndicatorSpinner = z
-  .object({
-    size: withRef(z.string()).default('{{primitives.space.lg}}'),
-    border: z
-      .object({
-        color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-        trackColor: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}'),
-        width: withRef(z.string()).default('{{primitives.border.width.md}}'),
-      })
-      .prefault({}),
-    animationDuration: withRef(z.string()).default('{{primitives.transition.duration}}'),
-  })
-  .register(themeSchemaRegistry, { id: 'loadingIndicatorSpinner' })
+const loadingIndicatorSpinnerBorderShape = z.object({
+  color: color.optional(),
+  trackColor: color.optional(),
+  width: withRef(z.string()).optional(),
+})
 
-export const loadingIndicator = z
-  .object({
-    overlay: (loadingIndicatorOverlay as typeof loadingIndicatorOverlay).prefault({}),
-    spinner: (loadingIndicatorSpinner as typeof loadingIndicatorSpinner).prefault({}),
-  })
-  .register(themeSchemaRegistry, { id: 'loadingIndicator' })
+const loadingIndicatorSpinnerShape = z.object({
+  size: withRef(z.string()).optional(),
+  border: loadingIndicatorSpinnerBorderShape.prefault({}),
+  animationDuration: withRef(z.string()).optional(),
+})
+
+export const loadingIndicatorShape = z.object({
+  overlay: loadingIndicatorOverlayShape.prefault({}),
+  spinner: loadingIndicatorSpinnerShape.prefault({}),
+})
+
+export const loadingIndicatorDefaults = {
+  overlay: {
+    background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+  },
+  spinner: {
+    size: '{{primitives.space.lg}}',
+    border: {
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+      trackColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      width: '{{primitives.border.width.md}}',
+    },
+    animationDuration: '{{primitives.transition.duration}}',
+  },
+}
+
+export const loadingIndicator = applyDefaultsRecursive(loadingIndicatorShape, loadingIndicatorDefaults).register(
+  themeSchemaRegistry,
+  { id: 'loadingIndicator' },
+)
