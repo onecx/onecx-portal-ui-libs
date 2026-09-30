@@ -31,10 +31,7 @@ Object {
       "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
       "border": Object {
         "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-        "offset": "{{primitives.border.offset.none}}",
-        "radius": "{{primitives.border.radius.none}}",
         "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-        "width": "{{primitives.border.width.none}}",
       },
       "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
       "focusRing": Object {
@@ -50,10 +47,7 @@ Object {
       "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
       "border": Object {
         "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-        "offset": "{{primitives.border.offset.none}}",
-        "radius": "{{primitives.border.radius.none}}",
         "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-        "width": "{{primitives.border.width.none}}",
       },
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
     },
@@ -77,10 +71,7 @@ Object {
       "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
       "border": Object {
         "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-        "offset": "{{primitives.border.offset.none}}",
-        "radius": "{{primitives.border.radius.none}}",
         "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-        "width": "{{primitives.border.width.none}}",
       },
       "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
       "focusRing": Object {
@@ -96,10 +87,7 @@ Object {
       "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
       "border": Object {
         "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-        "offset": "{{primitives.border.offset.none}}",
-        "radius": "{{primitives.border.radius.none}}",
         "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-        "width": "{{primitives.border.width.none}}",
       },
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
     },

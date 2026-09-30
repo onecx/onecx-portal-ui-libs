@@ -20,17 +20,11 @@ const borderDefaults = {
 const hoverBorderDefaults = {
   color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
   style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-  width: '{{primitives.border.width.none}}',
-  radius: '{{primitives.border.radius.none}}',
-  offset: '{{primitives.border.offset.none}}',
 }
 
 const disabledBorderDefaults = {
   color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
   style: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.style}}',
-  width: '{{primitives.border.width.none}}',
-  radius: '{{primitives.border.radius.none}}',
-  offset: '{{primitives.border.offset.none}}',
 }
 
 const focusRingDefaults = {
@@ -51,35 +45,24 @@ const iconFontDefaults = {
   style: '{{primitives.font.style}}',
 }
 
-// One chip variant: the baseline token set on `defaultState` plus the named
-// `hover`/`disabled` overrides. Both `defaultVariant` and `filled` share this
-// shape; they differ only in which tokens carry a default.
+// All states of a chip variant share the same token shape (mandatory so the
+// theming fallback works across states); they differ only in which tokens carry
+// a default. Both `defaultVariant` and `filled` use this same variant shape.
+const chipStateShape = z.object({
+  border: border.optional(),
+  focusRing: borderWithShadow.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  icon: icon.optional(),
+  cursor: withRef(z.string()).optional(),
+})
+
 const chipVariantShape = z.object({
-  defaultState: z.object({
-    border: border.optional(),
-    focusRing: borderWithShadow.optional(),
-    background: z.union([bg, withRef(z.string())]).optional(),
-    color: color.optional(),
-    paddingX: withRef(z.string()).optional(),
-    paddingY: withRef(z.string()).optional(),
-    icon: icon.optional(),
-  }).optional(),
-  hover: z
-    .object({
-      border: border.optional(),
-      background: z.union([bg, withRef(z.string())]).optional(),
-      color: color.optional(),
-      cursor: withRef(z.string()).optional(),
-    })
-    .optional(),
-  disabled: z
-    .object({
-      border: border.optional(),
-      background: z.union([bg, withRef(z.string())]).optional(),
-      color: color.optional(),
-      cursor: withRef(z.string()).optional(),
-    })
-    .optional(),
+  defaultState: chipStateShape.optional(),
+  hover: chipStateShape.optional(),
+  disabled: chipStateShape.optional(),
 })
 
 export const chipShape = z.object({
@@ -103,8 +86,6 @@ export const chipDefaults = {
         size: '{{primitives.iconSizes.sm}}',
         color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
         font: iconFontDefaults,
-        content: '',
-        url: '',
       },
     },
     hover: {

@@ -14,17 +14,11 @@ const defaultBorderDefaults = {
 const hoverBorderDefaults = {
   color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
   style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-  width: '{{primitives.border.width.none}}',
-  radius: '{{primitives.border.radius.none}}',
-  offset: '{{primitives.border.offset.none}}',
 }
 
 const focusBorderDefaults = {
   color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
   style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-  width: '{{primitives.border.width.none}}',
-  radius: '{{primitives.border.radius.none}}',
-  offset: '{{primitives.border.offset.none}}',
 }
 
 const focusRingDefaults = {

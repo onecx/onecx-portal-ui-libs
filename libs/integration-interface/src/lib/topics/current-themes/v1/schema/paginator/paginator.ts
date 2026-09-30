@@ -3,11 +3,18 @@ import { applyDefaultsRecursive } from '../defaults-helper'
 import { bg, border, icon, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
-const paginatorButtonShape = z.object({
+// A paginator button's base and its `hover`/`active` states share the same token
+// shape (mandatory so the theming fallback works across states); they differ only
+// in which tokens carry a default.
+const paginatorButtonStateShape = z.object({
   border: border.pick({ radius: true }).optional(),
   background: z.union([bg, withRef(z.string())]).optional(),
-  hover: z.object({ background: z.union([bg, withRef(z.string())]).optional() }).optional(),
-  active: z.object({ background: z.union([bg, withRef(z.string())]).optional() }).optional(),
+})
+
+const paginatorButtonShape = z.object({
+  ...paginatorButtonStateShape.shape,
+  hover: paginatorButtonStateShape.optional(),
+  active: paginatorButtonStateShape.optional(),
 })
 
 const paginatorInputShape = z.object({

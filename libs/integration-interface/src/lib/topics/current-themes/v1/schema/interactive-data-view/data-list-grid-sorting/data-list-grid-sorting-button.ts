@@ -12,32 +12,26 @@ const defaultBorderDefaults = {
 
 const hoverBorderDefaults = {
   color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
-  width: '{{primitives.border.width.none}}',
+  style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
 }
 
 const focusBorderDefaults = {
   color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-  width: '{{primitives.border.width.none}}',
+  style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
 }
 
+// All states of the sorting button share the same token shape (mandatory so the
+// theming fallback works across states); they differ only in which tokens carry
+// a default.
+const dataListGridSortingButtonStateShape = z.object({
+  border: border.optional(),
+  icon: icon.pick({ color: true }).optional(),
+})
+
 export const dataListGridSortingButtonShape = z.object({
-  defaultState: z
-    .object({
-      border: border.optional(),
-      icon: icon.pick({ color: true }).optional(),
-    })
-    .optional(),
-  hover: z
-    .object({
-      border: border.optional(),
-      icon: icon.pick({ color: true }).optional(),
-    })
-    .optional(),
-  focus: z
-    .object({
-      border: border.optional(),
-    })
-    .optional(),
+  defaultState: dataListGridSortingButtonStateShape.optional(),
+  hover: dataListGridSortingButtonStateShape.optional(),
+  focus: dataListGridSortingButtonStateShape.optional(),
 })
 
 export const dataListGridSortingButtonDefaults = {

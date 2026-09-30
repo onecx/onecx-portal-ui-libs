@@ -30,13 +30,13 @@ Object {
       "focus": Object {
         "border": Object {
           "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-          "width": "{{primitives.border.width.none}}",
+          "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
         },
       },
       "hover": Object {
         "border": Object {
           "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-          "width": "{{primitives.border.width.none}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
         },
         "icon": Object {
           "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
