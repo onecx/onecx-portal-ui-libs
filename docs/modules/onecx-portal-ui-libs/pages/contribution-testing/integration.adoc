@@ -330,7 +330,7 @@ At this point, you should see terminal output indicating that the libraries have
 Before running the app with the locally built libraries, you need to make some adjustments to ensure the local versions are used correctly:
 
 . Open the `package.json` file of the app that the libraries were copied to.
-. Increase the version numbers of the affected `@onecx/*` packages so the local builds are picked up. Use the same deliberately high temporary version in the app as you used in the build output. For example, set the affected dependencies to `999.0.0`:
+. Increase the version numbers of the affected `@onecx/*` packages so the local builds are picked up. Use the same deliberately high temporary version in the app as the other affected projects. For example, set the affected dependencies to `999.0.0`:
 +
 [source, json]
 ----
@@ -362,6 +362,6 @@ To do so, follow the documentation on xref:documentation:onecx-docs-start:first-
 [#related]
 == Related
 
-* {contribution_testing}[Contribution & Testing] — the overview and the other verification tiers.
-* {local_only_testing}[Local-only testing] — verifying a change with the library's own unit tests and Storybook.
-* {application_only_testing}[Application-only testing] — testing a change confined to a single OneCX application.
+* {contribution_testing} — the overview and the other verification tiers.
+* {local_only_testing} — verifying a change with the library's own unit tests and Storybook.
+* {application_only_testing} — testing a change confined to a single OneCX application.

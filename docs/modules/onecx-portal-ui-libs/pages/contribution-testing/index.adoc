@@ -12,7 +12,7 @@ This page describes how to verify a change to the OneCX UI libraries before it i
 [#which-tier]
 == Which tier is your change?
 
-* xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only] — the change is fully exercised by the library's own unit tests.
+* xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only] — the change is fully exercised by the library's own unit tests and Storybook.
 * xref:documentation:onecx-portal-ui-libs:contribution-testing/integration.adoc[Integration] — the source change is in a library and it must be verified inside the OneCX Shell together with one or more local applications.
 * xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only] — the source change is confined to a single OneCX application.
 

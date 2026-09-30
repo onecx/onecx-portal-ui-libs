@@ -44,6 +44,6 @@ If the source change is a library and it has to run inside the OneCX Shell and o
 [#related]
 == Related
 
-* {contribution_testing}[Contribution & Testing] — the overview and the other verification tiers.
-* {integration_testing}[Integration testing] — building the libraries locally and copying them into the shell and apps.
-* {application_only_testing}[Application-only testing] — testing a change confined to a single application.
+* {contribution_testing} — the overview and the other verification tiers.
+* {integration_testing} — building the libraries locally and copying them into the shell and apps.
+* {application_only_testing} — testing a change confined to a single application.
