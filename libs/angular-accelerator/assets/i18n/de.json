@@ -146,6 +146,18 @@
       "REMOVE_FILTER_TITLE": "Filter löschen",
       "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
     },
+    "ADD_FILTER": {
+      "DIALOG_TITLE": "Filter hinzufügen",
+      "BUTTON_LABEL": "Filter hinzufügen",
+      "BUTTON_ARIA_LABEL": "Neuen Filter hinzufügen",
+      "BUTTON_DETAIL": "Einen neuen Filter aus den angezeigten Spalten hinzufügen",
+      "COLUMN_LABEL": "Spalte",
+      "COLUMN_PLACEHOLDER": "Spalte auswählen",
+      "COLUMN_ARIA_LABEL": "Spalte auswählen, nach der gefiltert wird",
+      "VALUE_LABEL": "Wert",
+      "VALUE_PLACEHOLDER": "Wert auswählen",
+      "VALUE_ARIA_LABEL": "Filterwert auswählen"
+    },
     "PANEL_TITLE": "Filter"
   },
   "OCX_SEARCH_HEADER": {

@@ -1,0 +1,30 @@
+<div class="flex flex-column gap-4">
+  <div class="flex flex-column gap-1">
+    <label for="filterViewAddFilterColumn">{{ 'OCX_FILTER_VIEW.ADD_FILTER.COLUMN_LABEL' | translate }}</label>
+    <p-select
+      id="filterViewAddFilterColumn"
+      inputId="filterViewAddFilterColumnInput"
+      [options]="columnOptions()"
+      [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.COLUMN_PLACEHOLDER' | translate"
+      [ngModel]="selectedColumnId()"
+      (ngModelChange)="onColumnChange($event)"
+      [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.COLUMN_ARIA_LABEL' | translate"
+    >
+      <ng-template #item let-item> {{ item ? (item.label | translate) : '' }}</ng-template>
+    </p-select>
+  </div>
+  <div class="flex flex-column gap-1">
+    <label for="filterViewAddFilterValue">{{ 'OCX_FILTER_VIEW.ADD_FILTER.VALUE_LABEL' | translate }}</label>
+    <p-select
+      id="filterViewAddFilterValue"
+      inputId="filterViewAddFilterValueInput"
+      [options]="valueOptions()"
+      [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.VALUE_PLACEHOLDER' | translate"
+      [ngModel]="selectedValue()"
+      (ngModelChange)="onValueChange($event)"
+      [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.VALUE_ARIA_LABEL' | translate"
+    >
+      <ng-template #item let-item> {{ item ? item.label : '' }}</ng-template>
+    </p-select>
+  </div>
+</div>
