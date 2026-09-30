@@ -19,7 +19,7 @@ export interface AcceleratorTableInputDefaults {
 }
 
 export const mapAcceleratorTableSettings = defineUsageSettingsMapper<
-  ThemeUsageSettings<'table'>,
+  ThemeUsageSettings<'dataTable'>,
   AcceleratorTableInputDefaults
 >({
   checkboxColumnPosition: {
