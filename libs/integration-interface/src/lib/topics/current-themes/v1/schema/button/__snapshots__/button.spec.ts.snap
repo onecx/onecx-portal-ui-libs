@@ -5,38 +5,66 @@ Object {
   "defaultVariant": Object {
     "badge": Object {
       "defaultVariant": Object {
-        "background": "{{primitives.variant.primary.defaultState.defaultVariant.bg}}",
-        "border": Object {
-          "radius": "{{primitives.radius.full}}",
+        "contrast": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.contrast.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
         },
-        "color": "{{primitives.variant.primary.defaultState.defaultVariant.contrast}}",
-        "defaultVariant": Object {
-          "fontSize": "{{primitives.font.size}}",
+        "danger": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.danger.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+        },
+        "defaultSeverity": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "border": Object {
+            "radius": "{{primitives.radius.full}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "font": Object {
+            "size": "{{primitives.font.size}}",
+            "weight": "{{primitives.font.weight}}",
+          },
           "height": "1.5rem",
           "minWidth": "1.5rem",
+          "padding": "{{primitives.space.sm}}",
         },
-        "font": Object {
-          "size": "{{primitives.font.size}}",
-          "weight": "{{primitives.font.weight}}",
+        "info": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.info.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
         },
-        "padding": "{{primitives.space.sm}}",
-        "sizeVariant": Object {
-          "lg": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.75rem",
-            "minWidth": "1.75rem",
-          },
-          "sm": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.25rem",
-            "minWidth": "1.25rem",
-          },
-          "xl": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "2rem",
-            "minWidth": "2rem",
-          },
+        "primary": Object {
+          "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
         },
+        "secondary": Object {
+          "background": "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+        },
+        "success": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.success.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+        },
+        "warning": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.warning.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+        },
+      },
+      "dot": Object {
+        "size": "0.5rem",
+      },
+      "lg": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.75rem",
+        "minWidth": "1.75rem",
+      },
+      "sm": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.25rem",
+        "minWidth": "1.25rem",
+      },
+      "xl": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "2rem",
+        "minWidth": "2rem",
       },
     },
     "defaultVariant": Object {
@@ -2616,38 +2644,66 @@ Object {
   "primary": Object {
     "badge": Object {
       "defaultVariant": Object {
-        "background": "{{primitives.variant.primary.defaultState.defaultVariant.bg}}",
-        "border": Object {
-          "radius": "{{primitives.radius.full}}",
+        "contrast": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.contrast.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
         },
-        "color": "{{primitives.variant.primary.defaultState.defaultVariant.contrast}}",
-        "defaultVariant": Object {
-          "fontSize": "{{primitives.font.size}}",
+        "danger": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.danger.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+        },
+        "defaultSeverity": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "border": Object {
+            "radius": "{{primitives.radius.full}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "font": Object {
+            "size": "{{primitives.font.size}}",
+            "weight": "{{primitives.font.weight}}",
+          },
           "height": "1.5rem",
           "minWidth": "1.5rem",
+          "padding": "{{primitives.space.sm}}",
         },
-        "font": Object {
-          "size": "{{primitives.font.size}}",
-          "weight": "{{primitives.font.weight}}",
+        "info": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.info.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
         },
-        "padding": "{{primitives.space.sm}}",
-        "sizeVariant": Object {
-          "lg": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.75rem",
-            "minWidth": "1.75rem",
-          },
-          "sm": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.25rem",
-            "minWidth": "1.25rem",
-          },
-          "xl": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "2rem",
-            "minWidth": "2rem",
-          },
+        "primary": Object {
+          "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
         },
+        "secondary": Object {
+          "background": "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+        },
+        "success": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.success.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+        },
+        "warning": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.warning.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+        },
+      },
+      "dot": Object {
+        "size": "0.5rem",
+      },
+      "lg": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.75rem",
+        "minWidth": "1.75rem",
+      },
+      "sm": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.25rem",
+        "minWidth": "1.25rem",
+      },
+      "xl": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "2rem",
+        "minWidth": "2rem",
       },
     },
     "defaultVariant": Object {
@@ -5227,38 +5283,66 @@ Object {
   "secondary": Object {
     "badge": Object {
       "defaultVariant": Object {
-        "background": "{{primitives.variant.primary.defaultState.defaultVariant.bg}}",
-        "border": Object {
-          "radius": "{{primitives.radius.full}}",
+        "contrast": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.contrast.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.contrast.contrast}}",
         },
-        "color": "{{primitives.variant.primary.defaultState.defaultVariant.contrast}}",
-        "defaultVariant": Object {
-          "fontSize": "{{primitives.font.size}}",
+        "danger": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.danger.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.danger.contrast}}",
+        },
+        "defaultSeverity": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "border": Object {
+            "radius": "{{primitives.radius.full}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "font": Object {
+            "size": "{{primitives.font.size}}",
+            "weight": "{{primitives.font.weight}}",
+          },
           "height": "1.5rem",
           "minWidth": "1.5rem",
+          "padding": "{{primitives.space.sm}}",
         },
-        "font": Object {
-          "size": "{{primitives.font.size}}",
-          "weight": "{{primitives.font.weight}}",
+        "info": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.info.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.info.contrast}}",
         },
-        "padding": "{{primitives.space.sm}}",
-        "sizeVariant": Object {
-          "lg": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.75rem",
-            "minWidth": "1.75rem",
-          },
-          "sm": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "1.25rem",
-            "minWidth": "1.25rem",
-          },
-          "xl": Object {
-            "fontSize": "{{primitives.font.size}}",
-            "height": "2rem",
-            "minWidth": "2rem",
-          },
+        "primary": Object {
+          "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
         },
+        "secondary": Object {
+          "background": "{{primitives.variant.secondary.defaultState.defaultSeverity.bg}}",
+          "color": "{{primitives.variant.secondary.defaultState.defaultSeverity.contrast}}",
+        },
+        "success": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.success.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.success.contrast}}",
+        },
+        "warning": Object {
+          "background": "{{primitives.defaultVariant.defaultState.severity.warning.bg}}",
+          "color": "{{primitives.defaultVariant.defaultState.severity.warning.contrast}}",
+        },
+      },
+      "dot": Object {
+        "size": "0.5rem",
+      },
+      "lg": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.75rem",
+        "minWidth": "1.75rem",
+      },
+      "sm": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "1.25rem",
+        "minWidth": "1.25rem",
+      },
+      "xl": Object {
+        "fontSize": "{{primitives.font.size}}",
+        "height": "2rem",
+        "minWidth": "2rem",
       },
     },
     "defaultVariant": Object {
