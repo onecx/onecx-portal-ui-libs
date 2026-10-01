@@ -13,6 +13,10 @@ OneCX Portal UI Libs is using https://semantic-release.gitbook.io/semantic-relea
 - **main** - contains source code for `latest` distribution tag.
 - **develop** - contains source code for `rc` distribution tag with features for future release of OneCX.
 
+## CI and Sonar configuration maintenance
+
+When a Sonar or CI workflow configuration change is merged into `main`, assess and backport it to every supported maintenance branch (`v5`, `v6`, `v7`, and `v8`). Each backport must include matching workflow and default Sonar property changes, or explicitly document why the branch intentionally differs. Verify the corresponding SonarCloud project branch settings separately.
+
 # Releasing libs
 
 The `main` branch contains the source code for the `latest` distribution tag of OneCX libraries. In order to release new version of libs, use `create-release` action to run the release workflow for **main branch**.
