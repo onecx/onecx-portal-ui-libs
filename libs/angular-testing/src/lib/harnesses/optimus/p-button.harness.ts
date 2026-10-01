@@ -2,9 +2,9 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 import { SpanHarness } from '../span.harness'
 
 /**
- * Matches a PrimeIcons class pair in one class attribute string, e.g. `pi pi-check`.
+ * Matches an Optimus UI (OpenngIcons) class pair in one class attribute string, e.g. `pi pi-check`.
  *
- * - `\bpi\s+`: the base PrimeIcons class.
+ * - `\bpi\s+`: the base icon class.
  * - `pi-[a-z0-9-]+\b`: the specific icon class.
  */
 const ICON_CLASS_PATTERN = /\bpi\s+pi-[a-z0-9-]+\b/i

@@ -104,7 +104,7 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Disabled',
     disabled: true,
-    icon: PrimeIcons.BRIEFCASE,
+    icon: OpenngIcons.BRIEFCASE,
     show: 'asOverflow',
     disabledTooltip: 'Tooltip for Disabled Button',
   },
@@ -114,7 +114,7 @@ const demoActions: Action[] = [
       console.log(`you clicked 'Other Action'`)
     },
     show: 'asOverflow',
-    icon: PrimeIcons.ELLIPSIS_V,
+    icon: OpenngIcons.ELLIPSIS_V,
     title: 'Tooltip for Other action',
   },
   {
