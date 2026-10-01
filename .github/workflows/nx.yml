@@ -11,7 +11,7 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - run: npm ci
     - uses: timonmasberg/nx-migration-gh-action@v1.1.13
       with:
