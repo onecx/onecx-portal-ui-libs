@@ -1,0 +1,367 @@
+:idprefix:
+:idseparator: -
+
+:contribution_testing:      xref:documentation:onecx-portal-ui-libs:contribution-testing/index.adoc[Contribution & Testing]
+:local_only_testing:        xref:documentation:onecx-portal-ui-libs:contribution-testing/local-only.adoc[Local-only testing]
+:application_only_testing:  xref:documentation:onecx-portal-ui-libs:contribution-testing/application-only.adoc[Application-only testing]
+
+[#integration-testing]
+= Integration Testing
+
+If a library change has to be exercised inside the OneCX Shell together with local applications, build the libraries locally and copy them into the `node_modules` folders of the targets that need to see the change. Pick one route and follow it end to end:
+
+* Route 1 — shell-wide verification: copy the built libraries to the shell root, the relevant preloader(s), and every app you will run.
+* Route 2 — single-app verification: copy the built libraries only to the one app you will run.
+
+Use route 1 when the OneCX Shell and/or its relevant preloader(s) must be included in the test run — this applies whether you will exercise the change in a single application or in multiple applications. Use route 2 when the library change can be validated inside a single application and does not require any shell or preloader changes. Do not mix the routes in one run.
+
+[#prerequisites]
+== Prerequisites
+
+Before proceeding, make sure you have read the following documentation:
+
+* xref:documentation:onecx-local-env:index.adoc[OneCX Local Environment]
+
+These resources provide essential background on setting up a local OneCX environment and running custom applications.
+*This guide assumes you already know how to start OneCX locally and how to replace application images with local versions.*
+
+[#preparing-the-library-checkout]
+== Preparing the library checkout
+
+To begin making changes and contributing to the libraries:
+
+. Fork the repository: https://github.com/onecx/onecx-portal-ui-libs
++
+**Important:** Do **not** just copy the `main` branch.
+You may need to work on other branches to apply changes to other library release lines.
+
+. Clone your fork to your local machine. The command below assumes that you named your fork `onecx-portal-ui-libs`:
++
+[source, bash]
+----
+git clone https://github.com/<YOUR_USER_NAME>/onecx-portal-ui-libs
+----
+
+. Navigate to the cloned repository directory and install dependencies:
++
+[source, bash]
+----
+cd onecx-portal-ui-libs && npm i
+----
+
+. Open the project in your preferred code editor (e.g., VS Code) and start making your changes.
+
+[NOTE]
+.Checkpoint
+====
+At this point you should have...
+
+* a fork of the `onecx-portal-ui-libs` repository in your GitHub account.
+* a local clone of said fork on your machine.
+* installed all dependencies using `npm i`.
+* made some changes to the codebase.
+====
+
+[#testing-the-changes-locally]
+== Testing the changes locally
+
+Choose the route that matches your scenario and follow only that path.
+
+[#route-1-shell-wide-verification]
+=== Route 1: shell-wide verification
+
+Use this route for a library change that must be verified across the shell and one or more local applications.
+
+[#route-1-identify-relative-paths]
+==== 1. Identify the relative paths
+
+Before copying the built libraries, decide which application(s) you want to test the change in. Then determine the relative paths from the root of `onecx-portal-ui-libs` to the shell root, the relevant preloader(s), and the app(s) you will run. The relative paths will be used later and might look something like this:
+
+* For the shell root, e.g.:
++
+[source]
+----
+../onecx-shell-ui
+----
+
+* For the preloader(s) that load the changed libraries, e.g.:
++
+[source]
+----
+../onecx-shell-ui/pre_loaders/angular-19
+----
+
+* For the app(s), e.g.:
++
+[source]
+----
+../../apps/my-cool-app
+----
+
+[#route-1-create-copy-build-to-file]
+==== 2. Create the `.copy-build-to` file
+
+Create an empty file named `.copy-build-to` in the root of *onecx-portal-ui-libs*. This file will contain the paths to the `node_modules` folders that the build output should be copied to.
+
+The file can contain multiple paths, one per line. Each path must be relative to the root of *onecx-portal-ui-libs* and must point to the `@onecx` folder inside the `node_modules` folder of the target project. For route 1, keep only the shell, the relevant preloader(s), and the apps you selected.
+
+[#route-1-add-paths-to-copy-build-to]
+==== 3. Add paths to `.copy-build-to`
+
+Use the relative paths from step 1 and follow these patterns.
+
+**For the shell root**
+
+Append `/node_modules/@onecx` to the shell path.
+
+Example:
+[source]
+----
+../onecx-shell-ui/node_modules/@onecx
+----
+
+**For the preloader(s)**
+
+Add one line for each preloader that loads the libraries you changed or that the application(s) you are testing depend on. The shell also loads the libraries through its preloaders. There is one preloader for each supported framework and major version: each preloader is a separate sub-project that bundles the `@onecx/*` libraries for that combination and pins the `@onecx/*` version range it was built against. The current preloaders are listed in the following table:
+
+|===
+| Preloader | Framework & version
+
+| `pre_loaders/angular-18`
+| Angular 18
+
+| `pre_loaders/angular-19`
+| Angular 19
+
+| `pre_loaders/angular-20`
+| Angular 20
+
+| `pre_loaders/angular-21`
+| Angular 21
+
+| `pre_loaders/react-19`
+| React 19
+|===
+
+Append `/node_modules/@onecx` to the preloader path of every preloader that loads the libraries you changed or that the application(s) you are testing depend on. For example, if you are testing an Angular 19 application:
++
+[source]
+----
+../onecx-shell-ui/pre_loaders/angular-19/node_modules/@onecx
+----
+
+**For the app(s)**
+
+Append `/node_modules/@onecx` to each app path.
+
+Example:
+[source]
+----
+../../apps/my-cool-app/node_modules/@onecx
+----
+
+**Note:** Do **not** add a trailing `/` to any of the paths.
+
+[NOTE]
+.Checkpoint
+====
+At this point, your `.copy-build-to` file should contain only the route 1 targets you selected: the shell root, the relevant preloader(s), and the app(s) you will run. Each path should be on a new line and point to the `@onecx` folder inside the `node_modules` folder of the target project.
+
+The file might look something like this:
+
+[source]
+----
+../onecx-shell-ui/node_modules/@onecx
+../onecx-shell-ui/pre_loaders/angular-19/node_modules/@onecx
+../../apps/my-cool-app/node_modules/@onecx
+----
+====
+
+[#route-1-build-and-copy-the-libraries]
+==== 4. Build and copy the libraries
+
+Once you have correctly set up the `.copy-build-to` file, you are ready to build and copy the libraries to the specified paths.
+
+Before building, remove potentially outdated cached builds by running:
+
+[source, bash]
+----
+rm -rf dist .nx/cache
+----
+
+Afterwards, build and copy the libraries by running:
+
+[source, bash]
+----
+npm run build-copy
+----
+
+[NOTE]
+.Checkpoint
+====
+At this point, you should see terminal output indicating that the libraries have been built and copied to the route 1 targets. If you encounter any errors, refer to the error messages and ensure that the paths in the `.copy-build-to` file are correct.
+====
+
+[#route-1-prepare-the-shell-and-apps-for-local-testing]
+==== 5. Prepare the shell and apps for local testing
+
+Before running the shell and app(s) with the locally built libraries, you need to make some adjustments to ensure the local versions are used correctly:
+
+. Open the `package.json` files of the shell root, each preloader, and each app that the libraries were copied to.
+. Increase the version numbers of the affected `@onecx/*` packages so the local builds are picked up. Use the same deliberately high temporary version in every participating project. For example, set the affected dependencies to `999.0.0`:
++
+[source, json]
+----
+"@onecx/angular-integration-interface": "999.0.0"
+----
++
+If several `@onecx/*` packages were overwritten, set each affected package in the shell, the preloader(s), and the app(s) to the same temporary version.
+. **Do not** run `npm install` after changing the version numbers.
+. Before running the app(s), delete any build caches to ensure a clean build environment.
++
+[source, bash]
+----
+rm -rf dist .nx/cache .angular
+----
+. Before running the shell, delete the build caches of each preloader you updated and of the shell root itself to ensure a clean build environment.
++
+For example, to clear the `angular-19` preloader and the shell root:
++
+[source, bash]
+----
+rm -rf pre_loaders/angular-19/dist pre_loaders/angular-19/.nx/cache dist .nx/cache
+----
++
+If you updated several preloaders, clear the `dist` and `.nx/cache` of each of them in the same way.
++
+[NOTE]
+.Checkpoint
+====
+At this point, you should have updated the version numbers in the `package.json` files of the shell, the preloader(s), and the app(s) where the libraries were copied to. Every participating project should use the same temporary version, such as `999.0.0`. Additionally, you should have deleted any build caches to ensure a clean build environment.
+====
+
+[#route-1-run-onecx-shell-and-apps]
+==== 6. Run OneCX Shell and the app(s)
+
+After completing the previous steps, you are now ready to run OneCX Shell and the app(s) with your local library changes.
+
+To do so, follow the documentation on xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.adoc[running custom applications locally].
+
+TIP: The steps for running the shell should match the steps for running existing OneCX core apps.
+
+[#route-2-single-app-verification]
+=== Route 2: single-app verification
+
+Use this route for a library change that only needs one application to confirm the integration path.
+
+[#route-2-identify-relative-path]
+==== 1. Identify the relative path
+
+Before copying the built libraries, decide which single application you want to test the change in. Then determine the relative path from the root of `onecx-portal-ui-libs` to that app. The relative path will be used later and might look something like this:
+
+* For the app, e.g.:
++
+[source]
+----
+../../apps/my-cool-app
+----
+
+[#route-2-create-copy-build-to-file]
+==== 2. Create the `.copy-build-to` file
+
+Create an empty file named `.copy-build-to` in the root of *onecx-portal-ui-libs*. This file will contain the path to the `node_modules` folder that the build output should be copied to.
+
+The file can contain one path on a single line. The path must be relative to the root of *onecx-portal-ui-libs* and must point to the `@onecx` folder inside the `node_modules` folder of the target app. For route 2, do not add the shell or any preloader paths.
+
+[#route-2-add-path-to-copy-build-to]
+==== 3. Add the path to `.copy-build-to`
+
+Append `/node_modules/@onecx` to the app path.
+
+Example:
+[source]
+----
+../../apps/my-cool-app/node_modules/@onecx
+----
+
+**Note:** Do **not** add a trailing `/`.
+
+[NOTE]
+.Checkpoint
+====
+At this point, your `.copy-build-to` file should contain only the route 2 target you selected: the single app you will run. The file should contain one path on its own line, pointing to the `@onecx` folder inside the `node_modules` folder of that app.
+
+The file might look something like this:
+
+[source]
+----
+../../apps/my-cool-app/node_modules/@onecx
+----
+====
+
+[#route-2-build-and-copy-the-libraries]
+==== 4. Build and copy the libraries
+
+Once you have correctly set up the `.copy-build-to` file, you are ready to build and copy the libraries to the specified path.
+
+Before building, remove potentially outdated cached builds by running:
+
+[source, bash]
+----
+rm -rf dist .nx/cache
+----
+
+Afterwards, build and copy the libraries by running:
+
+[source, bash]
+----
+npm run build-copy
+----
+
+[NOTE]
+.Checkpoint
+====
+At this point, you should see terminal output indicating that the libraries have been built and copied to the route 2 target. If you encounter any errors, refer to the error messages and ensure that the path in the `.copy-build-to` file is correct.
+====
+
+[#route-2-prepare-the-app-for-local-testing]
+==== 5. Prepare the app for local testing
+
+Before running the app with the locally built libraries, you need to make some adjustments to ensure the local versions are used correctly:
+
+. Open the `package.json` file of the app that the libraries were copied to.
+. Increase the version numbers of the affected `@onecx/*` packages so the local builds are picked up. Use the same deliberately high temporary version in the app as the other affected projects. For example, set the affected dependencies to `999.0.0`:
++
+[source, json]
+----
+"@onecx/angular-integration-interface": "999.0.0"
+----
++
+If several `@onecx/*` packages were overwritten, set each affected package in the app to the same temporary version.
+. **Do not** run `npm install` after changing the version numbers.
+. Delete the app build caches to ensure a clean build environment.
++
+[source, bash]
+----
+rm -rf dist .nx/cache .angular
+----
++
+[NOTE]
+.Checkpoint
+====
+At this point, you should have updated the version numbers in the `package.json` file of the app where the libraries were copied to. The app should use the same temporary version, such as `999.0.0`, for every affected `@onecx/*` package. Additionally, you should have deleted the app build caches to ensure a clean build environment.
+====
+
+[#route-2-run-the-app]
+==== 6. Run the app
+
+After completing the previous steps, you are now ready to run the app with your local library changes.
+
+To do so, follow the documentation on xref:documentation:onecx-docs-start:first-app/running_custom_apps_overview.adoc[running custom applications locally].
+
+[#related]
+== Related
+
+* {contribution_testing} — the overview and the other verification tiers.
+* {local_only_testing} — verifying a change with the library's own unit tests and Storybook.
+* {application_only_testing} — testing a change confined to a single OneCX application.
