@@ -22,6 +22,7 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
     id: overrides.id ?? 'id',
     nameKey: overrides.nameKey ?? 'nameKey',
     columnType: overrides.columnType ?? ColumnType.STRING,
+    filterable: overrides.filterable ?? true,
     predefinedGroupKeys: overrides.predefinedGroupKeys,
   }) as DataTableColumn
 
@@ -179,6 +180,35 @@ describe('FilterViewComponent (class logic)', () => {
     expect((componentOrMessage as any).inputs.preselectColumnId).toBe('c2')
     expect(primary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON')
     expect(secondary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON')
+  })
+
+  it('should only pass filterable columns to the add filter dialog', async () => {
+    stateService.availableColumns.set([
+      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    component.onAddFilter()
+    await Promise.resolve()
+
+    const openDialogSpy = portalDialogService.openDialog as jest.Mock
+    expect(openDialogSpy).toHaveBeenCalledTimes(1)
+    const [, componentOrMessage] = openDialogSpy.mock.calls[0]
+    expect((componentOrMessage as any).inputs.columns.map((column: DataTableColumn) => column.id)).toEqual(['c2'])
+  })
+
+  it('should not open the add filter dialog when no column is filterable', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c1', nameKey: 'C1', filterable: false })])
+    stateService.data.set([{ c1: 'v' }] as any)
+    stateService.filters.set([])
+
+    component.onAddFilter()
+    await Promise.resolve()
+
+    const openDialogSpy = portalDialogService.openDialog as jest.Mock
+    expect(openDialogSpy).not.toHaveBeenCalled()
   })
 
   it('should replace the EQUALS filters of the added column on applyFilters', () => {

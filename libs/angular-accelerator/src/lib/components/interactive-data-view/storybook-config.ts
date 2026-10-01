@@ -159,6 +159,9 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
 
 export const defaultInteractiveDataViewArgs = {
   columns: [
+    // product / available / date are filterable, amount is not - the same single
+    // source of truth for the Table column header filters and the "Add Filter"
+    // dialog in the List / Grid views (see data-table-column.model.ts).
     {
       id: 'product',
       columnType: ColumnType.STRING,
@@ -172,6 +175,7 @@ export const defaultInteractiveDataViewArgs = {
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
+      filterable: false,
       predefinedGroupKeys: ['test', 'test1', 'all'],
     },
     {
