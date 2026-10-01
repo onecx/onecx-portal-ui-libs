@@ -125,6 +125,17 @@ const defaultComponentArgs = {
   viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
 
+const rowGroupingArgs = {
+  rowGrouping: { columnId: 'product' },
+  rows: [
+    { id: 1, product: 'Apples', amount: 2, available: true, expiration: new Date(2021, 5, 4) },
+    { id: 2, product: 'Apples', amount: 4, available: false, expiration: new Date(2021, 6, 4) },
+    { id: 3, product: 'Bananas', amount: 10, available: true, expiration: new Date(2021, 7, 4) },
+    { id: 4, product: 'Bananas', amount: 7, available: true, expiration: new Date(2021, 8, 4) },
+    { id: 5, product: 'Strawberries', amount: 5, available: false, expiration: new Date(2021, 9, 4) },
+  ],
+}
+
 const dataTableSelectionArgs = {
   selectionChanged: {
     observed: () => true,
@@ -732,6 +743,36 @@ export const WithCaptionTemplate = {
   render: CaptionTemplateStory,
   args: {
     ...defaultComponentArgs,
+  },
+}
+
+const RowGroupingStory: StoryFn<DataTableComponent> = (args) => ({
+  props: {
+    ...args,
+  },
+  template: `
+    <ocx-data-table
+      [columns]="columns"
+      [rows]="rows"
+      [rowGrouping]="rowGrouping"
+      [paginator]="paginator"
+      [emptyResultsMessage]="emptyResultsMessage"
+    >
+      <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount">
+        <div class="flex justify-content-between align-items-center w-full">
+          <span class="font-bold">{{ groupKey }}</span>
+          <span class="text-sm text-gray-500">{{ memberCount }} {{ memberCount === 1 ? 'item' : 'items' }}</span>
+        </div>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+
+export const WithRowGrouping = {
+  render: RowGroupingStory,
+  args: {
+    ...defaultComponentArgs,
+    ...rowGroupingArgs,
   },
 }
 

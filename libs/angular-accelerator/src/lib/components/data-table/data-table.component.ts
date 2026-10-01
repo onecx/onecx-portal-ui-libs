@@ -42,11 +42,17 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { toObservable, toSignal } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
+import { planRowGroups, RowGroupPlan } from '../../utils/row-grouping-planner'
+import type { RowGroup } from '../../utils/row-grouping-planner'
+import type {
+  DataTableGroupCellContext,
+  DataTableRowGroupingConfig,
+} from '../../model/data-table-row-grouping.model'
 
 export type Primitive = number | string | boolean | bigint | Date
 export type Row = {
@@ -221,6 +227,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return this.cellTemplate() || this.cellChildTemplate()
   })
 
+  groupCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  groupCellChildTemplate = contentChild<TemplateRef<any>>('groupCell')
+  groupCell = computed(() => {
+    return this.groupCellTemplate() || this.groupCellChildTemplate()
+  })
+
   translationKeyCellTemplate = input<TemplateRef<any> | undefined>(undefined)
   translationKeyCellChildTemplate = contentChild<TemplateRef<any>>('translationKeyCell')
   translationKeyCell = computed(() => {
@@ -344,6 +356,29 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })),
     map(({ rows }) => this.flattenItems(rows))
   )
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  private readonly displayedRowsSignal = toSignal(this.displayedRows$, {
+    initialValue: [] as Array<Row>,
+  })
+
+  groupingColumn = computed(() => {
+    const config = this.rowGrouping()
+    if (!config) {
+      return undefined
+    }
+    return this.stateService.columns().find((c) => c.id === config.columnId)
+  })
+
+  rowGroupPlan = computed<RowGroupPlan | null>(() => {
+    const config = this.rowGrouping()
+    if (!config) {
+      return null
+    }
+    const keyPath = config.groupKeyPath ?? config.columnId
+    return planRowGroups(this.displayedRowsSignal() as Row[], keyPath)
+  })
 
   selectedFilteredRows = computed(() => {
     const selectionIds = this.selectedIds()
@@ -562,6 +597,38 @@ export class DataTableComponent extends DataSortBase implements OnInit {
       (this.expandable() && hasExpansionTemplate ? 1 : 0) +
       (this.actionColumnVisible ? 1 : 0)
     )
+  }
+
+  getGroupColspan(): number {
+    return this.getRowColspan(!!this.expansionTemplate())
+  }
+
+  isRowGroupStart(row: Row): boolean {
+    const plan = this.rowGroupPlan()
+    return !!plan && plan.groupStartIds.has(row.id)
+  }
+
+  getGroupForRow(row: Row): RowGroup | undefined {
+    const plan = this.rowGroupPlan()
+    if (!plan) {
+      return undefined
+    }
+    return plan.groups.find((g) => g.firstRowId === row.id)
+  }
+
+  getGroupContext(row: Row): DataTableGroupCellContext | undefined {
+    const group = this.getGroupForRow(row)
+    const column = this.groupingColumn()
+    if (!group || !column) {
+      return undefined
+    }
+    return {
+      groupKey: group.key,
+      label: group.label,
+      memberCount: group.memberCount,
+      rowObject: group.firstRow,
+      column,
+    }
   }
 
   get selectionChangedObserved(): boolean {
