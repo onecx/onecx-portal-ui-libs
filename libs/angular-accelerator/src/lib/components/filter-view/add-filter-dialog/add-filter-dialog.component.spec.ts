@@ -17,6 +17,7 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
     id: 'id',
     nameKey: 'nameKey',
     columnType: ColumnType.STRING,
+    filterable: true,
     ...overrides,
   }) as DataTableColumn
 
@@ -61,6 +62,37 @@ describe('AddFilterDialogComponent (class logic)', () => {
     const options = component.valueOptions() ?? []
     expect(options.map((o) => o.value)).toEqual(['a', 'b'])
     expect(options.map((o) => o.label)).toEqual(['a', 'b'])
+  })
+
+  it('should only offer filterable columns and select the first filterable one', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+      makeColumn({ id: 'c3', nameKey: 'C3' }),
+    ])
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c2: 'x' }, { c3: 'y' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // The first filterable column is selected, not the first overall column.
+    expect(component.selectedColumnId()).toBe('c2')
+    expect(component.column()?.id).toBe('c2')
+    // Only the filterable columns are offered in the column select.
+    expect(component.columnOptions().map((o) => o.value)).toEqual(['c2', 'c3'])
+  })
+
+  it('should not select a non-filterable preselected column', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    fixture.componentRef.setInput('preselectColumnId', 'c1')
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c2: 'x' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.selectedColumnId()).toBe('c2')
+    expect(component.columnOptions().map((o) => o.value)).toEqual(['c2'])
   })
 
   it('should respect preselectColumnId', async () => {

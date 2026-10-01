@@ -44,6 +44,8 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
     <ng-template #topCenter>
       <input pInputText placeholder="Custom input injected via template" class="border-round w-18rem p-2" />
     </ng-template>
+    <!-- Suppress the default "No filters selected" text next to the Add Filter chip. -->
+    <ng-template pTemplate="filterViewNoSelection"></ng-template>
     </ocx-interactive-data-view>`,
 })
 

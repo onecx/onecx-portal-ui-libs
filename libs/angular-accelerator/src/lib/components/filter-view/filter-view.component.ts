@@ -270,7 +270,19 @@ export class FilterViewComponent {
     this.stateService.filters.set(filters)
   }
 
+  /**
+   * Opens the "Add Filter" dialog. Only columns whose {@link DataTableColumn.filterable}
+   * flag is set are offered to the dialog - the same single source of truth the
+   * Table mode uses for its column header filters - so a column can be filtered
+   * here (List / Grid views) if and only if it is also filterable in the Table
+   * view. If no column is filterable the dialog is not opened at all.
+   */
   onAddFilter(columnId?: string) {
+    const columns = this.stateService.availableColumns().filter((column) => column.filterable)
+    if (columns.length === 0) {
+      return
+    }
+
     // The PortalDialogService translates the title itself but treats closeAriaLabel as a
     // plain string, so resolve the translated label before opening the dialog.
     void firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')).then(
@@ -281,7 +293,7 @@ export class FilterViewComponent {
             {
               type: AddFilterDialogComponent,
               inputs: {
-                columns: this.stateService.availableColumns(),
+                columns,
                 data: this.stateService.data(),
                 existingFilters: this.stateService.filters(),
                 preselectColumnId: columnId,
@@ -291,6 +303,8 @@ export class FilterViewComponent {
             'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
             {
               closeAriaLabel,
+              // Keep the dialog readable with long column names and value labels.
+              width: '350px',
             }
           )
           .subscribe((state) => {

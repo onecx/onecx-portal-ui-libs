@@ -18,6 +18,10 @@ import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/por
  * {@link PortalDialogService} (see {@link filter-view.component.ts}).
  *
  * It lets the user pick one column and one or more of the values for that column.
+ * Only columns whose {@link DataTableColumn.filterable} flag is set are offered -
+ * the same single source of truth the Table mode uses for its column header
+ * filters - so a column can be filtered via this dialog (List / Grid views)
+ * if and only if it is also filterable in the Table view.
  * The produced {@link Filter}s are exposed
  * via the {@link DialogResult} interface and are returned to the caller by the
  * PortalDialogService on confirm. Appending/replacing those filters on the
@@ -126,22 +130,33 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
   readonly selectedValues = signal<unknown[]>([])
   readonly valueOptions = signal<SelectItem[] | undefined>(undefined)
 
+  /**
+   * The columns offered in the column select. Only columns that are marked
+   * `filterable` are offered - the same single source of truth the Table mode
+   * uses for its column header filters - so a column can be filtered in the
+   * Table view and via this dialog (List / Grid views) if and only if
+   * `filterable: true`.
+   */
   readonly columnOptions = computed<SelectItem[]>(() =>
-    this.columns().map((column) => ({ label: column.nameKey, value: column.id, toFilterBy: column.nameKey }))
+    this.columns()
+      .filter((column) => column.filterable)
+      .map((column) => ({ label: column.nameKey, value: column.id, toFilterBy: column.nameKey }))
   )
   readonly column = computed<DataTableColumn | null>(() => this.getColumnById(this.selectedColumnId()))
 
   constructor() {
     // Select a column once columns become available: the preselected one if it
-    // exists, otherwise the first available column.
+    // exists, otherwise the first filterable column. A preselected column that
+    // is not filterable is skipped (it is not offered in the column select).
     effect(() => {
-      const cols = this.columns()
-      if (cols.length === 0 || this.columnInitialized()) {
+      const filterableColumns = this.columns().filter((column) => column.filterable)
+      if (filterableColumns.length === 0 || this.columnInitialized()) {
         return
       }
       this.columnInitialized.set(true)
       const preselect = this.preselectColumnId()
-      const initialId = preselect && cols.some((c) => c.id === preselect) ? preselect : cols[0].id
+      const initialId =
+        preselect && filterableColumns.some((c) => c.id === preselect) ? preselect : filterableColumns[0].id
       this.selectedColumnId.set(initialId)
     })
 
