@@ -16,7 +16,7 @@ import { diagram, diagramShape } from './schema/diagram'
 import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
 import { fieldset, fieldsetShape } from './schema/fieldset'
 import { dropdown, dropdownShape } from './schema/dropdown'
-import { textarea } from './schema/textarea'
+import { textarea, textareaShape } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton } from './schema/togglebutton'
@@ -59,7 +59,7 @@ type UsagesInput = {
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
   toggleswitch?: z.input<typeof toggleswitch>
-  textarea?: z.input<typeof textarea>
+  textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
