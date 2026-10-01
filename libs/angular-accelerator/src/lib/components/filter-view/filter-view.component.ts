@@ -27,6 +27,8 @@ import { Button } from 'primeng/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
+import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
+import { PortalDialogService } from '../../services/portal-dialog.service'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -102,6 +104,8 @@ export class FilterViewComponent {
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
+
+  private readonly portalDialogService = inject(PortalDialogService)
 
   readonly filterViewNoSelection = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
@@ -264,6 +268,81 @@ export class FilterViewComponent {
   onFilterDelete(row: Row) {
     const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
+  }
+
+  /**
+   * Opens the "Add Filter" dialog. Only columns whose {@link DataTableColumn.filterable}
+   * flag is set are offered to the dialog - the same single source of truth the
+   * Table mode uses for its column header filters - so a column can be filtered
+   * here (List / Grid views) if and only if it is also filterable in the Table
+   * view. If no column is filterable the dialog is not opened at all.
+   */
+  onAddFilter(columnId?: string) {
+    const columns = this.stateService.availableColumns().filter((column) => column.filterable)
+    if (columns.length === 0) {
+      return
+    }
+
+    // The PortalDialogService translates the title itself but treats closeAriaLabel as a
+    // plain string, so resolve the translated label before opening the dialog.
+    void firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')).then(
+      (closeAriaLabel) => {
+        this.portalDialogService
+          .openDialog<Filter[]>(
+            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE',
+            {
+              type: AddFilterDialogComponent,
+              inputs: {
+                columns,
+                data: this.stateService.data(),
+                existingFilters: this.stateService.filters(),
+                preselectColumnId: columnId,
+              },
+            },
+            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON',
+            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
+            {
+              closeAriaLabel,
+              // Keep the dialog readable with long column names and value labels.
+              width: '350px',
+            }
+          )
+          .subscribe((state) => {
+            if (state?.result) {
+              this.applyFilters(state.result)
+            }
+          })
+      }
+    )
+  }
+
+  /**
+   * Applies the filters produced by the Add Filter dialog. The dialog always
+   * emits filters for a single column, so the existing filters of that column
+   * whose type matches the newly produced ones are replaced - the same behaviour
+   * as the column header filter in the Table mode. Filters of a different type
+   * on the same column (e.g. an IS_NOT_EMPTY filter when EQUALS filters are
+   * applied) are kept.
+   */
+  applyFilters(newFilters: Filter[]) {
+    const currentFilters = this.stateService.filters()
+
+    // The filter types the dialog just produced, per column.
+    const newTypesByColumn = new Map<string, Set<FilterType>>()
+    for (const f of newFilters) {
+      const type = f.filterType ?? FilterType.EQUALS
+      const types = newTypesByColumn.get(f.columnId) ?? new Set<FilterType>()
+      types.add(type)
+      newTypesByColumn.set(f.columnId, types)
+    }
+
+    this.stateService.filters.set([
+      ...currentFilters.filter((f) => {
+        const types = newTypesByColumn.get(f.columnId)
+        return !types || !types.has(f.filterType ?? FilterType.EQUALS)
+      }),
+      ...newFilters,
+    ])
   }
 
   focusTrigger() {

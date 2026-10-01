@@ -4,10 +4,13 @@ import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
+import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { ColumnType } from '../../model/column-type.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { PortalDialogService } from '../../services/portal-dialog.service'
 import type { Filter } from '../../model/filter.model'
+import { FilterType } from '../../model/filter.model'
 import { of, take } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
 import { PopoverModule } from 'primeng/popover'
@@ -19,6 +22,7 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
     id: overrides.id ?? 'id',
     nameKey: overrides.nameKey ?? 'nameKey',
     columnType: overrides.columnType ?? ColumnType.STRING,
+    filterable: overrides.filterable ?? true,
     predefinedGroupKeys: overrides.predefinedGroupKeys,
   }) as DataTableColumn
 
@@ -26,6 +30,7 @@ describe('FilterViewComponent (class logic)', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let component: FilterViewComponent
   let stateService: DataViewStateService
+  let portalDialogService: jest.Mocked<PortalDialogService>
   const panelMock = {
     toggle: jest.fn(),
   } as any
@@ -34,8 +39,17 @@ describe('FilterViewComponent (class logic)', () => {
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
       imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
-      providers: [provideTranslateTestingService({}), DataViewStateService],
+      providers: [
+        provideTranslateTestingService({}),
+        DataViewStateService,
+        {
+          provide: PortalDialogService,
+          useValue: { openDialog: jest.fn().mockReturnValue(of(null)) },
+        },
+      ],
     }).compileComponents()
+
+    portalDialogService = TestBed.inject(PortalDialogService) as jest.Mocked<PortalDialogService>
 
     fixture = TestBed.createComponent(FilterViewComponent)
     component = fixture.componentInstance
@@ -147,6 +161,91 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
+  })
+
+  it('should open the add filter dialog via PortalDialogService in onAddFilter', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    component.onAddFilter('c2')
+    // onAddFilter resolves the closeAriaLabel translation before opening, so let the microtask settle.
+    await Promise.resolve()
+
+    const openDialogSpy = portalDialogService.openDialog as jest.Mock
+    expect(openDialogSpy).toHaveBeenCalledTimes(1)
+    const [title, componentOrMessage, primary, secondary] = openDialogSpy.mock.calls[0]
+    expect(title).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE')
+    expect((componentOrMessage as any).type).toBe(AddFilterDialogComponent)
+    expect((componentOrMessage as any).inputs.preselectColumnId).toBe('c2')
+    expect(primary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON')
+    expect(secondary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON')
+  })
+
+  it('should only pass filterable columns to the add filter dialog', async () => {
+    stateService.availableColumns.set([
+      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    component.onAddFilter()
+    await Promise.resolve()
+
+    const openDialogSpy = portalDialogService.openDialog as jest.Mock
+    expect(openDialogSpy).toHaveBeenCalledTimes(1)
+    const [, componentOrMessage] = openDialogSpy.mock.calls[0]
+    expect((componentOrMessage as any).inputs.columns.map((column: DataTableColumn) => column.id)).toEqual(['c2'])
+  })
+
+  it('should not open the add filter dialog when no column is filterable', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c1', nameKey: 'C1', filterable: false })])
+    stateService.data.set([{ c1: 'v' }] as any)
+    stateService.filters.set([])
+
+    component.onAddFilter()
+    await Promise.resolve()
+
+    const openDialogSpy = portalDialogService.openDialog as jest.Mock
+    expect(openDialogSpy).not.toHaveBeenCalled()
+  })
+
+  it('should replace the EQUALS filters of the added column on applyFilters', () => {
+    stateService.filters.set([
+      { columnId: 'c1', value: 'old', filterType: FilterType.EQUALS } as Filter,
+      { columnId: 'c1', value: 'keepNotEmpty', filterType: FilterType.IS_NOT_EMPTY } as Filter,
+      { columnId: 'c2', value: 'other' } as Filter,
+    ])
+
+    component.applyFilters([
+      { columnId: 'c1', value: 'a', filterType: FilterType.EQUALS } as Filter,
+      { columnId: 'c1', value: 'b', filterType: FilterType.EQUALS } as Filter,
+    ])
+
+    const result = stateService.filters()
+    const c1Equals = result.filter((f) => f.columnId === 'c1' && f.filterType === FilterType.EQUALS)
+    expect(c1Equals.map((f) => f.value)).toEqual(['a', 'b'])
+    // non-EQUALS filters on the same column are preserved
+    expect(result.some((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)).toBe(true)
+    // other columns are untouched
+    expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
+  })
+
+  it('should replace an existing IS_NOT_EMPTY filter of the added column on applyFilters', () => {
+    stateService.filters.set([
+      { columnId: 'c1', value: true, filterType: FilterType.IS_NOT_EMPTY } as Filter,
+      { columnId: 'c2', value: 'other' } as Filter,
+    ])
+
+    component.applyFilters([{ columnId: 'c1', value: false, filterType: FilterType.IS_NOT_EMPTY } as Filter])
+
+    const result = stateService.filters()
+    // the previous IS_NOT_EMPTY filter of the column is replaced, not duplicated
+    const c1NotEmpty = result.filter((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)
+    expect(c1NotEmpty.map((f) => f.value)).toEqual([false])
+    // other columns are untouched
+    expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
   })
 
   it('should focus trigger when trigger id is ocxFilterViewShowMore', () => {

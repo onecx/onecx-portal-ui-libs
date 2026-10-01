@@ -13,6 +13,19 @@
       tooltipEvent="hover"
       [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
+    <p-chip
+      id="ocxFilterViewAddFilterChip"
+      tabindex="0"
+      role="button"
+      (click)="onAddFilter()"
+      (keydown.enter)="onAddFilter()"
+      (keydown.space)="onAddFilter()"
+      class="cursor-pointer filter-view-focusable ocx-filter-view-add-filter-chip"
+      [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
+    >
+      <span class="p-chip-text flex flex-nowrap align-items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
+      translate }} <i class="pi pi-plus" aria-hidden="true"></i> </span>
+    </p-chip>
     @if (filters.length <= 0) { @if (filterViewNoSelection()) {
     <ng-container [ngTemplateOutlet]="filterViewNoSelection()"> </ng-container>
     } @else {
@@ -89,14 +102,9 @@
       #manageButton
       id="ocxFilterViewManage"
       (onClick)="showPanel($event)"
-      [disabled]="filters.length === 0"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
-      [ocxTooltip]="
-        filters.length === 0
-          ? ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DISABLED_DETAIL' | translate)
-          : ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate)
-      "
+      [ocxTooltip]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate"
       tooltipPosition="top"
       tooltipEvent="hover"
       [badge]="filters.length.toString()"
@@ -110,7 +118,21 @@
       <ng-template pTemplate="content">
         <div pFocusTrap>
           <div class="flex justify-content-between align-items-center mb-2">
-            <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
+            <div class="flex align-items-center gap-3">
+              <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
+              <p-button
+                id="ocxFilterViewAddFilter"
+                (onClick)="onAddFilter()"
+                icon="pi pi-plus"
+                iconPos="left"
+                styleClass="p-button-text p-button-secondary"
+                label="{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' | translate }}"
+                [ocxTooltip]="'OCX_FILTER_VIEW.ADD_FILTER.DETAIL' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+                [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
+              ></p-button>
+            </div>
             <div>
               <p-button
                 pAutoFocus
@@ -184,6 +206,8 @@
   </ng-template>
 </div>
 } }
+
+
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   @if (templates[column.id]; as template) {

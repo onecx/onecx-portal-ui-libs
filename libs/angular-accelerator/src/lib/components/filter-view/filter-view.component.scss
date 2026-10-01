@@ -4,6 +4,10 @@
     box-shadow: none;
     border-radius: var(--chip-border-radius);
 }
+.ocx-filter-view-add-filter-chip {
+    border: 1px dashed var(--primary-color, #3b82f6);
+    border-radius: var(--chip-border-radius, 2rem);
+}
 .sr-only {
     position: absolute;
     width: 1px;
