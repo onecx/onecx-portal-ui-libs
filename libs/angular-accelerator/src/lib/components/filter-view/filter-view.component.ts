@@ -304,16 +304,29 @@ export class FilterViewComponent {
 
   /**
    * Applies the filters produced by the Add Filter dialog. The dialog always
-   * emits filters for a single column, so the previous EQUALS filters of that
-   * column are replaced by the newly selected values - the same behaviour as
-   * the multi-select column header filter in the Table mode.
+   * emits filters for a single column, so the existing filters of that column
+   * whose type matches the newly produced ones are replaced - the same behaviour
+   * as the column header filter in the Table mode. Filters of a different type
+   * on the same column (e.g. an IS_NOT_EMPTY filter when EQUALS filters are
+   * applied) are kept.
    */
   applyFilters(newFilters: Filter[]) {
     const currentFilters = this.stateService.filters()
-    const columnIds = newFilters.map((f) => f.columnId)
+
+    // The filter types the dialog just produced, per column.
+    const newTypesByColumn = new Map<string, Set<FilterType>>()
+    for (const f of newFilters) {
+      const type = f.filterType ?? FilterType.EQUALS
+      const types = newTypesByColumn.get(f.columnId) ?? new Set<FilterType>()
+      types.add(type)
+      newTypesByColumn.set(f.columnId, types)
+    }
 
     this.stateService.filters.set([
-      ...currentFilters.filter((f) => !columnIds.includes(f.columnId) || f.filterType === FilterType.IS_NOT_EMPTY),
+      ...currentFilters.filter((f) => {
+        const types = newTypesByColumn.get(f.columnId)
+        return !types || !types.has(f.filterType ?? FilterType.EQUALS)
+      }),
       ...newFilters,
     ])
   }
