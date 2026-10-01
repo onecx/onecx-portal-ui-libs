@@ -625,6 +625,21 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._tableCell()).toBe(mockPrimeTemplate)
     })
 
+    it('should return Optimus template when defined for columnHeader', () => {
+      const { component } = createComponent(true)
+
+      const mockPrimeTemplate = {} as TemplateRef<any>
+      const primeTemplateWrapper = {
+        getType: () => 'columnHeader',
+        template: mockPrimeTemplate,
+      } as PrimeTemplate
+
+      setInputSignal(component, 'templates', [primeTemplateWrapper])
+
+      expect(component.optimusColumnHeader()).toBe(mockPrimeTemplate)
+      expect(component._columnHeader()).toBe(mockPrimeTemplate)
+    })
+
     it('should prioritize Optimus template over childContent for dateTableCell', () => {
       const { component } = createComponent(true)
 
@@ -799,6 +814,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', mockTemplate)
       setInputSignal(component, 'childStringTableFilterCell', mockTemplate)
       setInputSignal(component, 'childNumberTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childColumnHeader', mockTemplate)
 
       expect(component._tableCell()).toBe(mockTemplate)
       expect(component._dateTableCell()).toBe(mockTemplate)
@@ -823,6 +839,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBe(mockTemplate)
       expect(component._stringTableFilterCell()).toBe(mockTemplate)
       expect(component._numberTableFilterCell()).toBe(mockTemplate)
+      expect(component._columnHeader()).toBe(mockTemplate)
     })
 
     it('should return undefined for all template types when neither Optimus nor child template is defined', () => {
@@ -852,6 +869,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', undefined)
       setInputSignal(component, 'childStringTableFilterCell', undefined)
       setInputSignal(component, 'childNumberTableFilterCell', undefined)
+      setInputSignal(component, 'childColumnHeader', undefined)
 
       expect(component._tableCell()).toBeUndefined()
       expect(component._dateTableCell()).toBeUndefined()
@@ -876,6 +894,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBeUndefined()
       expect(component._stringTableFilterCell()).toBeUndefined()
       expect(component._numberTableFilterCell()).toBeUndefined()
+      expect(component._columnHeader()).toBeUndefined()
     })
   })
 
