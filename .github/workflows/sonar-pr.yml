@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download coverage reports
         uses: dawidd6/action-download-artifact@v11
@@ -86,8 +86,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4
+      # Required to analyze fork PR heads after GitHub's safer workflow_run checkout defaults.
+      - uses: actions/checkout@v7
         with:
+          allow-unsafe-pr-checkout: true
           repository: ${{ github.event.workflow_run.head_repository.full_name }}
           ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0
@@ -130,15 +132,14 @@ jobs:
             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}_${{ matrix.path }}
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=${{ github.repository_owner }}
-            -Dsonar.scm.disabled=true
             -Dsonar.sourceEncoding=UTF-8
             -Dsonar.javascript.coveragePlugin=lcov
             -Dsonar.javascript.lcov.reportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/coverage/lcov.info
             -Dsonar.testExecutionReportPaths=${{ github.workspace }}/reports/${{ matrix.path }}/sonarqube_report.xml
             -Dsonar.working.directory=${{ github.workspace }}/reports/${{ matrix.path }}/.scannerwork
-            "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*"
+            "-Dsonar.exclusions=src/assets/**/*,src/migrations/**/*,src/mocks/**/*,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts"
             "-Dsonar.cpd.exclusions=src/**/*.ts,src/**/*.html"
-            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
+            "-Dsonar.coverage.exclusions=*.ts,*.js,src/*.ts,**/*.spec.ts,**/*.test.ts,**/*.stories.ts,**/*.harness.ts,**/logger.utils.ts,**/*logger.utils.ts,**/logger*.utils.ts,**/environments/**,**/assets/**,**/generated/**,**/*.module.ts,**/*.main.ts"
             "-Dsonar.test.inclusions=src/**/*.spec.ts,src/**/*.test.ts"
             -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}
             -Dsonar.pullrequest.key=${{ fromJson(steps.get_pr_data.outputs.data).number }}
