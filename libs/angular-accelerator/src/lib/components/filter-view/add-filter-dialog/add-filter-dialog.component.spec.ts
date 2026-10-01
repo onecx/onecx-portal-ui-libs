@@ -14,9 +14,10 @@ import { FilterType } from '../../../model/filter.model'
 
 const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
   ({
-    id: overrides.id ?? 'id',
-    nameKey: overrides.nameKey ?? 'nameKey',
-    columnType: overrides.columnType ?? ColumnType.STRING,
+    id: 'id',
+    nameKey: 'nameKey',
+    columnType: ColumnType.STRING,
+    ...overrides,
   }) as DataTableColumn
 
 describe('AddFilterDialogComponent (class logic)', () => {
@@ -190,5 +191,67 @@ describe('AddFilterDialogComponent (class logic)', () => {
 
     expect(enabledStates).toContain(true)
     expect(enabledStates).toContain(false)
+  })
+
+  it('should offer the fixed yes/no options for an IS_NOT_EMPTY column', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'available', nameKey: 'Available', filterType: FilterType.IS_NOT_EMPTY }),
+    ])
+    fixture.componentRef.setInput('data', [
+      { available: true },
+      { available: false },
+      { available: true },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const options = component.valueOptions() ?? []
+    expect(options).toHaveLength(2)
+    expect(options.map((o) => o.value)).toEqual([true, false])
+  })
+
+  it('should pre-select the existing IS_NOT_EMPTY filter for the column', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'available', nameKey: 'Available', filterType: FilterType.IS_NOT_EMPTY }),
+    ])
+    fixture.componentRef.setInput('data', [{ available: true }])
+    fixture.componentRef.setInput('existingFilters', [
+      { columnId: 'available', value: true, filterType: FilterType.IS_NOT_EMPTY },
+      { columnId: 'other', value: 'zzz', filterType: FilterType.EQUALS },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.selectedValues()).toEqual([true])
+  })
+
+  it('should capture IS_NOT_EMPTY filters with a boolean value for the selected column', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'available', nameKey: 'Available', filterType: FilterType.IS_NOT_EMPTY }),
+    ])
+    fixture.componentRef.setInput('data', [{ available: true }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    component.selectedValues.set([false])
+    fixture.detectChanges() // flush the result-synchronising effect
+    await fixture.whenStable()
+
+    expect(component.dialogResult).toEqual([
+      { columnId: 'available', value: false, filterType: FilterType.IS_NOT_EMPTY },
+    ])
+  })
+
+  it('should keep producing EQUALS filters for unset/EQUALS columns', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c1: 'b' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    component.selectedValues.set(['a'])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.dialogResult).toEqual([{ columnId: 'c1', value: 'a', filterType: FilterType.EQUALS }])
   })
 })

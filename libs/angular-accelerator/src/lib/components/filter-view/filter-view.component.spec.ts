@@ -202,6 +202,22 @@ describe('FilterViewComponent (class logic)', () => {
     expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
   })
 
+  it('should replace an existing IS_NOT_EMPTY filter of the added column on applyFilters', () => {
+    stateService.filters.set([
+      { columnId: 'c1', value: true, filterType: FilterType.IS_NOT_EMPTY } as Filter,
+      { columnId: 'c2', value: 'other' } as Filter,
+    ])
+
+    component.applyFilters([{ columnId: 'c1', value: false, filterType: FilterType.IS_NOT_EMPTY } as Filter])
+
+    const result = stateService.filters()
+    // the previous IS_NOT_EMPTY filter of the column is replaced, not duplicated
+    const c1NotEmpty = result.filter((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)
+    expect(c1NotEmpty.map((f) => f.value)).toEqual([false])
+    // other columns are untouched
+    expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
+  })
+
   it('should focus trigger when trigger id is ocxFilterViewShowMore', () => {
     const focusSpy = jest.fn()
     component.trigger.set({ id: 'ocxFilterViewShowMore', focus: focusSpy } as any)

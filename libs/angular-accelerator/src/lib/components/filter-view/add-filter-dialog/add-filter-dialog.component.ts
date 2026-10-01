@@ -17,19 +17,25 @@ import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/por
  * Content component for the Filter View "Add filter" dialog, opened through the
  * {@link PortalDialogService} (see {@link filter-view.component.ts}).
  *
- * It lets the user pick one column and one or more of the distinct values that
- * column currently holds in the data. The produced {@link Filter}s are exposed
+ * It lets the user pick one column and one or more of the values for that column.
+ * The produced {@link Filter}s are exposed
  * via the {@link DialogResult} interface and are returned to the caller by the
  * PortalDialogService on confirm. Appending/replacing those filters on the
  * shared {@link DataViewStateService} is what actually filters the List, Grid
  * and Table layouts, because all of them derive their visible rows from the
  * same client-side filtering logic.
  *
- * The produced filters always target a single column and use {@link FilterType.EQUALS}.
- * Values are stored as-is (the raw cell value) so they match the string comparison
- * performed by the client-side filtering, exactly like the column header filter in
- * the Table mode does. The dialog's confirm button is kept disabled until at
- * least one value is selected (see {@link DialogPrimaryButtonDisabled}).
+ * The value options and the produced {@link FilterType} are driven by the
+ * column's {@link DataTableColumn.filterType}:
+ *  - `EQUALS` (or unset) shows the distinct cell values of the column and
+ *    produces {@link FilterType.EQUALS} filters.
+ *  - `IS_NOT_EMPTY` shows the fixed yes/no options and produces
+ *    {@link FilterType.IS_NOT_EMPTY} filters whose value is a boolean, matching
+ *    the column header filter in the Table mode and the client-side filtering.
+ * Values are stored as-is (the raw cell value, or the yes/no boolean) so they
+ * match the comparison performed by the client-side filtering. The dialog's
+ * confirm button is kept disabled until at least one value is selected
+ * (see {@link DialogPrimaryButtonDisabled}).
  */
 @Component({
   selector: 'ocx-add-filter-dialog',
@@ -166,12 +172,15 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
   }
 
   /**
-   * Builds the EQUALS filters for the given column and values. Values are stored
-   * as-is (the raw cell value) so they match the string comparison performed by
-   * the client-side filtering.
+   * Builds the filters for the given column and values. The produced
+   * {@link FilterType} is derived from the column (defaulting to
+   * {@link FilterType.EQUALS}). Values are stored as-is (the raw cell value for
+   * EQUALS columns, or the yes/no boolean for IS_NOT_EMPTY columns) so they match
+   * the comparison performed by the client-side filtering.
    */
   private buildFilters(column: DataTableColumn, values: unknown[]): Filter[] {
-    return values.map((value) => ({ columnId: column.id, value, filterType: FilterType.EQUALS }) satisfies Filter)
+    const filterType = column.filterType ?? FilterType.EQUALS
+    return values.map((value) => ({ columnId: column.id, value, filterType }) satisfies Filter)
   }
 
   private getColumnById(columnId: string | null): DataTableColumn | null {
@@ -183,13 +192,35 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
 
   /**
    * Re-derives the value options and pre-selects the values already filtered on
-   * the given column (that are still present in the data).
+   * the given column (that are still present in the data). For
+   * {@link FilterType.IS_NOT_EMPTY} columns this builds the fixed yes/no options
+   * and pre-selects the existing yes/no filter; for all other columns it builds
+   * the distinct cell values of the column and pre-selects the existing EQUALS
+   * filters.
    */
   private refreshForColumn(columnId: string) {
     const column = this.getColumnById(columnId)
     if (!column) {
       this.valueOptions.set(undefined)
       this.selectedValues.set([])
+      return
+    }
+
+    // IS_NOT_EMPTY columns offer the fixed yes/no options (a boolean value) rather
+    // than the column's distinct values, mirroring the column header filter in the
+    // Table mode and the boolean semantics of the client-side filtering.
+    if (column.filterType === FilterType.IS_NOT_EMPTY) {
+      const yes = this.translateService.instant('OCX_FILTER_VIEW.FILTER_YES')
+      const no = this.translateService.instant('OCX_FILTER_VIEW.FILTER_NO')
+      this.valueOptions.set([
+        { label: yes, value: true, toFilterBy: yes } as SelectItem,
+        { label: no, value: false, toFilterBy: no } as SelectItem,
+      ])
+      this.selectedValues.set(
+        this.existingFilters()
+          .filter((filter) => filter.columnId === columnId && filter.filterType === FilterType.IS_NOT_EMPTY)
+          .map((filter) => filter.value)
+      )
       return
     }
 
