@@ -60,7 +60,12 @@ export class PSelectHarness extends ContentContainerComponentHarness {
   async getSelectItems() {
     await this.open()
     const rootLocator = this.documentRootLocatorFactory()
-    const items = await rootLocator.harnessLoaderFor('.p-select-list')
+    // PrimeNG renders each p-select's dropdown list as `<ul id="<selectId>_list">` and teleports it to the
+    // document root. When more than one p-select is open (e.g. the column + value selectors of the add-filter
+    // dialog) a bare `.p-select-list` scope is ambiguous, so scope to this select's own list when it has an id.
+    const id = await this.getId()
+    const listSelector = id && /^[a-zA-Z][a-zA-Z0-9_-]*$/.test(id) ? `#${id}_list` : '.p-select-list'
+    const items = await rootLocator.harnessLoaderFor(listSelector)
     return await items.getAllHarnesses(ListItemHarness)
   }
 

@@ -4,15 +4,19 @@ import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
+import { FilterViewAddFilterDialogComponent } from './filter-view-add-filter-dialog.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { ColumnType } from '../../model/column-type.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import type { Filter } from '../../model/filter.model'
+import { FilterType } from '../../model/filter.model'
+import { SelectItem } from 'primeng/api'
 import { of, take } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
 import { PopoverModule } from 'primeng/popover'
 import { TooltipModule } from 'primeng/tooltip'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { PortalDialogService } from '../../services/portal-dialog.service'
 
 const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
   ({
@@ -20,21 +24,32 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
     nameKey: overrides.nameKey ?? 'nameKey',
     columnType: overrides.columnType ?? ColumnType.STRING,
     predefinedGroupKeys: overrides.predefinedGroupKeys,
+    filterable: overrides.filterable,
+    filterType: overrides.filterType,
   }) as DataTableColumn
 
 describe('FilterViewComponent (class logic)', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let component: FilterViewComponent
   let stateService: DataViewStateService
+  let openDialogSpy: jest.Mock
   const panelMock = {
     toggle: jest.fn(),
   } as any
 
   beforeEach(async () => {
+    // The add-filter dialog is opened lazily via PortalDialogService; stub it so the component can
+    // be constructed without the full dialog/translate/router dependency graph.
+    openDialogSpy = jest.fn().mockReturnValue(of(null))
+
     await TestBed.configureTestingModule({
       declarations: [FilterViewComponent],
       imports: [CommonModule, FormsModule, TranslateModule.forRoot(), ButtonModule, PopoverModule, TooltipModule],
-      providers: [provideTranslateTestingService({}), DataViewStateService],
+      providers: [
+        provideTranslateTestingService({}),
+        DataViewStateService,
+        { provide: PortalDialogService, useValue: { openDialog: openDialogSpy } },
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(FilterViewComponent)
@@ -225,6 +240,123 @@ describe('FilterViewComponent (class logic)', () => {
         expect(value['c1']).toBeDefined()
         done()
       },
+    })
+  })
+
+  describe('add filter', () => {
+    const filterable = makeColumn({ id: 'c1', nameKey: 'C1', filterable: true, columnType: ColumnType.STRING })
+    const nonFilterable = makeColumn({ id: 'c2', nameKey: 'C2', filterable: false, columnType: ColumnType.STRING })
+
+    it('should derive filterableColumns from displayed columns only', () => {
+      // availableColumns is set through the `columns` input; displayed columns come from the service.
+      stateService.columns.set([filterable, nonFilterable])
+      fixture.detectChanges()
+
+      expect(component.filterableColumns().map((c) => c.id)).toEqual(['c1'])
+      expect(component.canAddFilter()).toBe(true)
+    })
+
+    it('should report canAddFilter as false when no displayed column is filterable', () => {
+      stateService.columns.set([nonFilterable])
+      fixture.detectChanges()
+
+      expect(component.filterableColumns()).toEqual([])
+      expect(component.canAddFilter()).toBe(false)
+    })
+
+    it('should add a new filter to the shared state via onFilterAdded', () => {
+      stateService.filters.set([{ columnId: 'c0', value: 'existing' } as Filter])
+      fixture.detectChanges()
+
+      component.onFilterAdded({ columnId: 'c1', value: 'v1', filterType: FilterType.EQUALS })
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([
+        { columnId: 'c0', value: 'existing' },
+        { columnId: 'c1', value: 'v1', filterType: FilterType.EQUALS },
+      ])
+    })
+
+    it('should ignore a duplicate column/value filter in onFilterAdded', () => {
+      stateService.filters.set([{ columnId: 'c1', value: 'v1' } as Filter])
+      fixture.detectChanges()
+
+      component.onFilterAdded({ columnId: 'c1', value: 'v1' })
+
+      expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'v1' }])
+    })
+
+    it('should open the add-filter dialog with the displayed filterable columns and loaded rows', () => {
+      stateService.columns.set([filterable])
+      stateService.data.set([{ id: 1, c1: 'a' }, { id: 2, c1: 'b' }])
+      stateService.filters.set([])
+      fixture.detectChanges()
+
+      component.openAddFilterDialog()
+
+      expect(openDialogSpy).toHaveBeenCalledTimes(1)
+      const [title, componentArg, primary, secondary, extras] = openDialogSpy.mock.calls[0]
+      expect(title).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG_TITLE')
+      expect(componentArg.type).toBe(FilterViewAddFilterDialogComponent)
+      expect(componentArg.inputs.columns).toEqual([filterable])
+      expect(componentArg.inputs.rows).toEqual([{ id: 1, c1: 'a' }, { id: 2, c1: 'b' }])
+      expect(componentArg.inputs.existingFilters).toEqual([])
+      expect(primary).toBe('OCX_BUTTON_DIALOG.CONFIRM')
+      expect(secondary).toBe('OCX_BUTTON_DIALOG.CANCEL')
+      expect(extras).toEqual({ closable: true })
+    })
+
+    it('should apply the chosen filter when the primary dialog button is confirmed', () => {
+      openDialogSpy.mockReturnValueOnce(of({ button: 'primary', result: { columnId: 'c1', value: 'a' } }))
+      stateService.columns.set([filterable])
+      stateService.filters.set([])
+      fixture.detectChanges()
+
+      component.openAddFilterDialog()
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'a' }])
+    })
+
+    it('should not change the shared filters when the dialog is dismissed or the secondary button is clicked', () => {
+      openDialogSpy.mockReturnValueOnce(of(null))
+      openDialogSpy.mockReturnValueOnce(of({ button: 'secondary', result: undefined }))
+      stateService.filters.set([])
+      fixture.detectChanges()
+
+      component.openAddFilterDialog()
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([])
+
+      openDialogSpy.mockReturnValueOnce(of({ button: 'secondary', result: undefined }))
+      component.openAddFilterDialog()
+      fixture.detectChanges()
+
+      expect(component.stateService.filters()).toEqual([])
+    })
+
+    it('should derive distinct EQUALS options for a string column from the loaded data', (done) => {
+      stateService.columns.set([filterable])
+      stateService.data.set([{ id: 1, c1: 'a' }, { id: 2, c1: 'b' }, { id: 3, c1: 'a' }])
+      fixture.detectChanges()
+
+      component.deriveColumnFilterOptions(filterable).pipe(take(1)).subscribe((options: SelectItem[]) => {
+        expect(options.map((o) => o.value).sort()).toEqual(['a', 'b'])
+        done()
+      })
+    })
+
+    it('should keep an already-selected value visible even when it is no longer in the data', (done) => {
+      stateService.columns.set([filterable])
+      stateService.data.set([{ id: 1, c1: 'a' }])
+      stateService.filters.set([{ columnId: 'c1', value: 'gone' } as Filter])
+      fixture.detectChanges()
+
+      component.deriveColumnFilterOptions(filterable).pipe(take(1)).subscribe((options: SelectItem[]) => {
+        expect(options.map((o) => o.value).sort()).toEqual(['a', 'gone'])
+        done()
+      })
     })
   })
 
