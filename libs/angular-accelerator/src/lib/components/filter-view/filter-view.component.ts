@@ -6,6 +6,7 @@ import {
   Input,
   input,
   output,
+  LOCALE_ID,
   signal,
   TemplateRef,
   viewChild,
@@ -14,12 +15,13 @@ import {
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
-import { combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
+import { combineLatest, debounceTime, firstValueFrom, map, Subscription } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate, SelectItem } from 'primeng/api'
 import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
 import { limit } from '../../utils/filter.utils'
+import { buildFilterColumnOptions } from '../../utils/filter-options.util'
 import { Popover } from 'primeng/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -27,6 +29,8 @@ import { Button } from 'primeng/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
+import { DialogState, PortalDialogService } from '../../services/portal-dialog.service'
+import { AddFilterDialogResult, FilterViewAddFilterDialogComponent } from './filter-view-add-filter-dialog.component'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -59,6 +63,10 @@ export class FilterViewComponent {
   private readonly ownService = inject(DataViewStateService)
   private readonly parentService = inject(DataViewStateService, { skipSelf: true, optional: true })
   readonly stateService = this.parentService ?? this.ownService
+
+  private readonly portalDialogService = inject(PortalDialogService)
+  private readonly locale = inject(LOCALE_ID)
+  private addFilterDialogSubscription: Subscription | undefined
 
   @Input()
   set filters(value: Filter[]) {
@@ -132,6 +140,23 @@ export class FilterViewComponent {
         (a: FilterViewRowDetailData, b: FilterViewRowDetailData) =>
           columnIds.indexOf(a.valueColumnId) - columnIds.indexOf(b.valueColumnId)
       )
+  })
+
+  /**
+   * Columns the user may add a new filter to: the currently displayed columns (the ones visible in the
+   * active layout) that are filterable. Sourced from {@link DataViewStateService.columns}, which is the set
+   * of displayed columns — unlike the existing filter display, which sources from `availableColumns` so that
+   * filters on now-hidden columns remain visible.
+   */
+  readonly filterableColumns = computed(() => {
+    return this.stateService.columns().filter((column) => column.filterable)
+  })
+
+  /**
+   * Whether a new filter can be added at all, i.e. whether at least one displayed column is filterable.
+   */
+  readonly canAddFilter = computed(() => {
+    return this.filterableColumns().length > 0
   })
 
   chipTemplates$: Observable<Record<string, TemplateRef<any> | null>> | undefined
@@ -254,6 +279,68 @@ export class FilterViewComponent {
 
   onResetFilersClick() {
     this.stateService.filters.set([])
+  }
+
+  /**
+   * Opens the add-filter dialog (via {@link PortalDialogService}) so a filter can be added in any layout.
+   *
+   * The dialog lets the user pick a displayed, filterable column and then one of the distinct values that
+   * already exist in the loaded data. On confirmation the chosen filter is appended to the shared filter
+   * state ({@link DataViewStateService.filters}), coexisting with the table's native per-column filter row.
+   *
+   * See ADR `docs/adr/0001-filterview-layout-agnostic-filter-management.md` for the full rationale of
+   * keeping the table's native filter row and making FilterView additive.
+   */
+  openAddFilterDialog(): void {
+    this.addFilterDialogSubscription?.unsubscribe()
+
+    const columns = this.filterableColumns()
+    const rows = this.stateService.data()
+    const existingFilters = this.stateService.filters()
+
+    const result$ = this.portalDialogService.openDialog<AddFilterDialogResult | undefined>(
+      'OCX_FILTER_VIEW.ADD_FILTER.DIALOG_TITLE',
+      {
+        type: FilterViewAddFilterDialogComponent,
+        inputs: {
+          columns,
+          rows,
+          existingFilters,
+        },
+      },
+      'OCX_BUTTON_DIALOG.CONFIRM',
+      'OCX_BUTTON_DIALOG.CANCEL',
+      { closable: true }
+    )
+
+    this.addFilterDialogSubscription = result$.subscribe((state: DialogState<AddFilterDialogResult | undefined> | null) => {
+      if (state?.button === 'primary' && state.result) {
+        this.onFilterAdded(state.result)
+      }
+    })
+  }
+
+  /**
+   * Appends a new filter (as chosen in the add-filter dialog) to the shared filter state. Duplicate
+   * column/value combinations are ignored.
+   */
+  onFilterAdded(result: AddFilterDialogResult) {
+    const filters = this.stateService.filters()
+    const alreadyPresent = filters.some((filter) => filter.columnId === result.columnId && filter.value === result.value)
+    if (alreadyPresent) {
+      return
+    }
+    const newFilter: Filter = { columnId: result.columnId, value: result.value, filterType: result.filterType }
+    this.stateService.filters.set([...filters, newFilter])
+  }
+
+  /**
+   * Derives the distinct values that exist in the loaded data for a column, reusing the same derivation as the
+   * table's native per-column filter row. Exposed for tests.
+   */
+  deriveColumnFilterOptions(column: DataTableColumn): Observable<SelectItem[]> {
+    const columnFilters = this.stateService.filters().filter((filter) => filter.columnId === column.id)
+    return buildFilterColumnOptions(column, this.stateService.data(), columnFilters, this.translateService, this.locale)
   }
 
   onChipRemove(filter: Filter) {

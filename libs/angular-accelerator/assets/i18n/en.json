@@ -145,6 +145,18 @@
       "REMOVE_FILTER_TITLE": "Remove filter",
       "REMOVE_FILTER_ARIA_LABEL": "Remove filter"
     },
+    "ADD_FILTER": {
+      "DIALOG_TITLE": "Add filter",
+      "BUTTON_LABEL": "Add filter",
+      "BUTTON_ARIA_LABEL": "Add a new filter",
+      "BUTTON_DETAIL": "Add a new filter from the displayed columns",
+      "COLUMN_LABEL": "Column",
+      "COLUMN_PLACEHOLDER": "Select a column",
+      "COLUMN_ARIA_LABEL": "Select the column to filter by",
+      "VALUE_LABEL": "Value",
+      "VALUE_PLACEHOLDER": "Select a value",
+      "VALUE_ARIA_LABEL": "Select a filter value"
+    },
     "PANEL_TITLE": "Filters"
   },
   "OCX_SEARCH_HEADER": {
