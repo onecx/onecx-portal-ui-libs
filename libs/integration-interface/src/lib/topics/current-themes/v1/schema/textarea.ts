@@ -179,18 +179,6 @@ const filledBaselineTokens = {
   placeholderColor: '{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}',
 }
 
-/** A filled named state's background (mapper reads `filled.<state>.background`). */
-const filledBackgroundToken = (state: 'hover' | 'focus' | 'disabled') =>
-  `{{primitives.variant.primary.state.${state}.defaultSeverity.bg}}`
-
-/** A filled named state's contrast (text/placeholder) color — used for the dimmed `disabled` state and the tinted `invalid` placeholder. */
-const filledContrastToken = (state: 'disabled' | 'invalid') =>
-  `{{primitives.variant.primary.state.${state}.defaultSeverity.contrast}}`
-
-/** A filled named state's border color — the filled states follow the same border-color shift as the outlined variant (mapper reads `filled.<state>.border.color`). */
-const filledBorderColorToken = (state: 'hover' | 'focus' | 'disabled' | 'invalid') =>
-  `{{primitives.variant.primary.state.${state}.defaultSeverity.border.color}}`
-
 export const textareaDefaults = {
   defaultVariant: {
     defaultState: baselineStateTokens,
@@ -204,16 +192,22 @@ export const textareaDefaults = {
   // the border, disabled dims background + text + border, invalid tints the placeholder + border.
   filled: {
     defaultState: filledBaselineTokens,
-    hover: { background: filledBackgroundToken('hover'), border: { color: filledBorderColorToken('hover') } },
-    focus: { background: filledBackgroundToken('focus'), border: { color: filledBorderColorToken('focus') } },
+    hover: {
+      background: '{{primitives.variant.primary.state.hover.defaultSeverity.bg}}',
+      border: { color: '{{primitives.variant.primary.state.hover.defaultSeverity.border.color}}' },
+    },
+    focus: {
+      background: '{{primitives.variant.primary.state.focus.defaultSeverity.bg}}',
+      border: { color: '{{primitives.variant.primary.state.focus.defaultSeverity.border.color}}' },
+    },
     disabled: {
-      background: filledBackgroundToken('disabled'),
-      color: filledContrastToken('disabled'),
-      border: { color: filledBorderColorToken('disabled') },
+      background: '{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}',
+      color: '{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}',
+      border: { color: '{{primitives.variant.primary.state.disabled.defaultSeverity.border.color}}' },
     },
     invalid: {
-      placeholderColor: filledContrastToken('invalid'),
-      border: { color: filledBorderColorToken('invalid') },
+      placeholderColor: '{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}',
+      border: { color: '{{primitives.variant.primary.state.invalid.defaultSeverity.border.color}}' },
     },
   },
 }
