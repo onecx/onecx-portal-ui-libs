@@ -26,6 +26,7 @@ import { interactiveDataView } from './schema/interactive-data-view'
 import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
+import { messageShape } from './schema/message/message'
 import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple, rippleShape } from './schema/ripple'
@@ -66,7 +67,7 @@ type UsagesInput = {
   calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
-  message?: z.input<typeof message>
+  message?: z.input<typeof messageShape>
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof rippleShape>
