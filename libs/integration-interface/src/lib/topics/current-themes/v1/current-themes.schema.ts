@@ -5,7 +5,7 @@ import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
+import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
@@ -24,26 +24,34 @@ import { togglebutton } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
+import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
-import { ripple } from './schema/ripple'
+import { ripple, rippleShape } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
-import { pageHeader } from './schema/page-header'
 import { content } from './schema/content'
+import { pageHeader } from './schema/page-header'
 import { dataview } from './schema/dataview'
+import { dataviewShape } from './schema/dataview/dataview'
+import { chip, chipShape } from './schema/chip'
+import { customGroupColumnSelector, customGroupColumnSelectorShape } from './schema/custom-group-column-selector'
+import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
+import { paginator, paginatorShape } from './schema/paginator'
+import { skeleton, skeletonShape } from './schema/skeleton'
 import { pageHeaderShape } from './schema/page-header/index'
+import { button, ButtonShapeInput } from './schema/button'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialog>
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
-  table?: z.input<typeof table>
+  dataTable?: z.input<typeof dataTableShape>
   tooltip?: z.input<typeof tooltipShape>
   carousel?: z.input<typeof carousel>
   fieldset?: z.input<typeof fieldsetShape>
@@ -57,19 +65,30 @@ type UsagesInput = {
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
   calendar?: CalendarShapeInput
-  interactiveDataView?: z.input<typeof interactiveDataView>
+  interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof message>
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
-  ripple?: z.input<typeof ripple>
+  ripple?: z.input<typeof rippleShape>
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeaderShape>
   content?: z.input<typeof content>
-  dataview?: z.input<typeof dataview>
+  dataview?: z.input<typeof dataviewShape>
+  chip?: z.input<typeof chipShape>
+  customGroupColumnSelector?: z.input<typeof customGroupColumnSelectorShape>
+  dataListGrid?: z.input<typeof dataListGridShape>
+  paginator?: z.input<typeof paginatorShape>
+  skeleton?: z.input<typeof skeletonShape>
+  // Hand-written concrete type (mirrors `CalendarShapeInput`/`PanelMenuShapeInput`) — the loose
+  // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
+  // `ThemePath`. See `ButtonShapeInput` in schema/button.
+  button?: ButtonShapeInput
 }
+
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
 
 const usages: z.ZodType<UsagesInput> = z
   .object({
@@ -77,7 +96,7 @@ const usages: z.ZodType<UsagesInput> = z
     badge: (badge as typeof badge).optional(),
     menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
+    dataTable: (dataTable as typeof dataTableShape).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
@@ -103,6 +122,12 @@ const usages: z.ZodType<UsagesInput> = z
     pageHeader: (pageHeader as typeof pageHeader).optional(),
     content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
+    chip: (chip as typeof chip).optional(),
+    customGroupColumnSelector: (customGroupColumnSelector as typeof customGroupColumnSelector).optional(),
+    dataListGrid: (dataListGrid as typeof dataListGrid).optional(),
+    paginator: (paginator as typeof paginator).optional(),
+    skeleton: (skeleton as typeof skeleton).optional(),
+    button: (button as typeof button).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
@@ -161,6 +186,14 @@ export type ThemePropertiesV2 = {
   regionOverrides?: RegionOverridesInput
   fallbackOrder?: RelaxedAxisKind[]
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

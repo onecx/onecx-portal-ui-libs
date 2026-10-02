@@ -126,19 +126,20 @@ describe('per-leaf axis metadata (primitives)', () => {
     ])
   })
 
-  it('records the area leaf with a multi-segment state delta (area keys are structural)', () => {
-    // `area` and `canvas` are structural pass-through keys (no axis; `areas` and `area` carry no
-    // variant marker), so they are NOT a variant member. The area leaf models state + severity
-    // only, with no variant entry — so the `defaultState` member's delta spans the anchor across
-    // the structural `area`/`canvas` keys, measured from the `v2.primitives` scope anchor.
+  it('records the area leaf anchored at its own canvas scope (area/canvas are variant roots)', () => {
+    // Each `area` entry (`canvas`, `surface`, `overlay`) is itself a `variantWithStates` block,
+    // which now nests a `defaultVariant`/`variant` (shape) pair alongside `defaultState`/`state`.
+    // The `isVariantRoot` heuristic detects that embedded `defaultVariant` key, so `canvas` opens
+    // its own scope anchored at `v2.primitives.area.canvas` rather than folding into the outer
+    // `v2.primitives` scope.
     const areaCanvasBgColor = 'v2.primitives.area.canvas.defaultState.defaultSeverity.bg.color'
     const entry = deriveLeafAxisMetadata(theme, areaCanvasBgColor)!
     expect(entry.scopes).toEqual([
       {
-        scopePath: 'v2.primitives',
+        scopePath: 'v2.primitives.area.canvas',
         entries: [
           { kind: 'severity', segments: ['defaultSeverity'] },
-          { kind: 'state', segments: ['area', 'canvas', 'defaultState'] },
+          { kind: 'state', segments: ['defaultState'] },
         ],
       },
     ])
