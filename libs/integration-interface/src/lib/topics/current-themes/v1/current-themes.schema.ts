@@ -9,6 +9,7 @@ import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
+import type { CarouselShapeInput } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
@@ -52,7 +53,7 @@ type UsagesInput = {
   region?: z.input<typeof region>
   dataTable?: z.input<typeof dataTableShape>
   tooltip?: z.input<typeof tooltipShape>
-  carousel?: z.input<typeof carousel>
+  carousel?: CarouselShapeInput
   fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
   diagram?: z.input<typeof diagramShape>
