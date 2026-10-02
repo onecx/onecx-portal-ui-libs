@@ -8,7 +8,7 @@
 
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { provideHttpClient, withXhr } from '@angular/common/http'
+import { provideHttpClient } from '@angular/common/http'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { Component, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core'
 import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
@@ -113,7 +113,7 @@ describe('SlotComponent', () => {
       .mockImplementation((timeout) => rxjsOperators.debounce(() => interval(timeout)))
     await TestBed.configureTestingModule({
       declarations: [SlotComponent, MockAngularComponent],
-      providers: [provideHttpClient(withXhr()), provideHttpClientTesting(), provideSlotServiceMock()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideSlotServiceMock()],
     }).compileComponents()
 
     fixture = TestBed.createComponent(SlotComponent)

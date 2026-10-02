@@ -1,4 +1,4 @@
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TranslateService } from '@ngx-translate/core'
@@ -102,7 +102,7 @@ describe('PageHeaderComponent', () => {
           de: require('./../../../../assets/i18n/de.json'),
         }),
         provideUserServiceMock(),
-        provideHttpClient(withXhr(), withInterceptorsFromDi()),
+        provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         {

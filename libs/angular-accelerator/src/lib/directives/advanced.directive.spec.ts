@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { HarnessLoader } from '@angular/cdk/testing'
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AdvancedDirective } from './advanced.directive'
@@ -73,7 +73,7 @@ describe('AdvancedDirective', () => {
         declarations: [HostInsideSearchHeaderComponent, SearchHeaderComponent, PageHeaderComponent, AdvancedDirective],
         imports: [AngularAcceleratorModule],
         providers: [
-          provideHttpClient(withXhr(), withInterceptorsFromDi()),
+          provideHttpClient(withInterceptorsFromDi()),
           provideHttpClientTesting(),
           provideTranslateTestingService({}),
           provideRouter([]),
