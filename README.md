@@ -15,6 +15,10 @@ OneCX Portal UI Libs is using [semantic-release](https://semantic-release.gitboo
 - **v7** - contains source code for `v7` distribution tag compatible with Angular 20.
 - **main** - contains source code for `rc` distribution tag with features for future release of OneCX.
 
+## CI and Sonar configuration maintenance
+
+When a Sonar or CI workflow configuration change is merged into `main`, assess and backport it to every supported maintenance branch (`v5`, `v6`, `v7`, and `v8`). Each backport must include matching workflow and default Sonar property changes, or explicitly document why the branch intentionally differs. Verify the corresponding SonarCloud project branch settings separately.
+
 # Releasing libs
 
 In order to release new version of libs, use the `create-release` action to run the release workflow for **desired branch**.
