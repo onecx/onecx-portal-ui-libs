@@ -16,6 +16,7 @@ import {
   output,
   signal,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
 import { DataAction } from '../../model/data-action'
@@ -39,6 +40,7 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: 'DataViewComponent', useExisting: DataViewComponent }, 
     {

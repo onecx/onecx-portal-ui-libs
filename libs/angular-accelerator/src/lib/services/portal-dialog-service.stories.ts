@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, importProvidersFrom, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -27,6 +27,7 @@ import { OcxTooltipDirective } from '../directives/tooltip.directive'
 @Component({
   standalone: false,
   selector: 'ocx-button-dialog-with-portal-dialog-service',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<p-button label="Open dialog" (click)="openDialog()" id="custom-button-1234" class="portal-dialog"/>`,
 })
 class ButtonDialogWithPortalDialogServiceComponent {
@@ -54,6 +55,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
 @Component({
   standalone: false,
   selector: 'ocx-my-component-to-display',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<p>Component to display with disabled buttons</p>
     <div class="flex gap-2">
       <p-button label="Toggle custom button" (click)="clickCustom()" />
@@ -216,6 +218,7 @@ export const CustomDataWithButtonSeverity = {
 @Component({
   standalone: false,
   selector: 'ocx-my-component-to-display',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<p>Hello, its my component to display</p>`,
 })
 class ComponentToDisplayComponent {}
@@ -293,6 +296,7 @@ export const ComponentDisplayedWithDisabledButtons = {
 @Component({
   standalone: false,
   selector: 'ocx-my-component-to-display',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<p>Component to display with validation</p>
     <p>It is impossible to close the dialog by clicking secondary button</p>
     <p>Type result to be able to close the dialog via primary button click</p>
@@ -369,6 +373,7 @@ export const CustomAutofocus = {
 @Component({
   standalone: false,
   selector: 'ocx-my-component-to-display',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<p>Hello, its my component to display custom buttons</p>`,
 })
 class ComponentToDisplayCustomButtonsComponent implements DialogCustomButtonsDisabled, OnInit {
