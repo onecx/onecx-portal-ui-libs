@@ -39,7 +39,7 @@ export function useAcceleratorTableThemeDefaults() {
       takeUntilDestroyed(destroyRef)
     )
     .subscribe((theme) => {
-      const table = mapThemeUsageSettings(theme.properties?.v2, 'table', mapAcceleratorTableSettings)
+      const table = mapThemeUsageSettings(theme.properties?.v2, 'dataTable', mapAcceleratorTableSettings)
       checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
       frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
       actionColumnPositionThemeSetting.set(table?.actionColumnPosition)

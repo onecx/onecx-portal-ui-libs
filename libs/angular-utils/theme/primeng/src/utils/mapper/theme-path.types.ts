@@ -57,18 +57,18 @@ type ObjIndex<T, K extends string> = T extends object ? (K extends keyof T ? T[K
 type LeafPaths<T, D extends number = 11> = [D] extends [never]
   ? never
   : T extends (...args: unknown[]) => unknown
-  ? never
-  : T extends object
-  ? {
-    [K in keyof T & string]: NonNullable<T[K]> extends infer V
-    ? V extends (...args: unknown[]) => unknown
-    ? K
-    : V extends object
-    ? `${K}.${LeafPaths<V, Prev[D]>}`
-    : K
-    : never
-  }[keyof T & string]
-  : never
+    ? never
+    : T extends object
+      ? {
+          [K in keyof T & string]: NonNullable<T[K]> extends infer V
+            ? V extends (...args: unknown[]) => unknown
+              ? K
+              : V extends object
+                ? `${K}.${LeafPaths<V, Prev[D]>}`
+                : K
+            : never
+        }[keyof T & string]
+      : never
 
 /**
  * Source type for theme path generation.
@@ -94,7 +94,25 @@ type Usages = NonNullable<RequiredThemeV2['usages']>
  * the default depth of 11.
  */
 export type ThemePath =
-  | `primitives.${LeafPaths<NonNullable<Primitives>>}`
+  // `primitives` is split per sub-tree (like the `usages.*` entries below): the
+  // combined `LeafPaths<Primitives>` union has ~124k members (driven by the
+  // `variant`/`area` color-variant trees), and expanding it in a single template
+  // literal exceeds TS's union-representability budget (TS2590). Each sub-branch
+  // is small enough to compute on its own, so computing them independently keeps
+  // every `LeafPaths` instantiation within budget while yielding the same set.
+  | `primitives.defaultVariant.${LeafPaths<NonNullable<Primitives['defaultVariant']>>}`
+  | `primitives.variant.${LeafPaths<NonNullable<Primitives['variant']>>}`
+  | `primitives.screenSettings.${LeafPaths<NonNullable<Primitives['screenSettings']>>}`
+  | `primitives.area.${LeafPaths<NonNullable<Primitives['area']>>}`
+  | `primitives.shadow.${LeafPaths<NonNullable<Primitives['shadow']>>}`
+  | `primitives.font.${LeafPaths<NonNullable<Primitives['font']>>}`
+  | `primitives.space.${LeafPaths<NonNullable<Primitives['space']>>}`
+  | `primitives.layout.${LeafPaths<NonNullable<Primitives['layout']>>}`
+  | `primitives.radius.${LeafPaths<NonNullable<Primitives['radius']>>}`
+  | `primitives.icon.${LeafPaths<NonNullable<Primitives['icon']>>}`
+  | `primitives.border.${LeafPaths<NonNullable<Primitives['border']>>}`
+  | `primitives.focusRing.${LeafPaths<NonNullable<Primitives['focusRing']>>}`
+  | `primitives.transition.${LeafPaths<NonNullable<Primitives['transition']>>}`
   | `usages.calendar.${LeafPaths<NonNullable<Usages['calendar']>, 13>}`
   | `usages.dialog.${LeafPaths<NonNullable<Usages['dialog']>>}`
   | `usages.badge.${LeafPaths<NonNullable<Usages['badge']>>}`
@@ -117,7 +135,6 @@ export type ThemePath =
   | `usages.togglebutton.${LeafPaths<NonNullable<Usages['togglebutton']>>}`
   | `usages.ripple.${LeafPaths<NonNullable<Usages['ripple']>>}`
   | `usages.accordion.${LeafPaths<NonNullable<Usages['accordion']>>}`
-  | `usages.message.${LeafPaths<NonNullable<Usages['message']>>}`
   | `usages.selectbutton.${LeafPaths<NonNullable<Usages['selectbutton']>>}`
   | `usages.content.${LeafPaths<NonNullable<Usages['content']>>}`
   | `usages.loadingIndicator.${LeafPaths<NonNullable<Usages['loadingIndicator']>>}`
@@ -126,6 +143,12 @@ export type ThemePath =
   | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
   | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
+  | `usages.chip.${LeafPaths<NonNullable<Usages['chip']>>}`
+  | `usages.customGroupColumnSelector.${LeafPaths<NonNullable<Usages['customGroupColumnSelector']>>}`
+  | `usages.dataListGrid.${LeafPaths<NonNullable<Usages['dataListGrid']>>}`
+  | `usages.paginator.${LeafPaths<NonNullable<Usages['paginator']>>}`
+  | `usages.skeleton.${LeafPaths<NonNullable<Usages['skeleton']>>}`
+  | `usages.button.${LeafPaths<NonNullable<Usages['button']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**
@@ -150,10 +173,10 @@ type ModeAlias<K extends string> = K extends 'light' | 'dark' ? K | '{mode}' : K
 type PresetPaths<T, D extends number = 10> = [D] extends [never]
   ? never
   : Exclude<ObjKeys<RemoveIndex<NonNullable<T>>>, PresetExcluded> extends infer K
-  ? K extends string
-  ? ModeAlias<K> | `${ModeAlias<K>}.${PresetPaths<ObjIndex<NonNullable<T>, K>, Prev[D]>}`
-  : never
-  : never
+    ? K extends string
+      ? ModeAlias<K> | `${ModeAlias<K>}.${PresetPaths<ObjIndex<NonNullable<T>, K>, Prev[D]>}`
+      : never
+    : never
 
 /**
  * All valid dot-notation paths into the PrimeNG `components` section.

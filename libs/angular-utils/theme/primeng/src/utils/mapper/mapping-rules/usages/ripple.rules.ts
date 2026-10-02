@@ -3,7 +3,7 @@ import { toColorString } from '../../mapper.utils';
 
 export const rippleMappingRules: MappingRule[] = [
   {
-    from: 'usages.ripple.background',
+    from: 'usages.ripple.ink.background',
     to: 'components.ripple.colorScheme.{mode}.root.background',
     transform: toColorString,
   },
