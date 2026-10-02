@@ -167,6 +167,10 @@
       "ARIA_LABEL": "Reset search criteria",
       "DETAIL": "Reset search criteria"
     },
+    "RESET_BUTTON_SEARCH_AND_RESULTS": {
+      "ARIA_LABEL": "Reset search criteria and results",
+      "DETAIL": "Reset search criteria and results"
+    },
     "SEARCH_BUTTON": {
       "TEXT": "Search",
       "ARIA_LABEL": "Start search",
