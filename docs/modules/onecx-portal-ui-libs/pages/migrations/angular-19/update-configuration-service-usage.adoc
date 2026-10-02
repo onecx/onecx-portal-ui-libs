@@ -47,3 +47,8 @@ await this.configService.setProperty(CONFIG_KEY.APP_VERSION, '6.0.0');
 
 ----
 
+[NOTE]
+====
+If your application provides a custom `AuthServiceFactory` (the `custom` option of `CONFIG_KEY.AUTH_SERVICE`), `AuthServiceWrapper` now `await`s both `ConfigurationService.getProperty()` and the value returned by your factory function. Update any custom auth-service-factory remote module so its exported factory function may return a value synchronously or wrapped in a `Promise`, and account for the async read of `CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL`.
+====
+

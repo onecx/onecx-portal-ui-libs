@@ -1,5 +1,11 @@
 [#update-translations]
 = Update Translation Path Factories
+
+[IMPORTANT]
+====
+This step requires OneCX UI libraries v6 to be installed, since `provideTranslationPathFromMeta` does not exist in v5. Perform this step **after** upgrading to Angular 19 and libs v6, not before.
+====
+
 In OneCX v6, `createTranslateLoader`, `createRemoteComponentAndMfeTranslateLoader`, and `createRemoteComponentTranslateLoader` were removed from @onecx/angular-accelerator. `createTranslateLoader` and `provideTranslationPathFromMeta` can be imported from @onecx/angular-utils.
 
 == Update Imports
