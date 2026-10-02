@@ -12,6 +12,7 @@ import { carousel } from './schema/carousel'
 import { toggleswitch } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
+import { FALLBACK_ORDER_DEFAULT, type RelaxedAxisKind } from './utils/axis-metadata'
 import { diagram, diagramShape } from './schema/diagram'
 import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
 import { fieldset, fieldsetShape } from './schema/fieldset'
@@ -165,6 +166,7 @@ export const themePropertiesV2 = z
     primitives: primitives as typeof primitives,
     usages: usages.optional(),
     regionOverrides: regionOverrides as typeof regionOverrides,
+    fallbackOrder: z.array(z.enum(['state', 'variant', 'severity'])).default(FALLBACK_ORDER_DEFAULT),
   })
   .register(themeSchemaRegistry, { id: 'themePropertiesV2' })
 
@@ -182,6 +184,7 @@ export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
+  fallbackOrder?: RelaxedAxisKind[]
 }
 
 export type ThemeUsageName = keyof UsagesInput

@@ -16,7 +16,7 @@ export const buttonStatefulShape = z
     focus: buttonSeverityGroupShape.prefault({}),
     disabled: buttonSeverityGroupShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'buttonStatefulShape' })
+  .register(themeSchemaRegistry, { id: 'buttonStatefulShape', axis: 'state' })
 
 /**
  * Builds the defaults for a full stateful node, referencing

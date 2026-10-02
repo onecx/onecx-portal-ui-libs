@@ -48,7 +48,7 @@ export const buttonSeverityGroupShape = z
     danger: buttonSeverityLeafShape.prefault({}),
     contrast: buttonSeverityLeafShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'buttonSeverityGroupShape' })
+  .register(themeSchemaRegistry, { id: 'buttonSeverityGroupShape', axis: 'severity' })
 
 // `border.style` is a single, design-wide token — every component in the schema points its
 // border style at the canonical `primitives.defaultVariant.defaultState.defaultSeverity.

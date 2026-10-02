@@ -14,9 +14,20 @@
  * expectDefaultsMatchShape — recursively verifies that every key present in a
  * defaults tree also exists in the corresponding zod shape, catching wiring
  * bugs (typos, renames) independently of the resolved token values.
+ *
+ * collectAxisScopes / expectAxes — collect the variant/state/severity keys of every
+ * fallback scope under a usage and assert them per component.
+ *
+ * expectFallback — asserts the resolver's single-step fallback for a leaf path under a usage.
+ * Takes named `{ from, to }` paths (rather than positional arguments) so call sites stay
+ * self-documenting even when `from`/`to` are built by a local helper instead of being written
+ * out as literal strings.
  */
 
 import * as z from 'zod'
+import { introspectThemeAxisMetadata } from '../utils/axis-metadata'
+import { resolveLeafFallback, THEME_VAR_PREFIX } from '../utils/resolve-leaf-fallback'
+import { theme } from '../current-themes.schema'
 
 export function expectTokens(o: object | undefined, expectedTokens: Record<string, any>) {
   for (const [key, expected] of Object.entries(expectedTokens)) {
@@ -55,4 +66,49 @@ export function expectDefaultsMatchShape(shape: z.ZodObject, defaults: Record<st
       expectDefaultsMatchShape(fieldSchema, value as Record<string, unknown>)
     }
   }
+}
+
+export type Axes = { variant?: string[]; state?: string[]; severity?: string[] }
+
+/** Maps every scope path under `usagePath` to the variant/state/severity keys its leaves pass through. */
+export function collectAxisScopes(usagePath: string): Map<string, Axes> {
+  const scopes = new Map<string, Axes>()
+  for (const [leafPath, metadata] of Object.entries(introspectThemeAxisMetadata(theme))) {
+    if (!leafPath.startsWith(`${usagePath}.`)) continue
+    for (const { scopePath, entries } of metadata.scopes) {
+      const axes = scopes.get(scopePath) ?? {}
+      for (const { kind, segments } of entries) {
+        axes[kind] = [...new Set(axes[kind]).add(segments.join('.'))].sort()
+      }
+      scopes.set(scopePath, axes)
+    }
+  }
+  return scopes
+}
+
+/**
+ * Asserts every scope whose path ends with `scopeName` (a component may repeat, e.g. per parent
+ * state) has exactly the expected keys. Key order in `expected` does not matter.
+ */
+export function expectAxes(scopes: Map<string, Axes>, scopeName: string, expected: Axes) {
+  const occurrences = [...scopes]
+    .filter(([path]) => path === scopeName || path.endsWith(`.${scopeName}`))
+    .map(([, axes]) => axes)
+  const sorted = Object.fromEntries(Object.entries(expected).map(([kind, keys]) => [kind, [...keys].sort()]))
+
+  expect(occurrences.length).toBeGreaterThan(0)
+  occurrences.forEach((axes) => expect(axes).toEqual(sorted))
+}
+
+/**
+ * Asserts the resolver maps the leaf at `from` to the leaf at `to` in one step (`undefined` means no
+ * fallback). Both paths are relative to `usagePath` and are compared as theme variable names.
+ *
+ * `from`/`to` are named (rather than positional) so the assertion reads unambiguously at the call
+ * site, e.g. `expectFallback(CALENDAR, { from: leaf('hover'), to: leaf('defaultState') })` — no need
+ * to open this file to know which side is the starting leaf and which is the expected fallback.
+ */
+export function expectFallback(usagePath: string, { from, to }: { from: string; to: string | undefined }) {
+  const toVar = (path: string) => THEME_VAR_PREFIX + `${usagePath}.${path}`.slice('v2.'.length).replace(/\./g, '-')
+  expect(resolveLeafFallback(toVar(from))).toBe(to === undefined ? undefined : toVar(to))
 }
