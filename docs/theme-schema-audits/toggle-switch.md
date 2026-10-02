@@ -33,13 +33,14 @@
 | Slider checked hover | Background and border color from `primitives.variant.primary.state.hover.defaultSeverity`. |
 | Handle baseline | Full radius; size/width/height `1.25rem`; background from `primitives.area.surface.defaultState.defaultSeverity.contrast`. Optional template-content color remains unset. |
 | Handle disabled | Defined at `defaultVariant.disabled.slider.handle.background`, using `primitives.area.surface.state.disabled.defaultSeverity.contrast`. |
-| Handle checked and hover | No additional Handle variants/states or duplicate defaults; inherit the baseline unless a consumer supplies an override. |
+| Handle checked and hover | Handle has no own variants/states and no separate mapping entries; it uses its baseline tokens. |
 
 ## Changes applied
 
 - Replaced the legacy single-file schema with a compatibility re-export and a directory-based ToggleSwitch schema, Slider schema, and Handle schema.
 - Added the requested `settings.autoload` default.
 - Updated ToggleSwitch mapping rules and custom CSS rules to read the new nested token paths.
+- Removed redundant Handle hover/checked mapping rules; Handle now maps its baseline background/color once, with a separate disabled-background mapping only.
 - During structural implementation, test/spec files were initially left unchanged; Step 10 then added the top-level test and snapshot below.
 
 ## Testing

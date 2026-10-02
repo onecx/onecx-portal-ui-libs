@@ -143,42 +143,6 @@ export const toggleswitchMappingRules: MappingRule[] = [
     transform: toColorString,
   },
 
-  // Handle - hover state
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.background',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.hoverBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.color',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.hoverColor',
-    transform: toColorString,
-  },
-
-  // Handle - checked state
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.background',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.color',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedColor',
-    transform: toColorString,
-  },
-
-  // Handle - checked + hover state
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.background',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverBackground',
-    transform: toColorString,
-  },
-  {
-    from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.color',
-    to: 'components.toggleswitch.colorScheme.{mode}.handle.checkedHoverColor',
-    transform: toColorString,
-  },
-
   // Handle - disabled state
   {
     from: 'usages.toggleswitch.defaultVariant.disabled.slider.handle.background',
