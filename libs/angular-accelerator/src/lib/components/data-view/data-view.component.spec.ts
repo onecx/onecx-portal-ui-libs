@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { DataViewModule } from 'primeng/dataview'
+import { DataViewModule } from '@openng/optimus-ui/dataview'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { DataListGridHarness, DataTableHarness, DataViewHarness } from '../../../../testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -11,7 +11,7 @@ import {
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { TooltipStyle } from 'primeng/tooltip'
+import { TooltipStyle } from '@openng/optimus-ui/tooltip'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataSortDirection } from '../../model/data-sort-direction'

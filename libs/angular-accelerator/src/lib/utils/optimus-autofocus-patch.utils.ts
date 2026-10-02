@@ -1,12 +1,12 @@
-import { AutoFocus } from 'primeng/autofocus'
+import { AutoFocus } from '@openng/optimus-ui/autofocus'
 import { createLogger } from './logger.utils'
 
-const logger = createLogger('PrimeNgAutoFocusPatch')
+const logger = createLogger('OptimusAutoFocusPatch')
 
-// Call this on in remoteModule ngOnBootstrap or constructor to apply the PrimeNG AutoFocus patch.
-// It normalizes PrimeNG's buggy `autofocus === false` comparison so an unset (undefined/null) `autofocus` input no longer stamps a stray `autofocus="true"` on inner native elements — covering deeply-nested
+// Call this on in remoteModule ngOnBootstrap or constructor to apply the Optimus AutoFocus patch.
+// It normalizes Optimus's buggy `autofocus === false` comparison so an unset (undefined/null) `autofocus` input no longer stamps a stray `autofocus="true"` on inner native elements — covering deeply-nested
 // Explicit `autofocus="true"` still works.
-export function patchPrimeNgAutoFocus(): void {
+export function patchOptimusAutoFocus(): void {
   // Fast, class-scoped idempotency guard.
   const autoFocusClass = AutoFocus as unknown as { __onecxAutofocusPatched?: boolean }
   if (autoFocusClass.__onecxAutofocusPatched) {
@@ -21,8 +21,8 @@ export function patchPrimeNgAutoFocus(): void {
 
     const original = proto.onAfterContentChecked
     if (typeof original !== 'function') {
-      // PrimeNG changed/removed the hook; leave behavior as-is rather than break.
-      logger.warn('[OneCX PatchPrimeNgAutoFocus] AutoFocus.onAfterContentChecked missing; patch skipped.')
+      // Optimus changed/removed the hook; leave behavior as-is rather than break.
+      logger.warn('[OneCX PatchOptimusAutoFocus] AutoFocus.onAfterContentChecked missing; patch skipped.')
       return
     }
 
@@ -41,7 +41,7 @@ export function patchPrimeNgAutoFocus(): void {
     }
   } catch (err) {
     logger.error(
-      '[OneCX PatchPrimeNgAutoFocus] patchPrimeNgAutoFocus failed; PrimeNG autofocus behavior unchanged.',
+      '[OneCX PatchOptimusAutoFocus] patchOptimusAutoFocus failed; Optimus autofocus behavior unchanged.',
       err
     )
   }

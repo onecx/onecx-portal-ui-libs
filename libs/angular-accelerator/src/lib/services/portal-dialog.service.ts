@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { DialogService, DynamicDialog } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialog } from '@openng/optimus-ui/dynamicdialog'
 import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
@@ -14,7 +14,7 @@ import {
 import { REMOTE_COMPONENT_CONFIG } from '@onecx/angular-remote-components'
 import { CurrentLocationTopicPayload, EventsTopic, EventType, TopicEventType } from '@onecx/integration-interface'
 import { Capability, ShellCapabilityService, AppStateService } from '@onecx/angular-integration-interface'
-import { PrimeIcon } from '../utils/primeicon.utils'
+import { OptimusIcon } from '../utils/optimus-icon.utils'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../components/dialog/dialog-footer/dialog-footer.component'
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
@@ -43,11 +43,11 @@ import { createLogger } from '../utils/logger.utils'
  *       value = 'hello',
  *     },
  *   },
- *   icon: PrimeIcons.QUESTION
+ *   icon: OpenngIcons.QUESTION
  * }
  * ```
  */
-type DialogMessage = { message: TranslationKey; icon: PrimeIcon }
+type DialogMessage = { message: TranslationKey; icon: OptimusIcon }
 
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -326,7 +326,7 @@ export class PortalDialogService implements OnDestroy {
    * // Welcome message with question mark icon
    * const dialogMessage = {
    *   key: 'WELCOME_MESSAGE',
-   *   icon: PrimeIcons.QUESTION
+   *   icon: OpenngIcons.QUESTION
    * }
    * this.portalDialogService.openDialog('TITLE_KEY', dialogMessage, 'OK_BUTTON').subscribe((stateOnClose) => {
    *   // operations when dialog has been closed
@@ -340,7 +340,7 @@ export class PortalDialogService implements OnDestroy {
    * // Ok button with check icon
    * const primaryButton = {
    *   key: 'OK_BUTTON',
-   *   icon: PrimeIcons.CHECK
+   *   icon: OpenngIcons.CHECK
    *   tooltipKey: 'OK_TOOLTIP',
    *   tooltipPosition: 'bottom'
    * }
@@ -348,7 +348,7 @@ export class PortalDialogService implements OnDestroy {
    * // Refresh button with refresh icon
    * const secondaryButton = {
    *   key: 'REFRESH_BUTTON',
-   *   icon: PrimeIcons.REFRESH
+   *   icon: OpenngIcons.REFRESH
    *   tooltipKey: 'REFRESH_TOOLTIP',
    *   tooltipPosition: 'right'
    * }

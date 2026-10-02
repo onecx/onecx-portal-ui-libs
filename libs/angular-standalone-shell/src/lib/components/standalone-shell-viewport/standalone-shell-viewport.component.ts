@@ -1,6 +1,6 @@
 import { AfterContentInit, Component, ElementRef, Input, inject, ChangeDetectionStrategy } from '@angular/core'
 import { Message, PortalMessageService } from '@onecx/angular-integration-interface'
-import { MessageService } from 'primeng/api'
+import { MessageService } from '@openng/optimus-ui/api'
 import { createLogger } from '../../utils/logger.utils'
 
 @Component({

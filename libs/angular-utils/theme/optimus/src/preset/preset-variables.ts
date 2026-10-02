@@ -114,7 +114,7 @@ export default {
       },
     },
     mask: {
-      // INFO: No variable for this, so probably was default PrimeNG value
+      // INFO: No variable for this, so probably was default Optimus value
       transitionDuration: '0.15s',
     },
     content: {

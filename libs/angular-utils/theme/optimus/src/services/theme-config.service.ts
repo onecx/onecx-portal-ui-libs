@@ -1,12 +1,12 @@
 import { ENVIRONMENT_INITIALIZER, Injectable, InjectionToken, inject } from '@angular/core'
 import { ThemeService } from '@onecx/angular-integration-interface'
 import { Theme as OneCXTheme, OverrideType, ThemeOverride } from '@onecx/integration-interface'
-import { Base } from 'primeng/base'
-import { PrimeNG } from 'primeng/config'
+import { Base } from '@openng/optimus-ui/base'
+import { Optimus } from '@openng/optimus-ui/config'
 import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
-import { UseStyle } from 'primeng/usestyle'
-import { Theme } from '@primeuix/styled'
+import { UseStyle } from '@openng/optimus-ui/usestyle'
+import { Theme } from '@openng/optimus-ui-styled'
 import { mergeDeep } from '@onecx/angular-utils'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING');
@@ -36,7 +36,7 @@ export function provideThemeConfigService(isAdvanced?: boolean) {
 })
 export class ThemeConfigService {
   private themeService = inject(ThemeService);
-  private primeNG = inject(PrimeNG);
+  private optimus = inject(Optimus);
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING);
 
   constructor() {
@@ -54,10 +54,10 @@ export class ThemeConfigService {
     }, {} );
   }
 
-  private parsePrimeNGOverridesValue(overrides?: ThemeOverride[]){
+  private parseOptimusOverridesValue(overrides?: ThemeOverride[]){
     if (!overrides?.length) return {};
     const parsedOverrides: any = []
-    overrides.filter(el => el.type === OverrideType.PRIMENG).forEach((element: ThemeOverride) => {
+    overrides.filter(el => el.type === OverrideType.OPTIMUS).forEach((element: ThemeOverride) => {
       if (element.value) {
         const override = { ...element, value: JSON.parse(element.value) }
         parsedOverrides.push(override)
@@ -68,11 +68,11 @@ export class ThemeConfigService {
 
   async applyThemeVariables(oldTheme: OneCXTheme): Promise<void> {
     const oldThemeVariables = oldTheme.properties
-    const overridesFolded = this.isAdvancedTheming ? this.foldOverrides(this.parsePrimeNGOverridesValue(oldTheme.overrides)) : {}
+    const overridesFolded = this.isAdvancedTheming ? this.foldOverrides(this.parseOptimusOverridesValue(oldTheme.overrides)) : {}
 
     const themeConfig = new ThemeConfig(oldThemeVariables)
     const preset = await (await import('../preset/custom-preset')).CustomPreset
-    this.primeNG.setThemeConfig({
+    this.optimus.setThemeConfig({
       theme: {
         preset: mergeDeep(preset, mergeDeep(themeConfig.getConfig(),overridesFolded)),
         options: { darkModeSelector: false },

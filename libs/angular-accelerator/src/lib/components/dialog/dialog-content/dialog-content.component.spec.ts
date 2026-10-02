@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { Observable, Subject } from 'rxjs'
 import { DialogContentHarness, provideTranslateTestingService } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
