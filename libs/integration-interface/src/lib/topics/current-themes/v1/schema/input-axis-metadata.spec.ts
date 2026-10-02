@@ -22,27 +22,28 @@ describe('input axis metadata', () => {
     })
 
     it('filled + hover falls back to filled + defaultState', () => {
-      expectFallback(INPUT, 'filled.hover.defaultSeverity.background', 'filled.defaultState.defaultSeverity.background')
+      expectFallback(INPUT, {
+        from: 'filled.hover.defaultSeverity.background',
+        to: 'filled.defaultState.defaultSeverity.background',
+      })
     })
 
     it('filled + defaultState falls back to defaultVariant + defaultState', () => {
-      expectFallback(
-        INPUT,
-        'filled.defaultState.defaultSeverity.background',
-        'defaultVariant.defaultState.defaultSeverity.background'
-      )
+      expectFallback(INPUT, {
+        from: 'filled.defaultState.defaultSeverity.background',
+        to: 'defaultVariant.defaultState.defaultSeverity.background',
+      })
     })
 
     it('defaultVariant + hover falls back to defaultVariant + defaultState', () => {
-      expectFallback(
-        INPUT,
-        'defaultVariant.hover.defaultSeverity.background',
-        'defaultVariant.defaultState.defaultSeverity.background'
-      )
+      expectFallback(INPUT, {
+        from: 'defaultVariant.hover.defaultSeverity.background',
+        to: 'defaultVariant.defaultState.defaultSeverity.background',
+      })
     })
 
     it('defaultVariant + defaultState has no fallback (no parent scope)', () => {
-      expectFallback(INPUT, 'defaultVariant.defaultState.defaultSeverity.background', undefined)
+      expectFallback(INPUT, { from: 'defaultVariant.defaultState.defaultSeverity.background', to: undefined })
     })
   })
 })

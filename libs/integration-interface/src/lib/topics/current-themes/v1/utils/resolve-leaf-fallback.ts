@@ -9,7 +9,6 @@
  */
 
 import {
-  AXES_OUTER_TO_INNER,
   DEFAULT_KEY,
   DEFAULT_SEGMENTS,
   FALLBACK_ORDER_DEFAULT,
@@ -49,19 +48,26 @@ function firstRelaxableKind(scope: Scope, order: RelaxedAxisKind[]): RelaxedAxis
   return order.find((kind) => scope.entries.some((entry) => entry.kind === kind && !isDefaultEntry(entry)))
 }
 
+function computeEntryOffsets(scope: Scope): number[] {
+  const baseOffset = scope.scopePath.split('.').length
+  const offsets: number[] = new Array(scope.entries.length)
+  let outerSegmentLength = 0
+  for (let i = scope.entries.length - 1; i >= 0; i--) {
+    offsets[i] = baseOffset + outerSegmentLength
+    outerSegmentLength += scope.entries[i].segments.length
+  }
+  return offsets
+}
+
 function relaxAxis(leafPath: string, scope: Scope, kind: RelaxedAxisKind): string {
-  const segments = leafPath.split('.')
-  let offset = scope.scopePath.split('.').length
-  for (const axis of AXES_OUTER_TO_INNER) {
-    const entry = scope.entries.find((e) => e.kind === axis)
-    if (entry === undefined) {
-      continue
-    }
-    if (axis === kind) {
-      segments.splice(offset, entry.segments.length, ...DEFAULT_SEGMENTS[kind])
+  const offsets = computeEntryOffsets(scope)
+  for (let i = 0; i < scope.entries.length; i++) {
+    const entry = scope.entries[i]
+    if (entry.kind === kind && !isDefaultEntry(entry)) {
+      const segments = leafPath.split('.')
+      segments.splice(offsets[i], entry.segments.length, ...DEFAULT_SEGMENTS[kind])
       return toVarName(segments.join('.'))
     }
-    offset += entry.segments.length
   }
   return leafPath
 }

@@ -92,6 +92,7 @@ export const buttonDefaults = {
 
 export const button = applyDefaultsRecursive(buttonShape, buttonDefaults).register(themeSchemaRegistry, {
   id: 'button',
+  axis: 'variant',
 })
 
 /** @deprecated kept for backward compatibility — import `button` directly instead. */

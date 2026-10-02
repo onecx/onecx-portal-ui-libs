@@ -46,7 +46,7 @@ export const buttonColorVariantShape: z.ZodObject<Record<string, z.ZodTypeAny>> 
     lg: lgButtonShape.prefault({}),
     badge: badge.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'buttonColorVariantShape' })
+  .register(themeSchemaRegistry, { id: 'buttonColorVariantShape', axis: 'variant' })
 
 /**
  * The color-independent, self-defaulting leaves of a color variant (`sm`/`md`/`lg`,

@@ -43,7 +43,7 @@ describe('calendar axis metadata', () => {
     })
 
     it('has no fallback for a leaf carrying only the root metadata', () => {
-      expectFallback(CALENDAR, 'defaultVariant.input.shadow', undefined)
+      expectFallback(CALENDAR, { from: 'defaultVariant.input.shadow', to: undefined })
     })
   })
 
@@ -57,31 +57,31 @@ describe('calendar axis metadata', () => {
     })
 
     it('filled + hover falls back to filled + defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.input.filled.hover.defaultSeverity.background',
-        'defaultVariant.input.filled.defaultState.defaultSeverity.background'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.input.filled.hover.defaultSeverity.background',
+        to: 'defaultVariant.input.filled.defaultState.defaultSeverity.background',
+      })
     })
 
     it('filled + defaultState falls back to defaultVariant + defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.input.filled.defaultState.defaultSeverity.background',
-        'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.input.filled.defaultState.defaultSeverity.background',
+        to: 'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background',
+      })
     })
 
     it('defaultVariant + hover falls back to defaultVariant + defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.input.defaultVariant.hover.defaultSeverity.background',
-        'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.input.defaultVariant.hover.defaultSeverity.background',
+        to: 'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background',
+      })
     })
 
     it('defaultVariant + defaultState has no fallback (root has only defaults)', () => {
-      expectFallback(CALENDAR, 'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background', undefined)
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.input.defaultVariant.defaultState.defaultSeverity.background',
+        to: undefined,
+      })
     })
   })
 
@@ -94,15 +94,14 @@ describe('calendar axis metadata', () => {
     })
 
     it('hover falls back to defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.input.icon.defaultVariant.hover.color',
-        'defaultVariant.input.icon.defaultVariant.defaultState.color'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.input.icon.defaultVariant.hover.color',
+        to: 'defaultVariant.input.icon.defaultVariant.defaultState.color',
+      })
     })
 
     it('defaultState has no fallback (root has only defaults)', () => {
-      expectFallback(CALENDAR, 'defaultVariant.input.icon.defaultVariant.defaultState.color', undefined)
+      expectFallback(CALENDAR, { from: 'defaultVariant.input.icon.defaultVariant.defaultState.color', to: undefined })
     })
   })
 
@@ -115,15 +114,17 @@ describe('calendar axis metadata', () => {
     })
 
     it('hover falls back to defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.calendarIconButton.defaultVariant.hover.color',
-        'defaultVariant.calendarIconButton.defaultVariant.defaultState.color'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.calendarIconButton.defaultVariant.hover.color',
+        to: 'defaultVariant.calendarIconButton.defaultVariant.defaultState.color',
+      })
     })
 
     it('defaultState has no fallback (root has only defaults)', () => {
-      expectFallback(CALENDAR, 'defaultVariant.calendarIconButton.defaultVariant.defaultState.color', undefined)
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.calendarIconButton.defaultVariant.defaultState.color',
+        to: undefined,
+      })
     })
   })
 
@@ -133,15 +134,17 @@ describe('calendar axis metadata', () => {
     })
 
     it('hover falls back to defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        'defaultVariant.panel.defaultVariant.hover.background.color',
-        'defaultVariant.panel.defaultVariant.defaultState.background.color'
-      )
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.panel.defaultVariant.hover.background.color',
+        to: 'defaultVariant.panel.defaultVariant.defaultState.background.color',
+      })
     })
 
     it('defaultState has no fallback (root has only defaults)', () => {
-      expectFallback(CALENDAR, 'defaultVariant.panel.defaultVariant.defaultState.background.color', undefined)
+      expectFallback(CALENDAR, {
+        from: 'defaultVariant.panel.defaultVariant.defaultState.background.color',
+        to: undefined,
+      })
     })
   })
 
@@ -151,27 +154,36 @@ describe('calendar axis metadata', () => {
     ['timePicker', 'padding'],
     ['footerButtonBar', 'padding'],
   ])('panel > %s', (child, token) => {
-    const leaf = (panelState: string, childState: string) =>
-      `defaultVariant.panel.defaultVariant.${panelState}.${child}.defaultVariant.${childState}.${token}`
-
     it('has the panel states', () => {
       expectAxes(scopes, child, { variant: ['defaultVariant'], state: ['defaultState', 'hover', 'focus'] })
     })
 
     it('hover falls back to defaultState', () => {
-      expectFallback(CALENDAR, leaf('defaultState', 'hover'), leaf('defaultState', 'defaultState'))
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.defaultState.${child}.defaultVariant.hover.${token}`,
+        to: `defaultVariant.panel.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it('hover falls back to defaultState before the parent panel relaxes', () => {
-      expectFallback(CALENDAR, leaf('hover', 'hover'), leaf('hover', 'defaultState'))
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.hover.${child}.defaultVariant.hover.${token}`,
+        to: `defaultVariant.panel.defaultVariant.hover.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it('defaultState falls back on the parent panel state', () => {
-      expectFallback(CALENDAR, leaf('hover', 'defaultState'), leaf('defaultState', 'defaultState'))
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.hover.${child}.defaultVariant.defaultState.${token}`,
+        to: `defaultVariant.panel.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it('defaultState has no fallback when the parent panel is default', () => {
-      expectFallback(CALENDAR, leaf('defaultState', 'defaultState'), undefined)
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+        to: undefined,
+      })
     })
   })
 
@@ -192,39 +204,43 @@ describe('calendar axis metadata', () => {
     ['footerButtonBar', 'todayButton', ['defaultState', 'hover', 'focus', 'active', 'disabled'], 'padding'],
     ['footerButtonBar', 'clearButton', ['defaultState', 'hover', 'focus', 'active', 'disabled'], 'padding'],
   ])('panel > %s > %s', (parent, child, states, token) => {
-    const leaf = (panelState: string, parentState: string, childState: string) =>
-      `defaultVariant.panel.defaultVariant.${panelState}.${parent}.defaultVariant.${parentState}.${child}.defaultVariant.${childState}.${token}`
-
     it('has its states (static tokens opted out)', () => {
       expectAxes(scopes, child, { variant: ['defaultVariant'], state: states })
     })
 
     it('hover falls back to defaultState', () => {
-      expectFallback(
-        CALENDAR,
-        leaf('defaultState', 'defaultState', 'hover'),
-        leaf('defaultState', 'defaultState', 'defaultState')
-      )
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.defaultState.${parent}.defaultVariant.defaultState.${child}.defaultVariant.hover.${token}`,
+        to: `defaultVariant.panel.defaultVariant.defaultState.${parent}.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it('hover falls back to defaultState before its parents relax', () => {
-      expectFallback(CALENDAR, leaf('hover', 'hover', 'hover'), leaf('hover', 'hover', 'defaultState'))
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.hover.${parent}.defaultVariant.hover.${child}.defaultVariant.hover.${token}`,
+        to: `defaultVariant.panel.defaultVariant.hover.${parent}.defaultVariant.hover.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it(`defaultState falls back on the parent ${parent} state`, () => {
-      expectFallback(CALENDAR, leaf('hover', 'hover', 'defaultState'), leaf('hover', 'defaultState', 'defaultState'))
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.hover.${parent}.defaultVariant.hover.${child}.defaultVariant.defaultState.${token}`,
+        to: `defaultVariant.panel.defaultVariant.hover.${parent}.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it(`defaultState falls back on the panel state when ${parent} is default`, () => {
-      expectFallback(
-        CALENDAR,
-        leaf('hover', 'defaultState', 'defaultState'),
-        leaf('defaultState', 'defaultState', 'defaultState')
-      )
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.hover.${parent}.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+        to: `defaultVariant.panel.defaultVariant.defaultState.${parent}.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+      })
     })
 
     it('defaultState has no fallback when all parents are default', () => {
-      expectFallback(CALENDAR, leaf('defaultState', 'defaultState', 'defaultState'), undefined)
+      expectFallback(CALENDAR, {
+        from: `defaultVariant.panel.defaultVariant.defaultState.${parent}.defaultVariant.defaultState.${child}.defaultVariant.defaultState.${token}`,
+        to: undefined,
+      })
     })
   })
 })

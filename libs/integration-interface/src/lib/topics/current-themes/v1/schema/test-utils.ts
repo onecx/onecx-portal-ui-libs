@@ -19,6 +19,9 @@
  * fallback scope under a usage and assert them per component.
  *
  * expectFallback — asserts the resolver's single-step fallback for a leaf path under a usage.
+ * Takes named `{ from, to }` paths (rather than positional arguments) so call sites stay
+ * self-documenting even when `from`/`to` are built by a local helper instead of being written
+ * out as literal strings.
  */
 
 import * as z from 'zod'
@@ -100,8 +103,12 @@ export function expectAxes(scopes: Map<string, Axes>, scopeName: string, expecte
 /**
  * Asserts the resolver maps the leaf at `from` to the leaf at `to` in one step (`undefined` means no
  * fallback). Both paths are relative to `usagePath` and are compared as theme variable names.
+ *
+ * `from`/`to` are named (rather than positional) so the assertion reads unambiguously at the call
+ * site, e.g. `expectFallback(CALENDAR, { from: leaf('hover'), to: leaf('defaultState') })` — no need
+ * to open this file to know which side is the starting leaf and which is the expected fallback.
  */
-export function expectFallback(usagePath: string, from: string, to: string | undefined) {
+export function expectFallback(usagePath: string, { from, to }: { from: string; to: string | undefined }) {
   const toVar = (path: string) => THEME_VAR_PREFIX + `${usagePath}.${path}`.slice('v2.'.length).replace(/\./g, '-')
   expect(resolveLeafFallback(toVar(from))).toBe(to === undefined ? undefined : toVar(to))
 }
