@@ -5,13 +5,15 @@
  * @jest-environment node
  */
 
-// Re-spread the real node:fs into a writable ESM mock so `existsSync` can be spied
-// on under the TS 6.0 CJS-namespace interop (raw-namespace props are no longer
-// configurable, which breaks jest.spyOn). Importing via the same 'node:fs'
-// specifier the source uses keeps spec and source on one shared mock object.
+// Make the real node:fs module spy-able. The default CJS-namespace that
+// `import * as fs` re-exports has read-only props, so `jest.spyOn(fs, 'existsSync')`
+// throws "Cannot redefine property". Re-spread the real module with
+// `__esModule: true` so it is treated as an ESM default whose props are writable,
+// while the real fs functions are preserved (the other tests rely on actual reads
+// of the real @angular/* package.json files).
 jest.mock('node:fs', () => {
   const actual = jest.requireActual('node:fs')
-  return { ...actual, __esModule: true, default: { ...actual } }
+  return { ...actual, __esModule: true }
 })
 import * as fs from 'node:fs'
 import {
