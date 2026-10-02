@@ -66,3 +66,4 @@ Once the previous steps are completed, **the application should be upgraded to A
 ** [ ] xref:./use-new-object-detail-item-interface.adoc[Use updated ObjectDetailItem interface for PageHeaderComponent]
 ** [ ] xref:./portal-dialog-service-signature-changes.adoc[Be aware of the PortalDialogService signature changes]
 ** [ ] xref:./updated-guards-usage.adoc[Leverage Angular guards]
+** [ ] xref:./additional-breaking-changes.adoc[Additional Breaking Changes]

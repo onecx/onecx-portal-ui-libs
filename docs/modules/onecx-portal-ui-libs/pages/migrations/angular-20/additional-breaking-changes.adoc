@@ -1,0 +1,27 @@
+[#additional-breaking-changes-20]
+= Additional Breaking Changes
+
+The following libs v7 changes are easy to miss. Review them and update your application as needed.
+
+[#static-menu-visible-topic-removed]
+== StaticMenuVisibleTopic Removed
+
+`StaticMenuVisibleTopic` has been removed from `@onecx/integration-interface`; the underlying source file was deleted and there is no replacement export. If your application publishes to or subscribes on the `staticMenuVisible` topic, remove that usage.
+
+.Before:
+[source, typescript]
+----
+import { StaticMenuVisibleTopic } from '@onecx/integration-interface';
+----
+
+[#integration-tests-package-removed]
+== @onecx/integration-tests Package Removed
+
+The `@onecx/integration-tests` package has been removed entirely in v7. If `package.json` contains this dependency, uninstall it:
+
+[source, bash]
+----
+npm uninstall --save-dev @onecx/integration-tests
+----
+
+Replace any imports from `@onecx/integration-tests` with project-local or repository-local test utilities; v7 no longer publishes this package.

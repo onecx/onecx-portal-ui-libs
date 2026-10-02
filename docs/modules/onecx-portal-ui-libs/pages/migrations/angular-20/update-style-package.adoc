@@ -20,6 +20,15 @@ import { updateStylesForMfeChange } from '@onecx/angular-utils'
 import { updateStylesForMfeChange } from '@onecx/angular-utils/style'
 ----
 
+[IMPORTANT]
+====
+Besides the import path change, some style helpers were renamed or removed entirely in v7. Update usages as follows:
+
+* `createScopedCss` → renamed to `createApplicationScopedCss`
+* `updateStylesForRcRemoval` → removed; use `removeAllRcUsagesFromStyles` or `removeRcUsageFromStyle` as appropriate
+* `replaceHtmlWithScope`, `addOriginalCssToStyleElement`, `removeAttributeFromStyle`, `isAppStyle`, `isAppStyleForScope` → removed from the public API with no direct replacement; refactor any usage
+====
+
 == Style subpackage public API contents
 
 === Functions
