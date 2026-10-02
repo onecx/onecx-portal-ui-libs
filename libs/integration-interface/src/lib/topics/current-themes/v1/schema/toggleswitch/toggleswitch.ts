@@ -21,7 +21,7 @@ const toggleSwitchSettingsShape = z
   })
   .register(themeSchemaRegistry, { id: 'toggleSwitchSettingsShape' })
 
-const toggleSwitchShape = z.object({
+export const toggleSwitchShape = z.object({
   settings: toggleSwitchSettingsShape.prefault({}),
   defaultVariant: toggleSwitchVariantShape.prefault({}),
   checked: toggleSwitchVariantShape.prefault({}),

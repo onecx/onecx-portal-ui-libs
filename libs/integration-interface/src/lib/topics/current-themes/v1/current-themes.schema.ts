@@ -9,7 +9,7 @@ import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
-import { toggleswitch } from './schema/toggleswitch'
+import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
 import { diagram, diagramShape } from './schema/diagram'
@@ -50,7 +50,7 @@ type UsagesInput = {
   diagram?: z.input<typeof diagramShape>
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
-  toggleswitch?: z.input<typeof toggleswitch>
+  toggleswitch?: z.input<typeof toggleSwitchShape>
   textarea?: z.input<typeof textarea>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
