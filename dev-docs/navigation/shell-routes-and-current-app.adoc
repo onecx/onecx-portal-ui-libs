@@ -1,0 +1,123 @@
+= Shell routes & Current App activation
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does the Shell build a route table from the Workspace, match the current URL against it, and activate the one application ("Current App") that owns that URL — and what happens when nothing owns it?
+
+== Why it exists
+
+The Shell does not know, at build time, which applications exist, what base URLs they own, or what the user is asking for. All of it arrives at runtime: the Workspace configuration (a list of routes, each with a base URL, a module to load and the app's identity) comes from the back end, and the current URL is what the user asked for. The Shell has to turn that data into a *router configuration* and let Angular Router match the URL to one of those routes, load the owning application's remote module, and put it in front of the user. If the URL does not match any application, the Shell must still show something sensible — its not-found page. This Unit traces that pipeline: route table → match → Current App → not-found.
+
+It is the Shell-side counterpart of Unit 1. Unit 1 says *the URL is the single source of truth that every router follows*; this Unit says *what the Shell's own router does with that URL* — which is, in effect, "which app should be open, and load it".
+
+== How it works
+
+The Shell's route table is assembled at runtime and handed to the native Angular `Router`. The Shell is a single Angular app; its router is the one router that is *allowed* to own the top-level path and to choose which remote app to mount. Every other app on the page is a *follower* whose router is driven by the shared URL (Unit 1).
+
+[source,mermaid]
+----
+flowchart TB
+  WS[Workspace routes<br/>from BFF] --> Init[RoutesService.init]
+  Init --> Sort[sort longest-url first]
+  Sort --> Convert[convert each to a lazy Route]
+  Convert --> Match[Angular Router matches the URL]
+  Match --> Activate[currentMfe$ publish<br/>+ load remote module]
+  Activate --> App[Current App renders]
+  Match -.no match.-> NF[not-found page]
+  Init -.workspace has no route.-> FB[fallback route<br/>-> home page]
+  Match -.remote fails.-> ERR[remote-loading-error page]
+----
+
+The moving parts:
+
+. *Route table.* `RoutesService.init(routes)` takes the BFF-generated route list and turns it into Angular `Route` objects.
+. *Ordering.* Routes are sorted longest-URL first so a more specific base matches before a shorter prefix (`sortRoutes` compares `url` length).
+. *Matching.* Angular Router does the actual match against the current URL. Each generated route has a `path` (the base URL, normalised by `toRouteUrl`), a `pathMatch` (`full` when the base ends in `$`, otherwise `prefix`), and a `loadChildren` loader.
+. *Activation.* When a route matches and its loader runs, the Shell publishes the `currentMfe` information (`currentMfe$`) and loads the owning module from Module Federation. That load is what makes an app the *Current App*.
+. *Not-found.* A `**` catch-all route always sits at the end; when nothing else matches, the Shell loads its not-found page instead.
+
+== Libs side / Shell side
+
+=== Shell side
+
+All of this lives in the Shell; the libs are consumed, not produced. The key file is link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`].
+
+* *Building the table (`init`).* `init(routes)` sorts the routes, converts each via `convertToRoute`, checks `containsRouteForWorkspace` (whether the Workspace's own base URL is actually one of the routes), and finally calls `router.resetConfig([...appRoutes, ...generatedRoutes, DEFAULT_CATCH_ALL_ROUTE])`. `appRoutes` are the Shell's own internal routes (link:{shell}/src/app/app.routes.ts[`app.routes.ts`]: initialization-error, remote-loading-error and the internal Shell route); `DEFAULT_CATCH_ALL_ROUTE` is the `{ path: '**', loadChildren: () => not-found }` fallback that never matches first.
+* *Converting one route (`convertToRoute`).* Each BFF route becomes `{ path: toRouteUrl(baseUrl), pathMatch, loadChildren: () => loadChildren(r, baseUrl), canActivateChild: [() => updateAppEnvironment(r, baseUrl)], data: { module, breadcrumb }, title }`. `pathMatch` is `full` when `baseUrl` ends with `$`, else `prefix`. `toRouteUrl` strips the Shell base href, a leading `/`, a trailing `$`/`/` — i.e. it normalises the base into a router path.
+* *Matching + activation (`loadChildren`).* This runs when the router matches the route. It sets `globalLoading`, calls `updateAppEnvironment`, then `registerRemotes` + `loadRemote` the owning module. If `technology === Angular` it returns the remote's module directly; otherwise it returns the link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.module.ts[`WebcomponentLoaderModule`], which mounts the remote as a web component. *This is the Current App activation.*
+* *Publishing the Current App (`updateMfeInfo`).* `updateAppEnvironment` → `updateAppState` → `updateMfeInfo` publishes `currentMfe$` with `baseHref`/`mountPath`/`remoteBaseUrl`/`appId`/`productName`/`elementName`/`version` for the matched route. Apps and the libs read `currentMfe$` to know *which* app is active and where its base is (and `updatePermissions` publishes the app's permissions alongside it). The Shell's own not-found page reads `currentMfe$` too.
+* *Not-found (`DEFAULT_CATCH_ALL_ROUTE`).* When the URL matches no generated route, the `**` route loads link:{shell}/src/app/not-found/not-found.module.ts[`NotFoundModule`] → link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent`]. The page shows a translated "not found" message and a button back to `workspace.baseUrl`. In its constructor it also publishes a *neutral* `currentMfe$` (empty app id/base href) so nothing else tries to activate a real app while the error page is showing.
+* *Workspace base not covered → fallback.* If the Workspace's own `baseUrl` is not among the routes, `createFallbackRoute` adds a `full`-match route on that base that either redirects to `homePage` (`createHomePageUrl`) or loads the `home` module when no `homePage` is configured.
+* *Remote load failure → error page.* If `loadRemote` throws, `onRemoteLoadError` raises a Portal Message and navigates to `remote-loading-error-page`, rethrowing so the route stays unmatched.
+
+=== Libs side
+
+The libs contribute the data and the consumers, not the matching itself:
+
+* *The route data.* `RoutesService.init` receives `routes` from the Shell's back-end response (the OpenAPI-generated `Route` type in link:{shell}/src/app/shared/generated[`src/app/shared/generated`]). Those routes are also published to apps as part of the `current-workspace` Topic (`Workspace.routes`), so each app can see the whole table — but only the Shell's `Router` decides which one is active.
+* *`currentMfe$` is the libs handle for "the Current App."* `AppStateService.currentMfe$` (link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]) is the `CurrentMfeTopic` (link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]). Every app-side mechanism that depends on "which app am I in" reads this. Publishing it is the Shell telling the rest of the page *this* is the Current App.
+* *App-side routing is scoped to the Current App's base.* The app-side helpers from Unit 1 — `initializeRouter` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`webcomponent-router-initializer.utils.ts`]) and `startsWith` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`webcomponent-router.utils.ts`]) — use the `mfeInfo.baseHref` published by the Shell so that, once an app is the Current App, its own router only claims URLs under its base. Activation (Shell) and scoped routing (app) are two halves of the same idea.
+
+== Angular / React
+
+The *activation* differs by the owning app's technology, the *matching* does not — matching is always done by the Shell's Angular `Router`.
+
+* *Angular apps.* `loadChildren` resolves the remote module and returns it; the Shell's router renders it directly as the active route.
+* *React apps (and other web components).* `loadChildren` returns the Shell's `WebcomponentLoaderModule`; its link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`] reads `currentMfe$`, creates a custom element named `currentMfe.elementName`, and appends it to the wrapper. The React app's own router inside that element then follows the shared URL exactly as in Unit 1 (via `SyncedRouterProvider`/`withSyncedRouter`), which is why a React app is mounted by the Shell but *routed* by the shared URL.
+
+== Edge cases & pitfalls
+
+* *Longest-match-first is load-bearing.* `sortRoutes` orders by descending URL length. If a base were inserted without that ordering, a shorter prefix route could shadow a longer, more specific one.
+* *`$` means "full".* A route base ending in `$` is matched with `pathMatch: 'full'` and the `$` is stripped from the path. Mixing `$` and prefix bases for overlapping paths changes what matches — keep the Workspace's bases consistent.
+* *The Shell base href is stripped before matching.* `toRouteUrl` removes `APP_BASE_HREF` (when the base starts with it) and normalises slashes, so the route path is relative to the Shell's own base. If the deployed base changes, this normalisation is what keeps the table correct.
+* *`currentMfe$` is only meaningful once a route activates.* An app reading `currentMfe$` before the Shell has activated a route (or before `workspaceConfigInitializer` finishes) reads nothing. Gate on `isInitialized` as with every other Shell context (Area 3, Unit 1).
+* *The not-found page is a neutral app, not "no app."* It deliberately publishes an empty `currentMfe$`. Code that assumes `currentMfe$` is always a real app must handle this blank value.
+* *The `**` route is always present.* It is appended after the generated routes, so it only wins when everything else fails. Removing it would leave unmatched URLs without a page.
+* *Internal Shell routes are skipped by the initializer.* `workspaceConfigInitializer` returns early for the Shell's own internal route, so on those pages there is no Workspace route table and no Current App — the Shell is showing itself.
+
+== Debugging
+
+* The Shell logs `🧭 Adding fallback route` and `🧭 Adding Workspace routes:` followed by the `url -> baseUrl` table during `RoutesService.init` — this is the assembled route table right before matching.
+* `➡ Load remote module <module>` (and `Load remote module <module> finished.`) in `loadChildren` marks the exact moment a Current App is being activated.
+* A `Navigation ID is -1` warning (from the history patch, Unit 1) often shows up while a route table is being built; it is a sign of a botched microfrontend initialisation, not a matching failure.
+* To see which app is active at runtime, read the `currentMfe$` value (its `appId`/`productName`/`remoteBaseUrl`); that is the Current App the Shell has activated.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:url-to-every-router.adoc[URL change → every router] — the shared-URL mechanism this Shell router sits on top of.
+* `navigation-topics.adoc` — the Topics that carry the route table and the current location.
+* `why-cross-app-guards.adoc` — why activating an app may be vetoed by another app's guards.
+* `angular-guards.adoc` / `react-guards.adoc` — the guard machinery that can block an activation before the URL changes.
+* Area 3 (Shell Context & Runtime Configuration) — `current-workspace` and `currentMfe$` readiness.
+* Area 2 (Application Bootstrap) — how the matched remote module actually bootstraps.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] (`init`, `sortRoutes`, `convertToRoute`, `loadChildren`, `updateAppEnvironment`, `updateAppState`, `updateMfeInfo`, `createFallbackRoute`, `createHomePageUrl`, `toRouteUrl`, `containsRouteForWorkspace`, `DEFAULT_CATCH_ALL_ROUTE`) (Shell)
+* link:{shell}/src/app/app.routes.ts[`appRoutes`, `internalShellRoute`] (Shell)
+* link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer` → `routesService.init(...).then(urlChangeListenerInitializer)`] (Shell)
+* link:{shell}/src/app/not-found/not-found.module.ts[`NotFoundModule`] (Shell)
+* link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent`] (Shell)
+* link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`] (Shell)
+* link:{shell}/src/app/shared/generated[generated `Route` / BFF route types] (Shell)
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`initializeRouter`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`startsWith`]
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, Known-issues rule.
+* Dev Docs top index (`README.adoc`) — Area 7 slug and reading order.
+* Draft Outline commit (6108bdff) — navigation-routing outline (routes-service section only; no content baseline).
+* Old Dev Docs `dev-docs/guards/modes.adoc` — the `INITIAL_ROUTER_SYNC`/revert story, cross-checked against `routes.service.ts` and `app.module.ts`.
+* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

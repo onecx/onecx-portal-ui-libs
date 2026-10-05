@@ -1,0 +1,72 @@
+= Remote Components & Slots
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This Area explains how OneCX places *Remote Components* into *Slots*: how the Workspace decides which component goes into which slot, and how that component is actually rendered on the page.
+
+toc::[]
+
+== Problem
+
+A portal page is made up of many independently built micro-frontends (MFEs), but a user expects to see a single coherent layout — a header, a menu, a footer, and small widgets dropped into reserved regions of that layout. Some of those widgets are not Apps: they are small, self-contained UI pieces (a toast, a header badge, an inline panel) that one MFE exposes and another host MFE or the Shell renders in a reserved place.
+
+That requires a mechanism with two answers:
+
+* *Which* component fills a given region of the page?
+* *How* is that component instantiated and wired up once it is chosen?
+
+This Area covers both. Bootstrap of a Remote Component, its styles, its permissions and its translations are owned by other Areas and are only linked to from here.
+
+== Big picture
+
+The work is split between the libraries in this repository and the Shell.
+
+The Shell loads the *Workspace configuration* from the BFF, which contains a list of Remote Components and a list of Slots that assign components to named regions. After normalising legacy slot names, the Shell publishes that data to every MFE on the page through the link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`].
+
+Each MFE that wants to host a widget renders one or more slot elements — `<ocx-slot>` in Angular and `SlotComponent` in React. The slot service in the MFE reads the published data, resolves the component names for its slot, loads the component's code through Module Federation, and renders it.
+
+[source,mermaid]
+----
+flowchart LR
+  BFF["Shell BFF<br/>(workspace config)"] --> SHELL
+  subgraph SHELL["OneCX Shell"]
+    direction TB
+    WC["workspaceConfigInitializer<br/>loads workspace config"]
+    MAP["mapSlots()<br/>normalises legacy slot names"]
+    PUB["RemoteComponentsTopic.publish<br/>{ components, slots }"]
+    WC --> MAP --> PUB
+  end
+  PUB -->|topic: remoteComponentsInfo| MFE
+  subgraph MFE["Host MFE"]
+    direction TB
+    SVC["SlotService.getComponentsForSlot<br/>(or SlotProvider / useSlot)"]
+    MF["Module Federation<br/>loads the remote module"]
+    SLOT["slot element<br/>&lt;ocx-slot&gt; / &lt;SlotComponent&gt;"]
+    SVC --> MF --> SLOT
+  end
+  SLOT --> RC["Remote Component<br/>instance rendered into the slot"]
+----
+
+The data the Shell publishes is defined in the libs. A `Slot` maps a slot name to the names of the Remote Components assigned to it, and a `RemoteComponent` carries its identity (`appId`, `productName`), how to load it (`remoteEntryUrl`, `exposedModule`) and its `technology` (see link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`remote-component.model.ts`]).
+
+== Unit map
+
+The Units of this Area are listed in reading order. The slugs and file names below are fixed by the link:../README.adoc[Dev Docs index].
+
+. link:slot-assignment.adoc[Assignment] — how the Workspace assigns Remote Components to Slots, and how a slot resolves the components that fill it.
+. link:slot-rendering.adoc[Slot rendering] — the two rendering flavours: the Angular-init path (`ocxInitRemoteComponent`) and the web-component config path (`ocxRemoteComponentConfig`).
+. link:host-communication.adoc[Remote Component config & host communication] — how a rendered Remote Component receives its `RemoteComponentConfig` and talks back to the host.
+. link:shell-slots-catalogue.adoc[Shell Slots catalogue] — the Shell's Slot Groups and legacy slot name mapping.
+. link:slot-size-reporting.adoc[Slot size reporting] — how slot and slot-group size changes are published through the `ResizedEventsTopic`.
+
+== Related Areas
+
+* link:../bootstrap/loading-matched-remote.adoc[Loading the matched remote] (Area 2) — the Module Federation loading this Area relies on is a Remote Component's bootstrap concern.
+* link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] (Area 4) — the `data-style-id` / `data-style-isolation` attributes set on a slot's children are what style isolation keys off.
+* link:../permissions/remote-component-permissions.adoc[Remote Component permissions] (Area 9) — the per-component permission request a slot performs before rendering.
+* link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications] (Area 11) — the Shell's toast Remote Component, which is only shown when assigned to a Slot.

@@ -1,0 +1,153 @@
+= App/Remote Component stylesheet load & removal
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u1: ./why-style-isolation.adoc
+
+== Question answered
+
+How does OneCX load an application's stylesheet when its content appears, and remove it when the last use of that content disappears?
+
+== Why it exists
+
+An application's content does not exist for the whole lifetime of the page. A Microfrontend is mounted and then unmounted as the user navigates; a Remote Component is created and destroyed as Slots are filled and emptied. Loading every application's `styles.css` up front would waste bandwidth and keep styles around that nothing uses.
+
+So application stylesheets are *loaded on demand*: the first time an application's content appears, its `styles.css` is fetched, scoped (see link:{u1}[Unit 1]) and inserted into the page. Because several pieces of content can come from the same application — a Microfrontend *and* several Remote Components — a stylesheet must not be removed while any of them is still on the page. That is what *usage counting* is for: the stylesheet stays as long as at least one Microfrontend or Slot is using it, and is removed from the DOM the moment the last one goes away.
+
+== How it works
+
+=== The stylesheet element and its markers
+
+Each application's stylesheet lives in a single `<style>` element in the document head, identified by the scope id:
+
+[source,html]
+----
+<style data-app-styles="onecx-workspace|onecx-workspace-ui"
+       data-mfe-styles data-slot-left-styles data-slot-footer-styles></style>
+----
+
+`data-app-styles` carries the scope id (one stylesheet per application). The remaining attributes record *who* is currently using it:
+
+[cols="1,3", options="header"]
+|===
+|Attribute |Meaning
+
+|`data-app-styles="scopeId"`
+|The stylesheet belongs to this scope. There is at most one such element per scope.
+
+|`data-mfe-styles`
+|The current Microfrontend is using this stylesheet. At most one.
+
+|`data-slot-<name>-styles`
+|A Remote Component in the slot named `<name>` is using it. One per active slot, many possible.
+|===
+
+The usage count is simply `1` if `data-mfe-styles` is present, plus one for each `data-slot-…-styles` attribute. When that count drops to zero, the element is removed. The marker attribute names are built by `dataRcStylesKey(slotName)` / `dataRcStylesAttribute(slotName)` in link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants]; the count and the register/unregister operations are in link:{libs}/angular-utils/style/src/utils/app-styles-usage.utils.ts[`app-styles-usage.utils.ts`]:
+
+* `getStyleUsageCount(styleElement)` — MFE count plus RC (slot) count.
+* `useStyleForMfe(styleElement)` / `useStyleForRc(styleElement, slotName)` — add a usage marker.
+* `removeMfeUsageFromStyle(styleElement)` / `removeRcUsageFromStyle(styleElement, slotName)` — remove one.
+
+=== The load path
+
+link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`] has two entry points that share one internal `updateStyles`:
+
+* `updateStylesForMfeChange(productName, appId, http, mfeUrl)` — for a Microfrontend.
+* `updateStylesForRcCreation(productName, appId, http, rcUrl, slotName)` — for a Remote Component.
+
+`updateStyles` does the following:
+
+. Computes the scope id from `productName` and `appId`.
+. (MFE only) Deregisters every Microfrontend usage that is *not* this scope — leaving an application's MFE behind frees its stylesheet if nothing else uses it.
+. Looks up an existing stylesheet with `getAppStyleByScope(scopeId)` (`style[data-app-styles="scopeId"]` in the head).
+. If one exists, it only registers the new usage and returns — no second fetch.
+. Otherwise it creates the element (`createStyleUsedByMfeRc`), fetches the CSS with `fetchAppCss(http, url)`, and either removes the just-created element (if the fetch returned nothing) or writes the scoped CSS into it with `createApplicationScopedCss` + `replaceStyleContent`.
+
+`fetchAppCss` in link:{libs}/angular-utils/style/src/utils/fetch-app-css.util.ts[`fetch-app-css.util.ts`] requests `<appUrl>/styles.css` with `Accept: text/css`, validates that the response is `text/css`, and — on any failure — logs and returns `undefined` rather than throwing, so a missing stylesheet degrades to "no app styles" instead of a hard error.
+
+=== The removal path
+
+Removal is driven by usage, not by a timer. Two helpers in link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`]:
+
+* `removeAllMfeUsagesFromStyles(scopeId)` — for every stylesheet tagged `data-mfe-styles` that does *not* belong to `scopeId`, drop the MFE marker and delete the element if the count hits zero.
+* `removeAllRcUsagesFromStyles(scopeId, slotName)` — for every stylesheet tagged `data-slot-<name>-styles` that does not belong to `scopeId`, drop the slot marker and delete the element if the count hits zero.
+
+The shared `removeInactiveStyles` does the actual work: for each candidate it removes the marker, then calls `getStyleUsageCount` and removes the `<style>` element from the DOM if nothing is left using it.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`] — `updateStylesForMfeChange`, `updateStylesForRcCreation`, `removeAllMfeUsagesFromStyles`, `removeAllRcUsagesFromStyles`.
+* link:{libs}/angular-utils/style/src/utils/app-styles-usage.utils.ts[`app-styles-usage.utils.ts`] — usage counting and register/unregister.
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`] — `addStyleToHead`, `createStyleUsedByMfeRc`, `replaceStyleContent`.
+* link:{libs}/angular-utils/style/src/utils/fetch-app-css.util.ts[`fetch-app-css.util.ts`] — `fetchAppCss`.
+* link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants] — the `data-app-styles` / `data-mfe-styles` / `data-slot-<name>-styles` markers.
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] — the Angular caller for the Remote Component side.
+
+=== Shell side
+
+The Shell owns the Microfrontend side and the initial page setup:
+
+* link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`] — `updateAppStyles` calls `updateStylesForMfeChange(r.productName, r.appId, httpClient, r.url)`. It is wired as the route's `canActivateChild` guard in `convertToRoute`, so it runs on every navigation into an application, before that application's remote module is loaded. This is the Microfrontend trigger.
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] — `styleInitializer` sets up the page before any application loads: it starts the scope polyfill and loads the Shell's own and legacy stylesheets. It does not load application styles — those wait for the first `updateStylesForMfeChange`/`updateStylesForRcCreation`.
+
+== Angular / React
+
+* *Angular — Microfrontend:* the Shell calls `updateStylesForMfeChange` (above) on navigation. The loaded stylesheet is re-scoped for PrimeNG variables by `provideAppStylesInitializer` (link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]), which rewrites the `--p-` variables to the scope's prefix once the app is up.
+* *Angular — Remote Component:* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] calls `updateComponentStyles` → `updateStylesForRcCreation(…, this.name())` when it creates each Remote Component, and in `ngOnDestroy` calls `removeAllRcUsagesFromStyles(scopeId, this.name())` for every component it hosted so that a destroyed Slot releases its slot markers ("ghost styles").
+* *React:* the same `data-app-styles` element is the shared source of truth. The Shell's Microfrontend trigger is framework-agnostic, so a React Microfrontend that exposes `styles.css` gets the element loaded the same way. The React libraries then *consume* it rather than fetching it: `attachPrimeReactScoper` (link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`scopingFunctionality`]) reads the existing `style[data-app-styles="…"]` to apply the app's theme variables, and `withAppStyles`/`withRemoteStyles` (link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withAppStyles/index.tsx[`withAppStyles`], link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withRemoteStyles/index.tsx[`withRemoteStyles`]) wrap components in the `StyleRegistry` provider. React does not run its own copy of the fetch/usage-counting code in this Area — it relies on the element the Angular/Shell side created.
+
+== Edge cases & pitfalls
+
+* *Shared application.* A Microfrontend and several Remote Components can come from the same application. The stylesheet is fetched once; each piece of content only toggles its own marker. Removing the Microfrontend must not delete the sheet while the Slots still use it — that is what the count is for.
+* *MFE switch.* `updateStylesForMfeChange` first runs `removeAllMfeUsagesFromStyles`, so switching to a new Microfrontend deregisters the previous application's MFE usage *before* registering the new one. If the previous application had no other usages, its stylesheet is freed at that moment.
+* *Fetch returns nothing.* If `fetchAppCss` returns `undefined` (missing or non-`text/css` `styles.css`), the just-created element is immediately deregistered and removed, so no empty `<style>` lingers. The content still renders, just without app styles.
+* *Slot marker is per slot name, not per component.* Two Remote Components in the same slot share the `data-slot-<name>-styles` marker. If one is removed while the other remains, the count is still at least one and the sheet stays. The markers track *slots in use*, not *components on the page*.
+* *Destroyed Slot.* If a `SlotComponent` is destroyed without calling the removal path, its slot marker would remain and the sheet would never be freed. The Angular component wires this into `ngOnDestroy`.
+
+== Debugging
+
+In the browser devtools, look at the `<head>`:
+
+* `<style data-app-styles="productName|appId">` — the application's stylesheet; the scope id must match the content's `data-style-id`.
+* Its `data-mfe-styles` and `data-slot-<name>-styles` attributes — which MFE/Slots currently hold it. Count them to predict whether the element will be removed.
+* A missing stylesheet despite visible app content usually means `fetchAppCss` failed (check the `fetch-app-css` log namespace and that the app exposes `<base>/styles.css`).
+
+The libs log under `fetch-app-css` on fetch failure and `scope.utils` when a scope id cannot be built. General runtime inspection is covered by the *Diagnostics* Area.
+
+== Known issues
+
+* `dataRcStylesAttribute(slotName)` builds `data-slot-<slotName>-styles` and `dataRcStylesKey(slotName)` builds the camel-cased dataset key `slot<Name>Styles`; the two are coupled by construction. If a slot name is ever normalised differently between the attribute and the dataset key, the count and the removal would disagree. The slot name used today is a lowercase hyphen-separated string, which keeps them aligned (see link:{libs}/angular-utils/style/src/api/constants.ts[`constants.ts`]).
+
+== Related Units
+
+* link:{u1}[Why isolation & style kinds]
+* link:{area}[Styling & Style Isolation — Area overview]
+* `primeng-style-scoping.adoc` (PrimeNG/PrimeReact style scoping — planned)
+* *Remote Components & Slots* (the Slot that triggers the RC side) and *Bootstrap* (the navigation that triggers the MFE side) — other Areas.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`]
+* link:{libs}/angular-utils/style/src/utils/app-styles-usage.utils.ts[`app-styles-usage.utils.ts`]
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]
+* link:{libs}/angular-utils/style/src/utils/fetch-app-css.util.ts[`fetch-app-css.util.ts`]
+* link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants]
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]
+* link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`]
+* link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`attachPrimeReactScoper`]
+* link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withAppStyles/index.tsx[`withAppStyles`]
+* link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withRemoteStyles/index.tsx[`withRemoteStyles`]
+* link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts` (Shell)]
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)]
+
+Verification Sources checked::
+* `dev-docs/styles/concept.adoc`, `dev-docs/styles/style-types.adoc` (the "Application Styles Details" section describes the same `data-app-styles`/`data-mfe-styles`/`data-slot-<name>-styles` load-and-count behaviour)
+* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff])
+* in-code JSDoc of `app-styles-lifecycle.utils.ts`, `app-styles-usage.utils.ts` and `fetch-app-css.util.ts`
+* the old `style-types.adoc` "Angular 19+ / Angular 18 Remote Components" note is recorded as a follow-up: it states Angular 18 RCs do not receive app styles by default, which the current `SlotComponent` code does not gate on Angular version — worth confirming against the actual 18 behaviour.

@@ -1,0 +1,121 @@
+= Slot Assignment
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Part of the link:README.adoc[Remote Components & Slots] Area.
+
+== Question answered
+
+How does the Workspace decide which Remote Components go into which Slots, and how does a slot on the page resolve the components that fill it?
+
+== Why it exists
+
+A slot is a named, reserved region of the page. The decision about *what* fills each region is not made by the host page and not by the Remote Component — it is made centrally by the Workspace. The Workspace configuration, served by the Shell's BFF, lists the available Remote Components and, separately, assigns components to named Slots. Keeping that decision in one place lets the same host page render different sets of widgets per tenant, per workspace, or per user, without any change to the MFEs involved.
+
+== How it works
+
+Assignment happens in two stages.
+
+First, the Shell turns the raw Workspace configuration into the data every MFE can read. The Shell's `workspaceConfigInitializer` loads the workspace configuration and publishes it to the link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`]:
+
+The payload is a link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components-info.model.ts[`RemoteComponentsInfo`]: a `components` array (one link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`] per component) and a `slots` array of link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`] objects, each of which maps a slot name to a list of *component names*. This is the link between a slot and its components: the slot holds names, and each name resolves to an entry in the `components` array.
+
+Second, a slot on the page resolves its assigned components. The slot service (the link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`] in Angular, the link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[`SlotProvider`] in React) subscribes to the `RemoteComponentsTopic`. For a given slot name it:
+
+. finds the `Slot` whose `name` matches, and reads the list of component names it holds;
+. resolves each name to the corresponding `RemoteComponent` from the `components` array;
+. loads the component's remote module through Module Federation; Angular's `SlotService` does this for every component, but returns a `componentType` only for `Angular` technology (see link:slot-rendering.adoc[Slot rendering]);
+. resolves the component's permissions through the link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`];
+. emits one `SlotComponentConfiguration` per component, holding the loaded `componentType`, the `RemoteComponent` info, and the `permissions`.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant BFF
+  participant Shell
+  participant Topic as RemoteComponentsTopic
+  participant Slot as Slot element / SlotService
+
+  Shell->>BFF: loadWorkspaceConfig
+  BFF-->>Shell: { components, slots }
+  Shell->>Topic: publish { components, slots }
+  Topic-->>Slot: emit RemoteComponentsInfo
+  Slot->>Slot: resolve slot name -> component names -> RemoteComponents
+  Slot->>Slot: load each via Module Federation + fetch permissions
+  Slot-->>Slot: emit SlotComponentConfiguration[]
+----
+
+The slot element then renders one child per resolved component, in the order the `components` array lists them (see link:slot-rendering.adoc[Slot rendering]).
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`] — the topic that carries the assignment to every MFE.
+* link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`] — `getComponentsForSlot(slotName)` and `isSomeComponentDefinedForSlot(slotName)`. It resolves names to `RemoteComponent`s, loads every remote module via Module Federation, returns a `componentType` only for `Angular` technology (web-component modules get no `componentType`), and fetches permissions. It exposes the `SLOT_SERVICE` injection token.
+* link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[`SlotProvider`] / link:{libs}/react-remote-components/src/lib/hooks/useSlot.ts[`useSlot`] — the React equivalent. `getComponentsForSlot` resolves names and loads each via `shellMfInstance.loadRemote`; for `Angular` technology it throws, because a React host cannot render an Angular component.
+* link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`] — resolves the per-component `permissions` a slot passes to the component it renders.
+
+=== Shell side
+
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] — `workspaceConfigInitializer` loads the workspace configuration and publishes `{ components, slots: mapSlots(slots) }` to the `RemoteComponentsTopic`. It also calls `slotInitializer(slotService)`.
+* link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`slot-names-mapper.ts`] — `mapSlots` normalises legacy slot names to the current slot-group naming and merges slots that end up with the same name (see the "Legacy names" note below).
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.html[`slot-group.component.html`] and link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[`portal-viewport.component.html`] — where the Shell declares the slots it hosts, as `<ocx-slot>` / `<ocx-shell-slot-group>` elements named to match the Workspace configuration.
+
+== Angular / React
+
+The assignment itself is identical: both read the same `RemoteComponentsTopic` and resolve the same slot-to-component mapping. They differ in how the result is exposed and what they can load.
+
+* Angular exposes the slot service through the link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SLOT_SERVICE`] token and the link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] (`<ocx-slot>`). It can render both Angular components and web components: it loads every remote module via Module Federation, returns a `componentType` only for `Angular` technology, and leaves `WebComponent*` ones with no `componentType` (the slot then builds the web component element directly).
+* React exposes the same operations through `SlotProvider` / `useSlot`. It can only render web components, so loading an `Angular` component is a hard error.
+
+== Edge cases & pitfalls
+
+* *A slot with no assignment renders nothing.* If no `Slot` matches the slot name, or the matched slot has an empty `components` list, the slot resolves zero components. `isSomeComponentDefinedForSlot` is provided so a host can check this before rendering.
+* *A component name that does not resolve is dropped.* The resolution filters out names that have no matching entry in the `components` array, so a malformed assignment is skipped rather than failing the whole slot.
+* *Legacy names.* The Shell maps legacy slot names (e.g. `onecx-shell-header-left`) onto the current slot-group naming (e.g. `onecx-shell-header.start`) in `mapSlots` before publishing. Host MFEs should reference the normalised names, not the legacy ones.
+* *Multiple components in one slot* are rendered in the order given by the slot's `components` array.
+* *`elementName` comes from the configuration, not the type.* The libs `RemoteComponent` model does not declare `elementName`, but the Shell's generated model does; the slot needs it to build a web component. If a web component's configuration lacks `elementName`, that component cannot be rendered.
+
+== Debugging
+
+* Inspect the published assignment directly from the console by reading the `RemoteComponentsTopic` value, or watch the Shell log it during `workspaceConfigInitializer`.
+* To see whether a given slot resolves any component, use `isSomeComponentDefinedForSlot` and log its value.
+
+== Known issues
+
+No known issues are identified beyond the documented edge cases.
+
+== Related Units
+
+* link:slot-rendering.adoc[Slot rendering] — how the resolved components are instantiated and configured.
+* Remote Component config & host communication — how a rendered component receives its configuration. (`host-communication.adoc`, not yet written)
+* Shell Slots catalogue — the Shell's Slot Groups and legacy name mapping in depth. (`shell-slots-catalogue.adoc`, not yet written)
+* Slot size reporting — how a slot publishes its dimensions. (`slot-size-reporting.adoc`, not yet written)
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components-info.model.ts[`RemoteComponentsInfo`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`, `Technologies`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`]
+* link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`, `SLOT_SERVICE`, `RemoteComponentInfo`]
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`]
+* link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`]
+* link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[`SlotProvider`, `getComponentsForSlot`, `loadComponent`]
+* link:{libs}/react-remote-components/src/lib/hooks/useSlot.ts[`useSlot`]
+* link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer`, `slotInitializer`] (Shell)
+* link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`, `slotNamesMapping`] (Shell)
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.html[Slot group template] (Shell)
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[Portal viewport template] (Shell)
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` — `dev-docs/remote-components/index.adoc` (topic coverage; no content baseline).
+* Libs `docs/` — `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc` (topic model only; no slot-assignment page).
+* No prior Dev Docs page existed for this Area (per the Area ticket), so there was no existing page to supersede.

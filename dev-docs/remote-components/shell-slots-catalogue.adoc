@@ -1,0 +1,150 @@
+= Shell Slots Catalogue
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Part of the link:README.adoc[Remote Components & Slots] Area.
+
+== Question answered
+
+What slots does the Shell itself offer, how are they grouped into Slot Groups, and how do the legacy slot names map onto the current naming?
+
+== Why it exists
+
+The Shell is itself a host of Remote Components: a toast, a header logo, a menu, a footer. Rather than hard-coding each widget into its own template regions, the Shell declares a fixed set of *named slots* and lets the Workspace decide which components fill them (see link:slot-assignment.adoc[Assignment]). Grouping the slots into a small number of layout regions keeps the Shell's layout stable while individual widgets come and go. Because the Workspace configuration is written against older slot names, the Shell also has to translate those *legacy names* to the current group-based names before publishing anything.
+
+This Unit is a catalogue of the Shell's slot regions and the name mapping. It does not re-explain slot rendering (see link:slot-rendering.adoc[Slot rendering]) or assignment (see link:slot-assignment.adoc[Assignment]).
+
+== How it works
+
+=== Slot Groups
+
+The Shell builds its regions out of a single building block: the link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[`ocx-shell-slot-group`] component. It takes a required `name` plus an optional `direction` (`row`, `row-reverse`, `column`, `column-reverse`; default `row`) and optional `slotInputs` / `slotOutputs`. It renders exactly three slots, one per end and one for the centre:
+
+* `name + '.start'`
+* `name + '.center'` — given `flex-grow-1`, so it absorbs the remaining space
+* `name + '.end'`
+
+Each of the three slots is a standard link:slot-rendering.adoc[Slot rendering] element (`<ocx-slot>`), and the group passes its own name into each slot's `inputs` as `slotGroupName` (merged with any `slotInputs` the group is given). A Remote Component hosted by any of the three slots can therefore read `slotGroupName` through the input channel to know which group placed it — a convenience a plain host slot does not provide (see link:host-communication.adoc[Host communication]).
+
+[source,mermaid]
+----
+flowchart TB
+  G["ocx-shell-slot-group[name]<br/>direction, slotInputs, slotOutputs"]
+  S1["<ocx-slot name='{name}.start'>"]
+  S2["<ocx-slot name='{name}.center' flex-grow-1>"]
+  S3["<ocx-slot name='{name}.end'>"]
+  G --> S1
+  G --> S2
+  G --> S3
+  S1 & S2 & S3 -. "inputs carry slotGroupName = {name}" .-> RC["Remote Components"]
+----
+
+The group's `slotInputs`/`slotOutputs` are bound to all three slots the same way a single slot's `inputs`/`outputs` are (see link:host-communication.adoc[Host communication]).
+
+=== The Shell's regions
+
+The Shell declares its Slot Groups in link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[`portal-viewport.component.html`], in this layout:
+
+. `onecx-shell-header` (`direction="row"`) — the top bar. It is the one group the Shell binds `slotInputs`/`slotOutputs` to: `slotHeaderInputs` sets `imageStyleClass` for the logo, and `slotHeaderOutputs` binds an `imageLoadingFailed` `EventEmitter` so a header logo Remote Component can report a failed load.
+. `onecx-shell-sub-header`
+. `onecx-shell-body-start` (`direction="column"`) — the vertical start region (where a vertical menu lives).
+. `onecx-shell-body-header`
+. `onecx-shell-body-footer`
+. `onecx-shell-body-end` (`direction="column"`) — the vertical end region.
+. `onecx-shell-footer`
+
+There is also one standalone slot that is *not* a group: `<ocx-slot name="onecx-shell-extensions">`, used to append extra custom functionality at the end of the page.
+
+Every group name becomes three slots in the form `<group>.start`, `<group>.center`, `<group>.end`; together with the standalone `onecx-shell-extensions`, these are the slot names a Workspace configuration may assign components to.
+
+=== Legacy name mapping
+
+The Workspace configuration has historically named slots with flat, non-grouped names. Before publishing, the Shell normalises them in link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`], which runs in link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer`] (see link:slot-assignment.adoc[Assignment]). It does two things:
+
+1. *Map* each slot name through the `slotNamesMapping` table, leaving unmapped names untouched:
+
+[cols="1,1", options="header"]
+|===
+|Legacy name |Normalised name
+
+|`onecx-shell-vertical-menu` |`onecx-shell-body-start.start`
+|`onecx-shell-horizontal-menu` |`onecx-shell-header.center`
+|`onecx-shell-header-left` |`onecx-shell-header.start`
+|`onecx-shell-header-right` |`onecx-shell-header.end`
+|`onecx-shell-sub-header` |`onecx-shell-body-header.center`
+|`onecx-shell-footer` |`onecx-shell-body-footer.start`
+|`onecx-page-footer` |`onecx-shell-body-footer.start`
+|===
+
+2. *Merge* slots that now share a name, combining their `components` lists and dropping duplicates. This is what lets two legacy names that resolve to the same group slot (for example `onecx-shell-footer` and `onecx-page-footer`, both to `onecx-shell-body-footer.start`) contribute their components to a single slot.
+
+The normalised `{ components, slots: mapSlots(slots) }` is then published to the link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`] for every MFE to consume.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] (`<ocx-slot>`) — the slot element the groups render. The group's `slotInputs`/`slotOutputs` are its `inputs`/`outputs` (see link:host-communication.adoc[Host communication]).
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`] and link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`] — the data shape `mapSlots` normalises.
+* link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`] — the libs service the Shell reuses (`provide: SLOT_SERVICE, useExisting: SlotService`) and kicks off with `slotService.init()`.
+
+=== Shell side
+
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[Slot group component] and its link:{shell}/src/app/shell/components/slot-group/slot-group.component.html[template] — the three-slot group building block.
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[Portal viewport template] and link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[component] — where the groups and the standalone `onecx-shell-extensions` slot are declared, and where `slotHeaderInputs`/`slotHeaderOutputs` are bound.
+* link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`, `slotNamesMapping`] — the legacy-name normalisation and merge.
+* link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer`, `slotInitializer`] — publishes the normalised slots and initialises the `SlotService`.
+
+=== The Shell's own toast Remote Component
+
+The Shell's toast is a Remote Component that the Shell itself exposes. It is rendered through the same slot machinery (see link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications], Area 11) and implements both config contracts (see link:host-communication.adoc[Host communication]). It is only shown when the Workspace assigns it to a slot, which is how the general "assigned to a slot or not visible" rule from Area 11 applies to it here.
+
+== Angular / React
+
+The Shell is an Angular application, so everything in this Unit is the Angular path (`<ocx-slot>` from `@onecx/angular-remote-components`, the `SlotService` behind `SLOT_SERVICE`). A React host would declare its regions with the React `SlotComponent` and the same slot names; the group concept is a Shell layout concern, not a libs primitive, so there is no React equivalent of the group component.
+
+== Edge cases & pitfalls
+
+* *Group names are three slots, not one.* Assigning a component to `onecx-shell-header` (the group name) renders nothing — the real slots are `onecx-shell-header.start`, `.center` and `.end`. Workspace configurations should reference the normalised, fully-qualified slot names.
+* *Legacy names are Shell-internal.* The mapping happens only in the Shell, before publishing. A host MFE always sees the normalised names; a Workspace configuration written with a legacy name is the exception the mapper exists for.
+* *Merging can combine unexpected components.* Two legacy names mapping to the same normalised slot merge their components (deduplicated). This is intended for the `onecx-shell-footer`/`onecx-page-footer` overlap but means any two mappings to one name also merge.
+* *`slotGroupName` is only set for group slots.* The standalone `onecx-shell-extensions` slot and any host-MFE slot do not inject `slotGroupName`; a component reading it there gets `undefined`.
+* *The header outputs are bound to a single `EventEmitter`.* `slotHeaderOutputs` reuses `logoLoadingEmitter` for every component in the header group, so a header component that emits on `imageLoadingFailed` reaches the Shell regardless of which header slot it is in.
+
+== Known issues
+
+See the Shell toast `REMOTE_COMPONENT_CONFIG` type-mismatch note in link:host-communication.adoc[Host communication] — it lives in the toast component this Area hosts.
+
+== Related Units
+
+* link:slot-assignment.adoc[Assignment] — how the normalised slots are assigned and resolved.
+* link:slot-rendering.adoc[Slot rendering] — how the group's slots render their components.
+* link:host-communication.adoc[Host communication] — the `inputs`/`outputs` channel the groups use and the `slotGroupName` convenience.
+* Slot size reporting — how a slot group publishes its own dimensions. (`slot-size-reporting.adoc`)
+* link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications] (Area 11) — the Shell's toast Remote Component in depth.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[Slot group component] (Shell)
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.html[Slot group template] (Shell)
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[Portal viewport template] (Shell)
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[Portal viewport component (`slotHeaderInputs`, `slotHeaderOutputs`)] (Shell)
+* link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`, `slotNamesMapping`, `mapSlotNames`, `mergeSlotsByName`] (Shell)
+* link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer`, `slotInitializer`, `SLOT_SERVICE` provider] (Shell)
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`]
+* link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`, `SLOT_SERVICE`]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` — `dev-docs/remote-components/index.adoc` (topic coverage: slot groups and legacy naming; no content baseline).
+* Shell `docs/` and JSDoc — the `slot-names-mapper.ts` doc comments describe the map-then-merge behaviour, matching the implementation.
+* Sibling Units link:slot-assignment.adoc[Assignment] and link:host-communication.adoc[Host communication] — the publishing and input/output channel this catalogue builds on.
+* No prior Dev Docs page existed for this Area (per the Area ticket).

@@ -1,0 +1,136 @@
+= URL change → every router
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+When the address bar changes, how does every application's router on the page follow that change, so all routers agree on the current URL?
+
+== Why it exists
+
+A OneCX page is a single shared document. The Shell and every loaded App (Angular or React) run their own router inside it, but there is only one address bar and one `window.location`. A router can be told to navigate in its own app without touching the shared URL (Angular's `replaceUrl`, React Router's internal state), and the URL can change from a link click in another app or the browser's back/forward. Left to their own devices, the routers would drift apart: the Shell could be showing `/orders` while one app still thinks it is on `/customers`.
+
+The fix is to make *one* thing the source of truth for "where am I" — the shared URL — and to have every router *follow* that source of truth instead of driving it on its own. This Unit describes that one-way contract: a single mechanism turns a URL change into a location change for every router at once. The guard machinery that decides whether a cross-app navigation is *allowed* is a different problem, covered by Units 4–6.
+
+== How it works
+
+The mechanism is a round trip through one Topic. The Shell is the *publisher* of the current URL; every app is a *subscriber* that re-points its own router at the URL it now reads from `window.location`.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant User
+  participant Shell as Shell (history patch + listener)
+  participant Topic as current-location Topic
+  participant AppA as App A router
+  participant AppB as App B router
+
+  User->>Shell: navigates (link / back / forward)
+  Note over Shell: window.history is patched, the real URL changes
+  Shell->>Topic: publish({ url, isFirst })
+  Topic-->>AppA: currentLocation$ emits
+  AppA->>AppA: router.navigateByUrl(url, replaceUrl, { isRouterSync })
+  Topic-->>AppB: currentLocation$ emits
+  AppB->>AppB: router follows the same url
+----
+
+Three things make this work:
+
+. *A single producer.* The Shell is the only thing that publishes the current location. It does not ask the apps; it broadcasts.
+. *A shared transport.* The location is carried on a link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`] (topic name `currentLocation`), so the Shell and the apps talk over the same channel whether they are in the same tab or, in theory, different ones.
+. *One-way following.* Apps *subscribe* and drive their routers; they do not each republish the URL back and forth. The sync is flagged so that an app-driven re-point does not re-trigger the whole round trip (the `isRouterSync` flag below).
+
+The payload is small — link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.model.ts[`CurrentLocationTopicPayload`] carries `{ url?, isFirst }`. `isFirst` marks the very first broadcast (used by the Shell's listener to swallow the initial route), and `url` is the path relative to the deployment base.
+
+== Libs side / Shell side
+
+=== Shell side
+
+The Shell owns the producer. It does two jobs in link:{shell}/src/app/app.module.ts[`app.module.ts`]:
+
+* *Patching history to capture every real navigation.* The Shell replaces `globalThis.history.pushState` and `globalThis.history.replaceState` with wrappers (the patched block at the top of the file). Every router on the page calls these when it navigates. The wrapper strips an `isRouterSync` flag out of the history `data`, and — unless that flag was set — publishes `{ url, isFirst: false }` to the link:{shell}/src/app/app.module.ts[`CurrentLocationTopic`] instance. In other words: *any navigation from any app that is not itself a sync* becomes a fresh broadcast to everyone.
+* *A URL change listener that drives the Shell's own router.* `urlChangeListenerInitializer(router, appStateService)` awaits authentication, publishes the initial `{ url, isFirst: true }`, then subscribes to `appStateService.currentLocation$`. On each emission it recomputes the URL from `location.pathname` minus the deployment path (plus search and hash) and, when it differs from the last seen URL, navigates the Shell's `Router` with `replaceUrl: true` and `state: { isRouterSync: true }`. So the Shell's router also follows the shared URL.
+
+The listener is started by the Shell's `workspaceConfigInitializer` — it runs *after* `routesService.init(...)` resolves (`routesService.init(routes).then(urlChangeListenerInitializer(...))`), which is the natural point at which the Shell's route table exists and a URL is meaningful. The same initializer also handles the `revertNavigation` event published by an app whose *initial* sync was rejected: on that signal the Shell calls `history.back()`. That cross-app revert is the edge of the guard machinery (Units 4–6); here it only matters that the Shell responds by moving the shared URL backwards.
+
+=== Libs side
+
+Each app is a follower. The libraries give the app a handle on the same `currentLocation` Topic and wire it to the app's router.
+
+* *The Topic is reachable through the app-state service.* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`] exposes `currentLocation$` (and the related `currentPage$`), created lazily as link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`]. Because a `Topic` sends a `TopicGet` on construction, an app that mounts *after* the Shell has already published can still receive the current URL — a late joiner catches up.
+* *The Angular web-component connector drives the Angular router.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector.connectLocationChange`]:
+  + On connect it performs an *initial* `router.navigateByUrl(initialUrl, { replaceUrl: true, state: { isRouterSync, isInitialRouterSync } })`, so the app's router starts aligned with the shared URL.
+  + It then subscribes to `appStateService.currentLocation$`. Each emission recomputes the URL from `location.pathname` minus `getLocation().deploymentPath` (plus search and hash); when it differs from the last URL it navigated to, it calls `router.navigateByUrl(url, { replaceUrl: true, state: { isRouterSync: true } })`.
+  + The `isRouterSync: true` state is what the Shell's patched history recognises: an app re-pointing its own router in response to the Topic is *not* a new real navigation, so it must not re-publish. That is the one-way valve that stops the loop.
+* *Capability fallback.* If the Shell does not advertise the `currentLocationTopic` capability (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapabilityService`]), the connector falls back to the older link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] `navigated` event. `EventsTopic` is marked `@deprecated` in favour of the dedicated `CurrentLocationTopic`; treat it as the legacy channel only.
+* *The deployment base.* `getLocation()` (link:{libs}/accelerator/src/lib/utils/path.utils.ts[`path.utils.ts`]) returns `window.location` enriched with `deploymentPath` (the base the Shell is deployed under) and `applicationPath` (the rest). Both the Shell and the apps strip `deploymentPath` before comparing URLs, so the same relative URL is what every router sees.
+* *The route table is scoped to this app.* `initializeRouter` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`webcomponent-router-initializer.utils.ts`]) rewrites each route's `redirectTo` to the MFE base href and appends a `**` catch-all, then `resetConfig`s. The `startsWith(prefix)` `UrlMatcher` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`webcomponent-router.utils.ts`]) matches URLs under the MFE base. Together this means an app's router only *claims* the URL when the URL is actually inside the app's own base href — which is what makes "one URL, every router" coherent across apps that each own a different slice of the path.
+
+== Angular / React
+
+Both frameworks follow the same one-way contract, but they follow it differently.
+
+* *Angular* — the app does not change the shared URL by navigating; the connector drives its router with `replaceUrl` and the `isRouterSync` flag, and the Shell's history patch is what decides whether a `pushState`/`replaceState` is "real" or a sync. The `isRouterSync` marker travels in the history `data` object, which Angular's `Location`/history integration populates from the navigation `state`.
+* *React* — there is no history patch on the app side. Instead the React web-component bootstrap provides link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider`] (applied via link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter`] / `useSyncedLocation`), which wraps the app in a `BrowserRouter` plus a `RouterSync` component. `RouterSync` subscribes to the same `currentLocation$` (created with link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]); when the topic URL differs from the current pathname it updates its context *without* calling `navigate()` — the `BrowserRouter` picks up the new URL on its own because the Shell already moved `window.location`. To propagate an app's *own* navigation back to the Shell, a `useLayoutEffect` publishes the new `location.pathname` to `currentLocation$`, guarded by `skipPublishUntil` so a topic-driven change is not echoed back. The net effect is identical to Angular: one producer, every router follows.
+
+== Edge cases & pitfalls
+
+* *The `isRouterSync` flag is the whole anti-loop design.* If an app drives its router in response to the Topic *without* that flag, the Shell's history patch treats it as a fresh real navigation and republishes, and every app re-syncs. That cascades. Every app-side sync must carry `isRouterSync: true`.
+* *The initial navigation is flagged `isFirst`.* The Shell's listener publishes `{ isFirst: true }` once and uses it to skip its own `navigateByUrl` on the first route (there is no "previous" URL to follow yet). Apps that branch on `isFirst` should only treat it as a marker that this is the establishing broadcast, not a user navigation.
+* *React Router bootstrap calls `replaceState` with `url === undefined`.* The Shell's `replaceState` patch detects this exact signature (`checkIfReactRouterInitialization`: `data.idx === 0` and no URL) and substitutes the real current URL instead of propagating `undefined`, so a React app's bootstrap does not publish a blank location.
+* *URLs are compared after stripping the deployment base.* An app must not compare the raw `location.pathname` against its routes; it must use the `deploymentPath`-relative form, otherwise the sync will either never fire or fire on the wrong URL.
+* *The `EventsTopic` fallback is deprecated.* Code that only speaks the `EventsTopic` `navigated` event still works against an old Shell, but it is the legacy path — new apps should rely on `CurrentLocationTopic`.
+* *Syncing is not the same as allowing.* Following a URL is unconditional. Whether a cross-app navigation is *permitted* before the URL actually changes is decided by the guard machinery (Units 4–6); if a guard blocks a navigation, the URL never changes and therefore no sync happens.
+
+== Debugging
+
+* The Shell logs `🧭 Adding Workspace routes:` during `routesService.init`, which is the point where the Shell's route table — and with it the URL-change wiring — is set up.
+* A `navigationId === -1` warning from the patched history (`Navigation ID is -1, indicating a potential invalid microfrontend initialization.`) means a router published a location with a bad navigation id; the Shell drops that publish rather than broadcasting a stale URL.
+* To see the raw topic traffic (who publishes `currentLocation`, and with what `url`/`isFirst`), enable the accelerator's topic logging (Area 13, Diagnostics — `tracing-communication.adoc`).
+* For the Angular guard side of a blocked sync, the guards debug switch applies (see `dev-docs/guards/debug.adoc`); that is a Unit 4–6 concern.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:shell-routes-and-current-app.adoc[Shell routes & Current App activation] — what the Shell's own router does with a URL once it is current.
+* `navigation-topics.adoc` — the `current-location` / `current-page` Topics in depth.
+* `why-cross-app-guards.adoc` — why a sync is not enough and cross-app guards are needed.
+* `angular-guards.adoc` / `react-guards.adoc` — the guard machinery behind the `isRouterSync` and `revertNavigation` signals.
+* Area 1 (Integration Contract & Topics) — the Topic transport that carries the location.
+* Area 2 (Application Bootstrap) — the `multiple-routers` problem that this mechanism is the answer to.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.model.ts[`CurrentLocationTopicPayload`]
+* link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`]
+* link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] (deprecated fallback)
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`Capability.CURRENT_LOCATION_TOPIC`]
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] (base: `TopicGet`, `isInitialized`)
+* link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentLocation$`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector.connectLocationChange`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`initializeRouter`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`startsWith`]
+* link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`GUARD_MODE`, `IS_ROUTER_SYNC`, `IS_INITIAL_ROUTER_SYNC`]
+* link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController`]
+* link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider` / `RouterSync`]
+* link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter`]
+* link:{libs}/react-webcomponents/src/lib/hooks/useSyncedLocation.ts[`useSyncedLocation`]
+* link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`NavigatedEventStoreConnectorService`]
+* link:{shell}/src/app/app.module.ts[history patch, `urlChangeListenerInitializer`, `workspaceConfigInitializer`] (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
+* Dev Docs top index (`README.adoc`) — Area 7 slug and reading order.
+* Draft Outline commit (6108bdff) — navigation-routing outline (topics only; the guard deep-dive there maps to Units 4–6).
+* Old Dev Docs `dev-docs/guards/modes.adoc` and `dev-docs/guards/debug.adoc` — `GUARD_MODE` / router-sync semantics, cross-checked against `guard-navigation.model.ts` and `webcomponent-connector.utils.ts`.
+* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

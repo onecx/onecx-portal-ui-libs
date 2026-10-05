@@ -1,0 +1,148 @@
+= Remote Component Config & Host Communication
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Part of the link:README.adoc[Remote Components & Slots] Area.
+
+== Question answered
+
+Once a Remote Component is rendered into a slot, how does it learn who it is and what it may do, and how does it exchange data with the host that rendered it?
+
+== Why it exists
+
+A Remote Component is built and shipped by a different team from the host that renders it. When the host instantiates it, the component cannot assume anything about its surroundings. It needs a single, well-defined hand-off that tells it its *identity* (which app and product it belongs to), its *runtime base URL*, and the *permissions* it is granted in this workspace. It also needs a *two-way channel* so the host can push data in and the component can emit events back, without the two sides agreeing on a shared type at build time.
+
+This Unit covers that hand-off and channel. *Which* component fills a slot is link:slot-assignment.adoc[Assignment]; *how* the component is instantiated is link:slot-rendering.adoc[Slot rendering]. Bootstrap, styles and permission resolution are other Areas and are only linked to from here.
+
+== How it works
+
+The hand-off has three parts, all defined in the libs and consumed identically by Angular and React hosts.
+
+=== 1. The payload: `RemoteComponentConfig`
+
+Both flavours of slot rendering (see link:slot-rendering.adoc[Slot rendering]) deliver the same four-field payload:
+
+[source,typescript]
+----
+type RemoteComponentConfig = {
+  appId: string
+  productName: string
+  permissions: string[]
+  baseUrl: string
+}
+----
+
+* `appId` and `productName` identify the component's owning application; they are also what style isolation keys off (`{productName}|{appId}`, see link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] in Area 4).
+* `permissions` is the list the host resolved for this component (through the link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`], see link:slot-assignment.adoc[Assignment]).
+* `baseUrl` is the component's origin, used to load its own styles.
+
+The slot does not build this object itself. It copies the fields straight from the resolved link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`] and appends the resolved `permissions`.
+
+=== 2. The receiving contract
+
+The component declares *how* it wants to receive the config. The libs define two interfaces, and a component may implement either or both:
+
+* link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent`] — exposes an `ocxInitRemoteComponent(config: RemoteComponentConfig): void` method. The host calls it imperatively after creating the component.
+* link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`] — declares an `ocxRemoteComponentConfig: RemoteComponentConfig` property. The host assigns it as a plain property on the custom element.
+
+Which one the host uses is decided by the rendering flavour, not by the component author: the Angular-init flavour calls `ocxInitRemoteComponent` if the instance has it, and the web-component flavour sets `ocxRemoteComponentConfig` on the element (see link:slot-rendering.adoc[Slot rendering]).
+
+=== 3. The ongoing data channel: `inputs` and `outputs`
+
+Config is a one-time hand-off. To keep talking, the host binds the slot's `inputs` and `outputs` to the rendered child.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph HOST["Host (slot parent)"]
+    I["inputs<br/>{ prop: value }"]
+    O["outputs<br/>{ eventName: emitter }"]
+  end
+  SLOT["<ocx-slot><br/>updateComponentData()"]
+  RC["Remote Component"]
+  I -->|host -> component| SLOT
+  SLOT -->|setInput / set prop / merge props| RC
+  RC -->|emits on the bound output| O
+  O -->|emitter fires| HOST
+  RC -.->|reads inputs| RC
+----
+
+* *Inputs* (`Record<string, unknown>`) are pushed to the component: an Angular component gets each value via `setInput(name, value)`, a web component gets a plain property assignment, a React element gets a merged `props` entry.
+* *Outputs* (`Record<string, RemoteComponentOutput>`) carry events *back*: the host hands the slot an `EventEmitter`/`OutputEmitterRef` (Angular) or a callback (React), the component emits on the matching input, and the host's emitter fires. Because the output name is resolved by a string at runtime, the two sides never share a build-time type.
+
+The slot re-applies `inputs` and `outputs` whenever either of them — or the set of assigned components — changes, so a host can update the channel after the initial render.
+
+=== Config inside the component: the `REMOTE_COMPONENT_CONFIG` token
+
+The config handed over by the slot is only what the host set. For a component's *own* code to read the config through dependency injection, it must provide the link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`] token itself: an `InjectionToken<ReplaySubject<RemoteComponentConfig>>`. The slot does *not* provide this token. A Remote Component declares a provider in its own bootstrap, and inside `ocxInitRemoteComponent` pushes the received config into that `ReplaySubject`; internal DI consumers then `inject(REMOTE_COMPONENT_CONFIG)`. The `ReplaySubject(1)` means a consumer that resolves the token later still receives the last config, even after init has run.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig`] (Angular) and link:{libs}/react-remote-components/src/lib/models/remoteComponentConfig.ts[`RemoteComponentConfig`] (React) — the same four-field payload on both frameworks.
+* link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent`] / link:{libs}/react-remote-components/src/lib/models/remote-component.ts[`ocxRemoteComponent`] (React) — the `ocxInitRemoteComponent(config)` contract.
+* link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`] / link:{libs}/react-remote-components/src/lib/models/remote-webcomponent.ts[`ocxRemoteWebcomponent`] (React) — the `ocxRemoteComponentConfig` property contract.
+* link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`] — the `InjectionToken<ReplaySubject<RemoteComponentConfig>>` a component provides for its own DI.
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent` (Angular)] — `createAngularComponent` calls `ocxInitRemoteComponent`; `createWebComponent` sets `ocxRemoteComponentConfig`; `updateComponentData`/`setProps` wire the `inputs`/`outputs` channel.
+* link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React)] — always renders via the web-component flavour and sets `ocxRemoteComponentConfig`; `setProps` wires the channel for a `ReactElement` or an `HTMLElement`.
+
+=== Shell side
+
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] — a concrete consumer that implements *both* contracts: an `@Input() ocxRemoteComponentConfig` setter that forwards to `ocxInitRemoteComponent`, which pushes the config into the `REMOTE_COMPONENT_CONFIG` `ReplaySubject` it provides. The Shell's toast is the reference example of a Remote Component that reads its config back through DI. It is covered under link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications] (Area 11).
+
+== Angular / React
+
+The payload and the two contracts are identical across frameworks; the wiring of the data channel differs.
+
+* **Angular** (`@onecx/angular-remote-components`): supports both flavours, so it can host both Angular components (Angular-init, `setInput`) and web components (property). Outputs are bound as `EventEmitter`/`OutputEmitterRef` values; the remote component declares the matching input with `@Input() ... = EventEmitter` or `input(output<T>())`.
+* **React** (`@onecx/react-remote-components`): always the web-component flavour — it creates an element by `elementName` and sets `ocxRemoteComponentConfig`, never calling `ocxInitRemoteComponent`. Inputs are merged into the element's props (or assigned as properties on a custom element); outputs are plain callbacks. A React host can only render web components, so the Angular-init contract is unused there.
+
+== Edge cases & pitfalls
+
+* *The config is only as complete as the slot's resolution.* `permissions` come from the link:slot-assignment.adoc[Assignment] step; if the component name does not resolve, nothing is rendered and no config is handed over at all.
+* *A component that implements neither contract silently receives no config.* The Angular-init flavour only calls `ocxInitRemoteComponent` when it is present (`'ocxInitRemoteComponent' in instance`); the web-component flavour only sets the property. A mistyped contract name is not detected.
+* *`REMOTE_COMPONENT_CONFIG` is not provided by the host.* If a component reads it from DI but never provides a `ReplaySubject` provider in its own bootstrap, DI fails. The slot deliberately leaves this to the component.
+* *The component does not learn its slot name from the config.* `RemoteComponentConfig` carries no slot name. The Shell's slot groups pass their group name through the `inputs` channel (`slotGroupName`), but a plain host slot does not unless it does so explicitly.
+* *Outputs are resolved by name at runtime.* A misspelled output name on the host or the component fails quietly — the emitter is simply never set, so events are dropped.
+
+== Known issues
+
+* *Shell toast type mismatch on `REMOTE_COMPONENT_CONFIG`.* In link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`shell-toast.component.ts`], the inline `@Component` provider is `new ReplaySubject<string>(1)` but the field is injected as `ReplaySubject<RemoteComponentConfig>` and `ocxInitRemoteComponent` pushes a `RemoteComponentConfig`. The web-component bootstrap (link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[`shell-toast.component.bootstrap.ts`]) provides the token correctly as `ReplaySubject<RemoteComponentConfig>(1)`. At runtime the object held is a `RemoteComponentConfig` either way, so the behaviour is correct; the inline provider's generic is a type error. Follow-up: align the inline provider's generic with the token.
+
+== Related Units
+
+* link:slot-assignment.adoc[Assignment] — how the slot resolves the components it renders and fetches their permissions.
+* link:slot-rendering.adoc[Slot rendering] — the two flavours that deliver the config.
+* link:shell-slots-catalogue.adoc[Shell Slots catalogue] — the Shell's Slot Groups, which push `slotGroupName` through the `inputs` channel.
+* Slot size reporting — how a rendered slot publishes its dimensions. (`slot-size-reporting.adoc`)
+* link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] (Area 4) — the `data-style-id` derived from `productName`/`appId`.
+* link:../permissions/remote-component-permissions.adoc[Remote Component permissions] (Area 9) — where the `permissions` field is resolved.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig` (Angular)]
+* link:{libs}/react-remote-components/src/lib/models/remoteComponentConfig.ts[`RemoteComponentConfig` (React)]
+* link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent` (Angular)]
+* link:{libs}/react-remote-components/src/lib/models/remote-component.ts[`ocxRemoteComponent` (React)]
+* link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent` (Angular)]
+* link:{libs}/react-remote-components/src/lib/models/remote-webcomponent.ts[`ocxRemoteWebcomponent` (React)]
+* link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`]
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent` (Angular): `createAngularComponent`, `createWebComponent`, `updateComponentData`, `setProps`, `inputs`, `outputs`]
+* link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React): `createComponent`, `setProps`, `updateComponentData`]
+* link:{libs}/react-remote-components/src/lib/models/slot-types.ts[`RemoteComponentInfo`, `SlotComponentConfiguration` (React)]
+* link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[Shell toast bootstrap] (Shell)
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` — `dev-docs/remote-components/index.adoc` (topic coverage: config and host communication; no content baseline).
+* Libs JSDoc/READMEs — `SlotComponent` `inputs`/`outputs` JSDoc (examples for both the `OutputEmitterRef` and `EventEmitter` output patterns) and the `@onecx/angular-remote-components` / `@onecx/react-remote-components` package sources.
+* Sibling Units link:slot-assignment.adoc[Assignment] and link:slot-rendering.adoc[Slot rendering] — the two-flavour delivery this Unit builds on.
+* No prior Dev Docs page existed for this Area (per the Area ticket).

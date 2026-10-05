@@ -1,0 +1,137 @@
+= Slot Size Reporting
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Part of the link:README.adoc[Remote Components & Slots] Area.
+
+== Question answered
+
+How do slots (and the Shell's Slot Groups) report their pixel size to the Remote Components that depend on it?
+
+== Why it exists
+
+A Remote Component placed into a slot often needs to know how much room it has — a chart, a resizable panel, a menu that collapses on a narrow viewport. The component cannot reliably measure its own box: it is rendered inside a slot it does not control, and the layout that sizes it belongs to the host. So the *host* measures the region and publishes the size. Because most slots most of the time have no listener for their size, this is done *opt-in*: a slot only broadcasts its dimensions while at least one consumer has asked for that slot's events. This avoids a page full of slots each publishing a resize stream that nobody reads.
+
+This Unit covers the size-reporting mechanism only. Which components a slot holds and how they are rendered are covered by link:slot-assignment.adoc[Assignment] and link:slot-rendering.adoc[Slot rendering].
+
+== How it works
+
+Reporting runs over the link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`ResizedEventsTopic`], a Topic named `resizedEvents` (v1). It carries three event kinds, defined in link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-event-type.ts[`ResizedEventType`]:
+
+[cols="1,1,2", options="header"]
+|===
+|Type |Constant |Payload
+
+|`SLOT_RESIZED` |`slot_resized` |`{ slotName, slotDetails: { width, height } }`
+|`SLOT_GROUP_RESIZED` |`slot_group_resized` |`{ slotGroupName, slotGroupDetails: { width, height } }`
+|`REQUESTED_EVENTS_CHANGED` |`requested_events_changed` |`{ type, name }` — the type and entity name a consumer just started (or, effectively, cares about)
+|===
+
+The first two are the size reports themselves; the third is the internal signal that a new listener registered.
+
+=== The opt-in gate
+
+The Topic's `publish` refuses to broadcast a `SLOT_RESIZED` or `SLOT_GROUP_RESIZED` event unless a listener has asked for that exact entity. The asked-for set lives on `window['@onecx/integration-interface'].resizedEvents`, keyed by event type:
+
+[source,typescript]
+----
+window['@onecx/integration-interface'].resizedEvents = {
+  slot_resized:       [ /* slot names */ ],
+  slot_group_resized: [ /* slot group names */ ]
+}
+----
+
+`publish` for a resize event resolves the entity name from the payload (`slotName` or `slotGroupName`) and only forwards the event when that name is in the matching list; otherwise it resolves silently. `REQUESTED_EVENTS_CHANGED` always passes through.
+
+A consumer registers with the static `ResizedEventsTopic.requestEvent(eventType, entityName)`. That does two things: it adds `entityName` to the `window` list for `eventType`, and it immediately publishes a `REQUESTED_EVENTS_CHANGED` for that entity so the current size is sent at once — without that, a late-joining listener would have to wait for the *next* resize before receiving anything.
+
+=== The measuring side
+
+Something has to actually measure. There are two measurers, one per level of the slot hierarchy, and each is a `ResizeObserver` feeding a debounced stream:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Measurer as Slot element / Slot group
+  participant RO as ResizeObserver
+  participant Stream as componentSize$ (debounce 100ms)
+  participant Topic as ResizedEventsTopic
+
+  Measurer->>RO: observe(element)
+  RO-->>Stream: entry.contentRect { width, height }
+  Stream->>Topic: publish SLOT_RESIZED / SLOT_GROUP_RESIZED
+  Note over Topic: dropped unless entity is in the opt-in list
+  Topic-->>Topic: REQUESTED_EVENTS_CHANGED (on requestEvent)
+  Topic->>Topic: re-publish current size for that entity
+----
+
+* The *Angular slot* (`SlotComponent`) observes its own element, publishes a `SLOT_RESIZED` named after the slot, and re-publishes the current size when a `REQUESTED_EVENTS_CHANGED` for `SLOT_RESIZED` names that slot.
+* The *Shell's slot group* (`ocx-shell-slot-group`) observes the group element, publishes a `SLOT_GROUP_RESIZED` named after the group, and re-publishes the current size on a matching `REQUESTED_EVENTS_CHANGED`. A consumer that wants a group's size registers with `SLOT_GROUP_RESIZED` and the group name; a consumer that wants an individual slot's size registers with `SLOT_RESIZED` and the fully-qualified slot name (see link:shell-slots-catalogue.adoc[Shell Slots catalogue]).
+
+The size stream starts at `{ width: -1, height: -1 }` before the first observation and is debounced by 100 ms, so a burst of layout changes settles into one published size.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`ResizedEventsTopic`] — the Topic, the `publish` opt-in gate, the static `requestEvent` registration, and the `window['@onecx/integration-interface'].resizedEvents` store.
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-event-type.ts[`ResizedEventType`] — the three event type constants.
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/slots-resized-type.ts[`SlotResizedEvent`] — the slot-size payload.
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/slot-groups-resized-type.ts[`SlotGroupResizedEvent`] — the slot-group-size payload.
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-update-requested-type.ts[`RequestedEventsChangedEvent`] — the registration signal.
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent` (Angular)] — `observeSlotSizeChanges` sets up the `ResizeObserver`, the `componentSize$` stream (initial `{ -1, -1 }`, debounced 100 ms), publishes `SLOT_RESIZED`, and re-publishes on `REQUESTED_EVENTS_CHANGED`.
+
+=== Shell side
+
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[Slot group component] — `observeSlotSizeChanges` mirrors the slot's logic at the group level: a `ResizeObserver` on the group element, a debounced `componentSize$`, a `SLOT_GROUP_RESIZED` publish named after the group, and a re-publish on a matching `REQUESTED_EVENTS_CHANGED`.
+
+== Angular / React
+
+* **Angular** (`@onecx/angular-remote-components`): the `SlotComponent` measures and reports `SLOT_RESIZED` for its own element, as described above.
+* **React** (`@onecx/react-remote-components`): the React `SlotComponent` does **not** report slot sizes. It has no `ResizeObserver`, no `componentSize$` stream and no `SLOT_RESIZED` publish — it only renders components and wires `inputs`/`outputs` (see link:slot-rendering.adoc[Slot rendering] and link:host-communication.adoc[Host communication]). See Known issues.
+
+Because the Shell's Slot Groups measure themselves (a Shell, i.e. Angular, concern), `SLOT_GROUP_RESIZED` is always available from the Shell regardless of the host framework. Only the per-slot `SLOT_RESIZED` is framework-dependent.
+
+== Edge cases & pitfalls
+
+* *No size until a consumer asks.* A slot publishes nothing unless `requestEvent(SLOT_RESIZED, name)` has run for it. A component that reads the Topic without registering receives no size, even after a resize.
+* *The first size is the current one, not a change.* Registering triggers a `REQUESTED_EVENTS_CHANGED`, which makes the slot re-publish its *current* size immediately. A consumer should treat the first event as the baseline.
+* *`-1 x -1` before first layout.* The stream is seeded with `{ width: -1, height: -1 }`. If a consumer registers before the element has laid out, it may briefly see a negative size; the 100 ms debounce and the re-publish on registration normally resolve this on the first real observation.
+* *Group size vs slot size are different.* `SLOT_GROUP_RESIZED` reports the whole group region; `SLOT_RESIZED` reports one `.start`/`.center`/`.end` slot. A component in the group's `.center` slot that needs the *group's* width must register for `SLOT_GROUP_RESIZED`, not `SLOT_RESIZED`.
+* *The debounce means sizes are not per-frame.* Rapid window resizes collapse into at most one publish per 100 ms window.
+
+== Known issues
+
+* *React slots do not report size.* The React `SlotComponent` implements no size reporting (no `ResizeObserver` or `SLOT_RESIZED` publish), while the Angular slot does. The actual behaviour is that a React-hosted slot never broadcasts `SLOT_RESIZED`; only the Shell's groups (Angular) report `SLOT_GROUP_RESIZED`, and Angular slots report `SLOT_RESIZED`. Follow-up: either document the intended React behaviour or add `ResizeObserver` reporting to the React `SlotComponent` so both frameworks behave consistently.
+
+== Related Units
+
+* link:slot-assignment.adoc[Assignment] — which components a slot holds.
+* link:slot-rendering.adoc[Slot rendering] — how a slot renders its components.
+* link:shell-slots-catalogue.adoc[Shell Slots catalogue] — the Slot Groups that report `SLOT_GROUP_RESIZED`.
+* link:host-communication.adoc[Host communication] — the other slot↔component channel (config and `inputs`/`outputs`).
+* link:../diagnostics/logging.adoc[Diagnostics] (Area 13) — observing Topic traffic such as `resizedEvents`.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`ResizedEventsTopic`, `ResizedEventsPublisher`, `requestEvent`]
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-event-type.ts[`ResizedEventType`]
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/slots-resized-type.ts[`SlotResizedEvent`, `SlotResizedEventPayload`]
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/slot-groups-resized-type.ts[`SlotGroupResizedEvent`, `SlotGroupResizedEventPayload`]
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-update-requested-type.ts[`RequestedEventsChangedEvent`, `RequestedEventsChangedEventPayload`]
+* link:{libs}/integration-interface/src/lib/topics/resized-events/v1/topic-resized-event-type.ts[`TopicResizedEventType`]
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent` (Angular): `observeSlotSizeChanges`, `componentSize$`, `requestedEventsChanged$`]
+* link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[Slot group component (`observeSlotSizeChanges`)] (Shell)
+* link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React) — no size reporting]
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` — `dev-docs/remote-components/index.adoc` (topic coverage: slot size reporting; no content baseline).
+* Libs JSDoc — `ResizedEventsTopic.requestEvent` documents the "register then receive an immediate update" intent, matching the `REQUESTED_EVENTS_CHANGED` re-publish.
+* Sibling Units link:slot-rendering.adoc[Slot rendering] and link:shell-slots-catalogue.adoc[Shell Slots catalogue] — the slot/group elements that perform the measuring.
+* No prior Dev Docs page existed for this Area (per the Area ticket).
