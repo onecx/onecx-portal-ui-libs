@@ -1,0 +1,130 @@
+= Profile load & language decision
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+How does the OneCX page learn who is signed in and decide the single language that every framework on the page must use?
+
+== Why it exists
+
+A OneCX page hosts several Apps and Remote Components built with different frameworks. Those frameworks must all show the *same* language at the *same* time, even though none of them talks to the identity provider directly. Two constraints shape the mechanism:
+
+* There is exactly one signed-in user, but the page needs that user's identity and language preferences to reach every framework without each one re-fetching them.
+* A single profile field must collapse into exactly one active language, with a deterministic fallback chain, so that a missing or misconfigured setting never leaves a framework without a language.
+
+The design therefore separates three things: the *transport* (a Topic that carries the profile across framework and module-federation boundaries), the *decision* (a pure, framework-agnostic function that turns a profile into one language), and the *consumers* (the Angular and React user services that expose the result as a stream).
+
+== How it works
+
+The mechanism has two independent parts that meet at a single stream.
+
+The *profile* travels on a Topic. link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.topic.ts[`UserProfileTopic`] is a link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic<UserProfile>`] created with the name `userProfile` and version `1`. The `UserProfile` payload is defined in link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.model.ts[`user-profile.model.ts`]; the two fields that drive the language decision are `settings.locales` (a `string[]`) and the legacy `accountSettings.localeAndTimeSettings.locale` (a `string`). Because the Topic is the transport, the Shell can publish the profile once and every framework reads it — the details of Topic message delivery belong to link:../integration-contract/message-delivery.adoc[1. Integration Contract & Topics].
+
+The *language decision* is a pure function of that profile. link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`user-language.utils.ts`] exports three functions, and the one every consumer calls is `resolveProfileLanguage(profile, defaultLang, getNormalizedLocales)`:
+
+. It reads `profile.settings.locales`.
+. If that array is absent it falls back to the *legacy* path, `resolveLegacyLanguage`, which resolves `profile.accountSettings?.localeAndTimeSettings?.locale` and, if that is also missing, the browser language.
+. If the array is present but empty, it substitutes the normalised browser locales returned by `getNormalizedBrowserLocales()`.
+. It returns the first entry that is exactly two characters long, or `defaultLang` if none qualifies.
+
+The default is the constant `DEFAULT_LANG`, which is `'en'` in both the Angular and the React integration interfaces. A second, coarser helper, `determineBrowserLanguage()`, reads `navigator.languages[0]` (falling back to `navigator.language`) and strips a `-`/`_` region suffix so it returns a bare two-letter code; it returns `undefined` when there is no `navigator` (for example in a test environment).
+
+The three functions fit together like this:
+
+[source,mermaid]
+----
+flowchart TD
+  P["UserProfile from Topic"] --> S{"settings.locales present?"}
+  S -- absent --> L["resolveLegacyLanguage"]
+  S -- present --> E{"locales empty?"}
+  E -- yes --> N["getNormalizedBrowserLocales"]
+  E -- no --> F["profile.settings.locales"]
+  N --> F
+  F --> F1{"an entry of length 2?"}
+  F1 -- yes --> LANG["lang"]
+  F1 -- no --> DEF["DEFAULT_LANG (en)"]
+  L --> L1{"localeAndTimeSettings.locale set?"}
+  L1 -- yes --> LANG
+  L1 -- no --> L2{"browser language available?"}
+  L2 -- yes --> LANG
+  L2 -- no --> DEF
+  DEF --> LANG
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries own the *decision*. The contract — the Topic and its payload — lives in `integration-interface` so that every framework depends on the same definition. The pure functions in `user-language.utils.ts` carry no framework imports and can be unit-tested in isolation; they receive the browser-locale resolver as an argument so that tests can control the browser language.
+
+Two consumers turn the decision into a stream:
+
+* link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService`] — an Angular `Injectable` that holds the `UserProfileTopic` and a `BehaviorSubject` `lang$`. In its constructor it pipes `profile$` through `resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)` and subscribes the result to `lang$`.
+* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider`] — the React equivalent, described under link:../localization/react-translations.adoc[React translations]; it builds the same `lang$` from the same `UserProfileTopic` and the same `resolveProfileLanguage` call.
+
+Because `lang$` is a `BehaviorSubject` seeded with `determineBrowserLanguage() ?? DEFAULT_LANG`, a framework that reads the stream before the profile arrives still has a sensible language (the browser language, or `'en'`). The profile Topic then upgrades it to the authoritative value once it is published.
+
+=== Shell side
+
+The Shell owns the *input*. It is the only participant that talks to the identity provider, and it is responsible for fetching the signed-in user's profile and publishing it to the `UserProfileTopic`. That publishing happens in the Shell's user-profile initialiser, which is wired into the Shell's providers in link:{shell}/src/app/app.module.ts[`app.module.ts`] (`userProfileInitializer`). The same file is where the Shell starts the translation stack for its own Apps, so the profile decision and the translation setup in link:./app-translations.adoc[App translations load & sharing] share a single bootstrap.
+
+The Shell therefore decides *which profile* reaches the page; the libraries decide *which language* that profile means. The two responsibilities never mix, which is what keeps the decision testable and framework-agnostic.
+
+== Angular / React
+
+The decision is identical on both sides — both call the same `resolveProfileLanguage` with the same `DEFAULT_LANG` and `getNormalizedBrowserLocales`. The difference is the plumbing around it:
+
+* **Angular** — `UserService` subscribes to the Topic in its constructor and is a single `providedIn: 'root'` instance shared across the whole page, so `lang$` is one stream every Angular App observes.
+* **React** — `UserProvider` builds the stream inside a `useMemo`/`useEffect` pair so it survives re-renders, and exposes it through `useUserService()`.
+
+Angular also keeps a deprecated helper on `UserService`, `useOldLangSetting(profile)`, which delegates to `resolveLegacyLanguage` and exists only so Apps on the old locale field keep working during migration; new code should read `resolveProfileLanguage`'s output instead.
+
+== Edge cases & pitfalls
+
+* **No `navigator`** — `determineBrowserLanguage()` returns `undefined` without a `window.navigator` (tests, SSR). The consumer then falls back to `DEFAULT_LANG`, so nothing throws.
+* **Locale array with no 2-letter entry** — if `profile.settings.locales` contains only full tags such as `de-DE` or `en-GB`, `resolveProfileLanguage` skips them and returns `DEFAULT_LANG`. This is why the *shape* of the published profile matters (see link:./profile-and-language.adoc#known-issues[Known issues]).
+* **Legacy profile** — a profile that predates `settings.locales` has no `settings.locales`, so the whole decision runs through `resolveLegacyLanguage` against `accountSettings.localeAndTimeSettings.locale`. Apps still on the old field rely on this branch.
+* **Race between stream and profile** — `lang$` emits the browser/default value immediately and re-emits once the profile Topic publishes. A consumer that reads `lang$` once at startup and caches it can miss the profile-driven value; subscribe to the stream instead.
+
+== Debugging
+
+* The profile Topic is named `userProfile` (v1); its `TopicNext` traffic is visible with the general Topic tooling described in link:../diagnostics/tracing-communication.adoc[13. Diagnostics].
+* `UserService` logs under the `UserService` namespace (`createLogger('UserService')`); the profile→language subscription is the first thing it does on construction.
+* To see the resolved language at runtime, subscribe to `UserService.lang$` (Angular) or `useUserService().lang$` (React) and log the value after the profile Topic has initialised (`UserService.isInitialized`).
+
+== Known issues
+
+* **The Shell publishes the raw profile, not normalised locales.** The user-profile initialiser computes normalised browser locales (via `normalizeLocales`/`getNormalizedBrowserLocales` from `@onecx/accelerator`) but publishes the *raw* profile to the `UserProfileTopic`. Consumers therefore read `profile.settings.locales` exactly as it came from the identity provider — potentially full tags rather than bare base codes — and the `lang.length === 2` filter in `resolveProfileLanguage` then decides whether such a tag is usable. This is the intended behaviour of the code as written; a follow-up should make the Shell publish normalised `settings.locales` so the decision is robust to full-tag values. Source: link:{shell}/src/app/app.module.ts[`userProfileInitializer` (Shell)] and link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveProfileLanguage`].
+
+== Related Units
+
+* link:./app-translations.adoc[App translations load & sharing] — the `lang$` stream decided here is what the translation stack consumes.
+* link:../authentication/obtaining-tokens.adoc[How Apps obtain tokens] — the identity the profile is built from.
+* link:../shell-context/context-readiness.adoc[3. Shell Context & Runtime Configuration] — where the profile and its settings originate.
+* link:../diagnostics/logging.adoc[13. Diagnostics] — observing the Topic and the resolved language.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.topic.ts[`UserProfileTopic` (`user-profile.topic.ts`)]
+* link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.model.ts[`UserProfile` model (`user-profile.model.ts`)]
+* link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveProfileLanguage`, `resolveLegacyLanguage`, `determineBrowserLanguage` (`user-language.utils.ts`)]
+* link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService` (`user.service.ts`)]
+* link:{libs}/angular-integration-interface/src/lib/api/constants.ts[`DEFAULT_LANG` (angular `constants.ts`)]
+* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider` (`userContext.tsx`)]
+* link:{libs}/react-integration-interface/src/lib/api/constants.ts[`DEFAULT_LANG` (react `constants.ts`)]
+* link:{libs}/accelerator/src/lib/utils/get-normalized-browser-locales.utils.ts[`getNormalizedBrowserLocales` (accelerator)]
+* link:{shell}/src/app/app.module.ts[`userProfileInitializer` (Shell)]
+
+Verification Sources checked::
+* Draft Outline commit 6108bff — no prior page for this Area's Unit 1; the Topic/user-profile structure was cross-checked against the existing `dev-docs/topics/` pages.
+* in-code JSDoc and `@deprecated` markers in `user-language.utils.ts`, `user-profile.model.ts` and `UserService`.
+* Shell `app.module.ts` (via the Shell repository, `main` branch) for the `userProfileInitializer` location.

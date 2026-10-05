@@ -1,0 +1,75 @@
+= Localization
+:idprefix:
+:idseparator: -
+
+Localization is the Area that answers a single, shared question: **which user is signed in, in which language, and where do the words on screen come from.** The mechanism is split across the libraries in this repository and the https://github.com/onecx/onecx-shell-ui[OneCX Shell], and it is consumed by both Angular (ngx-translate) and React (i18next) on the same page.
+
+== Problem
+
+A OneCX page is a module-federation composition: several Apps and Remote Components, built with different frameworks, share one browser window. That creates two constraints that a plain i18n setup cannot meet:
+
+* There is exactly **one signed-in user** and **one active language**, but many frameworks that must all stay in step with that decision.
+* Each App and Remote Component ships **its own translation files** at its own base URL, shared libraries ship their own, and all of them must be merged without key collisions — while the *same* file is never fetched more than once, even when several Apps need it.
+
+This Area documents how both problems are solved. It does not describe how to *configure* a translation for your App (that belongs in https://github.com/onecx/docs-guides-ui[docs-guides-ui]); it explains the runtime mechanism and why it is shaped the way it is.
+
+== Big picture
+
+The work is divided along the same libs / Shell boundary that the rest of the Dev Docs use. The Shell owns the *input* (the signed-in user and the profile it fetched); the libraries own the *decision* and the *distribution*.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Shell
+    Init[user-profile initialiser<br/>app.module.ts]
+    Trans["translation setup<br/>(ngx-translate, OnecxTranslateLoader)"]
+  end
+  subgraph integration-interface
+    Topic["UserProfileTopic<br/>userProfile v1"]
+    Decide["resolveProfileLanguage()"]
+  end
+  subgraph angular-utils
+    Cache["TranslationCacheService<br/>window.onecxTranslations"]
+    Loader["OnecxTranslateLoader + combined loader"]
+  end
+  Init -->|publish profile| Topic
+  Topic --> Decide
+  Decide -->|lang$| A[Angular UserService]
+  Decide -->|lang$| R[React UserProvider]
+  Trans --> Loader
+  Loader --> Cache
+  A -->|use(lang)| NgX[ngx-translate]
+  R -->|changeLanguage(lang)| I18N[i18next]
+----
+
+Two Units in this Area describe the two halves of that picture in depth:
+
+* **Profile load & language decision** — the profile Topic and the pure function that turns a profile into the one language every framework must use.
+* **App translations load & sharing** — how per-App and per-library translation files are resolved, deep-merged, and shared page-wide through a global cache.
+
+The remaining planned Units cover the surrounding mechanisms (Remote Component translations, missing-translation fallback, locale & timezone formatting, the React pipeline, dynamic translations). They are not yet written, so their entries below are unlinked.
+
+== Unit map
+
+All planned Units of this Area, in reading order. Units whose page exists are linked; the rest keep the fixed slug from the Dev Docs index so cross-links work once the page is written.
+
+. Profile load & language decision — link:./profile-and-language.adoc[`profile-and-language.adoc`]
+. App translations load & sharing — link:./app-translations.adoc[`app-translations.adoc`]
+. Remote Component translations — `remote-component-translations.adoc`
+. Missing-translation fallback — `missing-translation-fallback.adoc`
+. Locale & timezone formatting — `locale-and-timezone-formatting.adoc`
+. React translations — `react-translations.adoc`
+. Dynamic translations — `dynamic-translations.adoc`
+
+== Reading order
+
+1. link:./profile-and-language.adoc[Profile load & language decision] — read first: it defines the `lang$` stream every other Unit depends on.
+2. link:./app-translations.adoc[App translations load & sharing] — the loading, merging and page-wide sharing of translation files.
+3. The remaining Units build on both; follow the number order above.
+
+== Related Areas
+
+* link:../authentication/obtaining-tokens.adoc[8. Authentication] — the identity that the profile is built from; the Dev Docs index notes that the user profile itself is covered here, in Area 10.
+* link:../shell-context/current-app-and-api-base-url.adoc[3. Shell Context & Runtime Configuration] — where the profile and its settings come from.
+* link:../styling/primeng-style-scoping.adoc[4. Styling & Style Isolation] — the `primeng` translation keys are handed to the PrimeNG configuration on every language change.
+* link:../diagnostics/logging.adoc[13. Diagnostics] — general tools for observing the Topics and `window` state these Units rely on.

@@ -1,0 +1,130 @@
+= App translations load & sharing
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+How are per-App and per-library translation files resolved, merged into one object, and shared page-wide so the same file is never fetched more than once?
+
+== Why it exists
+
+In a single-module Angular app, a translation loader points at one base path (for example `/assets/i18n/`) and appends the language and a `.json` suffix. That breaks in a module-federation page:
+
+* Each App ships its own translation files at its own base URL.
+* Shared libraries (for example `angular-accelerator`) ship translations of their own that must be merged with the App's.
+* Multiple sources must be deep-merged so that a key defined in two of them does not collide or get lost.
+* The *same* translation file must not be fetched more than once, even when several Apps on the page need it — each fetch is an HTTP request.
+
+The design answers these with four layers: a multi-value token that declares *where* files can be found, a loader that *combines* all those sources, an HTTP loader that reads *one* file, and a global cache that *coordinates* who fetches and who waits.
+
+== How it works
+
+The framework-agnostic core is a chain of `TranslateLoader`s, each of which knows how to produce one translation object for a language.
+
+[source,mermaid]
+----
+flowchart TD
+  P["TRANSLATION_PATH<br/>(multi token, one entry per source)"] --> O[OnecxTranslateLoader]
+  O --> C1[CachingTranslateLoader #1]
+  O --> C2[CachingTranslateLoader #2]
+  O --> CN[CachingTranslateLoader #N]
+  C1 --> T[TranslationCacheService]
+  C2 --> T
+  CN --> T
+  T --> W["window.onecxTranslations<br/>(global page-wide cache)"]
+  C1 --> M[TranslateCombinedLoader]
+  C2 --> M
+  CN --> M
+  M --> D["deep-merged translation object<br/>(mergeDeep, later source wins)"]
+----
+
+* **The path token.** link:{libs}/angular-utils/src/lib/injection-tokens/translation-path.ts[`TRANSLATION_PATH`] is a multi-value `InjectionToken` whose value is an array of `string | Observable<string> | Promise<string>`. Every source — an App, a library, a Remote Component — contributes one base path, so the loader never hard-codes a single location. Apps add their path with link:{libs}/angular-utils/src/lib/providers/translation-path-from-meta.providers.ts[`provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')`], which strips the file name from `import.meta.url` and appends the segment; the `@onecx/angular-utils` library adds its own path plus a `LOCALE_ID` provider via link:{libs}/angular-utils/src/lib/providers/translation-path.providers.ts[`provideTranslationPaths()`].
+* **The combined loader.** link:{libs}/angular-utils/src/lib/utils/onecx-translate-loader.utils.ts[`OnecxTranslateLoader`] reads all `TRANSLATION_PATH` values, waits for the asynchronous ones to resolve (`zip`), deduplicates them with a `Set`, and builds one link:{libs}/angular-utils/src/lib/utils/caching-translate-loader.utils.ts[`CachingTranslateLoader`] per unique path — the path becomes the loader prefix and `.json` the suffix. All of those are wrapped in a link:{libs}/angular-utils/src/lib/utils/translate.combined.loader.ts[`TranslateCombinedLoader`]. When `getTranslation(lang)` is called, the combined loader fires every child loader in parallel (`forkJoin`) and folds the results with `mergeDeep`.
+* **One file at a time.** link:{libs}/angular-utils/src/lib/utils/caching-translate-loader.utils.ts[`CachingTranslateLoader`] builds the URL as `prefix + lang + suffix` and delegates to the cache service, passing the underlying `TranslateHttpLoader` fetch as the "cache miss" function with two retries (50 ms apart).
+* **The global cache and the coordination rule.** link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`TranslationCacheService`] owns `window.onecxTranslations`, a page-wide record. `getTranslationFile(url, cacheMiss)` has three cases:
+
+. *Already loaded* — `window.onecxTranslations[url]` is truthy, so it is returned immediately; no HTTP, no message.
+. *In flight elsewhere* — the value is `null`, meaning another subscriber already started the fetch. The caller subscribes to a link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] named `translationCache` (v2) and waits until that `url` is published, then reads the now-populated cache.
+. *Not yet seen* — the cache is set to `null` (in-flight marker), the miss function runs, and the result is stored *and* the `url` published on success — or, on failure, the entry is deleted, the `url` published, and an empty object returned.
+
+Publishing on *both* success and failure is the crux: a waiter in case 2 is guaranteed a signal and can never hang. The coordination Topic is defined inside `angular-utils` rather than in `integration-interface` because it is an Angular-specific optimisation, not part of the cross-framework integration contract.
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/angular-utils` provides the whole chain. The path token and its `import.meta.url`-based provider are the public entry point Apps use; the combined and caching loaders plus the cache service do the merging and sharing. A separate link:{libs}/angular-utils/src/lib/services/translation-connection.service.ts[`TranslationConnectionService`] (registered with link:{libs}/angular-utils/src/lib/utils/provide-connection-service.ts[`provideTranslationConnectionService()`]) closes the loop with the language decided in link:./profile-and-language.adoc[Profile load & language decision]: it subscribes `UserService.lang$` to `translateService.use(lang)`, and on any language/translation/fallback change it fetches the `primeng` translation keys and hands them to the PrimeNG configuration. The deep-merge primitive is link:{libs}/angular-utils/src/lib/utils/deep-merge.utils.ts[`mergeDeep`], which merges nested objects recursively with the later source winning on a conflicting leaf key.
+
+Two older factories still exist for migration and are marked `@deprecated` in favour of `provideTranslationPathFromMeta`: link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory`] and link:{libs}/angular-utils/src/lib/utils/remote-component-translation-path-factory.utils.ts[`remoteComponentTranslationPathFactory`].
+
+=== Shell side
+
+The Shell is itself a consumer of this chain. Its providers in link:{shell}/src/app/app.module.ts[`app.module.ts`] wire up `provideTranslateService` from `@ngx-translate/core`, use `OnecxTranslateLoader` as the loader, register the `MultiLanguageMissingTranslationHandler`, and add the Shell's own base path through `provideTranslationPathFromMeta`. In other words the Shell loads the shared library translations the same way every App does — through the same token and the same global cache — so the `primeng` and `angular-accelerator` strings are fetched once and shared with every App on the page.
+
+== Angular / React
+
+The loader, the combined loader and the *global cache* are Angular-specific: they are built around the `TranslateLoader` contract and `window.onecxTranslations`, so the cross-App "fetch once" guarantee described above is an Angular mechanism.
+
+React uses the same *language* decision (see link:./profile-and-language.adoc[Profile load & language decision]) but its own translation pipeline on top of i18next, described in link:./react-translations.adoc[React translations]. The two pieces that bridge the decision into i18next live in `@onecx/react-utils`:
+
+* link:{libs}/react-utils/src/lib/utils/translationResources.ts[`translationResources.ts`] — `getTranslationPathFromMeta(metaUrl, path)` builds an i18next base `loadPath` from `import.meta.url`, and `registerPortalPageTranslations(instance, metaUrl, path)` points an existing i18next backend at the OneCX portal page translations (`<base>{{lng}}.json`). Both bail out (or throw) when `metaUrl` is a local `file://` URL.
+* link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge`] — a zero-render component that subscribes `useUserService().lang$` and calls `i18n.changeLanguage(lang)` once i18next reports it is initialised.
+
+Because React has no equivalent of `window.onecxTranslations`, React Apps rely on i18next's own per-instance resource handling and the browser's HTTP cache rather than the shared cache; the "fetch once, page-wide" guarantee therefore applies to the Angular side of the page.
+
+== Edge cases & pitfalls
+
+* **Duplicate paths** — `OnecxTranslateLoader` deduplicates identical `TRANSLATION_PATH` values with a `Set`, so a path contributed twice is loaded once.
+* **A source that fails to load** — the combined loader catches a per-source failure and substitutes an empty object for that source, so one broken translation file does not prevent the rest of the page from rendering; the failed keys fall through to the missing-translation handler.
+* **Two Apps racing for one file** — the in-flight `null` marker means the second App waits on the `translationCache` Topic instead of issuing a duplicate HTTP request.
+* **Merge order is significant** — `mergeDeep` folds the sources in the order the `TRANSLATION_PATH` values were provided, so a later source overrides an earlier one for the same key. Deliberate ordering of App vs library paths matters.
+* **`import.meta.url` under `file://`** — `provideTranslationPathFromMeta` throws at runtime if `import.meta.url` is unavailable or a `file://` URL; the bundler must expose `import.meta.url` (in tests, `isTest()` falls back to the raw path string instead).
+
+== Debugging
+
+* `window.onecxTranslations` is inspectable from the console; each key is a translation file URL, a `null` value means in-flight, and a missing key means not yet requested.
+* The cache service logs under the `TranslationCacheService` namespace and the combined loader under `TranslateCombinedLoader`; a failed file is logged with the offending loader and error.
+* The `translationCache` Topic (v2) traffic shows who published which file URL; combine with the general Topic tooling in link:../diagnostics/tracing-communication.adoc[13. Diagnostics].
+
+== Known issues
+
+There is no known issue in this Unit as of the current `main` code. The coordination rule (publishing the URL on both success and failure) is documented because it is easy to misread: the `catchError` branch is *not* an error the caller sees — it deliberately returns an empty object so that waiting subscribers always receive a signal.
+
+== Related Units
+
+* link:./profile-and-language.adoc[Profile load & language decision] — provides the `lang$` stream this Unit consumes.
+* link:./remote-component-translations.adoc[Remote Component translations] — Remote Components register their own `TRANSLATION_PATH` entries.
+* link:./missing-translation-fallback.adoc[Missing-translation fallback] — what happens to a key this Unit could not load.
+* link:./react-translations.adoc[React translations] — the i18next pipeline that sits beside this Angular chain.
+* link:../styling/primeng-style-scoping.adoc[4. Styling & Style Isolation] — the `primeng` keys handed to the PrimeNG configuration on every language change.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/injection-tokens/translation-path.ts[`TRANSLATION_PATH` (`translation-path.ts`)]
+* link:{libs}/angular-utils/src/lib/providers/translation-path-from-meta.providers.ts[`provideTranslationPathFromMeta` (`translation-path-from-meta.providers.ts`)]
+* link:{libs}/angular-utils/src/lib/providers/translation-path.providers.ts[`provideTranslationPaths` (`translation-path.providers.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/onecx-translate-loader.utils.ts[`OnecxTranslateLoader` (`onecx-translate-loader.utils.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/caching-translate-loader.utils.ts[`CachingTranslateLoader` (`caching-translate-loader.utils.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/translate.combined.loader.ts[`TranslateCombinedLoader` (`translate.combined.loader.ts`)]
+* link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`TranslationCacheService` (`translation-cache.service.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/deep-merge.utils.ts[`mergeDeep` (`deep-merge.utils.ts`)]
+* link:{libs}/angular-utils/src/lib/services/translation-connection.service.ts[`TranslationConnectionService` (`translation-connection.service.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/provide-connection-service.ts[`provideTranslationConnectionService` (`provide-connection-service.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory` (deprecated)]
+* link:{libs}/angular-utils/src/lib/utils/remote-component-translation-path-factory.utils.ts[`remoteComponentTranslationPathFactory` (deprecated)]
+* link:{libs}/react-utils/src/lib/utils/translationResources.ts[`getTranslationPathFromMeta`, `registerPortalPageTranslations` (`translationResources.ts`)]
+* link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge` (`translationBridge.tsx`)]
+* link:{shell}/src/app/app.module.ts[translation providers (Shell)]
+
+Verification Sources checked::
+* Draft Outline commit 6108bff, `dev-docs/translations/index.adoc` — the loader chain, the three cache scenarios and the React pipeline described there were re-verified line-by-line against current `main` code; all matched.
+* in-code JSDoc and `@deprecated` markers in the `angular-utils` translation utilities.
+* Shell `app.module.ts` (via the Shell repository, `main` branch) for the translation provider wiring.
