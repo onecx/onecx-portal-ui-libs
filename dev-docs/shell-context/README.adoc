@@ -1,0 +1,84 @@
+= Shell Context & Runtime Configuration
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+This Area explains the data the Shell provides to Apps and where that data comes from: what "context" the Shell puts into the page, when it becomes ready for Apps to read, and how the Workspace configuration is loaded and distributed to the Topics and services that every App depends on.
+
+toc::[]
+
+== Problem
+
+An App does not know which Workspace (portal) it is running in, which routes and endpoints exist, which configuration keys apply, or which parameters the Shell wants it to honour. None of this is compiled into the App. The Shell owns the answer to all of it and has to hand it over at runtime, through the Topic contract of Area 1 (Integration Contract & Topics). This Area covers two things that every other Area builds on:
+
+* *readiness* — which Topics hold the Shell's context, and how an App can tell when a given piece of context has actually arrived
+* *distribution* — how the Workspace configuration is loaded on the Shell side and fanned out to the `current-workspace`, `configuration` and `parameters` Topics and the services that read them.
+
+The libraries only *carry* this data; they do not produce it. The Shell is the single producer.
+
+== Big picture
+
+The Shell is the only source of Shell context. It loads its runtime configuration and the Workspace configuration during bootstrap, then publishes the results onto Topics. Apps (Angular or React) get the same Topics through the libs, which wrap them in services or hooks. The split of work is shown below.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Shell
+    ENV[env.json / APP_CONFIG]
+    WS[Workspace config BFF]
+    P[Parameters service]
+    CfgInit[configurationServiceInitializer]
+    WsInit[workspaceConfigInitializer]
+  end
+  subgraph Topics
+    CFG[configuration]
+    WS_T[current-workspace]
+    PAR[parameters]
+    MFE[current-mfe]
+  end
+  subgraph App
+    S1[ConfigurationService]
+    S2[AppStateService / WorkspaceService]
+    S3[ParametersService / useParameters]
+  end
+  ENV --> CfgInit --> CFG
+  WS --> WsInit --> WS_T
+  WS --> WsInit --> PAR
+  WsInit --> MFE
+  CFG --> S1
+  WS_T --> S2
+  WS_T --> S3
+  MFE --> S3
+----
+
+The same Topics exist in both repositories. The Shell *publishes* them; an App *subscribes* to them. An App never writes Shell context itself — reading a Topic before the Shell has published it is the main failure mode this Area documents.
+
+== Unit map
+
+The Units of this Area, in reading order. Units 1 to 4 are written; the rest are planned and listed so their paths are reserved. Each Unit follows the link:{dev-docs-index}[Dev Docs index] slugs and the Unit template.
+
+. link:context-readiness.adoc[Context overview & readiness] — what context the Shell provides and how an App knows it is ready.
+. link:workspace-config-loading.adoc[Workspace config load & distribution] — how the Workspace configuration is loaded and fanned out to Topics/services.
+. link:workspace-model-and-urls.adoc[Workspace model & URL building] — the Workspace model and how cross-App URLs are built.
+. link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — how the Current App is described and the API base URL is resolved.
+. `configuration-kinds.adoc` — Configuration vs App Config vs Parameter.
+. `runtime-configuration.adoc` — Runtime configuration (env.json placeholders, configuration Topic, cross-repo keys).
+. `parameters.adoc` — Parameters.
+
+Read Units 1 and 2 first. They define the readiness and distribution mechanisms that the later Units (configuration kinds, runtime configuration, parameters) take for granted. Units 3 and 4 build directly on the Workspace and the `currentMfe$` that Units 1 and 2 load and distribute.
+
+== Related Areas
+
+This Area depends on the Topic contract and is consumed by the Areas below.
+
+* link:{dev-docs-index}[Dev Docs index] — the Area and Unit slug map.
+* Area 1, Integration Contract & Topics — the Topic mechanism these contexts are carried on (message delivery, transports, lifecycle).
+* Area 2, Application Bootstrap — when bootstrap runs relative to the Shell's initializers.
+* Area 7, Navigation & Routing — the `current-location` / Current App Topics that arrive alongside the workspace.
+* Area 10, Localization — the `i18n` and user-profile data that accompany the Workspace.
+* Area 12, State Management — how the Shell context is wired into an App's ngrx store.

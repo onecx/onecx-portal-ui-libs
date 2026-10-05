@@ -1,0 +1,120 @@
+= Workspace model & URL building
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+What is the Workspace model the Shell hands to an App, and how does an App build a correct URL for another product's route or endpoint from it?
+
+== Why it exists
+
+An App often needs to deep-link into a *different* product running in the same Workspace — "open the customer with id 42 in the Sales app" — without hard-coding a host or a path. Those URLs are not compiled into the App: they depend on which Workspace (portal) is loaded, which products are registered in it, and how each product's routes and endpoints are laid out. The Workspace model is the data shape that carries all of that, and a small set of pure helpers turns it into URLs. Because the helpers are framework-agnostic and the model crosses the App boundary on a Topic, the same resolution works for Angular and React Apps and is shared with the Shell itself, which builds its own route table from the same model. This Unit covers the model, the URL-building helpers, and the libs services/hooks that consume them. How the model is loaded and published is Unit 2; how an App waits for it to arrive is Unit 1.
+
+== How it works
+
+The Workspace is published on the link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`current-workspace` Topic] (registered with the raw name `currentPortal`, version 1). Its value is the link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`] model:
+
+* `baseUrl` — the Workspace root (used as the fallback base when a route has none).
+* `workspaceName` / `portalName` — the name of the Workspace (`portalName` is `@deprecated will be renamed to workspaceName`).
+* `routes` — an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`]. Each `Route` identifies one product/app entry point: `appId`, `productName`, `baseUrl`, `url`, `remoteEntryUrl`, `exposedModule`, `pathMatch`, … and `endpoints`.
+* `endpoints` — per route, an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`] of shape `{ name?, path? }`.
+* `homePage`, `i18n`, `displayName`, and a large `@deprecated` tail (see Edge cases).
+
+Everything about *building a URL* is a pure function in link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`], shared by both frameworks:
+
+* `constructRouteUrl(workspace, appId, productName, endpointName?, endpointParameters?)` → the full URL.
+* `doesUrlExistForWorkspace(workspace, productName, appId, endpointName?)` → `boolean` (does a matching route/endpoint exist?).
+
+`constructRouteUrl` resolves in four steps:
+
+. *Match the route* — `filterRouteFromList` picks the `Route` whose `appId` and `productName` both match. If there is none it warns and falls back to the Workspace `baseUrl`; if there is more than one it warns and uses the first.
+. *Pick the base* — if the route has a `baseUrl`, that replaces the Workspace `baseUrl`; otherwise the Workspace `baseUrl` is used. If no `endpointName` is given, this URL is returned.
+. *Resolve the endpoint* — `constructEndpointUrl` → `dissolveEndpoint` finds the endpoint by `name`, following `[[alias]]` chains (an endpoint whose `path` contains `[[other]]` is replaced by the endpoint named `other`). `fillParamsForPath` then replaces `{param}` placeholders in the path with values from `endpointParameters`.
+. *Join* — `joinWithSlash` concatenates base and endpoint path with a single slash.
+
+[source,mermaid]
+----
+flowchart TD
+  I["constructRouteUrl(workspace, appId, productName, endpointName?, params?)"]
+  I --> R["filterRouteFromList: match appId + productName"]
+  R -->|no route| B["warn + return workspace.baseUrl"]
+  R -->|route found| RB["base = route.baseUrl or workspace.baseUrl"]
+  RB -->|no endpointName| OUT1["return base"]
+  RB -->|endpointName| EP["dissolveEndpoint: resolve name + alias chain"]
+  EP --> FP["fillParamsForPath: replace {param} from params"]
+  FP --> OUT2["joinWithSlash(base, endpointPath) → URL"]
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs expose the model, the pure helpers, and a thin reactive consumer per framework.
+
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`] — the data shape, in `integration-interface`.
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`] — the pure, framework-agnostic builders. `constructRouteUrl` and `doesUrlExistForWorkspace` are the public entry points; `filterRouteFromList`, `constructBaseUrlFromWorkspace`, `dissolveEndpoint`, `fillParamsForPath` and `joinWithSlash` are the internal steps. Every resolver takes an optional `warn` handler (default `console.warn`) and *degrades instead of throwing* — missing routes, endpoints or parameters produce a warning and the best available URL (usually the route/Workspace base URL).
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`] — the Angular consumer. `getUrl(productName, appId, endpointName?, endpointParameters?)` and `doesUrlExistFor(productName, appId, endpointName?)` pipe `AppStateService.currentWorkspace$` through the helpers above and return `Observable<string>` / `Observable<boolean>`. They pass `logger.warn` as the `warn` handler.
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`] — the React equivalent, reading `useAppState().currentWorkspace$`. It must be called inside an `AppStateProvider`.
+
+=== Shell side
+
+The Shell is the producer of the model. `publishCurrentWorkspace` (called from `workspaceConfigInitializer`) in link:{shell}/src/app/app.module.ts[`app.module.ts`] publishes to `currentWorkspace$` exactly the fields an App needs for URL building: `baseUrl`, `portalName`, `workspaceName`, `routes`, `homePage`, `microfrontendRegistrations: []`, `displayName` and `i18n`, taken from the `loadWorkspaceConfigResponse` fetched from the Workspace-config BFF (loading itself is Unit 2). The `routes` array is the same list the Shell uses to build its own Angular route table — `RoutesService.init(...)` → `convertToRoute` in link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`] turns each BFF route into an Angular route whose `canActivateChild` wires up the app. So one `Workspace.routes` list drives both the Shell's navigation and every App's cross-App deep links; the Shell is not a second source of truth, it publishes the model it itself relies on.
+
+== Angular / React
+
+The resolution logic is identical because both frameworks call the same pure helpers over the same `Workspace` value.
+
+* Angular: inject `WorkspaceService`; `getUrl` / `doesUrlExistFor` take `(productName, appId, ...)` and return Observables.
+* React: `useWorkspace()` returns `{ getUrl, doesUrlExistFor }` with the same signatures; the returned Observables are consumed inside a component/hook.
+
+Both read the workspace from `currentWorkspace$`, so both inherit the readiness contract — gate on `isInitialized` (Unit 1) before the first value, or use `asObservable()`, which already filters on readiness.
+
+== Edge cases & pitfalls
+
+* *Argument order differs between the two helpers.* The public wrappers are consistent (`productName` then `appId`), but the pure helpers are not: `constructRouteUrl(workspace, appId, productName, …)` takes `appId` first, while `doesUrlExistForWorkspace(workspace, productName, appId, …)` takes `productName` first. The services/hooks pass them correctly, so normal use is safe; only direct calls to the raw helpers can trip on this.
+* *Ambiguous product/app.* If two routes share the same `appId` + `productName`, `filterRouteFromList` warns ("more than one route. First route has been used.") and silently uses the first.
+* *Missing route / endpoint / parameter.* Each missing piece degrades gracefully: no route → the Workspace `baseUrl` (or `''` if the Workspace has no `baseUrl`); no endpoint or empty `endpoint.path` → the route base URL; a `{param}` with no value → the endpoint path is dropped and the route base URL is returned. Nothing throws.
+* *`[[alias]]` chains.* `dissolveEndpoint` follows aliases until it reaches a concrete endpoint. A malformed alias (missing closing `]]` or a self/unknown reference) resolves to `undefined`, which degrades to the route base URL with a warning.
+* *Most `Workspace` fields are `@deprecated will be removed`.* New code should rely on `baseUrl`, `workspaceName`, `routes`, `homePage` and `i18n` and treat the rest (`id`, `themeId`/`themeName`, `footerLabel`, `companyName`, `imageUrls`, `address`, `logoUrl`, …) as transitional. `portalName` specifically is slated to be *renamed* to `workspaceName`.
+* *The Topic is named `currentPortal`.* `CurrentWorkspaceTopic` registers under the raw name `currentPortal` (v1). An App/Shell mismatch on this name or version means an App never receives the model — see Unit 1 for the readiness mechanics.
+
+== Debugging
+
+* The resolvers warn through the `warn` handler. The services feed `logger.warn`, so enable the `WorkspaceService` / `useWorkspace` logger to see why a URL resolved to a base URL instead of an endpoint (missing route, endpoint or parameter).
+* Confirm the model actually arrived first: gate on `currentWorkspace$.isInitialized` (Unit 1) and log the `routes` you received — a URL that keeps resolving to the Workspace base usually means the `appId`/`productName` you passed does not match any `routes` entry.
+* Compare the values in `workspace.routes` (from the BFF) against the `appId`/`productName`/`endpointName` you are passing; the match is an exact string comparison on `appId` and `productName`.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate for `current-workspace`.
+* link:workspace-config-loading.adoc[Workspace config load & distribution] — where the `Workspace` is loaded from the BFF and published.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — the sibling "current app" context (`currentMfe$`) and where the API base URL comes from.
+* Area 2 (Application Bootstrap) — how a route's `remoteEntryUrl` is used to load the matched remote.
+* Area 7 (Navigation & Routing) — the `current-location` / Current App Topics that arrive alongside the workspace.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`] (name `currentPortal`, v1)
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`] (`constructRouteUrl`, `doesUrlExistForWorkspace`, `filterRouteFromList`, `dissolveEndpoint`, `fillParamsForPath`, `constructBaseUrlFromWorkspace`, `joinWithSlash`)
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`publishCurrentWorkspace`, `workspaceConfigInitializer`) (Shell)
+* link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`] (`init`, `convertToRoute`) (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
+* Dev Docs top index (`README.adoc`) — slugs and reading order for this Area.
+* Sibling Units 1 and 2 (`context-readiness.adoc`, `workspace-config-loading.adoc`) — model field names and Shell publish fields cross-checked against the code.
+* Draft Outline commit (6108bdff) — topic map only; no content baseline.
+* JSDoc in `workspace.utils.ts` and the model files. Shell code read from `onecx-shell-ui` `main` and linked by file only (read-only for this work).

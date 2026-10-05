@@ -1,0 +1,114 @@
+= Current App & API base URL resolution
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does the Shell describe the *current* App (the product the page is currently showing), and how does an App resolve the base URL its backend API calls should be sent to?
+
+== Why it exists
+
+Within a Workspace, many products (Apps) run on the same page. At any moment one of them is *current* — the one the user is looking at. An App needs to know its own identity (`appId`, `productName`) and its base URL for two reasons that the Shell must answer, because the App does not know them at build time:
+
+* some libraries (parameters, permissions, translations) resolve values per `appId` / `productName` and need to know *which* app is current;
+* generated API clients need the *base URL* of that app's backend so a call to `…/api/…` lands on the right host.
+
+The `currentMfe` context is the data shape that carries the current App's identity and base URL, and the libs use it to resolve the API base URL instead of a hard-coded one. "MFE" is the Module-Federation remote the App was loaded from; the Shell republishes the context every time the current product changes.
+
+== How it works
+
+The context is published on the link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`current-mfe` Topic] (raw name `currentMfe`, version 1). Its value is the link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`] model:
+
+* `appId`, `productName` — which product is current (used to key per-app lookups).
+* `remoteBaseUrl` — the current App's base URL. **This is the value the API base URL is resolved from.**
+* `baseHref`, `mountPath` — the (joined) base path the App is mounted at.
+* `shellName` (always `portal`), `version`, `displayName`, `remoteName`, `elementName`, `remote`.
+
+The API base URL is resolved by link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`], which supplies the configuration surface a generated OpenAPI client expects (`basePath`, `selectHeaderContentType`, `selectHeaderAccept`, `isJsonMime`, `lookupCredential`, `encodeParam`). On construction it seeds a `BehaviorSubject` with a placeholder `./<apiPrefix>` and then subscribes to the *first* `currentMfe$` value, mapping it to `Location.joinWithSlash(currentMfe.remoteBaseUrl, apiPrefix)`:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Gen as Generated client
+  participant Cfg as PortalApiConfiguration
+  participant MFE as currentMfe$ (from Shell)
+  Gen->>Cfg: new (generatorConfig, apiPrefix)
+  Note over Cfg: basePath = ./<apiPrefix> (placeholder)
+  Cfg->>MFE: currentMfe$.pipe(first())
+  MFE-->>Cfg: MfeInfo (remoteBaseUrl = app base URL)
+  Cfg-->>Cfg: basePath = joinWithSlash(remoteBaseUrl, apiPrefix)
+  Gen->>Cfg: basePath  (now the real host)
+----
+
+Because the `Topic` only emits after the Shell has published a value (Unit 1), `basePath` stays the `./<apiPrefix>` placeholder until the first `currentMfe$` arrives. The `basePath` getter is read-only in practice: its setter throws `Error('Do not set basePath')` so a generated client cannot override the resolved value.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`] / link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`] — the model and Topic, in `integration-interface`.
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`] — the Angular accessor. `currentMfe$` is a lazily-created `CurrentMfeTopic` (getter) that is destroyed in `ngOnDestroy`. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider`] / `useAppState().currentMfe$` (created via `useTopic`).
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`] — the Angular API-base-URL resolver. It is exported from `@onecx/angular-utils`. The same `remoteBaseUrl` pattern also appears in the (deprecated) link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory`], which combines `currentMfe$` and `globalLoading$` to build the translation asset path from `remoteBaseUrl`.
+
+=== Shell side
+
+The Shell is the producer and it *republishes* the context per navigation, not once at bootstrap.
+
+* *Per-App publish:* `RoutesService.updateMfeInfo` in link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`] builds `MfeInfo` from the current BFF route and calls `currentMfe$.publish(mfeInfo)`: `remoteBaseUrl` is the route's `url`, while `baseHref` and `mountPath` are the route's (joined) `baseUrl`; `shellName` is `portal`. This runs from `updateAppEnvironment` → `updateAppState`, the `canActivateChild` guard attached to each converted route, so the context is refreshed whenever the *current route's base URL changes* (a guard skips the republish when `currentMfe.remoteBaseUrl` already equals the incoming route's URL). In other words, `remoteBaseUrl` always reflects the route the user is actually on.
+* *Empty publish on not-found:* `PageNotFoundComponent` (link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`not-found-page.component.ts`]) publishes a *blank* `MfeInfo` (`appId`, `productName`, `remoteBaseUrl` all empty strings, `baseHref: '/'`) in its constructor, so when the URL matches no product the context is explicitly reset to "no current App".
+* *Where the base URL comes from:* the route `url` / `baseUrl` values originate from the Workspace-config BFF (`loadWorkspaceConfig`, loaded in Unit 2). The Shell's own BFF clients point at `./shell-bff` (the `BASE_PATH` provided in link:{shell}/src/app/app.module.ts[`app.module.ts`]), and runtime `env.json` keys such as `APP_BASE_HREF` are resolved from the `${PLACEHOLDER}`-templated link:{shell}/src/assets/env.json[`env.json`] by `ConfigurationService` (Unit 2). So the API base URL is a *runtime, workspace- and route-driven* value, not a build-time constant.
+
+== Angular / React
+
+* Angular: the API base URL is a first-class concern — a generated client extends or composes `PortalApiConfiguration`, which resolves `basePath` from `currentMfe$.remoteBaseUrl`. Apps that just need the current App read `AppStateService.currentMfe$`.
+* React: there is no `PortalApiConfiguration` equivalent in the libs. React Apps read `useAppState().currentMfe$` directly and build any base URL themselves from `remoteBaseUrl`. The context and its readiness contract are otherwise identical to Angular.
+
+== Edge cases & pitfalls
+
+* *`basePath` is a placeholder until `currentMfe$` arrives.* `PortalApiConfiguration` initialises `basePath$` with `./<apiPrefix>` and only replaces it on the first `currentMfe$` value (Unit 1 readiness). Code that reads `basePath` before that value — e.g. constructing a request during a very early lifecycle hook — gets the relative placeholder rather than a real host. Gate on `currentMfe$.isInitialized` if you need the resolved value synchronously.
+* *The context resets on an unknown URL.* Navigating to a route the Workspace does not define lands on the not-found page, which publishes a blank `MfeInfo`. Any per-`appId` lookup (`parameters`, `PortalApiConfiguration`) then resolves against empty `appId`/`remoteBaseUrl`; treat that state as "no current App".
+* *`remoteBaseUrl` is the raw route `url`, not `baseHref`.* `updateMfeInfo` sets `remoteBaseUrl` to the BFF route's `url` while `baseHref`/`mountPath` are the joined `baseUrl`. They normally agree, but the API base URL specifically follows `remoteBaseUrl`.
+* *`basePath` cannot be set.* The `basePath` setter throws `Error('Do not set basePath')`; a generated client must rely on the resolved value, not override it.
+
+== Debugging
+
+* Log the `currentMfe$` value at the point a base URL is resolved: if `remoteBaseUrl` is empty you are on the not-found page (or have not navigated into a product yet); if `basePath` is still `./<apiPrefix>` the first `currentMfe$` has not arrived.
+* Confirm which product is current by checking `currentMfe$.appId` / `productName` against the BFF route you expect.
+* For raw cross-App Topic traffic (including `currentMfe`), see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+
+== Known issues
+
+* *Reading `basePath` before the first `currentMfe$` returns the placeholder.* `PortalApiConfiguration.basePath` is `./<apiPrefix>` until the first `currentMfe$` value maps into `basePath$` (link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`portal-api-configuration.utils.ts`]). The setter exists but throws, so the value can only ever be the resolved one — the placeholder window is the only source of a wrong value. Also recorded in Unit 2.
+* *Misspelled `encocdeParam` accessor.* The same file defines a setter named `encocdeParam` (misspelling of `encodeParam`), so `configuration.encodeParam` cannot be reassigned through the intended accessor. Also recorded in Unit 2.
+
+== Related Units
+
+* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate for `currentMfe$`.
+* link:workspace-config-loading.adoc[Workspace config load & distribution] — where the route list (and thus `remoteBaseUrl`) is loaded and published.
+* link:workspace-model-and-urls.adoc[Workspace model & URL building] — the sibling mechanism for cross-App *front-end* URLs from `current-workspace`.
+* Area 7 (Navigation & Routing) — `shell-routes-and-current-app.adoc`: how the Shell activates the Current App on navigation.
+* Area 9 (Permissions) and the `parameters` Unit — consumers of the current `appId` / `productName`.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`] (name `currentMfe`, v1)
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`]
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider` / `useAppState.currentMfe$`]
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`]
+* link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory`] (deprecated, same `remoteBaseUrl` pattern)
+* link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`] (`updateMfeInfo`, `updateAppState`, `updateAppEnvironment`) (Shell)
+* link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`not-found-page.component.ts`] (blank `currentMfe$` publish) (Shell)
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`BASE_PATH: './shell-bff'`) (Shell)
+* link:{shell}/src/assets/env.json[`env.json`] (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, Known-issues rule.
+* Dev Docs top index (`README.adoc`) — slugs and reading order for this Area.
+* Sibling Units 1 and 2 (`context-readiness.adoc`, `workspace-config-loading.adoc`) — `PortalApiConfiguration` accessor quirks and the readiness contract, cross-checked against the code.
+* Draft Outline commit (6108bdff) — topic map only; no content baseline.
+* JSDoc in `portal-api-configuration.utils.ts` and the `MfeInfo` model. Shell code read from `onecx-shell-ui` `main` and linked by file only (read-only for this work).
