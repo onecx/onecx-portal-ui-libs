@@ -4,7 +4,6 @@
 :idseparator: -
 :libs: ../../libs
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
-:dev-docs-index: ../README.adoc
 
 == Question answered
 
@@ -129,7 +128,7 @@ The Keycloak mechanism itself is identical on both frameworks — it runs once i
 * link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
 * How Apps obtain tokens — `obtaining-tokens.adoc`
 * Tokens on HTTP calls — `tokens-on-http-calls.adoc`
-* link:{dev-docs-index}#shell-context[3. Shell Context & Runtime Configuration] — the `KEYCLOAK_*` keys come from the workspace configuration.
+* 3. Shell Context & Runtime Configuration (cross-Area, on the Dev Docs top index — linked once it lands) — the `KEYCLOAK_*` keys come from the workspace configuration.
 
 == Sources
 

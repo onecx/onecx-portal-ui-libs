@@ -4,7 +4,6 @@
 :idseparator: -
 :libs: ../../libs
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
-:dev-docs-index: ../README.adoc
 
 == Question answered
 
@@ -108,8 +107,8 @@ The selection and gating are framework-agnostic and live entirely in the Shell: 
 * Custom auth service contract — `custom-auth-service.adoc`
 * How Apps obtain tokens — `obtaining-tokens.adoc`
 * Tokens on HTTP calls — `tokens-on-http-calls.adoc`
-* link:{dev-docs-index}#shell-context[3. Shell Context & Runtime Configuration]
-* link:{dev-docs-index}#integration-contract[1. Integration Contract & Topics] — the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
+* 3. Shell Context & Runtime Configuration (cross-Area, on the Dev Docs top index — linked once it lands)
+* 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
 
 == Sources
 
