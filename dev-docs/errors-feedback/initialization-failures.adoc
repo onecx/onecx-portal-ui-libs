@@ -1,0 +1,90 @@
+= Initialization failures & init-error page
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+When the Shell cannot finish initializing, how is the failure captured, how do the problem details travel to the error page, and what does that page show?
+
+== Why it exists
+
+Before a OneCX page can render any App it must configure itself: load the workspace configuration (routes, theme, slots, remote components) and the user profile. These requests go to the Shell's own back-end. If either one fails after retries, there is no workspace to render and no remote to load. The Shell therefore redirects to a dedicated initialization-error page and, because the redirect crosses a route boundary, it carries the problem details *in the URL* so the new page can display them.
+
+== How it works
+
+The Shell wraps its two initializers — the workspace-configuration load and the user-profile load — in an RxJS `retry` plus a `catchError`. When the retries are exhausted, the `catchError` hands the error to a single function, `initializationErrorHandler`, which:
+
+. Inspects the error. For an `HttpErrorResponse` it reads the RFC 7807 problem details (`detail`, `errorCode`, `invalidParams`, `params`); for a generic `ErrorEvent` it reads only the message.
+. Packs the result into `URLSearchParams` with the keys `message`, `requestedUrl` (the current `location.href`), `detail`, `errorCode`, `invalidParams` and `params`.
+. Navigates to the route `portal-initialization-error-page`, putting the whole parameter string in the URL **fragment** (the part after `#`): `router.navigate([...], { fragment: params.toString() })`.
+. Guards against re-entry: if the fragment already points at the init-error page, it does not navigate again, so an error on the error page itself cannot redirect in a loop.
+
+The init-error page then reads that fragment back with the same `URLSearchParams` API and renders each non-empty field.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Shell as Shell initializer
+  participant BFF as Shell back-end
+  participant Handler as initializationErrorHandler
+  participant Page as init-error page
+
+  Shell->>BFF: load config / profile (retry 3x)
+  BFF-->>Shell: error (after retries)
+  Shell->>Handler: catchError(error)
+  Handler->>Handler: build URLSearchParams
+  Handler->>Page: navigate(fragment=params)
+  Page->>Page: parse fragment, render fields
+----
+
+The problem details therefore travel as query-style key/value pairs, but specifically *in the URL fragment*, not in the query string. This is deliberate: the fragment is ignored by the back-end, so sensitive details never leave the page's origin in a request URL.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The initialization failure is a Shell concern, so the libraries are mostly absent here. The one reusable piece the page relies on is the `EventsTopic`, used to fire the "logout" action from the error page: link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]. The error page itself is Shell code.
+
+=== Shell side
+
+Everything else lives in the Shell:
+
+* link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`] — builds the parameters, reads the problem details, and performs the guarded navigation.
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] — the two initializers (`workspaceConfigInitializer`, `userProfileInitializer`) that call the handler in a `catchError`, each after `retry({ delay: 500, count: 3 })`.
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts`] — registers the route `portal-initialization-error-page`, lazy-loaded through `InitErrorModule`.
+* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent`] — reads the fragment, exposes the fields on an Observable, and offers a logout button that publishes the `authentication#logoutButtonClicked` event. The template assigns each displayed value a stable id (`onecxInitializationErrorMessage`, `onecxInitializationErrorRequestedUrl`, …) so they can be located or translated reliably.
+
+== Angular / React
+
+The current init-error page is an Angular component and the initializers use Angular DI and the Angular Router. A React Shell would run the same capture-and-redirect flow: parse the error, encode the fields into the URL, navigate to the init-error route, and decode them there. The mechanism — details carried in the URL fragment so they survive the route change — does not depend on the framework.
+
+== Edge cases & pitfalls
+
+* *Details are in the fragment, not the query string.* The `initializationErrorHandler` navigates with `{ fragment: params.toString() }` and the page reads `route.fragment`. If something were to read the query string instead, it would see nothing. (See *Known issues* — the Area's planning notes referred to these as "query parameters".)
+* *Re-entry guard.* The handler only navigates when the fragment does not already contain the target path. This is what stops the init-error page from redirecting into itself when its own request fails.
+* *Problem details are optional.* `detail`, `errorCode`, `params` and `invalidParams` are only present on an HTTP problem-detail response; for a plain error event they are empty, and the page hides any field that is empty.
+
+== Known issues
+
+The handler reads problem details only from `HttpErrorResponse` and `ErrorEvent` instances. The issue body and the Area's planning notes describe the problem details as being carried "in query parameters". The code carries them in the URL **fragment** instead (link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`]). This Unit documents the actual behaviour; the discrepancy is recorded as a follow-up for the Dev Docs planning.
+
+== Related Units
+
+* link:./failure-taxonomy.adoc[Failure taxonomy map] — where the initialization failure sits among the other failure modes.
+* Area 3 — Shell Context & Runtime Configuration — the workspace configuration and profile loads that can fail here.
+* Area 8 — Authentication — the logout event the init-error page fires.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler` (Shell)]
+* link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer` / `userProfileInitializer` (Shell)]
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts` (Shell)]
+* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent` (Shell)]
+* link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]
+
+Verification Sources checked::
+* Dev Docs Draft Outline (commit `6108bdff`) — no prior errors-feedback page.
+* Current `main` code of `onecx-shell-ui` — basis for every claim above, including the fragment-vs-query-parameter discrepancy.

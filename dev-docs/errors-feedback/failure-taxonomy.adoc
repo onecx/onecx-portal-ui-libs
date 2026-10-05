@@ -1,0 +1,102 @@
+= Failure taxonomy map
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+When something goes wrong in a OneCX page — during initialization, loading an App, or at any later point — which failure mode is it, and where does it end up on screen?
+
+== Why it exists
+
+A OneCX page can fail at several different moments, and the right reaction depends on *when* it failed. A failure while the workspace is still being configured, a failure while a remote module is being downloaded, an error raised after the page is running, and a URL that matches nothing all need different destinations and different UI. This Unit is the map: it lists each failure mode and the page or signal where it lands, so a reader can look up a symptom and find the mechanism (and the Unit that explains it) in one step.
+
+== How it works
+
+There are four distinct failure modes, and each has its own destination. The distinguishing factor is *timing* and *who detects the failure*:
+
+. *Initialization failure.* The Shell cannot build its own state — the workspace configuration or the user profile cannot be loaded. Detected by the Shell's initializers. Ends up on the **initialization-error page** (route `portal-initialization-error-page`). Covered in link:./initialization-failures.adoc[Unit 2].
+. *App load failure.* The Shell's routing tries to load a remote module (a Micro-Front-End) and the download or instantiation fails. Detected by the Shell's `RoutesService`, which fires a toast and navigates to the route `remote-loading-error-page`, rendered by a dedicated `ErrorPageComponent`. Covered in Unit 3.
+. *Global error.* Something publishes a value to the `globalError` Topic. Detected by the Shell's portal viewport, which subscribes to the Topic. Ends up on the **global-error page** (`ocx-shell-error`), which replaces the whole viewport. Covered in Unit 3.
+. *Not-found.* A URL matches no route. Detected by Angular's catch-all route. Ends up on the **not-found page**. Covered in Area 7.
+
+The `globalError` and `globalLoading` signals themselves are Topics defined in the libraries:
+
+* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`] — `Topic<string>`, name `globalError`, version 1. A single error code for the whole page.
+* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`] — `Topic<boolean>`, name `globalLoading`, version 1. A single loading flag for the whole page.
+
+A `Topic` is a page-global, cross-tab signal: every instance on the page converges on the same value. Both failures and the busy state therefore reach every part of the page from a single source of truth. See Area 1 (Integration Contract & Topics) for the delivery mechanism.
+
+[source,mermaid]
+----
+flowchart TD
+  subgraph "Failure mode"
+    A["Initialization<br/>(Shell initializer)"]
+    B["App load<br/>(RoutesService)"]
+    C["Global error<br/>(globalError Topic)"]
+    D["Not-found<br/>(catch-all route)"]
+  end
+
+  A --> A1["init-error page"]
+  B --> B1["remote-loading-error page + toast"]
+  C --> C1["global-error page"]
+  D --> D1["not-found page"]
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries provide the *signals* and the *reusable building blocks*; they do not decide which failure is which.
+
+* Two signal Topics: link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`] and link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`].
+* The Angular `AppStateService` re-exposes these (and other) Topics so a component can inject one service and read `globalError$` / `globalLoading$`: link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`].
+* A reusable error component and a reusable loading indicator, both in `angular-accelerator`:
+** link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent`] (selector `ocx-error`) — a generic "error" page that reads an `err` code and a `return` URL from the query string and can reload.
+** link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`] (`[ocxLoadingIndicator]`) — toggles a loading indicator on a host element or as a full-page overlay.
+
+=== Shell side
+
+The Shell is the consumer that turns those signals into concrete pages. Its routing and viewport split the failure modes across the destinations above:
+
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts`] registers the dedicated routes `portal-initialization-error-page` (initialization error) and `remote-loading-error-page` (remote/App load error).
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] owns the catch-all route (not-found), drives the `globalLoading` flag while a remote module loads, and reacts to a module-load failure with a toast plus a navigation to the error page.
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`] subscribes to `globalError$`; while a value is present it renders the global-error component in place of the normal viewport, and shows the full-screen loading spinner while content is loading.
+* The Shell also ships its own copies of the error and not-found pages under link:{shell}/src/app/error[`src/app/error`] and link:{shell}/src/app/not-found[`src/app/not-found`], separate from the reusable ones in the libraries.
+
+== Angular / React
+
+The `globalError` and `globalLoading` Topics, and the Shell's routing and viewport logic, are framework-agnostic at the signal level: any framework can publish or subscribe to the Topics. The concrete *pages* in the current Shell and in `angular-accelerator` are Angular components. A React Shell or App would subscribe to the same Topics and render its own error/loading views; the mechanism described here does not change.
+
+== Edge cases & pitfalls
+
+* *Two different "error page" components.* The library exposes `ocx-error` (link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent`]) while the Shell has its own `ocx-shell-error` (link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent`]). They read the same `err`/`return` query parameters and default to the same `E1001_FAILED_START` code, but they are separate implementations. Do not assume the Shell uses the library's component.
+* *App load failure vs. global error are different pages.* Both are "an error after bootstrap", but the App-load failure navigates to the `remote-loading-error-page` route (rendered by `ErrorPageComponent`, which shows the requested path and a reload action), while a `globalError` value swaps the viewport to `ocx-shell-error`. They look similar but are different components reached by different means. Unit 3 separates the two.
+* *A `Topic` is page-global.* Publishing to `globalError` affects every instance of that Topic on the page; there is no per-App scoping.
+
+== Related Units
+
+* link:./initialization-failures.adoc[Initialization failures & init-error page] — the mechanism behind failure mode 1.
+* App load failures & global errors (Unit 3, not yet written) — failure modes 2 and 3.
+* Area 7 — Navigation & Routing — where the not-found page is selected.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`]
+* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]
+* link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Angular)]
+* link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`]
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts` (Shell)]
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService` (Shell)]
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent` (Shell)]
+* link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Shell)]
+* link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent` (Shell)]
+* link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent` (Shell)]
+
+Verification Sources checked::
+* Dev Docs Draft Outline (commit `6108bdff`) — no prior errors-feedback page; topic map only.
+* libs `docs/` and in-code JSDoc/README — no coverage of this Area found.
+* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui` — basis for every claim above.

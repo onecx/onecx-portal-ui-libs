@@ -1,0 +1,65 @@
+= Errors, Loading & User Feedback
+:idprefix:
+:idseparator: -
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This Area covers how a running OneCX page reacts to failure, what it shows while it is busy, and how it tells the user something happened.
+
+== Problem
+
+A OneCX page can fail at several different moments: before the workspace is even configured, while a remote module is being loaded, in the middle of a navigation, or at any time afterwards. Each of those moments needs its own reaction — a page, a spinner, a toast. The work is split between the libraries and the Shell: the libraries define the *Topics* and the reusable error/loading building blocks, and the Shell decides where a given failure lands and what the user actually sees. Until now this behaviour was only documented in short, partly outdated pages. This Area describes it from the current code of both repositories.
+
+== Big picture
+
+The libraries expose four Topics that a page uses to signal or read state, plus a few reusable components and services:
+
+* `globalError` — a single, page-wide error signal (a `string`, e.g. an error code).
+* `globalLoading` — a single, page-wide loading flag (a `boolean`).
+* `message` — a Portal Message to show to the user (a toast).
+* `notification` — a structured cross-App notification.
+
+The Shell is the consumer that turns these into UI: an initialization-error page, a global-error page, a not-found page, a full-screen loading spinner, and the Shell's own toast Remote Component.
+
+[source,mermaid]
+----
+flowchart TD
+  subgraph Failures
+    A["Initialization failure<br/>(workspace config / user profile)"]
+    B["Remote module load failure"]
+    C["Global error<br/>(globalError Topic)"]
+    D["Unknown URL"]
+    E["Background request"]
+  end
+
+  A --> A1["init-error page<br/>portal-initialization-error-page"]
+  B --> B1["error page + toast"]
+  C --> C1["global-error page"]
+  D --> D1["not-found page"]
+  E --> E1["Portal Message<br/>(shell-toast)"]
+
+  subgraph Loading
+    L["globalLoading Topic"] --> LS["full-screen loading spinner"]
+  end
+----
+
+[NOTE]
+====
+Anything that reaches the `globalError` or `globalLoading` Topic is *page-global*: the value is shared across every Topic instance on the page. See Area 1 (Integration Contract & Topics) for the delivery mechanism.
+====
+
+== Units
+
+Read the Units in the order below. Units 1 and 2 are written; Units 3 to 5 are planned and will link once their pages exist.
+
+. Failure taxonomy map — link:./failure-taxonomy.adoc[failure-taxonomy.adoc]
+. Initialization failures & init-error page — link:./initialization-failures.adoc[initialization-failures.adoc]
+. App load failures & global errors — `app-load-failures-and-global-errors.adoc`
+. Global loading — `global-loading.adoc`
+. Portal Messages & Notifications — `portal-messages-and-notifications.adoc`
+
+== Related Areas
+
+* Area 1 (Integration Contract & Topics) — how the Topics this Area relies on are delivered across the page.
+* Area 7 (Navigation & Routing) — how the not-found page and the Current App route are selected.
+* Area 2 (Application Bootstrap) — the load path whose failure is covered by Unit 3.
+* Area 10 (Localization) — where the translated strings on the error and not-found pages come from.
