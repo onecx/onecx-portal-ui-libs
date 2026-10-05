@@ -1,0 +1,147 @@
+= Keycloak integration
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How the Keycloak mechanism works in the Shell: how it starts, how it reuses tokens across reloads, how it refreshes them, and how a logout event ends the session.
+
+== Why it exists
+
+Keycloak is the default authentication mechanism in OneCX (the wrapper falls back to it when `AUTH_SERVICE` is unset — see the previous Unit). A OneCX page, however, is reloaded and its JavaScript restarted many times during a user's session, and several Apps may run at once. `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]` therefore has to solve three problems that plain `keycloak-js` does not solve on its own:
+
+* *Survive a reload* without forcing the user to log in again, by persisting the tokens in `localStorage`.
+* *Refresh safely* even when many Apps fire requests at once, so only one refresh runs at a time.
+* *React to the identity provider* (silent SSO, refresh errors, token expiry) by wiring `keycloak-js` callbacks.
+
+The rest of the page stays framework-agnostic; only the Shell (via the libs) ever talks to Keycloak.
+
+== How it works
+
+The whole flow lives in `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]`, the Keycloak implementation of the `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` contract. Its `init()` runs in the order below.
+
+=== 1. Reuse the stored tokens
+
+`init()` first reads three keys from `localStorage`: `onecx_kc_token`, `onecx_kc_idToken` and `onecx_kc_refreshToken`. If both a token and a refresh token are present it decodes the refresh token's JWT payload and reads its `exp` claim (converted to milliseconds). If that `exp` is in the past the stored tokens are dropped from `localStorage` and `init` proceeds as a fresh login; otherwise the stored tokens are passed to `keycloak.init` and reused. If nothing is stored, a fresh login is expected.
+
+=== 2. Resolve the Keycloak server config
+
+`getValidKCConfig()` reads `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`CONFIG_KEY.KEYCLOAK_URL`]`, `KEYCLOAK_REALM` and `KEYCLOAK_CLIENT_ID` from the `ConfigurationService`. A missing `clientId` or `realm` throws (`Invalid KC config, missing clientId` / `... realm`). The result is merged with the `config` argument to `init()`, and if the merged object has no `clientId`, `realm` or `url` it is replaced by the file path `'./assets/keycloak.json'`.
+
+Two more configuration keys tune this step: `KEYCLOAK_TIME_SKEW` (read as a number via `getConfigValueNumberOrUndefined`) and `KEYCLOAK_ENABLE_SILENT_SSO`, which must be the string `'true'` to turn the silent-SSO check on.
+
+=== 3. Initialise keycloak-js and log in
+
+`keycloak-js` is loaded with a dynamic `import()`. With the config and the optional tokens in hand, `init` calls `this.keycloak.init(...)` with `onLoad: 'check-sso'` and `checkLoginIframe: false`, passing the stored `idToken`, `refreshToken` and `token`, the `timeSkew`, and — only when silent SSO is enabled — a `silentCheckSsoRedirectUri` built by `getSilentSSOUrl()` (the page `<base>` href plus `/assets/silent-check-sso.html`).
+
+The promise chain then:
+
+* on any `init` error, warns and falls back to `this.keycloak.login(config)` (a redirect to the auth server);
+* on a successful `init`, if `keycloak.token` is present it is returned, otherwise `login()` is called and the string `'login'` returned;
+* resolves `true` on success;
+* on final failure logs the error and rethrows, which propagates up through `AuthServiceWrapper.init()`.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant W as AuthServiceWrapper
+  participant K as KeycloakAuthService
+  participant LS as localStorage
+  participant KC as keycloak-js
+  W->>K: init()
+  K->>LS: read onecx_kc_token / idToken / refreshToken
+  alt refresh token expired
+    K->>LS: clear stored tokens
+  end
+  K->>KC: init({onLoad:'check-sso', tokens, timeSkew, silentSso?})
+  alt init fails
+    K->>KC: login() (redirect)
+  else init ok
+    K-->>W: true
+    W->>W: isAuthenticated$.publish()
+  end
+----
+
+=== 4. Persist on every auth event
+
+`setupEventListener()` wires the `keycloak-js` callbacks so the tokens are always kept in sync with `localStorage`:
+
+|===
+| Callback | Effect
+| `onAuthError` | Writes current tokens to `localStorage`.
+| `onAuthSuccess`, `onAuthRefreshSuccess`, `onActionUpdate`, `onReady` | Writes current tokens to `localStorage`.
+| `onAuthLogout` | Clears `localStorage` and calls `login()` (the SSO session ended).
+| `onAuthRefreshError` | Writes `localStorage`; if `KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED === 'true'`, calls `login()`.
+| `onTokenExpired` | Writes `localStorage`; if `KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED === 'true'`, proactively refreshes (see below).
+|===
+
+`updateLocalStorage()` sets each of the three keys when the corresponding `keycloak` property exists and removes it otherwise, so a token that has been cleared is not left behind in `localStorage`.
+
+=== 5. Refresh with a semaphore
+
+`updateTokenIfNeeded()` is the entry point the Apps call (through the proxy) to make sure the access token is still good. It is wrapped in a `link:https://www.npmjs.com/package/ts-semaphore[Semaphore(1)]`, so concurrent callers are serialised and only one `keycloak-js` refresh happens at a time. Inside it:
+
+* if `keycloak.authenticated` is false, it calls `login()` and returns `false` (or rejects when `keycloak` is undefined);
+* otherwise it reads `KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY` (as a number) and calls `this.keycloak.updateToken(minValidity)`, returning whether a refresh occurred.
+
+The same semaphore guards the proactive refresh triggered by `onTokenExpired` when `KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED` is on; when that flag is off, an expired token simply stays expired until the next `updateTokenIfNeeded()` call.
+
+`getHeaderValues()` returns the two headers the Apps attach to requests — `Authorization: Bearer <access-token>` and `apm-principal-token: <id-token>` — reading the tokens from `keycloak`. `hasRole()` and `getUserRoles()` are not implemented (they return `false` / `[]`) in the current code.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]` — the entire flow described above (init, config resolution, `keycloak-js` callbacks, `localStorage` persistence, semaphore refresh, headers).
+* `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` — the contract `KeycloakAuthService` implements.
+* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` — constructs the `KeycloakAuthService` (the `keycloak` case), calls its `init()` and publishes `isAuthenticated$` on success.
+* `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`CONFIG_KEY`]` — the `KEYCLOAK_*` keys read at init and refresh time.
+
+=== Shell side
+
+The Shell is where the service actually runs: it imports `provideAuthService()` from `@onecx/shell-auth` in `link:{shell}/src/app/app.module.ts[app.module.ts]`, which runs the wrapper (and therefore `KeycloakAuthService.init()`) during startup. Because the Keycloak flow performs a full-page redirect to the auth server on login, the Shell is the only component that can survive that redirect and continue loading the workspace. The `silent-check-sso.html` asset and the `keycloak.json` fallback referenced above are expected to be served from the Shell's public assets; these paths are link-only and should be confirmed against Shell `main` before they are relied on.
+
+== Angular / React
+
+The Keycloak mechanism itself is identical on both frameworks — it runs once in the Shell through the same `KeycloakAuthService`. The only difference is how an App consumes the result: an Angular App reaches the proxy via `AuthProxyService`/`TokenInterceptor`, a React App via `authServiceProxy`/`axiosFactory`. Neither framework initialises Keycloak itself; both wait on `isAuthenticated$.isInitialized` and then call the shared proxy. That consumption is covered by the Related Units.
+
+== Edge cases & pitfalls
+
+* *The fallback asset path.* When the resolved config has no `clientId`, `realm` or `url`, `keycloak-js` is pointed at `'./assets/keycloak.json'` instead of a server — a misconfigured page will look for that file.
+* *The expiry check needs both tokens.* The refresh-token `exp` check only runs when *both* a token and a refresh token are stored. A partial set (for example a stored access token with no refresh token) is not cleared; the code simply logs a fresh login and passes the tokens it has to `keycloak.init`.
+* *Silent SSO needs an asset.* The silent-SSO check only runs when `KEYCLOAK_ENABLE_SILENT_SSO` is `'true'` *and* the `/assets/silent-check-sso.html` asset exists at the page base.
+* *Refresh errors by default do not re-login.* `onAuthRefreshError` triggers a re-login only when `KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED` is `'true'`; otherwise the stale state is persisted and surfaced by the next token call.
+* *Concurrent requests.* Without the semaphore, simultaneous `updateTokenIfNeeded()` calls could each trigger a `keycloak-js` refresh; the `Semaphore(1)` serialises them, at the cost of latency for callers queued behind the first refresh.
+* *Headers depend on `keycloak` state.* `getHeaderValues()` reads the current `keycloak` tokens; before a successful `init`, the tokens are empty and the returned header values are empty strings.
+
+== Debugging
+
+* Enable the `debug` namespace `@onecx/shell-auth:KeycloakAuthService:<level>` (prefix set in `link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) with `DEBUG='@onecx/shell-auth:*'`; the code logs each init stage (`[KC init] 1`, config), each event (`[KC event] 2.x`) and each `updateTokenIfNeeded()` with the token `exp` as an ISO timestamp.
+* Inspect the three `localStorage` keys `onecx_kc_token`, `onecx_kc_idToken` and `onecx_kc_refreshToken` to see what is being persisted; the JWT `exp` of the refresh token drives the reuse/clear decision.
+* Confirm the gate by checking whether `isAuthenticated$.isInitialized` resolved — it only resolves after a successful `init()`. General tooling lives in Area 13 (Diagnostics).
+
+== Related Units
+
+* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
+* How Apps obtain tokens — `obtaining-tokens.adoc`
+* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+* link:{dev-docs-index}#shell-context[3. Shell Context & Runtime Configuration] — the `KEYCLOAK_*` keys come from the workspace configuration.
+
+== Sources
+
+Code::
+* link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`shell-auth/src/lib/auth_services/keycloak-auth.service.ts`]
+* link:{libs}/shell-auth/src/lib/auth.service.ts[`shell-auth/src/lib/auth.service.ts`]
+* link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`shell-auth/src/lib/auth-service-wrapper.ts`]
+* link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[`shell-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`angular-integration-interface/src/lib/model/config-key.model.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`angular-integration-interface/src/lib/services/app-state.service.ts`]
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
+
+Verification Sources checked::
+* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "Keycloak Implementation" and "Configuration Keys" sections match this Unit; no contradictions found.
+* In-code logs and JSDoc in `keycloak-auth.service.ts`.

@@ -1,0 +1,77 @@
+= Authentication
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+Authentication in OneCX is a single, shared capability that spans the libraries and the Shell. The Shell decides *who* is logged in and *which* mechanism (Keycloak, a custom service, or none); the libraries in this repository provide the services that carry the tokens and the proxies that let Apps attach them to HTTP calls. This Area explains both sides, starting with who owns authentication and how the mechanism is chosen, then the Keycloak flow in the Shell.
+
+== Problem
+
+Every page in a OneCX workspace contains the Shell plus one or more Apps (Angular, React or Web Components). Each of those Apps needs to know whether the user is authenticated, and to send a valid token on every request to the backend. If every App implemented its own login, token refresh and logout, the token state would be duplicated, out of sync and impossible to reason about across the whole page.
+
+OneCX therefore centralises authentication in the Shell. A single auth service is chosen at startup, initialised once, and exposed to the Apps through a small, versioned proxy on the global `window` object. The Apps never talk to the identity provider directly; they ask the proxy for headers and ask it to refresh the token when needed.
+
+The consequence for readers is that "authentication" is really three questions, each answered in its own Unit:
+
+* Who owns authentication, and how is the mechanism (Keycloak, custom, disabled) selected?
+* How does the Keycloak flow work in the Shell?
+* How do Apps get tokens, and how do those tokens end up on HTTP calls?
+
+== Big picture
+
+The libraries provide the mechanism; the Shell owns its initialisation and the authenticated gating that everything else waits on; a proxy on `window` bridges the two.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Shell
+    INIT["provideAuthService() app initialiser"]
+    WRAP["AuthServiceWrapper"]
+    IMPL["Keycloak / custom / disabled service"]
+    TOPIC["IsAuthenticatedTopic.isInitialized"]
+  end
+  INIT --> WRAP --> IMPL
+  IMPL -- "init result" --> TOPIC
+  subgraph Bridge
+    WIN["window.onecxAuth.authServiceProxy.v1"]
+  end
+  WRAP -- "mounts proxy" --> WIN
+  subgraph Apps
+    ANG["Angular: AuthProxyService / TokenInterceptor"]
+    REACT["React: authServiceProxy / axiosFactory"]
+  end
+  WIN --> ANG
+  WIN --> REACT
+  TOPIC -. "apps + Shell initializers await it" .-> ANG
+  TOPIC -. "apps + Shell initializers await it" .-> REACT
+----
+
+Three things to keep straight:
+
+. *Ownership is in the Shell.* The Shell calls `link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`provideAuthService()`]`, which registers an app initialiser that runs `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper.init()`]` once at startup.
+. *The libraries provide the mechanism.* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` picks a concrete `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` implementation and mounts the `window` proxy; the Keycloak implementation lives in `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]`.
+. *Gating is a Topic.* When auth succeeds the Shell publishes `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]`. Both the Shell's own initialisers and the Apps wait on that Topic before proceeding.
+
+== Unit map
+
+Read the Units in the order below. The first two are written; the remaining three are planned, so their entries are listed but not linked.
+
+. link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
+. link:./keycloak.adoc[Keycloak integration]
+. Custom auth service contract — `custom-auth-service.adoc`
+. How Apps obtain tokens — `obtaining-tokens.adoc`
+. Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+
+== Reading order
+
+Start with link:./mechanism-selection.adoc[Ownership & mechanism selection] to understand who is in charge and how the Shell picks a mechanism. If your deployment uses Keycloak (the default), follow with link:./keycloak.adoc[Keycloak integration] for the concrete login and token-refresh flow. The Units that follow the Keycloak flow describe the App side: the custom-service contract, how Apps obtain tokens, and how tokens are attached to HTTP calls.
+
+== Related Areas
+
+* link:{dev-docs-index}#shell-context[3. Shell Context & Runtime Configuration] — authentication is driven by the `AUTH_SERVICE` and `KEYCLOAK_*` configuration keys that the Shell distributes to the page.
+* link:{dev-docs-index}#integration-contract[1. Integration Contract & Topics] — the `IsAuthenticated` and `Events` Topics used here are plain Topics; their delivery semantics belong to that Area.
+* link:{dev-docs-index}#permissions[9. Permissions] — permissions are fetched after authentication succeeds and gate what an authenticated user can reach.
+* link:{dev-docs-index}#localization[10. Localization] — the user profile (also loaded only after authentication) is the other consumer of the same gating.
