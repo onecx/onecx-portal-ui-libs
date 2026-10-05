@@ -75,6 +75,16 @@ The Shell is the only consumer and the only place the polyfill runs:
 * *Mode matters.* Performance mode (default) is a one-pass rewrite that can leak a rule outside its scope; precision mode rewrites per element and is accurate but slower. A rule that visibly bleeds across apps on an older browser is a mode question, not a model one.
 * *Un-nestable rules.* `@keyframes` and `@font-face` cannot sit inside a selector, so the polyfill lifts them to the top of the sheet — they remain global even in a scoped sheet.
 
+== Debugging
+
+In the devtools:
+
+* *Is the polyfill running?* Evaluate `typeof CSSScopeRule === 'undefined'` in the console. If it resolves to `false`, the browser natively supports {scope_at_rule} and the polyfill never installs — a cross-scope leak is then a model issue, not a polyfill one (link:{u3}[Unit 3]).
+* *Which mode?* The mode is fixed at start-up by `POLYFILL_SCOPE_MODE` in link:{shell}/src/app/app.module.ts[`app.module.ts`]. Performance mode rewrites each scoped `<style>` once (on load and on content change); precision mode re-rewrites the affected sheets on every DOM mutation via the `document.body` `MutationObserver`. The `:where(:nth-child(n) > :nth-child(m))` suffix on a rewritten selector is the polyfill's fingerprint — a rule carrying it was re-targeted by the polyfill, so you are on an unsupported browser.
+* *Bleed-through.* A rule that applies outside its scope on an unsupported browser is the documented performance-mode leakage: the one-pass rewrite does not re-anchor every selector to the exact matching element. Confirm the mode first — in performance mode (the default) this is the expected trade-off; in precision mode a cross-scope leak is a genuine defect worth reporting.
+
+Whether a specific element was re-scoped after a DOM change can be followed through `updateStyleSheets` → `getChangedStyleIdSelectors` → `nodeToStyleIdSelectors`. General runtime inspection is covered by the *Diagnostics* Area.
+
 == Related Units
 
 * link:{u3}[The @scope scoping model] — the `@scope` blocks this polyfill rewrites.
