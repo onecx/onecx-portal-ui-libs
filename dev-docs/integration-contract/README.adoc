@@ -1,0 +1,54 @@
+= Integration Contract & Topics
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This Area answers how Apps, Remote Components and the Shell actually talk to each other at runtime: not by calling each other's code, but by exchanging *Topics*. It is Area 1 in the link:{dev-docs-index}[Dev Docs] because every other Area builds on the messaging contract described here. The meaning of each concrete Topic (workspace, theme, permissions, …) belongs to the Area that owns it; this Area covers the messaging mechanism only.
+
+== Problem
+
+A OneCX page hosts several independent units of code at once: one Shell, one or more Apps and an arbitrary number of Remote Components. They are built separately, released separately, may run in the same tab or in different tabs, and are written in different frameworks (Angular and React). There is no shared object graph, no common DI container and no guarantee that two of them load at the same time or in the same browsing context.
+
+Despite that, they must stay in sync: the Shell owns the workspace, the theme, the route and the user profile, and Apps and Remote Components all need to read and react to those values. The contract this Area describes is the only channel between them. Understanding *why* the contract is message-based, and *how* a single message reaches every subscriber in order, is the prerequisite for understanding every other mechanism the Dev Docs cover.
+
+== Big picture
+
+The libraries in this repository define the vocabulary and the machinery; the Shell is the primary publisher and the answerer of request/response Topics; Apps and Remote Components subscribe to the shared state and issue requests.
+
+* *Libraries* (`@onecx/accelerator`, `@onecx/integration-interface` and the Angular/React adapters) provide the `Topic` and `Gatherer` primitives, the concrete shared Topics, the request/response (RPC) Topics and the per-framework services/contexts that wrap them.
+* *Shell* advertises which capabilities it provides, publishes the shared state, and answers RPC Topics.
+* *Apps / Remote Components* subscribe to the state they need and send requests that the Shell or other units answer.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Shell
+  participant App
+  participant Remote as Remote Component
+
+  Shell->>Shell: publish workspace / theme / user
+  App->>App: subscribe to shared Topics
+  Remote->>App: TopicGet (late subscriber asks for current state)
+  App-->>Remote: TopicNext (current value)
+  App->>Shell: RPC request (e.g. permissions)
+  Shell-->>App: RPC response
+----
+
+== Unit map
+
+The full set of Units of this Area, in reading order. The first two are written and linked; the rest are planned but not written yet, so they are listed unlinked (their slugs are fixed in the link:{dev-docs-index}[Dev Docs index] and will link once each page exists):
+
+. link:why-message-based.adoc[Why a message-based contract] — why the units communicate only through Topics, and what that forbids.
+. link:message-delivery.adoc[Topic message delivery] — the message types, how messages are ordered by id and timestamp, how a late subscriber is replayed, and the init/resolve handshake.
+. Transports & tab scope (postMessage, BroadcastChannel v1/V2, tab id, fallback, who selects) — `transports-and-tab-scope.adoc`
+. Topic lifecycle (publisher, destroy, deprecated syncable Topic) — `topic-lifecycle.adoc`
+. Request/response: Gatherers & RPC Topics — `gatherers-and-rpc-topics.adoc`
+. Versioning & Shell capability negotiation — `versioning-and-capabilities.adoc`
+. Framework adapters — `framework-adapters.adoc`
+. Topic & Gatherer catalogue — `topic-catalogue.adoc`
+
+== Related Areas
+
+* Areas 2–12 of the link:{dev-docs-index}[Dev Docs index] each describe concrete Topics and state flows on top of the contract described here.
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13) explains how to observe Topic traffic at runtime.
