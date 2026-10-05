@@ -7,6 +7,7 @@ import { menubarMappingRules } from './usages/menubar.rules'
 import { tooltipMappingRules } from './usages/tooltip.rules'
 import { fieldsetMappingRules } from './usages/fieldset.rules'
 import { diagramMappingRules } from './usages/diagram.rules'
+import { groupByCountDiagramMappingRules } from './usages/group-by-count-diagram.rules'
 import { carouselMappingRules } from './usages/carousel.rules'
 import { toggleswitchMappingRules } from './usages/toggleswitch.rules'
 import { tabsMappingRules } from './usages/tabs.rules'
@@ -15,7 +16,7 @@ import { textareaMappingRules } from './usages/textarea.rules'
 import { picklistMappingRules } from './usages/picklist.rules'
 import { accordionMappingRules } from './usages/accordion.rules'
 import { messageMappingRules } from './usages/message.rules'
-import { togglebuttonMappingRules } from './usages/togglebutton.rules';
+import { togglebuttonMappingRules } from './usages/togglebutton.rules'
 import { inputMappingRules } from './usages/input.rules'
 import { interactiveDataViewMappingRules } from './usages/interactive-dataview.rules'
 import { selectbuttonMappingRules } from './usages/selectbutton.rules'
@@ -24,6 +25,7 @@ import { panelmenuMappingRules } from './usages/panelmenu.rules'
 import { menuMappingRules } from './usages/menu.rules'
 import { breadcrumbRules } from './usages/breadcrumb.rules'
 import { dataviewMappingRules } from './usages/dataview.rules'
+import { buttonMappingRules } from './usages/button.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -38,6 +40,7 @@ export const usageMappingRules: MappingRule[] = [
   ...tabsMappingRules,
   ...fieldsetMappingRules,
   ...diagramMappingRules,
+  ...groupByCountDiagramMappingRules,
   ...inputMappingRules,
   ...dropdownMappingRules,
   ...textareaMappingRules,
@@ -52,4 +55,5 @@ export const usageMappingRules: MappingRule[] = [
   ...menuMappingRules,
   ...breadcrumbRules,
   ...dataviewMappingRules,
+  ...buttonMappingRules,
 ]

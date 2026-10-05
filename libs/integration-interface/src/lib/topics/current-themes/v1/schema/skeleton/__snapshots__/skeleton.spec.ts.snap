@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`skeleton schema resolves the expected default token tree 1`] = `
+Object {
+  "animationBackground": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+  "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+  "border": Object {
+    "radius": "{{primitives.border.radius.none}}",
+  },
+}
+`;
