@@ -1,14 +1,17 @@
 import * as z from 'zod'
 import { color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Calendar week day label shape.
  */
-export const calendarWeekDayLabelShape = z.object({
-  padding: withRef(z.string()).optional(),
-  font: font.pick({ weight: true, size: true }).optional(),
-  color: color.optional(),
-})
+export const calendarWeekDayLabelShape = z
+  .object({
+    padding: withRef(z.string()).optional(),
+    font: font.pick({ weight: true, size: true }).optional(),
+    color: color.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarWeekDayLabelShape', child: true })
 
 /**
  * Default tokens for the week day label.

@@ -1,14 +1,17 @@
 import * as z from 'zod'
 import { color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape for the time separator used in the calendar time picker.
  */
-export const calendarTimeSeperatorShape = z.object({
-  color: color.optional(),
-  padding: withRef(z.string()).optional(),
-  font: font.pick({ family: true, size: true, weight: true }).optional(),
-})
+export const calendarTimeSeperatorShape = z
+  .object({
+    color: color.optional(),
+    padding: withRef(z.string()).optional(),
+    font: font.pick({ family: true, size: true, weight: true }).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarTimeSeperatorShape', child: true })
 
 /**
  * Default tokens for the time separator.

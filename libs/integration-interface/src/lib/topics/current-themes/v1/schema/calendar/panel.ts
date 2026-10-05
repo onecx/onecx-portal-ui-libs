@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { calendarDatePanelShape, calendarDatePanelDefaults } from './datepanel'
 import { calendarFooterButtonBarShape, calendarFooterButtonBarDefaults } from './footerbuttonbar'
 import { calendarMultiMonthDividerShape, calendarMultiMonthDividerDefaults } from './multimonthdivider'
@@ -49,15 +50,18 @@ type CalendarPanelShapeInput = {
  * Shape for the calendar panel including header and date panel.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarPanelShape: z.ZodType<CalendarPanelShapeInput, CalendarPanelShapeInput> = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: calendarPanelStateShape.prefault({}),
-      hover: calendarPanelStateShape.prefault({}),
-      focus: calendarPanelStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+export const calendarPanelShape: z.ZodType<CalendarPanelShapeInput, CalendarPanelShapeInput> = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarPanelStateShape.prefault({}),
+        hover: calendarPanelStateShape.prefault({}),
+        focus: calendarPanelStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarPanelVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarPanelShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar panel.
