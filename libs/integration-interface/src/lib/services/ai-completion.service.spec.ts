@@ -1,4 +1,4 @@
-import { OneCXAiCompletionService, consumerAiCompletionProvider } from './ai-completion-service'
+import { OneCXAiCompletionService, consumerAiCompletionProvider } from './ai-completion.service'
 import type { AiCompletionRequest, AiCompletionResponse } from '../gatherers/ai-completion/v1/ai-completion.model'
 
 const createGathererMock = () => {
