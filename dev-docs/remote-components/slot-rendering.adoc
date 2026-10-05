@@ -1,0 +1,137 @@
+= Slot Rendering
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+Part of the link:README.adoc[Remote Components & Slots] Area.
+
+== Question answered
+
+Once a slot has resolved the components that fill it (see link:slot-assignment.adoc[Assignment]), how is each component instantiated, and how is its configuration handed over?
+
+== Why it exists
+
+A Remote Component is a separate build. When the slot renders it, it must hand the component the data it needs to know *who* it is and *what* it is allowed to do — its `appId`, `productName`, `baseUrl` and `permissions`. The component's framework decides how that hand-off happens. There are two flavours, and a slot has to support both:
+
+* the **Angular-init** flavour, where the loaded component exposes an `ocxInitRemoteComponent(config)` method that the slot calls directly;
+* the **web-component** flavour, where the slot creates a custom element and the component reads a `ocxRemoteComponentConfig` property set on the element.
+
+Both flavours deliver the same payload: the link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig`].
+
+== How it works
+
+The slot picks a flavour for each resolved component based on what it got from Module Federation.
+
+[source,mermaid]
+----
+flowchart TD
+  RC["Resolved component<br/>(SlotComponentConfiguration)"] --> Q{has a loaded<br/>componentType?}
+  Q -- yes --> ANG["Angular-init flavour<br/>create the component, then call<br/>ocxInitRemoteComponent(config)"]
+  Q -- "no (web component,<br/>elementName present)" --> WC["Web-component flavour<br/>document.createElement(elementName)<br/>set element.ocxRemoteComponentConfig = config"]
+  ANG --> E["Rendered into the slot,<br/>data-style-id + data-style-isolation set"]
+  WC --> E
+----
+
+Both flavours set the same `RemoteComponentConfig` on the rendered child:
+
+[source,typescript]
+----
+type RemoteComponentConfig = {
+  appId: string
+  productName: string
+  baseUrl: string
+  permissions: string[]
+}
+----
+
+Both flavours also mark the child for style isolation with `data-style-id` (set to `{productName}|{appId}`) and `data-style-isolation` — see link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] in Area 4.
+
+=== Angular-init flavour
+
+The component was loaded through Module Federation as an Angular component, so the slot has a real component type. It creates the component with Angular's `ViewContainerRef` and, if the component's instance exposes an `ocxInitRemoteComponent` method (the link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent`] contract), calls it with the config:
+
+[source,typescript]
+----
+if (componentRef && 'ocxInitRemoteComponent' in componentRef.instance) {
+  (componentRef.instance as ocxRemoteComponent).ocxInitRemoteComponent({
+    appId, productName, baseUrl, permissions,
+  })
+}
+----
+
+A Remote Component written in Angular implements the `ocxRemoteComponent` interface to receive its config.
+
+=== Web-component flavour
+
+The component is a web component, so it is not loaded as a component type — it is declared as a custom element. The slot creates the element by its `elementName` and attaches the config as a plain property; the component reads it when it connects:
+
+[source,typescript]
+----
+const element = document.createElement(elementName)
+element['ocxRemoteComponentConfig'] = {
+  appId, productName, baseUrl, permissions,
+} satisfies RemoteComponentConfig
+----
+
+The component implements the link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`] contract, which simply declares the `ocxRemoteComponentConfig` property.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] — `createComponent` dispatches to `createAngularComponent` (Angular-init flavour) or `createWebComponent` (web-component flavour) and sets the style-isolation attributes.
+* link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent`] — the Angular-init contract (`ocxInitRemoteComponent(config)`).
+* link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`] — the web-component contract (`ocxRemoteComponentConfig` property).
+* link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React)] — always renders via the web-component flavour.
+* link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig`] — the payload both flavours carry.
+* link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`] — an Angular `InjectionToken<ReplaySubject<RemoteComponentConfig>>` that a Remote Component can provide so its own code reads the config from DI.
+
+=== Shell side
+
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`shell-toast.component.ts`] — a concrete Remote Component (the Shell's toast, see Area 11) that implements *both* contracts: it exposes `ocxInitRemoteComponent` and an `@Input() ocxRemoteComponentConfig` that forwards to it, so it renders correctly whichever flavour the slot uses. It is bootstrapped as a web component by link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[`shell-toast.component.bootstrap.ts`].
+
+== Angular / React
+
+* **Angular** (`@onecx/angular-remote-components`): supports both flavours. It renders the Angular-init flavour when Module Federation hands back a component type, and the web-component flavour when it does not (the component is a `WebComponentScript` or `WebComponentModule`). The input/output wiring differs by flavour: `setInput` for an Angular `ComponentRef`, direct property assignment for a web-component element.
+* **React** (`@onecx/react-remote-components`): only the web-component flavour. `SlotComponent` always creates an element by `elementName` and sets `ocxRemoteComponentConfig`; it never calls `ocxInitRemoteComponent`. The loaded Module Federation module is used only as a gate — if it did not load, no element is created. This means a React slot can only host web components, not Angular components.
+
+== Edge cases & pitfalls
+
+* *Web components need an `elementName`.* The web-component flavour is only selected when the configuration has an `elementName`. A web component whose configuration is missing it will not be rendered.
+* *`ocxRemoteComponentContext` is not set.* Some earlier documentation mentions a separate `ocxRemoteComponentContext` property carrying the slot name. The current code sets only `ocxRemoteComponentConfig`; no `ocxRemoteComponentContext` is written by the libs. If a component expects a slot name, it must obtain it another way.
+* *Both flavours for the same component.* A component may implement both contracts (as the Shell's toast does) so that it works when hosted from either framework or either flavour.
+* *Angular components in a React slot* are not rendered at all — the React slot service throws during resolution (see link:slot-assignment.adoc[Assignment]).
+
+== Known issues
+
+The Draft Outline (commit `6108bdff`) documents an `ocxRemoteComponentContext` property that the current `main` code does not set. The actual behaviour is that only `ocxRemoteComponentConfig` is written; the "Known issues" note above records this so a follow-up can align the documentation.
+
+== Related Units
+
+* link:slot-assignment.adoc[Assignment] — how a slot gets the components it renders.
+* Remote Component config & host communication — the `RemoteComponentConfig` and the host↔component communication in depth. (`host-communication.adoc`, not yet written)
+* Slot size reporting — how a rendered slot publishes its dimensions. (`slot-size-reporting.adoc`, not yet written)
+* link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] (Area 4) — the style-isolation attributes set on slot children.
+
+== Sources
+
+Code::
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent` (`createAngularComponent`, `createWebComponent`)]
+* link:{libs}/angular-remote-components/src/lib/model/remote-component.ts[`ocxRemoteComponent`]
+* link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`]
+* link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React), `createComponent`]
+* link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig`]
+* link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`]
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scopeIdFromProductNameAndAppId`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`bootstrapRemoteComponent`]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[Shell toast bootstrap] (Shell)
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` — `dev-docs/remote-components/index.adoc`. Its "Remote Component Initialization" section matches the two flavours, but its claim about `ocxRemoteComponentContext` does not match the current code (see Known issues).
+* Libs JSDoc/READMEs — `SlotComponent` input/output JSDoc and the `@onecx/angular-remote-components` / `@onecx/angular-utils` package sources.
+* No prior Dev Docs page existed for this Area (per the Area ticket).
