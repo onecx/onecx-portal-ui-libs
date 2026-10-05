@@ -5,6 +5,7 @@
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
 :theme_overrides_guide: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-overrides
 :theme_overrides_legacy: ./theme-overrides.adoc
+:overview: ./overview.adoc
 
 Theme overrides let a OneCX application adjust the appearance of the PrimeNG / PrimeReact components it renders, on top of the Workspace theme the libraries have already applied. This Unit covers the two override channels — plain *CSS-variable overrides* and *PrimeNG design-token (preset) overrides* — and the precedence rules between them and against the default theme. It is the third Unit of the *Theming & Visual Assets* Area.
 
@@ -129,6 +130,7 @@ The libraries' override mechanism is **Angular-only**. PrimeReact theming is dri
 
 == Related Units
 
+* link:{overview}[Theming & Visual Assets overview] — the Area this Unit belongs to.
 * link:theme-to-page.adoc[Theme → page] — the first stage that puts theme variables, favicon and logo on the page.
 * link:theme-to-primeng-tokens.adoc[Theme → PrimeNG / PrimeReact tokens] — how the Workspace theme is folded into the OneCX preset.
 * link:concept.adoc[Theming] and link:primeng.adoc[Theming with PrimeNG] — the pre-Area concept pages.

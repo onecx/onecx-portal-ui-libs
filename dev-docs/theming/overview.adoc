@@ -1,0 +1,101 @@
+
+= Theming & Visual Assets
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell_repo: https://github.com/onecx/onecx-shell-ui
+:theme_to_page: ./theme-to-page.adoc
+:theme_to_tokens: ./theme-to-primeng-tokens.adoc
+:theme_to_overrides: ./theme-override-precedence.adoc
+
+This page is the overview of the **Theming & Visual Assets** Area of the Dev Docs. It explains the problem the Area is about, how the work is split between the OneCX libraries in this repository and the {shell_repo}[OneCX Shell], and lists the Units that belong to the Area in reading order. It does not explain any single mechanism in depth — that is the job of the individual Unit pages, which follow the Unit template.
+
+[#problem]
+== Problem
+
+A *theme* in OneCX is the suite of values — colours, fonts, favicon and logo — that makes the same pages look different per Workspace. The mechanism is split across two repositories and is only fully understood by reading both halves:
+
+* the **libraries** in this repository define the shared data structure (`Theme`), the channel that carries it (`CurrentThemeTopic`) and, for each framework, the code that turns theme values into usable CSS variables and component-library design tokens;
+* the **{shell_repo}[Shell]** reads the active Workspace's theme and puts the values on the page (theme variables on the root element, favicon and logo), so that every application loaded on the page can react to the same theme at runtime.
+
+None of this lived in a single place before: the mechanism was documented only in short, partly outdated pages and only partially in code comments. This Area gives each half of the flow one page, grounded in the current `main` code of both repositories.
+
+[#big-picture]
+== Big picture
+
+One theme value travels from the backend to the rendered page in two stages. The same `Theme` object drives both, so a reader who understands both Units can trace a single colour from the Workspace all the way to a component.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Backend
+    T[Workspace theme]
+  end
+  subgraph Shell
+    S1[theme CSS variables on root]
+    S2[favicon & logo]
+  end
+  subgraph "Libs (this repo)"
+    C1[CurrentThemeTopic / Theme]
+    C2[Angular: ThemeConfigService -> PrimeNG preset]
+    C3[React: StyleRegistry -> CSS variables + tokens]
+  end
+  T -->|CurrentThemeTopic| C1
+  T --> S1
+  T --> S2
+  C1 --> C2
+  C1 --> C3
+  S1 -->|values read by apps| C2
+  S1 -->|values read by apps| C3
+----
+
+* **Theme → page** is the first stage: the Shell puts the theme's CSS variables, favicon and logo on the page and the libraries expose the current theme through the `CurrentThemeTopic`. See link:{theme_to_page}[Theme → page].
+* **Theme → PrimeNG/PrimeReact tokens** is the second stage: each framework maps the theme values onto the design tokens of the component library, so PrimeNG/PrimeReact components pick up the Workspace theme. See link:{theme_to_tokens}[Theme → PrimeNG/PrimeReact tokens].
+
+[#unit-map]
+== Unit map
+
+The Units of this Area, in reading order. Units that already exist are linked; planned Units that have not been written yet are listed unlinked so the split is visible.
+
+[cols="3,1,4", options="header"]
+|===
+|Unit |Page |Status
+
+|Theme → page (CSS variables, favicon, logo, current-theme Topic)
+|link:{theme_to_page}[theme-to-page.adoc]
+|Written
+
+|Theme → PrimeNG/PrimeReact tokens (theme values to component-library design tokens)
+|link:{theme_to_tokens}[theme-to-primeng-tokens.adoc]
+|Written
+
+|Theme Overrides (CSS vs PRIMENG, precedence)
+|link:{theme_to_overrides}[theme-override-precedence.adoc]
+|Written
+
+|Icons
+|icons.adoc
+|Planned
+
+|Images
+|images.adoc
+|Planned
+|===
+
+[NOTE]
+====
+This folder currently also contains the older pages link:concept.adoc[Theming], link:primeng.adoc[Theming with PrimeNG] and link:theme-overrides.adoc[Theme Overrides]. They predate this Area, are the verification sources for the new Units, and will be superseded by the Units above as the Area is completed.
+====
+
+[NOTE]
+====
+The Dev Docs top index (the "slug map", tracked separately) plans this Area under the folder `theming-assets/` with the token Unit named `theme-to-component-tokens.adoc` and the overview as that folder's `README.adoc`. Those paths are not present on `main` yet, so the pages here follow the existing `dev-docs/theming/` layout and the file names fixed by the implementation plan. Renaming the folder/slug is a follow-up once the index lands.
+====
+
+[#related-areas]
+== Related Areas
+
+* **Styling & Style Isolation** — how stylesheets are scoped so the theme variables of one application do not leak to another.
+* **Integration Contract & Topics** — the Topic mechanism that `CurrentThemeTopic` builds on.
+* **Application Bootstrap / Shell Context** — where the Shell loads the Workspace configuration that carries the active theme.
