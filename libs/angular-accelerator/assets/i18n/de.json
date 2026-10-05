@@ -151,6 +151,7 @@
       "BUTTON": "Filter hinzufügen",
       "ARIA_LABEL": "Neuen Filter hinzufügen",
       "DETAIL": "Neuen Filter hinzufügen",
+      "NO_FILTERABLE_COLUMNS": "Keine filterbaren Spalten verfügbar",
       "DIALOG": {
         "TITLE": "Filter hinzufügen",
         "COLUMN_LABEL": "Spalte",

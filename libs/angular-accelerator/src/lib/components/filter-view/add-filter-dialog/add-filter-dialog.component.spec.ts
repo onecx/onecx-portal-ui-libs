@@ -81,6 +81,20 @@ describe('AddFilterDialogComponent (class logic)', () => {
     expect(component.columnOptions().map((o) => o.value)).toEqual(['c2', 'c3'])
   })
 
+  it('should not offer a filterable column whose filterType the dialog cannot support', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'equals', nameKey: 'E', filterType: FilterType.EQUALS }),
+      makeColumn({ id: 'notEmpty', nameKey: 'N', filterType: FilterType.IS_NOT_EMPTY }),
+      makeColumn({ id: 'contains', nameKey: 'C', filterType: FilterType.CONTAINS }),
+    ])
+    fixture.componentRef.setInput('data', [{ equals: 'a' }, { notEmpty: true }, { contains: 'x' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // EQUALS and IS_NOT_EMPTY are supported; CONTAINS is not (it is a no-op downstream).
+    expect(component.columnOptions().map((o) => o.value)).toEqual(['equals', 'notEmpty'])
+  })
+
   it('should not select a non-filterable preselected column', async () => {
     fixture.componentRef.setInput('columns', [
       makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
@@ -125,6 +139,26 @@ describe('AddFilterDialogComponent (class logic)', () => {
     await fixture.whenStable()
 
     expect(component.selectedValues()).toEqual(['b', 'c'])
+  })
+
+  it('should keep existing selections absent from the loaded data selected and offer them as options', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1', filterType: FilterType.EQUALS }),
+    ])
+    // 'gone' is filtered but no longer present in the loaded rows (e.g. server-side paging).
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c1: 'b' }])
+    fixture.componentRef.setInput('existingFilters', [
+      { columnId: 'c1', value: 'b', filterType: FilterType.EQUALS },
+      { columnId: 'c1', value: 'gone', filterType: FilterType.EQUALS },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // The absent selection is not dropped - it stays selected and is available as an option.
+    expect(component.selectedValues()).toEqual(['b', 'gone'])
+    const optionValues = (component.valueOptions() ?? []).map((o) => o.value)
+    expect(optionValues).toContain('b')
+    expect(optionValues).toContain('gone')
   })
 
   it('should de-duplicate and keep order for number columns', async () => {
@@ -272,6 +306,19 @@ describe('AddFilterDialogComponent (class logic)', () => {
     expect(component.dialogResult).toEqual([
       { columnId: 'available', value: false, filterType: FilterType.IS_NOT_EMPTY },
     ])
+  })
+
+  it('should keep producing EQUALS filters for a declared EQUALS column', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1', filterType: FilterType.EQUALS })])
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c1: 'b' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    component.selectedValues.set(['a'])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.dialogResult).toEqual([{ columnId: 'c1', value: 'a', filterType: FilterType.EQUALS }])
   })
 
   it('should keep producing EQUALS filters for unset/EQUALS columns', async () => {

@@ -211,7 +211,7 @@ describe('FilterViewComponent (class logic)', () => {
     expect(openDialogSpy).not.toHaveBeenCalled()
   })
 
-  it('should replace the EQUALS filters of the added column on applyFilters', () => {
+  it('should replace the whole filter set of the added column on applyFilters', () => {
     stateService.filters.set([
       { columnId: 'c1', value: 'old', filterType: FilterType.EQUALS } as Filter,
       { columnId: 'c1', value: 'keepNotEmpty', filterType: FilterType.IS_NOT_EMPTY } as Filter,
@@ -224,10 +224,11 @@ describe('FilterViewComponent (class logic)', () => {
     ])
 
     const result = stateService.filters()
-    const c1Equals = result.filter((f) => f.columnId === 'c1' && f.filterType === FilterType.EQUALS)
-    expect(c1Equals.map((f) => f.value)).toEqual(['a', 'b'])
-    // non-EQUALS filters on the same column are preserved
-    expect(result.some((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)).toBe(true)
+    // the column's previous filters are replaced outright by the dialog's output
+    const c1 = result.filter((f) => f.columnId === 'c1')
+    expect(c1.map((f) => f.value)).toEqual(['a', 'b'])
+    // the previous IS_NOT_EMPTY filter of the column is not kept
+    expect(result.some((f) => f.columnId === 'c1' && f.filterType === FilterType.IS_NOT_EMPTY)).toBe(false)
     // other columns are untouched
     expect(result.some((f) => f.columnId === 'c2' && f.value === 'other')).toBe(true)
   })

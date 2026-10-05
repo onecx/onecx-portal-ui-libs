@@ -111,6 +111,24 @@ export class FilterViewComponent {
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewShowMoreChip = signal<TemplateRef<any> | undefined>(undefined)
 
+  /**
+   * The columns offered to the "Add Filter" dialog: only those that are marked
+   * {@link DataTableColumn.filterable} and whose {@link FilterType} the dialog can
+   * produce a working filter for (unset/EQUALS or IS_NOT_EMPTY) - the same set the
+   * dialog's column select offers. The Add Filter button (in both the chips and the
+   * button/panel view) is only enabled when at least one such column exists, so a
+   * user sees an empty filter state instead of a no-op click.
+   */
+  readonly filterableColumns = computed<DataTableColumn[]>(() =>
+    this.stateService.availableColumns().filter(
+      (column) =>
+        column.filterable &&
+        (column.filterType === undefined ||
+          column.filterType === FilterType.EQUALS ||
+          column.filterType === FilterType.IS_NOT_EMPTY)
+    )
+  )
+
   readonly templates = input<readonly PrimeTemplate[] | null | undefined>(undefined)
   readonly templates$ = toObservable(this.templates)
 
@@ -278,7 +296,7 @@ export class FilterViewComponent {
    * view. If no column is filterable the dialog is not opened at all.
    */
   onAddFilter(columnId?: string) {
-    const columns = this.stateService.availableColumns().filter((column) => column.filterable)
+    const columns = this.filterableColumns()
     if (columns.length === 0) {
       return
     }
@@ -318,29 +336,18 @@ export class FilterViewComponent {
 
   /**
    * Applies the filters produced by the Add Filter dialog. The dialog always
-   * emits filters for a single column, so the existing filters of that column
-   * whose type matches the newly produced ones are replaced - the same behaviour
-   * as the column header filter in the Table mode. Filters of a different type
-   * on the same column (e.g. an IS_NOT_EMPTY filter when EQUALS filters are
-   * applied) are kept.
+   * edits the value set of a single column and pre-selects that column's
+   * existing filters in its value selector, so the produced filters are the
+   * column's complete, updated set - the column's previous filters are
+   * replaced outright. This mirrors the multi-select column header filter in
+   * the Table mode, which likewise replaces a column's whole filter set.
    */
   applyFilters(newFilters: Filter[]) {
     const currentFilters = this.stateService.filters()
-
-    // The filter types the dialog just produced, per column.
-    const newTypesByColumn = new Map<string, Set<FilterType>>()
-    for (const f of newFilters) {
-      const type = f.filterType ?? FilterType.EQUALS
-      const types = newTypesByColumn.get(f.columnId) ?? new Set<FilterType>()
-      types.add(type)
-      newTypesByColumn.set(f.columnId, types)
-    }
+    const editedColumns = new Set(newFilters.map((f) => f.columnId))
 
     this.stateService.filters.set([
-      ...currentFilters.filter((f) => {
-        const types = newTypesByColumn.get(f.columnId)
-        return !types || !types.has(f.filterType ?? FilterType.EQUALS)
-      }),
+      ...currentFilters.filter((f) => !editedColumns.has(f.columnId)),
       ...newFilters,
     ])
   }

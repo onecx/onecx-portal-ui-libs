@@ -8,6 +8,10 @@
     border: 1px dashed var(--primary-color, #3b82f6);
     border-radius: var(--chip-border-radius, 2rem);
 }
+.ocx-filter-view-add-filter-chip-disabled {
+    border-color: var(--surface-border, #d1d5db);
+    color: var(--text-color-secondary, #9ca3af);
+}
 .sr-only {
     position: absolute;
     width: 1px;

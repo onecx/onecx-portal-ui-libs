@@ -150,6 +150,7 @@
       "BUTTON": "Add filter",
       "ARIA_LABEL": "Add a new filter",
       "DETAIL": "Add a new filter",
+      "NO_FILTERABLE_COLUMNS": "No filterable columns available",
       "DIALOG": {
         "TITLE": "Add filter",
         "COLUMN_LABEL": "Column",

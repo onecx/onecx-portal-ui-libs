@@ -132,31 +132,49 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
 
   /**
    * The columns offered in the column select. Only columns that are marked
-   * `filterable` are offered - the same single source of truth the Table mode
-   * uses for its column header filters - so a column can be filtered in the
-   * Table view and via this dialog (List / Grid views) if and only if
-   * `filterable: true`.
+   * `filterable` and whose {@link FilterType} this dialog can produce a working
+   * filter for are offered - unset/EQUALS (value multiselect) and IS_NOT_EMPTY
+   * (yes/no), the same types the Table renders controls for. Every other type is
+   * a no-op in the client-side filtering, so offering it would produce a filter
+   * that matches nothing. The column's `nameKey` is a translation key by contract
+   * (see {@link DataTableColumn}), so it is translated for the display label -
+   * mirroring the Table's column header - rather than shown as a raw key.
    */
   readonly columnOptions = computed<SelectItem[]>(() =>
     this.columns()
-      .filter((column) => column.filterable)
-      .map((column) => ({ label: column.nameKey, value: column.id, toFilterBy: column.nameKey }))
+      .filter(
+        (column) =>
+          column.filterable &&
+          (column.filterType === undefined ||
+            column.filterType === FilterType.EQUALS ||
+            column.filterType === FilterType.IS_NOT_EMPTY)
+      )
+      .map((column) => {
+        const label = this.translateService.instant(column.nameKey)
+        return { label, value: column.id, toFilterBy: label }
+      })
   )
   readonly column = computed<DataTableColumn | null>(() => this.getColumnById(this.selectedColumnId()))
 
   constructor() {
     // Select a column once columns become available: the preselected one if it
-    // exists, otherwise the first filterable column. A preselected column that
-    // is not filterable is skipped (it is not offered in the column select).
+    // exists, otherwise the first offered column. A preselected column that is not
+    // offered (not filterable, or an unsupported filterType) is skipped.
     effect(() => {
-      const filterableColumns = this.columns().filter((column) => column.filterable)
-      if (filterableColumns.length === 0 || this.columnInitialized()) {
+      const offeredColumns = this.columns().filter(
+        (column) =>
+          column.filterable &&
+          (column.filterType === undefined ||
+            column.filterType === FilterType.EQUALS ||
+            column.filterType === FilterType.IS_NOT_EMPTY)
+      )
+      if (offeredColumns.length === 0 || this.columnInitialized()) {
         return
       }
       this.columnInitialized.set(true)
       const preselect = this.preselectColumnId()
       const initialId =
-        preselect && filterableColumns.some((c) => c.id === preselect) ? preselect : filterableColumns[0].id
+        preselect && offeredColumns.some((c) => c.id === preselect) ? preselect : offeredColumns[0].id
       this.selectedColumnId.set(initialId)
     })
 
@@ -207,11 +225,9 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
 
   /**
    * Re-derives the value options and pre-selects the values already filtered on
-   * the given column (that are still present in the data). For
-   * {@link FilterType.IS_NOT_EMPTY} columns this builds the fixed yes/no options
-   * and pre-selects the existing yes/no filter; for all other columns it builds
-   * the distinct cell values of the column and pre-selects the existing EQUALS
-   * filters.
+   * the given column (that are still present in the data), delegating to the
+   * column's {@link FilterType}: {@link FilterType.IS_NOT_EMPTY} columns build
+   * the fixed yes/no options, all other columns the distinct cell values.
    */
   private refreshForColumn(columnId: string) {
     const column = this.getColumnById(columnId)
@@ -220,50 +236,76 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
       this.selectedValues.set([])
       return
     }
-
-    // IS_NOT_EMPTY columns offer the fixed yes/no options (a boolean value) rather
-    // than the column's distinct values, mirroring the column header filter in the
-    // Table mode and the boolean semantics of the client-side filtering.
     if (column.filterType === FilterType.IS_NOT_EMPTY) {
-      const yes = this.translateService.instant('OCX_FILTER_VIEW.FILTER_YES')
-      const no = this.translateService.instant('OCX_FILTER_VIEW.FILTER_NO')
-      this.valueOptions.set([
-        { label: yes, value: true, toFilterBy: yes } as SelectItem,
-        { label: no, value: false, toFilterBy: no } as SelectItem,
-      ])
-      this.selectedValues.set(
-        this.existingFilters()
-          .filter((filter) => filter.columnId === columnId && filter.filterType === FilterType.IS_NOT_EMPTY)
-          .map((filter) => filter.value)
-      )
+      this.refreshIsNotEmptyColumn(column)
       return
     }
+    this.refreshValueColumn(column)
+  }
 
+  /**
+   * IS_NOT_EMPTY columns offer the fixed yes/no options (a boolean value) rather
+   * than the column's distinct values, mirroring the column header filter in the
+   * Table mode and the boolean semantics of the client-side filtering.
+   */
+  private refreshIsNotEmptyColumn(column: DataTableColumn) {
+    const yes = this.translateService.instant('OCX_FILTER_VIEW.FILTER_YES')
+    const no = this.translateService.instant('OCX_FILTER_VIEW.FILTER_NO')
+    this.valueOptions.set([
+      { label: yes, value: true, toFilterBy: yes } as SelectItem,
+      { label: no, value: false, toFilterBy: no } as SelectItem,
+    ])
+    this.selectedValues.set(this.getExistingFilterValues(column, FilterType.IS_NOT_EMPTY))
+  }
+
+  /**
+   * Builds the value options from the column's distinct cell values and
+   * pre-selects the values already filtered on this column (EQUALS only) so the
+   * dialog behaves as an editor of the column's value set, mirroring the
+   * multi-select column header filter. Every existing selection is kept selected;
+   * selections that are not present in the currently loaded data are additionally
+   * added as options (mirroring the Table, which appends existing filters missing
+   * from the current rows) so confirming does not silently drop active filters.
+   */
+  private refreshValueColumn(column: DataTableColumn) {
     const rawValues = this.getColumnRawValues(column)
     const presentKeys = new Set(rawValues.map((value) => this.toComparableKey(column, value)))
+    const existingValues = this.getExistingFilterValues(column, FilterType.EQUALS)
+    // Existing selections absent from the loaded data (e.g. server-side paging or
+    // refreshed data), kept and de-duplicated by comparable key.
+    const seenMissing = new Set<string>()
+    const missingValues = existingValues.filter((value) => {
+      if (presentKeys.has(this.toComparableKey(column, value))) {
+        return false
+      }
+      const key = this.toComparableKey(column, value)
+      if (seenMissing.has(key)) {
+        return false
+      }
+      seenMissing.add(key)
+      return true
+    })
+    // Keep all existing values selected; the missing ones are offered as options
+    // so they stay visible in the selector instead of being dropped on confirm.
+    this.selectedValues.set(existingValues)
+    this.setValueOptions(column, [...rawValues, ...missingValues])
+  }
 
-    // Pre-select the values already filtered on this column (EQUALS only) so the
-    // dialog behaves as an editor of the column's value set, mirroring the
-    // multi-select column header filter.
-    this.selectedValues.set(
-      this.existingFilters()
-        .filter((filter) => filter.columnId === columnId && (!filter.filterType || filter.filterType === FilterType.EQUALS))
-        .map((filter) => filter.value)
-        .filter((value) => presentKeys.has(this.toComparableKey(column, value)))
-    )
-
-    const isDateColumn = column.columnType === ColumnType.DATE
-    const labelFor = (value: unknown) =>
-      isDateColumn
-        ? formatDate(new Date(value as string | number), column.dateFormat ?? 'medium', this.locale)
-        : String(value)
-
-    const baseOptions: SelectItem[] = rawValues.map(
-      (value) => ({ label: labelFor(value), value, toFilterBy: labelFor(value) }) as SelectItem
-    )
-
+  /**
+   * Sets the value options for a column whose options are its distinct values (plus
+   * any existing selections not present in the loaded data).
+   * {@link ColumnType.TRANSLATION_KEY} columns get their labels translated while
+   * keeping the raw key as the filter value, mirroring the column header filter
+   * in the Table mode.
+   */
+  private setValueOptions(column: DataTableColumn, optionValues: unknown[]) {
     if (column.columnType !== ColumnType.TRANSLATION_KEY) {
-      this.valueOptions.set(baseOptions)
+      this.valueOptions.set(
+        optionValues.map((value) => {
+          const label = this.labelForValue(column, value)
+          return { label, value, toFilterBy: label } as SelectItem
+        })
+      )
       return
     }
 
@@ -271,7 +313,7 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
     // mirroring the column header filter in the Table mode.
     this.valueOptions.set(undefined)
     Promise.all(
-      rawValues.map(
+      optionValues.map(
         (value) =>
           new Promise<SelectItem>((resolve) => {
             firstValueFrom(this.translateService.get(value as string))
@@ -284,10 +326,30 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
       )
     ).then((translatedOptions) => {
       // Guard against the column being changed while the translation resolved.
-      if (this.getColumnById(this.selectedColumnId())?.id === columnId) {
+      if (this.getColumnById(this.selectedColumnId())?.id === column.id) {
         this.valueOptions.set(translatedOptions)
       }
     })
+  }
+
+  /**
+   * The values of the existing filters of the given column matching the given
+   * filter type; untyped filters count as {@link FilterType.EQUALS}.
+   */
+  private getExistingFilterValues(column: DataTableColumn, filterType: FilterType): unknown[] {
+    return this.existingFilters()
+      .filter((filter) => filter.columnId === column.id && (filter.filterType ?? FilterType.EQUALS) === filterType)
+      .map((filter) => filter.value)
+  }
+
+  /**
+   * The display label for a cell value: dates are formatted with the column's
+   * date format, all other values are stringified.
+   */
+  private labelForValue(column: DataTableColumn, value: unknown): string {
+    return column.columnType === ColumnType.DATE
+      ? formatDate(new Date(value as string | number), column.dateFormat ?? 'medium', this.locale)
+      : String(value)
   }
 
   /**

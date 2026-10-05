@@ -57,6 +57,7 @@ import { LoadingIndicatorDirective } from './directives/loading-indicator.direct
 import { MessageService } from 'primeng/api'
 import { ConsentComponent } from './components/consent/consent.component'
 import { LIB_VERSION } from '../version'
+import { providePortalDialogService } from './services/portal-dialog.service'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -142,6 +143,7 @@ function appInitializer(userService: UserService) {
     },
     AppConfigService,
     provideTranslationConnectionService(),
+    providePortalDialogService(),
   ],
   exports: [
     AngularRemoteComponentsModule,
