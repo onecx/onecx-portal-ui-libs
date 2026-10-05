@@ -1,0 +1,159 @@
+= Theme Overrides — CSS vs PrimeNG overrides and their precedence
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:theme_overrides_guide: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-overrides
+:theme_overrides_legacy: ./theme-overrides.adoc
+
+Theme overrides let a OneCX application adjust the appearance of the PrimeNG / PrimeReact components it renders, on top of the Workspace theme the libraries have already applied. This Unit covers the two override channels — plain *CSS-variable overrides* and *PrimeNG design-token (preset) overrides* — and the precedence rules between them and against the default theme. It is the third Unit of the *Theming & Visual Assets* Area.
+
+== Question answered
+
+When a component's look can come from the default preset, from the Workspace theme, and from the application's overrides, which value wins — and by what mechanism?
+
+== Why it exists
+
+The Workspace theme is mapped onto PrimeNG design tokens through the OneCX preset (see the *Theme → PrimeNG / PrimeReact tokens* Unit). That mapping covers the tokens OneCX knows about, but it cannot cover every token a component uses, and each application has its own visual requirements. An application therefore needs a way to nudge individual values without rebuilding the whole preset.
+
+Two granularities are available, and they operate at different points of the theming pipeline:
+
+* **CSS-variable overrides** — raw CSS the application owns, placed on the page as a scoped `<style>` element. They compete with PrimeNG's generated CSS variables through the normal CSS cascade.
+* **PrimeNG / token overrides** — individual design-token values that are *folded into the preset* before PrimeNG computes any CSS. They change the token at the source, so no cascade is involved.
+
+Both are scoped per application so one app's overrides never leak into another.
+
+== How it works
+
+The two channels are fed from **different sources** and win by different mechanisms:
+
+* the **CSS-variable channel** is fed by the *application*: the override values are supplied through `provideThemeConfig({ overrides })` (the `THEME_OVERRIDES` injection token, see link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`application-config.ts`]) and applied by `CustomUseStyle`;
+* the **PrimeNG / token channel** is fed by the *Workspace theme*: the `Theme` object carries an optional `overrides` list (link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme.model.ts[`Theme.overrides`], of type link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme-override.model.ts[`ThemeOverride`], each entry a `type` + a string `value`), and `ThemeConfigService` folds the `PRIMENG`-typed entries into the preset.
+
+The shared contract (link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme-override.model.ts[`OverrideType`]) defines both a `PRIMENG` and a `CSS` entry type, but the libraries only ever filter `Theme.overrides` for `type === OverrideType.PRIMENG` (link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`parsePrimeNGOverridesValue`]); the CSS-variable channel is driven by the application's `THEME_OVERRIDES` token rather than by `CSS`-typed entries of `Theme.overrides`.
+
+[cols="1,2,2,2", options="header"]
+|===
+|Channel |Source |Precedence mechanism |Angular entry point
+
+|CSS-variable override
+|Application-provided values (`provideThemeConfig({ overrides })` → `THEME_OVERRIDES` token)
+|Equal specificity + later in DOM. The override `<style>` is always re-appended as the *last* child of `<head>`, so it beats PrimeNG's generated variables for the same name.
+|link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`provideThemeConfig({ overrides })`]
+
+|PrimeNG / token override
+|Workspace theme (`Theme.overrides`, entries with `type === PRIMENG`)
+|No cascade: the value is `mergeDeep`-ed into the preset *before* PrimeNG derives the CSS variables, so it wins over the theme value for the same token key.
+|link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`IS_ADVANCED_THEMING`] (opt-in) + `Theme.overrides`
+|===
+
+The two channels take different inputs and rejoin at the rendered values, but by different routes:
+
+[source,mermaid]
+----
+flowchart LR
+  A["App: provideThemeConfig overrides / THEME_OVERRIDES"] --> C1["CSS-variable channel"]
+  T["Theme.overrides (type = PRIMENG)"] --> T1["PrimeNG / token channel"]
+  C1 --> C2["scoped style element, re-appended last in head"]
+  T1 --> T2["mergeDeep into preset, before PrimeNG derives CSS"]
+  C2 -. "same specificity, later in DOM wins" .-> P["Rendered values"]
+  T2 -. "token value set at the source" .-> P
+----
+
+[#css-channel]
+=== CSS-variable channel (DOM-order precedence)
+
+Every PrimeNG stylesheet is created through the `UseStyle` service, which OneCX replaces with link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`CustomUseStyle`]. On each stylesheet update `CustomUseStyle` resolves the application's overrides and, in link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`applyOverrides`], turns them into CSS with PrimeUIX `toVariables`, scopes that CSS for the current application, and writes it into a single `<style data-variable-override-id="<scopeId>">` element (one per scope, created or retrieved by link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`createOrRetrieveOverrideElement`]).
+
+The element is then re-appended to the end of the document head — the code comment says *"Always make sure it is the last child of the document head."* PrimeNG's own stylesheets and this override `<style>` define the same scoped CSS variables with the same specificity, so in the CSS cascade the element that comes later in the DOM wins. Re-appending the override `<style>` last on every update is what gives overrides their precedence over the default theme and over PrimeNG's default token values.
+
+[#primeng-channel]
+=== PrimeNG / token channel (preset folding)
+
+On every `CurrentThemeTopic` change, link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`ThemeConfigService.applyThemeVariables`] rebuilds the effective preset. When advanced theming is enabled, it first selects the entries whose `type === OverrideType.PRIMENG`, JSON-parses their `value`, and `mergeDeep`-reduces them into one object (link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`parsePrimeNGOverridesValue`] and `foldOverrides`). That folded object is the *last* argument of the preset merge:
+
+[source,typescript]
+----
+preset = mergeDeep(preset, mergeDeep(themeConfig.getConfig(), overridesFolded))
+----
+
+Because `mergeDeep` gives the later argument priority, the folded overrides win over the theme values for the same token key. The result is passed to PrimeNG via `setThemeConfig`, so PrimeNG derives its CSS variables from the *already-overridden* tokens — the override is baked in rather than fought over in the cascade.
+
+Both channels are scoped through the same helpers in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] (`scopePrimengCss`, `replacePrimengPrefix`, `dataVariableOverrideIdAttribute`), so an override in one application never affects another.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries own the whole mechanism:
+
+* link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`CustomUseStyle`] — scopes and appends the CSS-variable override `<style>` last in `<head>`.
+* link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`application-config.ts`] — the `THEME_OVERRIDES` injection token and the `provideThemeConfig({ overrides, isAdvancedTheming })` entry point.
+* link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`theme-config.service.ts`] — `ThemeConfigService` folds `PRIMENG`-typed overrides into the preset, gated by `IS_ADVANCED_THEMING`.
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — the scoping helpers and the `data-variable-override-id` attribute that identify the override element.
+
+The `ThemeOverride` / `OverrideType` contract is defined in link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme-override.model.ts[`theme-override.model.ts`] and carried on the `CurrentThemeTopic`.
+
+=== Shell side
+
+The Shell is the page host: it owns the shared `<head>` in which every application's scoped override `<style>` lands, and it is itself one scope (scope id `shell-ui`, see `shellScopeId` in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]). Like any application, the Shell can opt into overrides by calling `provideThemeConfig({ overrides })` for its own scope. It does not implement the override logic — that lives entirely in the libraries. The first stage of the flow (putting the Workspace theme's CSS variables, favicon and logo on the page) is covered by the *Theme → page* Unit.
+
+== Angular / React
+
+=== Angular
+
+Both channels are Angular-only. An application calls link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`provideThemeConfig({ overrides })`]; `overrides` may be a plain value, a `Promise`, or a factory function (resolved with `runInInjectionContext`, so the factory runs in the correct injection context). Setting `isAdvancedTheming: true` additionally switches on the PRIMENG / token channel via `IS_ADVANCED_THEMING`.
+
+=== React
+
+The libraries' override mechanism is **Angular-only**. PrimeReact theming is driven by link:{libs}/react-utils/src/lib/styling/primeReact/theme/applyThemeVariables.ts[`applyThemeVariables`], which maps `theme.properties` into `--app-*` custom properties inside an `@layer tokens` block. It reads `theme.properties` only — it does *not* read `theme.overrides`, and there is no `CustomUseStyle` equivalent — so the libraries do not apply theme overrides for React. (React still defines the shared `dataVariableOverrideIdAttribute` constant in link:{libs}/react-utils/src/lib/utils/styleAttributes.ts[`styleAttributes.ts`], but nothing in the React path applies it. A React application can of course inject its own CSS, but that is the application's own styling, not a OneCX theme-override feature.)
+
+== Edge cases & pitfalls
+
+* **Token overrides are opt-in and silently dropped otherwise.** When `IS_ADVANCED_THEMING` is `false` (the default), `applyThemeVariables` sets `overridesFolded` to `{}`, so `PRIMENG`-typed overrides have no effect even though they are present on the `Theme`. Only the CSS-variable channel still applies.
+* **Empty CSS overrides are a no-op.** `applyOverrides` returns without touching the DOM when the resolved value produces no variables (`variablesData.value.length === 0`).
+* **One override `<style>` per scope.** All updates for a scope write into the same `<style data-variable-override-id="<scopeId>">`, re-appended last each time. On a multi-application page each scope keeps its own element, so overrides stay isolated.
+* **The CSS channel is scoped.** The override CSS is wrapped with `@scope` (or `@supports (@scope …)` when the browser lacks `@scope`), so it only applies inside the owning scope — an override never changes another app's components.
+* **`mergeDeep` is not immutable.** The folding of token overrides mutates nested objects that both arguments share; the values are safe here because the theme variables and the preset are rebuilt on every `CurrentThemeTopic` change.
+
+== Debugging
+
+* The logger namespace is `CustomUseStyle` (see `createLogger` in link:{libs}/angular-utils/theme/primeng/src/utils/logger.utils.ts[`logger.utils.ts`]).
+* In the page, inspect `<head>` for `style[data-variable-override-id="<scopeId>"]`. Its presence, its position (it should be among the last `<style>` elements) and its text content show the effective CSS overrides.
+* Reading the `name` or `el` property of `CustomUseStyle.use`'s return value logs an error by design — that is a signal a consumer is misusing the API, not a theming fault.
+* To confirm which value won for a component, inspect the computed value of the scoped variable (e.g. `--<scopeId>-surface-500`); the override `<style>` defines the name that appears last in the cascade.
+
+== Known issues
+
+* **Legacy pages point at pre-move code paths.** `link:{theme_overrides_legacy}[theme-overrides.adoc]`, `link:primeng.adoc[primeng.adoc]` and `link:../styles/primeng-token-variables.adoc[primeng-token-variables.adoc]` still reference `libs/angular-utils/src/lib/services/custom-use-style.service.ts` and `libs/angular-utils/src/lib/theme/…`. The code now lives under `libs/angular-utils/theme/primeng/src/…`. The behaviour described is still correct; only the file paths are stale. This is a follow-up for those pages and is out of scope here.
+
+== Related Units
+
+* link:theme-to-page.adoc[Theme → page] — the first stage that puts theme variables, favicon and logo on the page.
+* link:theme-to-primeng-tokens.adoc[Theme → PrimeNG / PrimeReact tokens] — how the Workspace theme is folded into the OneCX preset.
+* link:concept.adoc[Theming] and link:primeng.adoc[Theming with PrimeNG] — the pre-Area concept pages.
+* link:theme-overrides.adoc[Theme Overrides (legacy)] — the page this Unit supersedes.
+* link:../styles/primeng-token-variables.adoc[PrimeNG Token Variables] (Styling Area) — the `--p-` → scoped-prefix rewriting the overrides are written against.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`angular-utils/theme/primeng/src/services/custom-use-style.service.ts`] — `CustomUseStyle`, `applyOverrides`, `createOrRetrieveOverrideElement`
+* link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`angular-utils/theme/primeng/src/utils/application-config.ts`] — `THEME_OVERRIDES`, `ThemeOverrides`, `provideThemeConfig`
+* link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`angular-utils/theme/primeng/src/services/theme-config.service.ts`] — `ThemeConfigService`, `IS_ADVANCED_THEMING`, `applyThemeVariables`, `foldOverrides`, `parsePrimeNGOverridesValue`
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`angular-utils/src/lib/utils/scope.utils.ts`] — `scopePrimengCss`, `replacePrimengPrefix`, `dataVariableOverrideIdAttribute`, `shellScopeId`, `getScopeIdentifier`
+* link:{libs}/angular-utils/src/lib/utils/deep-merge.utils.ts[`angular-utils/src/lib/utils/deep-merge.utils.ts`] — `mergeDeep`
+* link:{libs}/angular-utils/theme/primeng/src/preset/custom-preset.ts[`angular-utils/theme/primeng/src/preset/custom-preset.ts`] — `CustomPreset`
+* link:{libs}/angular-utils/theme/primeng/src/utils/theme-config.ts[`angular-utils/theme/primeng/src/utils/theme-config.ts`] — `ThemeConfig`
+* link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme-override.model.ts[`integration-interface/.../current-theme/v1/theme-override.model.ts`] — `OverrideType`, `ThemeOverride`
+* link:{libs}/integration-interface/src/lib/topics/current-theme/v1/theme.model.ts[`integration-interface/.../current-theme/v1/theme.model.ts`] — `Theme.overrides`
+* link:{libs}/react-utils/src/lib/styling/primeReact/theme/applyThemeVariables.ts[`react-utils/.../primeReact/theme/applyThemeVariables.ts`] — PrimeReact theme application (no override support)
+* link:{shell}[OneCX Shell `main`] — page host, `shell-ui` scope
+
+Verification Sources checked::
+* `dev-docs/theming/theme-overrides.adoc` (legacy page) — matches on the "override `<style>` placed after PrimeNG stylesheets / cascade priority" behaviour; its code-path links are stale (see Known issues).
+* `dev-docs/theming/primeng.adoc` (legacy page) — context for the preset and `onecx` extended section the token channel folds into.
+* `dev-docs/theming/concept.adoc` (legacy page) — the `Theme` / theme-variables background.
+* `dev-docs/styles/primeng-token-variables.adoc` (Styling Area) — the scoped `--p-` prefix rewriting the overrides are written against.
+* Draft Outline commit `6108bdff` (topic discovery only) — confirms the "CSS vs PRIMENG + precedence" framing for this Unit.
+* JSDoc in the source files above.
