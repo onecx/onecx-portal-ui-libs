@@ -1,0 +1,143 @@
+= How Apps obtain tokens
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How an App gets the authentication headers and refreshes the token at request time — that is, what the libraries expose to Apps on `window` and what the App-side proxy services wrap.
+
+== Why it exists
+
+The auth service (Keycloak or a custom remote) is created and owned by the Shell, and it lives inside the Shell's Angular dependency-injection graph. An App — whether Angular, React or a plain Web Component — cannot inject the Shell's `AuthService` directly; it may not even share the same framework. OneCX therefore exposes a small, *versioned* bridge on the global `window` object that any code on the page can reach, and each framework library wraps that bridge in a thin, idiomatic proxy. The App never talks to the identity provider; it only asks the proxy for headers and asks it to refresh the token when a request is about to go out.
+
+The design has two goals. First, *framework neutrality*: the bridge is on `window`, so a Web Component (or any non-framework code) can use it without a library at all. Second, *stability*: the bridge is namespaced under a version (`v1`), so the shape of the API can evolve without breaking already-shipped Apps.
+
+== How it works
+
+=== The `window` proxy (the bridge)
+
+`link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` mounts the bridge in its constructor, so it exists as soon as the wrapper is instantiated — before, and independently of, a successful `init()`. It mounts the same two methods in two places:
+
+* `window.onecxAuth.authServiceProxy.v1` — the current name.
+* `window.onecxAngularAuth.authServiceProxy.v1` — a legacy alias, kept so Apps built against older library versions that read the `onecxAngularAuth` name keep working.
+
+Each namespace exposes a single versioned object:
+
+[source,typescript]
+----
+window.onecxAuth.authServiceProxy.v1 = {
+  getHeaderValues: () => Record<string, string>,
+  updateTokenIfNeeded: () => Promise<boolean>
+}
+----
+
+Both are mounted with the nullish-assignment operator (`??=`), so the wrapper never *replaces* a proxy the Shell already mounted; it only fills it in when absent. The two methods delegate straight to the wrapper's selected `AuthService`: `getHeaderValues()` returns the current header map (empty `{}` before the service exists) and `updateTokenIfNeeded()` refreshes the token if it is about to expire. The shape of both names is declared in `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]`.
+
+=== What the two methods do
+
+* `getHeaderValues()` — returns the header map the App should attach to an outgoing request. For the Keycloak mechanism that is `Authorization: Bearer <access-token>` and `apm-principal-token: <id-token>` (see the Keycloak Unit); for a custom or disabled service it is whatever that service returns (a custom service decides; disabled returns an empty map). The methods are synchronous and simply read the current token state.
+* `updateTokenIfNeeded()` — makes sure the access token is still valid before the request is sent. For Keycloak it runs behind a `Semaphore(1)` so concurrent requests only trigger one refresh; it resolves to `true`/`false` (whether a refresh happened). The App should call this immediately before reading the headers, so the headers reflect a fresh token.
+
+The two are meant to be used as a pair around each request: `await updateTokenIfNeeded()`, then `getHeaderValues()`.
+
+=== The App-side proxy services
+
+Each framework library wraps the `window` bridge so that App code never touches `window` directly. Both read the same `onecxAuth.authServiceProxy.v1` path, guarded with `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[`ensureProperty()`]`, which walks the path and only creates a default for the *leaf* node if it is missing:
+
+* Angular: `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`AuthProxyService`]` — an `@Injectable` so an Angular App injects it where the headers are needed.
+* React: `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[`AuthServiceProxy`]`, exported as a singleton `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[`authServiceProxy`]` — a React App imports the instance directly rather than using dependency injection.
+
+Both wrappers behave the same on the two methods:
+
+* `getHeaderValues()` — resolves the proxy via `ensureProperty(globalThis, ['onecxAuth', 'authServiceProxy', 'v1', 'getHeaderValues'], () => ({}))` and calls the bridge's `getHeaderValues()`. If the proxy was never mounted the leaf defaults to an empty object, so the call returns `{}` rather than throwing.
+* `updateTokenIfNeeded()` — resolves the proxy with a leaf default that *rejects* with the message `No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.`, then calls the bridge's `updateTokenIfNeeded()`. The Angular and React wrappers each log the error under their own namespace and rethrow on failure.
+
+The difference between the two wrappers is therefore only the delivery mechanism (Angular DI vs. a React singleton) and the logger namespace; the `window` path and the error message are identical.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App as App (Angular / React / Web Component)
+  participant P as App proxy (AuthProxyService / authServiceProxy)
+  participant W as window.onecxAuth.authServiceProxy.v1
+  participant S as AuthServiceWrapper -> selected AuthService
+  App->>P: updateTokenIfNeeded()
+  P->>W: updateTokenIfNeeded()
+  W->>S: updateTokenIfNeeded()
+  S-->>W: true / false
+  W-->>P: true / false
+  App->>P: getHeaderValues()
+  P->>W: getHeaderValues()
+  W->>S: getHeaderValues()
+  S-->>W: { Authorization, apm-principal-token }
+  W-->>P: { headers }
+  App->>App: attach headers to the request
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[auth-service-wrapper.ts]` — mounts the `window.onecxAuth` (and legacy `onecxAngularAuth`) proxy in its constructor and delegates its two methods to the selected `AuthService`. This is the *provider* side of the bridge.
+* `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]` — the TypeScript typings for both `window` namespaces, including the legacy `onecxAngularAuth` alias.
+* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]` — the Angular `AuthProxyService` consumer.
+* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the React `AuthServiceProxy` class and the `authServiceProxy` singleton, plus the `MISSING_PROXY_ERROR` constant.
+* `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensure-property.utils.ts]` — `ensureProperty()`, used by both consumers to safely read the bridge off `window`.
+* `link:{libs}/angular-auth/src/lib/declarations.ts[angular-auth declarations]` and `link:{libs}/react-auth/src/lib/declarations.ts[react-auth declarations]` — the per-library `window` typings the consumers import.
+
+=== Shell side
+
+The Shell is what makes the bridge exist at all: by importing `provideAuthService()` from `@onecx/shell-auth` in `link:{shell}/src/app/app.module.ts[app.module.ts]` it instantiates `AuthServiceWrapper`, whose constructor is what mounts `window.onecxAuth` / `window.onecxAngularAuth`. An App therefore only ever sees the bridge if the Shell (or something else on the page) has instantiated the wrapper. The legacy `onecxAngularAuth` name is described in `declarations.ts` as being defined "to support older library versions"; whether the Shell still needs to keep that name is a maintenance question, so it should be verified against Shell `main` before relying on the legacy alias.
+
+== Angular / React
+
+* *Angular.* An App injects `link:{libs/angular-auth/src/lib/auth-proxy.service.ts[`AuthProxyService`]` (provided by `link:{libs/angular-auth/src/lib/angular-auth.module.ts[`AngularAuthModule` / `provideTokenInterceptor()`]`) and calls `updateTokenIfNeeded()` / `getHeaderValues()` where headers are needed.
+* *React.* An App imports the `link:{libs/react-auth/src/lib/auth-proxy-service.ts[`authServiceProxy`]` singleton and calls the same two methods; there is no DI step.
+* *Neither* initialises auth or touches `window` directly — both funnel through the same bridge, so Angular, React and a plain Web Component (which would read `window.onecxAuth` itself) all consume the identical token state. The only framework difference is how the App reaches the proxy, not what the proxy does.
+
+== Edge cases & pitfalls
+
+* *The bridge exists before auth succeeds.* The proxy is mounted in the wrapper's constructor, so `window.onecxAuth` is present even when `init()` has not run yet. Calling `getHeaderValues()` at that point returns an empty map (the `AuthService` is not set), and calling `updateTokenIfNeeded()` rejects — because the wrapper's method rejects when there is no `AuthService`. Callers should gate on `isAuthenticated$` first (see the Tokens on HTTP calls Unit).
+* *Two names, one state.* The current and legacy names point at the *same* underlying methods. Code that reads `onecxAngularAuth` and code that reads `onecxAuth` observe the same token, but a codebase should standardise on `onecxAuth`; the legacy alias is only for backward compatibility.
+* *Missing proxy is a version signal.* The `updateTokenIfNeeded()` leaf default rejects with the "No authServiceWrapper provided" message precisely so an App can detect that it is running against a too-old Shell that never mounted the proxy. The `getHeaderValues()` leaf defaults to `{}` and does not — so a missing proxy is loud on refresh but silent on header read.
+* *The `??=` mount is idempotent.* Re-instantiating the wrapper does not replace an already-mounted proxy; the first mount wins. This is deliberate so that a second, later initialisation cannot clobber a bridge an App already holds references to.
+
+== Debugging
+
+* Inspect `window.onecxAuth` and `window.onecxAngularAuth` in devtools to confirm the bridge was mounted, and call `v1.getHeaderValues()` by hand to see the exact header map the App would attach.
+* Enable the consumer's `debug` namespace to see proxy errors: `@onecx/angular-auth` for Angular (prefix in `link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) and `@onecx/react-auth` for React (prefix in `link:{libs}/react-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`), e.g. `DEBUG='@onecx/angular-auth:*'`.
+* If `updateTokenIfNeeded()` rejects with the "No authServiceWrapper provided" message, the bridge was never mounted — the Shell did not run `AuthServiceWrapper`. General tooling lives in Area 13 (Diagnostics).
+
+== Known issues
+
+`link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper.getHeaderValues()`]` returns `this.authService?.getHeaderValues() ?? {}`, while `updateTokenIfNeeded()` returns `this.authService?.updateTokenIfNeeded() ?? Promise.reject()`. The two differ in how they handle a *missing* `AuthService`: the header read degrades silently to `{}`, but the refresh rejects unconditionally. For the `disabled` mechanism that is fine, but it means an App that calls `updateTokenIfNeeded()` before the service exists always rejects — even in a disabled configuration — which can look surprising when wiring up interceptors. Follow-up: consider making the no-service case of `updateTokenIfNeeded()` a resolved no-op for the disabled mechanism.
+
+== Related Units
+
+* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
+* link:./keycloak.adoc[Keycloak integration]
+* link:./custom-auth-service.adoc[Custom auth service contract]
+* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+* 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `IsAuthenticated` Topic the interceptors await is a plain Topic; its delivery semantics belong to that Area.
+
+== Sources
+
+Code::
+* link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`shell-auth/src/lib/auth-service-wrapper.ts`]
+* link:{libs}/shell-auth/src/lib/declarations.ts[`shell-auth/src/lib/declarations.ts`]
+* link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`angular-auth/src/lib/auth-proxy.service.ts`]
+* link:{libs}/angular-auth/src/lib/angular-auth.module.ts[`angular-auth/src/lib/angular-auth.module.ts`]
+* link:{libs}/angular-auth/src/lib/declarations.ts[`angular-auth/src/lib/declarations.ts`]
+* link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[`angular-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/react-auth/src/lib/auth-proxy-service.ts[`react-auth/src/lib/auth-proxy-service.ts`]
+* link:{libs}/react-auth/src/lib/declarations.ts[`react-auth/src/lib/declarations.ts`]
+* link:{libs}/react-auth/src/lib/utils/logger.utils.ts[`react-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[`accelerator/src/lib/utils/ensure-property.utils.ts`]
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
+
+Verification Sources checked::
+* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "MFE Auth Proxy" (including the legacy `onecxAngularAuth` alias) and "Architectural Notes" (versioned proxy, shell-owns-auth) sections match this Unit; no contradictions found.
+* In-code typings: the `window` shapes in the three `declarations.ts` files and the `MISSING_PROXY_ERROR` constant in `react-auth`.

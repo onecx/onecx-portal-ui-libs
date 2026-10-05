@@ -1,0 +1,157 @@
+= Tokens on HTTP calls
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How the headers produced by the auth proxy actually get attached to outgoing HTTP requests, for both the Angular (HTTP client interceptor) and React (axios) sides.
+
+== Why it exists
+
+Even if an App can read the auth headers and refresh the token (the previous Unit), it would be a trap to require every `http.get` / `axios.get` call to remember to attach the `Authorization` header and to refresh first. A single request that skips the refresh would send a stale token; a request that forgets the header would be rejected as unauthenticated. OneCX therefore intercepts *all* outgoing requests at the HTTP client layer and, before the request is sent: waits until authentication has completed, makes sure the token is still valid, and stamps the current headers onto the request. The App code then needs to do nothing per-request.
+
+Because the App can be Angular or React, the mechanism has two implementations of the same idea: an Angular `HttpInterceptor` and a React axios request-interceptor factory. Both follow the same three-step recipe and both carve out an "assets" path that must not be authenticated (static assets are public and must stay reachable before and without login).
+
+== How it works
+
+Both sides perform the same three steps, in the same order, for every non-whitelisted request:
+
+. *Gate on authentication.* Wait for the authenticated Topic to be ready — the Shell/App only proceeds once `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]` is initialised. This ensures the token exists before it is read.
+. *Refresh.* Call the proxy's `updateTokenIfNeeded()` so the access token is up to date.
+. *Attach.* Read `getHeaderValues()` and set each header onto the outgoing request.
+
+The two implementations and their whitelists:
+
+|===
+| | Angular | React
+| File | `link:{libs}/angular-auth/src/lib/token.interceptor.ts[token.interceptor.ts]` (`TokenInterceptor`) | `link:{libs}/react-auth/src/lib/axios.ts[axios.ts]` (`axiosFactory`)
+| Type | `HttpInterceptor` (Angular HTTP client) | an axios instance with a request interceptor
+| Whitelist | any URL that contains `assets` | any URL that contains `/assets/`
+| Refresh error | propagates (interceptor rejects) | swallowed *only* for the "missing proxy" error; other refresh errors still propagate
+| Empty header value | set (every key/value from the map) | skipped (only non-empty values are set)
+|===
+
+=== Angular: `TokenInterceptor`
+
+`link:{libs}/angular-auth/src/lib/token.interceptor.ts[`TokenInterceptor`]` implements `HttpInterceptor`. For each request it first checks the whitelist — `const WHITELIST = ['assets']` — and if the request URL contains any whitelisted substring it forwards the request unchanged (no auth headers, no gating). Otherwise it builds an `Observable` pipeline:
+
+[source,typescript]
+----
+return from(this.appStateService.isAuthenticated$.isInitialized).pipe(
+  mergeMap(() => from(this.authService.updateTokenIfNeeded())),
+  mergeMap(() => {
+    const headerValues = this.authService.getHeaderValues()
+    let headers = request.headers
+    for (const header in headerValues) {
+      headers = headers.set(header, headerValues[header])
+    }
+    const authenticatedReq = request.clone({ headers })
+    return next.handle(authenticatedReq)
+  })
+)
+----
+
+* `from(this.appStateService.isAuthenticated$.isInitialized)` waits for the authenticated gate to resolve before anything else runs.
+* `mergeMap(() => from(this.authService.updateTokenIfNeeded()))` then refreshes the token through `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`AuthProxyService`]`.
+* the final `mergeMap` reads `getHeaderValues()` and clones the request with the headers set, then hands it to the next handler.
+
+The interceptor is registered so it runs on every request made through the Angular HTTP client: `link:{libs}/angular-auth/src/lib/angular-auth.module.ts[`AngularAuthModule`]` (via `provideTokenInterceptor()`) provides `AuthProxyService` and registers `TokenInterceptor` under `HTTP_INTERCEPTORS` with `multi: true`. An Angular App that imports `AngularAuthModule` gets the behaviour automatically.
+
+=== React: `axiosFactory`
+
+`link:{libs}/react-auth/src/lib/axios.ts[`axiosFactory(baseURL?)`]` creates a standard axios instance and extends it into an `AuthenticatedAxiosInstance` that carries a `tokens` object (initialised as `{ sessionExpired: false }`) the App can use to track token state. It installs a *request* interceptor that, per request:
+
+* skips requests whose URL contains any whitelisted substring (`WHITELIST = ['/assets/']`), returning the config unchanged;
+* calls `authServiceProxy.updateTokenIfNeeded()` inside a `try/catch`, and *only* swallows the specific "No authServiceWrapper provided" (`MISSING_PROXY_ERROR`) failure — any other refresh error is rethrown so the request fails loudly;
+* reads `getHeaderValues()` and sets each header on the config, skipping empty values, then returns the config.
+
+A React App builds its client with `axiosFactory()` (or `axiosFactory(baseURL)`) and uses the returned instance; the interceptor runs on every request that instance makes.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App as App code
+  participant I as interceptor (TokenInterceptor / axiosFactory)
+  participant T as isAuthenticated$
+  participant P as proxy (AuthProxyService / authServiceProxy)
+  participant B as backend
+  App->>I: http.get/axios.get(url)
+  alt url matches whitelist (assets)
+    I-->>B: request unchanged (no auth headers)
+  else
+    I->>T: await isAuthenticated$.isInitialized
+    I->>P: updateTokenIfNeeded()
+    P-->>I: true / false
+    I->>P: getHeaderValues()
+    P-->>I: { Authorization, apm-principal-token }
+    I->>B: request with headers set
+  end
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `link:{libs}/angular-auth/src/lib/token.interceptor.ts[token.interceptor.ts]` — the Angular `TokenInterceptor`: the `assets` whitelist, the `isAuthenticated$.isInitialized` gate, the `updateTokenIfNeeded()` / `getHeaderValues()` steps and the request clone.
+* `link:{libs}/angular-auth/src/lib/angular-auth.module.ts[angular-auth.module.ts]` — `AngularAuthModule` / `provideTokenInterceptor()` registering the interceptor under `HTTP_INTERCEPTORS` (`multi: true`) alongside `AuthProxyService`.
+* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]` — the proxy the Angular interceptor reads headers and refreshes the token through.
+* `link:{libs}/react-auth/src/lib/axios.ts[axios.ts]` — the React `axiosFactory` and `AuthenticatedAxiosInstance`, with the `/assets/` whitelist, the graceful "missing proxy" handling and the header loop.
+* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the `authServiceProxy` singleton and the `MISSING_PROXY_ERROR` constant the React interceptor compares against.
+* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[app-state.service.ts]` — `AppStateService.isAuthenticated$`, the gate the Angular interceptor awaits (the Shell publishes it after a successful `init()`; see the mechanism-selection Unit).
+
+=== Shell side
+
+The Shell does not add its own interceptors for App traffic; it is the *producer* of the gate the Angular interceptor waits on. In `link:{shell}/src/app/app.module.ts[app.module.ts]` the Shell runs `provideAuthService()`, and it is the Shell's `AuthServiceWrapper` that publishes `isAuthenticated$` once auth succeeds. Until the Shell publishes that Topic, the Angular `TokenInterceptor` (and any App logic awaiting the gate) is suspended. The exact Shell code that awaits the gate in its own initialisers is covered in the mechanism-selection Unit; the Shell repository is treated as read-only here, so the interceptor files above are on the libs side.
+
+== Angular / React
+
+This Unit is one of the places where the two frameworks genuinely differ, so the difference is the point:
+
+* *Angular* attaches headers inside an `HttpInterceptor` registered through the DI system. The refresh error is not special-cased — any failure from `updateTokenIfNeeded()` rejects the request's `Observable`. Every key/value from `getHeaderValues()` is set, including empty values.
+* *React* attaches headers inside an axios request interceptor attached to an instance created by `axiosFactory()`. The refresh step deliberately swallows *only* the missing-proxy error (so a too-old Shell degrades gracefully to an unauthenticated request instead of crashing), but rethrows any other error. Empty header values are skipped. The instance also carries the `tokens` state object.
+* *Both* wait on the same `isAuthenticated$` semantics before proceeding, and both whitelist an "assets" path — so the framework difference is in error handling, empty-value handling and how the interceptor is installed, not in *when* or *which* headers are sent.
+
+== Edge cases & pitfalls
+
+* *The whitelists are substring tests, and they differ.* Angular skips any URL containing `assets` (no slashes), while React skips URLs containing `/assets/`. A path like `/foo/assets/bar` is skipped by both, but a bare `assets` path without a leading slash is skipped by Angular only. A request to a genuinely auth-required URL that happens to contain the substring `assets` would be sent unauthenticated — the test is intentional (static assets must load pre-auth) but it is a common source of surprise.
+* *The Angular interceptor waits on the gate synchronously with the request.* Because the `isAuthenticated$` await is part of the request's `Observable`, a request issued before auth has completed does not fail — it *pauses* until the gate resolves. If auth never succeeds (falsy `init()`), those requests never fire at all.
+* *React degrades, Angular does not.* If the proxy was never mounted (old Shell), the React factory's `updateTokenIfNeeded()` throws `MISSING_PROXY_ERROR`, which `axiosFactory` catches and ignores — the request then proceeds with `getHeaderValues()` (an empty map), i.e. unauthenticated. The equivalent Angular interceptor would instead reject. So the same misconfiguration behaves differently per framework.
+* *Empty headers behave differently.* Angular sets every entry from `getHeaderValues()` (a header with an empty value is still set); React only sets entries whose value is truthy. With the Keycloak mechanism the values are populated after init, but a custom service returning empty strings would produce different headers on the two frameworks.
+
+== Debugging
+
+* Confirm the gate first: if an Angular request never fires, `isAuthenticated$.isInitialized` has not resolved — the mechanism-selection and Keycloak Units explain when that happens.
+* For React, watch for the `MISSING_PROXY_ERROR` path: if a request goes out with no auth headers and no error, the proxy was missing and the error was swallowed by design. Enable `@onecx/react-auth` (prefix in `link:{libs}/react-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) or `@onecx/angular-auth` (prefix in `link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) with `DEBUG='@onecx/*'` to see proxy errors.
+* Inspect the outgoing request in devtools (Network tab) to verify the `Authorization` and `apm-principal-token` headers are present and fresh; compare a whitelisted `assets` request (no headers) against a normal request (headers present). General tooling lives in Area 13 (Diagnostics).
+
+== Known issues
+
+The `assets` whitelist is a broad substring match rather than a path check, and the two frameworks implement it slightly differently (`'assets'` vs. `'/assets/'`). A backend endpoint whose URL legitimately contains the substring (for example a resource path that includes `assets` but requires authentication) would be excluded from authentication. The current behaviour is that such requests are sent without headers. Follow-up: consider matching the assets path by a full segment (for example `^/assets/`) consistently on both frameworks.
+
+== Related Units
+
+* link:./obtaining-tokens.adoc[How Apps obtain tokens]
+* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
+* link:./keycloak.adoc[Keycloak integration]
+* link:./custom-auth-service.adoc[Custom auth service contract]
+* 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `IsAuthenticated` Topic awaited by the Angular interceptor is a plain Topic; its delivery semantics belong to that Area.
+
+== Sources
+
+Code::
+* link:{libs}/angular-auth/src/lib/token.interceptor.ts[`angular-auth/src/lib/token.interceptor.ts`]
+* link:{libs}/angular-auth/src/lib/angular-auth.module.ts[`angular-auth/src/lib/angular-auth.module.ts`]
+* link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`angular-auth/src/lib/auth-proxy.service.ts`]
+* link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[`angular-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/react-auth/src/lib/axios.ts[`react-auth/src/lib/axios.ts`]
+* link:{libs}/react-auth/src/lib/auth-proxy-service.ts[`react-auth/src/lib/auth-proxy-service.ts`]
+* link:{libs}/react-auth/src/lib/utils/logger.utils.ts[`react-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`angular-integration-interface/src/lib/services/app-state.service.ts`]
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
+
+Verification Sources checked::
+* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "HTTP Interceptors" sections (Angular `TokenInterceptor` steps and the two returned headers; React `axiosFactory` whitelist, graceful degradation on the missing proxy, and the `tokens.sessionExpired` state) match this Unit; no contradictions found.
+* In-code JSDoc in `react-auth/src/lib/axios.ts` and the `WHITELIST` constants in both interceptor files.
