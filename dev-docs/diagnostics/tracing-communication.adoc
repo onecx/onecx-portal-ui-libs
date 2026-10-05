@@ -1,0 +1,173 @@
+= Tracing cross-App communication
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How do I observe the Topic / BroadcastChannel traffic that moves state between the Apps and the Shell while a page is running?
+
+== Why it exists
+
+OneCX Apps and the Shell never call each other directly. They exchange *state* through link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] and link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`TopicPublisher`] instances, which broadcast messages across the page. To debug "my Topic never updates" or "two Apps disagree on a value" you need to see the traffic itself: which messages were sent, on which transport, with what ordering. This Unit is the field manual for doing that.
+
+The mechanism is one: the `accelerator` library. Every App, the Shell and every Remote Component run the *same* `Topic`/`TopicPublisher` code, so whatever you learn here applies on both sides of every boundary.
+
+== How it works
+
+A `Topic` is a piece of shared state identified by a `name` and a numeric `version`. Two kinds of instances cooperate:
+
+* a `TopicPublisher` can `publish(value)` a new state;
+* a `Topic` subscribes to that state and resolves its `isInitialized` promise once it has seen an initial value.
+
+All three message types are subclasses of link:{libs}/accelerator/src/lib/topic/message.ts[`Message`], which stamps every message with a `timestamp` and a page-wide monotonically-increasing `id` (`onecxMessageId`).
+
+[cols="1,3", options="header"]
+|===
+|Message |Carries
+|`TopicNext` (link:{libs}/accelerator/src/lib/topic/topic-data-message.ts[`TopicDataMessage`])
+|A new value (`data`) for the topic.
+|`TopicGet` (link:{libs}/accelerator/src/lib/topic/topic-message.ts[`TopicMessage`])
+|A request for the current value, sent by a newly-created topic so it can sync to peers.
+|`TopicResolve` (link:{libs}/accelerator/src/lib/topic/topic-resolve-message.ts[`TopicResolveMessage`])
+|An acknowledgement (`resolveId`) that a published `TopicNext` was processed; it resolves the publisher's `publish()` promise.
+|===
+
+=== The three transports
+
+A message travels over one of three transports, selected per message by the `@onecx/accelerator.topic.useBroadcastChannel` global (default `'V2'`):
+
+. **`window.postMessage`** — the baseline, used when the flag is `false`. Sent with target `'*'`, so it reaches every topic in the page.
+. **BroadcastChannel V1** — channel `Topic-<name>|<version>`, used when the flag is `true`.
+. **BroadcastChannel V2** — channel `TopicV2-<name>|<version>-<tabId>`, used when the flag is `'V2'`. The `<tabId>` is a per-page value so V2 traffic is scoped to one page load.
+
+The transport is chosen per message in `TopicPublisher.sendMessage`. If `BroadcastChannel` is not available in the browser, the flag is forced to `false` and the code falls back to `postMessage`, logging `BroadcastChannel not supported...`.
+
+The flag is *shared page-wide state*, so a subscriber can downgrade it. The cascade is one-way and always toward the broader transport: receiving a `postMessage`-delivered message calls `disableBroadcastChannel` (flag → `false`), and receiving a `postMessage`-delivered message while in `'V2'` first steps down to `true` via `disableBroadcastChannelV2` (flag → `true`). In practice this means that once a `postMessage` round-trip has happened in the page, every publisher converges on `postMessage`. The code treats `postMessage` as the reliable fallback when the BroadcastChannel path is not guaranteed to reach every peer.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Pub as Publisher
+  participant Trans as postMessage / BroadcastChannel
+  participant Sub as Subscriber Topic
+  Pub->>Trans: TopicNext {id, timestamp, data}
+  Trans-->>Sub: message (name + version match)
+  Sub->>Sub: isInit = true, resolve isInitialized
+  Pub->>Trans: TopicResolve {resolveId: id}
+  Trans-->>Pub: resolves publish() promise
+----
+
+A subscriber only applies a `TopicNext` if the message's `name` and `version` match and the message is *newer* (higher `id` or later `timestamp`) than what it holds.
+
+=== Order and init
+
+* **Init.** A topic's `asObservable()` emits nothing until `isInit` is true; `isInitialized` resolves the first time a value is applied. A fresh topic sends a `TopicGet` so already-initialised peers answer with their current value.
+* **Ordering.** Messages carry `id` (`onecxMessageId`) and `timestamp`; a topic keeps the latest. If an *old-style* message (no `id`) and a *new-style* message (with `id`) share a timestamp, the older one is dropped and a warning is logged (see Edge cases).
+
+== Libs side / Shell side
+
+=== Libs side
+
+The `accelerator` library provides the whole mechanism — `Topic`, `TopicPublisher`, the message classes, the `Message.id` counter, and the statistics counters in link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`logs.utils.ts`]. Apps and Remote Components instantiate `Topic`s against a `name`/`version` and either publish to or subscribe from them; both sides are the same code.
+
+=== Shell side
+
+The Shell is a peer participant in the same Topic graph: it publishes and consumes the same topics (current location, parameters, permissions, events, …) so that every App and Remote Component on the page converges on the same values. From a tracing standpoint the Shell is indistinguishable from an App — it is another set of `Topic`/`TopicPublisher` instances sharing the same `window` and `localStorage.debug`. If a value is right in one App and wrong in another, the divergence is in the shared traffic, not in either side's code.
+
+== Angular / React
+
+There is no Angular/React split: both use the identical `accelerator` classes and the identical `window`/BroadcastChannel transports. The only difference is *where the instances live* — an Angular service creates a `Topic` as an RxJS source, a React hook subscribes through the same `asObservable()`. The transport and ordering rules are the same.
+
+== Capability flags
+
+Topics themselves do not negotiate; the *page* advertises a list of Shell capabilities on the `onecx-shell-capabilities` global, which the libs read via `hasShellCapability` (link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`shell-capability.utils.ts`]). The `ShellCapability` enum (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`]) is:
+
+* `currentLocationTopic`
+* `parametersTopic`
+* `activenessAwareMenus`
+* `dynamicTranslationsTopic`
+
+An App checks `hasShellCapability(...)` to decide whether to use a feature rather than fall back. In the current Shell, `link:{shell}/src/bootstrap.ts[bootstrap.ts]` registers `PARAMETERS_TOPIC`, `CURRENT_LOCATION_TOPIC` and `ACTIVENESS_AWARE_MENUS` but *not* `DYNAMIC_TRANSLATIONS_TOPIC` — see Known issues.
+
+== Edge cases & pitfalls
+
+* **Name/version mismatch.** A `Topic` only accepts messages whose `name` *and* `version` match exactly. A typo or a version drift between producer and consumer means messages are received and then silently ignored.
+* **Never initialising.** `isInitialized` stays pending until a `TopicNext` is applied. If no peer has published yet, subscribers block on the promise.
+* **Transport downgrade is one-way.** `disableBroadcastChannel` / `disableBroadcastChannelV2` move the flag only *down* the cascade (`'V2'` → `true` → `false`). Once a `postMessage`-delivered message is observed, every publisher in the page is locked onto `postMessage` for the rest of that page's life. Expect `postMessage` to be the steady-state transport once several Apps are present.
+* **Old/new message mix.** If an old-style message (no `id`) and a new-style message (with `id`) land with the same `timestamp`, the code logs:
+
+  `Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.`
+
+  That is the signature of a partially-upgraded page — some bundle is still on a pre-`id` message format.
+
+== Debugging
+
+Three tools, in increasing order of detail.
+
+. **Enable the Topic logs.** The `accelerator` logger namespaces Topic traffic as `@onecx/accelerator:Topic:<name>` and `@onecx/accelerator:TopicPublisher:<name>` (Gatherers use `@onecx/accelerator:Gatherer:<name>`). Turn them on with `localStorage.debug`, then reload:
+
++
+[source,js]
+----
+// One specific topic
+localStorage.debug = '@onecx/accelerator:Topic:my-topic'; location.reload();
+
+// Everything about all topics
+localStorage.debug = '@onecx/accelerator:Topic:*'; location.reload();
+----
+
+. **Read the statistics.** The message and instance counters are off by default. Enable them, then inspect the shared globals on `window`:
+
++
+[source,js]
+----
+globalThis['@onecx/accelerator'].topic.statsEnabled = true;
+
+// messages published per topic, per type
+globalThis['@onecx/accelerator'].topic.stats.messagesPublished;
+
+// how many Topic instances were created per name
+globalThis['@onecx/accelerator'].topic.stats.instancesCreated;
+
+// the current transport mode ('V2' | true | false) and per-page tab id
+globalThis['@onecx/accelerator'].topic.useBroadcastChannel;
+globalThis['@onecx/accelerator'].topic.tabId;
+----
+
+. **Watch the message counter.** `onecxMessageId` increments once per message; a value that stops moving while you expect traffic is the fastest "is anything even publishing?" check.
+
+The globals this Unit reads are catalogued in link:window-state-inventory.adoc[Global `window` state inventory]; the general logging rules are in link:logging.adoc[Logging].
+
+== Known issues
+
+* **The Shell does not advertise or answer the dynamic-translations capability.** `bootstrap.ts` registers three capabilities but omits `DYNAMIC_TRANSLATIONS_TOPIC`, so any App that checks `hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)` sees `false` and will not drive the dynamic-translations Topic even though the shared cache exists. Follow-up: the Shell either advertises and answers the Topic, or the libs stop checking the flag. (See link:window-state-inventory.adoc[Global `window` state inventory] Known issues.)
+* **Deprecated `SyncableTopic`.** link:{libs}/accelerator/src/lib/topic/syncable-topic.ts[`SyncableTopic`] exposes a synchronous `getValue()` that returns `undefined` until the topic is initialised and has *no* read-after-write consistency. It is `@deprecated`; the actual behaviour is "returns the last value the topic has seen, or `undefined`". Prefer `Topic` with its async `isInitialized`/`asObservable()`.
+
+== Related Units
+
+* link:logging.adoc[Logging] — the `@onecx/accelerator:Topic:*` / `Gatherer:*` namespaces used above.
+* link:window-state-inventory.adoc[Global `window` state inventory] — the `@onecx/accelerator.topic.*` and `onecxMessageId` globals.
+* *1. Integration Contract & Topics* — the message contract, transports, Gatherers and RPC topics this Unit traces.
+* *3. Shell Context & Runtime Configuration* — the capability flags.
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`] — `Topic`: listener registration, `onWindowMessage`, transport selection, `disableBroadcastChannel*`, init, ordering, the equal-timestamp warning.
+* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`] — `TopicPublisher`: `publish`, `sendMessage`, `createBroadcastChannel`.
+* link:{libs}/accelerator/src/lib/topic/message.ts[`accelerator/src/lib/topic/message.ts`] — `Message`, `onecxMessageId`.
+* link:{libs}/accelerator/src/lib/topic/topic-message.ts[`accelerator/src/lib/topic/topic-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-data-message.ts[`topic-data-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-resolve-message.ts[`topic-resolve-message.ts`] — the message classes.
+* link:{libs}/accelerator/src/lib/topic/topic-message-type.ts[`accelerator/src/lib/topic/topic-message-type.ts`] — `TopicMessageType`.
+* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`] — `useBroadcastChannel`, `tabId`, `initDate` globals.
+* link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`accelerator/src/lib/utils/logs.utils.ts`] — statistics counters and `statsEnabled`.
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`] — Gatherer namespaces.
+* link:{libs}/accelerator/src/lib/topic/syncable-topic.ts[`accelerator/src/lib/topic/syncable-topic.ts`] — deprecated `SyncableTopic`.
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`] — capability flags.
+* link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)] — the capabilities the Shell registers.
+
+Verification Sources checked::
+* `dev-docs/topics/overview.adoc` — the existing deep-dive on Topic synchronisation, message types and `publish`/`onMessage` ordering.
+* `dev-docs/topics/debug.adoc` and `dev-docs/gatherer/debug.adoc` — the pre-v8 `window['@onecx/accelerator'].topic.debug` and the v8+ `localStorage.debug` enabling instructions that this Unit supersedes.
+* `docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc` — the `@onecx/accelerator:Topic:*` / `Gatherer:*` namespace reference.

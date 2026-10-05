@@ -1,0 +1,76 @@
+= Diagnostics
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Problem
+
+A running OneCX page is a single browser page that hosts the Shell plus one or more Apps and Remote Components, all loaded from different bundles. When something is off — a Topic that never updates, a missing translation, a token that is not attached to a request, styles bleeding across Apps — the state you need to inspect is spread across several runtime mechanisms at once: the browser console, a set of `window`-level globals the libraries share, and the Topic/BroadcastChannel traffic that carries state between the Apps and the Shell.
+
+This Area collects the tools for looking inside that running page. It does not re-explain the owning mechanisms (Topics, authentication, translations, styling); it points at them and gives you the concrete way to observe each of them at runtime.
+
+== Big picture
+
+Every diagnostic signal in OneCX comes from the same two places: the libraries in this repository, and the Shell. The libraries own the mechanisms (the logger factory, the `window` globals, the `Topic` and `TopicPublisher` classes); the Shell consumes them and adds its own writes (auth proxies, capability flags, Module Federation instance). Because the Shell and the Apps share one `window` object and one event loop, the two sides are observable from the same DevTools session.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Browser[One page / one window]
+    subgraph Libs[Libs — this repository]
+      L1["Logger factory<br/>createLoggerFactory()"]
+      L2["window globals<br/>(@onecx/accelerator, onecxAuth, …)"]
+      L3["Topic / TopicPublisher<br/>postMessage + BroadcastChannel"]
+    end
+    subgraph Shell[Shell — onexc-shell-ui]
+      S1["writes auth proxies,<br/>capabilities, MF instance"]
+      S2["consumes Topics,<br/>reads logger namespaces"]
+    end
+    Tools[DevTools: console,<br/>localStorage.debug,<br/>window inspection]
+  end
+  L1 -. observed via .-> Tools
+  L2 -. inspected in .-> Tools
+  L3 -. logged + stats in .-> Tools
+  S1 -->|shared window| L2
+  S2 <-->|shared event loop| L3
+----
+
+Reading order within the Area:
+
+. link:logging.adoc[Logging] — the first tool to reach for, because it gates how visible everything else is.
+. link:window-state-inventory.adoc[Global `window` state inventory] — the shared, mutable surface; know what lives there before you read it.
+. link:tracing-communication.adoc[Tracing cross-App communication] — the dynamic layer: how state actually moves between Apps and the Shell.
+
+== Unit map
+
+All Units of this Area, in reading order. Every Unit follows the link:../unit-template.adoc[Unit template].
+
+[cols="1,3", options="header"]
+|===
+|Unit |What it answers
+
+|link:logging.adoc[Logging]
+|How runtime logging works: the `debug`-based mechanism, the `@onecx/<lib>:<location>:<level>` namespace schema, how to enable and filter it with `localStorage.debug`, and where the Shell fits.
+
+|link:window-state-inventory.adoc[Global `window` state inventory]
+|A verified table of every `window`-level global key the libraries read or write, with owner, writers, readers and the Area that owns each key.
+
+|link:tracing-communication.adoc[Tracing cross-App communication]
+|How to observe Topic and BroadcastChannel traffic at runtime: the transports, the capability flags, and the failure signatures that show up in the logs and globals.
+|===
+
+== Related Areas
+
+This Area is deliberately cross-cutting. It links to the Areas that own the mechanisms it helps you observe, and it is linked back from their `Debugging` sections.
+
+* *1. Integration Contract & Topics* — the `Topic`/`TopicPublisher` classes and the message contract that this Area's tracing unit observes.
+* *2. Application Bootstrap* — Module Federation and preloaders, which own the `__FEDERATION__` / `onecxFederationInstance` globals.
+* *3. Shell Context & Runtime Configuration* — where the Shell capability flags come from.
+* *4. Styling & Style Isolation* — dynamic content attribution and the `onecxTriggerElement` global.
+* *8. Authentication* — the `onecxAuth` / `onecxAngularAuth` auth-proxy globals.
+* *10. Localization* — the `onecxTranslations` and `dynamicTranslationsCache` globals.
+
+NOTE: The Related Areas listed above are named but not yet linked. Their Area overview pages and most Units have not been written yet, so the paths are not in the link:../README.adoc[Dev Docs index] and linking them would 404. Each is recorded here so the link can be added from the Dev Docs index once the owning ticket lands.
+
+The Dev Docs are written from the current `main` branch of this repository and of the Shell. Where a mechanism is explained in full, this Area links to its owning Unit rather than repeating it.

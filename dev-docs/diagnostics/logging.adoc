@@ -1,0 +1,185 @@
+= Logging
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:browser-logging: ../../docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc
+
+== Question answered
+
+How do I see what the libraries (and the Shell) are doing at runtime, on demand, without permanently cluttering the console?
+
+== Why it exists
+
+The libraries run inside the same browser page as the Shell and one or more Apps. Plain `console.log` is unusable there: it cannot be turned off in production, it does not say *where* a message came from, and a full page of libraries makes it impossible to look at one mechanism. OneCX therefore builds all runtime logging on the https://github.com/debug-js/debug[`debug`] package:
+
+* it is *namespaced*, so every message carries the library, the location and the severity as part of its namespace;
+* it is *opt-in* — nothing is logged unless a developer enables the namespaces;
+* it is *filterable* from the browser with no build step, via a single `localStorage` key.
+
+The mechanism is completely framework-agnostic: the same factory serves Angular and React libraries.
+
+== How it works
+
+link:{libs}/accelerator/src/lib/utils/create-logger.utils.ts[`createLoggerFactory`] is the single entry point. You call it once per library (or app) with a *namespace prefix*, and it returns a `createLogger` function. Calling that with a *location* returns a `ComponentLogger` with four members — `debug`, `info`, `warn` and `error` — each of which is a `debug` instance.
+
+[source,typescript]
+----
+export type LogLevel = "debug" | "info" | "warn" | "error";
+
+export interface ComponentLogger {
+  debug: Debugger;   // namespace `<libName>:<location>:debug`
+  info:  Debugger;   // namespace `<libName>:<location>:info`
+  warn:  Debugger;   // namespace `<libName>:<location>:warn`
+  error: Debugger;   // namespace `<libName>:<location>:error`
+}
+----
+
+The namespace produced by each member is:
+
+[source,text]
+----
+<libName>:<location>:<level>
+----
+
+Because the prefix passed to the factory is already a full `@onecx/<lib>` package name, the real namespaces look like `@onecx/angular-auth:AuthProxyService:warn`. The severity is the *last* segment, which is what lets you filter by level in the browser (see the {browser-logging}[user-facing Browser Logging page] for the full `debug` pattern syntax — `*` wildcards, comma-separated patterns, and `-` to exclude).
+
+Two things make it work:
+
+. In `createLoggerFactory`, `debug.log = console.log.bind(console)` is set so that `debug` writes to the console (rather than its default `console.error` for warnings).
+. In the browser, `debug` reads `localStorage.debug` on load to decide which namespaces are active. If the key is absent, logging is off.
+
+[source,mermaid]
+----
+flowchart LR
+  A["createLoggerFactory('@onecx/angular-auth')"] --> B["createLogger('AuthProxyService')"]
+  B --> C["log.debug / .info / .warn / .error"]
+  C --> D["debug('@onecx/angular-auth:AuthProxyService:<level>')"]
+  E["localStorage.debug (browser)"] -.gates .-> D
+  D -->|enabled| F[Browser console]
+----
+
+=== Enabling and filtering
+
+Enable logging by setting `localStorage.debug` and reloading. All values are namespace patterns:
+
+[source,js]
+----
+// Everything, from every library, at every level
+localStorage.debug = '@onecx*'; location.reload();
+
+// One library only
+localStorage.debug = '@onecx/angular-auth*'; location.reload();
+
+// One library + one location
+localStorage.debug = '@onecx/angular-auth:AuthProxyService'; location.reload();
+
+// Only errors across all OneCX libraries
+localStorage.debug = '@onecx*:*:error'; location.reload();
+
+// Everything except the chatty Topic and Gatherer streams
+localStorage.debug = '@onecx*,-@onecx*:Topic:*,-@onecx*:Gatherer:*'; location.reload();
+----
+
+See the {browser-logging}[Browser Logging] page for more patterns and per-level guidance.
+
+=== Log levels
+
+The `debug` namespace embeds the level as the last segment, so you can filter by severity. As a rule of thumb (matching the {browser-logging}[user-facing page]):
+
+* `debug` — high-volume diagnostics you do not want on in normal troubleshooting (state transitions, timings, inputs/outputs).
+* `info` — lifecycle milestones that are useful in normal troubleshooting (initialisation, configuration decisions).
+* `warn` — unexpected but recoverable situations (fallback paths, handled bad input, missing optional dependency).
+* `error` — failures that break a feature or indicate a bug (exceptions, failed critical calls).
+
+== Libs side / Shell side
+
+=== Libs side
+
+The factory lives once in `@onecx/accelerator` and is consumed by every other library. Each library has a one-line wrapper that fixes its own prefix and re-exports a ready-made `createLogger`:
+
+[source,typescript]
+----
+// libs/angular-auth/src/lib/utils/logger.utils.ts
+import { createLoggerFactory } from '@onecx/accelerator'
+export const createLogger = createLoggerFactory('@onecx/angular-auth')
+----
+
+The `accelerator` library uses its own wrapper, `link:{libs}/accelerator/src/lib/utils/logger.utils.ts[logger.utils.ts]` (`@onecx/accelerator`).
+
+The namespaces actually present in current code (one per `createLoggerFactory(...)` call, non-test) are:
+
+* `@onecx/accelerator`
+* `@onecx/angular-accelerator` (`:testing`)
+* `@onecx/angular-auth`
+* `@onecx/angular-integration-interface` (`:mocks`)
+* `@onecx/angular-remote-components` (`:mocks`, `:testing`)
+* `@onecx/angular-standalone-shell`
+* `@onecx/angular-testing`
+* `@onecx/angular-utils` (`:guards`, `:mocks`, `:style`, `:theme/primeng`)
+* `@onecx/angular-webcomponents`
+* `@onecx/integration-interface`
+* `@onecx/ngrx-accelerator`
+* `@onecx/ngrx-integration-interface`
+* `@onecx/react-auth`
+* `@onecx/react-integration-interface`
+* `@onecx/react-remote-components`
+* `@onecx/react-utils` (`:guards`)
+* `@onecx/react-webcomponents`
+* `@onecx/shell-auth`
+
+In addition to these per-location namespaces, the high-volume Topic and Gatherer streams use dedicated namespaces (`@onecx/accelerator:Topic:<name>` and `@onecx/accelerator:Gatherer:<name>`) — see link:tracing-communication.adoc[Tracing cross-App communication].
+
+=== Shell side
+
+The Shell is a normal consumer of the same mechanism. It does not ship its own logger library; it produces logs through the `@onecx` libraries it bundles and through its own code, which logs under the `onecxShell` namespace. Because the Shell, Apps and Remote Components share one `window` and one `localStorage`, a single `localStorage.debug` value enables logging for *all* of them at once — you can filter the Shell's own lines with `onecxShell` and a specific App's lines with its `@onecx/...` prefix.
+
+== Angular / React
+
+The mechanism is identical for both frameworks — both call the same `createLoggerFactory`, both are gated by the same `localStorage.debug`, and both write to the same console. The only difference is the *namespace prefix*: Angular libraries use `@onecx/angular-*` / `@onecx/ngrx-*` prefixes and React libraries use `@onecx/react-*` prefixes (see the list above). There is no per-framework logger.
+
+== Edge cases & pitfalls
+
+* *Logging is off by default.* If `localStorage.debug` is unset, you will see nothing from the OneCX libraries even when a feature misbehaves. Set it before reproducing a problem.
+* *Names must be non-empty.* `createLoggerFactory` throws if the prefix is blank, and the inner `createLogger` throws if the location is blank. Prefixes are trimmed.
+* *`logs.utils.ts` is not the logger.* `link:{libs}/accelerator/src/lib/utils/logs.utils.ts[logs.utils.ts]` is the Topic *statistics* module (`isStatsEnabled`, message/instance counters) — it has a confusingly similar name to the logger in `logger.utils.ts`. Do not confuse the two.
+* *Level is part of the namespace.* `@onecx/angular-auth` alone will not match `@onecx/angular-auth:AuthProxyService:warn` unless you include the location and a `*` wildcard for the level; `@onecx/angular-auth*` does.
+
+== Debugging
+
+Start broad, then narrow:
+
+[source,js]
+----
+localStorage.debug = '@onecx*'; location.reload();          // see everything
+localStorage.debug = '@onecx*:*:error'; location.reload();  // failures only
+localStorage.debug = '@onecx/angular-auth:AuthProxyService'; // one location
+----
+
+For the high-volume Topic and Gatherer traffic, enable those dedicated namespaces specifically (see link:tracing-communication.adoc[Tracing cross-App communication]). For a map of what state lives on `window` while you do this, see link:window-state-inventory.adoc[Global `window` state inventory].
+
+== Known issues
+
+* The user-facing {browser-logging}[Browser Logging] page's "Library namespaces" list is written against an older snapshot of the code and is *incomplete*: it omits the `@onecx/react-*` and `@onecx/shell-auth` namespaces that exist in current code. Filtering by the page's list will not surface React-app or Shell-auth logs. The complete list is reproduced in this Unit (Libs side) from the current code.
+
+== Related Units
+
+* link:window-state-inventory.adoc[Global `window` state inventory] — the `window`-level state you read while the logs are on.
+* link:tracing-communication.adoc[Tracing cross-App communication] — the Topic/Gatherer namespaces and how to observe the traffic itself.
+* *1. Integration Contract & Topics* — the Topic mechanism these logs are about.
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/utils/create-logger.utils.ts[`accelerator/src/lib/utils/create-logger.utils.ts`] — `createLoggerFactory`, `ComponentLogger`, `CreateLogger`, `LogLevel`, `debug.log` binding.
+* link:{libs}/accelerator/src/lib/utils/logger.utils.ts[`accelerator/src/lib/utils/logger.utils.ts`] — the accelerator's own `createLogger` wrapper.
+* link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`accelerator/src/lib/utils/logs.utils.ts`] — Topic statistics (distinct from the logger).
+* `accelerator/src/lib/utils/gatherer.ts` — `Gatherer` logging under `@onecx/accelerator:Gatherer:<name>`.
+* `topic/topic.ts` and `topic/topic-publisher.ts` — Topic / TopicPublisher logging under `@onecx/accelerator:Topic:<name>`.
+* `angular-auth/src/lib/utils/logger.utils.ts` (representative per-lib wrapper; one exists per library).
+
+Verification Sources checked::
+* {browser-logging}[`docs/.../browser-logging.adoc`] — user-facing debug-js reference (patterns, log levels, curated namespace list). Cross-checked against the code namespace list; the code list is broader (see Known issues).
+* `docs/.../migrations/angular-21/use-debug-logger-namespaces.adoc` — v8 note that `console.log` was replaced by `debug` namespaces.
+* `dev-docs/topics/debug.adoc` and `dev-docs/gatherer/debug.adoc` — the pre-v8 (`window['@onecx/accelerator'].topic.debug`) and v8+ (`localStorage.debug`) enabling instructions that this Unit supersedes.
+* JSDoc on `createLoggerFactory` / `ComponentLogger` in `create-logger.utils.ts`.
