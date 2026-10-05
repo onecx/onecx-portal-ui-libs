@@ -78,6 +78,19 @@
       }
       <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
     </p-chip>
+    } @if (canAddFilter()) {
+    <p-chip
+      id="ocxFilterViewAddFilter"
+      tabindex="0"
+      role="button"
+      (click)="openAddFilterDialog()"
+      (keydown.enter)="openAddFilterDialog()"
+      (keydown.space)="openAddFilterDialog()"
+      class="filter-view-add-filter cursor-pointer filter-view-focusable"
+      icon="pi pi-plus"
+      [label]="'OCX_FILTER_VIEW.ADD_FILTER.BUTTON_LABEL' | translate"
+      [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.BUTTON_ARIA_LABEL' | translate"
+    ></p-chip>
     } } }
   </ng-container>
   } @else {
@@ -89,11 +102,11 @@
       #manageButton
       id="ocxFilterViewManage"
       (onClick)="showPanel($event)"
-      [disabled]="filters.length === 0"
+      [disabled]="filters.length === 0 && !canAddFilter()"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
       [ocxTooltip]="
-        filters.length === 0
+        filters.length === 0 && !canAddFilter()
           ? ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DISABLED_DETAIL' | translate)
           : ('OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.DETAIL' | translate)
       "
@@ -111,7 +124,20 @@
         <div pFocusTrap>
           <div class="flex justify-content-between align-items-center mb-2">
             <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
-            <div>
+            <div class="flex align-items-center gap-2">
+              @if (canAddFilter()) {
+              <p-button
+                id="ocxFilterViewPanelAddFilter"
+                severity="secondary"
+                (onClick)="openAddFilterDialog()"
+                icon="pi pi-plus"
+                label="{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON_LABEL' | translate }}"
+                ocxTooltip="{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON_DETAIL' | translate }}"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+                [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.BUTTON_ARIA_LABEL' | translate"
+              ></p-button>
+              }
               <p-button
                 pAutoFocus
                 [autofocus]="true"
