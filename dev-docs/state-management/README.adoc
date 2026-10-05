@@ -1,0 +1,51 @@
+= State Management
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+How an Angular App turns the Shell's context and the URL into reactive ngrx state, and keeps that state alive across a reload. This Area covers ngrx only — there is no React store implementation in this repository.
+
+== Problem
+
+An App needs three things that it does not own: the workspace, page, theme, permissions and configuration the Shell knows; a place to mirror its own view state (sort, filter) into the URL; and a way to keep state it does produce across a page reload. Each of these has a distinct mechanism, but they share one store. This Area explains each one, across the libraries and the Shell.
+
+Two libraries carry the machinery:
+
+* `@onecx/ngrx-integration-interface` — the shared `onecx` state slice (actions, reducer, selectors) and the store connectors that mirror Shell-provided data into it.
+* `@onecx/ngrx-accelerator` — the effect and filter helpers for URL-synced state, and the `localStorage` helpers for rehydrating lazily-loaded slices.
+
+== Big picture
+
+The Shell is the source of the global OneCX data. Store connectors subscribe to the Shell-published topics and services and dispatch into the `onecx` slice, which the App reads through selectors. Separately, the App mirrors its own view state into the URL fragment, and restores its own non-Shell state from `localStorage`. The three mechanisms feed one store but have independent lifecycles.
+
+[source,mermaid]
+----
+flowchart TB
+  Shell[Shell: topics / services] --> C[store connectors]
+  C --> S[onecx slice]
+  S --> Sel[selectors]
+  Sel --> UI[App UI]
+  UI -->|createFragmentParamsEffect| Url[URL fragment]
+  Url -->|RouterNavigatedAction| UI
+  UI -->|persist| LS[(localStorage)]
+  LS -->|lazyLoadingMergeReducer| S
+----
+
+Each box is explained in one Unit; the links are the reading order.
+
+== Unit map
+
+The Units in this Area, in reading order:
+
+. link:shell-context-to-store.adoc[Shell context → App ngrx store] — how Shell topics and services become the `onecx` slice, and how the selectors read it.
+. link:url-synced-state.adoc[URL-synced state (fragment parameters)] — how App view state round-trips with the URL fragment, and why the fragment rather than query parameters.
+. link:persisting-state.adoc[Persisting state across reloads with lazy feature slices] — how `localStorage` state is restored without clobbering lazily-loaded slices.
+
+== Related Areas
+
+* link:../integration-contract/README.adoc[Integration Contract & Topics] — the topic bus the store connectors subscribe to (planned).
+* link:../shell-context/README.adoc[Shell Context & Runtime Configuration] — where the data the connectors mirror comes from (planned).
+* link:../navigation/README.adoc[Navigation & Routing] — how a URL change reaches every router; the `RouterNavigatedAction` the URL-synced filters subscribe to (planned).
+* link:../localization/README.adoc[Localization] — the user profile this Area stores but does not populate by default (planned).
+* link:../diagnostics/README.adoc[Diagnostics] — tools for observing topics and `window` state at runtime (planned).

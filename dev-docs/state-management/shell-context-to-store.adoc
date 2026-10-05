@@ -1,0 +1,134 @@
+= Shell context → App ngrx store
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+Where does an Angular App's global OneCX data — the current location, permissions, theme, workspace, page, MFE, configuration — in its ngrx store come from, and how does it stay in sync with the Shell?
+
+== Why it exists
+
+The Shell is the only component that knows the workspace, the current MFE and page, the active theme, the user's permissions and the runtime configuration. An App's components, effects and guards need that data as reactive, memoizable, testable ngrx state rather than by reaching into topics and services directly.
+
+Store connectors close that gap: each one subscribes to a single external source (a Shell-published link:{libs}/integration-interface/src/index.ts[`@onecx/integration-interface` Topic] or an Angular service backed by one) and dispatches a matching ngrx action. The actions feed one feature slice, the link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-state.ts[`onecx` state], which the rest of the App reads through memoized selectors.
+
+The mechanism — one slice, many independent sources, a connector per source — is framework-agnostic in intent, but the shipped implementation is Angular/ngrx only (see the link:persisting-state.adoc[Persisting state] and link:url-synced-state.adoc[URL-synced state] Units for the other two pieces of this Area).
+
+== How it works
+
+The slice, the actions, the reducer and the selectors are defined once in link:{libs}/ngrx-integration-interface/src/index.ts[`@onecx/ngrx-integration-interface`]:
+
+. link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-state.ts[`onecx-state.ts`] declares the `OneCxState` shape. Every field is optional, so the whole slice starts as `undefined` until a connector dispatches for the first time.
+. link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-actions.ts[`onecx-actions.ts`] builds `OneCxActions` with `createActionGroup` (source `OneCX`), one event per state slice.
+. link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-reducer.ts[`onecx-reducer.ts`] is a `createReducer` with an `on` branch per action. Each branch spreads the current state and *replaces* the matching slice with the action's payload — there is no partial update.
+. link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-selectors.ts[`onecx-selectors.ts`] exposes `getOneCxSelectors()`, which returns one memoized selector per slice (plus the derived `selectBackNavigationPossible`).
+
+The App registers the reducer under the feature key `onecx` (e.g. `StoreModule.forRoot({ onecx: oneCxReducer })` or `provideStore`). `createOneCxSelector()` defaults to `createFeatureSelector('onecx')`; `getOneCxSelectors()` accepts an optional `selectState` argument so the slice can be nested under another path.
+
+The connectors are the Shell-facing half. Every connector is an `@Injectable` that injects the ngrx `Store` plus one source and dispatches on each emission, and every connector is exposed through a `provide*StoreConnector()` function that also returns a `provideEnvironmentInitializer`. The initializer instantiates the service at bootstrap, so the subscription is live before the App renders:
+
+[source,typescript]
+----
+export function provideCurrentPageStoreConnector() {
+  return [
+    provideEnvironmentInitializer(() => inject(CurrentPageStoreConnectorService)),
+    CurrentPageStoreConnectorService,
+  ]
+}
+----
+
+[source,mermaid]
+----
+flowchart LR
+  Shell[Shell topics] --> Conn[store connectors]
+  Conn -->|dispatch| Act[OneCxActions]
+  Act --> Red[oneCxReducer]
+  Red --> Slice[onecx slice]
+  Slice --> Sel[selectors]
+  Sel --> App[App components / effects]
+----
+
+Each slice and the connector that fills it:
+
+[cols="1,1,2,2", options="header"]
+|===
+| State slice | Source the connector subscribes to | Connector | Dispatched action
+
+| `location` | `AppStateService.currentLocation$` — or, without that capability, an `EventsTopic` filtered to `NAVIGATED` | `NavigatedEventStoreConnectorService` | `navigated`
+| `permissions` | `UserService.getPermissions()` | `PermissionsStoreConnectorService` | `permissionsChanged`
+| `config` | `ConfigurationService.getConfig()` (one-shot) | `ConfigurationStoreConnectorService` | `configChanged`
+| `currentMfe` | `AppStateService.currentMfe$` | `CurrentMfeStoreConnectorService` | `currentMfeChanged`
+| `currentPage` | `AppStateService.currentPage$` | `CurrentPageStoreConnectorService` | `currentPageChanged`
+| `currentTheme` | a `CurrentThemeTopic` | `CurrentThemeStoreConnectorService` | `currentThemeChanged`
+| `currentWorkspace` | `AppStateService.currentWorkspace$` | `CurrentWorkspaceStoreConnectorService` | `currentWorkspaceChanged`
+| `appConfig` | `AppConfigService.config$` | `AppConfigStoreConnectorService` | `appConfigChanged`
+| `userProfile` | _none (no connector)_ | — | `userProfileChanged`
+|===
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/ngrx-integration-interface` provides the whole slice, the connectors, and the public API (see link:{libs}/ngrx-integration-interface/src/index.ts[the barrel]). The Angular services the connectors inject — `AppStateService`, `UserService`, `ConfigurationService`, `AppConfigService`, `ShellCapabilityService` — live in the sibling package `@onecx/angular-integration-interface` (for example link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`app-state.service.ts`]). Those services are thin wrappers over the `@onecx/integration-interface` topics: `AppStateService.currentMfe$` is a `CurrentMfeTopic`, `currentPage$` a `CurrentPageTopic`, and so on. The connectors therefore observe the same topic bus the Shell publishes on.
+
+=== Shell side
+
+The Shell publishes the topic values on the shared topic bus — `currentMfe`, `currentTheme`, `currentWorkspace`, `currentPage`, the current location, the `events` topic, plus the configuration and permissions data. The connectors in this repository observe those topics and mirror them into ngrx state. The topic *contract* — the class each value is published as — is defined in this repository and shared by both sides, for example link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic extends Topic<MfeInfo>`] and link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`].
+
+Because every App (MFE) runs its own ngrx store, the OneCX slice is *not* a shared store instance. Each MFE independently subscribes to the same Shell-mediated sources, so all MFEs converge on the same OneCX state without reading another MFE's store. If the Shell republishes `permissions`, every MFE that registered `PermissionsStoreConnectorService` updates on its own.
+
+== Angular / React
+
+The store connectors are Angular-only: they rely on `@angular/core` `@Injectable`, `inject()`, `provideEnvironmentInitializer` and the Angular `Store`. There is no React equivalent of the `onecx` store connectors or slice in this repository, which is why this Area covers ngrx only. An App that uses React consumes the same topics through `@onecx/react-integration-interface` instead of this slice.
+
+== Edge cases & pitfalls
+
+* Every slice is `undefined` until its connector dispatches. Selectors therefore return `undefined` (not a default object) — guard the first render.
+* `ConfigurationStoreConnectorService` is a one-shot `.then()` on `getConfig()`, not a continuous subscription. A config value that changes later is not re-dispatched the way the topic-backed connectors are.
+* `AppStateService.currentPage$` only emits a `PageInfo` when `pageInfo.path` matches `document.location.pathname`; otherwise it emits `undefined` (see the JSDoc on that getter).
+* `NavigatedEventStoreConnectorService` changes source based on `ShellCapabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)`: it uses the `CurrentLocationTopic` when the Shell advertises it and falls back to an `EventsTopic` (filtered to `NAVIGATED`) otherwise, and only then owns and destroys its own `EventsTopic` in `ngOnDestroy`.
+* `selectBackNavigationPossible` is derived from `selectLocation` as `!!location && !location.isFirst`; it is `false` before the first `navigated` action.
+
+== Debugging
+
+The slice is just ngrx state, so any ngrx devtool or a `selectLocation`/`selectCurrentMfe` selector in the browser console shows what the Shell currently reports. To watch the underlying topic traffic, or to confirm which source the `navigated` connector chose, use the general tools in the link:../diagnostics/tracing-communication.adoc[Diagnostics Area] (planned).
+
+== Known issues
+
+* `OneCxActions.userProfileChanged` is defined, the reducer has a branch for it and `selectUserProfile` exists — but *no* store connector dispatches it. `userProfile` therefore stays `undefined` in the slice unless the App dispatches `OneCxActions.userProfileChanged` itself. Confirmed by search: the only references to `userProfileChanged` in the repository are the action definition and the reducer branch. Follow-up: wire a user-profile store connector or document the manual dispatch as the intended path.
+
+== Related Units
+
+* link:README.adoc[State Management overview]
+* link:url-synced-state.adoc[URL-synced state (fragment parameters)]
+* link:persisting-state.adoc[Persisting state across reloads with lazy feature slices]
+* link:../navigation/url-to-every-router.adoc[URL change → every router] (planned)
+* link:../shell-context/current-app-and-api-base-url.adoc[Current App & API base URL resolution] (planned)
+
+== Sources
+
+Code::
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-state.ts[`OneCxState`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-actions.ts[`OneCxActions`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-reducer.ts[`oneCxReducer`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-selectors.ts[`getOneCxSelectors`, `selectUserProfile`, `selectBackNavigationPossible`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[connector barrel]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`NavigatedEventStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/permissions-store-connector-service.ts[`PermissionsStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/configuration-store-connector-service.ts[`ConfigurationStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-mfe-store-connector-service.ts[`CurrentMfeStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-page-store-connector-service.ts[`CurrentPageStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-theme-store-connector-service.ts[`CurrentThemeStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-workspace-store-connector-service.ts[`CurrentWorkspaceStoreConnectorService`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/app-config-store-connector-service.ts[`AppConfigStoreConnectorService`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService` (topic wrappers)]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
+* link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` (`dev-docs/state-management/index.adoc`) — the slice/connector table and the "userProfile has no connector" note agree with the code.
+* Old Dev Docs — none exist for this Area.
+* libs `docs/` — no dedicated ngrx state page (only migration guides mention the accelerator).
+* In-code JSDoc/README — `@onecx/angular-integration-interface` service getters.

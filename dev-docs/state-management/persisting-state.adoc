@@ -1,0 +1,85 @@
+= Persisting state across reloads with lazy feature slices
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How does an App restore its ngrx state from `localStorage` across a page reload, and how is that restore made safe when some feature slices are loaded lazily and are not present in the store yet at boot?
+
+== Why it exists
+
+State that is not derived from the Shell or the URL — drafts, cached data, view preferences — is lost on reload unless the App writes it to `localStorage` and reads it back. The tricky part is lazy loading: on boot, only the eagerly-loaded slices are registered in the store, so a persisted snapshot also contains keys for features that have not been loaded yet. Naively merging the whole snapshot would either clobber those not-yet-loaded slices or throw on keys the current reducer does not know about. The accelerator provides a merge-reducer and a key-configuration helper for exactly this.
+
+== How it works
+
+The two helpers live in `@onecx/ngrx-accelerator` under link:{libs}/ngrx-accelerator/src/index.ts[`src/index.ts`] (both are exported).
+
+=== `lazyLoadingMergeReducer`
+
+link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer(state, rehydratedState, _action)`] is the `stateReconciler` you hand to a store-persistence setup. On each restore it:
+
+. Collects `keysToRehydrate` — the keys that exist in the *persisted* `rehydratedState` **and** are already present in the live `state` (a lazy feature that has not loaded yet has no key in the live state, so it is excluded).
+. Deep-merges only those keys from `rehydratedState` into the live `state` using `deepmerge`, with `arrayMerge` set to *overwrite* (the persisted array wins, not a concatenation).
+. Deletes the merged keys from `rehydratedState` so they are not re-applied later.
+. Returns the reconciled `state`.
+
+The effect is that persisted data is applied only to slices that are *already loaded*. A slice that is still loading lazily is left untouched at boot; when that feature loads and its slice appears in the store, the persisted copy for it can then be reconciled. This is what makes the helper "lazy-loading"-safe.
+
+[source,typescript]
+----
+import { lazyLoadingMergeReducer } from '@onecx/ngrx-accelerator'
+
+// stateReconciler used with the store-persistence setup:
+// merge persisted data only into slices that are already in the store
+----
+
+=== `createNestedKeyConfiguration`
+
+link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration(nestedKeyConfiguration)`] converts an App's whitelist of keys into the `KeyConfiguration[]` shape a persistence library expects. It accepts a flat array of `string` or nested `NestedKeyConfiguration` objects and returns it typed as `KeyConfiguration[]`. The related types — `Options` (`serialize`, `deserialize`, `reviver`, `replacer`, `encrypt`, `decrypt`, `filter`, `space`), `KeyConfiguration` and `NestedKeyConfiguration` — describe how particular state keys are (de)serialized and filtered before they touch `localStorage`.
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/ngrx-accelerator` provides `lazyLoadingMergeReducer` and `createNestedKeyConfiguration`. The App wires them into its own ngrx persistence setup and decides which keys to persist.
+
+=== Shell side
+
+The Shell does not participate in this mechanism. Persistence is a per-App concern against `localStorage`, which is shared by all tabs/windows on the origin. Nothing here crosses the libs ↔ Shell boundary, in contrast to the link:shell-context-to-store.adoc[Shell context → store] and link:url-synced-state.adoc[URL-synced state] Units.
+
+== Angular / React
+
+The helpers are plain TypeScript (they take and return state objects and use `deepmerge`) and do not depend on Angular, so the same code can be used by a React App with its own persistence layer. This is a framework-agnostic part of the Area.
+
+== Edge cases & pitfalls
+
+* Only keys present in *both* the persisted snapshot and the live store are merged. If a lazily-loaded slice is not in the live store yet, its persisted value is deferred — do not expect it to appear until the slice loads.
+* Arrays are *replaced*, not merged: `arrayMerge` is overwritten so the persisted array wins. If you want concatenated history, you must reconcile it yourself.
+* `_action` is ignored by the helper — it exists only to match the `stateReconciler` signature.
+* `createNestedKeyConfiguration` is a type-level cast; it does not validate the shape, so a malformed key list will only surface at persistence time.
+* Encryption and serialization are delegated to whatever `Options` you supply — the helper does not add its own security or (de)serialization.
+
+== Debugging
+
+Inspect the `localStorage` key the App writes (its name depends on the persistence setup) and compare it with the live store: after a reload, the merged slices should match the stored snapshot and the still-lazy slices should be absent until they load. General `window`-state inspection lives in the link:../diagnostics/window-state-inventory.adoc[Diagnostics Area] (planned).
+
+== Related Units
+
+* link:README.adoc[State Management overview]
+* link:shell-context-to-store.adoc[Shell context → App ngrx store]
+* link:url-synced-state.adoc[URL-synced state (fragment parameters)]
+
+== Sources
+
+Code::
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer`]
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration`, `Options`, `KeyConfiguration`, `NestedKeyConfiguration`]
+* link:{libs}/ngrx-accelerator/src/index.ts[public barrel]
+
+Verification Sources checked::
+* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca` (`dev-docs/state-management/index.adoc`) — the merge-reducer and key-configuration descriptions agree with the code.
+* Old Dev Docs — none exist for this Area.
+* libs `docs/` — no page for these helpers.
+* In-code — the `Options`/`KeyConfiguration` type definitions and the `deepmerge` peer dependency in link:{libs}/ngrx-accelerator/package.json[`package.json`].
