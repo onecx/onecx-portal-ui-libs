@@ -1,10 +1,7 @@
 import * as z from 'zod'
 import { border, withRef } from '../primitives'
-import {
-  calendarFooterButtonShape,
-  calendarTodayButtonDefaults,
-  calendarClearButtonDefaults,
-} from './footerbutton'
+import { themeSchemaRegistry } from '../registry'
+import { calendarFooterButtonShape, calendarTodayButtonDefaults, calendarClearButtonDefaults } from './footerbutton'
 
 /**
  * Shape of a single state block of the calendar footer button bar.
@@ -24,13 +21,18 @@ const calendarFooterButtonBarStateShape = z.object({
  * Shape for the footer button bar in the calendar panel.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarFooterButtonBarShape = z.object({
-  defaultVariant: z.object({
-    defaultState: calendarFooterButtonBarStateShape.prefault({}),
-    hover: calendarFooterButtonBarStateShape.prefault({}),
-    focus: calendarFooterButtonBarStateShape.prefault({}),
-  }).prefault({}),
-})
+export const calendarFooterButtonBarShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarFooterButtonBarStateShape.prefault({}),
+        hover: calendarFooterButtonBarStateShape.prefault({}),
+        focus: calendarFooterButtonBarStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarFooterButtonBarVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarFooterButtonBarShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the footer button bar.

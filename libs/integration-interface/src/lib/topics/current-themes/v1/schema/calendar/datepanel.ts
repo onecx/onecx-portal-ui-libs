@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { calendarTodayShape, calendarTodayDefaults } from './today'
 import { calendarViewShape, calendarViewDefaults, calendarDayViewShape, calendarDayViewDefaults } from './view'
 
@@ -25,15 +26,18 @@ const calendarDatePanelStateShape = z.object({
  * Shape for the calendar date panel.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarDatePanelShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: calendarDatePanelStateShape.prefault({}),
-      hover: calendarDatePanelStateShape.prefault({}),
-      focus: calendarDatePanelStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+export const calendarDatePanelShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarDatePanelStateShape.prefault({}),
+        hover: calendarDatePanelStateShape.prefault({}),
+        focus: calendarDatePanelStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarDatePanelVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarDatePanelShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar date panel.

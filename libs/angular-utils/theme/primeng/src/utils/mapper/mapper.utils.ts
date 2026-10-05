@@ -21,6 +21,7 @@ export function setByPath(
   value: unknown
 ): void {
   const segments = path.split('.');
+  if (segments.length === 0 || segments.includes('__proto__')) return;
   let current: Record<string, unknown> = obj;
   for (let i = 0; i < segments.length - 1; i++) {
     const key = segments[i];

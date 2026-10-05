@@ -12,7 +12,7 @@ export const smButtonShape = z
     paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
     paddingY: withRef(z.string()).default('{{primitives.space.xs}}'),
   })
-  .register(themeSchemaRegistry, { id: 'smButtonShape' })
+  .register(themeSchemaRegistry, { id: 'smButtonShape', axis: 'none' })
 
 export const mdButtonShape = z
   .object({
@@ -20,7 +20,7 @@ export const mdButtonShape = z
     paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
     paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
   })
-  .register(themeSchemaRegistry, { id: 'mdButtonShape' })
+  .register(themeSchemaRegistry, { id: 'mdButtonShape', axis: 'none' })
 
 export const lgButtonShape = z
   .object({
@@ -28,4 +28,4 @@ export const lgButtonShape = z
     paddingX: withRef(z.string()).default('{{primitives.space.lg}}'),
     paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
   })
-  .register(themeSchemaRegistry, { id: 'lgButtonShape' })
+  .register(themeSchemaRegistry, { id: 'lgButtonShape', axis: 'none' })
