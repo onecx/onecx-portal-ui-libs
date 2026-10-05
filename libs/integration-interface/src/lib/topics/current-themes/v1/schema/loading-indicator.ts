@@ -6,13 +6,8 @@ import { bg, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
 import { applyDefaultsRecursive } from './defaults-helper'
 
-const loadingIndicatorOverlayShape = z.object({
-  background: z.union([bg, withRef(z.string())]).optional(),
-})
-
 const loadingIndicatorSpinnerBorderShape = z.object({
   color: color.optional(),
-  trackColor: color.optional(),
   width: withRef(z.string()).optional(),
 })
 
@@ -22,23 +17,26 @@ const loadingIndicatorSpinnerShape = z.object({
   animationDuration: withRef(z.string()).optional(),
 })
 
+const loadingIndicatorOverlayShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  spinner: loadingIndicatorSpinnerShape.prefault({}),
+})
+
 export const loadingIndicatorShape = z.object({
   overlay: loadingIndicatorOverlayShape.prefault({}),
-  spinner: loadingIndicatorSpinnerShape.prefault({}),
 })
 
 export const loadingIndicatorDefaults = {
   overlay: {
     background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
-  },
-  spinner: {
-    size: '{{primitives.space.lg}}',
-    border: {
-      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-      trackColor: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-      width: '{{primitives.border.width.md}}',
+    spinner: {
+      size: '{{primitives.space.lg}}',
+      border: {
+        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+        width: '{{primitives.border.width.md}}',
+      },
+      animationDuration: '{{primitives.transition.duration}}',
     },
-    animationDuration: '{{primitives.transition.duration}}',
   },
 }
 

@@ -1,6 +1,14 @@
 # Loading Indicator — Theme Schema Structure Audit
 
 - **Date**: 2026-09-23
+
+> **Subsequent revision (PR 1728 review, 2026-10-05).** The flat two-child shape recorded below
+> (`overlay` and `spinner` both at the component root) was revised per review: the spinner is
+> rendered inside the overlay container, so it is now themed as a **child of `overlay`**
+> (`usages.loadingIndicator.overlay.spinner.*`), and the unused `border.trackColor` token was
+> removed (the spinner's transparent "track" is the CSS gap, not a themable color). The default
+> tables and path list below were updated to match; the original audit decisions are preserved in
+> "Structural decisions" for the record.
 - **Component**: `loadingIndicator` (single-file schema: `schema/loading-indicator.ts`)
 - **Scope**: structure-only audit (shape, children, dependency nesting, variant layers, states, severities, default-value placement). Semantic `{{primitives...}}` reference-path correctness against the CSS mapper is out of scope — no reference paths were changed in this audit (all values carried over verbatim from the legacy schema).
 
@@ -14,33 +22,32 @@
 
 The loading indicator renders a full-screen backdrop with a centered spinner (HTML: `.full-overlay` → `.overlay` → `.loader`). The positioning wrapper `.full-overlay` is a transparent fixed-position box with no themable styling, so it is not a child. The two themable children are the **overlay** (semi-transparent backdrop) and the **spinner** (`.loader`).
 
-The component has **no variants, states, or severities**. This is the **contract** the CSS mapper already reads — a flat shape with no variant/state/severity segment (see `css-rules/usages/loading-indicator.rules.ts`):
+The component has **no variants, states, or severities**. This is the **contract** the CSS mapper reads — a shape with no variant/state/severity segment (see `css-rules/usages/loading-indicator.rules.ts`):
 
 - `usages.loadingIndicator.overlay.background`
-- `usages.loadingIndicator.spinner.size`
-- `usages.loadingIndicator.spinner.border.color`
-- `usages.loadingIndicator.spinner.border.trackColor`
-- `usages.loadingIndicator.spinner.border.width`
-- `usages.loadingIndicator.spinner.animationDuration`
+- `usages.loadingIndicator.overlay.spinner.size`
+- `usages.loadingIndicator.overlay.spinner.border.color`
+- `usages.loadingIndicator.overlay.spinner.border.width`
+- `usages.loadingIndicator.overlay.spinner.animationDuration`
 
 ```
 loadingIndicator (root)
-├── overlay          # dep: nothing — flat at root, no wrapper
-│   └── background
-└── spinner          # dep: nothing — flat at root, no wrapper
-    ├── size
-    ├── border { color, trackColor, width }
-    └── animationDuration
+└── overlay          # dep: nothing — no wrapper
+    ├── background
+    └── spinner      # rendered inside the overlay container → child of overlay
+        ├── size
+        ├── border { color, width }
+        └── animationDuration
 ```
 
 ### Structural decisions (user-confirmed)
 
-1. **Two children: `overlay` and `spinner`.** Both render their own distinguishable visual box (backdrop fill; the loader ring).
-2. **Dependency `nothing` for both children.** No variant/state/severity axis exists, so each child sits flat at the component root — matching the mapper's flat `usages.loadingIndicator.<child>.<token>` reads.
+1. **Two children: `overlay` and `spinner`.** Both render their own distinguishable visual box (backdrop fill; the loader ring). _(Revised in PR 1728: `spinner` now nests under `overlay`, so the component has one root child, `overlay`.)_
+2. **Dependency `nothing` for both children.** No variant/state/severity axis exists, so the tokens sit flat with no variant/state/severity wrapper — matching the mapper's `usages.loadingIndicator.overlay[.spinner].<token>` reads.
 3. **Both children are specific** (no corresponding standalone generic usage). No Option 1/2 consolidation decision applies; each keeps its own minimal token set.
 4. **No `defaultVariant`/`defaultState`/`defaultSeverity` wrappers anywhere** — the component declares no named variants/states/severities, so tokens sit directly on each child (per the "no unused wrapper" rule).
 5. **The 5 canonical color variants are not modeled.** The mapper references no `usages.loadingIndicator.primary.*` etc.
-6. **Structure preserved.** The flat child shape the mapper reads is the structural contract; this audit must not add nesting or drop tokens.
+6. **Structure preserved.** The child shape the mapper reads is the structural contract. _(Superseded in PR 1728: the `spinner`-under-`overlay` nesting and the `trackColor` removal changed the shape per review; the mapper was updated to match in the same revision.)_
 
 ## Gap list (Step 5) — vs. actual `loading-indicator.ts`
 
@@ -57,7 +64,7 @@ Both items accepted by the user.
 
 ## Default-value tables (Step 7)
 
-Dependency is `nothing`, so every token **is** a baseline and all carry a default. Values are unchanged from the legacy schema.
+Dependency is `nothing`, so every token **is** a baseline and all carry a default. (`border.trackColor` was removed in the PR 1728 revision; the remaining values are unchanged from the legacy schema.)
 
 ### `overlay`
 
@@ -65,13 +72,12 @@ Dependency is `nothing`, so every token **is** a baseline and all carry a defaul
 |-------|---------|
 | `background` | `{{primitives.area.overlay.defaultState.defaultSeverity.bg}}` |
 
-### `spinner`
+### `overlay.spinner`
 
 | Token | Default |
 |-------|---------|
 | `size` | `{{primitives.space.lg}}` |
 | `border.color` | `{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}` |
-| `border.trackColor` | `{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}` |
 | `border.width` | `{{primitives.border.width.md}}` |
 | `animationDuration` | `{{primitives.transition.duration}}` |
 
