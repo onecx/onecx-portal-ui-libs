@@ -62,25 +62,21 @@ If your application provides a custom `AuthServiceFactory` (the `custom` option 
 [source,typescript]
 ----
 // exports default a factory that returns the service synchronously
-import { Injectables } from '@onecx/shell-auth';
 import { CustomAuthService } from './custom-auth.service';
 
 export default function (injector) {
-  // can synchronously retrieve already-available injectables
-  const keycloak = injector(Injectables.KEYCLOAK_AUTH_SERVICE) as any;
-  return new CustomAuthService(keycloak);
+  // can synchronously construct the service from already-available values
+  return new CustomAuthService();
 }
 ----
 .After
 [source,typescript]
 ----
 // unchanged: synchronous factories continue to work
-import { Injectables } from '@onecx/shell-auth';
 import { CustomAuthService } from './custom-auth.service';
 
 export default function (injector) {
-  const keycloak = injector(Injectables.KEYCLOAK_AUTH_SERVICE) as any;
-  return new CustomAuthService(keycloak);
+  return new CustomAuthService();
 }
 ----
 
@@ -118,4 +114,3 @@ export default async function (injector) {
 ====
 Synchronous factories remain valid — you do not need to make your factory async unless it must await injected values (for example, the configuration object). The implementation in libs/shell-auth accepts either a direct AuthService return or a Promise<AuthService>, and the injector callback may return a Promise for values such as the application Config.
 ====
-
