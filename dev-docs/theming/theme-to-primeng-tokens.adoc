@@ -1,0 +1,187 @@
+
+= Theme → PrimeNG/PrimeReact tokens
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:overview: ./overview.adoc
+:theme_to_page: ./theme-to-page.adoc
+:app_config: {libs}/angular-utils/theme/primeng/src/utils/application-config.ts
+:theme_config_service: {libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts
+:theme_config: {libs}/angular-utils/theme/primeng/src/utils/theme-config.ts
+:create_palette: {libs}/angular-utils/theme/primeng/src/utils/create-color-palette.ts
+:custom_preset: {libs}/angular-utils/theme/primeng/src/preset/custom-preset.ts
+:preset_variables: {libs}/angular-utils/theme/primeng/src/preset/preset-variables.ts
+:default_theme_variables: {libs}/angular-utils/theme/primeng/src/preset/default-theme-variables.ts
+:style_registry: {libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx
+:apply_theme_variables: {libs}/react-utils/src/lib/styling/primeReact/theme/applyThemeVariables.ts
+:scoped_style_container: {libs}/react-utils/src/lib/styling/primeReact/theme/scopedStyleContainer.ts
+:onecx_variables: {libs}/react-utils/src/lib/styling/primeReact/theme/theme-onecx/onecx-variables.scss
+:react_theme_entry: {libs}/react-utils/src/lib/styling/primeReact/styles.ts
+
+== Question answered
+
+How do the values of a OneCX theme (the `properties` map from link:{theme_to_page}[Theme → page]) become the design tokens that PrimeNG (Angular) and PrimeReact (React) components actually use?
+
+== Why it exists
+
+PrimeNG 19+ and PrimeReact are themed through *design tokens*: a set of primitive and semantic values that the component styles read at render time. OneCX wants its component-library UI to reflect the active Workspace theme, not just its own custom styles. So each framework needs a step that takes the theme values and writes them into the component library's token system, and re-runs that step whenever the theme changes at runtime. This Unit covers that step for both frameworks.
+
+== How it works
+
+Both frameworks consume the same input — the `Theme` published on `CurrentThemeTopic`, specifically its `properties` map (section → kebab-case variable → value). The shared goal is the same; the frameworks reach it by different means:
+
+* **Angular** maps the theme values into a PrimeNG *preset* (a token tree) and hands it to PrimeNG's `setThemeConfig`. PrimeNG then emits CSS variables (`--p-*`, and OneCX's extended `--onecx-*`) that its components read.
+* **React** keeps the theme as *CSS custom properties* on the page. A static SCSS theme defines each token as a fallback chain of CSS variables, and a runtime step rewrites those variables from the current theme into the app's scoped stylesheet.
+
+The two approaches differ because PrimeNG is configured programmatically through a preset object, whereas PrimeReact styles are compiled to CSS and scoped per application. See Angular / React below.
+
+== Angular / React
+
+=== Angular
+
+The entry point an application adds is link:{app_config}[`provideThemeConfig`]. It wires the Angular environment so that `ThemeConfigService` runs when the app starts, PrimeNG is provided, and the app's stylesheet gets its PrimeNG variables replaced for scoping (see the old link:../styles/primeng-token-variables.adoc[PrimeNG token variables] page).
+
+link:{theme_config_service}[`ThemeConfigService`] is the actor. On construction it subscribes to `ThemeService.currentTheme$` and, for every theme emitted, calls `applyThemeVariables(theme)`:
+
+[source,typescript]
+----
+async applyThemeVariables(oldTheme: OneCXTheme) {
+  const oldThemeVariables = oldTheme.properties
+  const overridesFolded = this.isAdvancedTheming
+    ? this.foldOverrides(this.parsePrimeNGOverridesValue(oldTheme.overrides)) : {}
+
+  const themeConfig = new ThemeConfig(oldThemeVariables)
+  const preset = await (await import('../preset/custom-preset')).CustomPreset
+  this.primeNG.setThemeConfig({
+    theme: {
+      preset: mergeDeep(preset, mergeDeep(themeConfig.getConfig(), overridesFolded)),
+      options: { darkModeSelector: false },
+    },
+  })
+}
+----
+
+The steps in that method:
+
+* **Read the theme variables.** `theme.properties` is the flat map from link:{theme_to_page}[Theme → page].
+* **Build the theme-driven part of the preset.** link:{theme_config}[`ThemeConfig`] takes the variables, converts their kebab-case keys to camelCase (PrimeNG expects camelCase), and in `getConfig()` assembles:
+  ** `semantic.extend.onecx` — the OneCX extension section, spread from the `font`, `topbar`, `sidebar` and `general` sections;
+  ** `primary` — a full colour palette generated from `general.primary-color` by link:{create_palette}[`createPalette(..., standardColorAdjustment)`] (the 50–950 scale);
+  ** `colorScheme.light.primary` — the same palette under the light scheme.
+* **Merge onto the base preset.** link:{custom_preset}[`CustomPreset`] is `definePreset(normalizeKeys(Aura), normalizeKeys(presetVariables))` — PrimeNG's *Aura* preset overlaid with OneCX's link:{preset_variables}[token tree]. The theme-driven part from the previous step is merged on top, so theme values win over the defaults.
+* **Apply.** `primeNG.setThemeConfig(...)` installs the merged preset; PrimeNG re-renders its CSS variables from it.
+
+[#angular-overrides]
+==== Theme overrides (advanced)
+
+When `provideThemeConfig` is given `isAdvancedTheming: true` (exposed via the `IS_ADVANCED_THEMING` token), `ThemeConfigService` also folds the theme's `overrides` array (link:{theme_to_page}[Theme → page]) into the preset. Only overrides of type `PRIMENG` are used; their `value` (a JSON string of a token tree) is parsed and deep-merged last, so application overrides beat both the theme and the defaults. See the old link:theme-overrides.adoc[theme overrides] page for how to supply them.
+
+link:{default_theme_variables}[`default-theme-variables.ts`] holds the default `font` / `topbar` / `sidebar` / `general` values used to seed `semantic.extend.onecx` before a Workspace theme overrides them.
+
+=== React
+
+React has no programmatic preset. Instead the theme is carried as CSS variables, and the app is wired up through the link:{style_registry}[`StyleRegistry`] component (added by the `withAppStyles` higher-order component).
+
+`StyleRegistry` does three things:
+
+[source,typescript]
+----
+const { PRODUCT_NAME } = useAppGlobals()
+const themeStyleId = `${PRODUCT_NAME}|${PRODUCT_NAME}`
+const styleContainer = useMemo(
+  () => getOrCreateScopedStyleContainer(themeStyleId), [themeStyleId])
+
+useEffect(() => {
+  const topic = new CurrentThemeTopic()
+  const themeSubscription = topic.subscribe((theme) => {
+    applyThemeVariables(theme, themeStyleId)
+  })
+  return () => { themeSubscription.unsubscribe(); topic.destroy() }
+}, [themeStyleId])
+
+return (
+  <PrimeReactProvider
+    value={{ unstyled: false, appendTo: 'self', styleContainer }}>
+    {children}
+  </PrimeReactProvider>
+)
+----
+
+* **A per-app scoped style container.** link:{scoped_style_container}[`scopedStyleContainer.ts`] returns a `Proxy` over `document.head` that rewrites PrimeReact's style ids to this product's id. This keeps PrimeReact's CSS scoped to the app even when PrimeReact is a shared Module-Federation singleton loaded by another app.
+* **Runtime theme application.** For every theme emitted on `CurrentThemeTopic`, link:{apply_theme_variables}[`applyThemeVariables`](theme, themeStyleId) runs.
+* **Provider config.** `PrimeReactProvider` is configured with `unstyled: false` and the scoped `styleContainer`.
+
+[#react-variables]
+==== From `properties` to CSS variables
+
+link:{apply_theme_variables}[`applyThemeVariables`] turns the theme `properties` into CSS custom properties:
+
+[source,typescript]
+----
+// flatten { general: { 'primary-color': '#274b5f' } } ->
+// { '--app-primary-color': '#274b5f' }
+// keys are kebab-cased; a leading 'app-' is stripped before re-prefixing '--app-'
+----
+
+It then applies them in two ways:
+
+* **First-render safety.** `applyVariablesToScopeRoots` sets the variables directly on the DOM elements whose `data-style-id` / `data-intermediate-style-id` matches the app id, so styles never wait for the stylesheet element.
+* **Into the scoped stylesheet.** It injects a `@layer tokens { :scope { …variables… } }` block (between `/* app-theme-runtime:start */` and `…end */` markers) into the app's `<style data-app-styles=…>` / `data-app-primereact-style` elements, replacing any previous runtime block.
+
+The *static* counterpart is the compiled SCSS. link:{onecx_variables}[`onecx-variables.scss`] (included by the app's theme via link:{react_theme_entry}[`styles.ts`]) defines each token as a fallback chain:
+
+[source,scss]
+----
+--app-primary-color:
+  var(--ocx-theme-definitions-primary-color,   // forward hook, not defined on main
+      var(--primary-color, #550e0e33))          // bare var, then hard default
+----
+
+The rest of the PrimeReact theme reads `var(--app-*)`. So a token's resolved value is:
+
+* **At runtime** — the `--app-*` (and bare `--*`) values written by `applyThemeVariables` from the current theme take precedence (set inline on the scope root and into the scoped stylesheet).
+* **Fallback (first paint / a token absent from `theme.properties`)** — the static chain above: the bare `--primary-color`, which the Shell sets on `<html>` (link:theme-to-page.adoc#the-shell-leg[Shell leg]); then a hard-coded default.
+* **`--ocx-theme-definitions-*`** — the outermost fallback. It is a forward-looking hook: it is *referenced* by the libs SCSS but is **not defined by the libs, nor by the Shell `main`** (verified by search in both repositories). Today it therefore resolves through to the bare `--*` / default.
+
+== Edge cases & pitfalls
+
+* **Theme change at runtime.** Both frameworks subscribe to the Topic and re-apply on every emission — Angular re-calls `setThemeConfig`, React re-runs `applyThemeVariables`. A consumer that caches the theme value once will not track Workspace switches.
+* **Angular key casing.** `ThemeConfig` converts kebab-case `properties` keys to camelCase because PrimeNG expects camelCase. If a theme uses a variable name that does not round-trip through this conversion, it will not map.
+* **Dark mode is disabled.** Angular sets `darkModeSelector: false` and the `CustomPreset` clears `semantic.colorScheme.dark`, so only the light scheme is active. Do not expect dark-theme tokens to be driven.
+* **React: no stylesheet element yet.** `applyThemeVariables` logs a warning and only sets the variables on the scope root when the app's `<style data-app-styles=…>` element is not present yet.
+* **React: `--ocx-theme-definitions-*` is an undefined hook.** The outermost fallback in the static chain is referenced by the libs SCSS but is defined by neither the libs nor the Shell `main`. It is a forward hook (likely the target of a future theming revision); until something defines it, tokens resolve through to the bare `--*` variables the Shell writes on `<html>`, then to the hard-coded default. Do not assume a themed value is flowing through this layer.
+
+== Related Units
+
+* link:{theme_to_page}[Theme → page] — where the `Theme` and its `properties` come from.
+* link:{overview}[Theming & Visual Assets overview] — the Area this Unit belongs to.
+* link:theme-overrides.adoc[Theme Overrides] — how an application overrides the resulting token values (existing page).
+* link:../styles/primeng-token-variables.adoc[PrimeNG token variables] — how the generated `--p-*` variables are scoped per application (existing page).
+
+== Sources
+
+Code::
+* link:{theme_config_service}[`angular-utils/theme/primeng/src/services/theme-config.service.ts`] — `ThemeConfigService` / `applyThemeVariables`, overrides folding.
+* link:{theme_config}[`angular-utils/theme/primeng/src/utils/theme-config.ts`] — `ThemeConfig` (kebab→camel, `getConfig()`).
+* link:{custom_preset}[`angular-utils/theme/primeng/src/preset/custom-preset.ts`] — `CustomPreset` (`definePreset(normalizeKeys(Aura), normalizeKeys(presetVariables))`).
+* link:{preset_variables}[`angular-utils/theme/primeng/src/preset/preset-variables.ts`] — OneCX token tree and `semantic.extend.onecx` defaults.
+* link:{default_theme_variables}[`angular-utils/theme/primeng/src/preset/default-theme-variables.ts`] — default theme-variable values.
+* link:{create_palette}[`angular-utils/theme/primeng/src/utils/create-color-palette.ts`] — `createPalette` / `standardColorAdjustment` (primary scale).
+* link:{app_config}[`angular-utils/theme/primeng/src/utils/application-config.ts`] — `provideThemeConfig`, `IS_ADVANCED_THEMING`, `THEME_OVERRIDES`.
+* link:{style_registry}[`react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx`] — React wiring (scoped container, Topic subscription, `PrimeReactProvider`).
+* link:{apply_theme_variables}[`react-utils/src/lib/styling/primeReact/theme/applyThemeVariables.ts`] — properties → CSS variables, scope-root + stylesheet injection.
+* link:{scoped_style_container}[`react-utils/src/lib/styling/primeReact/theme/scopedStyleContainer.ts`] — per-product `document.head` Proxy.
+* link:{onecx_variables}[`react-utils/src/lib/styling/primeReact/theme/theme-onecx/onecx-variables.scss`] — static `--app-*` fallback chains.
+* link:{react_theme_entry}[`react-utils/src/lib/styling/primeReact/styles.ts`] — how the SCSS theme is loaded.
+
+Verification Sources checked::
+* `dev-docs/theming/primeng.adoc` (old) — matches on `provideThemeConfig`, `ThemeConfigService`, `CustomPreset` and the `onecx` extension section. Note: it links `libs/angular-utils/src/lib/theme/…` and `…/src/lib/services/…`, which no longer exist on `main` (the code moved to `libs/angular-utils/theme/primeng/src/…`); follow-up to update the old page.
+* `dev-docs/theming/theme-overrides.adoc` (old) — cross-checked for the overrides mechanism described under Angular.
+* `dev-docs/styles/primeng-token-variables.adoc` (old) — cross-checked for the `--p-*` per-scope replacement (referenced, not repeated, here).
+* `docs/…/migrations/angular-20/update-primeng-package.adoc` and `docs/…/migrations/angular-19/provide-theme-config.adoc` — confirm the `@onecx/angular-utils/theme/primeng` subpackage layout and `provideThemeConfig` usage.
+
+== Known issues
+
+* **Old pages point at moved paths.** `theming/primeng.adoc` and `theming/theme-overrides.adoc` still reference `libs/angular-utils/src/lib/theme/…` and `libs/angular-utils/src/lib/services/…`, which were moved to `libs/angular-utils/theme/primeng/src/…` (see the v7 migration docs). The per-page rule is not to edit the verification-source pages, so this is recorded as a follow-up rather than fixed here.
