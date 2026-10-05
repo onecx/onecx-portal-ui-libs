@@ -47,8 +47,75 @@ await this.configService.setProperty(CONFIG_KEY.APP_VERSION, '6.0.0');
 
 ----
 
+=== Custom AuthServiceFactory
+
+If your application provides a custom `AuthServiceFactory` (the `custom` option of `CONFIG_KEY.AUTH_SERVICE`), note the following:
+
+* `AuthServiceWrapper` awaits the async configuration reads (e.g. `CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL`) before loading the remote factory.
+* The exported factory function itself may return an `AuthService` synchronously or a `Promise<AuthService>`; `AuthServiceWrapper` will await the factory result.
+* The injector callback passed into the factory may itself return a value or a `Promise` (for example, `CONFIG` is provided via an async call). If the factory needs injected values that must be awaited, make the factory async and `await` the injector callback.
+
+=== Examples
+
+.Synchronous factory (no change required)
+.Before
+[source,typescript]
+----
+// exports default a factory that returns the service synchronously
+import { Injectables } from '@onecx/shell-auth';
+import { CustomAuthService } from './custom-auth.service';
+
+export default function (injector) {
+  // can synchronously retrieve already-available injectables
+  const keycloak = injector(Injectables.KEYCLOAK_AUTH_SERVICE) as any;
+  return new CustomAuthService(keycloak);
+}
+----
+.After
+[source,typescript]
+----
+// unchanged: synchronous factories continue to work
+import { Injectables } from '@onecx/shell-auth';
+import { CustomAuthService } from './custom-auth.service';
+
+export default function (injector) {
+  const keycloak = injector(Injectables.KEYCLOAK_AUTH_SERVICE) as any;
+  return new CustomAuthService(keycloak);
+}
+----
+
+.Asynchronous factory (await injected configuration)
+.Before
+[source,typescript]
+----
+// if your factory needs to read injected configuration asynchronously,
+// calling the injector without awaiting will give a Promise and lead to errors
+import { Injectables } from '@onecx/shell-auth';
+import { CustomAuthService } from './custom-auth.service';
+
+export default function (injector) {
+  // WRONG: injector(Injectables.CONFIG) may be a Promise
+  const cfg = injector(Injectables.CONFIG) as any;
+  return new CustomAuthService(cfg);
+}
+----
+.After
+[source,typescript]
+----
+// Make the factory async and await injected values when needed
+import { Injectables } from '@onecx/shell-auth';
+import { CustomAuthService } from './custom-auth.service';
+
+export default async function (injector) {
+  // injector may return a Promise for CONFIG; await it
+  const cfg = (await injector(Injectables.CONFIG)) as any;
+  // perform any async initialization here, then return the service
+  return new CustomAuthService(cfg);
+}
+----
+
 [NOTE]
 ====
-If your application provides a custom `AuthServiceFactory` (the `custom` option of `CONFIG_KEY.AUTH_SERVICE`), `AuthServiceWrapper` now `await`s both `ConfigurationService.getProperty()` and the value returned by your factory function. Update any custom auth-service-factory remote module so its exported factory function may return a value synchronously or wrapped in a `Promise`, and account for the async read of `CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL`.
+Synchronous factories remain valid — you do not need to make your factory async unless it must await injected values (for example, the configuration object). The implementation in libs/shell-auth accepts either a direct AuthService return or a Promise<AuthService>, and the injector callback may return a Promise for values such as the application Config.
 ====
 
