@@ -73,3 +73,32 @@ All planned Units of this Area, in reading order. Units whose page exists are li
 * link:../shell-context/current-app-and-api-base-url.adoc[3. Shell Context & Runtime Configuration] — where the profile and its settings come from.
 * link:../styling/primeng-style-scoping.adoc[4. Styling & Style Isolation] — the `primeng` translation keys are handed to the PrimeNG configuration on every language change.
 * link:../diagnostics/logging.adoc[13. Diagnostics] — general tools for observing the Topics and `window` state these Units rely on.
+
+== Cross-Area links
+
+The Units in this Area link out to the following Units in other Areas. Each path is a planned slug fixed by the Dev Docs top index; none of these pages exists in the repository yet, so every one of them is a link to a not-yet-written page and is listed here (as the top-index convention requires) so the links can be verified. All in-Area links resolve to the two Units written in this change.
+
+|===
+|Link |Target Area — Unit
+
+|link:../integration-contract/message-delivery.adoc[`integration-contract/message-delivery.adoc`]
+|1. Integration Contract & Topics — Topic message delivery
+
+|link:../shell-context/context-readiness.adoc[`shell-context/context-readiness.adoc`]
+|3. Shell Context & Runtime Configuration — Context overview & readiness
+
+|link:../shell-context/current-app-and-api-base-url.adoc[`shell-context/current-app-and-api-base-url.adoc`]
+|3. Shell Context & Runtime Configuration — Current App & API base URL resolution
+
+|link:../styling/primeng-style-scoping.adoc[`styling/primeng-style-scoping.adoc`]
+|4. Styling & Style Isolation — PrimeNG/PrimeReact style scoping
+
+|link:../authentication/obtaining-tokens.adoc[`authentication/obtaining-tokens.adoc`]
+|8. Authentication — How Apps obtain tokens
+
+|link:../diagnostics/logging.adoc[`diagnostics/logging.adoc`]
+|13. Diagnostics — Logging
+
+|link:../diagnostics/tracing-communication.adoc[`diagnostics/tracing-communication.adoc`]
+|13. Diagnostics — Tracing cross-App communication
+|===
