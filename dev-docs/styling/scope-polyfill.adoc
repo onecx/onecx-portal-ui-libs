@@ -1,0 +1,97 @@
+= Scope polyfill
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u3: ./scope-model.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+== Question answered
+
+When does the scope polyfill apply, and what does it do to a scoped stylesheet on a browser that does not support the {scope_at_rule}[`@scope` at-rule]?
+
+== Why it exists
+
+The scoping model (link:{u3}[Unit 3]) writes every application stylesheet as an `@scope(...)` block. Browsers that do not implement {scope_at_rule} simply ignore that block, so the app's styles would not apply at all. The Shell therefore installs a polyfill that rewrites those blocks into ordinary rules that every browser can parse. It is applied only in the Shell and only when the native rule is absent.
+
+== How it works
+
+The polyfill lives entirely in the Shell at link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts`]. Every entry point is guarded by the same check:
+
+[source,ts]
+----
+if (typeof CSSScopeRule === 'undefined') { /* install polyfill */ }
+----
+
+This is the same probe the libraries use (`isCssScopeRuleSupported()` returns `typeof CSSScopeRule !== 'undefined'`). On a browser that supports {scope_at_rule} nothing is installed: the `@scope` blocks are used natively and the polyfill is inert.
+
+On a browser without {scope_at_rule}, the Shell picks one of two modes (chosen at start-up by the `POLYFILL_SCOPE_MODE` option in link:{shell}/src/app/app.module.ts[`app.module.ts`]):
+
+* *Precision mode* — `applyPrecisionPolyfill()`. A `MutationObserver` watches `document.body` (subtree, child list and attributes) and, on every change, rewrites the affected scoped sheets; the Shell also instruments `appendChild`, `className` and the `classList` methods so DOM edits trigger an update. Accurate, but performance-heavy.
+* *Performance mode* (the default) — `applyPerformancePolyfill()`. A `MutationObserver` on `document.head` rewrites each scoped `<style>` once, on load and on content change. Fast, but it may allow some cross-scope leakage.
+
+Both modes deconstruct the `@supports (@scope(...))` block the libraries emit (Unit 3). The rewrite is per scope:
+
+. Find the scope from the block — `containsSupportsRule` / `findSupportsRule`, then `supportsConditionTextToScopeRuleText` + `matchScope` recover the *from* selector (e.g. `[data-style-id="shell-ui"]`).
+. Re-anchor the rules to that selector. `:root`/`html` and `:scope` become `&` and the rest of the block is wrapped in the from selector, so a rule written as `.custom-class { … }` becomes one that applies only inside the scope.
+. Because a bare selector cannot be re-scoped to a *specific* matching element, the update pass re-targets each rule with a `:where(:nth-child(n) > :nth-child(m) > …)` path to the element(s) that actually carry the original selector. For example `.custom-class` becomes `.custom-class:where(:nth-child(1) > :nth-child(2))`.
+. Rules that cannot be nested inside a selector (`@keyframes`, `@font-face`) are lifted to the top level of the sheet instead.
+
+[source,css]
+----
+/* as written by the libs (fallback)                    */
+@supports (@scope([data-style-id="app|app"]) to ([data-style-isolation])) {
+  .custom-class { color: red; }
+}
+/* after the polyfill, for a .custom-class that is the  */
+/* 2nd child of the 1st child of the scope root:         */
+:where([data-style-id="app|app"]) {
+  .custom-class:where(:nth-child(1) > :nth-child(2)) { color: red; }
+}
+----
+
+The rewrite is driven by DOM mutation: when content inside a scope changes, `updateStyleSheets` computes which scopes are affected (`getChangedStyleIdSelectors` → `nodeToStyleIdSelectors`) and only rewrites those sheets, so an unrelated mutation does not re-scope the whole page.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries are *producers only*: `createApplicationScopedCss` (link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]) and `scopePrimengCss` (link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]) emit the `@supports (@scope(...))` block when `isCssScopeRuleSupported()` is false, and do nothing about rewriting it. No library code runs the polyfill.
+
+=== Shell side
+
+The Shell is the only consumer and the only place the polyfill runs:
+
+* link:{shell}/src/scope-polyfill/polyfill.ts[`polyfill.ts`] — `applyPrecisionPolyfill` / `applyPerformancePolyfill`, `updateStyleSheets`, the `@supports`/`@scope` deconstruction and the `:where(:nth-child(…))` re-targeting.
+* link:{shell}/src/scope-polyfill/css-style-sheet-updater.ts[`css-style-sheet-updater.ts`] — `CssStyleSheetHandler.changeToScopedSheet` / `updateScopedSheet`, the per-sheet rewrite.
+* link:{shell}/src/scope-polyfill/data.ts[`data.ts`] — the `OcxCSSStyleSheet` / `OcxOwnerNode` shape a rewritten sheet is promoted to.
+* link:{shell}/src/scope-polyfill/utils.ts[`utils.ts`] — `containsSupportsRule`, `matchScope`, `supportsConditionTextToScopeRuleText`, `nodeToStyleIdSelectors`, `mutationListToUniqueNodes`.
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] — `styleInitializer` reads `POLYFILL_SCOPE_MODE` and starts the chosen mode.
+
+== Edge cases & pitfalls
+
+* *Native support ⇒ no-op.* If `CSSScopeRule` exists the polyfill never installs; the `@scope` blocks work natively and there is nothing to rewrite.
+* *Mode matters.* Performance mode (default) is a one-pass rewrite that can leak a rule outside its scope; precision mode rewrites per element and is accurate but slower. A rule that visibly bleeds across apps on an older browser is a mode question, not a model one.
+* *Un-nestable rules.* `@keyframes` and `@font-face` cannot sit inside a selector, so the polyfill lifts them to the top of the sheet — they remain global even in a scoped sheet.
+
+== Related Units
+
+* link:{u3}[The @scope scoping model] — the `@scope` blocks this polyfill rewrites.
+* link:{area}[Styling & Style Isolation — Area overview]
+
+== Sources
+
+Code::
+* link:{shell}/src/scope-polyfill/polyfill.ts[`polyfill.ts` (Shell)] — modes, `updateStyleSheets`, deconstruction
+* link:{shell}/src/scope-polyfill/css-style-sheet-updater.ts[`css-style-sheet-updater.ts` (Shell)] — `CssStyleSheetHandler`
+* link:{shell}/src/scope-polyfill/data.ts[`data.ts` (Shell)] — `OcxCSSStyleSheet`
+* link:{shell}/src/scope-polyfill/utils.ts[`utils.ts` (Shell)] — `matchScope`, `nodeToStyleIdSelectors`
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)] — `POLYFILL_SCOPE_MODE`
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — `isCssScopeRuleSupported`
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] — the `@supports (@scope(...))` producer
+
+Verification Sources checked::
+* `dev-docs/styles/scope-polyfill.adoc` (the older page describing the same mechanism; the current `polyfill.ts` precision/performance split is the baseline)
+* in-code JSDoc of `src/scope-polyfill/polyfill.ts`
+* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff])
