@@ -1,0 +1,215 @@
+= Unit Template
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:dev-docs-index: ./README.adoc
+
+Every Unit in the link:{dev-docs-index}[Dev Docs] follows this template. Using the same structure everywhere lets readers scan and compare Units quickly. This page also describes the Area overview page and the checks each Unit must pass before it is merged.
+
+toc::[]
+
+== File location and naming
+
+* A Unit is one AsciiDoc page at `dev-docs/<area-slug>/<unit-slug>.adoc`.
+* Use the Area and Unit slugs listed in the link:{dev-docs-index}[Dev Docs index]. Do not invent new paths. If an Area ticket changes its Unit split, it updates the index in the same pull request.
+* The Area overview page is `dev-docs/<area-slug>/README.adoc`. GitHub shows it automatically when someone opens the Area folder.
+
+== Sections
+
+A Unit uses the sections below in this order. Sections marked _optional_ are left out when they have no content. Do not add empty placeholder sections.
+
+[cols="1,3", options="header"]
+|===
+|Section |Content
+
+|Question answered
+|One sentence: the single question this Unit answers. If you need two questions, write two Units.
+
+|Why it exists
+|The problem or design constraint behind the mechanism. Explain this before any detail of how it works.
+
+|How it works
+|The mechanism, framework-agnostic first. Every claim links to the source files on `main` in this repository or in the Shell repository (see <<source-links>>).
+
+|Libs side / Shell side
+|What the libraries provide and what the Shell does with it, as two subsections. Most mechanisms are split between both repositories, so describe both sides even when one side is small.
+
+|Angular / React
+|_Optional._ Only the parts where the Angular and React implementations differ. Do not repeat the framework-agnostic explanation.
+
+|Edge cases & pitfalls
+|Timing problems, ordering, version mismatches and common mistakes.
+
+|Debugging
+|_Optional._ How to observe the mechanism at runtime: log namespaces, `window` state, Topic traffic. Link to Area 13 (Diagnostics) for general tools.
+
+|Known issues
+|_Optional._ Places where the code looks wrong. See <<known-issues-rule>>.
+
+|Related Units
+|Links to Units in this and other Areas that the reader is likely to need next.
+
+|Sources
+|Two lists: *Code* (every file the Unit is based on) and *Verification Sources checked* (existing documentation compared against the Unit). See <<verification>>.
+|===
+
+== Copyable skeleton
+
+Copy this skeleton into a new Unit and replace the placeholders.
+
+[source,asciidoc]
+....
+= <Unit title>
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+<One sentence.>
+
+== Why it exists
+
+<Problem and design constraints.>
+
+== How it works
+
+<Framework-agnostic mechanism, with source links such as link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`].>
+
+== Libs side / Shell side
+
+=== Libs side
+
+<What the libraries provide.>
+
+=== Shell side
+
+<What the Shell does, with links such as link:{shell}/src/app/app.routes.ts[`app.routes.ts`].>
+
+== Angular / React
+
+<Optional: only where the implementations differ.>
+
+== Edge cases & pitfalls
+
+* <Pitfall.>
+
+== Debugging
+
+<Optional.>
+
+== Known issues
+
+<Optional: actual behaviour, why it looks wrong, follow-up reference.>
+
+== Related Units
+
+* link:../<area-slug>/<unit-slug>.adoc[<Unit title>]
+
+== Sources
+
+Code::
+* link:{libs}/<path>[`<path>`]
+* link:{shell}/<path>[`<path>` (Shell)]
+
+Verification Sources checked::
+* <Old Dev Docs page, Draft Outline, libs docs/, Shell docs/, docs-guides-ui, JSDoc/README>
+....
+
+== Rules
+
+=== Audience and scope
+
+* Write for maintainers of the libs and the Shell and for advanced App developers. Explain how and why. Usage how-tos belong in https://github.com/onecx/docs-guides-ui[docs-guides-ui].
+* The baseline is the current `main` branch of both repositories. When code and documentation disagree, the code wins.
+* Deprecated APIs get one short note and a pointer to their replacement. Do not describe them in detail.
+* Each concept is explained once, in its owning Area. Other Units link to it instead of repeating it.
+
+=== Size
+
+A Unit takes about 10 minutes to read, which is roughly 300 lines of AsciiDoc or fewer. If a Unit grows beyond that, split it into separate Units and update the index.
+
+=== Diagrams
+
+Use a diagram when a sequence or an ownership split is hard to follow in prose. Use only text-based diagrams that GitHub renders: Mermaid source blocks or ASCII blocks. Do not add binary images.
+
+[source,asciidoc]
+....
+[source,mermaid]
+----
+sequenceDiagram
+  participant App
+  participant Shell
+  App->>Shell: TopicGet
+  Shell-->>App: TopicNext (current value)
+----
+....
+
+The block above renders as:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App
+  participant Shell
+  App->>Shell: TopicGet
+  Shell-->>App: TopicNext (current value)
+----
+
+[#source-links]
+=== Source links
+
+* *Libs code:* use a relative link from the Unit to the file in this repository, for example `+link:{libs}/accelerator/src/lib/topic/topic.ts[...]+` with `+:libs: ../../libs+` in the page header.
+* *Shell code:* the Shell repository is read-only for this work. Link to its `main` branch on GitHub: `+https://github.com/onecx/onecx-shell-ui/blob/main/<path>+`, for example with `+:shell: https://github.com/onecx/onecx-shell-ui/blob/main+` in the page header.
+* Link to files, not line numbers, because line numbers change on `main`. Name the class, function or constant in the link text so the reader can find it in the file.
+* Every file named in *How it works* also appears in *Sources*.
+
+=== Cross-Area links
+
+* Link to other Units with a relative path built from the planned slugs in the link:{dev-docs-index}[index], for example `+link:../navigation/url-to-every-router.adoc[URL change → every router]+`.
+* You may link to a planned Unit that has not been written yet. The path is fixed, so the link will work once the page exists. Do not link to paths that are not listed in the index.
+* When you add a new page, also link it from the index and from its Area overview page.
+
+[#known-issues-rule]
+=== Known-issues rule
+
+When the code itself looks wrong:
+
+. Document the actual behaviour of the code, not the intended behaviour.
+. Add a *Known issues* entry. It describes the behaviour, why it looks wrong and which source file it is in.
+. Record a follow-up in the pull request. Fixing the issue is out of scope for the documentation ticket.
+
+Known issues found during planning:
+
+* The Shell's user-profile initialiser computes normalised locales but publishes the raw profile (Area 10).
+* The Shell does not advertise or answer the dynamic-translations Topic capability (Area 10).
+* The ngrx `userProfileChanged` action has no store connector that dispatches it (Area 12).
+
+== Area overview page
+
+Each Area has one overview page at `dev-docs/<area-slug>/README.adoc`. It is written by the first ticket of the Area and contains:
+
+* *Problem:* what the Area is about and why it matters.
+* *Big picture:* how the libraries and the Shell share the work, ideally as a diagram.
+* *Unit map:* all Units of the Area in reading order, linked where the page exists.
+* *Related Areas:* links to Areas that this Area depends on or is used by.
+
+The overview page links to Units; it does not explain mechanisms itself.
+
+[#verification]
+== Verification before merge
+
+The Dev Docs have no automated tests. Each Unit is checked at three points, and the pull request records the result:
+
+. *Code:* every claim traces to a file on `main` in this repository or in the Shell repository. That file is listed under *Sources*.
+. *Verification Sources:* the Unit is compared with the old Dev Docs pages, the https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[Draft Outline] (for finding topics only, not as a content baseline), libs `docs/`, Shell `docs/`, docs-guides-ui and JSDoc/READMEs. Missing content and contradictions are listed in the pull request as follow-ups. The code wins.
+. *Rendering:* the page renders on GitHub, and all cross-references, Shell links and diagrams resolve.
+
+The pull request also records:
+
+* any change to the planned Unit split, with the reason;
+* every Known issue found, as a follow-up;
+* that no test change is required, because the change is documentation only.

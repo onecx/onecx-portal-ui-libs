@@ -1,0 +1,123 @@
+= Context overview & readiness
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+What context does the Shell put into the page, and how does an App know that a piece of that context is actually ready to use?
+
+== Why it exists
+
+An App is loaded into a page it does not control. It does not know which Workspace it is in, which routes and endpoints exist, which configuration keys apply, or which parameters the Shell wants it to honour. All of that is owned by the Shell and crosses the App boundary over the Topic contract of Area 1 (Integration Contract & Topics). Topics are asynchronous: an App instance may be created *before* the Shell has published a value. Without a readiness signal, an App would read an empty or stale value and silently misbehave. This Unit names the context Topics, explains the readiness signal the libs expose, and shows the Shell's bootstrap order that decides *when* each context becomes ready.
+
+== How it works
+
+Context crosses the boundary as a fixed set of Topics defined in the libs (link:{libs}/integration-interface/src/lib/topics[`integration-interface`] topics). The Shell is the only producer; Apps subscribe. The three that this Area owns are:
+
+* `configuration` — runtime configuration keys resolved from env. See link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`].
+* `current-workspace` — the Workspace the Shell is currently showing. See link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`].
+* `parameters` — per-app parameters. See link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`].
+
+Two more arrive alongside them and are needed to read parameters and to gate readiness:
+
+* `current-mfe` — the MFE (remote entry / base URL) that the App is currently running in. See link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`].
+* `is-authenticated` — set by the Shell once authentication completes. See link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`IsAuthenticatedTopic`].
+
+Every Topic is built on the base link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] class, which carries the readiness contract:
+
+* `Topic.isInitialized` is a Promise that resolves the first time the Topic receives a value (a `TopicNext`). Reading this lets an App wait until the context it needs has actually arrived.
+* `Topic.asObservable()` (and `Topic.pipe(...)`) only emit after that first value is in, so subscribing to them is already a readiness-gated read.
+* On construction a `Topic` sends a `TopicGet` to request the current value from any peer that has already published, so a late-joining App can still catch up.
+
+The exact delivery, ordering and replay semantics of `TopicGet`/`TopicNext`/`TopicResolve` belong to Area 1 (Integration Contract & Topics) — here they matter only as the mechanism that makes `isInitialized` resolve.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs expose the context Topics behind two services (Angular) and two hooks/contexts (React), plus a small URL helper that reads the workspace.
+
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`] — lazily creates and hands out the context Topics (`currentWorkspace$`, `currentMfe$`, `isAuthenticated$`, `globalLoading$`, `globalError$`, `currentPage$`, `currentLocation$`) and destroys them on teardown. It is the single place an App reaches the Shell context in Angular.
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`] — reads `AppStateService.currentWorkspace$` and maps it through the shared URL helpers (`constructRouteUrl`, `doesUrlExistForWorkspace`) to resolve endpoint URLs from the workspace.
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`] — owns the `configuration` Topic and the env-resolution step (`init()`). See Unit 2.
+* link:{libs}/angular-integration-interface/src/lib/services/app-config-service.ts[`AppConfigService`] — a standalone (non-Topic) variant that loads `assets/env.json` into a `BehaviorSubject`. It is the app-side config holder used when running outside the Shell (for example via the standalone shell).
+
+On the React side the same Topics are wrapped in contexts rather than services:
+
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider` / `useAppState`] — exposes the same context Topics as Angular, created with `useTopic`, which lazily instantiates them and survives StrictMode double-mounting.
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`] — the React equivalent of `WorkspaceService.getUrl` / `doesUrlExistFor`, built on the same shared URL helpers.
+
+The React context for `configuration` is the `ConfigurationProvider` (Unit 2). The point for readiness is the same in both frameworks: an App gets a Topic and can `await` its `isInitialized` (Angular) or `await isInitialized` from the provider (React) before consuming it.
+
+=== Shell side
+
+The Shell is where the context actually becomes ready. Bootstrap is wired through Angular `APP_INITIALIZER`s registered with `provideAppInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]. The initializers this Area cares about:
+
+* `configurationServiceInitializer` — calls `configurationService.init()` to resolve env (Unit 2).
+* `workspaceConfigInitializer` — the heart of readiness. It (1) bails out immediately for the Shell's own internal route, (2) awaits `appStateService.isAuthenticated$.isInitialized`, (3) calls `WorkspaceConfigBffService.loadWorkspaceConfig(...)` (with retry + `initializationErrorHandler`), (4) publishes `currentWorkspace$` (and the derived `remoteComponents$`, theme and location), and (5) finally calls `parametersService.initialize()`.
+
+That order is the readiness story in one line: *authentication → workspace config load → workspace published → parameters loaded.* An App reading `currentWorkspace$` before step 4 is reading nothing; the `isInitialized` promise is the gate that tells it to wait.
+
+== Angular / React
+
+The readiness contract is identical — both frameworks surface `isInitialized` on the same Topics. Only the shape differs:
+
+* Angular: inject `AppStateService` and `await appStateService.currentWorkspace$.isInitialized`; `WorkspaceService` then maps the value.
+* React: `useAppState().currentWorkspace$.isInitialized` is awaited inside a component or hook; `useWorkspace` then maps the value.
+
+One difference worth knowing: Angular's `AppStateService` destroys its Topics in `ngOnDestroy`, while React's `useTopic` defers destruction to a `setTimeout(0)` so a StrictMode remount does not destroy a Topic that is being re-acquired. Both keep the Topic alive across the App's lifetime.
+
+== Edge cases & pitfalls
+
+* *Reading before ready.* The most common bug. `firstValueFrom(topic)` rejects if the Topic has never received a value; always gate on `isInitialized` (or use `asObservable()`, which already filters on readiness).
+* *The `current-workspace` Topic is named `currentPortal`.* `CurrentWorkspaceTopic` registers with the raw name `currentPortal` (link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`]). A Shell/App mismatch on this name/version means the App never receives the workspace.
+* *Internal Shell routes are skipped.* `workspaceConfigInitializer` returns early for the Shell's own internal route, so on those pages the workspace is intentionally never published.
+* *`isAuthenticated$` ordering.* The workspace initializer waits on `isAuthenticated$.isInitialized`. If authentication does not complete (or the App runs standalone), the wait never resolves and no workspace arrives.
+* *Standalone mode fakes the context.* Outside a real Shell, `provideStandaloneProviders` (link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`expose-standalone.utils.ts`]) publishes a hard-coded workspace (`workspaceName: 'Standalone'`, `baseUrl: '/'`), a mock profile and empty permissions so Apps behave. This is test/scaffold context, not a real Workspace.
+
+== Debugging
+
+* Check whether the App is actually waiting: `await topic.isInitialized` and log before/after — a hang here means the Shell has not published (or auth did not finish).
+* Inspect the `configuration` source at runtime: the libs log `ENV resolved from injected config` (inlined), the `📢 TKA001: Remote config load is disabled...` message (default), or nothing (remote) — see `ConfigurationService.init()` and the React `ConfigurationProvider.init()`.
+* For general cross-App message traffic, see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:workspace-config-loading.adoc[Workspace config load & distribution] — how the workspace and configuration values are produced and fanned out.
+* `workspace-model-and-urls.adoc` — the Workspace model and URL building that `WorkspaceService` relies on.
+* `configuration-kinds.adoc` — Configuration vs App Config vs Parameter.
+* Area 1 (Integration Contract & Topics) — the Topic delivery/ordering/replay mechanism behind `isInitialized`.
+* Area 7 (Navigation & Routing) — the `current-location` / Current App Topics that arrive with the workspace.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`]
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
+* link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`IsAuthenticatedTopic`]
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] (base class: `isInitialized`, `asObservable`, `TopicGet`)
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-config-service.ts[`AppConfigService`]
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider` / `useAppState`]
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`]
+* link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]
+* link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`provideStandaloneProviders`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`workspaceConfigInitializer`, `configurationServiceInitializer`) (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
+* Dev Docs top index (`README.adoc`) — slugs and reading order for this Area.
+* Existing `dev-docs/topics/overview.adoc` — Topic message types (`TopicNext`/`TopicGet`/`TopicResolve`) and scheduling, cross-checked against `topic.ts`.
+* Draft Outline commit (6108bdff) — topic map only; no content baseline.
+* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).
