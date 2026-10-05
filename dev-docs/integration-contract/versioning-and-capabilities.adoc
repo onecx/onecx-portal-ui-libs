@@ -1,0 +1,132 @@
+= Versioning & Shell capability negotiation
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This Unit covers Unit 6 of the link:README.adoc[Integration Contract & Topics] Area. Units 1–5 describe the contract assuming every unit on the page is present and compatible; this Unit explains *how that assumption is made safe*: how a Topic is versioned, how the Shell advertises the capabilities it actually provides, and how an App or Remote Component checks them so it can keep working with an older or newer Shell.
+
+== Question answered
+
+How are Topics versioned, how does the Shell advertise the capabilities it provides and how do Apps and Remote Components check them, and what is the per-library version used for — in short, how does a unit tell which Shell it is running against?
+
+== Why it exists
+
+A OneCX page hosts units that are built, versioned and released *independently* (link:why-message-based.adoc[Unit 1]). An App loaded today may run against a Shell that shipped yesterday, or against one that shipped next quarter. It therefore cannot assume that every mechanism it knows about is available: the Shell may not publish a given Topic, may not answer a given RPC Topic (link:gatherers-and-rpc-topics.adoc[Unit 5]), or may expose a state that a newer Shell no longer provides.
+
+Two independent, composable mechanisms address this, and they answer different questions:
+
+* *Topic version* answers *"will this message be delivered at all?"* It is a per-Topic contract that gates which instances can talk to which.
+* *Shell capability* answers *"does this Shell provide the feature I want to use?"* It is a per-Shell declaration that a consumer checks before deciding whether to subscribe, publish or make an RPC call.
+
+A third, smaller notion — the *per-library version* — lets each library identify itself and is used for self-description, not for cross-unit negotiation.
+
+== How it works
+
+=== Topic versions
+
+Every `Topic` is identified by a *name* and a *version* (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`], constructor `constructor(name, version, sendGetMessage)`). Both are carried on every message — `TopicMessage` holds `name` and `version` (link:{libs}/accelerator/src/lib/topic/topic-message.ts[`topic-message.ts`]) — and a subscriber only accepts a message when *both* match: `m.data.name === this.name && m.data.version === this.version` (link:{libs}/accelerator/src/lib/topic/topic.ts[`onWindowMessage`]). The version also becomes part of the transport channel name, so a version mismatch means the two sides are on literally different channels (link:transports-and-tab-scope.adoc[Unit 3]).
+
+The consequence is that *changing a Topic's meaning without changing its version silently breaks consumers*. The safe evolution path is:
+
+* A new, incompatible shape of a Topic gets a new `version` (and normally a new `v<N>/` folder and class).
+* Old consumers stay on the old version and are unaffected; new consumers opt in to the new version.
+* The old version can later be deprecated once no consumer still uses it.
+
+Most concrete Topics in `@onecx/integration-interface` are still at version `1` (for example `('currentPortal', 1)` in the `CurrentWorkspaceTopic`, `('permissionsRpc', 1, false)`), so the versioning machinery is in place and used. Where a Topic has outgrown a version it bumps rather than changes meaning in place — `TranslationCacheTopic` (link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`angular-utils/.../translation-cache.service.ts`]) is a live example that already runs at version `2`.
+
+=== Shell capabilities
+
+A Topic version is fixed *per Topic*. A Shell capability is fixed *per Shell run*: before it bootstraps its module, the Shell writes the list of capabilities it provides to a key on `globalThis`/`window` called `onecx-shell-capabilities` (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]). This is *not* a Topic — it is a plain window key set once at start-up and read synchronously by consumers, so there is no message traffic, ordering or replay involved.
+
+The set of capabilities is an enum (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`]):
+
+* `CURRENT_LOCATION_TOPIC` — the Shell publishes the current location as a Topic.
+* `PARAMETERS_TOPIC` — the Shell provides the parameters Topic.
+* `ACTIVENESS_AWARE_MENUS` — the Shell supports activeness-aware menus.
+* `DYNAMIC_TRANSLATIONS_TOPIC` — the Shell provides and answers the dynamic-translations Topic.
+
+The write/read/check helpers live in the framework-agnostic `@onecx/integration-interface` (link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`shell-capability.utils.ts`]): `setShellCapabilities(list)` writes the list, `getShellCapabilities()` reads it, and `hasShellCapability(cap)` returns whether the current Shell advertises `cap`. `hasShellCapability` returns `false` when nothing has been set yet (`getShellCapabilities()?.includes(cap) ?? false`), so an App that checks before the Shell has bootstrapped safely sees "capability absent".
+
+An App or Remote Component uses `hasShellCapability` to pick a path at runtime. The clearest example is parameters: the Angular `ParametersService.get(key, defaultValue, …)` returns `defaultValue` when the `PARAMETERS_TOPIC` capability is absent, and only otherwise reads the `ParametersTopic` (link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`parameters.service.ts`]). The JSDoc is explicit about why the default exists: *"if the shell is not yet providing the parameters because it is too old."* The same check gates the `CURRENT_LOCATION_TOPIC` fallback (Unit: Angular / React below) and the dynamic-translations path.
+
+=== Per-library version
+
+Each library in this repository ships a `src/version.ts` exporting `LIB_NAME` and `LIB_VERSION` (link:{libs}/accelerator/src/version.ts[`accelerator/src/version.ts`], link:{libs}/integration-interface/src/version.ts[`integration-interface/src/version.ts`]). In source, `LIB_VERSION` is the placeholder `'0.0.0-PLACEHOLDER'`; the release step rewrites `version.ts` (and `package.json`) with the real version for every library before publishing (link:../../release-script.sh[`release-script.sh`]).
+
+This is *self-identification*, not cross-unit negotiation. It is used to register a multi-language identifier — `provideMultiLanguageIdentifier(LIB_NAME, LIB_VERSION, 'lib')` — and to namespace the shared dynamic-translations cache on `globalThis` under the library's own name (link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`dynamic-translation.service.ts`], link:{libs}/angular-utils/src/lib/providers/translation-path.providers.ts[`translation-path.providers.ts`]). It tells the page *which version of this library* is loaded; it is not something an App reads to decide whether a Shell feature exists.
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/integration-interface` defines the `ShellCapability` enum, the window-key helpers and the per-library `version.ts` (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`], link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`shell-capability.utils.ts`], link:{libs}/integration-interface/src/version.ts[`version.ts`]). The Angular and React adapters expose the check through a service and a hook respectively (see Angular / React below), and the library code is where the capability checks actually happen: parameters, the current-location fallback and dynamic translations all branch on `hasShellCapability`.
+
+=== Shell side
+
+The Shell is the *only* writer of the capability list. It calls `ShellCapabilityService.setCapabilities(…)` in `bootstrap.ts` before bootstrapping its module, advertising the capabilities it supports for that run (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]). On current `main` it advertises `PARAMETERS_TOPIC`, `CURRENT_LOCATION_TOPIC` and `ACTIVENESS_AWARE_MENUS` — and *not* `DYNAMIC_TRANSLATIONS_TOPIC` (see Known issues). Everything else is done by the libraries.
+
+== Angular / React
+
+The capability contract is identical in both frameworks; only the wrapper differs.
+
+* *Angular.* `ShellCapabilityService` is an `@Injectable` that re-exports the enum as `Capability` and provides `hasCapability` (instance) and `setCapabilities` (static) (link:{libs}/angular-integration-interface/src/lib/services/shell-capability.service.ts[`shell-capability.service.ts`]). Consumers `inject` it and branch: `ParametersService.get` on `Capability.PARAMETERS_TOPIC` (link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`parameters.service.ts`]); the ngrx `NavigatedEvent` store connector and the web-component connector on `Capability.CURRENT_LOCATION_TOPIC`, falling back to the older `navigated` `EventsTopic` when the capability is absent (link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`navigated-event-store-connector-service.ts`], link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`webcomponent-connector.utils.ts`]).
+* *React.* `useShellCapability()` returns a `hasCapability` helper and `setCapabilities` is exported for the host (link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`]). `ParametersProvider` reads `hasCapability(ShellCapability.PARAMETERS_TOPIC)` and returns the default value when the capability is absent (link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`parametersContext.tsx`]).
+
+Both delegate to the same `hasShellCapability` underneath; the capability key itself is framework-agnostic.
+
+== Edge cases & pitfalls
+
+* *The key is plain window state, set once.* It is not a Topic, so there is no replay and no ordering. It must be set before consumers read it; the Shell sets it in `bootstrap.ts` before the App is bootstrapped, which is why App code can assume it is already present. If a unit reads it before the Shell has run `setCapabilities`, it gets `false`, not an error.
+* *Not every Topic has a capability.* Capabilities are declared for a handful of Topics. A Topic that has *no* capability — the `PermissionsRpcTopic` is one — cannot be probed this way; an App cannot ask "will the Shell answer my RPC?". It can only make the call and cope with never being answered, which is why RPC asks have no built-in timeout (link:gatherers-and-rpc-topics.adoc[Unit 5]).
+* *Version and capability are different axes.* A Topic's `version` is fixed per Topic and gates message delivery. A capability is a per-Shell switch checked *before* deciding to use a Topic at all. Checking the capability does not change the version a Topic uses, and bumping a version does not change the capability list.
+* *`hasShellCapability` fails closed.* A missing or empty capability list reports every capability as absent, so an App degrades to its defaults rather than crashing. That is intended, but it means a misconfigured Shell (list not written) looks like a very old Shell.
+
+== Debugging
+
+Inspect the capability list directly in the browser console: `globalThis['onecx-shell-capabilities']` (equivalently `window['onecx-shell-capabilities']`). It returns the array of advertised `ShellCapability` strings, or `undefined` if the Shell has not set it yet. To see which library version is loaded, look at that library's `version.ts` (`LIB_NAME`/`LIB_VERSION`) or the multi-language identifier it registers. General cross-App observation is in link:../diagnostics/tracing-communication.adoc[Area 13].
+
+== Known issues
+
+* *The dynamic-translations capability is declared but not advertised.* The `DYNAMIC_TRANSLATIONS_TOPIC` value exists in the enum (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`]) and the consumer `DynamicTranslationService` checks for it and returns empty records when it is absent (link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`dynamic-translation.service.ts`]), but the current Shell does not advertise or answer that capability (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]). Documented from the code; recorded as a follow-up.
+* *`ACTIVENESS_AWARE_MENUS` is advertised but not consumed in this repository.* The Shell advertises the capability, but no consumer in this repository checks `hasShellCapability(ACTIVENESS_AWARE_MENUS)`; it is only defined in the enum. The consumption, if any, lives outside this repository. Recorded as a follow-up.
+
+== Related Units
+
+* link:why-message-based.adoc[Why a message-based contract] — the independence that makes versioning and capabilities necessary.
+* link:message-delivery.adoc[Topic message delivery] — how name and version gate message acceptance.
+* link:transports-and-tab-scope.adoc[Transports & tab scope] — how the version is part of the channel name.
+* link:topic-lifecycle.adoc[Topic lifecycle]
+* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] — the RPC asks that capabilities gate.
+* link:framework-adapters.adoc[Framework adapters]
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13)
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic-message.ts[`accelerator/src/lib/topic/topic-message.ts`]
+* link:{libs}/accelerator/src/version.ts[`accelerator/src/version.ts`]
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`integration-interface/.../shell-capability.model.ts`]
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/.../shell-capability.utils.ts`]
+* link:{libs}/integration-interface/src/version.ts[`integration-interface/src/version.ts`]
+* link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`integration-interface/.../dynamic-translation.service.ts`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`integration-interface/.../current-workspace.topic.ts`]
+* link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`angular-utils/.../translation-cache.service.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/shell-capability.service.ts[`angular-integration-interface/.../shell-capability.service.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`angular-integration-interface/.../parameters.service.ts`]
+* link:{libs}/angular-utils/src/lib/providers/translation-path.providers.ts[`angular-utils/.../translation-path.providers.ts`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`angular-webcomponents/.../webcomponent-connector.utils.ts`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`ngrx-integration-interface/.../navigated-event-store-connector-service.ts`]
+* link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`react-integration-interface/.../shellCapability.ts`]
+* link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`react-integration-interface/.../parametersContext.tsx`]
+* link:../../release-script.sh[`release-script.sh`]
+* link:{shell}/src/bootstrap.ts[`bootstrap.ts` (Shell)]
+
+Verification Sources checked::
+* link:../topics/overview.adoc[old `dev-docs/topics/overview.adoc`] — the name/version matching rule for message delivery (matches the code).
+* link:../general/overview.adoc[old `dev-docs/general/overview.adoc`] — the list of libraries each of which carries its own `version.ts`.
+* in-code JSDoc of `ShellCapability`, the `shell-capability.utils.ts` helpers and `ParametersService.get`.
+* Draft Outline (commit `6108bdf`) — for locating the versioning/capability topics only, not as a content baseline.
