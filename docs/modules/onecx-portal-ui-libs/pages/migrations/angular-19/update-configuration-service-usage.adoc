@@ -64,8 +64,7 @@ If your application provides a custom `AuthServiceFactory` (the `custom` option 
 // exports default a factory that returns the service synchronously
 import { CustomAuthService } from './custom-auth.service';
 
-export default function (injector) {
-  // can synchronously construct the service from already-available values
+export default function () {
   return new CustomAuthService();
 }
 ----
@@ -75,7 +74,7 @@ export default function (injector) {
 // unchanged: synchronous factories continue to work
 import { CustomAuthService } from './custom-auth.service';
 
-export default function (injector) {
+export default function () {
   return new CustomAuthService();
 }
 ----
@@ -86,12 +85,20 @@ export default function (injector) {
 ----
 // if your factory needs to read injected configuration asynchronously,
 // calling the injector without awaiting will give a Promise and lead to errors
-import { Injectables } from '@onecx/shell-auth';
+import type { Config } from '@onecx/integration-interface';
 import { CustomAuthService } from './custom-auth.service';
 
-export default function (injector) {
+const Injectables = {
+  CONFIG: 'CONFIG',
+  KEYCLOAK_AUTH_SERVICE: 'KEYCLOAK_AUTH_SERVICE'
+} as const;
+
+type Injectable = typeof Injectables[keyof typeof Injectables];
+type Injector = (injectable: Injectable) => Config | Promise<Config>;
+
+export default function (injector: Injector) {
   // WRONG: injector(Injectables.CONFIG) may be a Promise
-  const cfg = injector(Injectables.CONFIG) as any;
+  const cfg = injector(Injectables.CONFIG);
   return new CustomAuthService(cfg);
 }
 ----
@@ -99,12 +106,20 @@ export default function (injector) {
 [source,typescript]
 ----
 // Make the factory async and await injected values when needed
-import { Injectables } from '@onecx/shell-auth';
+import type { Config } from '@onecx/integration-interface';
 import { CustomAuthService } from './custom-auth.service';
 
-export default async function (injector) {
+const Injectables = {
+  CONFIG: 'CONFIG',
+  KEYCLOAK_AUTH_SERVICE: 'KEYCLOAK_AUTH_SERVICE'
+} as const;
+
+type Injectable = typeof Injectables[keyof typeof Injectables];
+type Injector = (injectable: Injectable) => Config | Promise<Config>;
+
+export default async function (injector: Injector) {
   // injector may return a Promise for CONFIG; await it
-  const cfg = (await injector(Injectables.CONFIG)) as any;
+  const cfg = await injector(Injectables.CONFIG);
   // perform any async initialization here, then return the service
   return new CustomAuthService(cfg);
 }
