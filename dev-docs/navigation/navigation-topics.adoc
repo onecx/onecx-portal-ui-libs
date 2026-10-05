@@ -1,0 +1,160 @@
+= Page & workspace Topics during navigation
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+Which Topics carry state while a navigation happens on a OneCX page, what is in each of their payloads, and when does each one fire?
+
+== Why it exists
+
+Unit 1 explains *how* a URL change is broadcast to every router (the `current-location` round trip), and Unit 2 explains *how the Shell* turns that URL into a Current App. But the mechanisms of this Area are not carried by the URL alone — they are carried by three dedicated Topics whose payloads travel over the Topic transport alongside the location. A reader who only knows the URL contract cannot answer "what does an app read to find out which app is active, which base it owns, or which page is on screen?", because each of those facts lives on a different Topic with a different publisher and a different firing rule. This Unit documents those three Topics in depth so the data contract of a navigation is complete.
+
+== How it works
+
+Three Topics are involved in navigation. All three are instances of link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] (Area 1 — Integration Contract & Topics): each is identified by a name and version, sends a `TopicGet` on construction so a late-joined app catches up, and delivers its current value via `TopicNext` to every subscriber on the page.
+
+. link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`] (name `currentLocation`) — the shared URL and its payload.
+. link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`] (name `currentMfe`) — the *route data* for the application the Shell has just activated: the Current App.
+. link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`] (name `currentPage`) — the metadata of the *page* that is currently on screen.
+
+The first two are published by the Shell; the third is published by the app. The diagram below shows all three and who publishes each during one navigation:
+
+[source,mermaid]
+----
+flowchart LR
+  Nav[real navigation] -->|Shell history patch| LOC[current-location<br/>url, isFirst]
+  Match[Shell route match] -->|route activation| MFE[current-mfe<br/>MfeInfo]
+  Page[active page<br/>ocx-portal-page] -->|page init| PG[current-page<br/>PageInfo]
+  LOC --> Apps[every app router — Unit 1]
+  MFE --> Scoping[app route scoping — Unit 2]
+  PG --> Consumers[help / permissions / breadcrumb]
+----
+
+=== current-location
+
+The payload is link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.model.ts[`CurrentLocationTopicPayload`]: `{ url?, isFirst }`. `url` is the path relative to the deployment base, and `isFirst` is a boolean flag on the very first broadcast. It fires on every *real* navigation (not on the app-driven router syncs), which is the Shell's one-way publish described in Unit 1. This Unit only documents the shape and the timing; the anti-loop and `isRouterSync` mechanics belong to Unit 1.
+
+=== current-mfe
+
+The payload is link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`], the route data of the Current App. Its fields and their source are:
+
+[cols="1,1,2", options="header"]
+|===
+|Field |Type |Meaning
+
+|`appId` |`string` |Unique identifier of the Microfrontend.
+|`productName` |`string` |Name of the application the Microfrontend belongs to.
+|`baseHref` |`string` |The MFE base path within the Workspace, e.g. `'/workspace/mfe_base_path'`. The app's router scopes itself to this prefix (Unit 1 / Unit 2).
+|`mountPath` |`string` |The MFE mount path containing Workspace and application base path.
+|`remoteBaseUrl` |`string` |Remote URL used to fetch the module's assets, e.g. `'/mfe/mfe_name'`.
+|`shellName` |`string` |Name of the shell, always `'portal'`.
+|`displayName?` |`string` |Display name for the MFE.
+|`elementName?` |`string` |Custom-element name the MFE module renders into, e.g. `'mfe-component'`.
+|`remoteName?` |`string` |Remote name set up in the MFE's webpack (WebComponents integration).
+|`version?` |`string` |Version of the Microfrontend.
+|`remote?` |`string` |Deprecated.
+|===
+
+It fires on route activation: when the Shell's `Router` matches the URL and activates a route, the Shell publishes the `MfeInfo` it derives from that Workspace `Route` (link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] — see Unit 2). The Shell's not-found page publishes a *neutral* value (empty app id / base) so no real app is treated as active while the error page is showing.
+
+=== current-page
+
+The payload is link:{libs}/integration-interface/src/lib/topics/current-page/v1/page-info.model.ts[`PageInfo`]:
+
+[cols="1,1,2", options="header"]
+|===
+|Field |Type |Meaning
+
+|`path` |`string` |Complete path of the page, containing the Shell deployment path, Workspace base and the MFE's path, e.g. `'/shell/workspace/mfe/details/id-1'`.
+|`helpArticleId?` |`string` |Help-article id associated with the page.
+|`pageName?` |`string` |Unique name of the page.
+|`permission?` |`string` |Permission required to access the page content.
+|`applicationId?` |`string` |Deprecated.
+|===
+
+Unlike the other two, `current-page` has a *receiving* filter built into the Topic itself. `CurrentPageTopic.asObservable()` (link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`]) combines the base Topic value with a `currentPath$` stream that tracks `document.location.pathname` via a `MutationObserver`; it emits the published `PageInfo` only when `pageInfo.path === document.location.pathname`, and emits `undefined` otherwise. So a subscriber sees a page's metadata *while that page is the one on screen*, and `undefined` as soon as the URL moves to a page whose path differs. This is what makes the Topic mean "the *current* page" rather than "the last published page".
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs own all three Topic definitions, their payloads, and the app-side handles:
+
+* *Topic definitions.* The three `Topic` subclasses and their payload interfaces above, all in link:{libs}/integration-interface/src/index.ts[`@onecx/integration-interface`].
+* *App handles.* `AppStateService` (link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]) exposes `currentLocation$`, `currentPage$` and `currentMfe$`, each created lazily (`??= new XxxTopic()`). Because a `Topic` sends a `TopicGet` on construction, an app that mounts *after* the Shell has already published a value still receives it.
+* *Consumers.* The ngrx store connector link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-page-store-connector-service.ts[`CurrentPageStoreConnectorService`] dispatches `currentPageChanged` into the App store from `currentPage$` (Area 12 — State Management). The page's `permission` and `helpArticleId` fields feed the app's permission check and help integration.
+
+=== Shell side
+
+The Shell is the producer of the two navigation Topics and the *consumer* of the page Topic:
+
+* *Publishing `current-location`.* On every real navigation the Shell's patched history and `urlChangeListenerInitializer` publish `{ url, isFirst }` — the mechanism of Unit 1.
+* *Publishing `current-mfe`.* On route activation the Shell's `RoutesService` publishes the `MfeInfo` derived from the matched Workspace `Route`, and publishes a neutral value for the not-found page (Unit 2).
+* *Consuming `current-page`.* The Shell reads the page metadata for its own features — help integration, breadcrumb and permission display — but it does *not* publish it. Publishing `current-page` is the app's job.
+
+== Angular / React
+
+The Topic contract is identical in both frameworks; only the app-side handle differs.
+
+* *Angular.* Apps read the three Topics through `AppStateService.currentLocation$` / `currentPage$` / `currentMfe$`, and the `ocx-portal-page` component publishes `current-page` from its `ngOnInit` (link:{libs}/angular-utils/src/lib/components/portal-page/portal-page.component.ts[`PortalPageComponent`]).
+* *React.* Apps read the same three Topics through the React app-state context (link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`useAppState`] → `useTopic`), and publish `current-page` from the React `portalPage` helper (link:{libs}/react-utils/src/lib/utils/portalPage.tsx[`portalPage.tsx`]).
+
+Both read `current-mfe` the same way — the Shell publishes it, the app only consumes it.
+
+== Edge cases & pitfalls
+
+* *`current-page` emits `undefined` when the paths differ.* A subscriber that assumes `currentPage$` is always a `PageInfo` must handle the `undefined` emissions that occur between navigations or when the published `path` does not match the current `document.location.pathname`. This is by design, not a race.
+* *`path` is the full path, not the deployment-relative URL.* `PageInfo.path` includes the Shell deployment path, the Workspace base and the MFE path. Do not compare it against a route the way Unit 1 compares `current-location.url` (which is deployment-relative).
+* *`current-mfe` is only meaningful once a route has activated.* An app reading `currentMfe$` before the Shell has matched a route reads nothing; gate on the Topic's `isInitialized` as with every Shell context (Area 3).
+* *The not-found page is a neutral app.* It publishes an empty `currentMfe$`; code that assumes `currentMfe$` is always a real app must handle this blank value.
+* *Deprecated fields.* `MfeInfo.remote` and `PageInfo.applicationId` are marked deprecated in the documentation. `ocx-portal-page` still publishes `applicationId` today; read them only to stay compatible, and prefer the non-deprecated fields.
+
+== Debugging
+
+* Enable the accelerator's Topic logging to watch all three Topics (who publishes `currentLocation` / `currentMfe` / `currentPage`, and with what payload) — Area 13 (Diagnostics, `tracing-communication.adoc`).
+* To see what an app resolves for the Current App at runtime, read the `currentMfe$` value (`appId` / `baseHref` / `remoteBaseUrl`).
+* To confirm the *current-page* filter is working, compare the emitted `PageInfo.path` against the address bar: a mismatch means the subscriber received `undefined` rather than the stale page.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:url-to-every-router.adoc[URL change → every router] — the `current-location` anti-loop and `isRouterSync` mechanics this Unit does not repeat.
+* link:shell-routes-and-current-app.adoc[Shell routes & Current App activation] — how the Shell's route match produces the `current-mfe` value.
+* link:why-cross-app-guards.adoc[Why cross-App guards] — why a navigation that would change these Topics may be vetoed before the URL moves.
+* `angular-guards.adoc` / `react-guards.adoc` — the guard machinery that runs before the URL (and therefore before these Topics) changes.
+* Area 1 (Integration Contract & Topics) — the `Topic` base, `TopicGet`/`TopicNext`, and late-joiner catch-up.
+* Area 3 (Shell Context & Runtime Configuration) — `current-workspace` and `current-mfe` readiness.
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] (`TopicGet`, `TopicNext`, `asObservable`, `isInitialized`)
+* link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.model.ts[`CurrentLocationTopicPayload`]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`]
+* link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`] (`asObservable` path filter)
+* link:{libs}/integration-interface/src/lib/topics/current-page/v1/page-info.model.ts[`PageInfo`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`] (the Workspace route the `MfeInfo` is derived from)
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentLocation$` / `currentPage$` / `currentMfe$`]
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`useAppState`] (React handles)
+* link:{libs}/angular-utils/src/lib/components/portal-page/portal-page.component.ts[`PortalPageComponent`] (publishes `current-page`)
+* link:{libs}/react-utils/src/lib/utils/portalPage.tsx[`portalPage`] (publishes `current-page`)
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-page-store-connector-service.ts[`CurrentPageStoreConnectorService`]
+* link:{shell}/src/app/app.module.ts[history patch, `urlChangeListenerInitializer`] (Shell publisher of `current-location`) (Shell)
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updateMfeInfo`] (Shell publisher of `current-mfe`) (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, source-link and diagram rules.
+* Dev Docs top index (`README.adoc`) — Area 7 slug and reading order.
+* Draft Outline commit (6108bdff) — navigation-routing outline (topic list only; no content baseline).
+* Antora docs `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc` — `#current-mfe-topic` and `#current-page-topic` (publisher, payload, deprecated fields).
+* Old Dev Docs `dev-docs/guards/modes.adoc` — cross-checked the `current-location` / `isFirst` semantics it references.
+* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

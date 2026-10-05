@@ -1,0 +1,145 @@
+= Why cross-App guards
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+Why is following the shared URL (Unit 1) not enough to decide whether a navigation may proceed, and what is the overall protocol the libraries use to let every application on the page consent to or veto a cross-app navigation?
+
+== Why it exists
+
+In a single-router Angular app, guards are local: `canActivate` / `canDeactivate` run against the app's own routes, and a `false` simply cancels the navigation. In a OneCX page there is more than one router and more than one application, but only one URL. Unit 1 makes every router *follow* that URL — but following is unconditional. Two things break if guards stay local:
+
+* *A departing app cannot say no.* App A may be sitting on a form with unsaved work. If the Shell or app B changes the shared URL, A's `canDeactivate` is never asked, because A's router is just *reacting* to a URL that has already moved. There is no moment when A's permission is sought.
+* *An arriving app cannot be vetted.* Before the URL actually changes, the applications on the page should be able to check their guards for the *target* route and report a veto — otherwise a navigation is committed and only then discovered to be forbidden.
+
+Cross-App guards add a pre-navigation consent protocol on top of the URL contract: before the shared URL is allowed to move, the requesting application asks every other active application to run its guards against the target route, and waits for their verdicts. Only if all of them allow the navigation does the URL change. This Unit documents *why* and *the overall protocol* (the `GUARD_MODE` state machine and the Gatherer request/response that carries verdicts). The concrete Angular and React guard wrappers are Units 5 and 6.
+
+== How it works
+
+The protocol is carried by a navigation *state* plus a *Gatherer* Topic. Every active application runs one copy of the same protocol, and the shared URL only moves when the requesting application's guard checks — which include the verdicts of all the others — pass.
+
+=== The navigation state and its modes
+
+A navigation carries a scattered state object, link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`GuardsNavigationState`], on the router's navigation extras. Four boolean/keyed flags distinguish the situations:
+
+[cols="1,1,2", options="header"]
+|===
+|Flag |Value |Meaning
+
+|`isRouterSync` |`boolean` |The router is re-pointing itself at a URL that is already agreed (a sync, not a user navigation).
+|`isInitialRouterSync` |`boolean` |The very first router sync when the app loads.
+|`guardCheck` |`boolean` |A guard *check* is being requested — run the guards without committing a navigation.
+|`guardCheckPromise` |`Promise<boolean>` |The promise the *requesting* app stores so its own guards can wait for the other apps' verdicts.
+|===
+
+link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController.getMode`] maps that state to one of four link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`GUARD_MODE`] values:
+
+. `INITIAL_ROUTER_SYNC` — first sync on load.
+. `ROUTER_SYNC` — a sync of an already-agreed URL.
+. `GUARD_CHECK` — another app is asking this app to check its guards.
+. `NAVIGATION_REQUESTED` — this app is requesting a navigation and must collect the other apps' verdicts.
+
+The mode is what lets a guard know *why* it is running and whether it is allowed to change the outcome.
+
+=== The Gatherer: how verdicts cross app boundaries
+
+Verdicts do not travel over the URL — they travel over a Gatherer. Each active application registers a link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardsGatherer`], an accelerator `Gatherer` named `GuardGatherer` that pairs a request (a link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardResultRequest`] `{ url }`) with a response (a `boolean`).
+
+When the requesting app wants to navigate to a URL in `NAVIGATION_REQUESTED` mode, it calls `GuardsGatherer.gather({ url })`. That request is answered by the callback every *other* app registered: each such app performs a *fake navigation* to that URL — a `navigateByUrl` in `GUARD_CHECK` mode that runs the target route's guards without committing the change (`onSameUrlNavigation: 'reload'`) — and answers the request with a `boolean`: `true` if its guards allow the target, `false` if any of them veto it. The requesting app's own guards then wait on the stored `guardCheckPromise` before they return, so the final navigation decision already includes every app's verdict.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Req as App A (requesting)
+  participant G as GuardGatherer topic
+  participant B as App B (active)
+  Req->>G: gather({ url })
+  G->>B: request
+  B->>B: fake navigateByUrl(url, GUARD_CHECK)
+  B-->>G: true | false
+  G-->>Req: Promise<boolean> (all verdicts)
+  Note over Req: NAVIGATION_REQUESTED guards wait on guardCheckPromise
+  Req->>Req: proceed (true) or cancel (false)
+----
+
+=== Where the mode is decided and where verdicts are answered
+
+The requesting app wires the protocol into the router's guard lifecycle. On `RoutesRecognized` it wraps the routes' guards; on `GuardsCheckStart`, when the mode is `NAVIGATION_REQUESTED`, it starts the `gather` and stores the promise in the navigation state; on `GuardsCheckEnd` it finalises. An app that *answered* a check (`GUARD_CHECK` mode) resolves the Gatherer route with its verdict and, on the successful case, cancels the fake navigation so it does not commit. An app whose *initial* sync is rejected (`INITIAL_ROUTER_SYNC` with a failed check) publishes a `revertNavigation` event so the Shell moves the shared URL back. This wiring lives in the framework connectors (Angular: link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`]; React: `useGuardsGatherer` + the wrapped-guard hooks), which is why Units 5 and 6 cover the per-framework details.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libs define the whole protocol, framework by framework:
+
+* *The state model.* link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`guard-navigation.model.ts`] — `GuardsNavigationState`, the flag constants and the `GUARD_MODE` enum.
+* *The mode resolver.* link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController`] — `getMode` and the `create*State` helpers.
+* *The Gatherer.* link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardsGatherer`] — `gather`, `resolveRoute`, `activate`/`deactivate` and the fake-navigation callback.
+* *The guard wrappers.* link:{libs}/angular-utils/guards/src/utils/wrap-guards.utils.ts[`wrapGuards`] replaces `canActivate` / `canDeactivate` / `canActivateChild` with mode-aware wrappers, saves the originals in `*GuardList`, and forces `runGuardsAndResolvers: 'always'` so the guards run even when the target route is already active. `ActivateGuardsWrapper` / `DeactivateGuardsWrapper` switch on the mode and, in `NAVIGATION_REQUESTED`, gate on `guardCheckPromise`.
+* *The connector.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] hooks the router events (`RoutesRecognized`, `GuardsCheckStart`, `GuardsCheckEnd`) to wrap, gather and resolve, and publishes `revertNavigation` on a rejected initial sync.
+
+=== Shell side
+
+The Shell participates at one point only: it *responds* to the `revertNavigation` event that an app publishes when its initial router sync is rejected (its patched-history / listener code in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `history.back()`). The Shell does not itself run cross-app guard checks — it moves the shared URL, and the guard protocol is what decides whether that move is allowed in the first place.
+
+== Angular / React
+
+The protocol — state, modes, Gatherer, fake navigation, verdicts — is the same in both frameworks. The implementations differ in plumbing:
+
+* *Angular.* The guards are Angular `Route` guards and the router events (`RoutesRecognized`, `GuardsCheckStart`, `GuardsCheckEnd`) are Angular's; the `GuardsGatherer` is an `@Injectable` service, and the fake navigation uses `onSameUrlNavigation: 'reload'`.
+* *React.* The guards are React-Router handle guards (`canMatch` / `canActivate` / `canActivateChild` / `canDeactivate`) collected from the route `matches`, and the `GuardsGatherer` is a plain class used through the `useGuardsGatherer` hook. React adds one extra state flag, `guardCheckKey`, a unique key that forces re-processing of a guard check on the same URL (see link:{libs}/react-utils/src/lib/guards/model/guard-navigation.model.ts[`guard-navigation.model.ts`]).
+
+The per-framework wrappers and hooks are documented in Units 5 and 6; this Unit only fixes the shared protocol they both implement.
+
+== Edge cases & pitfalls
+
+* *A veto only means the URL does not move.* If any app's guards return `false`, the navigation is rejected and the shared URL is not changed — so the Topics from Unit 3 are not republished for that URL. There is no "partial navigation".
+* *The fake navigation must not commit.* The `GUARD_CHECK` navigation is a check, not a navigation. In Angular this is enforced by `runGuardsAndResolvers: 'always'` plus cancelling the check on success; a check that accidentally commits would move the URL without the other apps having consented.
+* *The requesting app stores the promise on the navigation state.* If the `guardCheckPromise` is missing from the state, the wrappers log a warning and default to `true` (allow) rather than block — a missing promise is treated as "nothing to wait for".
+* *Initial sync can be reverted.* On a guarded initial route the app runs its guards in `INITIAL_ROUTER_SYNC`, and if they fail it publishes `revertNavigation`; the Shell then moves the URL back. This is the one guard interaction that the Shell actively reacts to.
+* *URLs are normalised before being matched.* `GuardsGatherer` normalises request/response URLs (a leading `/`, no trailing `/`) so the same route matches across apps; a mismatched normalisation would make a verdict resolve the wrong pending check.
+
+== Debugging
+
+* Enable the guards debug switch — `window['@onecx/angular-utils'].guards ??= { debug: true }` in the console (see `dev-docs/guards/debug.adoc`) — to log the mode and each guard-check callback as it runs.
+* To see the verdict traffic, watch the `GuardGatherer` Gatherer request/response (Area 13, Diagnostics — `tracing-communication.adoc`): the request is `{ url }`, the response is the `boolean` verdict.
+* A `navigationId === -1` warning from the Shell's history patch (Unit 1) frequently appears around a rejected initial sync.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:url-to-every-router.adoc[URL change → every router] — the unconditional URL following that guards sit on top of, and the `isRouterSync` / `revertNavigation` signals they share.
+* link:navigation-topics.adoc[Page & workspace Topics during navigation] — the Topics that change only when a navigation the guards allow actually moves the URL.
+* `angular-guards.adoc` / `react-guards.adoc` — the per-framework guard wrappers, gatherer and modes this Unit only fixes at the protocol level.
+* Area 1 (Integration Contract & Topics) — the Gatherer mechanism (request/response Topics) that carries the verdicts.
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`Gatherer`] (request/response base)
+* link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`GuardsNavigationState`, `GUARD_MODE`, flag constants]
+* link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController.getMode`]
+* link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardsGatherer`] (`gather`, `resolveRoute`, fake-navigation callback)
+* link:{libs}/angular-utils/guards/src/utils/wrap-guards.utils.ts[`wrapGuards`]
+* link:{libs}/angular-utils/guards/src/utils/activate-guards-wrapper.utils.ts[`ActivateGuardsWrapper`]
+* link:{libs}/angular-utils/guards/src/utils/deactivate-guards-wrapper.utils.ts[`DeactivateGuardsWrapper`]
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] (router guard lifecycle, `revertNavigation`)
+* link:{libs}/react-utils/src/lib/guards/model/guard-navigation.model.ts[`GUARD_MODE`, `GUARD_CHECK_KEY`]
+* link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`GuardsGatherer`] (React)
+* link:{libs}/react-utils/src/lib/guards/hooks/use-guards-gatherer.ts[`useGuardsGatherer`]
+* link:{shell}/src/app/app.module.ts[history patch / listener — `revertNavigation` handling] (Shell)
+
+Verification Sources checked::
+* Unit template (`unit-template.adoc`) — sections, size limit, source-link and diagram rules.
+* Dev Docs top index (`README.adoc`) — Area 7 slug and reading order.
+* Draft Outline commit (6108bdff) — navigation-routing outline (guard section only; no content baseline).
+* Old Dev Docs `dev-docs/guards/modes.adoc` — `GUARD_MODE` flows and the "fake navigation" / gatherer story; the code (fake-navigation via `onSameUrlNavigation: 'reload'`) is the baseline, no contradiction found.
+* Old Dev Docs `dev-docs/guards/debug.adoc` — the console debug switch.
+* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

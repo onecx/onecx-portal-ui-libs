@@ -1,0 +1,82 @@
+= Navigation & Routing
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+This Area explains how a URL is decided and acted on in a OneCX page: how a single address bar is turned into one shared URL that every application's router follows, and how the Shell uses that URL to choose which application to open (the *Current App*) and to show a page when nothing owns the URL.
+
+toc::[]
+
+== Problem
+
+A OneCX page holds several applications at once — a Shell and one or more Angular or React apps, each with its own router. Yet there is only one address bar and one `window.location`. Two hard problems follow:
+
+* *Everyone has to agree on the URL.* Any app can navigate, and the browser's back/forward can change the URL without any app's cooperation. If each router only managed its own slice, the routers would drift apart and disagree about "where am I".
+* *The Shell has to decide what to open.* The Shell does not know its own routes at build time; they arrive at runtime with the Workspace. It must build a route table, match the current URL against it, load the one application that owns that URL, and fall back to a not-found page when no one does.
+
+Solved together, these give the navigation contract of the page: the URL is the single source of truth, and every router follows it — the Shell's router follows it to *activate* an app, and each app's router follows it to *stay in sync*. Whether a cross-app navigation is even *allowed* is a separate concern (Units 4–6) handled by guards, on top of this.
+
+== Big picture
+
+The Shell is the publisher of the shared URL and the owner of the route table. Apps are subscribers that drive their own routers from that URL. The split of work:
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Shared
+    URL[window.location / address bar]
+  end
+  subgraph Shell
+    Patch[patched history]
+    Listener[urlChangeListenerInitializer]
+    Routes[RoutesService route table]
+    Match[Angular Router match]
+  end
+  subgraph Topics
+    LOC[current-location]
+    MFE[current-mfe]
+  end
+  subgraph Apps
+    A[App A router]
+    R[App B router]
+  end
+  URL <--> Patch
+  Patch --> LOC
+  Listener --> LOC
+  LOC --> A
+  LOC --> R
+  Routes --> Match
+  Match --> MFE
+  MFE --> A
+  MFE --> R
+----
+
+Reading it: a real navigation lands on `window.location`; the Shell's patched history turns it into a `current-location` broadcast; the Shell's own listener and every app's router follow that URL; the Shell's `RoutesService` matches the URL to a route and publishes the resulting `current-mfe` (the Current App), which the apps use to scope their own routing.
+
+== Unit map
+
+The Units of this Area, in reading order. Units 1–4 are written; Units 5–6 are planned and listed so their paths are reserved. Each Unit follows the link:{dev-docs-index}[Dev Docs index] slugs and the Unit template.
+
+. link:url-to-every-router.adoc[URL change → every router] — how a single URL change is broadcast and every app's router follows it.
+. link:shell-routes-and-current-app.adoc[Shell routes & Current App activation] — how the Shell builds its route table, matches the URL, activates the Current App and renders not-found.
+. link:navigation-topics.adoc[Page & workspace Topics during navigation] — the `current-location` / `current-page` Topics and the route data in depth.
+. link:why-cross-app-guards.adoc[Why cross-App guards] — why following the URL is not enough and cross-app guard checks are needed.
+. `angular-guards.adoc` — the Angular guard wrappers, gatherer and modes.
+. `react-guards.adoc` — the React guard hooks and gatherer.
+
+Read Units 1 and 2 first: they define the URL contract and the Shell's own use of it. Units 3–6 then add the Topics detail and the guard machinery that decides whether a navigation may proceed at all.
+
+== Related Areas
+
+This Area sits on the Topic contract and is built on and consumed by the Areas below.
+
+* link:{dev-docs-index}[Dev Docs index] — the Area and Unit slug map.
+* Area 1 (Integration Contract & Topics) — the Topic transport that carries `current-location`, `current-page` and `current-mfe`.
+* Area 2 (Application Bootstrap) — the multiple-router problem this Area answers, and how a matched remote module bootstraps.
+* Area 3 (Shell Context & Runtime Configuration) — `current-workspace` and `current-mfe` readiness.
+* Area 13 (Diagnostics) — observing the URL-change traffic and the topic messages at runtime.
