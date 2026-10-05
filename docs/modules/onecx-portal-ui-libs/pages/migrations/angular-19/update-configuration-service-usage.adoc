@@ -94,10 +94,11 @@ const Injectables = {
 } as const;
 
 type Injectable = typeof Injectables[keyof typeof Injectables];
-type Injector = (injectable: Injectable) => Config | Promise<Config>;
+type Injector = (injectable: Injectable) => Config;
 
 export default function (injector: Injector) {
-  // WRONG: injector(Injectables.CONFIG) may be a Promise
+  // WRONG: pre-v6 injectors returned CONFIG synchronously, so this example
+  // incorrectly assumes the updated async behavior
   const cfg = injector(Injectables.CONFIG);
   return new CustomAuthService(cfg);
 }
