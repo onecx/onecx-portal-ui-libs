@@ -34,10 +34,8 @@ You can click the name of any change to open a detailed migration guide with ins
 [%interactive]
 ** [ ] xref:./remove-keycloak-auth.adoc[Remove @onecx/keycloak-auth]
 ** [ ] xref:./update-component-imports.adoc[Update Component Imports]
-** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
 ** [ ] xref:./adjust-packages-in-webpack-config.adoc[Adjust Packages in Webpack Config]
 ** [ ] xref:./remove-menuservice.adoc[Remove MenuService]
-** [ ] xref:./update-translations.adoc[Update Translations]
 
 After these steps are completed, it is recommended to build the application to ensure that there are no remaining issues before proceeding with the Angular 19 upgrade:
 
@@ -65,7 +63,10 @@ Once the previous steps are completed, **the application should be upgraded to A
 ** [ ] xref:./update-packages.adoc[Required Package Updates]
 ** [ ] xref:./update-filtertype-value.adoc[Update FilterType Value]
 ** [ ] xref:./update-configuration-service-usage.adoc[Update ConfigurationService Usage]
+** [ ] xref:./update-translations.adoc[Update Translations]
 ** [ ] xref:./update-component-import-post-migration.adoc[Update Component Imports after Migration]
+** [ ] xref:./switch-to-new-components.adoc[Replace Removed Components]
+** [ ] xref:./additional-breaking-changes.adoc[Additional Breaking Changes]
 ** [ ] xref:./update-portal-api-configuration.adoc[Update Portal API Configuration object parameters]
 ** [ ] xref:./remove-portal-layout-styles.adoc[Remove @onecx/portal-layout-styles]
 ** [ ] xref:./remove-add-initialize-module-guard.adoc[Remove addInitializeModuleGuard()]
