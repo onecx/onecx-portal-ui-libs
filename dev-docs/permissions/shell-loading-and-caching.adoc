@@ -1,0 +1,172 @@
+= Shell loading & caching
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How does the Shell load a user's permission list from the backend, cache it, and publish it onto the two permission Topics — including what happens when the backend call fails?
+
+== Why it exists
+
+The Shell is the only component that can ask the backend for a user's permissions, so it sits between the backend and the permission Topics described in link:permission-model.adoc[Permission model & two Topics]. Two problems force the design:
+
+* The same permission list is requested through two different paths — the push Topic (when a route is activated) and the RPC Topic (when a Remote Component asks). Without a cache, the Shell would hit the backend twice for the same `appId`/`productName`.
+* The backend is a network call that can be slow or fail. The Shell needs a defined, safe behaviour when it cannot load a list, and it must not let a Remote Component's request block or take down the host application.
+
+This Unit covers that loading, caching and failure handling. It does not re-explain the Topics themselves.
+
+== How it works
+
+The Shell reads permissions from its own Backend-for-Frontend (BFF). The generated client `link:{shell}/src/app/shared/generated/api/permission.service.ts[`PermissionBffService.getPermissions(request)`] issues a `POST /permissions` with a body `{ appId, productName }` (`link:{shell}/src/app/shared/generated/model/getPermissionsRequest.ts[GetPermissionsRequest]`) and receives `{ permissions: Array<string> }` (`link:{shell}/src/app/shared/generated/model/getPermissionsResponse.ts[GetPermissionsResponse]`). Everything else is built around that one call.
+
+=== The cache and its key
+
+`link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService`]` is a `providedIn: 'root'` singleton that holds
+
+[source,typescript]
+----
+permissions: Record<string, Observable<string[]>> = {}
+----
+
+and exposes `getPermissions(appId, productName, cacheMissFkt)`. The behaviour is:
+
+* The cache key is `appId + '|' + productName` — a string concatenation, not an object or a Topic name.
+* On a *cache hit* it returns the stored `Observable<string[]>` as-is.
+* On a *cache miss* it calls the supplied `cacheMissFkt(appId, productName)`, pipes the result through `shareReplay()`, stores that shared observable under the key and returns it.
+
+`shareReplay()` is the important part. It makes the observable *multicasting* and *replaying the last value*: the first subscriber triggers the BFF call, and every later subscriber (including ones arriving after the call has already completed) receives the same in-flight request or the already-emitted result. Two consequences follow:
+
+* The BFF is called **at most once** per `(appId, productName)` pair for the life of the cache, no matter how many Apps or Remote Components ask.
+* Both the push and the RPC path (below) call the *same* `getPermissions` method with the *same* key, so a list loaded for route activation is reused when a Remote Component asks about that same application, and vice versa.
+
+=== The push path (route activation)
+
+`link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]` converts each backend route into an Angular route whose `canActivateChild` guard runs `updateAppEnvironment` → `updateAppState`. On a route whose `remoteBaseUrl` differs from the one currently loaded (or on the first load), `updateAppState` runs `Promise.all([updateMfeInfo, updatePermissions])`, and `updatePermissions` does:
+
+[source,typescript]
+----
+const permissions = await firstValueFrom(
+  this.permissionsCacheService.getPermissions(r.appId, r.productName, (appId, productName) =>
+    this.permissionsService.getPermissions({ appId, productName }).pipe(map(({ permissions }) => permissions))
+  )
+)
+await this.permissionsTopic$.publish(permissions)
+----
+
+It resolves the list from the cache and publishes it onto its own `PermissionsTopic` (the push Topic, `string[]`). This is the mechanism that keeps every App's "current MFE permissions" in step with the active route.
+
+=== The RPC path (Remote Components)
+
+`link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]` is the answerer on `PermissionsRpcTopic`, started by the `permissionProxyInitializer` in `link:{shell}/src/app/app.module.ts[`app.module.ts`]`. Its `init()` subscribes to its own `PermissionsRpcTopic` and, for every message whose `permissions` is `undefined` (i.e. a request), loads the list through the same cache and publishes the filled-in answer back:
+
+[source,typescript]
+----
+this.permissionsTopic$
+  .pipe(
+    filter((message) => message.permissions === undefined),
+    mergeMap((message) =>
+      this.permissionsCacheService
+        .getPermissions(message.appId, message.productName, (appId, productName) =>
+          this.permissionsService.getPermissions({ appId, productName }).pipe(
+            retry({ delay: 500, count: 3 }),
+            catchError(() => {
+              console.error('Unable to load permissions for ', appId, productName)
+              return of({ permissions: [] })
+            }),
+            map(({ permissions }) => permissions)
+          )
+        )
+        .pipe(map((permissions) => ({ message, permissions })))
+    )
+  )
+  .subscribe(({ message, permissions }) => {
+    this.permissionsTopic$.publish({ appId: message.appId, productName: message.productName, permissions })
+  })
+----
+
+The deny-all fallback lives here. `retry({ delay: 500, count: 3 })` re-attempts the BFF call three times, half a second apart. If every attempt fails, `catchError` returns `of({ permissions: [] })` — an empty list. An empty list means "the user has no permissions", which is the safe default: rather than hang a Remote Component on a request that can never be answered, the Shell answers with *deny everything*. The answer is published on the RPC Topic and the requesting component's `firstValueFrom` (filtered to the matching `appId`/`productName`) resolves.
+
+=== Where each path lives
+
+* The push path and the RPC path are wired up separately in `link:{shell}/src/app/app.module.ts[`app.module.ts`]: `workspaceConfigInitializer` calls `routesService.init(routes)`, and a separate `provideAppInitializer` runs `permissionProxyInitializer(inject(PermissionProxyService))`.
+* Both services are `providedIn: 'root'`, so each owns one topic instance in the Shell context; the topic machinery is what fans a single Shell out to every App and Remote Component.
+
+=== Request/response sequence
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant RC as Remote Component
+  participant Proxy as PermissionProxyService
+  participant Cache as PermissionsCacheService
+  participant BFF as PermissionBffService
+
+  RC->>Proxy: RPC request { appId, productName }
+  Proxy->>Cache: getPermissions(appId, productName)
+  alt cache hit
+    Cache-->>Proxy: cached Observable (last value)
+  else cache miss
+    Cache->>BFF: POST /permissions
+    BFF-->>Cache: { permissions } (retry 3x @ 500ms)
+    Cache-->>Proxy: sharedReplay Observable
+  end
+  Proxy-->>RC: RPC answer { appId, productName, permissions }
+  Note over Proxy: on total failure -> permissions: [] (deny-all)
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The library side is thin here: it defines the Topics the Shell publishes on and the clients that consume them, but it does no loading or caching.
+
+* `link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[PermissionsTopic]` and `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[PermissionsRpcTopic]` are the two Topics.
+* The App-side consumers (`link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[UserService]`, the Remote Component `PermissionService`s) simply subscribe to the Topics and never talk to the backend. Everything about *where* the permission list comes from is on the Shell side.
+
+=== Shell side
+
+All of the loading, caching and failure handling is in the Shell:
+
+* `link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService`]` — the `appId|productName` → `shareReplay()` cache.
+* `link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updatePermissions`]` — the push publisher.
+* `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]` — the RPC answerer, and the owner of the retry and deny-all fallback.
+* `link:{shell}/src/app/shared/generated/api/permission.service.ts[`PermissionBffService`]` — the BFF client.
+
+== Edge cases & pitfalls
+
+* The cache is keyed on `appId|productName` and lives for the whole session (`shareReplay`, `providedIn: 'root'`). The Shell never re-validates a list: if a user's permissions change mid-session, the Shell keeps serving the cached value. There is no invalidation on logout/login within the same Shell instance in the code.
+* The two paths are **not** equally resilient. The RPC path has `retry({ delay: 500, count: 3 })` and a `catchError` deny-all; the push path (`updatePermissions`) has *neither* — it calls the BFF and `firstValueFrom`s the result directly. A BFF failure on the push path therefore rejects the `canActivateChild` guard, which fails the navigation, instead of publishing an empty list. The consequences of this asymmetry are recorded in the Known issues section below.
+* The deny-all fallback produces `permissions: []`. Consumers must treat an empty list as "deny", not as "not loaded yet". On the RPC path an empty array is a *final answer*, distinct from the "request not yet answered" state the requesters wait for.
+* The cache key uses `|` as a separator. It is stable as long as `appId` and `productName` do not themselves contain `|`; treat the separator as part of the key contract.
+* A cache hit returns the *shared* observable. A value loaded via the push path is what a later RPC request for the same application will see, even if the RPC client would have triggered its own retry/fallback — the fallback only runs when there is genuinely nothing in the cache.
+
+[#known-issues]
+== Known issues
+
+* The push path (`RoutesService.updatePermissions`) has no retry and no deny-all fallback, while the RPC path (`PermissionProxyService`) does. The consequence is asymmetric: a BFF outage blocks the affected route (the `canActivateChild` guard rejects and navigation fails) but a Remote Component that asks the same question gets a silent deny-all answer. This is the *actual* behaviour of the code in `link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`]` versus `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts`]`. It is unclear whether the missing resilience on the push path is intentional, so it is recorded as a follow-up to confirm with the Shell team rather than a documentation change.
+
+== Related Units
+
+* link:permission-model.adoc[Permission model & two Topics] — the Topics this Shell code publishes on.
+* link:checking-in-apps.adoc[Checking in Apps] — how Apps consume the push Topic (planned).
+* link:remote-component-permissions.adoc[Remote Component permissions] — the RPC path from the consumer's side (planned).
+* link:../shell-context/runtime-configuration.adoc[Shell context & runtime configuration] — the Shell's own loading/failure patterns for BFF data, which mirror this one (Area 3, planned).
+
+== Sources
+
+Code::
+* link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService` (cache key + `shareReplay`)]
+* link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService` (RPC answerer, `retry` + deny-all `catchError`)]
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updatePermissions` (push publisher, no retry/fallback)]
+* link:{shell}/src/app/shared/generated/api/permission.service.ts[`PermissionBffService.getPermissions` (`POST /permissions`)]
+* link:{shell}/src/app/shared/generated/model/getPermissionsRequest.ts[`GetPermissionsRequest`]
+* link:{shell}/src/app/shared/generated/model/getPermissionsResponse.ts[`GetPermissionsResponse`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (`permissionProxyInitializer`, `workspaceConfigInitializer`)]
+* link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[`PermissionsTopic`]
+* link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`PermissionsRpcTopic`]
+
+Verification Sources checked::
+* Shell `main` branch source (`onecx-shell-ui`): `permissions-cache.service.ts`, `permission-proxy.service.ts`, `routes.service.ts`, generated `permission.service.ts` and its request/response models. No dedicated Shell Dev Docs page for permission loading exists to diff against; the generated BFF models were used as the source for the endpoint contract.
+* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`) — used for topic discovery only; it does not cover Shell loading/caching in depth, so there was no contradiction to resolve there.
