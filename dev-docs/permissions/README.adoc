@@ -1,0 +1,66 @@
+= Permissions
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Problem
+
+OneCX decides what a user may see and do from permission *keys*. The Shell is the only component that knows those keys for the whole session, while every App and every Remote Component has to act on them. This Area explains how the permission data moves from the Shell to the rest of the page, and how the pieces on each side fit together:
+
+* how the Shell loads and caches the permission lists it serves, and
+* how Apps and Remote Components receive and check them.
+
+The data structures are framework-agnostic: the contract lives in the `@onecx/integration-interface` package of this repository, and the Shell talks to the same Topics from the other side. The Units below explain one question each; read them in the order listed under Unit map.
+
+== Big picture
+
+The Shell owns the permission data. It loads a user's permission list from its backend, caches it, and pushes it out over two Topics. Apps subscribe to the push Topic to get the permissions for the application that is currently in the foreground, while Remote Components use the request/response (RPC) Topic to ask for the permissions of *another* application.
+
+[source,mermaid]
+----
+flowchart TB
+  subgraph Backend[Shell BFF]
+    API[POST /permissions]
+  end
+
+  subgraph Shell[Shell]
+    Cache[PermissionsCacheService<br/>key = appId + productName]
+    Routes[RoutesService<br/>publish on route change]
+    Proxy[PermissionProxyService<br/>answer RPC requests]
+  end
+
+  subgraph App[App — current MFE]
+    US[UserService / PermissionService]
+  end
+
+  subgraph RC[Remote Component]
+    RCPS[PermissionService / PermissionContext]
+  end
+
+  API --> Cache
+  Cache --> Routes
+  Cache --> Proxy
+  Routes -- "permissions Topic (string[])" --> US
+  Proxy -- "permissionsRpc Topic (request / answer)" --> RCPS
+  RCPS -- "request { appId, productName }" --> Proxy
+----
+
+Two repositories share the work. The *libs* define the Topics and the clients that consume them (see the link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[Topics] and the `UserService` / Remote Component services). The *Shell* loads, caches and publishes the data (`link:{shell}/src/app/shell/services/permissions-cache.service.ts[PermissionsCacheService]`, `link:{shell}/src/app/shell/services/routes.service.ts[RoutesService]`, `link:{shell}/src/app/shell/services/permission-proxy.service.ts[PermissionProxyService]`). Every Unit below names the files on both sides it relies on.
+
+== Unit map
+
+Read the Units in this order. The first two explain the model and the Shell side; the other two build on them. Pages that have not been written yet are listed by their planned slug so links to them can be added without changing the map.
+
+. link:permission-model.adoc[Permission model & two Topics] — the push Topic (`permissions`, `string[]`) and the request/response Topic (`permissionsRpc`, `PermissionsRpc`), and why two are needed.
+. link:shell-loading-and-caching.adoc[Shell loading & caching] — the `appId|productName` cache, the `shareReplay` behaviour, the retry policy and the deny-all fallback.
+. link:checking-in-apps.adoc[Checking in Apps] — `PermissionService`, the `HAS_PERMISSION_CHECKER` token and template-based checks.
+. link:remote-component-permissions.adoc[Remote Component permissions] — consuming the RPC Topic from the Remote Component's side.
+
+== Related Areas
+
+* link:../integration-contract/gatherers-and-rpc-topics.adoc[Integration Contract & Topics] — the messaging mechanism, request/response patterns and versioning that both permission Topics ride on (Area 1).
+* link:../authentication/obtaining-tokens.adoc[Authentication] — permissions are per user, and the user (and their tokens) come from the Authentication Area (Area 8).
+* link:../shell-context/context-readiness.adoc[Shell Context & Runtime Configuration] — the Shell loading/failure patterns the permission loader shares with the other BFF data (Area 3).
+* link:../remote-components/slot-assignment.adoc[Remote Components & Slots] — Remote Components, whose permission checks are the main user of the RPC Topic (Area 6).
+* link:../diagnostics/tracing-communication.adoc[Diagnostics] — how to observe the `permissions` / `permissionsRpc` traffic at runtime (Area 13).

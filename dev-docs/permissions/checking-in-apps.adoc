@@ -1,0 +1,153 @@
+= Checking permissions in Apps
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How does an App resolve a *permission checker* at runtime and use it to ask "may the user do X?" — and what does the template-based check look like?
+
+== Why it exists
+
+An App renders features gated by permission keys, but it does not own the data: the Shell publishes the current user's permission list for the active micro frontend over the push Topic (see link:permission-model.adoc[Permission model & two Topics] and link:shell-loading-and-caching.adoc[Shell loading & caching]). So the App needs a single, injectable point of truth it can ask for a decision — with the default implementation reading that push Topic, and the ability to swap in a different source (or "always allow") for other setups.
+
+The design keeps three layers deliberately separate:
+
+* a small framework-agnostic *contract* — what a checker is and how an App tells Angular to provide one;
+* a higher-level *service* for code, which caches results so templates do not re-render in a loop;
+* a *template* escape hatch (`ocxIfPermission` / `ocxIfNotPermission`) for declarative show/hide.
+
+This Unit explains each layer and how they resolve to an actual checker. It does not re-explain the Topics or the Shell side of loading/caching.
+
+== How it works
+
+The contract is a two-method interface in the framework-agnostic `@onecx/angular-utils` package:
+
+`link:{libs}/angular-utils/src/lib/utils/has-permission-checker.ts[HasPermissionChecker]`
+
+* `hasPermission(permissionKey: string | string[]): Promise<boolean>` — the only required method. An array means *all* keys must be granted.
+* `getPermissions?(): Observable<string[]>` — optional. When present, a consumer can read the whole list and derive checks, which is how the shared push Topic is most naturally consumed.
+
+`link:{libs}/angular-utils/src/lib/utils/has-permission-checker.ts[AlwaysGrantPermissionChecker]` implements the same interface but `hasPermission` always returns `true`, "basically disabling the permission system on the UI side".
+
+=== Resolver, not component
+
+The contract is a concept, not a component API. The App never constructs a checker directly; Angular dependency injection resolves one. The token and the resolution rule live together in `link:{libs}/angular-utils/src/lib/utils/has-permission-checker.ts[has-permission-checker.ts]`:
+
+* `HAS_PERMISSION_CHECKER` — an `InjectionToken<HasPermissionChecker>('hasPermission')`.
+* `providePermissionChecker()` — provides the token via a *factory* whose deps are `[Injector, [new Optional(), new SkipSelf(), HAS_PERMISSION_CHECKER]]`. The `SkipSelf` + `Optional` pair means "look for an existing checker in a *parent* injector". If one is found, it wins unchanged; if not, the factory builds one (see below).
+* `provideAlwaysGrantPermissionChecker()` — provides the token with `useClass: AlwaysGrantPermissionChecker`.
+
+The build-on-miss logic is in `link:{libs}/angular-utils/src/lib/utils/has-permission-checker-factory.ts[hasPermissionCheckerFactory]`:
+
+* It receives the parent `Injector` and the (possibly absent) parent-provided checker.
+* If a parent checker exists, it is returned as-is.
+* Otherwise it creates a child `Injector` that binds `HAS_PERMISSION_CHECKER` with `useExisting: UserService` — i.e. the *default* checker is the `UserService` from `@onecx/angular-integration-interface`. If the parent injector cannot already resolve `UserService`, the factory adds it to the child injector's providers so the binding has something to point at.
+* It then resolves `HAS_PERMISSION_CHECKER` from that child injector and returns it.
+
+So resolution is: *explicit parent checker* → *`UserService` (default)* → *build `UserService` if needed*. There is no third built-in path; a custom checker is supplied by providing `HAS_PERMISSION_CHECKER` higher in the tree.
+
+[source,mermaid]
+----
+flowchart TB
+  Q[Inject HAS_PERMISSION_CHECKER] --> P{Parent injector already provides it?}
+  P -- yes --> USE[use the parent checker unchanged]
+  P -- no --> B[build child injector:<br/>HAS_PERMISSION_CHECKER useExisting UserService]
+  B --> U{UserService resolvable in parent?}
+  U -- yes --> RES
+  U -- no --> ADD[add UserService to child providers] --> RES
+  RES[resolve HAS_PERMISSION_CHECKER] --> OUT[default = UserService over the push Topic]
+----
+
+=== The service for code
+
+On top of the checker sits `link:{libs}/angular-utils/src/lib/services/permission.service.ts[PermissionService]`, the convenience API an App calls from component code. It injects *both* the optional `UserService` and the optional `HAS_PERMISSION_CHECKER` and keeps `availableHasPermissionChecker = hasPermissionChecker || userService`. If *neither* is available the constructor throws `UserService or HasPermissionChecker have to be provided to check permissions!`. Its behaviour:
+
+* `hasPermission(key | key[]): Observable<boolean>` — resolves the same way the template check does (below) but *caches* the result per `JSON.stringify(key)` in `cachedPermissions`, so repeated checks in a template do not create a new observable every change detection (this is the "avoid infinite re-rendering loops" cache in the source). If the active checker exposes `getPermissions`, it is used to derive the answer; otherwise `hasPermission(key)` is awaited. A missing checker yields a `false` observable.
+* `getPermissions(): Observable<string[] | undefined>` — returns the (cached) `UserService` permission stream, or `of(undefined)` when no `UserService` is present.
+
+The provider `link:{libs}/angular-utils/src/lib/providers/permission-service.providers.ts[providePermissionService()]` simply exposes `[PermissionService]`.
+
+=== The template-based check
+
+The declarative path is `link:{libs}/angular-accelerator/src/lib/directives/if-permission.directive.ts[IfPermissionDirective]`, declared and exported by `link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[AngularAcceleratorModule]` and selectable as `[ocxIfPermission]` or `[ocxIfNotPermission]` (`standalone: false`). It resolves the checker as `hasPermissionChecker ?? userService` (a computed signal) and throws `IfPermission requires UserService or HasPermissionChecker to be provided!` if there is none. The inputs and their meaning:
+
+* `ocxIfPermission` / `ocxIfNotPermission` — the permission key or `string[]`. The *negated* form is detected by `ocxIfNotPermission !== undefined`; exactly one is used per element.
+* `...OnMissingPermission` — `'hide'` (default) or `'disable'`.
+* `...Permissions` — an *override* `string[]` that, when set, short-circuits the checker entirely: the directive answers from this list only (`permission.every(p => overridePermissions.includes(p))`).
+* `...ElseTemplate` — a `TemplateRef` rendered when the check fails (instead of hiding/disabling).
+
+On each evaluation the directive normalises the key to an array and: if it is empty it hides (`shouldShow: false`); otherwise it asks the checker (override list if given, else `getPermissions` + `every`, else `hasPermission`), then flips the result when negated. When shown, it renders the element's own template; when the check fails and no `else` template is set, `hide` clears the view while `disable` renders the template and sets the `disabled` attribute on the first rendered node. The model types `PermissionInput` (`string | string[] | undefined`) and `OnMissingPermission` (`'hide' | 'disable'`) are in `link:{libs}/angular-accelerator/src/lib/model/permission.model.ts[permission.model.ts]`.
+
+`AngularAcceleratorModule` also calls `providePermissionChecker()` in its `providers`, so importing the accelerator gives a module-scoped checker (resolved via the factory above) to its declared directives and to anything in the module that injects the token.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `link:{libs}/angular-utils/src/lib/utils/has-permission-checker.ts[has-permission-checker.ts]` — the `HasPermissionChecker` interface, `AlwaysGrantPermissionChecker`, the `HAS_PERMISSION_CHECKER` token, and the `providePermissionChecker()` / `provideAlwaysGrantPermissionChecker()` providers.
+* `link:{libs}/angular-utils/src/lib/utils/has-permission-checker-factory.ts[has-permission-checker-factory.ts]` — the DI factory that resolves an existing parent checker or builds one bound to `UserService`.
+* `link:{libs}/angular-utils/src/lib/services/permission.service.ts[permission.service.ts]` — the caching `PermissionService` for code; `link:{libs}/angular-utils/src/lib/providers/permission-service.providers.ts[permission-service.providers.ts]` exports it.
+* `link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[UserService]` — the *default* checker. `providedIn: 'root'`, it keeps a lazily-created `PermissionsTopic`, exposes `getPermissions()` (`permissionsTopic$.asObservable()`, i.e. `Observable<string[]>`) and `hasPermission(key | key[])` (a `firstValueFrom` over the topic; an array means *all* keys must be present; an empty/`undefined` key resolves `true`).
+* `link:{libs}/angular-accelerator/src/lib/directives/if-permission.directive.ts[IfPermissionDirective]` — the `ocxIfPermission` / `ocxIfNotPermission` template check, plus `link:{libs}/angular-accelerator/src/lib/model/permission.model.ts[permission.model.ts]` and `link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[AngularAcceleratorModule]`.
+* Deprecated re-exports: `link:{libs}/angular-accelerator/src/lib/injection-tokens/has-permission-checker.ts[@onecx/angular-accelerator]` re-exports `HasPermissionChecker`, `AlwaysGrantPermissionChecker` and `HAS_PERMISSION_CHECKER` — all marked `@deprecated`; import them from `@onecx/angular-utils` instead.
+
+=== Shell side
+
+The App-side checker is deliberately thin; all of the permission *data* is owned by the Shell and delivered over the push Topic. For the current micro frontend the Shell publishes the list on `link:{shell}/src/app/shell/services/routes.service.ts[RoutesService]` when a route activates, fed by the `link:{shell}/src/app/shell/services/permissions-cache.service.ts[PermissionsCacheService]` (see link:shell-loading-and-caching.adoc[Shell loading & caching]). `UserService` (and therefore the default `HAS_PERMISSION_CHECKER`) simply subscribes to that Topic and turns it into checkable decisions — it never talks to the backend itself. A Remote Component asking about a *different* application is out of scope here (see link:remote-component-permissions.adoc[Remote Component permissions]).
+
+== Angular / React
+
+The contract, service and template check above are the Angular story; React has a thinner equivalent with no DI token and no template directive:
+
+* `link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[UserProvider]` / `useUserService()` — the React app-side checker. `UserProvider` builds a `PermissionsTopic` via `useTopic`, exposes `getPermissions()` (`permissionsTopic$.asObservable()`) and `hasPermission(key | key[])` (array = all keys; empty key = `true`), and an `isInitialized` promise. `useUserService()` throws when used outside a `UserProvider`.
+* There is no `HAS_PERMISSION_CHECKER` analogue in React — the provider *is* the checker, so "swapping in a custom checker" means overriding the context `value` rather than providing an injection token.
+
+A standalone (no-Shell) Angular app has no Shell to answer anything, so `link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[exposeStandalone]` handles both ends at once: the `appInitializer` publishes a `PermissionsTopic` directly with `providerConfig?.permissions ?? []`, and `provideStandaloneProviders()` installs `provideAlwaysGrantPermissionChecker()` — so the same resolution logic ends up on an always-allow checker while the push Topic carries the configured list.
+
+== Edge cases & pitfalls
+
+* *Two defaults, one order.* `PermissionService` resolves `hasPermissionChecker || userService`; the directive resolves `hasPermissionChecker ?? userService`. In either case an explicit `HAS_PERMISSION_CHECKER` provider wins over the `UserService` default, and `provideAlwaysGrantPermissionChecker()` silently makes every check pass — a common way to "disable permissions" in a dev or preview build.
+* *The override list bypasses the checker.* Setting `...Permissions` on the directive means the real permission list is never consulted for that element. It is a preview/testing hook, not a way to "add" permissions — a key not in the override list is denied even if the user actually has it.
+* *`getPermissions` vs `hasPermission`.* Where both exist, the service and directive prefer `getPermissions()` and derive the answer locally (`every` over the list). A custom checker that only implements `hasPermission` is still fine, but each key then goes through that method instead of one list read.
+* *Caching is by `JSON.stringify(key)`.* `PermissionService` reuses the observable for an identical key (string or array), which is what keeps templates from re-subscribing. It also means a changed key produces a fresh subscription; it is a per-instance cache, not a shared one.
+* *An empty permission is a hide.* The directive treats a normalised empty permission as `shouldShow: false`. Checking "nothing" does not mean "show"; the element must name at least one key.
+
+== Debugging
+
+The directives and `UserService` log through their namespaces: `IfPermissionDirective` and `UserService` log a `debug` line such as `No permission for: <key>` / `No permission from permission checker for: [...]` when a check fails. Enable them via `localStorage.debug = '@onecx/angular-accelerator:*'` (and the user service namespace) and reload. To watch the underlying `permissions` traffic itself, see link:../diagnostics/logging.adoc[Area 13 — Diagnostics].
+
+== Known issues
+
+* The `...OnMissingPermission="disable"` path sets a `disabled` attribute on the first rendered node of the element's own template (`link:{libs}/angular-accelerator/src/lib/directives/if-permission.directive.ts[getElement()]` returns `directiveContentRef()?.rootNodes?.[0]`). For an element whose first rendered node is not the interactive control, the attribute lands on the wrong node and the control stays enabled. This is the *actual* behaviour of the current code; it is recorded as a follow-up rather than a documentation change.
+
+== Related Units
+
+* link:permission-model.adoc[Permission model & two Topics] — the push Topic (`permissions`, `string[]`) this checker reads, and why two Topics exist.
+* link:shell-loading-and-caching.adoc[Shell loading & caching] — how the Shell loads, caches and publishes the list the `UserService` subscribes to.
+* link:remote-component-permissions.adoc[Remote Component permissions] — the *other* way permissions are checked, over the RPC Topic, for a different application.
+* link:../integration-contract/message-delivery.adoc[Topic message delivery] — the transport and replay behind the `permissions` Topic (Area 1).
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/utils/has-permission-checker.ts[`HasPermissionChecker`, `AlwaysGrantPermissionChecker`, `HAS_PERMISSION_CHECKER`, `providePermissionChecker()`, `provideAlwaysGrantPermissionChecker()`]
+* link:{libs}/angular-utils/src/lib/utils/has-permission-checker-factory.ts[`hasPermissionCheckerFactory` (DI factory: parent checker → `UserService`)]
+* link:{libs}/angular-utils/src/lib/services/permission.service.ts[`PermissionService` (caching checker for code)]
+* link:{libs}/angular-utils/src/lib/providers/permission-service.providers.ts[`providePermissionService()`]
+* link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService` (default checker over the push Topic)]
+* link:{libs}/angular-accelerator/src/lib/directives/if-permission.directive.ts[`IfPermissionDirective` (`ocxIfPermission` / `ocxIfNotPermission`)]
+* link:{libs}/angular-accelerator/src/lib/model/permission.model.ts[`PermissionInput`, `OnMissingPermission`]
+* link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorModule` (declares/exports the directive, `providePermissionChecker()`)]
+* link:{libs}/angular-accelerator/src/lib/injection-tokens/has-permission-checker.ts[deprecated re-exports (`@onecx/angular-accelerator`)]
+* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[React `UserProvider` / `useUserService`]
+* link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`exposeStandalone` (standalone `PermissionsTopic` publish + `provideAlwaysGrantPermissionChecker()`)]
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService` (Shell, push publisher)]
+* link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService` (Shell)]
+
+Verification Sources checked::
+* `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc` — `#permissions-topic` section (Shell-only publisher of the current MFE's `string[]`), the contract the default checker reads.
+* `docs/modules/onecx-portal-ui-libs/pages/libraries/angular-integration-interface.adoc` — `UserService` permission table (`getPermissions()` / `hasPermission(...)`), cross-checked against the code.
+* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`) — topic discovery only; its checker-factory signature (a function wrapper) is wrong against the current DI-factory code and its directive detail is moved here from that outline. Recorded as a follow-up; code wins.
+* In-code JSDoc for the `HAS_PERMISSION_CHECKER` token, `PermissionService` and `IfPermissionDirective` — the libs `docs/` pages do not yet document `@onecx/angular-utils` permission checking or the `ocxIfPermission` directive, so the source JSDoc was used as the baseline. Listed as a follow-up.
