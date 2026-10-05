@@ -76,7 +76,7 @@ All planned Units of this Area, in reading order. Units whose page exists are li
 
 == Cross-Area links
 
-The Units in this Area link out to the following Units in other Areas. Each path is a planned slug fixed by the Dev Docs top index; none of these pages exists in the repository yet, so every one of them is a link to a not-yet-written page and is listed here (as the top-index convention requires) so the links can be verified. All in-Area links resolve to the two Units written in this change.
+The Units in this Area link out to the following Units in other Areas. Each path is a planned slug fixed by the Dev Docs top index; none of these pages exists in the repository yet, so every one of them is a link to a not-yet-written page and is listed here (as the top-index convention requires) so the links can be verified. In-Area links point to the two Units written in this change and to the planned sibling Units (`react-translations.adoc`, `remote-component-translations.adoc`, `missing-translation-fallback.adoc`); those forward links resolve once the corresponding pages exist, which is why the Unit map above lists them unlinked for now.
 
 |===
 |Link |Target Area — Unit
