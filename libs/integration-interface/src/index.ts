@@ -85,3 +85,5 @@ export * from './lib/gatherers/ai-context/v1/ai-context.model'
 export * from './lib/gatherers/ai-context/v1/ai-context.gatherer'
 export * from './lib/gatherers/ai-completion/v1/ai-completion.model'
 export * from './lib/gatherers/ai-completion/v1/ai-completion.gatherer'
+
+export * from './lib/services/one-cx-ai-completion.service'
