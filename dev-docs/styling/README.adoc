@@ -1,0 +1,81 @@
+= Styling & Style Isolation
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:u1: ./why-style-isolation.adoc
+:u2: ./stylesheet-loading.adoc
+
+This Area explains where CSS on a OneCX page comes from and how the styles of the many applications that share a single page are kept apart. It is the fourth Area in the link:{dev-docs-index}[Dev Docs index].
+
+toc::[]
+
+== Problem
+
+A single OneCX page hosts the Shell plus at least one Microfrontend, and often many Remote Components. Every one of those applications ships its own CSS, and a few shared stylesheets (theme variables, the Shell's own styles, legacy portal-layout rules) sit alongside them. Left unchecked, those stylesheets are global: a `button` rule from App A would restyle the buttons of App B and of the Shell.
+
+The mechanism this Area covers keeps each application's styles bound to the content that belongs to it. It has three moving parts:
+
+* A *scope* identifies the set of content owned by one application (the Shell, a Microfrontend, a Remote Component).
+* Every stylesheet on the page except the genuinely global ones is *scoped* so its rules only apply inside the scope they belong to.
+* Application stylesheets are *loaded on demand* when the application's content appears, and *removed* when the last use of them disappears.
+
+The scoping primitive is the CSS https://developer.mozilla.org/en-US/docs/Web/CSS/@scope[@scope at-rule]. Because that rule is not supported in every browser, the Shell installs a polyfill (Unit 8) that rewrites scoped stylesheets when `@scope` is missing.
+
+== Big picture
+
+The work is split between the libraries in this repository and the Shell. The libraries provide the scope identifiers, the stylesheet utilities, and the Angular/React integration glue. The Shell owns the page-level initialisation: it starts the polyfill, loads the Shell's own and the legacy portal-layout stylesheets, and triggers the loading of Microfrontend styles on navigation.
+
+[source,mermaid]
+----
+flowchart TD
+  subgraph libs["Libs (this repo)"]
+    scopeId["Scope id and attributes<br/>(scope.utils)"]
+    styleUtils["App stylesheet utilities<br/>(fetch, scope, usage count)<br/>(angular-utils/style)"]
+    slot["Angular Slot component<br/>loads/removes RC styles"]
+    react["React scoping and theme HOCs<br/>(react-utils/styling)"]
+  end
+  subgraph shell["Shell (onecx-shell-ui)"]
+    init["styleInitializer<br/>(pick polyfill mode, load shell and legacy styles)"]
+    polyfill["Scope polyfill<br/>(per-scope rewrite)"]
+    routes["RoutesService<br/>loads MFE styles on navigation"]
+    slotHost["Portal Viewport and Slots"]
+  end
+  init --> polyfill
+  routes --> styleUtils
+  slot --> styleUtils
+  react --> styleUtils
+  scopeId --> styleUtils
+  slotHost --> slot
+----
+
+The two pages in this Area so far:
+
+* *Why isolation & style kinds* (Unit 1) covers the scope model and the kinds of stylesheets that exist on a page.
+* *App/Remote Component stylesheet load & removal* (Unit 2) covers the load-on-demand and remove-on-unuse lifecycle with per-App/Slot usage counting.
+
+== Unit map
+
+The Units of this Area, in reading order. Units 3–9 are planned but not yet written, so they are listed unlinked.
+
+. *Why isolation & style kinds* — link:{u1}[why-style-isolation.adoc] _(written)_
+. *App/Remote Component stylesheet load & removal (usage counting)* — link:{u2}[stylesheet-loading.adoc] _(written)_
+. *`@scope` scoping model* — `scope-model.adoc` _(planned)_
+. *Shell's own stylesheets & legacy portal layout* — `shell-stylesheets.adoc` _(planned)_
+. *Angular component styles* — `angular-component-styles.adoc` _(planned)_
+. *Dynamic content attribution (trigger element)* — `dynamic-content-attribution.adoc` _(planned)_
+. *Dynamic content wrapping & listeners* — `dynamic-content-wrapping.adoc` _(planned)_
+. *Scope polyfill* — `scope-polyfill.adoc` _(planned)_
+. *PrimeNG/PrimeReact style scoping* — `primeng-style-scoping.adoc` _(planned)_
+
+== Reading order
+
+Start with Unit 1 so the scope model and the stylesheet categories are established, then read Unit 2. Units 3–9 build on those: the `@scope` model (3), the Shell's own stylesheets (4), component-level styles (5), and the polyfill (8) are the natural next steps.
+
+== Related Areas
+
+* *Bootstrap* — how an App or Remote Component is loaded in the first place; stylesheet loading (Unit 2) is triggered by that bootstrap.
+* *Remote Components & Slots* — the Slot that hosts Remote Components is the caller of the RC style lifecycle (Unit 2).
+* *Theming & Visual Assets* — the Theme's CSS variables and PrimeNG/PrimeReact tokens flow into the scoped stylesheets described here.
+* *Diagnostics* — how to observe stylesheets at runtime once you understand the model.

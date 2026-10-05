@@ -1,0 +1,254 @@
+= OneCX Dev Docs
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:unit-template: ./unit-template.adoc
+
+The Dev Docs explain how OneCX works at runtime, one concept at a time. Each page covers both sides of a mechanism: what the libraries in this repository provide, and how the https://github.com/onecx/onecx-shell-ui[OneCX Shell] uses it.
+
+toc::[]
+
+== Who these pages are for
+
+* Maintainers of the OneCX libraries and the Shell.
+* Advanced App developers who need to understand a mechanism in depth.
+
+The Dev Docs explain how things work and why. Other documentation covers the following:
+
+* Step-by-step usage guides are in https://github.com/onecx/docs-guides-ui[docs-guides-ui].
+* Library API and component documentation is in the libs Antora docs (`docs/`) and Storybook.
+
+== How the Dev Docs are organised
+
+Area:: A large subject, for example Styling & Style Isolation. Each Area has its own folder. The folder's `README.adoc` is the Area overview page. It describes the problem, gives the big picture across libs and Shell, and lists the Units in reading order.
+Unit:: One small page that answers one question. A Unit takes about 10 minutes to read and follows the link:{unit-template}[Unit template].
+
+All pages are written from the current `main` branch of this repository and of the Shell. The rules for writing them are defined once, in the link:{unit-template}[Unit template].
+
+== Areas and Units
+
+Read the Areas in the order below. Area 1 defines the integration contract that all other Areas build on.
+
+Each Area is listed with its folder (`dev-docs/<area-slug>/`) and its planned Units with their page files. The paths are fixed so that pages can link to each other before the target page is written. Links are added here when a page exists. Unplanned pages must not reuse these paths.
+
+[NOTE]
+====
+An Area ticket may change its Unit split after investigation, for example by splitting a Unit in two. In that case, the ticket updates this index and records the change in its pull request.
+====
+
+[#integration-contract]
+.1. Integration Contract & Topics — `integration-contract/`
+[%collapsible]
+====
+How Apps and the Shell communicate through Topics. This Area covers the messaging mechanism only. The meaning of each concrete Topic is described in the Area that owns it.
+
+. Why a message-based contract — `why-message-based.adoc`
+. Topic message delivery (types, ordering, replay, init/resolve) — `message-delivery.adoc`
+. Transports & tab scope (postMessage, BroadcastChannel v1/V2, tab id, fallback, who selects) — `transports-and-tab-scope.adoc`
+. Topic lifecycle (publisher, destroy, deprecated syncable Topic) — `topic-lifecycle.adoc`
+. Request/response: Gatherers & RPC Topics — `gatherers-and-rpc-topics.adoc`
+. Versioning & Shell capability negotiation — `versioning-and-capabilities.adoc`
+. Framework adapters — `framework-adapters.adoc`
+. Topic & Gatherer catalogue — `topic-catalogue.adoc`
+====
+
+[#bootstrap]
+.2. Application Bootstrap — `bootstrap/`
+[%collapsible]
+====
+From the Shell's `index.html` to a running App or Remote Component.
+
+. index.html → first App timeline — `startup-timeline.adoc`
+. Module Federation in OneCX — `module-federation.adoc`
+. Shared dependency config & mismatch — `shared-dependencies.adoc`
+. Preloaders (build time and runtime) — `preloaders.adoc`
+. Loading the matched remote — `loading-matched-remote.adoc`
+. App bootstrap as web component (Angular/React, legacy module Apps) — `web-component-bootstrap.adoc`
+. Multiple-router problem & router wiring — `multiple-routers.adoc`
+====
+
+[#shell-context]
+.3. Shell Context & Runtime Configuration — `shell-context/`
+[%collapsible]
+====
+The data the Shell provides to Apps, and where that data comes from.
+
+. Context overview & readiness — `context-readiness.adoc`
+. Workspace config load & distribution — `workspace-config-loading.adoc`
+. Workspace model & URL building — `workspace-model-and-urls.adoc`
+. Current App & API base URL resolution — `current-app-and-api-base-url.adoc`
+. Configuration vs App Config vs Parameter — `configuration-kinds.adoc`
+. Runtime configuration (env.json placeholders, configuration Topic, cross-repo keys) — `runtime-configuration.adoc`
+. Parameters — `parameters.adoc`
+====
+
+[#styling]
+.4. link:./styling/README.adoc[Styling & Style Isolation] — `styling/`
+[%collapsible]
+====
+Where CSS comes from and how the styles of different Apps are kept apart.
+
+. link:./styling/why-style-isolation.adoc[Why isolation & style kinds] — `why-style-isolation.adoc`
+. link:./styling/stylesheet-loading.adoc[App/Remote Component stylesheet load & removal (usage counting)] — `stylesheet-loading.adoc`
+. `@scope` scoping model — `scope-model.adoc`
+. Shell's own stylesheets & legacy portal layout — `shell-stylesheets.adoc`
+. Angular component styles — `angular-component-styles.adoc`
+. Dynamic content attribution (trigger element) — `dynamic-content-attribution.adoc`
+. Dynamic content wrapping & listeners — `dynamic-content-wrapping.adoc`
+. Scope polyfill — `scope-polyfill.adoc`
+. PrimeNG/PrimeReact style scoping — `primeng-style-scoping.adoc`
+====
+
+[#theming-assets]
+.5. Theming & Visual Assets — `theming-assets/`
+[%collapsible]
+====
+The values a Theme provides (colors, favicon, logo), how they reach the page, and how icons and images are delivered.
+
+. Theme → page (variables, favicon, logo) — `theme-to-page.adoc`
+. Theme → PrimeNG/PrimeReact tokens — `theme-to-component-tokens.adoc`
+. Theme Overrides (CSS vs PRIMENG, precedence) — `theme-override-precedence.adoc`
+. Icons — `icons.adoc`
+. Images — `images.adoc`
+====
+
+[#remote-components]
+.6. Remote Components & Slots — `remote-components/`
+[%collapsible]
+====
+How the Workspace places Remote Components into Slots. Bootstrap, styles, permissions and translations of Remote Components are covered in Areas 2, 4, 9 and 10.
+
+. Assignment — `slot-assignment.adoc`
+. Slot rendering (two flavours) — `slot-rendering.adoc`
+. Remote Component config & host communication — `host-communication.adoc`
+. Shell Slots catalogue (Slot Groups, legacy name mapping) — `shell-slots-catalogue.adoc`
+. Slot size reporting — `slot-size-reporting.adoc`
+====
+
+[#navigation]
+.7. Navigation & Routing — `navigation/`
+[%collapsible]
+====
+How a URL change reaches every router on the page, and how the Shell activates the Current App.
+
+. URL change → every router — `url-to-every-router.adoc`
+. Shell routes & Current App activation (including not-found) — `shell-routes-and-current-app.adoc`
+. Page & workspace Topics during navigation — `navigation-topics.adoc`
+. Why cross-App guards — `why-cross-app-guards.adoc`
+. Angular guards — `angular-guards.adoc`
+. React guards — `react-guards.adoc`
+====
+
+[#authentication]
+.8. Authentication — `authentication/`
+[%collapsible]
+====
+Who owns authentication and how Apps get tokens. The user profile is covered in Area 10.
+
+. Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating) — `mechanism-selection.adoc`
+. Keycloak integration — `keycloak.adoc`
+. Custom auth service contract — `custom-auth-service.adoc`
+. How Apps obtain tokens — `obtaining-tokens.adoc`
+. Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+====
+
+[#permissions]
+.9. Permissions — `permissions/`
+[%collapsible]
+====
+How permissions reach Apps and Remote Components and how they are checked.
+
+. Permission model & two Topics (push vs RPC) — `permission-model.adoc`
+. Shell loading & caching (deny-all fallback) — `shell-loading-and-caching.adoc`
+. Checking in Apps — `checking-in-apps.adoc`
+. Remote Component permissions — `remote-component-permissions.adoc`
+====
+
+[#localization]
+.10. Localization — `localization/`
+[%collapsible]
+====
+User profile, language choice, translations and formatting.
+
+. Profile load & language decision — `profile-and-language.adoc`
+. App translations load & sharing — `app-translations.adoc`
+. Remote Component translations — `remote-component-translations.adoc`
+. Missing-translation fallback — `missing-translation-fallback.adoc`
+. Locale & timezone formatting — `locale-and-timezone-formatting.adoc`
+. React translations — `react-translations.adoc`
+. Dynamic translations — `dynamic-translations.adoc`
+====
+
+[#errors-feedback]
+.11. Errors, Loading & User Feedback — `errors-feedback/`
+[%collapsible]
+====
+The kinds of failure, where each one ends up, and how the user is informed.
+
+. Failure taxonomy map — `failure-taxonomy.adoc`
+. Initialization failures & init-error page — `initialization-failures.adoc`
+. App load failures & global errors — `app-load-failures-and-global-errors.adoc`
+. Global loading — `global-loading.adoc`
+. Portal Messages & Notifications (incl. the Shell's toast Remote Component, which shows only when assigned to a Slot) — `portal-messages-and-notifications.adoc`
+====
+
+[#state-management]
+.12. State Management — `state-management/`
+[%collapsible]
+====
+How the Shell context and the URL connect to an App's ngrx store. Covers ngrx only.
+
+. Shell context → App ngrx store — `shell-context-to-store.adoc`
+. URL-synced state (fragment parameters) — `url-synced-state.adoc`
+. Persisting state across reloads with lazy feature slices — `persisting-state.adoc`
+====
+
+[#diagnostics]
+.13. Diagnostics — `diagnostics/`
+[%collapsible]
+====
+Tools for looking inside a running OneCX page. This Area links to the owning Areas instead of repeating their content.
+
+. Logging (mechanism, namespaces, enabling/filtering) — `logging.adoc`
+. Global `window` state inventory — `window-state-inventory.adoc`
+. Tracing cross-App communication — `tracing-communication.adoc`
+====
+
+== Writing a Unit
+
+Every Unit follows the link:{unit-template}[Unit template]. The template defines the sections, the size limit, diagrams, source links and the Known-issues rule.
+
+== Superseded pages
+
+The following older pages are still in this folder. Each one is removed by the last ticket of the Area listed here, after its content has been checked against the new Units. A page that spans several Areas is removed by the last Area that uses it.
+
+[cols="2,1", options="header"]
+|===
+|Old pages |Superseded by
+
+|`topics/`, `gatherer/`
+|1. Integration Contract & Topics (debugging parts: 13. Diagnostics)
+
+|`styles/`
+|4. Styling & Style Isolation (`primeng-token-variables.adoc` also feeds 5. Theming & Visual Assets)
+
+|`theming/`
+|5. Theming & Visual Assets
+
+|`guards/`
+|7. Navigation & Routing
+|===
+
+== Other
+
+These pages are not part of any Area and are kept as they are.
+
+* link:./general/overview.adoc[Library overview]: the list of libraries in this repository.
+* Storybook:
+** link:./storybook/concept.adoc[Target Picture - OneCX Storybooks]
+** link:./storybook/setup.adoc[Storybook Setup in OneCX]
+** link:./storybook/story-creation.adoc[Story Creation Guidelines]
+** link:./storybook/docs-creation.adoc[Documentation Creation Guidelines]
+** link:./storybook/dod.adoc[Definition of Done - Stories and Component Documentation]
