@@ -53,7 +53,7 @@ If your application provides a custom `AuthServiceFactory` (the `custom` option 
 
 * `AuthServiceWrapper` awaits the async configuration reads (e.g. `CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL`) before loading the remote factory.
 * The exported factory function itself may return an `AuthService` synchronously or a `Promise<AuthService>`; `AuthServiceWrapper` will await the factory result.
-* The injector callback passed into the factory may itself return a value or a `Promise` (for example, `CONFIG` is provided via an async call). If the factory needs injected values that must be awaited, make the factory async and `await` the injector callback.
+* The injector callback passed into the factory may itself return a value or a `Promise` for injected values (for example, `CONFIG` is provided via an async call). If the factory needs injected values that must be awaited, make the factory async and `await` the injector callback.
 
 === Examples
 
@@ -83,8 +83,6 @@ export default function () {
 .Before
 [source,typescript]
 ----
-// if your factory needs to read injected configuration asynchronously,
-// calling the injector without awaiting will give a Promise and lead to errors
 import type { Config } from '@onecx/integration-interface';
 import { CustomAuthService } from './custom-auth.service';
 
@@ -94,12 +92,11 @@ const Injectables = {
 } as const;
 
 type Injectable = typeof Injectables[keyof typeof Injectables];
-type Injector = (injectable: Injectable) => Config;
+type Injector = (injectable: Injectable) => unknown;
 
 export default function (injector: Injector) {
-  // WRONG: pre-v6 injectors returned CONFIG synchronously, so this example
-  // incorrectly assumes the updated async behavior
-  const cfg = injector(Injectables.CONFIG);
+  // v5 injectors return CONFIG synchronously, so no await is needed here
+  const cfg = injector(Injectables.CONFIG) as Config;
   return new CustomAuthService(cfg);
 }
 ----
@@ -116,11 +113,11 @@ const Injectables = {
 } as const;
 
 type Injectable = typeof Injectables[keyof typeof Injectables];
-type Injector = (injectable: Injectable) => Config | Promise<Config>;
+type Injector = (injectable: Injectable) => unknown | Promise<unknown>;
 
 export default async function (injector: Injector) {
-  // injector may return a Promise for CONFIG; await it
-  const cfg = await injector(Injectables.CONFIG);
+  // v6 injectors may return a Promise for CONFIG; await it before using it
+  const cfg = (await injector(Injectables.CONFIG)) as Config;
   // perform any async initialization here, then return the service
   return new CustomAuthService(cfg);
 }
