@@ -47,17 +47,18 @@ await this.configService.setProperty(CONFIG_KEY.APP_VERSION, '6.0.0');
 
 ----
 
-=== Custom AuthServiceFactory
+== Custom AuthServiceFactory
 
 If your application provides a custom `AuthServiceFactory` (the `custom` option of `CONFIG_KEY.AUTH_SERVICE`), note the following:
 
 * `AuthServiceWrapper` awaits the async configuration reads (e.g. `CONFIG_KEY.AUTH_SERVICE_CUSTOM_URL`) before loading the remote factory.
 * The exported factory function itself may return an `AuthService` synchronously or a `Promise<AuthService>`; `AuthServiceWrapper` will await the factory result.
-* The injector callback passed into the factory may itself return a value or a `Promise` for injected values (for example, `CONFIG` is provided via an async call). If the factory needs injected values that must be awaited, make the factory async and `await` the injector callback.
+* The v6 injector callback always returns a `Promise` for both `CONFIG` and `KEYCLOAK_AUTH_SERVICE`. Any factory that uses the injector must be `async` and `await` the returned value; only a factory that does not use the injector can remain synchronous.
+* The returned auth service must implement `init`, `getHeaderValues`, `logout`, and `updateTokenIfNeeded`.
 
 === Examples
 
-.Synchronous factory (no change required)
+==== Synchronous factory (no change required)
 .Before
 [source,typescript]
 ----
@@ -79,7 +80,7 @@ export default function () {
 }
 ----
 
-.Asynchronous factory (await injected configuration)
+==== Asynchronous factory (await injected configuration)
 .Before
 [source,typescript]
 ----
@@ -113,7 +114,7 @@ const Injectables = {
 } as const;
 
 type Injectable = typeof Injectables[keyof typeof Injectables];
-type Injector = (injectable: Injectable) => unknown | Promise<unknown>;
+type Injector = (injectable: Injectable) => Promise<unknown>;
 
 export default async function (injector: Injector) {
   // v6 injectors may return a Promise for CONFIG; await it before using it
@@ -122,8 +123,3 @@ export default async function (injector: Injector) {
   return new CustomAuthService(cfg);
 }
 ----
-
-[NOTE]
-====
-Synchronous factories remain valid — you do not need to make your factory async unless it must await injected values (for example, the configuration object). The implementation in libs/shell-auth accepts either a direct AuthService return or a Promise<AuthService>, and the injector callback may return a Promise for values such as the application Config.
-====
