@@ -14,6 +14,17 @@ import { ObjectUtils } from '../../../utils/objectutils'
 import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/portal-dialog.service'
 
 /**
+ * Whether this dialog can produce a working filter for the column's
+ * {@link FilterType}: unset/EQUALS (value multiselect) and IS_NOT_EMPTY (yes/no),
+ * the same types the Table renders controls for. Every other type is a no-op in
+ * the client-side filtering, so offering it would produce a filter that matches
+ * nothing.
+ */
+function isSupportedFilterType(filterType: FilterType | undefined): boolean {
+  return filterType === undefined || filterType === FilterType.EQUALS || filterType === FilterType.IS_NOT_EMPTY
+}
+
+/**
  * Content component for the Filter View "Add filter" dialog, opened through the
  * {@link PortalDialogService} (see {@link filter-view.component.ts}).
  *
@@ -45,61 +56,7 @@ import { DialogPrimaryButtonDisabled, DialogResult } from '../../../services/por
   selector: 'ocx-add-filter-dialog',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, MultiSelectModule, SelectModule],
-  template: `
-    @if (column()) {
-    <div class="flex flex-column gap-3">
-      <label class="block text-sm font-medium" for="ocxAddFilterColumnSelect">{{
-        'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_LABEL' | translate
-      }}</label>
-      <p-select
-        id="ocxAddFilterColumnSelect"
-        [autofocus]="true"
-        [options]="columnOptions()"
-        [optionLabel]="'label'"
-        [optionValue]="'value'"
-        [ngModel]="selectedColumnId()"
-        (ngModelChange)="onColumnChange($event)"
-        [showClear]="false"
-        [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_PLACEHOLDER' | translate"
-        [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_ARIA_LABEL' | translate"
-        appendTo="body"
-        class="w-full"
-      ></p-select>
-
-      @if (valueOptions(); as values) {
-      <label class="block text-sm font-medium" for="ocxAddFilterValueSelect">{{
-        'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate
-      }}</label>
-      <p-multiSelect
-        id="ocxAddFilterValueSelect"
-        [options]="values"
-        [optionLabel]="'label'"
-        [optionValue]="'value'"
-        [ngModel]="selectedValues()"
-        (ngModelChange)="selectedValues.set($event)"
-        [filter]="true"
-        [showClear]="true"
-        [maxSelectedLabels]="3"
-        [resetFilterOnHide]="true"
-        filterBy="toFilterBy"
-        [emptyFilterMessage]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_EMPTY_MESSAGE' | translate"
-        [filterPlaceHolder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_PLACEHOLDER' | translate"
-        [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_PLACEHOLDER' | translate"
-        [ariaFilterLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_ARIA_LABEL' | translate"
-        appendTo="body"
-        [style]="{ 'min-width': '100%' }"
-        class="w-full"
-      >
-        <ng-template pTemplate="header">
-          <div class="p-3 border-bottom-1 surface-border">
-            {{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_SELECTION_HEADER' | translate }}
-          </div>
-        </ng-template>
-      </p-multiSelect>
-      }
-    </div>
-    }
-  `,
+  templateUrl: './add-filter-dialog.component.html',
 })
 export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogPrimaryButtonDisabled {
   private readonly translateService = inject(TranslateService)
@@ -124,6 +81,14 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
    */
   readonly primaryButtonEnabled = new Subject<boolean>()
 
+  /**
+   * One-shot guard for the initial column selection. That effect reads the
+   * {@link #columns} input, so it would re-run - and re-select the initial
+   * column - every time `columns` gets a new array reference. Setting this the
+   * first time a column is chosen makes the initial selection happen exactly
+   * once, so a later `columns` update cannot clobber a column the user has
+   * already picked in the dropdown. Only read/written inside that one effect.
+   */
   private readonly columnInitialized = signal(false)
 
   readonly selectedColumnId = signal<string | null>(null)
@@ -138,22 +103,36 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
    * a no-op in the client-side filtering, so offering it would produce a filter
    * that matches nothing. The column's `nameKey` is a translation key by contract
    * (see {@link DataTableColumn}), so it is translated for the display label -
-   * mirroring the Table's column header - rather than shown as a raw key.
+   * mirroring the Table's column header - rather than shown as a raw key. The
+   * labels are resolved asynchronously via `translateService.get()`: the offered
+   * set (and thus the labels) is recomputed whenever the columns change.
    */
-  readonly columnOptions = computed<SelectItem[]>(() =>
-    this.columns()
-      .filter(
-        (column) =>
-          column.filterable &&
-          (column.filterType === undefined ||
-            column.filterType === FilterType.EQUALS ||
-            column.filterType === FilterType.IS_NOT_EMPTY)
-      )
-      .map((column) => {
-        const label = this.translateService.instant(column.nameKey)
-        return { label, value: column.id, toFilterBy: label }
-      })
+  readonly columnOptions = signal<SelectItem[]>([])
+  /**
+   * The translated yes/no labels for {@link FilterType.IS_NOT_EMPTY} options,
+   * loaded once per dialog via `translateService.get()` on first need (a
+   * non-empty column becomes the selected column) and cached afterwards, so
+   * switching between non-empty columns re-uses the already-translated labels.
+   * An empty string is the loading state. They are plain fields rather than
+   * signals because only the resulting {@link valueOptions} is read by the
+   * template: keeping them out of the signal graph makes sure the
+   * column-change effect does not re-run (and re-preselect, wiping the user's
+   * selection) when the async translation resolves.
+   */
+  private yesLabel = ''
+  private noLabel = ''
+
+  /**
+   * The offered columns: the filterable columns whose {@link FilterType} this
+   * dialog can produce a working filter for. The single source for the "which
+   * columns are offered" rule - both the initial column selection and the
+   * column select's labels are derived from it, so the filtering happens in
+   * exactly one place.
+   */
+  private readonly offeredColumns = computed<DataTableColumn[]>(() =>
+    this.columns().filter((column) => column.filterable && isSupportedFilterType(column.filterType))
   )
+
   readonly column = computed<DataTableColumn | null>(() => this.getColumnById(this.selectedColumnId()))
 
   constructor() {
@@ -161,21 +140,43 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
     // exists, otherwise the first offered column. A preselected column that is not
     // offered (not filterable, or an unsupported filterType) is skipped.
     effect(() => {
-      const offeredColumns = this.columns().filter(
-        (column) =>
-          column.filterable &&
-          (column.filterType === undefined ||
-            column.filterType === FilterType.EQUALS ||
-            column.filterType === FilterType.IS_NOT_EMPTY)
-      )
+      const offeredColumns = this.offeredColumns()
       if (offeredColumns.length === 0 || this.columnInitialized()) {
         return
       }
       this.columnInitialized.set(true)
       const preselect = this.preselectColumnId()
-      const initialId =
-        preselect && offeredColumns.some((c) => c.id === preselect) ? preselect : offeredColumns[0].id
+      const initialId = preselect && offeredColumns.some((c) => c.id === preselect) ? preselect : offeredColumns[0].id
       this.selectedColumnId.set(initialId)
+    })
+
+    // Resolve the offered columns' translated names via `translateService.get()`
+    // (the column's `nameKey` is a translation key by contract). The options are
+    // reset whenever the offered set changes; a translation resolving for an
+    // already replaced set is ignored so a stale set is never rendered.
+    effect(() => {
+      const offeredColumns = this.offeredColumns()
+      if (offeredColumns.length === 0) {
+        this.columnOptions.set([])
+        return
+      }
+      this.columnOptions.set([])
+      const columnsInputForThisLoad = this.columns()
+      void firstValueFrom(this.translateService.get(offeredColumns.map((column) => column.nameKey))).then(
+        (translations) => {
+          // Guard against the columns being replaced while the translation resolved.
+          if (this.columns() !== columnsInputForThisLoad) {
+            return
+          }
+          this.columnOptions.set(
+            offeredColumns.map((column) => {
+              const translated = translations[column.nameKey]
+              const label = typeof translated === 'string' && translated !== '' ? translated : column.nameKey
+              return { label, value: column.id, toFilterBy: label } as SelectItem
+            })
+          )
+        }
+      )
     })
 
     // Keep the value options and the pre-selected values in sync with the
@@ -239,8 +240,9 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
   /**
    * Re-derives the value options and pre-selects the values already filtered on
    * the given column (that are still present in the data), delegating to the
-   * column's {@link FilterType}: {@link FilterType.IS_NOT_EMPTY} columns build
-   * the fixed yes/no options, all other columns the distinct cell values.
+   * column's {@link FilterType}: {@link FilterType.IS_NOT_EMPTY} columns offer
+   * the fixed yes/no options once the yes/no labels are loaded, all other columns
+   * the distinct cell values.
    */
   private refreshForColumn(columnId: string) {
     const column = this.getColumnById(columnId)
@@ -250,10 +252,41 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
       return
     }
     if (column.filterType === FilterType.IS_NOT_EMPTY) {
+      // The yes/no options need the translated labels; refreshIsNotEmptyColumn()
+      // loads them on first need (showing nothing until they are loaded) and
+      // builds the options from the cache afterwards.
       this.refreshIsNotEmptyColumn(column)
+      this.selectedValues.set(this.getExistingFilterValues(column, FilterType.IS_NOT_EMPTY))
       return
     }
     this.refreshValueColumn(column)
+  }
+
+  /**
+   * Loads the translated yes/no labels once (on first need) and builds the
+   * {@link FilterType.IS_NOT_EMPTY} options, caching the labels so that later
+   * column switches re-use them synchronously.
+   */
+  private refreshIsNotEmptyColumn(column: DataTableColumn) {
+    if (this.yesLabel && this.noLabel) {
+      this.setIsNotEmptyOptions()
+      return
+    }
+    this.valueOptions.set(undefined)
+    void firstValueFrom(this.translateService.get(['OCX_FILTER_VIEW.FILTER_YES', 'OCX_FILTER_VIEW.FILTER_NO'])).then(
+      (translations) => {
+        // Guard against the column being changed while the translation resolved.
+        const current = this.column()
+        if (!current || current.id !== column.id || current.filterType !== FilterType.IS_NOT_EMPTY) {
+          return
+        }
+        const yes = translations['OCX_FILTER_VIEW.FILTER_YES']
+        const no = translations['OCX_FILTER_VIEW.FILTER_NO']
+        this.yesLabel = typeof yes === 'string' && yes !== '' ? yes : 'OCX_FILTER_VIEW.FILTER_YES'
+        this.noLabel = typeof no === 'string' && no !== '' ? no : 'OCX_FILTER_VIEW.FILTER_NO'
+        this.setIsNotEmptyOptions()
+      }
+    )
   }
 
   /**
@@ -261,14 +294,11 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
    * than the column's distinct values, mirroring the column header filter in the
    * Table mode and the boolean semantics of the client-side filtering.
    */
-  private refreshIsNotEmptyColumn(column: DataTableColumn) {
-    const yes = this.translateService.instant('OCX_FILTER_VIEW.FILTER_YES')
-    const no = this.translateService.instant('OCX_FILTER_VIEW.FILTER_NO')
+  private setIsNotEmptyOptions() {
     this.valueOptions.set([
-      { label: yes, value: true, toFilterBy: yes } as SelectItem,
-      { label: no, value: false, toFilterBy: no } as SelectItem,
+      { label: this.yesLabel, value: true, toFilterBy: this.yesLabel } as SelectItem,
+      { label: this.noLabel, value: false, toFilterBy: this.noLabel } as SelectItem,
     ])
-    this.selectedValues.set(this.getExistingFilterValues(column, FilterType.IS_NOT_EMPTY))
   }
 
   /**
@@ -332,9 +362,9 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
             firstValueFrom(this.translateService.get(value as string))
               .then((translated) => {
                 const label = typeof translated === 'string' && translated !== '' ? translated : String(value)
-                resolve(({ label, value, toFilterBy: label }) as SelectItem)
+                resolve({ label, value, toFilterBy: label } as SelectItem)
               })
-              .catch(() => resolve(({ label: String(value), value, toFilterBy: String(value) }) as SelectItem))
+              .catch(() => resolve({ label: String(value), value, toFilterBy: String(value) } as SelectItem))
           })
       )
     ).then((translatedOptions) => {

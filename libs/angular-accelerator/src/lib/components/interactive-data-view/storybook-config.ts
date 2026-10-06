@@ -25,7 +25,6 @@ import { MenuModule } from 'primeng/menu'
 import { PickListModule } from 'primeng/picklist'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { DialogModule } from 'primeng/dialog'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
 import { DialogMessageContentComponent } from '../dialog/dialog-message-content/dialog-message-content.component'
 import { DialogContentComponent } from '../dialog/dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../dialog/dialog-footer/dialog-footer.component'
@@ -49,7 +48,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { action } from 'storybook/actions'
 import { UserService } from '@onecx/angular-integration-interface'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
-import { PortalDialogService } from '../../services/portal-dialog.service'
+import { providePortalDialogService } from '../../services/portal-dialog.service'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -59,16 +58,12 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
       providers: [
         importProvidersFrom(BrowserModule),
         importProvidersFrom(BrowserAnimationsModule),
-        // Real PortalDialogService so the "Add Filter" dialog actually opens (see the
-        // PortalDialogService story for the proven wiring). Its transitive deps
-        // (DialogService, Router, AppStateService, ShellCapabilityService, TranslateService)
-        // all resolve in this Storybook environment - verified against the working
-        // portal-dialog-service stories - so only the explicit PrimeNG DialogService and
-        // the DynamicDialog tokens need to be declared here.
-        DialogService,
-        DynamicDialogConfig,
-        DynamicDialogRef,
-        PortalDialogService,
+        // The Filter View's "Add Filter" dialog opens through the real
+        // PortalDialogService. The provider (mirroring portal-dialog.service.spec.ts)
+        // supplies DialogService + PortalDialogService; DynamicDialogConfig /
+        // DynamicDialogRef are resolved from the service's own element injector, not
+        // DI, so they no longer need to be declared here.
+        providePortalDialogService(),
         // TranslateService must live in the environment (app) injector, not just the
         // NgModule injector (moduleMetadata): the Add Filter dialog is created dynamically
         // by the PrimeNG DialogService, whose injector chain is rooted at the env injector.
@@ -126,7 +121,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         // for the Filter View's "Add Filter" dialog to render in this Storybook.
         DialogMessageContentComponent,
         DialogContentComponent,
-        DialogFooterComponent
+        DialogFooterComponent,
       ],
       imports: [
         TableModule,
@@ -148,7 +143,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ChipModule,
         SkeletonModule,
         TooltipModule,
-        OcxTooltipDirective
+        OcxTooltipDirective,
       ],
     }),
   ],
