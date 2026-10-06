@@ -182,6 +182,50 @@ describe('FilterViewComponent (class logic)', () => {
     expect(secondary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON')
   })
 
+  it('should only apply filters when the primary (confirm) button is clicked, not on cancel/X', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    // Simulate the dialog being closed via the secondary (cancel) button or the
+    // X/Escape, carrying a non-empty result (the dialog pre-selects existing
+    // values). No filter must be applied.
+    ;(portalDialogService.openDialog as jest.Mock).mockReturnValueOnce(
+      of({ button: 'secondary', result: [{ columnId: 'c2', value: 'v', filterType: FilterType.EQUALS }] })
+    )
+    component.onAddFilter('c2')
+    await Promise.resolve()
+
+    expect(stateService.filters()).toEqual([])
+  })
+
+  it('should apply the dialog result when the primary (confirm) button is clicked', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    ;(portalDialogService.openDialog as jest.Mock).mockReturnValueOnce(
+      of({ button: 'primary', result: [{ columnId: 'c2', value: 'v', filterType: FilterType.EQUALS }] })
+    )
+    component.onAddFilter('c2')
+    await Promise.resolve()
+
+    expect(stateService.filters()).toEqual([{ columnId: 'c2', value: 'v', filterType: FilterType.EQUALS }])
+  })
+
+  it('should not apply filters when the primary button is clicked with an empty result', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([{ columnId: 'c2', value: 'existing', filterType: FilterType.EQUALS }])
+
+    ;(portalDialogService.openDialog as jest.Mock).mockReturnValueOnce(of({ button: 'primary', result: [] }))
+    component.onAddFilter('c2')
+    await Promise.resolve()
+
+    // Confirming with no selected value leaves the existing filters untouched.
+    expect(stateService.filters()).toEqual([{ columnId: 'c2', value: 'existing', filterType: FilterType.EQUALS }])
+  })
+
   it('should only pass filterable columns to the add filter dialog', async () => {
     stateService.availableColumns.set([
       makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),

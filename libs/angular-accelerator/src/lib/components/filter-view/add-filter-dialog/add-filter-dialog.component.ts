@@ -191,10 +191,13 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
     // Keep the captured result and the primary button state in sync with the
     // currently selected column and values, so that confirming returns the
     // filters for the selected column and the confirm button is only enabled
-    // when at least one value is selected.
+    // when at least one value is selected. The PrimeNG MultiSelect emits `null`
+    // when its clear icon (showClear) is used, which would otherwise make
+    // `values.length` throw and abort the effect - leaving the confirm button
+    // enabled and the dialogResult holding the pre-removal selection.
     effect(() => {
       const column = this.column()
-      const values = this.selectedValues()
+      const values = this.normalizeValues(this.selectedValues())
       this.dialogResult = column && values.length > 0 ? this.buildFilters(column, values) : []
       this.primaryButtonEnabled.next(values.length > 0)
     })
@@ -214,6 +217,16 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
   private buildFilters(column: DataTableColumn, values: unknown[]): Filter[] {
     const filterType = column.filterType ?? FilterType.EQUALS
     return values.map((value) => ({ columnId: column.id, value, filterType }) satisfies Filter)
+  }
+
+  /**
+   * Normalises the MultiSelect's emitted selection to a plain array. The clear
+   * icon (`showClear`) and other PrimeNG code paths emit `null` rather than `[]`,
+   * so a `null`/non-array value is treated as "no value selected" instead of
+   * being read as an array (which would throw on `.length`).
+   */
+  private normalizeValues(values: unknown): unknown[] {
+    return Array.isArray(values) ? values : []
   }
 
   private getColumnById(columnId: string | null): DataTableColumn | null {

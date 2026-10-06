@@ -259,6 +259,32 @@ describe('AddFilterDialogComponent (class logic)', () => {
     expect(enabledStates).toContain(false)
   })
 
+  it('should disable the primary button and clear the result when the MultiSelect emits null (clear icon)', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c1: 'b' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const enabledStates: boolean[] = []
+    component.primaryButtonEnabled.subscribe((enabled) => enabledStates.push(enabled))
+
+    // A value is selected -> confirm enabled and result captured.
+    component.selectedValues.set(['a'])
+    fixture.detectChanges()
+    expect(component.dialogResult).toEqual([{ columnId: 'c1', value: 'a', filterType: FilterType.EQUALS }])
+    expect(enabledStates).toContain(true)
+
+    // The PrimeNG MultiSelect clear icon emits `null`, not `[]`. This must not
+    // throw inside the sync effect; it should disable the button and reset the
+    // result so a stale (pre-removal) filter is never applied.
+    ;(component.selectedValues as any).set(null)
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.dialogResult).toEqual([])
+    expect(enabledStates[enabledStates.length - 1]).toBe(false)
+  })
+
   it('should offer the fixed yes/no options for an IS_NOT_EMPTY column', async () => {
     fixture.componentRef.setInput('columns', [
       makeColumn({ id: 'available', nameKey: 'Available', filterType: FilterType.IS_NOT_EMPTY }),

@@ -326,7 +326,11 @@ export class FilterViewComponent {
             }
           )
           .subscribe((state) => {
-            if (state?.result) {
+            // Only the primary (confirm) button applies the filters. Closing via the
+            // secondary (cancel) button, the X button or Escape must not apply the
+            // dialog's result - the dialog pre-selects the column's existing values,
+            // so its result is non-empty even when the user changed nothing.
+            if (state?.button === 'primary' && state.result && state.result.length > 0) {
               this.applyFilters(state.result)
             }
           })
