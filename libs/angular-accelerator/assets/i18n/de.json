@@ -168,10 +168,6 @@
       "ARIA_LABEL": "Suchkriterien zurücksetzen",
       "DETAIL": "Suchkriterien zurücksetzen"
     },
-    "RESET_BUTTON_SEARCH_AND_RESULTS": {
-      "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
-      "DETAIL": "Suchkriterien und Ergebnisse zurücksetzen"
-    },
     "SEARCH_BUTTON": {
       "TEXT": "Suchen",
       "ARIA_LABEL": "Suche starten",
