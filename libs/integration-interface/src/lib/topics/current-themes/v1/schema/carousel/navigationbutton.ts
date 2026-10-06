@@ -27,8 +27,8 @@ export const carouselNavigationButtonShape = z.object({
     .object({
       defaultState: carouselNavigationButtonStateShape.prefault({}),
       hover: carouselNavigationButtonStateShape.prefault({}),
-      active: carouselNavigationButtonStateShape.prefault({}),
       focus: carouselNavigationButtonStateShape.prefault({}),
+      disabled: carouselNavigationButtonStateShape.prefault({}),
     })
     .prefault({}),
 })
@@ -66,20 +66,6 @@ export const carouselNavigationButtonDefaults = {
       border: {
         color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.md}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
-      },
-    },
-    active: {
-      background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
-      color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-      border: {
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
-        style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.md}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
       },
     },
     focus: {
@@ -88,10 +74,11 @@ export const carouselNavigationButtonDefaults = {
       border: {
         color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.md}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
       },
+    },
+    disabled: {
+      background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
+      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
     },
   },
 }

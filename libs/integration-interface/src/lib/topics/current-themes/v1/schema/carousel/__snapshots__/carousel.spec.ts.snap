@@ -78,17 +78,6 @@ Object {
     },
     "navigationButton": Object {
       "defaultVariant": Object {
-        "active": Object {
-          "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
-          "border": Object {
-            "color": "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
-            "style": "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.md}}",
-          },
-          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
-        },
         "defaultState": Object {
           "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
           "border": Object {
@@ -99,6 +88,10 @@ Object {
             "width": "{{primitives.border.width.md}}",
           },
           "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "disabled": Object {
+          "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
         },
         "focus": Object {
           "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",

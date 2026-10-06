@@ -26,7 +26,7 @@ Styleable regions (authoritative, matching the mapper): the root container, the 
 |---|---|---|---|
 | `container` | specific, no states | — | nothing |
 | `content` | specific, no states | — | nothing |
-| `navigationButton` | specific, stateful | `defaultState`, `hover`, `active`, `focus` | nothing |
+| `navigationButton` | specific, stateful | `defaultState`, `hover`, `focus`, `disabled` | nothing |
 | `indicator` | specific, stateful | `defaultState`, `hover`, `active`, `focus` | nothing |
 
 The `carousel` root is an **aggregator** with no variant/state/severity of its own (like `calendar`), so every child sits under the single `defaultVariant` and is effectively dependency-`nothing`.
@@ -54,8 +54,8 @@ carousel (root)
     │    └── defaultVariant
     │         ├── defaultState { background, color, border }
     │         ├── hover        { background, color, border }
-    │         ├── active       { background, color, border }
-    │         └── focus        { background, color, border }
+    │         ├── focus        { background, color, border }
+    │         └── disabled     { background, color }   # no active (PrimeNG has no :active nav rule); border falls back
     └── indicator                    # stateful — own defaultVariant
          ├── width, height           # static (variant root)
          ├── focusRing               # static (variant root) { color,style,width,radius,offset,shadow }
@@ -95,10 +95,10 @@ Defaults mirror the original token values verbatim (only the path/naming changes
 | `settings` | — | the whole object (no inline defaults; PrimeNG built-ins apply) |
 | `defaultVariant.container` | `background`, `color`, `padding` (`space.md`), `border` (full: color/style/`width md`/`radius md`/offset none) | — |
 | `defaultVariant.content` | `gap` (`space.md`) | — |
-| `defaultVariant.navigationButton` | static `padding` (`space.sm`), `focusRing` (full 6 fields); per-state `background`/`color`/`border` at `defaultState`/`hover`/`active`/`focus` | — |
+| `defaultVariant.navigationButton` | static `padding` (`space.sm`), `focusRing` (full 6 fields); per-state `background`/`color`/`border` at `defaultState`/`hover`/`focus`; `disabled` with `background`/`color` only (border falls back) | — |
 | `defaultVariant.indicator` | static `width`/`height` (`space.md`), `focusRing` (full 6 fields); per-state `background`/`color`/`border` (border `width none`) at `defaultState`/`hover`/`active`/`focus` | — |
 
-Baseline refs: `{{primitives.defaultVariant.defaultState.defaultSeverity.{bg,contrast,border.*,focusRing.*}}}`; hover/active/focus state refs: `{{primitives.defaultVariant.state.{hover,active,focus}.defaultSeverity.{bg,contrast,border.*}}}`.
+Baseline refs: `{{primitives.defaultVariant.defaultState.defaultSeverity.{bg,contrast,border.*,focusRing.*}}}`; hover/active/focus/disabled state refs: `{{primitives.defaultVariant.state.{hover,active,focus,disabled}.defaultSeverity.{bg,contrast,border.*}}}` (the navigation button's `disabled` fills only `bg`/`contrast`).
 
 The full resolved tree is captured by the snapshot test (Step 10) as the canonical reference.
 
@@ -123,6 +123,16 @@ The full resolved tree is captured by the snapshot test (Step 10) as the canonic
 ### Note on Step 8 test policy
 
 Per the audit's structure-only-scope rule, no test was added/modified during Step 8. The spec rewrite (old `expectExactTokens` spec → three-test pattern) is Step 10 and was done as a separate step.
+
+## Navigation-button state correction (2026-10-06)
+
+Follow-up audit of the `navigationButton` state set against PrimeNG v21.1.9 source:
+
+- **Removed `active`.** PrimeUix's carousel base styles (`@primeuix/styles/dist/carousel/index.mjs`) give `.p-carousel-prev-button, .p-carousel-next-button` only layout rules (`align-self: center; flex-shrink: 0`) — no `:active`/`:hover`/`:focus`/`:disabled` styling, and no `…-active` nav-button class. The `active` state had no runtime basis. (The **indicator** is unaffected: it has real `:hover`, `:focus-visible`, and `.p-carousel-indicator-active` rules, so its `active` state is retained.)
+- **Added `disabled`.** `primeng-carousel.mjs` binds `'p-disabled': instance.isBackwardNavDisabled()` (prev) / `isForwardNavDisabled()` (next) — true at the first/last item on a non-circular carousel — so `disabled` is a real, themable state that was previously missing.
+- **Default for `disabled`:** `background` (`{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}`) + `color` (`…contrast`) only, leaving `border` to the fallback mechanism — matching the `calendar/panelbutton.ts` nav-button analog and the minimal-per-state rule.
+- The mappers are unaffected: no rule referenced `usages.carousel…navigationButton.active`, and `disabled` (like `focus`) is modeled-but-unmapped.
+
 
 ## Testing (Step 10)
 

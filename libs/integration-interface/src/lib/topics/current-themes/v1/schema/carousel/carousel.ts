@@ -8,6 +8,7 @@ import { carouselContainerShape, carouselContainerDefaults } from './container'
 import { carouselContentShape, carouselContentDefaults } from './content'
 import { carouselNavigationButtonShape, carouselNavigationButtonDefaults } from './navigationbutton'
 import { carouselIndicatorShape, carouselIndicatorDefaults } from './indicator'
+import { carouselItemShape, carouselItemDefaults } from './item'
 
 // ------------------------------------------------------------------
 // SHAPE — all keys optional, no defaults baked in
@@ -24,6 +25,7 @@ const carouselVariantContentShape = z.object({
   content: carouselContentShape.prefault({}),
   navigationButton: carouselNavigationButtonShape.prefault({}),
   indicator: carouselIndicatorShape.prefault({}),
+  item: carouselItemShape.prefault({}),
 })
 
 export const carouselShape = z.object({
@@ -51,6 +53,7 @@ export type CarouselShapeInput = {
     content?: z.input<typeof carouselContentShape>
     navigationButton?: z.input<typeof carouselNavigationButtonShape>
     indicator?: z.input<typeof carouselIndicatorShape>
+    item?: z.input<typeof carouselItemShape>
   }
   transitionDuration?: number | string
 }
@@ -76,6 +79,7 @@ export const carouselDefaults = {
     content: carouselContentDefaults,
     navigationButton: carouselNavigationButtonDefaults,
     indicator: carouselIndicatorDefaults,
+    item: carouselItemDefaults,
   },
 }
 

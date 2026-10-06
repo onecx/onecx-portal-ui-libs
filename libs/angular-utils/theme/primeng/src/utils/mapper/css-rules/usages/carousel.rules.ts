@@ -1,4 +1,4 @@
-import type { CssRule } from '../../mapper.types';
+import type { CssRule } from '../../mapper.types'
 
 export const carouselCssRules: CssRule[] = [
   // ─── Carousel root container ──────────────────────────────────────────────
@@ -107,9 +107,7 @@ export const carouselCssRules: CssRule[] = [
 
   // ─── Navigation buttons ───────────────────────────────────────────────────
   {
-    selector:
-      '.p-carousel .p-carousel-prev-button,' +
-      '\n.p-carousel .p-carousel-next-button',
+    selector: '.p-carousel .p-carousel-prev-button,' + '\n.p-carousel .p-carousel-next-button',
     declarations: [
       {
         property: 'padding',
@@ -117,4 +115,38 @@ export const carouselCssRules: CssRule[] = [
       },
     ],
   },
-];
+
+  // ─── Item ──────────────────────────────────────────────────────────────────
+  // No PrimeNG preset equivalent — `.p-carousel-item`'s width/flex-basis is
+  // computed at runtime from `numVisible`/`responsiveOptions` and must not be
+  // themed, so only the visual (non-layout) properties are exposed here.
+  {
+    selector: '.p-carousel .p-carousel-item',
+    declarations: [
+      {
+        property: 'background',
+        from: 'usages.carousel.defaultVariant.item.background',
+      },
+      {
+        property: 'padding',
+        from: 'usages.carousel.defaultVariant.item.padding',
+      },
+      {
+        property: 'border-color',
+        from: 'usages.carousel.defaultVariant.item.border.color',
+      },
+      {
+        property: 'border-width',
+        from: 'usages.carousel.defaultVariant.item.border.width',
+      },
+      {
+        property: 'border-style',
+        from: 'usages.carousel.defaultVariant.item.border.style',
+      },
+      {
+        property: 'border-radius',
+        from: 'usages.carousel.defaultVariant.item.border.radius',
+      },
+    ],
+  },
+]

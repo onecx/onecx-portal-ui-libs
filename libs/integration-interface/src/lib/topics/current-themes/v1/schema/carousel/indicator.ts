@@ -68,9 +68,6 @@ export const carouselIndicatorDefaults = {
       border: {
         color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.none}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
       },
     },
     active: {
@@ -79,9 +76,6 @@ export const carouselIndicatorDefaults = {
       border: {
         color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.none}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
       },
     },
     focus: {
@@ -90,9 +84,6 @@ export const carouselIndicatorDefaults = {
       border: {
         color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
         style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.none}}',
-        radius: '{{primitives.border.radius.md}}',
-        offset: '{{primitives.border.offset.none}}',
       },
     },
   },
