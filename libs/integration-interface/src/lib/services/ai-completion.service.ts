@@ -18,14 +18,7 @@ export async function consumerAiCompletionProvider(
 export class OneCXAiCompletionService {
   private readonly logger = createLogger('OneCXAiCompletionService')
 
-  private _aiCompletionGatherer: AiCompletionGatherer | undefined
-  get aiCompletionGatherer() {
-    this._aiCompletionGatherer ??= new AiCompletionGatherer(consumerAiCompletionProvider)
-    return this._aiCompletionGatherer
-  }
-  set aiCompletionGatherer(source: AiCompletionGatherer) {
-    this._aiCompletionGatherer = source
-  }
+  private readonly aiCompletionGatherer = new AiCompletionGatherer(consumerAiCompletionProvider)
 
   async getCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
     this.logger.debug('getCompletion', request)
