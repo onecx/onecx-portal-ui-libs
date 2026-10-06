@@ -7,8 +7,7 @@ import type { CssRule } from '../../mapper.types'
 // The PrimeNG DataView preset only exposes per-section borderColor/borderWidth/
 // borderRadius/background/color/padding. The dataview schema additionally carries
 // paddingX/paddingY/gap (split padding + inter-item gap) and, on the shared
-// paginator, a focusRing and background that have no preset tokens — those are
-// emitted here as CSS.
+// paginator minimal local tokens that have no preset equivalent are emitted here as CSS.
 
 export const dataviewCssRules: CssRule[] = [
   // Root
@@ -55,8 +54,6 @@ export const dataviewCssRules: CssRule[] = [
   {
     selector: '.p-dataview-paginator-top',
     declarations: [
-      { property: 'background', from: 'usages.dataview.header.paginator.background' },
-      { property: 'color', from: 'usages.dataview.header.paginator.color' },
       {
         property: 'padding-inline',
         from: 'usages.dataview.header.paginator.paddingX',
@@ -65,39 +62,11 @@ export const dataviewCssRules: CssRule[] = [
         property: 'padding-block',
         from: 'usages.dataview.header.paginator.paddingY',
       },
-      { property: 'gap', from: 'usages.dataview.header.paginator.gap' },
-    ],
-  },
-  {
-    selector: '.p-dataview-paginator-top :focus',
-    declarations: [
-      {
-        property: 'outline-color',
-        from: 'usages.dataview.header.paginator.focusRing.color',
-      },
-      {
-        property: 'outline-width',
-        from: 'usages.dataview.header.paginator.focusRing.width',
-      },
-      {
-        property: 'outline-offset',
-        from: 'usages.dataview.header.paginator.focusRing.offset',
-      },
-      {
-        property: 'border-radius',
-        from: 'usages.dataview.header.paginator.focusRing.radius',
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.dataview.header.paginator.focusRing.shadow',
-      },
     ],
   },
   {
     selector: '.p-dataview-paginator-bottom',
     declarations: [
-      { property: 'background', from: 'usages.dataview.footer.paginator.background' },
-      { property: 'color', from: 'usages.dataview.footer.paginator.color' },
       {
         property: 'padding-inline',
         from: 'usages.dataview.footer.paginator.paddingX',
@@ -106,32 +75,7 @@ export const dataviewCssRules: CssRule[] = [
         property: 'padding-block',
         from: 'usages.dataview.footer.paginator.paddingY',
       },
-      { property: 'gap', from: 'usages.dataview.footer.paginator.gap' },
     ],
   },
-  {
-    selector: '.p-dataview-paginator-bottom :focus',
-    declarations: [
-      {
-        property: 'outline-color',
-        from: 'usages.dataview.footer.paginator.focusRing.color',
-      },
-      {
-        property: 'outline-width',
-        from: 'usages.dataview.footer.paginator.focusRing.width',
-      },
-      {
-        property: 'outline-offset',
-        from: 'usages.dataview.footer.paginator.focusRing.offset',
-      },
-      {
-        property: 'border-radius',
-        from: 'usages.dataview.footer.paginator.focusRing.radius',
-      },
-      {
-        property: 'box-shadow',
-        from: 'usages.dataview.footer.paginator.focusRing.shadow',
-      },
-    ],
-  },
+
 ]
