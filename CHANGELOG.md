@@ -1,3 +1,10 @@
+## [6.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.28.0...v6.29.0) (2026-10-06)
+
+### Features
+
+* add ai-completion.service ([#1797](https://github.com/onecx/onecx-portal-ui-libs/issues/1797)) ([27f7e6f](https://github.com/onecx/onecx-portal-ui-libs/commit/27f7e6ff44faf6e0c0a8add9a3da6a4acf6b9a75))
+* add configurable search header buttons (v6) ([#1801](https://github.com/onecx/onecx-portal-ui-libs/issues/1801)) ([7a0e271](https://github.com/onecx/onecx-portal-ui-libs/commit/7a0e271556e29751a8f05b8f712e7f50819b8ad1))
+
 ## [6.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.3...v6.28.0) (2026-09-30)
 
 ### Features
