@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core'
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { TranslationObject, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
@@ -6,8 +6,8 @@ import { OcxConsentHarness } from '../../../../testing/consent.harness'
 import { ConsentComponent } from './consent.component'
 import { of } from 'rxjs'
 import type { Observable } from 'rxjs'
-import { ButtonModule } from 'primeng/button'
-import { RippleModule } from 'primeng/ripple'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { RippleModule } from '@openng/optimus-ui/ripple'
 
 class FakeTranslateLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<TranslationObject> {
@@ -30,6 +30,7 @@ class FakeTranslateLoader implements TranslateLoader {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-consent
       [url]="url()"

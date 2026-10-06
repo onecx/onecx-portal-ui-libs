@@ -1,15 +1,17 @@
-import debug from "debug";
+jest.mock("debug", () => ({ __esModule: true, default: jest.fn(() => jest.fn()) }));
 
+import debug from "debug";
 import { createLoggerFactory } from "./create-logger.utils";
+
+const debugSpy = debug as unknown as jest.Mock;
 
 describe("createLoggerFactory", () => {
   afterEach(() => {
     jest.restoreAllMocks();
+    debugSpy.mockClear();
   });
 
   it("creates loggers with the expected namespace format", () => {
-    const debugSpy = jest.spyOn(debug, "default");
-
     const createLogger = createLoggerFactory("my-lib");
     const log = createLogger("MyComponent");
 
@@ -25,8 +27,6 @@ describe("createLoggerFactory", () => {
   });
 
   it("trims libOrAppName and componentName", () => {
-    const debugSpy = jest.spyOn(debug, "default");
-
     const createLogger = createLoggerFactory("  accelerator  ");
     createLogger("  Topic  ").info("x");
 

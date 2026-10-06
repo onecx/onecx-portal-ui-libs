@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { PrimeIcons } from 'primeng/api'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { OpenngIcons } from '@openng/optimus-ui/api'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import {
   DialogContentHarness,
   DialogFooterHarness,
@@ -17,6 +17,7 @@ import { DialogInlineComponent } from './dialog-inline.component'
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ocx-dialog-inline>
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -26,17 +27,18 @@ class TestBaseHostComponent {}
 const config: ButtonDialogConfig = {
   primaryButtonDetails: {
     key: 'inlineMain',
-    icon: PrimeIcons.PLUS,
+    icon: OpenngIcons.PLUS,
   },
   secondaryButtonIncluded: true,
   secondaryButtonDetails: {
     key: 'inlineSide',
-    icon: PrimeIcons.TIMES,
+    icon: OpenngIcons.TIMES,
   },
 }
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <ocx-dialog-inline [config]="this.buttonDialogConfig">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -47,6 +49,7 @@ class TestHostWithConfigComponent {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <ocx-dialog-inline (resultEmitter)="handleResult($event)">
     <div class="host">HostComponentContent</div>
   </ocx-dialog-inline>`,
@@ -112,9 +115,9 @@ describe('DialogInlineComponent', () => {
     const footerHarness = await harnessLoader.getHarness(DialogFooterHarness)
 
     expect(await footerHarness.getPrimaryButtonLabel()).toBe('inlineMain')
-    expect(await footerHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.PLUS)
+    expect(await footerHarness.getPrimaryButtonIcon()).toBe(OpenngIcons.PLUS)
     expect(await footerHarness.getSecondaryButtonLabel()).toBe('inlineSide')
-    expect(await footerHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
+    expect(await footerHarness.getSecondaryButtonIcon()).toBe(OpenngIcons.TIMES)
   })
 
   it('should use default emitter inline', async () => {

@@ -10,20 +10,21 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
 import { combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
 import { limit } from '../../utils/filter.utils'
-import { Popover } from 'primeng/popover'
+import { Popover } from '@openng/optimus-ui/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
-import { Button } from 'primeng/button'
+import { Button } from '@openng/optimus-ui/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
@@ -47,6 +48,7 @@ export interface FilterViewComponentState {
   selector: 'ocx-filter-view',
   templateUrl: './filter-view.component.html',
   styleUrls: ['./filter-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [DataViewStateService],
 })
 export class FilterViewComponent {
