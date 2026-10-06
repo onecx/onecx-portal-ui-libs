@@ -10,6 +10,31 @@ import {
 const InteractiveDataViewComponentFilterViewSBConfig: Meta<InteractiveDataViewComponent> = {
   ...InteractiveDataViewComponentSBConfig,
   title: 'Components/InteractiveDataViewComponent/Filtering',
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'In addition to viewing and removing active filters, the FilterView can now **add** a filter from any',
+          'data view layout (table, list, grid) — not just the table layout\'s native per-column filter row,',
+          'which is left unchanged and coexists with this capability.',
+          '',
+          '**How it works (both display modes):**',
+          '- **With Filter View Chips** (`filterViewDisplayMode: "chips"`): an **Add filter** chip (the pill with a',
+          '  `+` at the end of the chip row) opens the add-filter dialog.',
+          '- **With Filter View Button** (`filterViewDisplayMode: "button"`): open the manage panel and use the',
+          '  **Add filter** button in the panel header.',
+          '',
+          'The dialog lets you pick a **currently displayed, filterable column** and then one of the **distinct',
+          'values that already exist in the loaded data** (no free-text entry). For boolean/truthy columns the',
+          'value is a Yes/No choice. Confirmed filters are added to the same shared filter state the table\'s',
+          'native filter row writes to, so filters are managed consistently regardless of layout or entry point.',
+          '',
+          'See ADR-0001 (`docs/adr/0001-filterview-layout-agnostic-filter-management.md`) for the rationale',
+          'behind keeping the table\'s native filter row and making the FilterView additive.',
+        ].join('\n'),
+      },
+    },
+  },
 }
 
 const defaultArgs = {
