@@ -22,21 +22,17 @@ describe('OneCXAiCompletionService', () => {
     let service: OneCXAiCompletionService
     let gathererMock: { gather: jest.Mock; destroy: jest.Mock }
 
+    const getGathererMock = (instance: OneCXAiCompletionService) =>
+        (instance as unknown as { aiCompletionGatherer: { gather: jest.Mock; destroy: jest.Mock } }).aiCompletionGatherer
+
     beforeEach(() => {
         service = new OneCXAiCompletionService()
-        gathererMock = service.aiCompletionGatherer as unknown as { gather: jest.Mock; destroy: jest.Mock }
+        gathererMock = getGathererMock(service)
     })
 
-    it('should lazily initialize aiCompletionGatherer', () => {
-        expect(service.aiCompletionGatherer).toBeTruthy()
-        expect(service.aiCompletionGatherer).toBe(service.aiCompletionGatherer)
-    })
-
-    it('should allow overriding aiCompletionGatherer through setter', () => {
-        const custom = createGathererMock()
-        service.aiCompletionGatherer = custom as any
-
-        expect(service.aiCompletionGatherer).toBe(custom)
+    it('should create the aiCompletionGatherer during construction', () => {
+        expect(gathererMock).toBeTruthy()
+        expect(getGathererMock(new OneCXAiCompletionService())).not.toBe(gathererMock)
     })
 
     it('should forward the request unchanged to gatherer.gather and return the first non-null response', async () => {
