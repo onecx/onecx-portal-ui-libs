@@ -6,7 +6,7 @@ import {
   inject,
   runInInjectionContext,
 } from '@angular/core'
-import { AppStateService, ConfigurationService, ThemeService } from '@onecx/angular-integration-interface'
+import { AppStateService, ThemeService } from '@onecx/angular-integration-interface'
 import {
   OverrideType,
   Theme as OneCXTheme,
@@ -22,7 +22,13 @@ import ThemeConfig from '../utils/theme-config'
 import { CustomUseStyle } from './custom-use-style.service'
 import { UseStyle } from 'primeng/usestyle'
 import { Theme } from '@primeuix/styled'
-import { mergeDeep, REMOTE_COMPONENT_CONFIG, REMOTE_COMPONENT_CONTEXT, THEME_MAX_VERSION, themeVersionAvailable } from '@onecx/angular-utils'
+import {
+  mergeDeep,
+  REMOTE_COMPONENT_CONFIG,
+  REMOTE_COMPONENT_CONTEXT,
+  THEME_MAX_VERSION,
+  themeVersionAvailable,
+} from '@onecx/angular-utils'
 import { mapThemeToPreset } from '../utils/mapper/mapper'
 import { CssOverrides, ThemeOverrides } from '../utils/application-config'
 import { firstValueFrom } from 'rxjs'
@@ -33,6 +39,7 @@ import {
   useStyleForMfe,
   useStyleForRc,
 } from '@onecx/angular-utils/style'
+import { PRIMENG_COMPONENT_SETTINGS_APPLIERS } from '@onecx/angular-utils'
 
 export const IS_ADVANCED_THEMING = new InjectionToken<boolean>('IS_ADVANCED_THEMING')
 
@@ -83,7 +90,6 @@ export function provideThemeConfigService(isAdvancedOrOptions?: boolean | Option
 })
 export class ThemeConfigService {
   private themeService = inject(ThemeService)
-  private configService = inject(ConfigurationService)
   private primeNG = inject(PrimeNG)
   private appStateService = inject(AppStateService)
   private readonly rcConfig = inject(REMOTE_COMPONENT_CONFIG, { optional: true })
@@ -91,6 +97,7 @@ export class ThemeConfigService {
   private readonly isAdvancedTheming = inject(IS_ADVANCED_THEMING)
   private readonly options = inject(THEME_OPTIONS)
   private readonly injector = inject(Injector)
+  private readonly componentSettingsAppliers = inject(PRIMENG_COMPONENT_SETTINGS_APPLIERS)
 
   constructor() {
     this.themeService.currentThemes$.subscribe(async (theme) => {
@@ -142,6 +149,9 @@ export class ThemeConfigService {
   ): Promise<void> {
     // theme.properties has already been resolved against region overrides upstream
     const properties = await this.getThemeProperties(theme)
+    for (const applier of this.componentSettingsAppliers) {
+      applier.applyThemeProperties(properties)
+    }
     const { variables: primeNgPresetFromTheme, css: cssFromTheme } = mapThemeToPreset(properties)
 
     const primeNgThemeOverrides = this.generateThemeOverrides(theme.overrides)
@@ -247,8 +257,9 @@ export class ThemeConfigService {
       const regionUsages = region?.usages ?? {}
 
       return {
-        primitives: mergeDeep(theme.properties.primitives, regionPrimitives),
-        usages: mergeDeep(theme.properties.usages, regionUsages)
+        ...theme.properties,
+        primitives: mergeDeep(theme.properties.primitives ?? {}, regionPrimitives),
+        usages: mergeDeep(theme.properties.usages ?? {}, regionUsages),
       }
     } else {
       return theme.properties
