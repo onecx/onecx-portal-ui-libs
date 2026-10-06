@@ -26,7 +26,7 @@ describe('getOneCXSharedRecommendations', () => {
     '@angular/core',
     '@onecx/whatever',
     'rxjs',
-    'primeng/api',
+    '@openng/optimus-ui/api',
     '@ngx-translate/core',
     '@ngrx/store',
     'react',

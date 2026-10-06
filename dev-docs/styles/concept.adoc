@@ -6,7 +6,7 @@
 :scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
 :scoping: ./scoping.adoc
 :style_types: ./style-types.adoc
-:primeng_token_variables: ./primeng-token-variables.adoc
+:optimus_token_variables: ./optimus-token-variables.adoc
 :scope_polyfill: ./scope-polyfill.adoc
 
 This document outlines the styles mechanisms available in OneCX, focusing on how styles are structured, applied, and managed. It provides both conceptual and technical insights to help developers and administrators understand how to implement and customize styles effectively. After reading, you should be able to:
@@ -83,5 +83,5 @@ Access the technical details for the following topics:
 
 * link:{scoping}[Style scoping details] - how style scoping is used in OneCX to ensure style isolation
 * link:{style_types}[Style sheets on the page] - what different style sheets are on a single OneCX page
-* link:{primeng_token_variables}[PrimeNG variable overrides] - how application and component style sheets are affected when using PrimeNG design token variables
+* link:{optimus_token_variables}[Optimus UI variable overrides] - how application and component style sheets are affected when using Optimus UI design token variables
 * link:{scope_polyfill}[@scope polyfill] - details on how the @scope polyfill works

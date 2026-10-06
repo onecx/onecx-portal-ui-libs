@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, inject, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { Observable, of, Subscription } from 'rxjs'
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
@@ -12,7 +12,7 @@ import {
   provideShellCapabilityServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { DivHarness, InputHarness, provideTranslateTestingService } from '@onecx/angular-testing'
-import { PrimeIcons } from 'primeng/api'
+import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DialogContentHarness, DialogFooterHarness } from '../../../testing'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
@@ -451,33 +451,33 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show(
       'title',
       'message',
-      { key: 'BUTTON', icon: PrimeIcons.TIMES },
-      { key: 'BUTTON', icon: PrimeIcons.TRASH }
+      { key: 'BUTTON', icon: OpenngIcons.TIMES },
+      { key: 'BUTTON', icon: OpenngIcons.TRASH }
     )
 
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     const primaryButtonIcon = await footerHarness.getPrimaryButtonIcon()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
-    expect(primaryButtonIcon).toBe(PrimeIcons.TIMES)
+    expect(primaryButtonIcon).toBe(OpenngIcons.TIMES)
 
     const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     const secondaryButtonIcon = await footerHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
-    expect(secondaryButtonIcon).toBe(PrimeIcons.TRASH)
+    expect(secondaryButtonIcon).toBe(OpenngIcons.TRASH)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as string and icon', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: PrimeIcons.TIMES }, 'button1', 'button2')
+    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: OpenngIcons.TIMES }, 'button1', 'button2')
 
     const contentHarness = await rootLoader.getHarness(DialogContentHarness)
     const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual(translations['MESSAGE'])
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain(PrimeIcons.TIMES)
+    expect(icon).toContain(OpenngIcons.TIMES)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as TranslationKey and icon', async () => {
@@ -485,7 +485,7 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show(
       'title',
-      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: PrimeIcons.TIMES },
+      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: OpenngIcons.TIMES },
       'button1',
       'button2'
     )
@@ -495,7 +495,7 @@ describe('PortalDialogService', () => {
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage dialogMessageParam')
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain(PrimeIcons.TIMES)
+    expect(icon).toContain(OpenngIcons.TIMES)
   })
 
   it('should display dialog with custom component if provided', async () => {

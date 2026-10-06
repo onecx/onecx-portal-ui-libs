@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
@@ -18,7 +18,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [CommonModule, AngularAcceleratorOptimusModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
       providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 

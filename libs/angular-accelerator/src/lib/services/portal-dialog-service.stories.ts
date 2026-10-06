@@ -3,10 +3,10 @@ import { FormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
-import { PrimeIcons } from 'primeng/api'
-import { ButtonModule } from 'primeng/button'
-import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { TooltipModule } from 'primeng/tooltip'
+import { OpenngIcons } from '@openng/optimus-ui/api'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { Observable } from 'rxjs'
 import { DialogMessageContentComponent } from '../components/dialog/dialog-message-content/dialog-message-content.component'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
@@ -167,13 +167,13 @@ export const CustomDataWithExtendedButtons = {
     messageOrComponent: 'Custom message',
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
     secondaryKey: {
       key: 'SECONDARY_KEY',
-      icon: PrimeIcons.SEARCH,
+      icon: OpenngIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
     },
@@ -240,13 +240,13 @@ export const ComponentDisplayed = {
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
     secondaryKey: {
       key: 'SECONDARY_KEY',
-      icon: PrimeIcons.SEARCH,
+      icon: OpenngIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
     },
@@ -271,13 +271,13 @@ export const ComponentDisplayedWithDisabledButtons = {
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
     secondaryKey: {
       key: 'SECONDARY_KEY',
-      icon: PrimeIcons.SEARCH,
+      icon: OpenngIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
     },
@@ -336,13 +336,13 @@ export const ComponentDisplayedWithValidation = {
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
     secondaryKey: {
       key: 'SECONDARY_KEY',
-      icon: PrimeIcons.SEARCH,
+      icon: OpenngIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
     },
@@ -400,13 +400,13 @@ export const CustomButtonsWithAutofocus = {
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },
     secondaryKey: {
       key: 'SECONDARY_KEY',
-      icon: PrimeIcons.SEARCH,
+      icon: OpenngIcons.SEARCH,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'left',
     },
@@ -444,7 +444,7 @@ export const withClosableOption = {
     },
     primaryKey: {
       key: 'PRIMARY_KEY',
-      icon: PrimeIcons.BOOKMARK,
+      icon: OpenngIcons.BOOKMARK,
       tooltipKey: 'TOOLTIP_KEY',
       tooltipPosition: 'right',
     },

@@ -27,9 +27,9 @@ import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { isValidDate } from '@onecx/accelerator'
 import { UserService } from '@onecx/angular-integration-interface'
-import { PrimeTemplate, SelectItem } from 'primeng/api'
-import { Menu } from 'primeng/menu'
-import { MultiSelectItem } from 'primeng/multiselect'
+import { PrimeTemplate, SelectItem } from '@openng/optimus-ui/api'
+import { Menu } from '@openng/optimus-ui/menu'
+import { MultiSelectItem } from '@openng/optimus-ui/multiselect'
 import { Observable, combineLatest, debounceTime, filter, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
@@ -351,7 +351,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     const selectionIds = this.selectedIds()
     const rows = this.rows()
     // Include page to force fresh array references on page navigation
-    // to satisfy PrimeNG DataTable selection tracking, because it needs new object references to detect changes
+    // to satisfy Optimus DataTable selection tracking, because it needs new object references to detect changes
     this.stateService.activePage()
     return selectionIds.map((rowId) => rows.find((r) => r.id === rowId)).filter((row): row is Row => row !== undefined)
   })

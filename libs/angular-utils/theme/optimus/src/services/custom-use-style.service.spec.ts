@@ -36,12 +36,6 @@ function removeSpacesAndNewlines(str?: string) {
   return str?.replace(/\s+/g, '')
 }
 
-jest.mock('@primeuix/utils', () => ({
-  setAttributes: (element: ElementMock, attributes: Record<string, string>) => {
-    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value))
-  },
-}))
-
 describe('CustomUseStyleService', () => {
   let service: CustomUseStyle
   let styleList: Array<ElementMock> = []
