@@ -1,3 +1,9 @@
+## [8.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.12.0...v8.13.0) (2026-10-06)
+
+### Features
+
+* add ai-completion.service ([#1798](https://github.com/onecx/onecx-portal-ui-libs/issues/1798)) ([14b9f7f](https://github.com/onecx/onecx-portal-ui-libs/commit/14b9f7f418a40608be71973a8b91d903ead99643))
+
 ## [8.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.11.0...v8.12.0) (2026-09-30)
 
 ### Features
