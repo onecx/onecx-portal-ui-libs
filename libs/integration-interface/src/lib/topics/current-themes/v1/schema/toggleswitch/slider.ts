@@ -33,10 +33,10 @@ export const toggleSwitchSliderDefaults = {
     radius: '{{primitives.focusRing.radius}}',
     shadow: '{{primitives.focusRing.shadow}}',
   },
-  background: '{{primitives.area.surface.defaultState.defaultSeverity.bg}}',
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
   border: {
-    color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
-    style: '{{primitives.area.surface.defaultState.defaultSeverity.border.style}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
     width: '{{primitives.border.width.md}}',
     offset: '{{primitives.border.offset.none}}',
     radius: '{{primitives.radius.full}}',

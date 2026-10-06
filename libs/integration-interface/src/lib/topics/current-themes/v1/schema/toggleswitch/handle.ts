@@ -18,5 +18,5 @@ export const toggleSwitchHandleDefaults = {
   size: '1.25rem',
   width: '1.25rem',
   height: '1.25rem',
-  background: '{{primitives.area.surface.defaultState.defaultSeverity.contrast}}',
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
 }

@@ -23,12 +23,12 @@ Object {
   "defaultVariant": Object {
     "defaultState": Object {
       "slider": Object {
-        "background": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
+        "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
         "border": Object {
-          "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
           "offset": "{{primitives.border.offset.none}}",
           "radius": "{{primitives.radius.full}}",
-          "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+          "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
           "width": "{{primitives.border.width.md}}",
         },
         "focusRing": Object {
@@ -41,7 +41,7 @@ Object {
         },
         "gap": "{{primitives.layout.gap}}",
         "handle": Object {
-          "background": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
           "borderRadius": "{{primitives.radius.full}}",
           "height": "1.25rem",
           "size": "1.25rem",
@@ -56,17 +56,17 @@ Object {
     },
     "disabled": Object {
       "slider": Object {
-        "background": "{{primitives.area.surface.state.disabled.defaultSeverity.bg}}",
+        "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
         "handle": Object {
-          "background": "{{primitives.area.surface.state.disabled.defaultSeverity.contrast}}",
+          "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
         },
       },
     },
     "hover": Object {
       "slider": Object {
-        "background": "{{primitives.area.surface.state.hover.defaultSeverity.bg}}",
+        "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
         "border": Object {
-          "color": "{{primitives.area.surface.state.hover.defaultSeverity.border.color}}",
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
         },
       },
     },

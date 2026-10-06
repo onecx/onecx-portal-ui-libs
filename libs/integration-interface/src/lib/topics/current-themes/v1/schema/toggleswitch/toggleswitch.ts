@@ -33,17 +33,17 @@ const defaultVariantDefaults = {
   },
   hover: {
     slider: {
-      background: '{{primitives.area.surface.state.hover.defaultSeverity.bg}}',
+      background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
       border: {
-        color: '{{primitives.area.surface.state.hover.defaultSeverity.border.color}}',
+        color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
       },
     },
   },
   disabled: {
     slider: {
-      background: '{{primitives.area.surface.state.disabled.defaultSeverity.bg}}',
+      background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',
       handle: {
-        background: '{{primitives.area.surface.state.disabled.defaultSeverity.contrast}}',
+        background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
       },
     },
   },
