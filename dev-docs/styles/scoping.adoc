@@ -6,7 +6,7 @@
 :idseparator: -
 :scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
 :scope_utils: ../../libs/angular-utils/src/lib/utils/scope.utils.ts
-:primeng-dynamic-content: ./primeng-scoping#primeng-dynamic-content
+:optimus-dynamic-content: ./optimus-scoping#optimus-dynamic-content
 
 This document outlines the styles scoping mechanisms in OneCX, detailing how styles are scoped on pages and the technical implementation behind them. It provides insights to help developers understand how to apply scoped styles effectively.
 
@@ -91,6 +91,6 @@ To support this scenario, Shell UI uses `bodyChildListenerInitializer` on its st
 
 * intercept `document.body.appendChild` calls and add style scoping attributes based on the call context
 * intercept `document.body.removeChild` calls and remove any additional elements added by `document.body.appendChild` intercept
-* prepare link:{primeng-dynamic-content}[document.createElementFromPrimeNg] method used for PrimeNG dynamic content support
+* prepare link:{optimus-dynamic-content}[document.createElementFromPrimeNg] method used for Optimus UI dynamic content support
 
 Dynamic content mechanism rely on few additional HTML attributes called `intermediate` attributes. Those attributes should exist only for a short period between elements creation and the moment of adding this element to the DOM. Those attributes should not be used for scoping itself but only as an intermediate information of what scope should be set for created elements.

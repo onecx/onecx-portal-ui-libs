@@ -7,11 +7,11 @@
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/cdk": "^21.0.0",
-    "primeng": "^21.0.2",
+    "@angular/cdk": "^22.0.0",
     "@onecx/accelerator": "9.0.0-rc.13",
     "@ngx-translate/core": "^17.0.0",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "@openng/optimus-ui": "^2.0.2"
   },
   "dependencies": {},
   "publishConfig": {
