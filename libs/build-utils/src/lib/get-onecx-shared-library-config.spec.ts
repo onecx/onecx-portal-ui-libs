@@ -5,7 +5,17 @@
  * @jest-environment node
  */
 
-import * as fs from 'fs'
+// Make the real node:fs module spy-able. The default CJS-namespace that
+// `import * as fs` re-exports has read-only props, so `jest.spyOn(fs, 'existsSync')`
+// throws "Cannot redefine property". Re-spread the real module with
+// `__esModule: true` so it is treated as an ESM default whose props are writable,
+// while the real fs functions are preserved (the other tests rely on actual reads
+// of the real @angular/* package.json files).
+jest.mock('node:fs', () => {
+  const actual = jest.requireActual('node:fs')
+  return { ...actual, __esModule: true }
+})
+import * as fs from 'node:fs'
 import {
   getOneCXSharedLibraryConfig,
   onecxPackageFilter,

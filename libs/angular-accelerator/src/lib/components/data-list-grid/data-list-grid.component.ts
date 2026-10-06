@@ -19,6 +19,7 @@ import {
   signal,
   untracked,
   viewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -66,6 +67,7 @@ export interface DataListGridComponentState {
   selector: 'ocx-data-list-grid',
   templateUrl: './data-list-grid.component.html',
   styleUrls: ['./data-list-grid.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: DataViewStateService,

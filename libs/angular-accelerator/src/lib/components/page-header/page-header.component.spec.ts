@@ -22,7 +22,7 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { provideRouter, Router } from '@angular/router'
 import { of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
-import { Component, Injectable } from '@angular/core'
+import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
 
 export function provideBreadcrumbServiceMock() {
@@ -52,7 +52,8 @@ export class BreadcrumbServiceMock {
   }
 }
 
-@Component({ standalone: false, template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestRouteComponent {}
 
 const mockActions: Action[] = [

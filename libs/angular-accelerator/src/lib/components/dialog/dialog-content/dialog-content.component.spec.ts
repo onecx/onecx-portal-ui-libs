@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing'
 import { DivHarness, TestbedHarnessEnvironment } from '@onecx/angular-testing'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
@@ -18,6 +18,7 @@ import { DialogContentComponent } from './dialog-content.component'
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ocx-dialog-content>
     <div class="host">HostComponentContent</div>
   </ocx-dialog-content>`,
@@ -26,6 +27,7 @@ class TestBaseHostComponent {}
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithDialogResultComponent implements DialogResult<string> {
@@ -34,6 +36,7 @@ class TestWithDialogResultComponent implements DialogResult<string> {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonClickedComponent implements DialogButtonClicked {
@@ -53,6 +56,7 @@ class TestWithButtonClickedComponent implements DialogButtonClicked {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithDialogResultAndButtonClickedComponent implements DialogResult<string>, DialogButtonClicked {
@@ -74,6 +78,7 @@ class TestWithDialogResultAndButtonClickedComponent implements DialogResult<stri
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ` <div class="test">Test Component</div>`,
 })
 class TestWithButtonDisableComponent

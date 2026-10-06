@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
@@ -21,6 +21,7 @@ export interface CustomGroupColumnSelectorComponentState {
   standalone: false,
   selector: 'ocx-custom-group-column-selector',
   templateUrl: './custom-group-column-selector.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
