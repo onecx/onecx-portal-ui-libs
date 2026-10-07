@@ -1,13 +1,13 @@
-import z from 'zod'
-import { themeSchemaRegistry } from '../registry'
+import * as z from 'zod'
 import { withRef } from '../primitives'
 
-export class MessageSettingsSchema {
-  static readonly schema = z
-    .object({
-      closable: withRef(z.boolean()).default(false),
-      delay: withRef(z.number()).default(300),
-      showMultiple: withRef(z.boolean()).default(true),
-    })
-    .register(themeSchemaRegistry, { id: 'messageSettings' })
-}
+/**
+ * Message component settings shape. No `.default()` on any field — left to the underlying
+ * component's own defaults, matching the `add-theme-usage` skill's settings convention.
+ */
+export const messageSettingsShape = z.object({
+  closable: withRef(z.boolean()).optional(),
+  life: withRef(z.number()).optional(),
+  size: withRef(z.enum(['small', 'large'])).optional(),
+  variant: withRef(z.enum(['text', 'outlined', 'simple'])).optional(),
+})
