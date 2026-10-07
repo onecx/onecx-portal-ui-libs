@@ -4,30 +4,30 @@ import { toColorString } from '../../../mapper.utils';
 export const tabRules: MappingRule[] = [
   // ─── Tab default state ────────────────────────────────────────────────────
   {
-    from: 'usages.tabs.tab.background',
+    from: 'usages.tabs.tab.defaultState.background',
     to: 'components.tabs.tab.background',
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.color',
+    from: 'usages.tabs.tab.defaultState.color',
     to: 'components.tabs.tab.color',
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.border.width',
+    from: 'usages.tabs.tab.defaultState.border.width',
     to: 'components.tabs.tab.borderWidth',
   },
   {
-    from: 'usages.tabs.tab.border.color',
+    from: 'usages.tabs.tab.defaultState.border.color',
     to: 'components.tabs.tab.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.paddingX',
+    from: 'usages.tabs.tab.defaultState.paddingX',
     to: 'components.tabs.tab.padding',
   },
   {
-    from: 'usages.tabs.tab.gap',
+    from: 'usages.tabs.tab.defaultState.gap',
     to: 'components.tabs.tab.gap',
   },
 
@@ -67,26 +67,26 @@ export const tabRules: MappingRule[] = [
 
   // ─── Tab focus ring ────────────────────────────────────────────────────────
   {
-    from: 'usages.tabs.tab.focusRing.width',
+    from: 'usages.tabs.tab.defaultState.focusRing.width',
     to: 'components.tabs.tab.focusRing.width',
   },
   {
-    from: 'usages.tabs.tab.focusRing.shadow',
+    from: 'usages.tabs.tab.defaultState.focusRing.shadow',
     to: 'components.tabs.tab.focusRing.shadow',
   },
   {
-    from: 'usages.tabs.tab.focusRing.offset',
+    from: 'usages.tabs.tab.defaultState.focusRing.offset',
     to: 'components.tabs.tab.focusRing.offset',
   },
 
   // ─── Active bar ───────────────────────────────────────────────────────────
   {
-    from: 'usages.tabs.tab.activeBar.background',
+    from: 'usages.tabs.tab.defaultState.activeBar.background',
     to: 'components.tabs.activeBar.background',
     transform: toColorString,
   },
   {
-    from: 'usages.tabs.tab.activeBar.height',
+    from: 'usages.tabs.tab.defaultState.activeBar.height',
     to: 'components.tabs.activeBar.height',
   },
   // NOTE: the theme exposes `activeBar.position` (a direction: top/bottom/left/right)
@@ -94,7 +94,7 @@ export const tabRules: MappingRule[] = [
   // `bottom` distance, so the offset maps here; the direction itself is not expressible
   // as a preset token (would need a CSS rule to support top/left/right placement).
   {
-    from: 'usages.tabs.tab.activeBar.positionOffset',
+    from: 'usages.tabs.tab.defaultState.activeBar.positionOffset',
     to: 'components.tabs.activeBar.bottom',
   },
 ];

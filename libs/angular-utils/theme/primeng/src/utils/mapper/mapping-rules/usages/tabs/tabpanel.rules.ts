@@ -20,15 +20,15 @@ export const tabpanelRules: MappingRule[] = [
 
   // ─── Tabpanel focus ring (inherited from tab-level focusRing) ─────────────
   {
-    from: 'usages.tabs.tab.focusRing.width',
+    from: 'usages.tabs.tab.defaultState.focusRing.width',
     to: 'components.tabs.tabpanel.focusRing.width',
   },
   {
-    from: 'usages.tabs.tab.focusRing.shadow',
+    from: 'usages.tabs.tab.defaultState.focusRing.shadow',
     to: 'components.tabs.tabpanel.focusRing.shadow',
   },
   {
-    from: 'usages.tabs.tab.focusRing.offset',
+    from: 'usages.tabs.tab.defaultState.focusRing.offset',
     to: 'components.tabs.tabpanel.focusRing.offset',
   },
 ];
