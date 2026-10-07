@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for the calendar time input (the hour/minute/second number
@@ -19,20 +20,31 @@ const calendarTimeInputStateShape = z.object({
  * The default token path lives under `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarTimeInputShape = z.object({
-  width: withRef(z.string()).optional(),
-  padding: withRef(z.string()).optional(),
-  font: font.pick({ weight: true, size: true, family: true }).optional(),
-  focusRing: borderWithShadow.optional(),
+export const calendarTimeInputShape = z
+  .object({
+    width: withRef(z.string().register(themeSchemaRegistry, { id: 'calendarTimeInputWidth', axis: 'none' })).optional(),
+    padding: withRef(
+      z.string().register(themeSchemaRegistry, { id: 'calendarTimeInputPadding', axis: 'none' })
+    ).optional(),
+    font: font
+      .pick({ weight: true, size: true, family: true })
+      .register(themeSchemaRegistry, { id: 'calendarTimeInputFont', axis: 'none' })
+      .optional(),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'calendarTimeInputFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z
-    .object({
-      defaultState: calendarTimeInputStateShape.prefault({}),
-      hover: calendarTimeInputStateShape.prefault({}),
-      focus: calendarTimeInputStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: calendarTimeInputStateShape.prefault({}),
+        hover: calendarTimeInputStateShape.prefault({}),
+        focus: calendarTimeInputStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarTimeInputVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarTimeInputShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar time input.

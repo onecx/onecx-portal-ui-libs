@@ -264,16 +264,17 @@ export const severityStyles = bgContrast
   .register(themeSchemaRegistry, { id: 'severityStyles' })
 
 // Per-named-level style overrides. Each severity level maps to a severityStyles block
-// (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, warning, danger, and contrast cases.
+// (bg, contrast, border, focusRing) so individual components can be styled differently for success, info, help, warning, danger, and contrast cases.
 export const severityVariants = z
   .object({
     success: severityStyles.optional(),
     info: severityStyles.optional(),
+    help: severityStyles.optional(),
     warning: severityStyles.optional(),
     danger: severityStyles.optional(),
     contrast: severityStyles.optional(),
   })
-  .register(themeSchemaRegistry, { id: 'severityVariants' })
+  .register(themeSchemaRegistry, { id: 'severityVariants', axis: 'severity' })
 
 // A single interaction-state group: a baseline style (defaultVariant) and per-level severity overrides (variants).
 // Used as the type for variantWithStates.defaultState and each state entry.
@@ -284,19 +285,58 @@ export const severityVariantGroup = z
   })
   .register(themeSchemaRegistry, { id: 'severityVariantGroup' })
 
-export const variantWithStates = bgContrast
+// Named interaction-state container: the set of states a variant can appear in
+// (hover, active, selected, focus, invalid, disabled). Classified as the `state`
+// axis for build-time introspection so per-leaf metadata can record which states apply.
+export const states = z
+  .object({
+    hover: severityVariantGroup.optional(),
+    active: severityVariantGroup.optional(),
+    selected: severityVariantGroup.optional(),
+    focus: severityVariantGroup.optional(),
+    invalid: severityVariantGroup.optional(),
+    disabled: severityVariantGroup.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'states', axis: 'state' })
+
+export const variantStyleAndStates = bgContrast
   .extend({
     defaultState: severityVariantGroup.optional(),
-    state: z
-      .object({
-        hover: severityVariantGroup.optional(),
-        active: severityVariantGroup.optional(),
-        selected: severityVariantGroup.optional(),
-        focus: severityVariantGroup.optional(),
-        invalid: severityVariantGroup.optional(),
-        disabled: severityVariantGroup.optional(),
-      })
-      .optional(),
+    state: states.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'variantStyleAndStates' })
+
+export const shapeVariants = z
+  .object({
+    rounded: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    raised: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    text: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    raisedText: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    outlined: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    iconOnly: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'shapeVariants' })
+
+// Explicit shape annotation so the emitted `.d.ts` references this named type instead of the
+// fully-expanded `.extend()` inference (which exceeds the compiler's type-serialization limit
+// once `severityVariants` carries its full named-severity set).
+type VariantWithStatesShape = {
+  bg: (typeof bgContrast)['shape']['bg']
+  contrast: (typeof bgContrast)['shape']['contrast']
+  defaultState: z.ZodOptional<typeof severityVariantGroup>
+  state: z.ZodOptional<typeof states>
+  defaultVariant: z.ZodOptional<typeof variantStyleAndStates>
+  variant: z.ZodOptional<typeof shapeVariants>
+}
+
+// Reuses the axis-tagged `states` schema (rather than re-declaring an equivalent inline
+// object) so build-time axis introspection still recognizes this `state` member.
+export const variantWithStates: z.ZodObject<VariantWithStatesShape> = bgContrast
+  .extend({
+    defaultState: severityVariantGroup.optional(),
+    state: states.optional(),
+    defaultVariant: (variantStyleAndStates as typeof variantStyleAndStates).optional(),
+    variant: (shapeVariants as typeof shapeVariants).optional(),
   })
   .register(themeSchemaRegistry, { id: 'variantWithStates' })
 
@@ -317,9 +357,11 @@ const colorVariantsShape: ColorVariantsShape = {
   // TODO: Add a link variant to all components that support link display (e.g. buttons)
 }
 
-export const colorVariants = z.object(colorVariantsShape).register(themeSchemaRegistry, { id: 'colorVariants' })
+export const colorVariants = z
+  .object(colorVariantsShape)
+  .register(themeSchemaRegistry, { id: 'colorVariants', axis: 'variant' })
 
-export const area = variantWithStates.extend({})
+export const area: z.ZodObject<VariantWithStatesShape> = (variantWithStates as typeof variantWithStates).extend({})
 
 type AreasShape = {
   canvas: z.ZodOptional<typeof area>
@@ -375,4 +417,7 @@ const primitivesShape: PrimitivesShape = {
   transition: (transition as typeof transition).optional(),
 }
 
-export const primitives = z.object(primitivesShape).optional().register(themeSchemaRegistry, { id: 'primitives' })
+export const primitives = z
+  .object(primitivesShape)
+  .optional()
+  .register(themeSchemaRegistry, { id: 'primitives' })

@@ -24,7 +24,9 @@ import { pageHeaderCssRules } from './usages/page-header.rules'
 import { searchHeaderCssRules } from './usages/search-header.rules'
 import { contentCssRules } from './usages/content.rules'
 import { dataviewCssRules } from './usages/dataview.rules'
+import { rippleCssRules } from './usages/ripple.rules'
 import { dataListGridCssRules } from './usages/data-list-grid.rules'
+import { buttonCssRules } from './usages/button.rules'
 
 export const usageCssRules: CssRule[] = [
   ...carouselCssRules,
@@ -52,5 +54,7 @@ export const usageCssRules: CssRule[] = [
   ...searchHeaderCssRules,
   ...contentCssRules,
   ...dataviewCssRules,
+  ...rippleCssRules,
   ...dataListGridCssRules,
+  ...buttonCssRules,
 ]
