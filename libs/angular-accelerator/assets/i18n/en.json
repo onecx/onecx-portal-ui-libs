@@ -145,7 +145,28 @@
       "REMOVE_FILTER_TITLE": "Remove filter",
       "REMOVE_FILTER_ARIA_LABEL": "Remove filter"
     },
-    "PANEL_TITLE": "Filters"
+    "PANEL_TITLE": "Filters",
+    "ADD_FILTER": {
+      "BUTTON": "Add filter",
+      "ARIA_LABEL": "Add a new filter",
+      "DETAIL": "Add a new filter",
+      "NO_FILTERABLE_COLUMNS": "No filterable columns available",
+      "DIALOG": {
+        "TITLE": "Add filter",
+        "COLUMN_LABEL": "Column",
+        "COLUMN_PLACEHOLDER": "Select a column",
+        "COLUMN_ARIA_LABEL": "Select a column to filter",
+        "VALUE_LABEL": "Value(s)",
+        "VALUE_EMPTY_MESSAGE": "No values available for this column",
+        "VALUE_FILTER_PLACEHOLDER": "Search values",
+        "VALUE_PLACEHOLDER": "Select value(s)",
+        "VALUE_FILTER_ARIA_LABEL": "Filter the available values",
+        "VALUE_SELECTION_HEADER": "Select one or more values",
+        "CONFIRM_BUTTON": "Add",
+        "CANCEL_BUTTON": "Cancel",
+        "ARIA_CLOSE_LABEL": "Close add filter dialog"
+      }
+    }
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {

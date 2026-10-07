@@ -1,0 +1,53 @@
+@if (column()) {
+<div class="flex flex-column gap-3">
+  <label class="block text-sm font-medium" for="ocxAddFilterColumnSelect"
+    >{{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_LABEL' | translate }}</label
+  >
+  <p-select
+    id="ocxAddFilterColumnSelect"
+    [autofocus]="true"
+    [options]="columnOptions()"
+    [optionLabel]="'label'"
+    [optionValue]="'value'"
+    [ngModel]="selectedColumnId()"
+    (ngModelChange)="onColumnChange($event)"
+    [showClear]="false"
+    [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_PLACEHOLDER' | translate"
+    [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_ARIA_LABEL' | translate"
+    appendTo="body"
+    class="w-full"
+  ></p-select>
+
+  @if (valueOptions(); as values) {
+  <label class="block text-sm font-medium" for="ocxAddFilterValueSelect"
+    >{{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate }}</label
+  >
+  <p-multiSelect
+    id="ocxAddFilterValueSelect"
+    [options]="values"
+    [optionLabel]="'label'"
+    [optionValue]="'value'"
+    [ngModel]="selectedValues()"
+    (ngModelChange)="selectedValues.set($event)"
+    [filter]="true"
+    [showClear]="true"
+    [maxSelectedLabels]="3"
+    [resetFilterOnHide]="true"
+    filterBy="toFilterBy"
+    [emptyFilterMessage]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_EMPTY_MESSAGE' | translate"
+    [filterPlaceHolder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_PLACEHOLDER' | translate"
+    [placeholder]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_PLACEHOLDER' | translate"
+    [ariaFilterLabel]="'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_FILTER_ARIA_LABEL' | translate"
+    appendTo="body"
+    [style]="{ 'min-width': '100%' }"
+    class="w-full"
+  >
+    <ng-template pTemplate="header">
+      <div class="p-3 border-bottom-1 surface-border">
+        {{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_SELECTION_HEADER' | translate }}
+      </div>
+    </ng-template>
+  </p-multiSelect>
+  }
+</div>
+}
