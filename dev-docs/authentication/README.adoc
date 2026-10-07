@@ -27,10 +27,11 @@ The libraries provide the mechanism; the Shell owns its initialisation and the a
 ----
 flowchart LR
   subgraph Shell
-    INIT["provideAuthService() app initialiser"]
+    INIT["provideAuthService() (bootstrap initializer - publishes Topic)"]
     WRAP["AuthServiceWrapper"]
     IMPL["Keycloak / custom / disabled service"]
     TOPIC["IsAuthenticatedTopic.isInitialized"]
+    SINIT["Shell initializers (auth-dependent)"]
   end
   INIT --> WRAP --> IMPL
   IMPL -- "init result" --> TOPIC
@@ -44,7 +45,8 @@ flowchart LR
   end
   WIN --> ANG
   WIN --> REACT
-  TOPIC -. "Shell initializers and Angular apps await it" .-> ANG
+  TOPIC -. "awaits completion" .-> ANG
+  TOPIC -. "awaits completion" .-> SINIT
 ----
 
 Three things to keep straight:
