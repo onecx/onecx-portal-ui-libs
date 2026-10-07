@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`content schema resolves the expected default token tree 1`] = `
+Object {
+  "background": "{{primitives.area.surface.defaultState.defaultSeverity.bg}}",
+  "border": Object {
+    "color": "{{primitives.area.surface.defaultState.defaultSeverity.border.color}}",
+    "offset": "{{primitives.border.offset.none}}",
+    "radius": "{{primitives.border.radius.md}}",
+    "style": "{{primitives.area.surface.defaultState.defaultSeverity.border.style}}",
+    "width": "{{primitives.border.width.none}}",
+  },
+  "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
+  "font": Object {
+    "family": "{{primitives.font.family}}",
+    "letterSpacing": "{{primitives.font.letterSpacing}}",
+    "lineHeight": "{{primitives.font.lineHeight}}",
+    "size": "{{primitives.font.size}}",
+    "style": "{{primitives.font.style}}",
+    "weight": "{{primitives.font.weight}}",
+  },
+  "marginX": "0",
+  "marginY": "{{primitives.space.xl}}",
+  "paddingX": "{{primitives.space.md}}",
+  "paddingY": "{{primitives.space.md}}",
+  "shadow": "{{primitives.shadow.md}}",
+  "title": Object {
+    "color": "{{primitives.area.surface.defaultState.defaultSeverity.contrast}}",
+    "font": Object {
+      "family": "{{primitives.font.family}}",
+      "letterSpacing": "{{primitives.font.letterSpacing}}",
+      "lineHeight": "{{primitives.font.lineHeight}}",
+      "size": "{{primitives.font.size.lg}}",
+      "style": "{{primitives.font.style}}",
+      "weight": "{{primitives.font.weight.medium}}",
+    },
+  },
+}
+`;
