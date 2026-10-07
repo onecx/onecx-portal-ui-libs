@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-utils",
-  "version": "9.0.0-rc.13",
+  "version": "9.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,9 +15,9 @@
     "@openng/optimus-ui-themes": "^2.0.2",
     "rxjs": "^7.8.1",
     "@angular/platform-browser": "^22.0.0",
-    "@onecx/accelerator": "9.0.0-rc.13",
-    "@onecx/angular-integration-interface": "9.0.0-rc.13",
-    "@onecx/integration-interface": "9.0.0-rc.13",
+    "@onecx/accelerator": "9.0.0-rc.14",
+    "@onecx/angular-integration-interface": "9.0.0-rc.14",
+    "@onecx/integration-interface": "9.0.0-rc.14",
     "@ngx-translate/http-loader": "^17.0.0",
     "@module-federation/enhanced": "^2.5.0",
     "@module-federation/runtime-core": "^2.5.0",
