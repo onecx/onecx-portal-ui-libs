@@ -44,15 +44,14 @@ flowchart LR
   end
   WIN --> ANG
   WIN --> REACT
-  TOPIC -. "apps + Shell initializers await it" .-> ANG
-  TOPIC -. "apps + Shell initializers await it" .-> REACT
+  TOPIC -. "Shell initializers and Angular apps await it" .-> ANG
 ----
 
 Three things to keep straight:
 
 . *Ownership is in the Shell.* The Shell calls `link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`provideAuthService()`]`, which registers an app initialiser that runs `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper.init()`]` once at startup.
 . *The libraries provide the mechanism.* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` picks a concrete `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` implementation and mounts the `window` proxy; the Keycloak implementation lives in `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]`.
-. *Gating is a Topic.* When auth succeeds the Shell publishes `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]`. Both the Shell's own initialisers and the Apps wait on that Topic before proceeding.
+. *Gating is a Topic.* When auth succeeds the Shell publishes `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]`. The Shell's own initialisers and Angular apps (the Angular TokenInterceptor) wait on that Topic before proceeding; React's axios-based interceptor does not await the Topic.
 
 == Unit map
 

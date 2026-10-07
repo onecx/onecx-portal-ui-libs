@@ -13,15 +13,14 @@ How the headers produced by the auth proxy actually get attached to outgoing HTT
 
 Even if an App can read the auth headers and refresh the token (the previous Unit), it would be a trap to require every `http.get` / `axios.get` call to remember to attach the `Authorization` header and to refresh first. A single request that skips the refresh would send a stale token; a request that forgets the header would be rejected as unauthenticated. OneCX therefore intercepts *all* outgoing requests at the HTTP client layer and, before the request is sent: waits until authentication has completed, makes sure the token is still valid, and stamps the current headers onto the request. The App code then needs to do nothing per-request.
 
-Because the App can be Angular or React, the mechanism has two implementations of the same idea: an Angular `HttpInterceptor` and a React axios request-interceptor factory. Both follow the same three-step recipe and both carve out an "assets" path that must not be authenticated (static assets are public and must stay reachable before and without login).
+Because the App can be Angular or React, the mechanism has two implementations: an Angular `HttpInterceptor` and a React axios request-interceptor factory. They share the goal of stamping auth headers on outgoing requests and whitelisting assets, but Angular's interceptor waits on the Shell's authenticated Topic before proceeding; React's axios interceptor does not — it directly calls `updateTokenIfNeeded()`.
 
 == How it works
 
-Both sides perform the same three steps, in the same order, for every non-whitelisted request:
+Angular and React take similar steps for non-whitelisted requests, but the ordering differs:
 
-. *Gate on authentication.* Wait for the authenticated Topic to be ready — the Shell/App only proceeds once `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]` is initialised. This ensures the token exists before it is read.
-. *Refresh.* Call the proxy's `updateTokenIfNeeded()` so the access token is up to date.
-. *Attach.* Read `getHeaderValues()` and set each header onto the outgoing request.
+. *Angular (HttpInterceptor).* Gate on authentication first — wait for the Shell's `isAuthenticated$` to be initialised, then call `updateTokenIfNeeded()`, and finally read `getHeaderValues()` and attach the headers.
+. *React (axios factory).* Do not wait on the `isAuthenticated$` Topic; the axios request interceptor directly calls `authServiceProxy.updateTokenIfNeeded()` (handling `MISSING_PROXY_ERROR` specially), then reads `getHeaderValues()` and attaches non-empty values to the request.
 
 The two implementations and their whitelists:
 
@@ -82,12 +81,20 @@ sequenceDiagram
   alt url matches whitelist (assets)
     I-->>B: request unchanged (no auth headers)
   else
-    I->>T: await isAuthenticated$.isInitialized
-    I->>P: updateTokenIfNeeded()
-    P-->>I: true / false
-    I->>P: getHeaderValues()
-    P-->>I: { Authorization, apm-principal-token }
-    I->>B: request with headers set
+    alt Angular (TokenInterceptor)
+      I->>T: await isAuthenticated$.isInitialized
+      I->>P: updateTokenIfNeeded()
+      P-->>I: true / false
+      I->>P: getHeaderValues()
+      P-->>I: { Authorization, apm-principal-token }
+      I->>B: request with headers set
+    else React (axiosFactory)
+      I->>P: updateTokenIfNeeded()
+      P-->>I: true / false / (MISSING_PROXY)
+      I->>P: getHeaderValues()
+      P-->>I: { Authorization, apm-principal-token }
+      I->>B: request with headers set
+    end
   end
 ----
 
@@ -112,7 +119,7 @@ This Unit is one of the places where the two frameworks genuinely differ, so the
 
 * *Angular* attaches headers inside an `HttpInterceptor` registered through the DI system. The refresh error is not special-cased — any failure from `updateTokenIfNeeded()` rejects the request's `Observable`. Every key/value from `getHeaderValues()` is set, including empty values.
 * *React* attaches headers inside an axios request interceptor attached to an instance created by `axiosFactory()`. The refresh step deliberately swallows *only* the missing-proxy error (so a too-old Shell degrades gracefully to an unauthenticated request instead of crashing), but rethrows any other error. Empty header values are skipped. The instance also carries the `tokens` state object.
-* *Both* wait on the same `isAuthenticated$` semantics before proceeding, and both whitelist an "assets" path — so the framework difference is in error handling, empty-value handling and how the interceptor is installed, not in *when* or *which* headers are sent.
+*Only Angular* waits on the `isAuthenticated$` Topic before proceeding; React does not. Both whitelist an "assets" path — the framework differences are in when the gate occurs, error handling, empty-value handling and how the interceptor is installed.
 
 == Edge cases & pitfalls
 
