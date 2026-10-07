@@ -1,8 +1,9 @@
-import { Component, input } from '@angular/core'
+import { Component, input, ChangeDetectionStrategy } from '@angular/core'
 
 @Component({
   standalone: false,
   selector: 'ocx-content',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './content.component.html',
 })
 export class OcxContentComponent {

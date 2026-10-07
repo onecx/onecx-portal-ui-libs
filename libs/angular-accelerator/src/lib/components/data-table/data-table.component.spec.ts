@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness } from '@onecx/angular-testing'
 import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
@@ -17,12 +17,13 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
-@Component({ standalone: false, template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestRouteComponent {}
 
 describe('DataTableComponent', () => {
@@ -220,7 +221,7 @@ describe('DataTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataTableComponent, TestRouteComponent],
-      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+      imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
@@ -264,7 +265,7 @@ describe('DataTableComponent', () => {
 
       await TestBed.configureTestingModule({
         declarations: [DataTableComponent],
-        imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+        imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
         providers: [
           provideTranslateTestingService(TRANSLATIONS),
           provideUserServiceMock(),

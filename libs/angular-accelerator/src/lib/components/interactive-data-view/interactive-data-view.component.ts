@@ -15,14 +15,15 @@ import {
   effect,
   inject,
   input,
-  model,
+  linkedSignal,
   output,
   signal,
   untracked,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { SlotService } from '@onecx/angular-remote-components'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { Observable, startWith } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -67,6 +68,7 @@ export interface ColumnGroupData {
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
   styleUrls: ['./interactive-data-view.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: DataViewStateService,
@@ -190,7 +192,12 @@ export class InteractiveDataViewComponent implements OnInit {
     this.stateService.selectedRows.set(value)
   }
 
-  displayedColumnKeys = model<string[]>([])
+  // `displayedColumnKeys` is a writable model, but `linkedSignal(input(...))` trips NG8110
+  // (`input()` may only be a direct member initializer), so the input lives in its own member and is
+  // aliased to `displayedColumnKeys` so external `setInput('displayedColumnKeys')` targets it.
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  readonly displayedColumnKeysInput = input<string[]>([], { alias: 'displayedColumnKeys' })
+  displayedColumnKeys = linkedSignal(this.displayedColumnKeysInput)
   displayedColumns = computed(() => {
     const columnKeys = this.displayedColumnKeys()
     return columnKeys
@@ -222,291 +229,291 @@ export class InteractiveDataViewComponent implements OnInit {
   }
 
   childTableCell = contentChild<TemplateRef<any> | undefined>('tableCell')
-  primeNgTableCell = computed(() => {
+  optimusTableCell = computed(() => {
     const templates = this.templates()
     const tableCellTemplate = templates.find((t) => t.getType() === 'tableCell')
     return tableCellTemplate?.template ?? undefined
   })
   _tableCell = computed(() => {
-    const primeNgTableCell = this.primeNgTableCell()
+    const optimusTableCell = this.optimusTableCell()
     const childTableCell = this.childTableCell()
-    return primeNgTableCell ?? childTableCell ?? undefined
+    return optimusTableCell ?? childTableCell ?? undefined
   })
 
   childDateTableCell = contentChild<TemplateRef<any> | undefined>('dateTableCell')
-  primeNgDateTableCell = computed(() => {
+  optimusDateTableCell = computed(() => {
     const templates = this.templates()
     const dateTableCellTemplate = templates.find((t) => t.getType() === 'dateTableCell')
     return dateTableCellTemplate?.template ?? undefined
   })
   _dateTableCell = computed(() => {
-    const primeNgDateTableCell = this.primeNgDateTableCell()
+    const optimusDateTableCell = this.optimusDateTableCell()
     const childDateTableCell = this.childDateTableCell()
-    return primeNgDateTableCell ?? childDateTableCell ?? undefined
+    return optimusDateTableCell ?? childDateTableCell ?? undefined
   })
 
   childRelativeDateTableCell = contentChild<TemplateRef<any> | undefined>('relativeDateTableCell')
-  primeNgRelativeDateTableCell = computed(() => {
+  optimusRelativeDateTableCell = computed(() => {
     const templates = this.templates()
     const relativeDateTableCellTemplate = templates.find((t) => t.getType() === 'relativeDateTableCell')
     return relativeDateTableCellTemplate?.template ?? undefined
   })
   _relativeDateTableCell = computed(() => {
-    const primeNgRelativeDateTableCell = this.primeNgRelativeDateTableCell()
+    const optimusRelativeDateTableCell = this.optimusRelativeDateTableCell()
     const childRelativeDateTableCell = this.childRelativeDateTableCell()
-    return primeNgRelativeDateTableCell ?? childRelativeDateTableCell ?? undefined
+    return optimusRelativeDateTableCell ?? childRelativeDateTableCell ?? undefined
   })
 
   childTranslationKeyTableCell = contentChild<TemplateRef<any> | undefined>('translationKeyTableCell')
-  primeNgTranslationKeyTableCell = computed(() => {
+  optimusTranslationKeyTableCell = computed(() => {
     const templates = this.templates()
     const translationKeyTableCellTemplate = templates.find((t) => t.getType() === 'translationKeyTableCell')
     return translationKeyTableCellTemplate?.template ?? undefined
   })
   _translationKeyTableCell = computed(() => {
-    const primeNgTranslationKeyTableCell = this.primeNgTranslationKeyTableCell()
+    const optimusTranslationKeyTableCell = this.optimusTranslationKeyTableCell()
     const childTranslationKeyTableCell = this.childTranslationKeyTableCell()
-    return primeNgTranslationKeyTableCell ?? childTranslationKeyTableCell ?? undefined
+    return optimusTranslationKeyTableCell ?? childTranslationKeyTableCell ?? undefined
   })
 
   childGridItemSubtitleLines = contentChild<TemplateRef<any> | undefined>('gridItemSubtitleLines')
-  primeNgGridItemSubtitleLines = computed(() => {
+  optimusGridItemSubtitleLines = computed(() => {
     const templates = this.templates()
     const gridItemSubtitleLinesTemplate = templates.find((t) => t.getType() === 'gridItemSubtitleLines')
     return gridItemSubtitleLinesTemplate?.template ?? undefined
   })
   _gridItemSubtitleLines = computed(() => {
-    const primeNgGridItemSubtitleLines = this.primeNgGridItemSubtitleLines()
+    const optimusGridItemSubtitleLines = this.optimusGridItemSubtitleLines()
     const childGridItemSubtitleLines = this.childGridItemSubtitleLines()
-    return primeNgGridItemSubtitleLines ?? childGridItemSubtitleLines ?? undefined
+    return optimusGridItemSubtitleLines ?? childGridItemSubtitleLines ?? undefined
   })
 
   childListItemSubtitleLines = contentChild<TemplateRef<any> | undefined>('listItemSubtitleLines')
-  primeNgListItemSubtitleLines = computed(() => {
+  optimusListItemSubtitleLines = computed(() => {
     const templates = this.templates()
     const listItemSubtitleLinesTemplate = templates.find((t) => t.getType() === 'listItemSubtitleLines')
     return listItemSubtitleLinesTemplate?.template ?? undefined
   })
   _listItemSubtitleLines = computed(() => {
-    const primeNgListItemSubtitleLines = this.primeNgListItemSubtitleLines()
+    const optimusListItemSubtitleLines = this.optimusListItemSubtitleLines()
     const childListItemSubtitleLines = this.childListItemSubtitleLines()
-    return primeNgListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
+    return optimusListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
   })
 
   childStringTableCell = contentChild<TemplateRef<any> | undefined>('stringTableCell')
-  primeNgStringTableCell = computed(() => {
+  optimusStringTableCell = computed(() => {
     const templates = this.templates()
     const stringTableCellTemplate = templates.find((t) => t.getType() === 'stringTableCell')
     return stringTableCellTemplate?.template ?? undefined
   })
   _stringTableCell = computed(() => {
-    const primeNgStringTableCell = this.primeNgStringTableCell()
+    const optimusStringTableCell = this.optimusStringTableCell()
     const childStringTableCell = this.childStringTableCell()
-    return primeNgStringTableCell ?? childStringTableCell ?? undefined
+    return optimusStringTableCell ?? childStringTableCell ?? undefined
   })
 
   childNumberTableCell = contentChild<TemplateRef<any> | undefined>('numberTableCell')
-  primeNgNumberTableCell = computed(() => {
+  optimusNumberTableCell = computed(() => {
     const templates = this.templates()
     const numberTableCellTemplate = templates.find((t) => t.getType() === 'numberTableCell')
     return numberTableCellTemplate?.template ?? undefined
   })
   _numberTableCell = computed(() => {
-    const primeNgNumberTableCell = this.primeNgNumberTableCell()
+    const optimusNumberTableCell = this.optimusNumberTableCell()
     const childNumberTableCell = this.childNumberTableCell()
-    return primeNgNumberTableCell ?? childNumberTableCell ?? undefined
+    return optimusNumberTableCell ?? childNumberTableCell ?? undefined
   })
 
   childGridItem = contentChild<TemplateRef<any> | undefined>('gridItem')
-  primeNgGridItem = computed(() => {
+  optimusGridItem = computed(() => {
     const templates = this.templates()
     const gridItemTemplate = templates.find((t) => t.getType() === 'gridItem')
     return gridItemTemplate?.template ?? undefined
   })
   _gridItem = computed(() => {
-    const primeNgGridItem = this.primeNgGridItem()
+    const optimusGridItem = this.optimusGridItem()
     const childGridItem = this.childGridItem()
-    return primeNgGridItem ?? childGridItem ?? undefined
+    return optimusGridItem ?? childGridItem ?? undefined
   })
 
   childListItem = contentChild<TemplateRef<any> | undefined>('listItem')
-  primeNgListItem = computed(() => {
+  optimusListItem = computed(() => {
     const templates = this.templates()
     const listItemTemplate = templates.find((t) => t.getType() === 'listItem')
     return listItemTemplate?.template ?? undefined
   })
   _listItem = computed(() => {
-    const primeNgListItem = this.primeNgListItem()
+    const optimusListItem = this.optimusListItem()
     const childListItem = this.childListItem()
-    return primeNgListItem ?? childListItem ?? undefined
+    return optimusListItem ?? childListItem ?? undefined
   })
 
   childTopCenter = contentChild<TemplateRef<any> | undefined>('topCenter')
-  primeNgTopCenter = computed(() => {
+  optimusTopCenter = computed(() => {
     const templates = this.templates()
     const topCenterTemplate = templates.find((t) => t.getType() === 'topCenter')
     return topCenterTemplate?.template ?? undefined
   })
   _topCenter = computed(() => {
-    const primeNgTopCenter = this.primeNgTopCenter()
+    const optimusTopCenter = this.optimusTopCenter()
     const childTopCenter = this.childTopCenter()
-    return primeNgTopCenter ?? childTopCenter ?? undefined
+    return optimusTopCenter ?? childTopCenter ?? undefined
   })
 
   childListValue = contentChild<TemplateRef<any> | undefined>('listValue')
-  primeNgListValue = computed(() => {
+  optimusListValue = computed(() => {
     const templates = this.templates()
     const listValueTemplate = templates.find((t) => t.getType() === 'listValue')
     return listValueTemplate?.template ?? undefined
   })
   _listValue = computed(() => {
-    const primeNgListValue = this.primeNgListValue()
+    const optimusListValue = this.optimusListValue()
     const childListValue = this.childListValue()
-    return primeNgListValue ?? childListValue ?? undefined
+    return optimusListValue ?? childListValue ?? undefined
   })
 
   childTranslationKeyListValue = contentChild<TemplateRef<any> | undefined>('translationKeyListValue')
-  primeNgTranslationKeyListValue = computed(() => {
+  optimusTranslationKeyListValue = computed(() => {
     const templates = this.templates()
     const translationKeyListValueTemplate = templates.find((t) => t.getType() === 'translationKeyListValue')
     return translationKeyListValueTemplate?.template ?? undefined
   })
   _translationKeyListValue = computed(() => {
-    const primeNgTranslationKeyListValue = this.primeNgTranslationKeyListValue()
+    const optimusTranslationKeyListValue = this.optimusTranslationKeyListValue()
     const childTranslationKeyListValue = this.childTranslationKeyListValue()
-    return primeNgTranslationKeyListValue ?? childTranslationKeyListValue ?? undefined
+    return optimusTranslationKeyListValue ?? childTranslationKeyListValue ?? undefined
   })
 
   childNumberListValue = contentChild<TemplateRef<any> | undefined>('numberListValue')
-  primeNgNumberListValue = computed(() => {
+  optimusNumberListValue = computed(() => {
     const templates = this.templates()
     const numberListValueTemplate = templates.find((t) => t.getType() === 'numberListValue')
     return numberListValueTemplate?.template ?? undefined
   })
   _numberListValue = computed(() => {
-    const primeNgNumberListValue = this.primeNgNumberListValue()
+    const optimusNumberListValue = this.optimusNumberListValue()
     const childNumberListValue = this.childNumberListValue()
-    return primeNgNumberListValue ?? childNumberListValue ?? undefined
+    return optimusNumberListValue ?? childNumberListValue ?? undefined
   })
 
   childRelativeDateListValue = contentChild<TemplateRef<any> | undefined>('relativeDateListValue')
-  primeNgRelativeDateListValue = computed(() => {
+  optimusRelativeDateListValue = computed(() => {
     const templates = this.templates()
     const relativeDateListValueTemplate = templates.find((t) => t.getType() === 'relativeDateListValue')
     return relativeDateListValueTemplate?.template ?? undefined
   })
   _relativeDateListValue = computed(() => {
-    const primeNgRelativeDateListValue = this.primeNgRelativeDateListValue()
+    const optimusRelativeDateListValue = this.optimusRelativeDateListValue()
     const childRelativeDateListValue = this.childRelativeDateListValue()
-    return primeNgRelativeDateListValue ?? childRelativeDateListValue ?? undefined
+    return optimusRelativeDateListValue ?? childRelativeDateListValue ?? undefined
   })
 
   childStringListValue = contentChild<TemplateRef<any> | undefined>('stringListValue')
-  primeNgStringListValue = computed(() => {
+  optimusStringListValue = computed(() => {
     const templates = this.templates()
     const stringListValueTemplate = templates.find((t) => t.getType() === 'stringListValue')
     return stringListValueTemplate?.template ?? undefined
   })
   _stringListValue = computed(() => {
-    const primeNgStringListValue = this.primeNgStringListValue()
+    const optimusStringListValue = this.optimusStringListValue()
     const childStringListValue = this.childStringListValue()
-    return primeNgStringListValue ?? childStringListValue ?? undefined
+    return optimusStringListValue ?? childStringListValue ?? undefined
   })
 
   childDateListValue = contentChild<TemplateRef<any> | undefined>('dateListValue')
-  primeNgDateListValue = computed(() => {
+  optimusDateListValue = computed(() => {
     const templates = this.templates()
     const dateListValueTemplate = templates.find((t) => t.getType() === 'dateListValue')
     return dateListValueTemplate?.template ?? undefined
   })
   _dateListValue = computed(() => {
-    const primeNgDateListValue = this.primeNgDateListValue()
+    const optimusDateListValue = this.optimusDateListValue()
     const childDateListValue = this.childDateListValue()
-    return primeNgDateListValue ?? childDateListValue ?? undefined
+    return optimusDateListValue ?? childDateListValue ?? undefined
   })
 
   childTableFilterCell = contentChild<TemplateRef<any> | undefined>('tableFilterCell')
-  primeNgTableFilterCell = computed(() => {
+  optimusTableFilterCell = computed(() => {
     const templates = this.templates()
     const tableFilterCellTemplate = templates.find((t) => t.getType() === 'tableFilterCell')
     return tableFilterCellTemplate?.template ?? undefined
   })
   _tableFilterCell = computed(() => {
-    const primeNgTableFilterCell = this.primeNgTableFilterCell()
+    const optimusTableFilterCell = this.optimusTableFilterCell()
     const childTableFilterCell = this.childTableFilterCell()
-    return primeNgTableFilterCell ?? childTableFilterCell ?? undefined
+    return optimusTableFilterCell ?? childTableFilterCell ?? undefined
   })
 
   childDateTableFilterCell = contentChild<TemplateRef<any> | undefined>('dateTableFilterCell')
-  primeNgDateTableFilterCell = computed(() => {
+  optimusDateTableFilterCell = computed(() => {
     const templates = this.templates()
     const dateTableFilterCellTemplate = templates.find((t) => t.getType() === 'dateTableFilterCell')
     return dateTableFilterCellTemplate?.template ?? undefined
   })
   _dateTableFilterCell = computed(() => {
-    const primeNgDateTableFilterCell = this.primeNgDateTableFilterCell()
+    const optimusDateTableFilterCell = this.optimusDateTableFilterCell()
     const childDateTableFilterCell = this.childDateTableFilterCell()
-    return primeNgDateTableFilterCell ?? childDateTableFilterCell ?? undefined
+    return optimusDateTableFilterCell ?? childDateTableFilterCell ?? undefined
   })
 
   childRelativeDateTableFilterCell = contentChild<TemplateRef<any> | undefined>('relativeDateTableFilterCell')
-  primeNgRelativeDateTableFilterCell = computed(() => {
+  optimusRelativeDateTableFilterCell = computed(() => {
     const templates = this.templates()
     const relativeDateTableFilterCellTemplate = templates.find((t) => t.getType() === 'relativeDateTableFilterCell')
     return relativeDateTableFilterCellTemplate?.template ?? undefined
   })
   _relativeDateTableFilterCell = computed(() => {
-    const primeNgRelativeDateTableFilterCell = this.primeNgRelativeDateTableFilterCell()
+    const optimusRelativeDateTableFilterCell = this.optimusRelativeDateTableFilterCell()
     const childRelativeDateTableFilterCell = this.childRelativeDateTableFilterCell()
-    return primeNgRelativeDateTableFilterCell ?? childRelativeDateTableFilterCell ?? undefined
+    return optimusRelativeDateTableFilterCell ?? childRelativeDateTableFilterCell ?? undefined
   })
 
   childTranslationKeyTableFilterCell = contentChild<TemplateRef<any> | undefined>('translationKeyTableFilterCell')
-  primeNgTranslationKeyTableFilterCell = computed(() => {
+  optimusTranslationKeyTableFilterCell = computed(() => {
     const templates = this.templates()
     const translationKeyTableFilterCellTemplate = templates.find((t) => t.getType() === 'translationKeyTableFilterCell')
     return translationKeyTableFilterCellTemplate?.template ?? undefined
   })
   _translationKeyTableFilterCell = computed(() => {
-    const primeNgTranslationKeyTableFilterCell = this.primeNgTranslationKeyTableFilterCell()
+    const optimusTranslationKeyTableFilterCell = this.optimusTranslationKeyTableFilterCell()
     const childTranslationKeyTableFilterCell = this.childTranslationKeyTableFilterCell()
-    return primeNgTranslationKeyTableFilterCell ?? childTranslationKeyTableFilterCell ?? undefined
+    return optimusTranslationKeyTableFilterCell ?? childTranslationKeyTableFilterCell ?? undefined
   })
 
   childStringTableFilterCell = contentChild<TemplateRef<any> | undefined>('stringTableFilterCell')
-  primeNgStringTableFilterCell = computed(() => {
+  optimusStringTableFilterCell = computed(() => {
     const templates = this.templates()
     const stringTableFilterCellTemplate = templates.find((t) => t.getType() === 'stringTableFilterCell')
     return stringTableFilterCellTemplate?.template ?? undefined
   })
   _stringTableFilterCell = computed(() => {
-    const primeNgStringTableFilterCell = this.primeNgStringTableFilterCell()
+    const optimusStringTableFilterCell = this.optimusStringTableFilterCell()
     const childStringTableFilterCell = this.childStringTableFilterCell()
-    return primeNgStringTableFilterCell ?? childStringTableFilterCell ?? undefined
+    return optimusStringTableFilterCell ?? childStringTableFilterCell ?? undefined
   })
 
   childNumberTableFilterCell = contentChild<TemplateRef<any> | undefined>('numberTableFilterCell')
-  primeNgNumberTableFilterCell = computed(() => {
+  optimusNumberTableFilterCell = computed(() => {
     const templates = this.templates()
     const numberTableFilterCellTemplate = templates.find((t) => t.getType() === 'numberTableFilterCell')
     return numberTableFilterCellTemplate?.template ?? undefined
   })
   _numberTableFilterCell = computed(() => {
-    const primeNgNumberTableFilterCell = this.primeNgNumberTableFilterCell()
+    const optimusNumberTableFilterCell = this.optimusNumberTableFilterCell()
     const childNumberTableFilterCell = this.childNumberTableFilterCell()
-    return primeNgNumberTableFilterCell ?? childNumberTableFilterCell ?? undefined
+    return optimusNumberTableFilterCell ?? childNumberTableFilterCell ?? undefined
   })
 
   childColumnHeader = contentChild<TemplateRef<any> | undefined>('columnHeader')
-  primeNgColumnHeader = computed(() => {
+  optimusColumnHeader = computed(() => {
     const templates = this.templates()
     const columnHeaderTemplate = templates.find((t) => t.getType() === 'columnHeader')
     return columnHeaderTemplate?.template ?? undefined
   })
   _columnHeader = computed(() => {
-    const primeNgColumnHeader = this.primeNgColumnHeader()
+    const optimusColumnHeader = this.optimusColumnHeader()
     const childColumnHeader = this.childColumnHeader()
-    return primeNgColumnHeader ?? childColumnHeader ?? undefined
+    return optimusColumnHeader ?? childColumnHeader ?? undefined
   })
 
   templates = contentChildren<PrimeTemplate>(PrimeTemplate)

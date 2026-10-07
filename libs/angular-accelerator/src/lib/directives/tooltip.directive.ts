@@ -1,5 +1,5 @@
 import { Directive, AfterViewInit, OnChanges, inject, Renderer2, TemplateRef, NgZone, ViewContainerRef, SimpleChanges, input, effect } from "@angular/core"
-import { Tooltip, TooltipStyle } from "primeng/tooltip"
+import { Tooltip, TooltipStyle } from "@openng/optimus-ui/tooltip"
 
 @Directive({ selector: '[ocxTooltip]', providers: [TooltipStyle], standalone: true })
 export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnChanges {
