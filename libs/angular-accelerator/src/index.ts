@@ -70,7 +70,7 @@ export * from './lib/model/row-list-grid-data.model'
 
 // core
 export * from './lib/angular-accelerator.module'
-export * from './lib/angular-accelerator-primeng.module'
+export * from './lib/angular-accelerator-optimus.module'
 
 // functions
 export * from './lib/functions/flatten-object'
@@ -81,7 +81,7 @@ export * from './lib/utils/colorutils'
 export * from './lib/utils/data-operation-strategy'
 export * from './lib/utils/dateutils'
 export * from './lib/utils/objectutils'
-export * from './lib/utils/primeicon.utils'
+export * from './lib/utils/optimus-icon.utils'
 export * from './lib/utils/enum-to-dropdown-options.utils'
 export * from './lib/utils/criteria.utils'
 export * from './lib/utils/string-and-array-helper-functions.utils'
@@ -90,5 +90,5 @@ export * from './lib/utils/filter.utils'
 export * from './lib/utils/image-logo-url.utils'
 export * from './lib/utils/observable-output.utils'
 export * from './lib/utils/action-router.utils'
-export * from './lib/utils/primeng-autofocus-patch.utils'
+export * from './lib/utils/optimus-autofocus-patch.utils'
 

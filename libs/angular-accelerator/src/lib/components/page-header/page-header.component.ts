@@ -15,13 +15,14 @@ import {
   model,
   output,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { MenuItem, PrimeIcons } from 'primeng/api'
+import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
 import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
-import { PrimeIcon } from '../../utils/primeicon.utils'
+import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TranslationKey } from '../../model/translation.model'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -63,13 +64,13 @@ export interface Action {
 export interface ObjectDetailItem {
   label: string
   value?: string
-  icon?: PrimeIcon
+  icon?: OptimusIcon
   iconStyleClass?: string
   labelPipe?: Type<any>
   valuePipe?: Type<any>
   valuePipeArgs?: string
   valueCssClass?: string
-  actionItemIcon?: PrimeIcon
+  actionItemIcon?: OptimusIcon
   actionItemCallback?: () => void
   actionItemAriaLabel?: string
   actionItemAriaLabelKey?: TranslationKey
@@ -90,6 +91,7 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   selector: 'ocx-page-header',
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, AfterViewInit {
@@ -194,11 +196,11 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   constructor() {
     this.home$ = concat(
-      of({ menuItem: { icon: PrimeIcons.HOME, routerLink: '/' } }),
+      of({ menuItem: { icon: OpenngIcons.HOME, routerLink: '/' } }),
       this.appStateService.currentWorkspace$.pipe(
         map((workspace) => ({
           menuItem: {
-            icon: PrimeIcons.HOME,
+            icon: OpenngIcons.HOME,
             routerLink: workspace.baseUrl,
           },
           page: workspace.workspaceName,

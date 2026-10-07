@@ -1,8 +1,8 @@
 import type { Preview } from '@storybook/angular'
-import { patchPrimeNgAutoFocus } from '../src/lib/utils/primeng-autofocus-patch.utils'
+import { patchOptimusAutoFocus } from '../src/lib/utils/optimus-autofocus-patch.utils'
 
-// Stories import PrimeNG modules directly (e.g. `primeng/table`), that applies the PrimeNG  AutoFocus patch does not run in the Storybook bundle.
-patchPrimeNgAutoFocus()
+// Stories import Optimus modules directly (e.g. `optimus/table`), that applies the Optimus  AutoFocus patch does not run in the Storybook bundle.
+patchOptimusAutoFocus()
 
 
 const preview: Preview = {

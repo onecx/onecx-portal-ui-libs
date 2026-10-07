@@ -3,7 +3,7 @@ description: 'Setup Node.js, install dependencies'
 inputs:
   node:
     description: 'Node version'
-    default: '20'
+    default: '24'
     required: false
 
 runs:

@@ -15,6 +15,7 @@ import {
   signal,
   untracked,
   viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { FormControlName, FormGroup } from '@angular/forms'
@@ -60,6 +61,7 @@ export interface SearchConfigData {
   standalone: false,
   selector: 'ocx-search-header',
   templateUrl: './search-header.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [],
 })
 export class SearchHeaderComponent {
@@ -79,7 +81,13 @@ export class SearchHeaderComponent {
 
   searchConfigPermission = input<PermissionInput>(undefined)
   searchButtonDisabled = input<boolean>(false)
+  searchButtonLabel = input<string>('')
+  searchButtonAriaLabel = input<string>('')
+  searchButtonTooltip = input<string>('')
   resetButtonDisabled = input<boolean>(false)
+  resetButtonLabel = input<string>('')
+  resetButtonAriaLabel = input<string>('')
+  resetButtonTooltip = input<string>('')
   pageName = input<string | undefined>(getLocation().applicationPath)
 
   searched = output<void>()

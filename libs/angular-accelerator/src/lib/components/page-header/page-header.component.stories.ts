@@ -3,17 +3,17 @@ import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
 import { action } from 'storybook/actions'
 import { Meta, StoryFn, applicationConfig, moduleMetadata } from '@storybook/angular'
-import { PrimeIcons } from 'primeng/api'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { ButtonModule } from 'primeng/button'
-import { MenuModule } from 'primeng/menu'
-import { SkeletonModule } from 'primeng/skeleton'
+import { OpenngIcons } from '@openng/optimus-ui/api'
+import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { MenuModule } from '@openng/optimus-ui/menu'
+import { SkeletonModule } from '@openng/optimus-ui/skeleton'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -76,7 +76,7 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Reload',
     show: 'always',
-    icon: PrimeIcons.REFRESH,
+    icon: OpenngIcons.REFRESH,
   },
   {
     label: 'Delete',
@@ -86,7 +86,7 @@ const demoActions: Action[] = [
     },
     title: 'Tooltip for Delete',
     show: 'always',
-    icon: PrimeIcons.TRASH,
+    icon: OpenngIcons.TRASH,
   },
   {
     label: 'Some action that has a long text',
@@ -94,8 +94,19 @@ const demoActions: Action[] = [
       console.log(`you clicked 'Some action'`)
     },
     show: 'asOverflow',
-    icon: PrimeIcons.ADDRESS_BOOK,
+    icon: OpenngIcons.ADDRESS_BOOK,
     title: 'Tooltip for some action',
+  },
+  {
+    label: 'Disabled OverFlow Action',
+    actionCallback: () => {
+      console.log(`you clicked 'Disabled'`)
+    },
+    title: 'Tooltip for Disabled',
+    disabled: true,
+    icon: OpenngIcons.BRIEFCASE,
+    show: 'asOverflow',
+    disabledTooltip: 'Tooltip for Disabled Button',
   },
   {
     label: 'Other action',
@@ -103,14 +114,8 @@ const demoActions: Action[] = [
       console.log(`you clicked 'Other Action'`)
     },
     show: 'asOverflow',
-  },
-  {
-    label: 'Disabled',
-    actionCallback: () => {
-      console.log(`you clicked 'Disabled'`)
-    },
-    title: 'Tooltip for Disabled',
-    disabled: true,
+    icon: OpenngIcons.ELLIPSIS_V,
+    title: 'Tooltip for Other action',
   },
   {
     label: 'Loading',
@@ -119,11 +124,11 @@ const demoActions: Action[] = [
     },
     title: 'This action is currently loading',
     loading: true,
-    icon: PrimeIcons.SPINNER,
+    icon: OpenngIcons.SPINNER,
     show: 'always',
   },
   {
-    icon: PrimeIcons.BOOK,
+    icon: OpenngIcons.BOOK,
     actionCallback: () => {
       console.log(`you clicked 'BOOK'`)
     },
@@ -137,7 +142,7 @@ const demoFields: ObjectDetailItem[] = [
     label: 'Venue',
     value: 'AIE Munich ',
     labelTooltipKey: 'Label Tooltip',
-    actionItemIcon: PrimeIcons.COPY,
+    actionItemIcon: OpenngIcons.COPY,
     actionItemTooltipKey: 'Copy to clipboard',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
@@ -146,13 +151,13 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'Status',
     value: 'Confirmed',
-    icon: PrimeIcons.CHECK_CIRCLE,
+    icon: OpenngIcons.CHECK_CIRCLE,
   },
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CALENDAR,
-    actionItemIcon: PrimeIcons.COPY,
+    icon: OpenngIcons.CALENDAR,
+    actionItemIcon: OpenngIcons.COPY,
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -161,7 +166,7 @@ const demoFields: ObjectDetailItem[] = [
   {
     label: 'End Date',
     value: '19.06.2024',
-    icon: PrimeIcons.CALENDAR,
+    icon: OpenngIcons.CALENDAR,
   },
 ]
 
@@ -379,12 +384,12 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
   },
   {
     label: 'Event Completed',
-    icon: PrimeIcons.CHECK_CIRCLE,
+    icon: OpenngIcons.CHECK_CIRCLE,
   },
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CLOCK,
+    icon: OpenngIcons.CLOCK,
   },
   {
     label: 'I have no value',
@@ -392,7 +397,7 @@ const objectDetailsWithIcons: ObjectDetailItem[] = [
   {
     label: 'Status with style',
     value: 'Completed',
-    icon: PrimeIcons.CHECK_SQUARE,
+    icon: OpenngIcons.CHECK_SQUARE,
     valueCssClass: 'bg-green-400 text-white border-round-sm p-1',
   },
 ]
@@ -421,7 +426,7 @@ export const WithObjectDetailsAndStyledIcons = {
       {
         label: 'Styled Icon',
         value: 'Confirmed',
-        icon: PrimeIcons.CHECK_CIRCLE,
+        icon: OpenngIcons.CHECK_CIRCLE,
         iconStyleClass: 'text-red-400 fadein animation-duration-1000 animation-iteration-infinite',
       },
     ],
@@ -489,7 +494,7 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
     labelTooltipKey: 'pageheader.labelTooltip',
     actionItemTooltipKey: 'pageheader.actionItemTooltip',
     actionItemAriaLabelKey: 'pageheader.actionItemAriaLabel',
-    actionItemIcon: PrimeIcons.COPY,
+    actionItemIcon: OpenngIcons.COPY,
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -497,15 +502,15 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
   {
     label: 'Start Date',
     value: '14.3.2022',
-    icon: PrimeIcons.CALENDAR,
+    icon: OpenngIcons.CALENDAR,
     labelTooltipKey: 'Simple string tooltip for label',
     valueTooltipKey: 'Simple string tooltip for value',
   },
   {
     label: 'End Date',
     value: '19.06.2024',
-    icon: PrimeIcons.CALENDAR,
-    actionItemIcon: PrimeIcons.COPY,
+    icon: OpenngIcons.CALENDAR,
+    actionItemIcon: OpenngIcons.COPY,
     actionItemTooltipKey: 'Simple string tooltip for action',
     actionItemAriaLabel: 'Simple string aria label for action',
     actionItemCallback: () => {
@@ -515,15 +520,15 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
   {
     label: 'Status',
     value: 'Confirmed',
-    icon: PrimeIcons.CHECK_CIRCLE,
+    icon: OpenngIcons.CHECK_CIRCLE,
     labelTooltipKey: { key: 'pageheader.statusLabelTooltip', parameters: { status: 'confirmed' } },
     valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'Confirmed' } },
   },
   {
     label: 'Fallback Test',
     value: 'No tooltips provided',
-    icon: PrimeIcons.INFO_CIRCLE,
-    actionItemIcon: PrimeIcons.COPY,
+    icon: OpenngIcons.INFO_CIRCLE,
+    actionItemIcon: OpenngIcons.COPY,
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
