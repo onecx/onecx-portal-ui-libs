@@ -9,7 +9,7 @@ import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
-import { toggleswitch } from './schema/toggleswitch'
+import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
 import { tabs, tabsShape } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
 import { FALLBACK_ORDER_DEFAULT, type RelaxedAxisKind } from './utils/axis-metadata'
@@ -27,6 +27,7 @@ import { interactiveDataView } from './schema/interactive-data-view'
 import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
+import { messageShape } from './schema/message/message'
 import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { ripple, rippleShape } from './schema/ripple'
@@ -59,7 +60,7 @@ type UsagesInput = {
   diagram?: z.input<typeof diagramShape>
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabsShape>
-  toggleswitch?: z.input<typeof toggleswitch>
+  toggleswitch?: z.input<typeof toggleSwitchShape>
   textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
@@ -67,7 +68,7 @@ type UsagesInput = {
   calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
-  message?: z.input<typeof message>
+  message?: z.input<typeof messageShape>
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
   ripple?: z.input<typeof rippleShape>
