@@ -44,8 +44,6 @@ const breadcrumbItemVariantShape = z.object({
   defaultState: breadcrumbItemStateShape.prefault({}),
   hover: breadcrumbItemStateShape.prefault({}),
   focus: breadcrumbItemStateShape.prefault({}),
-  active: breadcrumbItemStateShape.prefault({}),
-  disabled: breadcrumbItemStateShape.prefault({}),
 })
 
 export const breadcrumbItemShape = z.object({
@@ -125,36 +123,5 @@ export const breadcrumbItemDefaults = {
       },
     },
 
-    active: {
-      background: {
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.bg.color}}',
-      },
-
-      color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-
-      border: {
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
-      },
-
-      icon: {
-        color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
-      },
-    },
-
-    disabled: {
-      background: {
-        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg.color}}',
-      },
-
-      color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-
-      border: {
-        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}',
-      },
-
-      icon: {
-        color: '{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}',
-      },
-    },
   },
 }
