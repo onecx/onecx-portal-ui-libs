@@ -96,6 +96,16 @@ describe('Gatherer', () => {
     expect(responses).toEqual(['responseGatherer2: request1'])
   })
 
+  it('should reject when a provider callback rejects', async () => {
+    const expectedError = new Error('provider failed')
+    gatherer2.destroy()
+    gatherer2 = new Gatherer<string, string>('test', 1, async () => {
+      throw expectedError
+    })
+
+    await expect(gatherer1.gather('request-rejects')).rejects.toBe(expectedError)
+  })
+
   it('should not gather responses if destroyed', async () => {
     gatherer2.destroy()
 

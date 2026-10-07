@@ -30,15 +30,19 @@ export class Gatherer<Request, Response> {
           return
         }
         let resolve: (value: Response) => void
+        let reject: (reason?: unknown) => void
         acceleratorState['@onecx/accelerator'].gatherer.promises[m.id].push(
-          new Promise((r) => {
+          new Promise((r, j) => {
             resolve = r
+            reject = j
           })
         )
-        callback(m.request).then((response) => {
-          resolve(response)
-          this.logAnsweredIfDebug(name, version, m, response)
-        })
+        callback(m.request)
+          .then((response) => {
+            resolve(response)
+            this.logAnsweredIfDebug(name, version, m, response)
+          })
+          .catch((error) => reject(error))
       }
     })
   }
