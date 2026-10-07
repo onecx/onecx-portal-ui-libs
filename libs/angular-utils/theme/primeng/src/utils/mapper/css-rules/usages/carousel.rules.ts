@@ -128,8 +128,12 @@ export const carouselCssRules: CssRule[] = [
         from: 'usages.carousel.defaultVariant.item.background',
       },
       {
-        property: 'padding',
-        from: 'usages.carousel.defaultVariant.item.padding',
+        property: 'padding-inline',
+        from: 'usages.carousel.defaultVariant.item.paddingX',
+      },
+      {
+        property: 'padding-block',
+        from: 'usages.carousel.defaultVariant.item.paddingY',
       },
       {
         property: 'border-color',
