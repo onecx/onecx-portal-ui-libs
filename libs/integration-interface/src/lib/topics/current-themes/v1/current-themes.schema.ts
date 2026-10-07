@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { dialog } from './schema/dialog'
+import { dialog, dialogShape } from './schema/dialog'
 import { menubar, menubarShape } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
@@ -10,14 +10,15 @@ import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import type { CarouselShapeInput } from './schema/carousel'
-import { toggleswitch } from './schema/toggleswitch'
+import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
 import { tabs } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
+import { FALLBACK_ORDER_DEFAULT, type RelaxedAxisKind } from './utils/axis-metadata'
 import { diagram, diagramShape } from './schema/diagram'
 import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
 import { fieldset, fieldsetShape } from './schema/fieldset'
 import { dropdown, dropdownShape } from './schema/dropdown'
-import { textarea } from './schema/textarea'
+import { textarea, textareaShape } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton } from './schema/togglebutton'
@@ -27,9 +28,10 @@ import { interactiveDataView } from './schema/interactive-data-view'
 import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
+import { messageShape } from './schema/message/message'
 import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
-import { ripple } from './schema/ripple'
+import { ripple, rippleShape } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
@@ -44,9 +46,10 @@ import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
 import { paginator, paginatorShape } from './schema/paginator'
 import { skeleton, skeletonShape } from './schema/skeleton'
 import { pageHeaderShape } from './schema/page-header/index'
+import { button, ButtonShapeInput } from './schema/button'
 
 type UsagesInput = {
-  dialog?: z.input<typeof dialog>
+  dialog?: z.input<typeof dialogShape>
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
@@ -58,18 +61,18 @@ type UsagesInput = {
   diagram?: z.input<typeof diagramShape>
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
   tabs?: z.input<typeof tabs>
-  toggleswitch?: z.input<typeof toggleswitch>
-  textarea?: z.input<typeof textarea>
+  toggleswitch?: z.input<typeof toggleSwitchShape>
+  textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebutton>
   calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
-  message?: z.input<typeof message>
+  message?: z.input<typeof messageShape>
   selectbutton?: z.input<typeof selectbutton>
   loadingIndicator?: z.input<typeof loadingIndicator>
-  ripple?: z.input<typeof ripple>
+  ripple?: z.input<typeof rippleShape>
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
@@ -81,6 +84,10 @@ type UsagesInput = {
   dataListGrid?: z.input<typeof dataListGridShape>
   paginator?: z.input<typeof paginatorShape>
   skeleton?: z.input<typeof skeletonShape>
+  // Hand-written concrete type (mirrors `CalendarShapeInput`/`PanelMenuShapeInput`) — the loose
+  // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
+  // `ThemePath`. See `ButtonShapeInput` in schema/button.
+  button?: ButtonShapeInput
 }
 
 type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
@@ -122,6 +129,7 @@ const usages: z.ZodType<UsagesInput> = z
     dataListGrid: (dataListGrid as typeof dataListGrid).optional(),
     paginator: (paginator as typeof paginator).optional(),
     skeleton: (skeleton as typeof skeleton).optional(),
+    button: (button as typeof button).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
@@ -160,6 +168,7 @@ export const themePropertiesV2 = z
     primitives: primitives as typeof primitives,
     usages: usages.optional(),
     regionOverrides: regionOverrides as typeof regionOverrides,
+    fallbackOrder: z.array(z.enum(['state', 'variant', 'severity'])).default(FALLBACK_ORDER_DEFAULT),
   })
   .register(themeSchemaRegistry, { id: 'themePropertiesV2' })
 
@@ -177,6 +186,7 @@ export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
+  fallbackOrder?: RelaxedAxisKind[]
 }
 
 export type ThemeUsageName = keyof UsagesInput

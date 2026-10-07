@@ -29,7 +29,9 @@ const calendarShape = z.object({
 
   defaultVariant: calendarVariantContentShape.prefault({}),
 
-  transitionDuration: withRef(z.number()).optional(),
+  transitionDuration: withRef(
+    z.number().register(themeSchemaRegistry, { id: 'calendarTransitionDuration', axis: 'none' })
+  ).optional(),
 })
 
 /**
@@ -89,8 +91,11 @@ export const calendarDefaults = {
  * Only keys present in `calendarDefaults` get `.default()`.
  * All other keys stay optional (filled by fallback mechanism).
  */
+// Only `defaultVariant` is a variant key; `settings` (axis: 'setting') and `transitionDuration`
+// (axis: 'none') opt out of the root's variant axis.
 export const calendar = applyDefaultsRecursive(calendarShape, calendarDefaults).register(themeSchemaRegistry, {
   id: 'calendar',
+  axis: 'variant',
 })
 
 // Backward-compatible facade for consumers that import `CalendarSchema.schema`
