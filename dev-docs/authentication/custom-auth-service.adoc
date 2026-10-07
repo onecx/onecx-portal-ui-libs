@@ -11,7 +11,7 @@ How a deployment can replace the built-in Keycloak mechanism with its own identi
 
 == Why it exists
 
-`link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` is fixed to three built-in mechanisms — `keycloak` (the default), `custom` and `disabled` (see the previous Unit on mechanism selection). Most deployments use Keycloak, but some run a home-grown identity provider that does not fit `keycloak-js`. Rather than forking the Shell or adding a new mechanism to the libraries, OneCX lets a deployment *ship its own* auth service as a separate Module Federation remote. The Shell loads it at startup, instantiates it, and treats it exactly like any other `AuthService` — so the rest of the page (the `window` proxy, the authenticated gate, the token interceptors) does not change at all.
+`link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` is fixed to three built-in mechanisms — `keycloak` (the default), `custom` and `disabled` (covered by Unit 1, *Ownership & mechanism selection*, ticket #900 — not yet written). Most deployments use Keycloak, but some run a home-grown identity provider that does not fit `keycloak-js`. Rather than forking the Shell or adding a new mechanism to the libraries, OneCX lets a deployment *ship its own* auth service as a separate Module Federation remote. The Shell loads it at startup, instantiates it, and treats it exactly like any other `AuthService` — so the rest of the page (the `window` proxy, the authenticated gate, the token interceptors) does not change at all.
 
 The consequence for the reader is that a custom service is not a new feature: it is a *plug-in* that has to satisfy one small contract and expose one small factory function. Everything else is handled by the Shell.
 
@@ -105,10 +105,10 @@ The `AuthService` contract exposes no way for a custom service to report the *cu
 
 == Related Units
 
-* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
-* link:./keycloak.adoc[Keycloak integration]
-* How Apps obtain tokens — `obtaining-tokens.adoc`
-* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+* Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating) — *not yet written* (ticket #900)
+* Keycloak integration — *not yet written* (ticket #900)
+* link:./obtaining-tokens.adoc[How Apps obtain tokens]
+* link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
 * 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — Module Federation and remote loading are the transport; the loading mechanism itself is covered in Area 2 (Application Bootstrap).
 
 == Sources

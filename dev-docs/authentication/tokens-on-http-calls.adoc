@@ -100,11 +100,11 @@ sequenceDiagram
 * `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]` — the proxy the Angular interceptor reads headers and refreshes the token through.
 * `link:{libs}/react-auth/src/lib/axios.ts[axios.ts]` — the React `axiosFactory` and `AuthenticatedAxiosInstance`, with the `/assets/` whitelist, the graceful "missing proxy" handling and the header loop.
 * `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the `authServiceProxy` singleton and the `MISSING_PROXY_ERROR` constant the React interceptor compares against.
-* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[app-state.service.ts]` — `AppStateService.isAuthenticated$`, the gate the Angular interceptor awaits (the Shell publishes it after a successful `init()`; see the mechanism-selection Unit).
+* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[app-state.service.ts]` — `AppStateService.isAuthenticated$`, the gate the Angular interceptor awaits (the Shell publishes it after a successful `init()`; see the *mechanism-selection* Unit, ticket #900 — not yet written).
 
 === Shell side
 
-The Shell does not add its own interceptors for App traffic; it is the *producer* of the gate the Angular interceptor waits on. In `link:{shell}/src/app/app.module.ts[app.module.ts]` the Shell runs `provideAuthService()`, and it is the Shell's `AuthServiceWrapper` that publishes `isAuthenticated$` once auth succeeds. Until the Shell publishes that Topic, the Angular `TokenInterceptor` (and any App logic awaiting the gate) is suspended. The exact Shell code that awaits the gate in its own initialisers is covered in the mechanism-selection Unit; the Shell repository is treated as read-only here, so the interceptor files above are on the libs side.
+The Shell does not add its own interceptors for App traffic; it is the *producer* of the gate the Angular interceptor waits on. In `link:{shell}/src/app/app.module.ts[app.module.ts]` the Shell runs `provideAuthService()`, and it is the Shell's `AuthServiceWrapper` that publishes `isAuthenticated$` once auth succeeds. Until the Shell publishes that Topic, the Angular `TokenInterceptor` (and any App logic awaiting the gate) is suspended. The exact Shell code that awaits the gate in its own initialisers is covered in the *mechanism-selection* Unit (ticket #900 — not yet written); the Shell repository is treated as read-only here, so the interceptor files above are on the libs side.
 
 == Angular / React
 
@@ -123,7 +123,7 @@ This Unit is one of the places where the two frameworks genuinely differ, so the
 
 == Debugging
 
-* Confirm the gate first: if an Angular request never fires, `isAuthenticated$.isInitialized` has not resolved — the mechanism-selection and Keycloak Units explain when that happens.
+* Confirm the gate first: if an Angular request never fires, `isAuthenticated$.isInitialized` has not resolved — the *mechanism-selection* and *Keycloak* Units explain when that happens (ticket #900 — not yet written).
 * For React, watch for the `MISSING_PROXY_ERROR` path: if a request goes out with no auth headers and no error, the proxy was missing and the error was swallowed by design. Enable `@onecx/react-auth` (prefix in `link:{libs}/react-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) or `@onecx/angular-auth` (prefix in `link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) with `DEBUG='@onecx/*'` to see proxy errors.
 * Inspect the outgoing request in devtools (Network tab) to verify the `Authorization` and `apm-principal-token` headers are present and fresh; compare a whitelisted `assets` request (no headers) against a normal request (headers present). General tooling lives in Area 13 (Diagnostics).
 
@@ -134,8 +134,8 @@ The `assets` whitelist is a broad substring match rather than a path check, and 
 == Related Units
 
 * link:./obtaining-tokens.adoc[How Apps obtain tokens]
-* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
-* link:./keycloak.adoc[Keycloak integration]
+* Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating) — *not yet written* (ticket #900)
+* Keycloak integration — *not yet written* (ticket #900)
 * link:./custom-auth-service.adoc[Custom auth service contract]
 * 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `IsAuthenticated` Topic awaited by the Angular interceptor is a plain Topic; its delivery semantics belong to that Area.
 

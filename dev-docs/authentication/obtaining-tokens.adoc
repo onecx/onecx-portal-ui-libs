@@ -117,10 +117,10 @@ The Shell is what makes the bridge exist at all: by importing `provideAuthServic
 
 == Related Units
 
-* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
-* link:./keycloak.adoc[Keycloak integration]
+* Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating) — *not yet written* (ticket #900)
+* Keycloak integration — *not yet written* (ticket #900)
 * link:./custom-auth-service.adoc[Custom auth service contract]
-* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+* link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
 * 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `IsAuthenticated` Topic the interceptors await is a plain Topic; its delivery semantics belong to that Area.
 
 == Sources
