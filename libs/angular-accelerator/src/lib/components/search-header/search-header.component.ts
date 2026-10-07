@@ -81,7 +81,13 @@ export class SearchHeaderComponent {
 
   searchConfigPermission = input<PermissionInput>(undefined)
   searchButtonDisabled = input<boolean>(false)
+  searchButtonLabel = input<string>('')
+  searchButtonAriaLabel = input<string>('')
+  searchButtonTooltip = input<string>('')
   resetButtonDisabled = input<boolean>(false)
+  resetButtonLabel = input<string>('')
+  resetButtonAriaLabel = input<string>('')
+  resetButtonTooltip = input<string>('')
   pageName = input<string | undefined>(getLocation().applicationPath)
 
   searched = output<void>()
