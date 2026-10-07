@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-standalone-shell",
-  "version": "9.0.0-rc.13",
+  "version": "9.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -11,13 +11,13 @@
     "@angular/core": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@ngx-translate/core": "^17.0.0",
-    "@onecx/accelerator": "9.0.0-rc.13",
-    "@onecx/angular-integration-interface": "9.0.0-rc.13",
-    "@onecx/angular-webcomponents": "9.0.0-rc.13",
-    "@onecx/angular-utils": "9.0.0-rc.13",
-    "@onecx/integration-interface": "9.0.0-rc.13",
-    "@onecx/angular-auth": "9.0.0-rc.13",
-    "@onecx/shell-auth": "9.0.0-rc.13",
+    "@onecx/accelerator": "9.0.0-rc.14",
+    "@onecx/angular-integration-interface": "9.0.0-rc.14",
+    "@onecx/angular-webcomponents": "9.0.0-rc.14",
+    "@onecx/angular-utils": "9.0.0-rc.14",
+    "@onecx/integration-interface": "9.0.0-rc.14",
+    "@onecx/angular-auth": "9.0.0-rc.14",
+    "@onecx/shell-auth": "9.0.0-rc.14",
     "@openng/optimus-ui": "^2.0.2"
   },
   "dependencies": {},
