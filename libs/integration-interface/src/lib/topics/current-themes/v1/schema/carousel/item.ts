@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { bg, border, withRef } from '../primitives'
+import { bg, border, color, withRef } from '../primitives'
 
 /**
  * Shape for an individual carousel item (`.p-carousel-item`).
@@ -14,18 +14,21 @@ import { bg, border, withRef } from '../primitives'
  */
 export const carouselItemShape = z.object({
   background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
   border: border.optional(),
-  padding: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
 })
 
 /**
  * Default tokens for an individual carousel item.
- * `border.width` defaults to `none` and `padding` to `0` so the item stays
- * visually flush/transparent (matching the previously unthemed markup) until
- * explicitly overridden.
+ * `border.width` defaults to `none` so the item stays visually flush/
+ * transparent (matching the previously unthemed markup) until explicitly
+ * overridden.
  */
 export const carouselItemDefaults = {
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   border: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
     style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
@@ -33,5 +36,6 @@ export const carouselItemDefaults = {
     radius: '{{primitives.border.radius.none}}',
     offset: '{{primitives.border.offset.none}}',
   },
-  padding: '0',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
 }

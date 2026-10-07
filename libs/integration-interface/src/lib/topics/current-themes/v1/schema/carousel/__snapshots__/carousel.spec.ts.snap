@@ -24,10 +24,7 @@ Object {
           "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
           "border": Object {
             "color": "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
             "style": "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.none}}",
           },
           "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
         },
@@ -46,10 +43,7 @@ Object {
           "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
           "border": Object {
             "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
             "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.none}}",
           },
           "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
@@ -57,10 +51,7 @@ Object {
           "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
           "border": Object {
             "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
             "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.none}}",
           },
           "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
         },
@@ -75,6 +66,19 @@ Object {
       },
       "height": "{{primitives.space.md}}",
       "width": "{{primitives.space.md}}",
+    },
+    "item": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
     },
     "navigationButton": Object {
       "defaultVariant": Object {
@@ -97,10 +101,7 @@ Object {
           "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
           "border": Object {
             "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
             "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.md}}",
           },
           "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
         },
@@ -108,10 +109,7 @@ Object {
           "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
           "border": Object {
             "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
-            "offset": "{{primitives.border.offset.none}}",
-            "radius": "{{primitives.border.radius.md}}",
             "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
-            "width": "{{primitives.border.width.md}}",
           },
           "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
         },
