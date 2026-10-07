@@ -16,9 +16,11 @@ Object {
   "header": Object {
     "alignItems": "center",
     "closeButton": Object {
-      "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
-      "hover": Object {
+      "defaultState": Object {
         "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
+      },
+      "hover": Object {
+        "color": "{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}",
       },
     },
     "gap": "{{primitives.space.sm}}",

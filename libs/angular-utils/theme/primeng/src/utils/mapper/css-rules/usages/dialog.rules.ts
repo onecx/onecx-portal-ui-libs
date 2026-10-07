@@ -57,7 +57,7 @@ export const dialogCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.dialog.header.closeButton.color',
+        from: 'usages.dialog.header.closeButton.defaultState.color',
       },
     ],
   },

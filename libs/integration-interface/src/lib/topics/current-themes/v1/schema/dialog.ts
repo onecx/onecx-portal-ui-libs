@@ -61,24 +61,27 @@ const dialogTitleDefaults = {
   fontWeight: '{{primitives.font.weight}}',
 }
 
-export const dialogButtonShape = z
+const dialogButtonStateShape = z
   .object({
     color: color.optional(),
     background: z.union([bg, withRef(z.string())]).optional(),
     border: border.optional(),
-    hover: z
-      .object({
-        color: color.optional(),
-        background: z.union([bg, withRef(z.string())]).optional(),
-      })
-      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dialogButtonStateShape' })
+
+export const dialogButtonShape = z
+  .object({
+    defaultState: dialogButtonStateShape.prefault({}),
+    hover: dialogButtonStateShape.prefault({}),
   })
   .register(themeSchemaRegistry, { id: 'dialogButtonShape' })
 
 const dialogCloseButtonDefaults = {
-  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
-  hover: {
+  defaultState: {
     color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+  },
+  hover: {
+    color: '{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}',
   },
 }
 

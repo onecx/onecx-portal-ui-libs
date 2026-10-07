@@ -34,7 +34,7 @@ Verified against `libs/angular-utils/theme/primeng/src/utils/mapper/`:
   `usages.dialog.footer.{padding,gap}`.
 - `css-rules/usages/dialog.rules.ts` additionally reads:
   `usages.dialog.header.{alignItems,justifyContent}`,
-  `usages.dialog.header.closeButton.{color,hover.color}`,
+  `usages.dialog.header.closeButton.{defaultState.color,hover.color}`,
   `usages.dialog.footer.justifyContent`,
   and pulls the mask's background directly from `primitives.area.overlay.…bg`.
 
@@ -201,10 +201,13 @@ is kept as a plain `const`. Existing import sites
 
 ## Step 7: Default-value decisions
 
-Every visual default is preserved unchanged. `header.closeButton` carries two
-new defaults — a rest `color` and a `hover.color`, both the overlay `contrast`
-primitive — because the close button is PrimeNG's own icon-only chrome whose
-icon inherits `currentColor`. The two footer action buttons carry **no** defaults
+`header.closeButton` carries two `color` defaults — a rest
+(`defaultState.color`, the overlay `defaultState` `contrast` primitive) and a
+`hover.color` (the overlay `state.hover` `contrast` primitive) — so the icon
+genuinely changes on hover. The two states resolve to *different* values (not a
+duplicate), matching the calendar footer / button close-button pattern. The close
+button is PrimeNG's own icon-only chrome whose icon inherits `currentColor`, so
+only its foreground is themed here. The two footer action buttons carry **no** defaults
 (`primaryActionButton: {}` / `secondaryActionButton: {}`), so they resolve to
 `{}` in the parsed tree — overridable surface, inert until the future `button`
 usage + its mapper rules land. The shared `dialogButtonShape`'s `background` /
@@ -230,8 +233,8 @@ they resolve to a concrete value in the parsed tree rather than falling back.
 | `header.justifyContent` | | `space-between` |
 | `header.title.fontSize` | | `{{primitives.font.size}}` |
 | `header.title.fontWeight` | | `{{primitives.font.weight}}` |
-| `header.closeButton.color` | | `{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}` |
-| `header.closeButton.hover.color` | | `{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}` |
+| `header.closeButton.defaultState.color` | | `{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}` |
+| `header.closeButton.hover.color` | | `{{primitives.area.overlay.state.hover.defaultSeverity.contrast}}` |
 | `content.padding` | | `{{primitives.space.md}}` |
 | `content.fontSize` | | `{{primitives.font.size}}` |
 | `footer.padding` | | `{{primitives.space.md}}` |
@@ -300,7 +303,7 @@ Execution:
   `current-themes.schema.ts` still holds for the new button leaves).
 - `CI=false npx nx build angular-utils --skip-nx-cache` → clean. This is the
   type-level guard: the mapper rule files reference
-  `usages.dialog.header.closeButton.{color,hover.color}`, which must be valid
+  `usages.dialog.header.closeButton.{defaultState.color,hover.color}`, which must be valid
   `ThemePath` members for the `@onecx/angular-utils/theme/primeng` entry point
   to compile.
 - `CI=true npx nx lint integration-interface` → clean.
