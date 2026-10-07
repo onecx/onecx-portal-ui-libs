@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { calendarPickerCellShape, calendarPickerCellDefaults } from './pickercell'
 import { calendarWeekDayLabelShape, calendarWeekDayLabelDefaults } from './weekdaylabel'
 
@@ -10,10 +11,12 @@ export type CalendarViewCellFieldName = 'dateCell' | 'monthCell' | 'yearCell'
  * All keys are optional — defaults are applied at the calendar schema level.
  */
 export function calendarViewShape(cellFieldName: CalendarViewCellFieldName) {
-  return z.object({
-    margin: withRef(z.string()).optional(),
-    [cellFieldName]: calendarPickerCellShape.prefault({}),
-  })
+  return z
+    .object({
+      margin: withRef(z.string()).optional(),
+      [cellFieldName]: calendarPickerCellShape.prefault({}),
+    })
+    .register(themeSchemaRegistry, { id: `calendarView_${cellFieldName}`, child: true })
 }
 
 /**
@@ -32,9 +35,11 @@ export function calendarViewDefaults(cellFieldName: CalendarViewCellFieldName): 
  * (`.p-datepicker-weekday`) in date-cell mode — month/year views have no equivalent — so
  * `weekDayLabel` is added here rather than in the shared `calendarViewShape`/`monthView`/`yearView`.
  */
-export const calendarDayViewShape = calendarViewShape('dateCell').extend({
-  weekDayLabel: calendarWeekDayLabelShape.prefault({}),
-})
+export const calendarDayViewShape = calendarViewShape('dateCell')
+  .extend({
+    weekDayLabel: calendarWeekDayLabelShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarDayViewShape', child: true })
 
 /**
  * Default tokens for the day view (dateCell view + its weekday header row).

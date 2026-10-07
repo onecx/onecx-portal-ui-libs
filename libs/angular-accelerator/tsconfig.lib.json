@@ -16,7 +16,8 @@
     "**/*.test.ts",
     "**/*.stories.ts",
     "jest.config.ts",
-    "storybook-config.ts"
+    "storybook-config.ts",
+    "src/lib/theme-v2-usage-settings-structural-compat/**"
   ],
   "include": ["**/*.ts"]
 }
