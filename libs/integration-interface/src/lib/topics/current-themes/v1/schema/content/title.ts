@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { color, font, withRef } from '../primitives'
+import { color, font } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 
 /**
