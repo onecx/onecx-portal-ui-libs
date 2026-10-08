@@ -1,3 +1,9 @@
+## [6.29.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.29.0...v6.29.1) (2026-10-08)
+
+### Bug Fixes
+
+* resolve gatherer id issues when using multiple gatherers ([#1811](https://github.com/onecx/onecx-portal-ui-libs/issues/1811)) ([53c628f](https://github.com/onecx/onecx-portal-ui-libs/commit/53c628f2737c783b92b4bee650c7dff9737040ab))
+
 ## [6.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.28.0...v6.29.0) (2026-10-06)
 
 ### Features
