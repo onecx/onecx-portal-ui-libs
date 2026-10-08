@@ -31,6 +31,7 @@ import { message } from './schema/message'
 import { messageShape } from './schema/message/message'
 import { selectbutton } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
+import { loadingIndicatorShape } from './schema/loading-indicator'
 import { ripple, rippleShape } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
@@ -71,7 +72,7 @@ type UsagesInput = {
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof messageShape>
   selectbutton?: z.input<typeof selectbutton>
-  loadingIndicator?: z.input<typeof loadingIndicator>
+  loadingIndicator?: z.input<typeof loadingIndicatorShape>
   ripple?: z.input<typeof rippleShape>
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
