@@ -21,6 +21,7 @@ import { selectbuttonCssRules } from './usages/selectbutton.rules'
 import { loadingIndicatorCssRules } from './usages/loading-indicator.rules'
 import { panelmenuCssRules } from './usages/panelmenu.rules'
 import { pageHeaderCssRules } from './usages/page-header.rules'
+import { searchHeaderCssRules } from './usages/search-header.rules'
 import { contentCssRules } from './usages/content.rules'
 import { dataviewCssRules } from './usages/dataview.rules'
 import { rippleCssRules } from './usages/ripple.rules'
@@ -50,6 +51,7 @@ export const usageCssRules: CssRule[] = [
   ...loadingIndicatorCssRules,
   ...panelmenuCssRules,
   ...pageHeaderCssRules,
+  ...searchHeaderCssRules,
   ...contentCssRules,
   ...dataviewCssRules,
   ...rippleCssRules,

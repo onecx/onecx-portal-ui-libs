@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`breadcrumb schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "background": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+    },
+    "gap": "{{primitives.space.md}}",
+    "padding": "{{primitives.space.md}}",
+    "transition": Object {
+      "duration": "{{primitives.transition.duration}}",
+    },
+  },
+  "item": Object {
+    "defaultVariant": Object {
+      "defaultState": Object {
+        "background": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg.color}}",
+        },
+        "border": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+          "radius": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.radius}}",
+          "width": "{{primitives.border.width.md}}",
+        },
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        "focusRing": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+          "offset": "{{primitives.focusRing.offset.md}}",
+          "radius": "{{primitives.focusRing.radius.md}}",
+          "shadow": "{{primitives.focusRing.shadow.md}}",
+          "width": "{{primitives.focusRing.width.md}}",
+        },
+        "gap": "{{primitives.space.sm}}",
+        "icon": Object {
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+          "size": "{{primitives.icon.md}}",
+        },
+        "label": Object {
+          "font": Object {
+            "size": "{{primitives.font.size}}",
+            "weight": "{{primitives.font.weight}}",
+          },
+        },
+        "paddingX": "{{primitives.space.md}}",
+        "paddingY": "{{primitives.space.md}}",
+      },
+      "focus": Object {
+        "background": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}",
+        },
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+        },
+        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        "icon": Object {
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+      },
+      "hover": Object {
+        "background": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg.color}}",
+        },
+        "border": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+        },
+        "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        "icon": Object {
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+      },
+    },
+  },
+  "separator": Object {
+    "defaultVariant": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "width": "{{primitives.border.width.md}}",
+    },
+  },
+}
+`;

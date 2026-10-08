@@ -43,12 +43,14 @@ const objectPanelShape = {
 export const pageHeaderContentShape = z.object({
   paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
   paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-  border: z.object({
-    top: border.pick({ width: true, color: true }).optional(),
-    bottom: border.pick({ width: true, color: true }).optional(),
-    left: border.pick({ width: true, color: true }).optional(),
-    right: border.pick({ width: true, color: true }).optional(),
-  }).optional(),
+  border: z
+    .object({
+      top: border.pick({ width: true, color: true }).optional(),
+      bottom: border.pick({ width: true, color: true }).optional(),
+      left: border.pick({ width: true, color: true }).optional(),
+      right: border.pick({ width: true, color: true }).optional(),
+    })
+    .optional(),
   color: color.optional(),
   background: bg.pick({ color: true }).optional(),
   font: font.pick({ family: true, size: true, weight: true }).optional(),
@@ -137,7 +139,6 @@ export const pageHeaderContent = applyDefaultsRecursive(pageHeaderContentShape, 
     id: 'pageHeaderContent',
   }
 )
-
 export class PageHeaderContentSchema {
   static readonly schema = pageHeaderContent
 }

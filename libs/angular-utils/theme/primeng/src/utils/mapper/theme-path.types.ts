@@ -142,6 +142,7 @@ export type ThemePath =
   | `usages.menu.${LeafPaths<NonNullable<Usages['menu']>>}`
   | `usages.breadcrumb.${LeafPaths<NonNullable<Usages['breadcrumb']>>}`
   | `usages.pageHeader.${LeafPaths<NonNullable<Usages['pageHeader']>>}`
+  | `usages.searchHeader.${LeafPaths<NonNullable<Usages['searchHeader']>>}`
   | `usages.dataview.${LeafPaths<NonNullable<Usages['dataview']>>}`
   | `usages.chip.${LeafPaths<NonNullable<Usages['chip']>>}`
   | `usages.customGroupColumnSelector.${LeafPaths<NonNullable<Usages['customGroupColumnSelector']>>}`
