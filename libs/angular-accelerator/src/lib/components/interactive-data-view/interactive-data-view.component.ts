@@ -360,6 +360,30 @@ export class InteractiveDataViewComponent implements OnInit {
     return optimusTopCenter ?? childTopCenter ?? undefined
   })
 
+  childTopLeft = contentChild<TemplateRef<any> | undefined>('topLeft')
+  optimusTopLeft = computed(() => {
+    const templates = this.templates()
+    const topLeftTemplate = templates.find((t) => t.getType() === 'topLeft')
+    return topLeftTemplate?.template ?? undefined
+  })
+  _topLeft = computed(() => {
+    const optimusTopLeft = this.optimusTopLeft()
+    const childTopLeft = this.childTopLeft()
+    return optimusTopLeft ?? childTopLeft ?? undefined
+  })
+
+  childTopRight = contentChild<TemplateRef<any> | undefined>('topRight')
+  optimusTopRight = computed(() => {
+    const templates = this.templates()
+    const topRightTemplate = templates.find((t) => t.getType() === 'topRight')
+    return topRightTemplate?.template ?? undefined
+  })
+  _topRight = computed(() => {
+    const optimusTopRight = this.optimusTopRight()
+    const childTopRight = this.childTopRight()
+    return optimusTopRight ?? childTopRight ?? undefined
+  })
+
   childListValue = contentChild<TemplateRef<any> | undefined>('listValue')
   optimusListValue = computed(() => {
     const templates = this.templates()
