@@ -198,6 +198,18 @@ export class InteractiveDataViewComponent implements OnInit {
       .filter(Boolean) as DataTableColumn[]
   })
 
+  /**
+   * The columns offered to the Filter View. The Filter View opens the "Add Filter"
+   * dialog, so it must only offer columns that are actually active (displayed) in
+   * the current table / list / grid rather than every available column. Consumers
+   * that don't drive `displayedColumnKeys` (no `defaultGroupKey`) leave the active
+   * set empty; fall back to the full available set so those consumers keep working.
+   */
+  readonly filterViewColumns = computed<DataTableColumn[]>(() => {
+    const activeColumns = this.displayedColumns()
+    return activeColumns.length > 0 ? activeColumns : this.stateService.availableColumns()
+  })
+
   // Track whether displayed columns have ever been non-empty (to suppress warning on initial empty state)
   private readonly _hasHadColumns = signal<boolean>(false)
 

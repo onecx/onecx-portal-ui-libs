@@ -23,9 +23,9 @@
       tabindex="0"
       role="button"
       [disabled]="filterableColumns().length === 0"
-      (click)="onAddFilter()"
-      (keydown.enter)="onAddFilter()"
-      (keydown.space)="onAddFilter()"
+      (click)="onAddFilter(undefined, $event)"
+      (keydown.enter)="onAddFilter(undefined, $event)"
+      (keydown.space)="$event.preventDefault(); onAddFilter(undefined, $event)"
       [class.cursor-pointer]="filterableColumns().length > 0"
       class="filter-view-focusable ocx-filter-view-add-filter-chip"
       [class.ocx-filter-view-add-filter-chip-disabled]="filterableColumns().length === 0"
@@ -133,8 +133,10 @@
               <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
               <p-button
                 id="ocxFilterViewAddFilter"
+                pAutoFocus
+                [autofocus]="filters.length === 0"
                 [disabled]="filterableColumns().length === 0"
-                (onClick)="onAddFilter()"
+                (onClick)="onAddFilter(undefined, $event)"
                 icon="pi pi-plus"
                 iconPos="left"
                 styleClass="p-button-text p-button-secondary"
@@ -152,7 +154,7 @@
             <div>
               <p-button
                 pAutoFocus
-                [autofocus]="true"
+                [autofocus]="filters.length > 0"
                 [disabled]="filters.length === 0"
                 id="ocxFilterViewOverlayReset"
                 (onClick)="onResetFilersClick()"

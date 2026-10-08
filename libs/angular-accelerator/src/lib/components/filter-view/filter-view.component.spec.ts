@@ -174,12 +174,32 @@ describe('FilterViewComponent (class logic)', () => {
 
     const openDialogSpy = portalDialogService.openDialog as jest.Mock
     expect(openDialogSpy).toHaveBeenCalledTimes(1)
-    const [title, componentOrMessage, primary, secondary] = openDialogSpy.mock.calls[0]
+    const [title, componentOrMessage, primary, secondary, extras] = openDialogSpy.mock.calls[0]
     expect(title).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE')
     expect((componentOrMessage as any).type).toBe(AddFilterDialogComponent)
     expect((componentOrMessage as any).inputs.preselectColumnId).toBe('c2')
     expect(primary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON')
     expect(secondary).toBe('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON')
+    // Dialog is capped to the viewport and restores focus to the triggering control.
+    expect(extras).toEqual(
+      expect.objectContaining({
+        width: 'min(350px, 90vw)',
+        onCloseFocus: 'initiator',
+      })
+    )
+  })
+
+  it('should pass the triggering element as initiatorRef so focus is restored after close', async () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    const initiatorElement = { id: 'ocxFilterViewAddFilter' } as unknown as HTMLElement
+    component.onAddFilter('c2', { currentTarget: initiatorElement } as unknown as Event)
+    await Promise.resolve()
+
+    const [, , , , extras] = (portalDialogService.openDialog as jest.Mock).mock.calls[0]
+    expect(extras).toEqual(expect.objectContaining({ initiatorRef: initiatorElement, onCloseFocus: 'initiator' }))
   })
 
   it('should only apply filters when the primary (confirm) button is clicked, not on cancel/X', async () => {

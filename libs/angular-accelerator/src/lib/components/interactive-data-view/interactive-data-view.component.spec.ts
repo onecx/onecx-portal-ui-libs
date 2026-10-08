@@ -334,6 +334,41 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.displayedColumnKeys()).toEqual(['b', 'c'])
     })
 
+    it('should offer only the active (displayed) columns to the Filter View', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+
+      // `b` and `c` belong to the active group; `a` is available but not active.
+      fixture.componentRef.setInput('columns', [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['other'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g2'] } as any,
+      ])
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
+      component.ngOnInit()
+      fixture.detectChanges()
+
+      expect(component.filterViewColumns().map((c) => c.id)).toEqual(['b', 'c'])
+    })
+
+    it('should fall back to all available columns for the Filter View when no column is active', () => {
+      const { component } = createComponent(true)
+
+      // Set columns through the real `@Input() set columns` setter so the available
+      // columns signal is populated (a signal-shaped replacement would skip it).
+      component.columns = [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g1'] } as any,
+      ]
+      setInputSignal(component, 'defaultGroupKey', '')
+
+      component.ngOnInit()
+      TestBed.tick()
+
+      // displayedColumnKeys stays empty (no defaultGroupKey) -> the full set is offered.
+      expect(component.displayedColumnKeys()).toEqual([])
+      expect(component.filterViewColumns().map((c) => c.id)).toEqual(['a', 'b'])
+    })
+
     it('should initialize displayedColumnKeys from defaultGroupKey', () => {
       const { fixture, component } = createComponentWithFixture(true)
 

@@ -295,11 +295,18 @@ export class FilterViewComponent {
    * here (List / Grid views) if and only if it is also filterable in the Table
    * view. If no column is filterable the dialog is not opened at all.
    */
-  onAddFilter(columnId?: string) {
+  onAddFilter(columnId?: string, event?: Event) {
     const columns = this.filterableColumns()
     if (columns.length === 0) {
       return
     }
+
+    // The element that opened the dialog (the add-filter chip or the manage-panel
+    // button). Captured synchronously while the click/keydown is being dispatched so
+    // that the PortalDialogService can return keyboard focus to it when the dialog
+    // closes (it only does so when an initiatorRef and onCloseFocus: 'initiator'
+    // are supplied).
+    const initiatorRef = (event?.currentTarget ?? undefined) as HTMLElement | undefined
 
     // The PortalDialogService translates the title itself but treats closeAriaLabel as a
     // plain string, so resolve the translated label before opening the dialog.
@@ -321,8 +328,12 @@ export class FilterViewComponent {
             'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
             {
               closeAriaLabel,
-              // Keep the dialog readable with long column names and value labels.
-              width: '350px',
+              // Keep the dialog readable with long column names and value labels, while
+              // capping it to the viewport so it never overflows narrow/mobile screens.
+              width: 'min(350px, 90vw)',
+              // Return keyboard focus to the originating control once the dialog closes.
+              initiatorRef,
+              onCloseFocus: 'initiator',
             }
           )
           .subscribe((state) => {

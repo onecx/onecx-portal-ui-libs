@@ -1,10 +1,11 @@
 @if (column()) {
 <div class="flex flex-column gap-3">
-  <label class="block text-sm font-medium" for="ocxAddFilterColumnSelect"
+  <label class="block text-sm font-medium" for="ocxAddFilterColumnInput"
     >{{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.COLUMN_LABEL' | translate }}</label
   >
   <p-select
     id="ocxAddFilterColumnSelect"
+    inputId="ocxAddFilterColumnInput"
     [autofocus]="true"
     [options]="columnOptions()"
     [optionLabel]="'label'"
@@ -19,11 +20,12 @@
   ></p-select>
 
   @if (valueOptions(); as values) {
-  <label class="block text-sm font-medium" for="ocxAddFilterValueSelect"
+  <label class="block text-sm font-medium" for="ocxAddFilterValueInput"
     >{{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate }}</label
   >
   <p-multiSelect
     id="ocxAddFilterValueSelect"
+    inputId="ocxAddFilterValueInput"
     [options]="values"
     [optionLabel]="'label'"
     [optionValue]="'value'"
