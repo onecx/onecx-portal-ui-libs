@@ -48,7 +48,7 @@ export const contentDefaults = {
   },
   paddingX: '{{primitives.space.md}}',
   paddingY: '{{primitives.space.md}}',
-  marginX: '0',
+  marginX: '{{primitives.space.xs}}',
   marginY: '{{primitives.space.xl}}',
   border: {
     color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',

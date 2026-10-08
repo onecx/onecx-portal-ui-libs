@@ -19,7 +19,7 @@ Object {
     "style": "{{primitives.font.style}}",
     "weight": "{{primitives.font.weight}}",
   },
-  "marginX": "0",
+  "marginX": "{{primitives.space.xs}}",
   "marginY": "{{primitives.space.xl}}",
   "paddingX": "{{primitives.space.md}}",
   "paddingY": "{{primitives.space.md}}",
