@@ -46,6 +46,7 @@ import { paginator, paginatorShape } from './schema/paginator'
 import { skeleton, skeletonShape } from './schema/skeleton'
 import { pageHeaderShape } from './schema/page-header/index'
 import { button, ButtonShapeInput } from './schema/button'
+import { multiselect, multiselectShape } from './schema/multiselect'
 
 type UsagesInput = {
   dialog?: z.input<typeof dialogShape>
@@ -87,6 +88,7 @@ type UsagesInput = {
   // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
   // `ThemePath`. See `ButtonShapeInput` in schema/button.
   button?: ButtonShapeInput
+  multiselect?: z.input<typeof multiselectShape>
 }
 
 type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
@@ -129,6 +131,7 @@ const usages: z.ZodType<UsagesInput> = z
     paginator: (paginator as typeof paginator).optional(),
     skeleton: (skeleton as typeof skeleton).optional(),
     button: (button as typeof button).optional(),
+    multiselect: (multiselect as typeof multiselect).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 

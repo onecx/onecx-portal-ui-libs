@@ -1,25 +1,27 @@
-import z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { MultiselectListItemSchema } from './listitem'
-import { withRef } from '../primitives'
-import { MultiselectGroupHeaderSchema } from './groupheader'
-import { MultiselectEmptyMessageSchema } from './emptymessage'
-
 /**
- * Multiselect listItems schema.
+ * Multiselect listItems schema: the list of options, its group headers, and the empty message.
  */
-export class MultiselectListItemsSchema {
-  private static readonly tokens = {
-    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-  }
+import * as z from 'zod'
+import { themeSchemaRegistry } from '../registry'
+import { multiselectListItemDefaults, multiselectListItemShape } from './listitem'
+import { withRef } from '../primitives'
+import { multiselectGroupHeaderDefaults, multiselectGroupHeaderShape } from './groupheader'
+import { multiselectEmptyMessageDefaults, multiselectEmptyMessageShape } from './emptymessage'
 
-  static readonly schema = z
-    .object({
-      item: (MultiselectListItemSchema.schema as typeof MultiselectListItemSchema.schema).prefault({}),
-      groupHeader: (MultiselectGroupHeaderSchema.schema as typeof MultiselectGroupHeaderSchema.schema).prefault({}),
-      emptyMessage: (MultiselectEmptyMessageSchema.schema as typeof MultiselectEmptyMessageSchema.schema).prefault({}),
-      ...this.tokens,
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectListItems' })
+export const multiselectListItemsShape = z
+  .object({
+    item: multiselectListItemShape.prefault({}),
+    groupHeader: multiselectGroupHeaderShape.prefault({}),
+    emptyMessage: multiselectEmptyMessageShape.prefault({}),
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectListItemsShape' })
+
+export const multiselectListItemsDefaults = {
+  item: multiselectListItemDefaults,
+  groupHeader: multiselectGroupHeaderDefaults,
+  emptyMessage: multiselectEmptyMessageDefaults,
+  paddingX: '{{primitives.space.sm}}',
+  paddingY: '{{primitives.space.sm}}',
 }

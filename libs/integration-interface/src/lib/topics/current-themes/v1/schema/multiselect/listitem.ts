@@ -1,71 +1,69 @@
-import z from 'zod'
+/**
+ * Single selectable item in the list of the multiselect overlay.
+ * `paddingX`/`paddingY`/`gap`/`font`/`border`/`focusRing` are static (same regardless of
+ * state) and only live on `defaultState`; named states only carry `background`, the one
+ * token that actually differs. `checkbox` is the same shared shape used by `filter`.
+ */
+import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { MultiselectCheckboxSchema } from './checkbox'
+import { multiselectCheckboxDefaults, multiselectCheckboxShape } from './checkbox'
 import { border, borderWithShadow, font, withRef } from '../primitives'
 
-/**
- * Single selectable item in list of multiselect overlay.
- */
-export class MultiselectListItemSchema {
-  private static readonly commonTokens = {
-    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-    gap: withRef(z.string()).default('{{primitives.space.sm}}'),
-    font: font.pick({ weight: true, size: true }).default({
+const multiselectListItemStateShape = z
+  .object({
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
+    font: font.pick({ weight: true, size: true }).optional(),
+    border: border.optional(),
+    background: z.union([z.string(), withRef(z.string())]).optional(),
+    focusRing: borderWithShadow.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectListItemStateShape' })
+
+export const multiselectListItemShape = z
+  .object({
+    checkbox: multiselectCheckboxShape.prefault({}),
+    defaultState: multiselectListItemStateShape.prefault({}),
+    hover: multiselectListItemStateShape.prefault({}),
+    focus: multiselectListItemStateShape.prefault({}),
+    selected: multiselectListItemStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectListItemShape', axis: 'state' })
+
+export const multiselectListItemDefaults = {
+  checkbox: multiselectCheckboxDefaults,
+  defaultState: {
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+    gap: '{{primitives.space.sm}}',
+    font: {
       weight: '{{primitives.font.weight}}',
       size: '{{primitives.font.size}}',
-    }),
-    border: border.default({
+    },
+    border: {
       width: '{{primitives.border.width.none}}',
       offset: '{{primitives.border.offset.none}}',
       color: '{{primitives.border.color.none}}',
       style: '{{primitives.border.style.none}}',
       radius: '{{primitives.border.radius.sm}}',
-    }),
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    background: z
-      .union([z.string(), withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    focusRing: borderWithShadow.default({
+    },
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    focusRing: {
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
       width: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}',
       offset: '{{primitives.focusRing.offset.none}}',
       shadow: '{{primitives.focus.shadow.none}}',
-    }),
-  }
-
-  static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([z.string(), withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
-  })
-
-  static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([z.string(), withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-  })
-
-  static readonly selectedTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([z.string(), withRef(z.string())])
-      .default('{{primitives.primary.state.selected.defaultSeverity.bg}}'),
-  })
-
-  static readonly schema = z
-    .object({
-      checkbox: (MultiselectCheckboxSchema.schema as typeof MultiselectCheckboxSchema.schema).prefault({}),
-      ...this.defaultStateTokens,
-      hover: this.hoverTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-      selected: this.selectedTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectListItem' })
+    },
+  },
+  hover: {
+    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+  },
+  focus: {
+    background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+  },
+  selected: {
+    background: '{{primitives.variant.primary.state.selected.defaultSeverity.bg}}',
+  },
 }

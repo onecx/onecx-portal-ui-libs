@@ -1,78 +1,86 @@
-import { border, borderWithShadow, color, font } from '../primitives'
-import { themeSchemaRegistry } from '../registry'
-import { z } from 'zod'
-import { MultiselectChipRemoveIconButtonSchema } from './chipremoveiconbutton'
-
 /**
- * Multiselect chip schema for selected items in multiselect container.
+ * Multiselect chip schema for selected items in the multiselect's label container.
+ * Specific (Step 3, Option 2): kept independent of the generic top-level `chip` usage.
+ * Only `defaultState`/`hover`/`focus` are modeled (no `disabled`/`selected` — a selected
+ * chip's own disabled/selected look isn't a distinct concept here). Static tokens
+ * (padding/gap/transitionDuration/font/focusRing, plus border width/offset/radius) live on
+ * `defaultState` only; named states only carry the tokens that actually differ
+ * (background/color/border.color/border.style).
  */
-export class MultiselectChipSchema {
-  private static readonly commonTokens = {
-    paddingX: z.string().default('{{primitives.space.sm}}'),
-    paddingY: z.string().default('{{primitives.space.sm}}'),
-    gap: z.string().default('{{primitives.space.xs}}'),
-    transitionDuration: z.string().default('{{primitives.transition.duration}}'),
-    font: font.pick({ weight: true, size: true }).default({
+import * as z from 'zod'
+import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
+import { multiselectChipRemoveIconDefaults, multiselectChipRemoveIconShape } from './chipremoveiconbutton'
+
+const multiselectChipStateShape = z
+  .object({
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
+    transitionDuration: withRef(z.string()).optional(),
+    font: font.pick({ weight: true, size: true }).optional(),
+    background: z.union([bg, withRef(z.string())]).optional(),
+    color: color.optional(),
+    border: border.optional(),
+    focusRing: borderWithShadow.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectChipStateShape' })
+
+export const multiselectChipShape = z
+  .object({
+    defaultState: multiselectChipStateShape.prefault({}),
+    hover: multiselectChipStateShape.prefault({}),
+    focus: multiselectChipStateShape.prefault({}),
+    chipRemoveIcon: multiselectChipRemoveIconShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectChipShape', axis: 'state' })
+
+export const multiselectChipDefaults = {
+  defaultState: {
+    paddingX: '{{primitives.space.sm}}',
+    paddingY: '{{primitives.space.sm}}',
+    gap: '{{primitives.space.xs}}',
+    transitionDuration: '{{primitives.transition.duration}}',
+    font: {
       weight: '{{primitives.font.weight}}',
       size: '{{primitives.font.size}}',
-    }),
-  }
-
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.none}}',
-    offset: '{{primitives.border.offset.none}}',
-    radius: '{{primitives.border.radius.none}}',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    background: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    border: {
+      width: '{{primitives.border.width.none}}',
+      offset: '{{primitives.border.offset.none}}',
+      radius: '{{primitives.border.radius.none}}',
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-    }),
-    focusRing: borderWithShadow.default({
+    },
+    focusRing: {
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.style}}',
       width: '{{primitives.border.width.md}}',
       offset: '{{primitives.border.offset.none}}',
       radius: '{{primitives.border.radius.md}}',
       shadow: '{{primitives.border.shadow.none}}',
-    }),
-  }
-
-  private static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    background: z.string().default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
-      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
-      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-    }),
-  })
-
-  private static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    background: z.string().default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+  },
+  // Named states only carry border.color/style — width/offset/radius are static and only
+  // live on `defaultState`, resolving via the runtime fallback (and, in practice, the normal
+  // CSS cascade) for the rest.
+  hover: {
+    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    border: {
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-    }),
-  })
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      focus: this.focusTokens.prefault({}),
-      hover: this.hoverTokens.prefault({}),
-      chipRemoveIcon: (
-        MultiselectChipRemoveIconButtonSchema.schema as typeof MultiselectChipRemoveIconButtonSchema.schema
-      ).prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectChip' })
+    },
+  },
+  focus: {
+    background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+    border: {
+      color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
+    },
+  },
+  chipRemoveIcon: multiselectChipRemoveIconDefaults,
 }
