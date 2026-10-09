@@ -6,10 +6,10 @@
 :toc: macro
 :toclevels: 3
 :source-highlighter: highlight.js
-:schema_root: ../../libs/integration-interface/src/lib/topics/current-themes/v1
-:mapper_root: ../../libs/angular-utils/theme/primeng/src/utils/mapper
-:theme_service_root: ../../libs/angular-utils/theme/primeng/src/services
-:shell_root: ../../../onecx-shell/onecx-shell-ui/src/app/shell
+:schema_root: ../../../libs/integration-interface/src/lib/topics/current-themes/v1
+:mapper_root: ../../../libs/angular-utils/theme/primeng/src/utils/mapper
+:theme_service_root: ../../../libs/angular-utils/theme/primeng/src/services
+:shell_root: ../../../../onecx-shell/onecx-shell-ui/src/app/shell
 
 This document describes the Theme V2 schema, the mapping pipeline that translates theme tokens into PrimeNG presets, and the runtime mechanisms in the Shell and MFEs. It is aimed at developers who will **extend** the schema or add new mapping rules.
 
@@ -22,8 +22,8 @@ Familiarity with:
 
 * https://primeng.org/theming[PrimeNG theming (design tokens & presets)]
 * https://zod.dev[Zod schema library]
-* link:concept.adoc[OneCX theming concept]
-* link:primeng.adoc[OneCX × PrimeNG theming integration]
+* link:../concept.adoc[OneCX theming concept]
+* link:../primeng.adoc[OneCX × PrimeNG theming integration]
 
 [#top-level-structure]
 == Top-Level Structure
@@ -607,7 +607,7 @@ this.primeNG.setThemeConfig({
 * All PrimeNG style sheets are scoped per-MFE using `@scope` rules and prefixed CSS variable names.
 * Theme overrides (if provided) are appended as the last style sheet in the document head.
 
-This ensures that multiple MFEs on the same page each receive correctly scoped PrimeNG styles. Details are covered in link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping].
+This ensures that multiple MFEs on the same page each receive correctly scoped PrimeNG styles. Details are covered in link:../../styles/primeng-scoping.adoc[PrimeNG Styles Scoping].
 
 [#webpack-modifications]
 === Webpack Modifications (Shell)
@@ -701,8 +701,9 @@ If you add a new schema property and reference it in a mapping rule, the type sy
 [#cross-references]
 == Related Documentation
 
-* link:concept.adoc[Theming Concept] — what themes are in OneCX, how variables work
-* link:primeng.adoc[PrimeNG Theming Integration] — v1 preset, OneCX extend section, appliance
-* link:theme-overrides.adoc[Theme Overrides] — per-application PrimeNG token overrides
-* link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping] — how PrimeNG CSS is scoped per-MFE
-* link:../styles/primeng-token-variables.adoc[PrimeNG Token Variables] — CSS variable prefixing
+* link:../concept.adoc[Theming Concept] — what themes are in OneCX, how variables work
+* link:../primeng.adoc[PrimeNG Theming Integration] — v1 preset, OneCX extend section, appliance
+* link:../theme-overrides.adoc[Theme Overrides] — per-application PrimeNG token overrides
+* link:../../styles/primeng-scoping.adoc[PrimeNG Styles Scoping] — how PrimeNG CSS is scoped per-MFE
+* link:../../styles/primeng-token-variables.adoc[PrimeNG Token Variables] — CSS variable prefixing
+* link:settings/index.adoc[Theme V2 Usage Settings] — how usage settings become component input defaults for PrimeNG and OneCX components
