@@ -1,92 +1,89 @@
-import z from 'zod'
+/**
+ * Input field in the filter component of the multiselect overlay schema.
+ * Specific (Step 3, Option 2): kept independent of the generic top-level `input` usage.
+ * `paddingX`/`paddingY`/`font`/`focusRing`, plus border width/offset/radius, are static (same
+ * regardless of state) and only live on `defaultState`; named states only carry the tokens
+ * that actually differ (background/color/border.color/border.style).
+ */
+// TODO: Refactor to relevant tokens from input usage tokens
+import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
 import { withRef, font, bg, color, border, borderWithShadow } from '../primitives'
 
-// TODO: Refactor to relevant tokens from input usage tokens
-/**
- * Input field in the filter component of the multiselect overlay schema.
- */
-export class MultiselectInputSchema {
-  private static readonly commonTokens = {
-    paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-    font: font.pick({ family: true, size: true, weight: true }).default({
+const multiselectFilterInputStateShape = z
+  .object({
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    font: font.pick({ family: true, size: true, weight: true }).optional(),
+    background: z.union([bg, withRef(z.string())]).optional(),
+    color: color.optional(),
+    border: border.optional(),
+    focusRing: borderWithShadow.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectFilterInputStateShape' })
+
+export const multiselectFilterInputShape = z
+  .object({
+    defaultState: multiselectFilterInputStateShape.prefault({}),
+    hover: multiselectFilterInputStateShape.prefault({}),
+    focus: multiselectFilterInputStateShape.prefault({}),
+    active: multiselectFilterInputStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectFilterInputShape', axis: 'state' })
+
+const commonBorder = {
+  width: '{{primitives.border.width.md}}',
+  radius: '{{primitives.border.radius.md}}',
+  offset: '{{primitives.border.offset.none}}',
+}
+
+export const multiselectFilterInputDefaults = {
+  defaultState: {
+    paddingX: '{{primitives.space.md}}',
+    paddingY: '{{primitives.space.md}}',
+    font: {
       family: '{{primitives.font.family}}',
       size: '{{primitives.font.size}}',
       weight: '{{primitives.font.weight}}',
-    }),
-  }
-
-  private static readonly commonBorder = {
-    width: '{{primitives.border.width.md}}',
-    radius: '{{primitives.border.radius.md}}',
-    offset: '{{primitives.border.offset.none}}',
-  }
-
-  private static readonly defaultStateTokens = {
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+    background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    border: {
+      ...commonBorder,
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-    }),
-    focusRing: borderWithShadow.default({
-      ...this.commonBorder,
+    },
+    focusRing: {
+      ...commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
       shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.shadow}}',
-    }),
-  }
-
-  private static readonly hoverTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+  },
+  // Named states only carry border.color/style — width/offset/radius are static and only
+  // live on `defaultState`.
+  hover: {
+    background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}',
+    border: {
       color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
-    }),
-  })
-
-  private static readonly focusTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+  },
+  focus: {
+    background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}',
+    border: {
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-    }),
-  })
-
-  private static readonly activeTokens = z.object({
-    ...this.commonTokens,
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.defaultVariant.state.active.defaultSeverity.bg}}'),
-    color: color.default('{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}'),
-    border: border.default({
-      ...this.commonBorder,
+    },
+  },
+  active: {
+    background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
+    color: '{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}',
+    border: {
       color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
-    }),
-  })
-
-  static readonly schema = z
-    .object({
-      ...this.defaultStateTokens,
-      hover: this.hoverTokens.prefault({}),
-      focus: this.focusTokens.prefault({}),
-      active: this.activeTokens.prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectInput' })
+    },
+  },
 }
