@@ -5,6 +5,8 @@ import { themeSchemaRegistry } from '../registry'
 /**
  * Message component settings shape. No `.default()` on any field — left to the underlying
  * component's own defaults, matching the `add-theme-usage` skill's settings convention.
+ * Registered as a structural pass-through (no `axis`) so build-time axis introspection treats
+ * its keys as non-axis members, like the other component settings shapes.
  */
 export const messageSettingsShape = z
   .object({

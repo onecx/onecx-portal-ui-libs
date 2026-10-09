@@ -45,7 +45,8 @@ export class OcxContentDirective implements OnInit {
       if (titleElement) {
         titleElement.textContent = this.ocxContent()
       } else {
-        const title = document.createElement('p')
+        const title = document.createElement('p')    
+        title.classList.add('ocx-content-title')
         title.classList.add('font-medium')
         title.classList.add('text-lg')
         title.id = titleElementId
