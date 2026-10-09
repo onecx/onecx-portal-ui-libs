@@ -7,6 +7,7 @@
 :source-highlighter: highlight.js
 :schema_root: ../../../../libs/integration-interface/src/lib/topics/current-themes/v1
 :primeng_provider_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/providers/primeng
+:mapper_cluster_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers
 :theme_service_root: ../../../../libs/angular-utils/theme/primeng/src/services
 
 This guide covers the **PrimeNG-native** path for Theme V2 usage settings: how a usage's `settings` object becomes default values for a PrimeNG component's inputs. It pairs with link:index.adoc[the architecture reference], which defines the shared machinery (`mapThemeUsageSettings`, `defineUsageSettingsMapper`, `PrimeNgComponentThemingSettingsRuntime`, `PRIMENG_COMPONENT_SETTINGS_APPLIERS`) — read that first if you have not.
