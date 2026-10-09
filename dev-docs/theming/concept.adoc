@@ -56,3 +56,11 @@ The **Shell** is responsible for managing theme variables. When a Workspace load
 === Default Theme Variables
 
 Before a Workspace is loaded, the Shell ensures that theme variables are available with default values. These default values are defined in the link:../../libs/portal-layout-styles/src/styles/shell/theme_defaults.scss[theme defaults stylesheet], which is imported by the Shell’s global stylesheet.
+
+[#theme-v2]
+== Theme V2
+
+In addition to the variable-based theming described above, the repository ships a **Theme V2** architecture: a structured schema of design tokens and *usage settings* that is translated into PrimeNG presets and CSS, and whose usage settings additionally become component input defaults. See:
+
+* link:theme-v2/theme-v2.adoc[Theme V2 Architecture] — the schema, the token-to-preset/CSS mapping pipeline, and the Shell/MFE runtime.
+* link:theme-v2/settings/index.adoc[Theme V2 Usage Settings] — how usage settings become PrimeNG and OneCX component input defaults, with configuration and extension recipes.

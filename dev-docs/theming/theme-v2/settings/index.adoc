@@ -1,0 +1,401 @@
+= Theme V2 Usage Settings
+
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 2
+:source-highlighter: highlight.js
+:schema_root: ../../../../libs/integration-interface/src/lib/topics/current-themes/v1
+:mapper_cluster_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers
+:primeng_provider_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/providers/primeng
+:accel_provider_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/providers/accelerator
+:accel_root: ../../../../libs/angular-accelerator/src/lib/components
+:compat_root: ../../../../libs/angular-accelerator/src/lib/theme-v2-usage-settings-structural-compat
+:theme_service_root: ../../../../libs/angular-utils/theme/primeng/src/services
+
+This document explains how **Theme V2 usage settings** become **component input defaults** for PrimeNG and OneCX (Angular Accelerator) components. It complements the link:../theme-v2.adoc[Theme V2 Architecture] document, which describes the *design-token* side of Theme V2 (the schema, the token-to-preset/CSS mapping pipeline, and the Shell/MFE runtime).
+
+The two documents are intentionally split along one distinction:
+
+* The **Architecture** document covers **design tokens** — the visual design values (colors, spacing, radii, shadows) that Theme V2 translates into PrimeNG preset variables and CSS.
+* **This** document covers **usage settings** — per-component *configuration* values (for example, which column a data table's checkbox column sits on, or whether a carousel wraps around) that Theme V2 translates into **component input defaults**. Usage settings can affect a component's *appearance* or its *behavior*, and are a different mechanism from the token-to-preset/CSS pipeline.
+
+The rest of this page is an architecture reference. Two sibling pages give end-to-end, reproducible recipes:
+
+* link:primeng.adoc[PrimeNG provider guide] — configure the existing Carousel settings and add a new PrimeNG component mapping.
+* link:onecx.adoc[OneCX provider guide] — configure the existing data-table settings and add a new Angular Accelerator component mapping.
+
+toc::[]
+
+[#rationale]
+== Why Usage Settings Exist
+
+A Theme V2 theme is a single object that describes two different kinds of knowledge about a component:
+
+1. **How it should look** — the design tokens. These flow through the token-to-preset/CSS pipeline (link:../theme-v2.adoc#mapping-pipeline[see the architecture document]) and land as PrimeNG preset variables and CSS custom properties.
+2. **How it should behave / be configured** — the usage settings. These are not design tokens. They are plain, provider-meaningful values (booleans, numbers, enum strings) that a component reads as an *input* and that are not expressible as a PrimeNG preset token or a CSS property.
+
+Usage settings exist so that a theme author can set a **component input default** once in the theme, instead of every consumer of a component having to bind the input explicitly. A usage setting is appropriate when:
+
+* The value is a genuine *input* on the component (a PrimeNG `@Input`, or an Angular `input()`/`model()`), not a style.
+* A sensible *default* can be supplied for the component from the theme, but consumers must still be able to **override** it per instance.
+* The value changes behavior (for example a frozen column, or a carousel's circular mode) or appearance in a way the token pipeline cannot reach (PrimeNG preset tokens and CSS are the wrong tool).
+
+The three-part contract is:
+
+* The **theme** supplies the value (in the usage's `settings` object).
+* The **component** supplies an explicit value if one is bound.
+* A defined **precedence** resolves the final value: explicit input first, then the theme default, then a hardcoded component fallback (see <<precedence>> and the provider guides).
+
+[#glossary]
+== Glossary
+
+[cols="1,3"]
+|===
+| Term | Meaning
+
+| **Design token**
+| A visual design value (color, spacing, radius, shadow, font) carried by `primitives` or by a usage's token subtree. Translated into PrimeNG preset variables and CSS by the token-to-preset/CSS pipeline. Describes *appearance only*.
+
+| **Usage**
+| A component-specific entry in `ThemePropertiesV2.usages` (for example `carousel`, `dataTable`, `dropdown`, `dataview`). A usage groups a component's design tokens *and*, for some components, a `settings` object.
+
+| **Usage setting**
+| A non-token field inside a usage's `settings` object. Supplies a **component configuration default** that may affect appearance *or* behavior. Consumed by a mapper and applied to a component input — never to CSS.
+
+| **Usage-settings mapping**
+| The typed translation of a usage's `settings` object into a shape of component input defaults. One *mapper* (`mapThemeUsageSettings` + a `defineUsageSettingsMapper` definition) per provider and usage, plus the provider-specific mechanism that applies the result.
+
+| **Mapper target keys**
+| The set of component input names a usage-settings mapper writes. For the table mapper: `checkboxColumnPosition`, `frozenActionColumn`, `actionColumnPosition`. Kept in sync with the real component inputs by convention and by the structural-compatibility specs (see <<structural-compatibility>>).
+
+| **Applier** (PrimeNG)
+| A `PrimeNgComponentSettingsApplier` registered in `PRIMENG_COMPONENT_SETTINGS_APPLIERS` that pushes resolved settings to live PrimeNG instances by monkey-patching the component prototype.
+
+| **Reactive wiring** (OneCX)
+| The `useAcceleratorTableThemeDefaults()` composable that subscribes to the current themes, gates on V2 availability, and mirrors each mapped table setting into a signal that the accelerator components read.
+|===
+
+[#navigation]
+== Navigation
+
+* link:../theme-v2.adoc[Theme V2 Architecture] — schema, token-to-preset/CSS pipeline, Shell/MFE runtime.
+* link:primeng.adoc[PrimeNG provider guide] — existing Carousel example + a concrete extension recipe.
+* link:onecx.adoc[OneCX provider guide] — existing data-table example + a concrete extension recipe.
+* link:../../concept.adoc[Theming Concept] — the broader theming model.
+
+[#schema-contract]
+== The Schema Contract
+
+The eligible usages and the shapes of their settings are **derived from the schema**, not from a manually maintained runtime registry. Everything below is defined in link:{schema_root}/current-themes.schema.ts[current-themes.schema.ts].
+
+[#schema-types]
+=== The types
+
+[source,typescript]
+----
+// A v2 theme object.
+export type ThemePropertiesV2 = {
+  primitives?: PrimitivesInput
+  usages?: UsagesInput
+  regionOverrides?: RegionOverridesInput
+  fallbackOrder?: RelaxedAxisKind[]
+}
+
+// The object type of all usages. Each entry is a component usage, all optional.
+type UsagesInput = {
+  dialog?: ...
+  badge?: ...
+  menubar?: ...
+  dataTable?: ...
+  carousel?: CarouselShapeInput
+  dropdown?: ...
+  dataview?: ...
+  // ... one entry per component usage
+}
+
+// The union of usage keys the schema knows about.
+export type ThemeUsageName = keyof UsagesInput
+
+// A usage's `settings` shape, extracted structurally; `never` when the usage
+// has no `settings` field at all.
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
+
+// The subset of usages that *do* carry a `settings` object.
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+
+// The concrete `settings` type for one eligible usage.
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
+----
+
+What this means in practice:
+
+* `ThemeUsageName` is the set of **all** usage keys (`'dialog' | 'badge' | 'dataTable' | 'carousel' | ...`).
+* `ThemeUsageNameWithSettings` is the subset of those whose schema shape declares a `settings` field. Adding a `settings` sub-schema to a usage (see the recipe steps in the provider guides) makes that usage's key appear here **automatically**, because the type is computed from the schema shape. There is no runtime list to update.
+* `ThemeUsageSettings<'dataTable'>` resolves to the `dataTable` usage's `settings` object type; `ThemeUsageSettings<'carousel'>` resolves to the `carousel` usage's `settings` object type, and so on.
+
+[#settings-in-a-usage]
+=== Settings inside a usage
+
+A usage only participates in usage-settings mapping if its schema declares a `settings` sub-schema. Two real examples (quoted from the schema):
+
+[source,typescript]
+----
+// libs/.../v1/schema/data-table/settings.ts
+export const dataTableSettingsShape = z.object({
+  checkboxColumnPosition: withRef(z.enum(['start', 'end'])).optional(),
+  actionColumnPosition:   withRef(z.enum(['start', 'end'])).optional(),
+  actionColumnSticky:     withRef(z.boolean()).optional(),
+})
+----
+
+[source,typescript]
+----
+// libs/.../v1/schema/carousel/settings.ts
+export const carouselSettingsShape = z.object({
+  orientation:      withRef(z.enum(['horizontal', 'vertical'])).optional(),
+  showIndicators:   withRef(z.boolean()).optional(),
+  showNavigators:   withRef(z.boolean()).optional(),
+  circular:         withRef(z.boolean()).optional(),
+  autoplayInterval: withRef(z.number()).optional(),
+})
+----
+
+Two usages illustrate the two ways a `settings` object can be wired into the usage:
+
+* The `dataTable` usage uses `settings: dataTableSettingsShape.prefault({})` with a `dataTableSettingsDefaults` object (`{ checkboxColumnPosition: 'start', actionColumnPosition: 'end', actionColumnSticky: false }`), so the resolved schema carries defaults.
+* The `carousel` usage uses `settings: carouselSettingsShape.optional()` with **no** inline defaults, so `settings` only ever carries values a theme author explicitly set.
+
+Both are eligible usages. The presence or absence of schema-level defaults does not change *which* settings are eligible to be mapped — it only changes the values a fully-defaulted theme reports. See <<precedence>> and the provider guides for the runtime consequences of each.
+
+[#shared-mapper-cluster]
+== The Shared Mapper Cluster
+
+The reusable machinery that turns a usage's `settings` into provider-specific component defaults lives in the `angular-utils` feature directory link:{mapper_cluster_root}/[theme-v2-usage-settings-mappers]. All of it is written once and shared by every provider and every usage.
+
+[#extraction]
+=== Settings extraction — `mapThemeUsageSettings`
+
+link:{mapper_cluster_root}/usage-settings.utils.ts[usage-settings.utils.ts] provides the single extraction point:
+
+[source,typescript]
+----
+export function mapThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings, TResult>(
+  properties: ThemePropertiesV2 | undefined,
+  usageName: TUsage,
+  mapper: ThemeUsageSettingsMapper<TUsage, TResult>
+): TResult | undefined {
+  const settings = properties?.usages?.[usageName]?.settings as ThemeUsageSettings<TUsage> | undefined
+  return settings ? mapper(settings) : undefined
+}
+----
+
+It reads `properties.usages[usageName].settings` and hands that object to the mapper. Two boundaries matter here:
+
+* It returns `undefined` (not `{}`) when the usage — or its `settings` object — is absent. Callers decide how to treat "no settings".
+* **It performs no CSS axis-fallback resolution.** It reads the `settings` values from the (already-resolved) theme properties as-is. The `withRef(...)` reference syntax inside a settings value is resolved *upstream* by the reference-resolution pipeline before these properties reach this function. Neither this extraction step nor any provider mapper performs CSS-style reference fallback.
+
+[#mapper-definition]
+=== Mapper definitions and transforms — `defineUsageSettingsMapper` + `helpers`
+
+A mapper is a small, fully-typed declaration of *which* source setting populates *which* target field, and *how* the value is converted. It is built with `defineUsageSettingsMapper` (link:{mapper_cluster_root}/helpers.ts[helpers.ts]) over a `ThemeUsageSettingsMapDefinition` (link:{mapper_cluster_root}/types.ts[types.ts]):
+
+[source,typescript]
+----
+// types.ts — the declaration a mapper is built from.
+export type ThemeUsageSettingsMapDefinition<TSettings extends object, TResult extends object> = {
+  [TKey in keyof TResult]: ThemeUsageSettingsMappingEntry<TSettings, TResult[TKey]>
+}
+// ^ Non-Partial: every target field MUST have an entry, or it is a compile error.
+
+export type ThemeUsageSettingsMappingEntry<TSettings extends object, TResultValue> = {
+  [TKey in keyof TSettings]-?: {
+    from: TKey                                          // pinned to a real source key
+    transform?: ThemeUsageSettingsTransform<TSettings[TKey], TResultValue>
+  }
+}[keyof TSettings]
+----
+
+`defineUsageSettingsMapper` returns a *callable* mapper that is also a plain value:
+
+[source,typescript]
+----
+export function defineUsageSettingsMapper<TSettings extends object, TResult extends object>(
+  definition: ThemeUsageSettingsMapDefinition<TSettings, TResult>
+): ThemeUsageSettingsDefinitionMapper<TSettings, TResult>
+// where ThemeUsageSettingsDefinitionMapper is:
+//   ((settings: TSettings) => Partial<TResult>) & { targetKeys: readonly (keyof TResult)[] }
+----
+
+Behavior of the produced mapper:
+
+* For each target field it reads `settings[entry.from]`, applies `entry.transform` if present (otherwise copies the value through), and writes the result to the target **only when the mapped value is not `undefined`**. A transform returning `undefined` *omits* the target field rather than writing `undefined`.
+* The output is a `Partial<TResult>` — only the fields whose source values were present and survived a transform.
+* `mapper.targetKeys` is `Object.keys(definition)` — the list of target fields the mapper covers. Specs use this to assert the target keys stay a subset of the component's real inputs (see <<structural-compatibility>>).
+
+The type system pins `from` to a real source key and types `transform` against that key's value, so a typo in a source key or a mistyped transform is a **compile error**, not a runtime surprise.
+
+[#transforms]
+=== The transform helpers
+
+link:{mapper_cluster_root}/helpers.ts[helpers.ts] provides the value conversions mappers compose from:
+
+[cols="1,3"]
+|===
+| Helper | Purpose
+
+| `asBoolean(value)`
+| Returns the value when it is a `boolean`, else `undefined`. Preserves an explicit `false`.
+
+| `asNumber(value)`
+| Returns the value when it is a `number`, else `undefined`.
+
+| `asEnum<TValue extends string>(allowed)`
+| Keeps the value when it is one of `allowed`, else `undefined`.
+| `mapValues(mapping)`
+| Maps one set of string literals to another (for example `{ start: 'left', end: 'right' }`); drops anything not in the mapping.
+
+| `asObservable(source)`
+| Returns the RxJS `Observable` exposed by an `Observable` *or* a OneCX `Topic` (anything with `asObservable()`). Used by the reactive wiring so it can subscribe to either without a runtime type guard.
+|===
+
+Returning `undefined` from any transform (including `asBoolean`/`asNumber` on a non-matching type, or an unknown enum/literal) is how a mapper expresses "the source value is not usable — omit this target". This is the *unsupported-value handling* contract: a setting whose value does not match the expected type or literal set is silently dropped for that field, so the component falls back (see <<precedence>>) rather than receiving a garbage value.
+
+[#public-surface]
+=== Public export surface vs internal helpers
+
+The feature's **public** surface is the single barrel link:{mapper_cluster_root}/index.ts[index.ts], which is re-exported by the package barrel (link:../../../../libs/angular-utils/src/index.ts[angular-utils/src/index.ts]). It exposes, and intentionally limits exposure to, exactly:
+
+[source,typescript]
+----
+export * from './usage-settings.utils'              // mapThemeUsageSettings
+export * from './providers/accelerator/table/table.mapper'      // mapAcceleratorTableSettings, AcceleratorTableInputDefaults
+export * from './providers/accelerator/table/table.wiring'      // useAcceleratorTableThemeDefaults
+export * from './providers/primeng/carousel/carousel.mapper'    // mapPrimeNgCarouselSettings, PrimeNgCarouselInputDefaults
+export * from './providers/primeng/component-settings-applier.token' // PRIMENG_COMPONENT_SETTINGS_APPLIERS, PrimeNgComponentSettingsApplier
+export * from './providers/primeng/carousel/carousel-component-settings.service' // CarouselComponentSettingsService
+----
+
+Everything else in the cluster is **internal** — imported *relative* to the feature directory, not re-exported from the package:
+
+* `helpers.ts` — `defineUsageSettingsMapper`, the transforms, `asObservable`.
+* `types.ts` — `ThemeUsageSettingsMapDefinition`, `ThemeUsageSettingsMappingEntry`, `ThemeUsageSettingsDefinitionMapper`, `ThemeUsageSettingsTransform`.
+* `component-settings-runtime.utils.ts` — `PrimeNgComponentThemingSettingsRuntime` (the PrimeNG runtime bridge).
+
+New provider mappers and services are added to the public barrel *only for their own provider-specific exports* (their mapper + defaults interface, and their applier/service), and they keep importing the shared cluster **relatively** — exactly as the existing `carousel` and `table` providers do. Do not export the shared cluster from individual provider files.
+
+[#reference-resolution-boundary]
+== Where Reference Resolution Happens
+
+Theme values can reference other values with the `{{path.to.value}}` syntax. A usage setting declared as `withRef(z.boolean())` may carry such a reference in a raw theme.
+
+* **Reference resolution is an upstream concern**, performed by the token/reference pipeline (`resolveThemeRefs`, covered in the link:../theme-v2.adoc#reference-resolution[architecture document]). By the time `ThemePropertiesV2` reaches `mapThemeUsageSettings` or the reactive wiring, the properties have already been resolved.
+* **Neither settings extraction nor a provider mapper does CSS-style axis-fallback or reference resolution.** Do not describe `mapThemeUsageSettings` or a `defineUsageSettingsMapper` mapper as resolving `{{...}}` references or walking fallback scopes. If a settings value still contains an unresolved reference or an unsupported value, the transform drops it (see <<transforms>>) and the field is omitted.
+
+[#primeng-path]
+== The PrimeNG Path (Overview)
+
+PrimeNG-native components are themed by **monkey-patching the component prototype** and pushing resolved settings to *live instances*. The full recipe is in link:primeng.adoc[primeng.adoc]; the building blocks are:
+
+1. **Mapper** — `mapPrimeNgCarouselSettings` (link:{primeng_provider_root}/carousel/carousel.mapper.ts[carousel.mapper.ts]) maps `ThemeUsageSettings<'carousel'>` into a `PrimeNgCarouselInputDefaults` shape (`orientation`, `showIndicators`, `showNavigators`, `circular`, `autoplayInterval`).
+2. **Component-settings service** — `CarouselComponentSettingsService` (link:{primeng_provider_root}/carousel/carousel-component-settings.service.ts[carousel-component-settings.service.ts]) owns a `PrimeNgComponentThemingSettingsRuntime` for the `Carousel` type and exposes `applyThemeProperties(properties)`. Its `refreshInstance` recomputes the Carousel-specific derived state (autoplay, cloned items, layout, change detection).
+3. **Reusable runtime bridge** — `PrimeNgComponentThemingSettingsRuntime` (link:{primeng_provider_root}/component-settings-runtime.utils.ts[component-settings-runtime.utils.ts]) patches the component prototype's `ngOnChanges`, `ngAfterContentInit` and `ngOnDestroy` **once**; it registers instances, tracks *explicit* inputs, and applies only the theme defaults a component did not set explicitly. It is component-agnostic and reused by every PrimeNG provider.
+4. **Applier registry** — `PRIMENG_COMPONENT_SETTINGS_APPLIERS` (link:{primeng_provider_root}/component-settings-applier.token.ts[component-settings-applier.token.ts]) is an `InjectionToken<readonly PrimeNgComponentSettingsApplier[]>` whose factory currently returns `[inject(CarouselComponentSettingsService)]`.
+5. **Activation** — `ThemeConfigService` (link:{theme_service_root}/theme-config.service.ts[theme-config.service.ts]) injects the registry and, inside `applyThemeVariablesV2`, calls `applyThemeProperties(properties)` on **every** registered applier (after region overrides have been folded, before the preset mapping). Because it loops the registry, **a new applier needs no change to `theme-config.service.ts`** — registration in the factory is the activation.
+
+The runtime bridge's behavior that a recipe must respect:
+
+* **Lifecycle wrapping** — `ngAfterContentInit` registers an instance and applies the current defaults for the first time; `ngOnChanges` records explicit inputs and re-applies on later changes; `ngOnDestroy` unregisters the instance so a destroyed component is no longer targeted.
+* **Tracked instances** — a `Set` of live instances, plus a `WeakMap` of per-instance explicit-input sets.
+* **Sticky explicit inputs** — once a tracked input appears in a `changes` map it is recorded as explicit and the set only grows. Removing the binding or letting the value become `undefined` does **not** restore the theme default for that instance (see <<precedence>>).
+* **Refresh, not just assignment** — assigning inputs is not enough when a component derives internal state from them. Each provider supplies a component-appropriate `refreshInstance` (Carousel's recomputes autoplay/layout; a simpler component may only need `markForCheck`). See link:primeng.adoc[primeng.adoc] for the component-specific guidance.
+
+[#onecx-path]
+== The OneCX Path (Overview)
+
+Angular Accelerator components own their theming and consume the resolved per-field settings **directly through reactive signals** (they are *not* registered in the PrimeNG-only applier registry). The full recipe is in link:onecx.adoc[onecx.adoc]; the building blocks are:
+
+1. **Mapper** — `mapAcceleratorTableSettings` (link:{accel_provider_root}/table/table.mapper.ts[table.mapper.ts]) maps `ThemeUsageSettings<'dataTable'>` into an `AcceleratorTableInputDefaults` shape. This is where the conversions live: `checkboxColumnPosition`/`actionColumnPosition` `start`/`end` become `left`/`right` via `mapValues`, and `actionColumnSticky` becomes `frozenActionColumn` via `asBoolean`.
+2. **V2-gated reactive wiring** — `useAcceleratorTableThemeDefaults()` (link:{accel_provider_root}/table/table.wiring.ts[table.wiring.ts]) subscribes to `ThemeService.currentThemes$`, gates each theme through `themeVersionAvailable(2, injector)`, maps the resolved `dataTable` settings, and mirrors each mapped value into a signal. The subscription is torn down with the calling component's injection context (`takeUntilDestroyed`).
+3. **Component inputs/models** — `DataTableComponent`, `DataViewComponent` and `InteractiveDataViewComponent` declare the three inputs (and, in InteractiveDataView, `frozenActionColumn`/`actionColumnPosition` as `model()`), call the wiring composable, and expose the three `*ThemeSetting` signals.
+4. **Theme signals + computed resolved defaults** — each component computes its final value with a `computed()` precedence chain (explicit input `??` theme setting `??` hardcoded fallback).
+5. **Template / child-component consumption** — the resolved values are bound in the template; `InteractiveDataViewComponent` forwards them to its child `ocx-data-view` and to the `ocx-custom-group-column-selector` dialog (see link:onecx.adoc#data-table-interactive[InteractiveDataView dialog behavior]).
+
+[#dependency-boundary]
+== Dependency Direction
+
+`@onecx/angular-accelerator` **depends on** `@onecx/angular-utils` (not the reverse). The usage-settings mappers and the reactive wiring live in `angular-utils`; the components that consume the output live in `angular-accelerator`.
+
+Consequences:
+
+* An accelerator mapper's target type **cannot be derived structurally** from the accelerator components' `input()` declarations without introducing a **circular library dependency** (accelerator would have to import from a type that imports it back).
+* The two shapes are therefore **kept in sync by convention**, and the structural-compatibility specs (below) catch a rename on either side at *runtime*, because it is silent at compile time.
+* Do **not** introduce a reverse dependency (accelerator → utils is the only allowed direction) in extension code to derive mapper types from the components.
+
+[#structural-compatibility]
+== Structural-Compatibility Guarantees and Limits
+
+Because the mapper and the components live in different libraries, a spec asserts that the mapper's **target keys** match the components' declared **input names**. It lives in `angular-accelerator` (link:{compat_root}/[theme-v2-usage-settings-structural-compat]).
+
+[#compat-what-it-checks]
+=== What it checks
+
+link:{compat_root}/helpers.ts[helpers.ts] reads the input names a component declares from its compilation metadata:
+
+[source,typescript]
+----
+export function declaredInputNames(component): string[] {
+  return Object.keys(component.ɵcmp?.inputs ?? {})
+}
+
+export function assertMapperTargetsCoverInputs(targetKeys, components) {
+  const declared = new Set(components.flatMap(declaredInputNames))
+  const missing = targetKeys.filter((key) => !declared.has(key))
+  expect(missing).toEqual([])
+}
+----
+
+The existing spec (link:{compat_root}/table-input-defaults.compat.spec.ts[table-input-defaults.compat.spec.ts]) calls:
+
+[source,typescript]
+----
+assertMapperTargetsCoverInputs(mapAcceleratorTableSettings.targetKeys, [
+  DataTableComponent, DataViewComponent, InteractiveDataViewComponent,
+])
+----
+
+Precisely:
+
+* It checks each mapper **target key against the union of the supplied components' inputs** — a key is acceptable if *at least one* of the components declares it. It does **not** check every target against every component (a component that does not use a given setting simply does not declare that input).
+* It checks **names only**, read from `ɵcmp.inputs`.
+
+[#compat-limits]
+=== What it does not prove
+
+Structural compatibility alone is **not** behavioral validation. It does *not* prove:
+
+* the **value types** line up (a key that exists as a `boolean` input vs a mapper writing a string is not caught);
+* the setting is actually **consumed by a template** or forwarded to a child;
+* the **precedence** / fallback behavior is correct;
+* anything about **rendering**.
+
+A rename on the mapper or on a component input *is* caught (the mapper would produce a value no component reads, so `missing` is non-empty and the spec fails), but a value that is the *wrong type yet the right name* is not. Treat this spec as a dead-target/drift detector, not as proof that a setting behaves correctly.
+
+[#precedence]
+== Precedence, Missing Values, and Provider Differences
+
+The resolution order is the same shape in both providers: **explicit input → theme default → hardcoded component fallback**.
+
+* **OneCX (accelerator)** uses the nullish coalescing operator in a `computed()`: `explicitInput() ?? themeSetting() ?? fallback`. Because `??` only falls through on `null`/`undefined`, an **explicit `false` (or `0`, `''`) is preserved** and does *not* fall back to the theme default or the component fallback.
+* **PrimeNG** reaches the same result through the runtime bridge: a value is written to an instance only when it is `!== undefined`, it is *not* written when the input was recorded explicit, and explicit inputs are **sticky** (recorded-once, never cleared). The net effect — an explicit value, including `false`, is never clobbered by a later theme update.
+
+Behavior when a value is absent, removed, or becomes `undefined` differs subtly between the providers:
+
+* **OneCX** — the wiring *overwrites* each signal on every theme emission with the mapped value (which may be `undefined`). So a later theme that omits a setting **clears** the signal, and the component then falls back to its hardcoded default.
+* **PrimeNG** — the bridge **skips `undefined`** theme values rather than resetting an instance to them, and explicit inputs are sticky. So a later theme that omits a setting does **not** reset a live instance back to a native default, and an override that becomes `undefined` is left in place rather than restored to the theme default.
+
+Both providers are gated on Theme V2 availability, but at **different layers**: the OneCX gate is the *wiring* (`useAcceleratorTableThemeDefaults` gates on `themeVersionAvailable(2)`), while the PrimeNG gate is the *activation* (`ThemeConfigService` only runs the appliers inside `applyThemeVariablesV2`, reached only when V2 is available). The individual accelerator components read their signals unconditionally and have no per-class version guard. See the provider guides for the exact observed behavior and tests.

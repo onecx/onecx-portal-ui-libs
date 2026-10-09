@@ -1,0 +1,645 @@
+= Theme V2 Usage Settings — OneCX (Angular Accelerator)
+
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 2
+:source-highlighter: highlight.js
+:schema_root: ../../../../libs/integration-interface/src/lib/topics/current-themes/v1
+:accel_provider_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/providers/accelerator
+:accel_root: ../../../../libs/angular-accelerator/src/lib/components
+:compat_root: ../../../../libs/angular-accelerator/src/lib/theme-v2-usage-settings-structural-compat
+
+This guide covers the **OneCX / Angular Accelerator** path for Theme V2 usage settings: how a usage's `settings` object becomes default values for accelerator component inputs. It pairs with link:index.adoc[the architecture reference], which defines the shared machinery (`mapThemeUsageSettings`, `defineUsageSettingsMapper`, the transform helpers, `themeVersionAvailable`, the structural-compat helpers) — read that first if you have not.
+
+Two sections:
+
+* <<existing-data-table>> — how to *configure* the existing `dataTable` usage settings (no code), with the tested revision, the schema shape, the mapper's value conversions, and the observed runtime behavior across the table-family components.
+* <<new-dataview>> — a complete, reproducible recipe for *adding* a new accelerator usage-settings mapping: the `dataview` usage's `paginatorPosition` setting mapped onto the `DataView` component.
+
+toc::[]
+
+[#conventions]
+== Conventions and Test Environment
+
+Both recipes below were authored and verified against this repository state. Record these in any recipe so a reader (human or agent) can reproduce the result:
+
+[cols="1,3"]
+|===
+| Item | Value
+
+| **Tested revision**
+| `5f6447523c859d6a29dcba6f1e0dea4854e740af` (branch `ai-workflow/wf_fb80a1f725e801d0df48/f6d5d5cabb6e6564`).
+| **Working directory**
+| The repository root (the directory containing `angular.json` / `nx.json`). All relative paths in this guide are from here.
+| **Verification commands**
+| `npx nx test angular-utils --no-interactive` (the wiring and mapper unit tests live in `angular-utils`), `npx nx test angular-accelerator --no-interactive` (the structural-compat spec lives here), `npx nx build angular-utils`, `npx nx build angular-accelerator`.
+|===
+
+The OneCX path differs from the PrimeNG path in one important way: **accelerator components consume the resolved settings *directly* through reactive signals — they are not registered in the PrimeNG-only applier registry, and there is no prototype monkey-patching.** The reactive wiring subscribes to the current themes and mirrors each mapped setting into a signal; each component reads its signals in a `computed()` precedence chain. This makes the *activation* story simpler (there is no registry to update) but puts the **V2 gate in the wiring** rather than in a central activation step.
+
+[#existing-data-table]
+== Existing: Configuring the `dataTable` Usage Settings
+
+The `dataTable` usage is already wired end to end to the three table-family components (`DataTableComponent`, `DataViewComponent`, `InteractiveDataViewComponent`). You can configure its settings from a theme with no code changes.
+
+[#data-table-schema]
+=== Schema shape
+
+The `dataTable` usage's settings shape (`{schema_root}/schema/data-table/settings.ts`) is:
+
+[source,typescript]
+----
+/** Component-level behaviour (not visual tokens). */
+export const dataTableSettingsShape = z.object({
+  checkboxColumnPosition: withRef(z.enum(['start', 'end'])).optional(),
+  actionColumnPosition:   withRef(z.enum(['start', 'end'])).optional(),
+  actionColumnSticky:     withRef(z.boolean()).optional(),
+})
+
+export const dataTableSettingsDefaults = {
+  checkboxColumnPosition: 'start',
+  actionColumnPosition: 'end',
+  actionColumnSticky: false,
+}
+// usage: settings: dataTableSettingsShape.prefault({})   // <- carries the defaults above
+----
+
+Two things stand out here that the `dataview`/`carousel` usages do not have:
+
+* The usage is declared `settings: dataTableSettingsShape.prefault({})` with a `dataTableSettingsDefaults` object, so the **resolved** schema carries schema-level defaults. A theme that sets *nothing* still reports `checkboxColumnPosition: 'start'`, `actionColumnPosition: 'end'`, `actionColumnSticky: false`.
+* The settings values are component-*meaningful* strings and a boolean — `start`/`end` and a stickiness flag — not the `left`/`right`/`frozen` the components use. That gap is exactly what the mapper closes.
+
+[#data-table-mapper]
+=== Mapper (the value conversions)
+
+`mapAcceleratorTableSettings` (`{accel_provider_root}/table/table.mapper.ts`) maps the three settings onto the components' input names, applying two conversions:
+
+[source,typescript]
+----
+export interface AcceleratorTableInputDefaults {
+  checkboxColumnPosition?: 'left' | 'right'
+  frozenActionColumn?: boolean
+  actionColumnPosition?: 'left' | 'right'
+}
+
+export const mapAcceleratorTableSettings = defineUsageSettingsMapper<
+  ThemeUsageSettings<'dataTable'>,
+  AcceleratorTableInputDefaults
+>({
+  checkboxColumnPosition: {
+    from: 'checkboxColumnPosition',
+    transform: mapValues({ start: 'left', end: 'right' } as const),
+  },
+  frozenActionColumn: {
+    from: 'actionColumnSticky',        // schema key -> component input key
+    transform: asBoolean,
+  },
+  actionColumnPosition: {
+    from: 'actionColumnPosition',
+    transform: mapValues({ start: 'left', end: 'right' } as const),
+  },
+})
+----
+
+Concretely:
+
+* `checkboxColumnPosition` / `actionColumnPosition`: `start` → `left`, `end` → `right` (via `mapValues`).
+* `actionColumnSticky` → `frozenActionColumn`: the *source key is renamed* to the component's input name, and the value passes through `asBoolean`.
+* `mapAcceleratorTableSettings.targetKeys` is `['checkboxColumnPosition', 'frozenActionColumn', 'actionColumnPosition']`.
+
+This is where the *mapper target keys* come from — they are the names the components declare as `input()`, which is what the structural-compat spec (<<structural-compat>>) checks.
+
+[#data-table-configure]
+=== How to configure it (no code)
+
+Add a `settings` object to the `dataTable` usage of a v2 theme:
+
+[source,json]
+----
+{
+  "usages": {
+    "dataTable": {
+      "settings": {
+        "checkboxColumnPosition": "end",
+        "actionColumnPosition": "start",
+        "actionColumnSticky": true
+      }
+    }
+  }
+}
+----
+
+When Theme V2 is active, these become the default `checkboxColumnPosition` (`right`), `actionColumnPosition` (`left`) and `frozenActionColumn` (`true`) on the table-family components that do not bind those inputs explicitly. Because the usage is `prefault({})`, omitting individual keys falls back to the schema defaults (`start`/`end`/`false`), *not* to `undefined` — so even a `dataTable` usage present with an empty `settings` object still produces `left`/`right`/`false` after mapping. (See <<data-table-behavior>>.)
+
+[#data-table-behavior]
+=== Observed runtime behavior (what to expect)
+
+[#data-table-wiring]
+==== The wiring and its V2 gate
+
+`useAcceleratorTableThemeDefaults()` (`{accel_provider_root}/table/table.wiring.ts`) is the **single place the V2 gate lives for the accelerator path**:
+
+[source,typescript]
+----
+export function useAcceleratorTableThemeDefaults() {
+  assertInInjectionContext(useAcceleratorTableThemeDefaults)
+
+  const checkboxColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  const frozenActionColumnThemeSetting = signal<boolean | undefined>(undefined)
+  const actionColumnPositionThemeSetting = signal<'left' | 'right' | undefined>(undefined)
+  const themeService = inject(ThemeService)
+  const injector = inject(Injector)
+  const destroyRef = inject(DestroyRef)
+
+  asObservable(themeService.currentThemes$)
+    .pipe(
+      switchMap((theme) =>
+        from(themeVersionAvailable(2, injector)).pipe(
+          filter(Boolean),                       // <- gate: only V2-available themes pass through
+          map(() => theme)
+        )
+      ),
+      takeUntilDestroyed(destroyRef)
+    )
+    .subscribe((theme) => {
+      const table = mapThemeUsageSettings(theme.properties?.v2, 'dataTable', mapAcceleratorTableSettings)
+      checkboxColumnPositionThemeSetting.set(table?.checkboxColumnPosition)
+      frozenActionColumnThemeSetting.set(table?.frozenActionColumn)
+      actionColumnPositionThemeSetting.set(table?.actionColumnPosition)
+    })
+
+  return { checkboxColumnPositionThemeSetting, frozenActionColumnThemeSetting, actionColumnPositionThemeSetting }
+}
+----
+
+Consequences of this wiring:
+
+* **V2 gate** — `themeVersionAvailable(2, injector)` must resolve `true` for a theme to pass the `filter(Boolean)`; otherwise the signals are never set (they stay `undefined`). On a v1 theme the components therefore use their hardcoded fallbacks.
+* **Overwrite per emission** — every accepted theme *overwrites* each signal with the mapped value (which may be `undefined`). A later theme that omits a setting **clears** that signal, so the component falls back to its hardcoded default. This is the OneCX-side "missing/removed value" behavior (see link:index.adoc#precedence[the provider-difference summary]).
+* **Torn down with the caller** — `takeUntilDestroyed(destroyRef)` unsubscribes when the calling component is destroyed.
+
+[#data-table-precedence]
+==== Precedence and the hardcoded fallbacks
+
+Each table-family component declares the three inputs with an `undefined` default, calls the wiring, exposes the three `*ThemeSetting` signals, and computes a resolved value (from `data-view.component.ts`, identical in the other two):
+
+[source,typescript]
+----
+checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)   // explicit input
+frozenActionColumn     = input<boolean | undefined>(undefined)
+actionColumnPosition   = input<'left' | 'right' | undefined>(undefined)
+
+private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()  // -> the 3 signals
+checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+frozenActionColumnThemeSetting     = this.tableThemeDefaults.frozenActionColumnThemeSetting
+actionColumnPositionThemeSetting   = this.tableThemeDefaults.actionColumnPositionThemeSetting
+
+// Explicit input -> theme default -> hardcoded component fallback.
+checkboxColumnPositionResolved = computed(
+  () => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+frozenActionColumnResolved     = computed(
+  () => this.frozenActionColumn()     ?? this.frozenActionColumnThemeSetting()     ?? false)
+actionColumnPositionResolved   = computed(
+  () => this.actionColumnPosition()   ?? this.actionColumnPositionThemeSetting()   ?? 'right')
+----
+
+Because this uses the nullish coalescing operator `??`, the precedence is **explicit input → theme default → hardcoded fallback**, and an **explicit `false` (or `''`, `0`) is preserved** — `??` only falls through on `null`/`undefined`. The hardcoded fallbacks are `'left'` / `false` / `'right'` respectively.
+
+Expected results you can assert:
+
+* A theme with `actionColumnSticky: true` and no explicit `[frozenActionColumn]` binding → `frozenActionColumnResolved()` is `true`.
+* A component bound with `[frozenActionColumn]="false"` keeps `false` even when the theme sets `actionColumnSticky: true` (explicit wins, and `false` is preserved).
+* No V2 theme (or a theme that omits `actionColumnPosition`) → `actionColumnPositionResolved()` is `'right'` (the hardcoded fallback).
+* A later theme that removes `checkboxColumnPosition` **clears** the signal → the resolved value drops to `'left'` (the fallback), because the wiring overwrites the signal with `undefined`.
+
+[#data-table-interactive]
+==== InteractiveDataView dialog behavior
+
+`InteractiveDataViewComponent` (`{accel_root}/interactive-data-view/interactive-data-view.component.ts`) wraps `DataViewComponent` and a `custom-group-column-selector` dialog. Its relevant inputs are a mix of `input()` and `model()`:
+
+[source,typescript]
+----
+checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+frozenActionColumn     = model<boolean | undefined>(undefined)
+actionColumnPosition   = model<'left' | 'right' | undefined>(undefined)
+----
+
+It computes the same three `*Resolved` signals and **forwards** them to its children:
+
+* To the child `ocx-data-view`: `[checkboxColumnPosition]="checkboxColumnPositionResolved()"`, `[frozenActionColumn]="frozenActionColumnResolved()"`, `[actionColumnPosition]="actionColumnPositionResolved()"`.
+* To the `ocx-custom-group-column-selector` dialog: `[frozenActionColumn]="frozenActionColumnResolved()"`, `[actionColumnPosition]="actionColumnPositionResolved()"`.
+
+The dialog (`custom-group-column-selector.component.ts`) takes its current resolved values as `input()` (defaulting to `false` / `'right'`), copies them into local models when opened, and — when the user saves a *changed* value — emits `actionColumnConfigChanged`. `InteractiveDataViewComponent.onActionColumnConfigChange` then writes the explicit model:
+
+[source,typescript]
+----
+this.frozenActionColumn.set(event.frozenActionColumn)
+this.actionColumnPosition.set(event.actionColumnPosition)
+----
+
+So the theme default *reflows into the dialog* until the user explicitly saves a change; once saved, the explicit `model()` becomes set (and, like PrimeNG's sticky explicit inputs, stays set), so the theme default no longer applies for that instance's lifetime.
+
+[#data-table-struct]
+==== Structural compatibility for the existing table mapping
+
+`{compat_root}/table-input-defaults.compat.spec.ts` asserts the mapper's target keys are a subset of the table-family components' declared inputs (see <<structural-compat>> for what that does and does not prove).
+
+[#new-dataview]
+== New: Mapping the `dataview` Usage to the `DataView` Component
+
+This is a complete, reproducible recipe for adding a *new* accelerator usage-settings mapping. It maps **one** concrete setting from the existing `dataview` usage's `settings` shape — `paginatorPosition` — onto a new `paginatorPosition` input on the `DataView` component, end to end.
+
+**Why this usage/component pair:** the `dataview` usage already has a `settings` sub-schema (so `dataview` is a `ThemeUsageNameWithSettings`), and `DataViewComponent` is the natural host — but the `dataview` usage has no mapper or wiring yet, and `DataView` does not yet expose a `paginatorPosition` input. It is a clean, realistic addition that mirrors the existing `dataTable` recipe one-to-one.
+
+**What is NOT in scope** (and why): no change to `theme-config.service.ts` (that is the *PrimeNG* activation path; the accelerator path has no registry), no change to the reference-resolution pipeline (reference resolution is upstream — see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]), and no change to the `dataview` usage's *schema* (the `paginatorPosition` field already exists; if you needed a *new* settings field, that would be the only schema edit, and the eligible-usage type updates automatically).
+
+[#dataview-prereq]
+=== Prerequisites
+
+* You are at the tested revision (<<conventions>>) or a descendant where the `dataview` usage still declares a `paginatorPosition` setting.
+* You can run `npx nx test angular-utils --no-interactive` and `npx nx test angular-accelerator --no-interactive`.
+
+Verify the setting exists before mapping it:
+
+[source,bash]
+----
+grep -n "paginatorPosition" \
+  libs/integration-interface/src/lib/topics/current-themes/v1/schema/dataview/settings.ts
+# expected: paginatorPosition: withRef(z.enum(['top', 'bottom', 'both'])).optional(),
+----
+
+[#dataview-schema]
+=== Step 1 — Confirm the `dataview` usage settings schema
+
+No schema change is required — the `dataview` usage already declares settings (`{schema_root}/schema/dataview/settings.ts`). The field this recipe maps:
+
+[source,typescript]
+----
+export const dataviewSettingsShape = z.object({
+  // ...
+  paginatorPosition: withRef(z.enum(['top', 'bottom', 'both'])).optional(),
+  // ...
+})
+export const dataviewSettingsDefaults = { /* ... */ paginatorPosition: 'bottom', /* ... */ }
+// usage: settings: dataviewSettingsShape.optional()   // <- NO prefault: no schema defaults carried
+----
+
+Note the contrast with `dataTable`: the `dataview` usage is `settings: dataviewSettingsShape.optional()` with **no** `prefault`, so `mapThemeUsageSettings` reads only the values a theme author *explicitly* set (a present `dataview` usage with an empty/absent `settings` object yields `undefined` for `paginatorPosition`, and the component then uses its hardcoded fallback).
+
+Because `dataview` declares a `settings` field, `'dataview'` is already a member of `ThemeUsageNameWithSettings`, and `ThemeUsageSettings<'dataview'>` already resolves to this settings type.
+
+[#dataview-mapper]
+=== Step 2 — Add the mapper
+
+Create `{accel_provider_root}/dataview/dataview.mapper.ts`:
+
+[source,typescript]
+----
+import { ThemeUsageSettings } from '@onecx/integration-interface'
+import { asEnum, defineUsageSettingsMapper } from '../../../helpers'
+
+/**
+ * Component input defaults derived from the `dataview` theme usage settings, applied by
+ * DataViewComponent when the matching input isn't explicitly set.
+ *
+ * This shape mirrors the component's input declaration, which lives in
+ * `@onecx/angular-accelerator`. Since `angular-accelerator` depends on `angular-utils` (not the
+ * reverse), the two shapes cannot be structurally derived from one another without a circular
+ * library dependency, so they are kept in sync by convention. A spec in `angular-accelerator`
+ * asserts these keys stay a subset of the component's declared inputs to catch drift early.
+ */
+export interface AcceleratorDataViewInputDefaults {
+  paginatorPosition?: 'top' | 'bottom' | 'both'
+}
+
+export const mapAcceleratorDataViewSettings = defineUsageSettingsMapper<
+  ThemeUsageSettings<'dataview'>,
+  AcceleratorDataViewInputDefaults
+>({
+  paginatorPosition: {
+    from: 'paginatorPosition',
+    transform: asEnum(['top', 'bottom', 'both']),
+  },
+})
+----
+
+Notes:
+
+* The imports are **relative to the feature directory** (`../../../helpers`), exactly as `table.mapper.ts` does. Do not import the shared cluster from the package barrel.
+* `from` is pinned to a real `dataview` settings key by the type system — a typo is a compile error.
+* The transform here is `asEnum(['top', 'bottom', 'both'])` (an identity pass-through that also drops any value outside the enum). If you preferred the schema's `start`/`end`→`left`/`right` style, `mapValues` would be the tool; for `top`/`bottom`/`both` there is no rename, so `asEnum` is the honest choice.
+* `mapAcceleratorDataViewSettings.targetKeys` is `['paginatorPosition']`.
+
+Verify it compiles: `npx nx build angular-utils`.
+
+[#dataview-wiring]
+=== Step 3 — Add the V2-gated reactive wiring
+
+Create `{accel_provider_root}/dataview/dataview.wiring.ts`. This mirrors `table.wiring.ts`, mapped onto the `dataview` usage and a single signal:
+
+[source,typescript]
+----
+import { assertInInjectionContext, DestroyRef, inject, Injector, signal } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
+import { ThemeService } from '@onecx/angular-integration-interface'
+import { filter, from, map, switchMap } from 'rxjs'
+
+import { asObservable } from '../../../helpers'
+import { themeVersionAvailable } from '../../../../theme-version-available.utils'
+import { mapThemeUsageSettings } from '../../../usage-settings.utils'
+import { mapAcceleratorDataViewSettings } from './dataview.mapper'
+
+/**
+ * Composable that exposes the `dataview` theme usage settings as reactive defaults for the
+ * DataView component, which lives in `@onecx/angular-accelerator`.
+ *
+ * Subscribes to the current themes, gates on theme V2 being available, maps the resolved
+ * `dataview` usage settings via {@link mapAcceleratorDataViewSettings}, and mirrors each mapped
+ * value into a signal. Each returned signal stays `undefined` until a V2 theme with dataview
+ * settings arrives, and the subscription is torn down with the calling component's context.
+ */
+export function useAcceleratorDataViewThemeDefaults() {
+  assertInInjectionContext(useAcceleratorDataViewThemeDefaults)
+
+  const paginatorPositionThemeSetting = signal<'top' | 'bottom' | 'both' | undefined>(undefined)
+  const themeService = inject(ThemeService)
+  const injector = inject(Injector)
+  const destroyRef = inject(DestroyRef)
+
+  asObservable(themeService.currentThemes$)
+    .pipe(
+      switchMap((theme) =>
+        from(themeVersionAvailable(2, injector)).pipe(
+          filter(Boolean),
+          map(() => theme)
+        )
+      ),
+      takeUntilDestroyed(destroyRef)
+    )
+    .subscribe((theme) => {
+      const dataview = mapThemeUsageSettings(theme.properties?.v2, 'dataview', mapAcceleratorDataViewSettings)
+      paginatorPositionThemeSetting.set(dataview?.paginatorPosition)
+    })
+
+  return { paginatorPositionThemeSetting }
+}
+----
+
+The V2 gate, per-emission overwrite semantics, and `takeUntilDestroyed` teardown are identical to the table wiring (see <<data-table-wiring>>) — including the "a later theme that omits the setting clears the signal" behavior.
+
+Verify: `npx nx build angular-utils`.
+
+[#dataview-component]
+=== Step 4 — Add the input, signal, and computed on `DataView`
+
+Edit `{accel_root}/data-view/data-view.component.ts`. Add the input alongside the existing table-family inputs, call the new wiring, expose the signal, and add the computed resolved default (fallback `'bottom'`, matching `dataviewSettingsDefaults.paginatorPosition`):
+
+[source,typescript]
+----
+// ... next to the existing table-family inputs ...
+paginatorPosition = input<'top' | 'bottom' | 'both' | undefined>(undefined)   // explicit input
+
+// ... next to `private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()` ...
+private readonly dataViewThemeDefaults = useAcceleratorDataViewThemeDefaults()
+paginatorPositionThemeSetting = this.dataViewThemeDefaults.paginatorPositionThemeSetting
+
+// ... next to the existing table-family computeds ...
+paginatorPositionResolved = computed(
+  () => this.paginatorPosition() ?? this.paginatorPositionThemeSetting() ?? 'bottom')
+----
+
+Because this uses `??`, an explicit `paginatorPosition` (bound in the template) always wins; a theme default applies only when the input is not set; and the `'bottom'` fallback applies when neither is present.
+
+Bind the resolved value to the paginator in the template. The `DataView` template renders PrimeNG `p-dataview` paginators (`[paginator]="listGridPaginator()"` / `[paginator]="tablePaginator()"`); pass the resolved position to each so the theme default reflows into the rendered paginator:
+
+[source,html]
+----
+[paginator]="listGridPaginator()"
+[position]="paginatorPositionResolved()"
+----
+
+(If the PrimeNG `p-dataview` `position` binding is not the correct attribute name for your PrimeNG version, bind the equivalent paginator position input — the point of the recipe is that the *resolved* signal is what the template consumes.)
+
+Verify: `npx nx build angular-accelerator`.
+
+[#dataview-register]
+=== Step 5 — Export from the feature barrel
+
+Add the two provider-specific public exports to the feature barrel (`../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/index.ts`), next to the existing `table` exports:
+
+[source,typescript]
+----
+export * from './providers/accelerator/dataview/dataview.mapper'
+export * from './providers/accelerator/dataview/dataview.wiring'
+----
+
+Do not export the shared cluster (`defineUsageSettingsMapper`, transforms, helpers) from provider files — they stay internal and are imported relatively (see link:index.adoc#public-surface[the public export surface]).
+
+[#dataview-activation]
+=== Step 6 — Activation (no registry, gate is the wiring)
+
+Unlike the PrimeNG path, there is **no registry to update** for accelerator mappings. Activation is implicit:
+
+* `DataViewComponent` calls `useAcceleratorDataViewThemeDefaults()` and reads the signal in `paginatorPositionResolved`, so the mapping is live the moment the component renders.
+* The only gate is the V2 availability check inside the wiring (`themeVersionAvailable(2, injector)`), so on a v1 theme the signal stays `undefined` and the component uses its `'bottom'` fallback.
+
+There is no edit to `theme-config.service.ts`, and no change to any other existing component.
+
+[#dataview-struct]
+=== Step 7 — Structural-compatibility spec (accelerator)
+
+Because the mapper lives in `angular-utils` and the component lives in `angular-accelerator`, add a structural-compat assertion so a rename on either side fails at runtime. Add to `{compat_root}/table-input-defaults.compat.spec.ts` (or a sibling `dataview-input-defaults.compat.spec.ts`):
+
+[source,typescript]
+----
+import { mapAcceleratorDataViewSettings } from '@onecx/angular-utils'
+import { DataViewComponent } from '../components/data-view/data-view.component'
+
+it('should only map dataview settings to keys the DataView component declares as inputs', () => {
+  assertMapperTargetsCoverInputs(mapAcceleratorDataViewSettings.targetKeys, [DataViewComponent])
+})
+----
+
+`assertMapperTargetsCoverInputs` (`{compat_root}/helpers.ts`) checks each mapper **target key against the union of the supplied components' `ɵcmp.inputs`** — so `'paginatorPosition'` must be declared as an input on `DataViewComponent` (it is, after Step 4). See <<structural-compat>> for the guarantees and limits of this check.
+
+Verify: `npx nx test angular-accelerator --no-interactive`.
+
+[#dataview-wiring-spec]
+=== Step 8 — Wiring unit test (angular-utils)
+
+Add `{accel_provider_root}/dataview/dataview.wiring.spec.ts`, mirroring `table.wiring.spec.ts` (same `TestBed` + `ThemeService` provider, `jest.mock` of `themeVersionAvailable`, and the `flush()` microtask helper). The `dataview` usage key differs and there is one signal:
+
+[source,typescript]
+----
+import { TestBed } from '@angular/core/testing'
+import { ThemeService } from '@onecx/angular-integration-interface'
+import { CurrentThemes } from '@onecx/integration-interface'
+import { themeVersionAvailable } from '../../../../theme-version-available.utils'
+import { BehaviorSubject } from 'rxjs'
+
+import { useAcceleratorDataViewThemeDefaults } from './dataview.wiring'
+
+jest.mock('../../../../theme-version-available.utils', () => ({
+  themeVersionAvailable: jest.fn(),
+}))
+const themeVersionAvailableMock = jest.mocked(themeVersionAvailable)
+
+describe('useAcceleratorDataViewThemeDefaults', () => {
+  let currentThemes$!: BehaviorSubject<CurrentThemes>
+
+  const publishTheme = (settings: Record<string, unknown>) =>
+    currentThemes$.next({
+      properties: { v2: { usages: { dataview: { settings } } } },
+    } as CurrentThemes)
+
+  const call = () => TestBed.runInInjectionContext(() => useAcceleratorDataViewThemeDefaults())
+
+  beforeEach(() => {
+    themeVersionAvailableMock.mockResolvedValue(false)
+    currentThemes$ = new BehaviorSubject<CurrentThemes>({} as CurrentThemes)
+    TestBed.configureTestingModule({
+      providers: [{ provide: ThemeService, useValue: { currentThemes$ } }],
+    })
+  })
+
+  it('does not apply any setting while theme V2 is unavailable', async () => {
+    const result = call()
+    publishTheme({ paginatorPosition: 'top' })
+    await flush()
+    expect(result.paginatorPositionThemeSetting()).toBeUndefined()
+  })
+
+  it('applies the mapped setting once theme V2 becomes available', async () => {
+    themeVersionAvailableMock.mockResolvedValue(true)
+    const result = call()
+    publishTheme({ paginatorPosition: 'top' })
+    await flush()
+    expect(result.paginatorPositionThemeSetting()).toBe('top')
+  })
+
+  it('drops an out-of-enum value and clears on a later theme that omits it', async () => {
+    themeVersionAvailableMock.mockResolvedValue(true)
+    const result = call()
+    publishTheme({ paginatorPosition: 'middle' })   // not in the enum -> omitted
+    await flush()
+    expect(result.paginatorPositionThemeSetting()).toBeUndefined()
+
+    publishTheme({ paginatorPosition: 'both' })
+    await flush()
+    expect(result.paginatorPositionThemeSetting()).toBe('both')
+
+    publishTheme({})                                 // omitted -> overwritten to undefined
+    await flush()
+    expect(result.paginatorPositionThemeSetting()).toBeUndefined()
+  })
+})
+
+async function flush(): Promise<void> {
+  for (let i = 0; i < 5; i++) await Promise.resolve()
+}
+----
+
+Run both suites: `npx nx test angular-utils --no-interactive` and `npx nx test angular-accelerator --no-interactive`. Expected: the new wiring and structural-compat specs pass; the existing `dataTable` specs are unaffected.
+
+[#behavior-matrix]
+== Missing / Removed / `undefined` Behavior Matrix
+
+The same setting (`paginatorPosition`) under different inputs, for the new `dataview`→`DataView` mapping (and the same shape as the existing table mapping):
+
+[cols="1,1,1,1"]
+|===
+| Scenario | Theme V2? | Signal value | `paginatorPositionResolved()`
+
+| No `dataview` usage / no `settings`
+| Yes | `undefined` (nothing to map) | `bottom` (fallback)
+
+| `settings: {}` (usage present, field omitted)
+| Yes | `undefined` (no `prefault` on `dataview`) | `bottom` (fallback)
+
+| `settings: { paginatorPosition: 'top' }`
+| Yes | `top` | `top`
+
+| `settings: { paginatorPosition: 'middle' }` (out of enum)
+| Yes | `undefined` (transform dropped it) | `bottom` (fallback)
+
+| Theme sets `top`, then a *later* theme omits it
+| Yes | cleared to `undefined` (wiring overwrites) | `bottom` (fallback)
+
+| Any of the above
+| **No** (v1) | `undefined` (gate blocks) | `bottom` (fallback)
+
+| Explicit `[paginatorPosition]="'both'"` bound, theme sets `top`
+| Yes | `top` | `both` (explicit input wins)
+|===
+
+The last row is the key guarantee: an **explicit input always wins** over the theme, and the wiring's per-emission overwrite (rows 3–4) is what *clears* a stale theme value — distinct from the PrimeNG path, which skips `undefined` theme values and keeps explicit inputs sticky.
+
+[#precedence-note]
+== Precedence and Explicit-`false` Preservation
+
+The OneCX path resolves with `??`, so:
+
+* **Explicit input → theme default → hardcoded fallback**, exactly.
+* An **explicit `false` is preserved**: `input<boolean>(undefined)` bound to `false` yields `false ?? theme ?? fallback` = `false` (the `false` is returned, not treated as "unset"). This matters for boolean settings such as `frozenActionColumn` / `actionColumnSticky` in the existing table mapping.
+* A **`model()` that becomes set** (as in the InteractiveDataView dialog, <<data-table-interactive>>) is an explicit value and likewise wins for the instance's lifetime.
+
+[#structural-compat]
+== Structural Compatibility: Guarantees and Limits
+
+The structural-compat specs (<<data-table-struct>> and <<dataview-struct>>) use `assertMapperTargetsCoverInputs` from `{compat_root}/helpers.ts`:
+
+[source,typescript]
+----
+export function assertMapperTargetsCoverInputs(targetKeys, components) {
+  const declared = new Set(components.flatMap(declaredInputNames))   // union of ɵcmp.inputs
+  const missing = targetKeys.filter((key) => !declared.has(key))
+  expect(missing).toEqual([])
+}
+----
+
+What it **does** catch:
+
+* A **rename on either side** — if the mapper writes `paginatorPosition` but the component's input is renamed to `position`, `missing` is non-empty and the spec fails. It is a *dead-target/drift* detector, because the mapper's target type cannot be structurally derived from the component's `input()` without a circular library dependency (see link:index.adoc#dependency-boundary[the dependency direction]).
+
+What it **does not** prove (this is important for a reviewer):
+
+* **Value types** — a key that exists as a `boolean` input but is written as a string is *not* caught (the check is name-only, read from `ɵcmp.inputs`).
+* **Template / child consumption** — that the resolved value is actually bound in the template or forwarded to a child is not checked.
+* **Precedence / fallback behavior** — the `??` chain and the hardcoded fallback are not validated by this spec.
+* **Rendering** — nothing about what is painted.
+
+Treat the spec as a drift detector, not as behavioral proof. The wiring unit tests (<<dataview-wiring-spec>>) cover the mapping and V2-gating behavior; a component-level template test (hosting `DataView` and asserting the rendered paginator) would be needed to prove end-to-end consumption.
+
+[#troubleshooting-onecx]
+== Troubleshooting
+
+[cols="1,2"]
+|===
+| Symptom | Cause / fix
+
+| Setting has no effect; component shows the hardcoded fallback.
+| Theme V2 is not available, so the wiring's `filter(Boolean)` blocks every theme and the signal stays `undefined`. Confirm the theme reports v2 and that the app resolves v2 (`themeVersionAvailable(2)`).
+
+| A bound input is still being overridden by the theme.
+| Check the precedence chain. The `computed()` must read the explicit `input()` *first* (`explicit ?? theme ?? fallback`). If the explicit input is a `model()` that has not been set, it reads `undefined` and the theme applies — that is correct, not a bug.
+
+| A settings field is silently dropped.
+| The value failed its transform (e.g. a string outside `asEnum`'s allowed set, or a non-boolean where `asBoolean` is expected). The field is omitted by design and the component falls back. Check the value's type/shape against the schema.
+
+| A `{{...}}` reference in a setting is applied verbatim or dropped.
+| Reference resolution is upstream. If unresolved references reach the wiring, the transform drops the field. Resolve references upstream (see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]).
+
+| The structural-compat spec fails with a specific missing key.
+| A rename on the mapper or on the component's `input()`. Realign the two names (the mapper writes the component input name, not the schema key — e.g. `actionColumnSticky` → `frozenActionColumn`).
+
+| A later theme change reverts a value a user set in the InteractiveDataView dialog.
+| The user has not saved a change, so the explicit `model()` is not set and the theme reflows (by design, <<data-table-interactive>>). After the user saves, the `model()` is set and the theme no longer applies for that instance.
+|===
+
+[#see-also-onecx]
+== See Also
+
+* link:index.adoc[Theme V2 Usage Settings — architecture reference]
+* link:primeng.adoc[Theme V2 Usage Settings — PrimeNG provider guide]
+* link:../theme-v2.adoc[Theme V2 Architecture]
