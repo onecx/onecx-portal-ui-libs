@@ -70,9 +70,9 @@ Start with link:./mechanism-selection.adoc[Ownership & mechanism selection] to u
 
 == Related Areas
 
-The Dev Docs top index (which links the Areas and holds the anchors below) is being added on the Dev Docs integration branch, so these cross-Area references are listed without links until it lands. They will be wired up as `../README.adoc#<anchor>` once that page is merged.
+Cross-Area anchors are defined in the Dev Docs root index (link:../README.adoc[dev-docs/README.adoc]); each item below links to that index at the anchor for the named Area.
 
-* 3. Shell Context & Runtime Configuration — authentication is driven by the `AUTH_SERVICE` and `KEYCLOAK_*` configuration keys that the Shell distributes to the page.
-* 1. Integration Contract & Topics — the `IsAuthenticated` and `Events` Topics used here are plain Topics; their delivery semantics belong to that Area.
-* 9. Permissions — permissions are fetched after authentication succeeds and gate what an authenticated user can reach.
-* 10. Localization — the user profile (also loaded only after authentication) is the other consumer of the same gating.
+* link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration] — authentication is driven by the `AUTH_SERVICE` and `KEYCLOAK_*` configuration keys that the Shell distributes to the page.
+* link:../README.adoc#integration-contract[1. Integration Contract & Topics] — the `IsAuthenticated` and `Events` Topics used here are plain Topics; their delivery semantics belong to that Area.
+* link:../README.adoc#permissions[9. Permissions] — permissions are fetched after authentication succeeds and gate what an authenticated user can reach.
+* link:../README.adoc#localization[10. Localization] — the user profile (also loaded only after authentication) is the other consumer of the same gating.

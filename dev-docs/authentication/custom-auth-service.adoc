@@ -120,7 +120,7 @@ sequenceDiagram
 
 === Shell side
 
-The Shell owns two responsibilities here. First, it is the *host* of the Module Federation instance the wrapper pulls via `getShellMfInstance()` — without a running Shell MF instance the custom load fails (`Shell module federation instance not found`). Second, it distributes the `AUTH_SERVICE_CUSTOM_*` configuration keys through the `ConfigurationService` so the wrapper can resolve the remote. The *provider* module itself (`CustomAuth` or the configured exposed module) is written by the deployment team and deployed as a separate Module Federation remote — it is not part of the Shell repository, and this documentation is read-only with respect to both.
+The Shell owns two responsibilities here. First, it hosts the Module Federation instance the wrapper pulls via `getShellMfInstance()` — without it the custom load fails (`Shell module federation instance not found`). Second, it distributes the `AUTH_SERVICE_CUSTOM_*` keys through the `ConfigurationService` so the wrapper can resolve the remote. The *provider* module itself (`CustomAuth` or the configured exposed module) is written and deployed by the deployment team as a separate Module Federation remote; it is not part of the Shell repository, and this documentation is read-only with respect to both.
 
 The Shell's `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup; the custom path is taken whenever `AUTH_SERVICE=custom` is configured.
 
@@ -139,7 +139,7 @@ The custom-service contract is *entirely* framework-agnostic and lives in the Sh
 
 == Debugging
 
-* Enable the `debug` namespace `@onecx/shell-auth:AuthServiceWrapper:<level>` (logger prefix set in `link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) with `DEBUG='@onecx/shell-auth:*'` to watch the custom selection path run.
+* The `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[AuthServiceWrapper]` has no logger of its own, so the custom selection path is not directly observable in the `debug` output; the `@onecx/shell-auth` prefix (set in `link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) is only used by `KeycloakAuthService` when a provider reuses the built-in Keycloak service. Enable `DEBUG='@onecx/shell-auth:*'` and trace the three `getAuthServiceFactory()` throw messages in the devtools to pin down a failure.
 * In the devtools, confirm `window.onecxAuth.authServiceProxy.v1` was mounted and that `getHeaderValues()` returns the custom provider's headers — a custom mechanism that mounts the proxy but returns `{}` means its `getHeaderValues()` implementation is not producing tokens.
 * A custom module that never resolves check the remote entry URL (`AUTH_SERVICE_CUSTOM_URL`), the exposed module name, and the share scope; the three throw messages in `getAuthServiceFactory()` pin down which of those failed. General tooling lives in Area 13 (Diagnostics).
 
@@ -149,8 +149,8 @@ The custom-service contract is *entirely* framework-agnostic and lives in the Sh
 * link:./keycloak.adoc[Keycloak integration]
 * link:./obtaining-tokens.adoc[How Apps obtain tokens]
 * link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
-* 3. Shell Context & Runtime Configuration (cross-Area, on the Dev Docs top index — linked once it lands) — the `AUTH_SERVICE_CUSTOM_*` keys come from the workspace configuration.
-* 2. Application Bootstrap (cross-Area, on the Dev Docs top index — linked once it lands) — the custom provider is loaded as a remote Module Federation module; the loading machinery belongs to that Area.
+* link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration] — the `AUTH_SERVICE_CUSTOM_*` keys come from the workspace configuration.
+* link:../README.adoc#bootstrap[2. Application Bootstrap] — the custom provider is loaded as a remote Module Federation module; the loading machinery belongs to that Area.
 
 == Sources
 
@@ -164,7 +164,3 @@ Code::
 * link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts`]
 * link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts`]
 * link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "Auth Service Contract", "Auth Service Wrapper" (custom row) and "Configuration Keys" sections match this Unit; no contradictions found.
-* In-code JSDoc / typings: `auth.service.ts` (`AuthService`, `Injectables`, `AuthServiceFactory`) and `auth-service-wrapper.ts` (`getAuthServiceFactory`, `retrieveInjectables`).

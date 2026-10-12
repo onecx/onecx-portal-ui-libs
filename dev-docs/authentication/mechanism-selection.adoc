@@ -77,7 +77,7 @@ sequenceDiagram
 
 === Shell side
 
-The Shell is what calls the libs and consumes the gate. In `link:{shell}/src/app/app.module.ts[app.module.ts]` it imports `provideAuthService()` from `@onecx/shell-auth` and registers it, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in several of its initialisers — `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer` — so the workspace config, user profile and URL change only resolve once authentication has completed. The component that fires the `AUTH_LOGOUT_BUTTON_CLICKED` event is on the Shell side (the user menu / top bar rendered from Shell slots); the Shell repository is treated as read-only here, so the exact file is not linked and should be verified against Shell `main` before this is relied on.
+The Shell calls the libs and consumes the gate. `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in four initialisers — `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer` — so workspace config, user profile and URL change resolve only once authentication has completed. The `AUTH_LOGOUT_BUTTON_CLICKED` subscription lives on the libs side (above); its emitter is `link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[InitializationErrorPageComponent]`, whose `onLogout()` button publishes the event on the Shell's `portal-initialization-error-page` route.
 
 == Angular / React
 
@@ -104,11 +104,11 @@ The selection and gating are framework-agnostic and live entirely in the Shell: 
 == Related Units
 
 * link:./keycloak.adoc[Keycloak integration]
-* Custom auth service contract — `custom-auth-service.adoc`
-* How Apps obtain tokens — `obtaining-tokens.adoc`
-* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
-* 3. Shell Context & Runtime Configuration (cross-Area, on the Dev Docs top index — linked once it lands)
-* 1. Integration Contract & Topics (cross-Area, on the Dev Docs top index — linked once it lands) — the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
+* link:./custom-auth-service.adoc[Custom auth service contract]
+* link:./obtaining-tokens.adoc[How Apps obtain tokens]
+* link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
+* link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration]
+* link:../README.adoc#integration-contract[1. Integration Contract & Topics] — the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
 
 == Sources
 
@@ -117,6 +117,7 @@ Code::
 * link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`shell-auth/src/lib/provide-auth-service.ts`]
 * link:{libs}/shell-auth/src/lib/auth.service.ts[`shell-auth/src/lib/auth.service.ts`]
 * link:{libs}/shell-auth/src/lib/auth_services/disabled-auth.service.ts[`shell-auth/src/lib/auth_services/disabled-auth.service.ts`]
+* link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`shell-auth/src/lib/auth_services/keycloak-auth.service.ts`]
 * link:{libs}/shell-auth/src/lib/declarations.ts[`shell-auth/src/lib/declarations.ts`]
 * link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[`shell-auth/src/lib/utils/logger.utils.ts`]
 * link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`angular-integration-interface/src/lib/model/config-key.model.ts`]
@@ -124,7 +125,4 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/events/v1/event-type.ts[`integration-interface/src/lib/topics/events/v1/event-type.ts`]
 * link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts`]
 * link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "Auth Service Contract", "Auth Service Wrapper" and "Shell Owns Authentication" sections match this Unit; no contradictions found.
-* In-code JSDoc / typings: `declarations.ts` (`window` proxy shape) and `auth.service.ts` (`AuthService` contract).
+* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts` (Shell)]

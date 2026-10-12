@@ -102,7 +102,7 @@ The same semaphore guards the proactive refresh triggered by `onTokenExpired` wh
 
 === Shell side
 
-The Shell is where the service actually runs: it imports `provideAuthService()` from `@onecx/shell-auth` in `link:{shell}/src/app/app.module.ts[app.module.ts]`, which runs the wrapper (and therefore `KeycloakAuthService.init()`) during startup. Because the Keycloak flow performs a full-page redirect to the auth server on login, the Shell is the only component that can survive that redirect and continue loading the workspace. The `silent-check-sso.html` asset and the `keycloak.json` fallback referenced above are expected to be served from the Shell's public assets; these paths are link-only and should be confirmed against Shell `main` before they are relied on.
+The Shell is where the service actually runs: it imports `provideAuthService()` from `@onecx/shell-auth` in `link:{shell}/src/app/app.module.ts[app.module.ts]`, which runs the wrapper (and therefore `KeycloakAuthService.init()`) during startup. Because the Keycloak flow performs a full-page redirect to the auth server on login, the Shell is the only component that can survive that redirect and continue loading the workspace. The `link:{shell}/src/assets/silent-check-sso.html[silent-check-sso.html]` asset ships in the Shell's `src/assets` directory; the `./assets/keycloak.json` fallback path, by contrast, is only used when the `KEYCLOAK_*` config is incomplete and is resolved at runtime — it is not a file shipped by the Shell.
 
 == Angular / React
 
@@ -126,9 +126,9 @@ The Keycloak mechanism itself is identical on both frameworks — it runs once i
 == Related Units
 
 * link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
-* How Apps obtain tokens — `obtaining-tokens.adoc`
-* Tokens on HTTP calls — `tokens-on-http-calls.adoc`
-* 3. Shell Context & Runtime Configuration (cross-Area, on the Dev Docs top index — linked once it lands) — the `KEYCLOAK_*` keys come from the workspace configuration.
+* link:./obtaining-tokens.adoc[How Apps obtain tokens]
+* link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
+* link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration] — the `KEYCLOAK_*` keys come from the workspace configuration.
 
 == Sources
 
@@ -140,7 +140,4 @@ Code::
 * link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`angular-integration-interface/src/lib/model/config-key.model.ts`]
 * link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`angular-integration-interface/src/lib/services/app-state.service.ts`]
 * link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "Keycloak Implementation" and "Configuration Keys" sections match this Unit; no contradictions found.
-* In-code logs and JSDoc in `keycloak-auth.service.ts`.
+* link:{shell}/src/assets/silent-check-sso.html[`src/assets/silent-check-sso.html` (Shell)]

@@ -127,10 +127,7 @@ Code::
 * link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[`angular-auth/src/lib/auth-proxy.service.ts`]
 * link:{libs}/angular-auth/src/lib/utils/logger.utils.ts[`angular-auth/src/lib/utils/logger.utils.ts`]
 * link:{libs}/react-auth/src/lib/auth-proxy-service.ts[`react-auth/src/lib/auth-proxy-service.ts`]
+* link:{libs}/react-auth/src/lib/axios.ts[`react-auth/src/lib/axios.ts`]
 * link:{libs}/react-auth/src/lib/utils/logger.utils.ts[`react-auth/src/lib/utils/logger.utils.ts`]
 * link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[`accelerator/src/lib/utils/ensure-property.utils.ts`]
 * link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline, `dev-docs/authentication/index.adoc` (commit `6108bdff`) — its "MFE Auth Proxy", "Angular" and "React" proxy sections match this Unit; no contradictions found.
-* In-code JSDoc / README: `react-auth/README.md` (proxy usage) and `declarations.ts` (proxy shape).
