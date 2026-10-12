@@ -182,7 +182,7 @@ The table lists every `window`/`globalThis` key that the current libraries read 
 
 |`onecxFederationInstance`
 |Shell — link:{shell}/src/main.ts[`src/main.ts`]
-|Apps reading the Module Federation instance
+|`@onecx/angular-utils` — link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`get-load-remote-entry-options.utils.ts`] (falls back to the runtime `getInstance`)
 |2. Application Bootstrap — Module Federation
 
 |`__FEDERATION__.__INSTANCES__`
@@ -266,6 +266,7 @@ Code::
 * link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`] — `onecx-shell-capabilities` and the `ShellCapability` enum.
 * link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/functions/onecx-trigger-element.ts[`react-utils/.../onecx-trigger-element.ts`] and `.../functions/declarations.ts` — `onecxTriggerElement`.
 * link:{libs}/react-remote-components/src/lib/utils/getShellMfInstance.ts[`react-remote-components/src/lib/utils/getShellMfInstance.ts`] — `__FEDERATION__.__INSTANCES__` reader.
+* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts`] — `onecxFederationInstance` reader (Angular side, with a runtime `getInstance` fallback).
 * link:{shell}/src/main.ts[`src/main.ts` (Shell)] — `onecxFederationInstance`, `onecxPreloaders` writers.
 * link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)] — `setShellCapabilities(...)` writer.
 * link:{shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts[`src/app/shell/utils/styles/onecx-trigger-element.utils.ts`] — assigns `globalThis.onecxTriggerElement` from UI event handlers.
