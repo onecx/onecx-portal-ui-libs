@@ -1463,4 +1463,21 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       jest.restoreAllMocks()
     })
   })
+
+  describe('row grouping pass-through', () => {
+    it('should resolve the group cell template from the content child when no input is set', () => {
+      const childTpl = {} as any
+
+      const { component: withChild } = createComponent()
+      setInputSignal(withChild, 'groupCellTemplate', undefined)
+      setInputSignal(withChild, 'optimusGroupCell', undefined)
+      setInputSignal(withChild, 'childGroupCell', childTpl)
+      expect((withChild as any)._groupCell()).toBe(childTpl)
+    })
+
+    it('should default rowGrouping to undefined', () => {
+      const { component } = createComponent()
+      expect(component.rowGrouping()).toBeUndefined()
+    })
+  })
 })
