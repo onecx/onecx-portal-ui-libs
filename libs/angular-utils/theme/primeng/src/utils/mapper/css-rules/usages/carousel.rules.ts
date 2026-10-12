@@ -1,4 +1,4 @@
-import type { CssRule } from '../../mapper.types';
+import type { CssRule } from '../../mapper.types'
 
 export const carouselCssRules: CssRule[] = [
   // ─── Carousel root container ──────────────────────────────────────────────
@@ -7,31 +7,31 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.carousel.container.bg',
+        from: 'usages.carousel.defaultVariant.container.background',
       },
       {
         property: 'color',
-        from: 'usages.carousel.container.contrast',
+        from: 'usages.carousel.defaultVariant.container.color',
       },
       {
         property: 'padding',
-        from: 'usages.carousel.container.padding',
+        from: 'usages.carousel.defaultVariant.container.padding',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.container.border.color',
+        from: 'usages.carousel.defaultVariant.container.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.container.border.width',
+        from: 'usages.carousel.defaultVariant.container.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.container.border.style',
+        from: 'usages.carousel.defaultVariant.container.border.style',
       },
       {
         property: 'border-radius',
-        from: 'usages.carousel.container.border.radius',
+        from: 'usages.carousel.defaultVariant.container.border.radius',
       },
     ],
   },
@@ -42,19 +42,19 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.contrast',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.color',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.border.color',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.border.width',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.border.style',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.border.style',
       },
     ],
   },
@@ -65,19 +65,19 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.hover.contrast',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.hover.color',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.hover.border.color',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.hover.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.hover.border.width',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.hover.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.hover.border.style',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.hover.border.style',
       },
     ],
   },
@@ -88,33 +88,69 @@ export const carouselCssRules: CssRule[] = [
     declarations: [
       {
         property: 'color',
-        from: 'usages.carousel.indicator.active.contrast',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.active.color',
       },
       {
         property: 'border-color',
-        from: 'usages.carousel.indicator.active.border.color',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.active.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.carousel.indicator.active.border.width',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.active.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.carousel.indicator.active.border.style',
+        from: 'usages.carousel.defaultVariant.indicator.defaultVariant.active.border.style',
       },
     ],
   },
 
   // ─── Navigation buttons ───────────────────────────────────────────────────
   {
-    selector:
-      '.p-carousel .p-carousel-prev-button,' +
-      '\n.p-carousel .p-carousel-next-button',
+    selector: '.p-carousel .p-carousel-prev-button,' + '\n.p-carousel .p-carousel-next-button',
     declarations: [
       {
         property: 'padding',
-        from: 'usages.carousel.navigationButton.padding',
+        from: 'usages.carousel.defaultVariant.navigationButton.padding',
       },
     ],
   },
-];
+
+  // ─── Item ──────────────────────────────────────────────────────────────────
+  // No PrimeNG preset equivalent — `.p-carousel-item`'s width/flex-basis is
+  // computed at runtime from `numVisible`/`responsiveOptions` and must not be
+  // themed, so only the visual (non-layout) properties are exposed here.
+  {
+    selector: '.p-carousel .p-carousel-item',
+    declarations: [
+      {
+        property: 'background',
+        from: 'usages.carousel.defaultVariant.item.background',
+      },
+      {
+        property: 'padding-inline',
+        from: 'usages.carousel.defaultVariant.item.paddingX',
+      },
+      {
+        property: 'padding-block',
+        from: 'usages.carousel.defaultVariant.item.paddingY',
+      },
+      {
+        property: 'border-color',
+        from: 'usages.carousel.defaultVariant.item.border.color',
+      },
+      {
+        property: 'border-width',
+        from: 'usages.carousel.defaultVariant.item.border.width',
+      },
+      {
+        property: 'border-style',
+        from: 'usages.carousel.defaultVariant.item.border.style',
+      },
+      {
+        property: 'border-radius',
+        from: 'usages.carousel.defaultVariant.item.border.radius',
+      },
+    ],
+  },
+]

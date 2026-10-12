@@ -11,7 +11,7 @@ export const toggleswitchCssRules: CssRule[] = [
     declarations: [
       {
         property: 'border-style',
-        from: 'usages.toggleswitch.border.style',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.border.style',
       },
     ],
   },
@@ -22,11 +22,11 @@ export const toggleswitchCssRules: CssRule[] = [
     declarations: [
       {
         property: 'width',
-        from: 'usages.toggleswitch.handle.width',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.width',
       },
       {
         property: 'height',
-        from: 'usages.toggleswitch.handle.height',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.height',
       },
     ],
   },

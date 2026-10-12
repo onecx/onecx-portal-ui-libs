@@ -25,7 +25,7 @@ export const contentCssRules: CssRule[] = [
     ],
   },
   {
-    selector: '#ocx_content_title_element',
+    selector: '.ocx-content-title',
     declarations: [
       { property: 'color', from: 'usages.content.title.color' },
       { property: 'font-family', from: 'usages.content.title.font.family' },

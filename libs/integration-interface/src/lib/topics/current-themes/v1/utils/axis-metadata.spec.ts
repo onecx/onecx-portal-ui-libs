@@ -9,7 +9,7 @@ import {
 import { theme } from '../current-themes.schema'
 import { colorVariants, severityVariants, states, themeRef } from '../schema/primitives'
 import { themeSchemaRegistry } from '../schema/registry'
-import { MessageSettingsSchema } from '../schema/message/settings'
+import { messageSettingsShape } from '../schema/message/settings'
 import { input } from '../schema/input'
 
 // Leaf paths are rooted at the top-level `theme` schema, which nests the v2 token
@@ -34,7 +34,7 @@ describe('schema node marker', () => {
   })
 
   it('classifies messageSettings as a structural pass-through (axis de-assigned)', () => {
-    const entry = themeSchemaRegistry.get(MessageSettingsSchema.schema)
+    const entry = themeSchemaRegistry.get(messageSettingsShape)
     expect(entry).toBeDefined()
     expect(entry?.axis).toBeUndefined()
   })
