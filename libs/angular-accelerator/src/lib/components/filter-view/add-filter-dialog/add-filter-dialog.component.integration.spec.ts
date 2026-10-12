@@ -151,9 +151,13 @@ describe('AddFilterDialogComponent (integration / harness)', () => {
 
     const addFilterHarness = await TestbedHarnessEnvironment.documentRootLoader(fixture).getHarness(AddFilterDialogHarness)
     const columnSelect = await addFilterHarness.getColumnSelect()
-    expect(columnSelect).toBeTruthy()
-    await columnSelect?.open()
-    const items = await Promise.all((await columnSelect?.getSelectItems()).map((item) => item.getText()))
+    expect(columnSelect).not.toBeNull()
+    if (!columnSelect) {
+      throw new Error('Expected the column select harness to be available after opening the dialog')
+    }
+    await columnSelect.open()
+    const selectItems = await columnSelect.getSelectItems()
+    const items = await Promise.all(selectItems.map((item) => item.getText()))
     expect(items).toEqual(['product', 'amount'])
   })
 
@@ -164,15 +168,21 @@ describe('AddFilterDialogComponent (integration / harness)', () => {
     const addFilterHarness = await TestbedHarnessEnvironment.documentRootLoader(fixture).getHarness(AddFilterDialogHarness)
 
     // Default selection is the first column (`product`) -> its distinct values.
-    const firstOptions = await Promise.all(
-      (await (await addFilterHarness.getValueSelect())?.getAllOptions()).map((o) => o.getText())
-    )
+    const firstValueSelect = await addFilterHarness.getValueSelect()
+    expect(firstValueSelect).not.toBeNull()
+    if (!firstValueSelect) {
+      throw new Error('Expected the value select harness to be available after opening the dialog')
+    }
+    const firstOptions = await Promise.all((await firstValueSelect.getAllOptions()).map((o) => o.getText()))
     expect([...firstOptions].sort()).toEqual(['Apples', 'Bananas'])
 
     await addFilterHarness.selectColumn('amount')
-    const numericOptions = await Promise.all(
-      (await (await addFilterHarness.getValueSelect())?.getAllOptions()).map((o) => o.getText())
-    )
+    const numericValueSelect = await addFilterHarness.getValueSelect()
+    expect(numericValueSelect).not.toBeNull()
+    if (!numericValueSelect) {
+      throw new Error('Expected the value select harness to stay available after switching columns')
+    }
+    const numericOptions = await Promise.all((await numericValueSelect.getAllOptions()).map((o) => o.getText()))
     expect([...numericOptions].sort()).toEqual(['10', '2'])
   })
 
@@ -190,8 +200,12 @@ describe('AddFilterDialogComponent (integration / harness)', () => {
 
     await addFilterHarness.clickConfirm()
     const state = await statePromise
-    expect(state?.button).toBe('primary')
-    expect(state?.result).toEqual([{ columnId: 'product', value: 'Apples', filterType: FilterType.EQUALS }])
+    expect(state).not.toBeNull()
+    if (!state) {
+      throw new Error('Expected confirm to close the dialog with a state payload')
+    }
+    expect(state.button).toBe('primary')
+    expect(state.result).toEqual([{ columnId: 'product', value: 'Apples', filterType: FilterType.EQUALS }])
   }, 20000)
 
   it('should associate the field labels with a focusable control via inputId', async () => {
@@ -233,7 +247,11 @@ describe('AddFilterDialogComponent (integration / harness)', () => {
     await footer.clickSecondaryButton()
 
     const state = await statePromise
-    expect(state?.button).toBe('secondary')
+    expect(state).not.toBeNull()
+    if (!state) {
+      throw new Error('Expected cancel to close the dialog with a state payload')
+    }
+    expect(state.button).toBe('secondary')
     expect(document.activeElement).toBe(trigger)
   }, 20000)
 })

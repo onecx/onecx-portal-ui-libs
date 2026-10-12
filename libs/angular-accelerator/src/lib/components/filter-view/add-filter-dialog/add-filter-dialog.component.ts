@@ -413,18 +413,11 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
 
   /**
    * A stable key used to de-duplicate and test membership. Dates are keyed by
-   * their timestamp and numbers by their numeric value so that visually
-   * distinct values are never collapsed together.
+   * the same string representation used by the client-side filter comparator,
+   * so option deduplication and membership checks match the actual filter
+   * equality semantics.
    */
   private toComparableKey(column: DataTableColumn, value: unknown): string {
-    if (column.columnType === ColumnType.DATE) {
-      const date = new Date(value as string | number)
-      return Number.isNaN(date.getTime()) ? String(value) : date.getTime().toString()
-    }
-    if (column.columnType === ColumnType.NUMBER) {
-      const number = typeof value === 'number' ? value : Number(value)
-      return Number.isNaN(number) ? String(value) : number.toString()
-    }
     return String(value)
   }
 }

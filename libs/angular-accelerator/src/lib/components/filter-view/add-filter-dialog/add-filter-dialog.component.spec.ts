@@ -177,6 +177,18 @@ describe('AddFilterDialogComponent (class logic)', () => {
     expect(options.map((o) => o.label)).toEqual(['1', '2', '3'])
   })
 
+  it('should keep raw numeric strings distinct from numeric values in options and existing selections', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'n', nameKey: 'N', columnType: ColumnType.NUMBER })])
+    fixture.componentRef.setInput('data', [{ n: '01' }, { n: 1 }])
+    fixture.componentRef.setInput('existingFilters', [{ columnId: 'n', value: '01', filterType: FilterType.EQUALS }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const options = component.valueOptions() ?? []
+    expect(options.map((o) => o.value)).toEqual(['01', 1])
+    expect(component.selectedValues()).toEqual(['01'])
+  })
+
   it('should format date column option labels while keeping the raw value', async () => {
     fixture.componentRef.setInput('columns', [
       makeColumn({ id: 'd', nameKey: 'D', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' }),
@@ -198,6 +210,28 @@ describe('AddFilterDialogComponent (class logic)', () => {
       expect(o.label).not.toEqual(o.value)
       expect(o.label).toMatch(/\d{4}/)
     })
+  })
+
+  it('should keep distinct date strings separate when they resolve to the same instant', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'd', nameKey: 'D', columnType: ColumnType.DATE, dateFormat: 'yyyy-MM-dd' }),
+    ])
+    fixture.componentRef.setInput('data', [
+      { d: '2024-05-06T12:00:00.000Z' },
+      { d: '2024-05-06T14:00:00+02:00' },
+    ])
+    fixture.componentRef.setInput('existingFilters', [
+      { columnId: 'd', value: '2024-05-06T12:00:00.000Z', filterType: FilterType.EQUALS },
+    ])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const options = component.valueOptions() ?? []
+    expect(options.map((o) => o.value)).toEqual([
+      '2024-05-06T12:00:00.000Z',
+      '2024-05-06T14:00:00+02:00',
+    ])
+    expect(component.selectedValues()).toEqual(['2024-05-06T12:00:00.000Z'])
   })
 
   it('should switch options and preselection when the column changes', async () => {
