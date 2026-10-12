@@ -23,7 +23,7 @@ flowchart LR
       L2["window globals<br/>(@onecx/accelerator, onecxAuth, …)"]
       L3["Topic / TopicPublisher<br/>postMessage + BroadcastChannel"]
     end
-    subgraph Shell[Shell — onexc-shell-ui]
+    subgraph Shell[Shell — onecx-shell-ui]
       S1["writes auth proxies,<br/>capabilities, MF instance"]
       S2["consumes Topics,<br/>reads logger namespaces"]
     end
@@ -67,23 +67,8 @@ This Area is deliberately cross-cutting. It links to the Areas that own the mech
 * link:../integration-contract/README.adoc[1. Integration Contract & Topics] — link:../integration-contract/topic-lifecycle.adoc[Topic lifecycle], link:../integration-contract/transports-and-tab-scope.adoc[Transports & tab scope] — the `Topic`/`TopicPublisher` classes and the message contract that this Area's tracing unit observes.
 * link:../bootstrap/README.adoc[2. Application Bootstrap] — link:../bootstrap/module-federation.adoc[Module Federation], link:../bootstrap/preloaders.adoc[Preloaders] — Module Federation and preloaders, which own the `__FEDERATION__` / `onecxFederationInstance` globals.
 * link:../shell-context/README.adoc[3. Shell Context & Runtime Configuration] — link:../shell-context/runtime-configuration.adoc[Runtime configuration] — where the Shell capability flags come from.
-* link:../styling/README.adoc[4. Styling & Style Isolation] — link:../styling/dynamic-content-attribution.adoc[Dynamic content attribution] — dynamic content attribution and the `onecxTriggerElement` global.
+* link:../styling/README.adoc[4. Styling & Style Isolation] — link:../styling/dynamic-content-via-patching.adoc[Dynamic content via patching] — dynamic content attribution and the `onecxTriggerElement` global.
 * link:../authentication/README.adoc[8. Authentication] — link:../authentication/obtaining-tokens.adoc[How Apps obtain tokens] — the `onecxAuth` / `onecxAngularAuth` auth-proxy globals.
 * link:../localization/README.adoc[10. Localization] — link:../localization/app-translations.adoc[App translations], link:../localization/dynamic-translations.adoc[Dynamic translations] — the `onecxTranslations` and `dynamicTranslationsCache` globals.
-
-[NOTE]
-====
-These links intentionally target the fixed Dev Docs index paths. The following linked targets are not yet present on the PR base branch:
-
-* `../bootstrap/README.adoc`
-* `../bootstrap/module-federation.adoc`
-* `../bootstrap/preloaders.adoc`
-* `../styling/dynamic-content-attribution.adoc`
-* `../authentication/obtaining-tokens.adoc`
-* `../localization/README.adoc`
-* `../localization/app-translations.adoc`
-* `../localization/dynamic-translations.adoc`
-====
-
 
 The Dev Docs are written from the current `main` branch of this repository and of the Shell. Where a mechanism is explained in full, this Area links to its owning Unit rather than repeating it.

@@ -166,8 +166,3 @@ Code::
 * link:{libs}/accelerator/src/lib/topic/syncable-topic.ts[`accelerator/src/lib/topic/syncable-topic.ts`] — deprecated `SyncableTopic`.
 * link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`] — capability flags.
 * link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)] — the capabilities the Shell registers.
-
-Verification Sources checked::
-* `dev-docs/topics/overview.adoc` — the existing deep-dive on Topic synchronisation, message types and `publish`/`onMessage` ordering.
-* `dev-docs/topics/debug.adoc` and `dev-docs/gatherer/debug.adoc` — the pre-v8 `window['@onecx/accelerator'].topic.debug` and the v8+ `localStorage.debug` enabling instructions that this Unit supersedes.
-* `docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc` — the `@onecx/accelerator:Topic:*` / `Gatherer:*` namespace reference.
