@@ -350,6 +350,22 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.filterViewColumns().map((c) => c.id)).toEqual(['b', 'c'])
     })
 
+    it('should offer no columns when a configured column group has no active columns', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+
+      fixture.componentRef.setInput('columns', [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g2'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+      ])
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
+      component.ngOnInit()
+      fixture.detectChanges()
+
+      component.displayedColumnKeys.set([])
+
+      expect(component.filterViewColumns()).toEqual([])
+    })
+
     it('should fall back to all available columns for the Filter View when no column is active', () => {
       const { component } = createComponent(true)
 
