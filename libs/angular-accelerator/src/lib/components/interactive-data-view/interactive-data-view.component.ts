@@ -103,6 +103,18 @@ export class InteractiveDataViewComponent implements OnInit {
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
   draggableColumnGroupSelectorDialog = input<boolean>(true)
 
+  /**
+   * Controls whether the hosted column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  resizableColumnGroupSelectorDialog = input<boolean>(false)
+
+  /**
+   * When enabled, the hosted column selector keeps the active columns in the main column order
+   * after a transfer instead of appending to the target.
+   */
+  restoreColumnGroupSelectorOrder = input<boolean>(false)
+
   @Input()
   set columns(value: DataTableColumn[]) {
     this.stateService.availableColumns.set(value)

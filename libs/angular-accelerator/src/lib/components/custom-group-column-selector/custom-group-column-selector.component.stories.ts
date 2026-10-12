@@ -81,6 +81,15 @@ const defaultComponentArgs = {
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
   draggableColumnGroupSelectorDialog: true,
+  resizableColumnGroupSelectorDialog: false,
+  restoreColumnGroupSelectorOrder: false,
+}
+
+const dialogArgTypes = {
+  draggableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+  resizableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+  restoreColumnGroupSelectorOrder: { control: { type: 'boolean' } },
+  actionColumnConfigChanged: { action: 'actionColumnConfigChanged' },
 }
 
 export const Default = {
@@ -88,9 +97,34 @@ export const Default = {
   args: {
     ...defaultComponentArgs,
   },
-  argTypes: {
-    actionColumnConfigChanged: { action: 'actionColumnConfigChanged' },
+  argTypes: dialogArgTypes,
+}
+
+export const ResizableDialog = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    resizableColumnGroupSelectorDialog: true,
   },
+  argTypes: dialogArgTypes,
+}
+
+export const RestoreColumnOrder = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    restoreColumnGroupSelectorOrder: true,
+  },
+  argTypes: dialogArgTypes,
+}
+
+export const RestoreColumnOrderDisabled = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    restoreColumnGroupSelectorOrder: false,
+  },
+  argTypes: dialogArgTypes,
 }
 
 export default CustomGroupColumnSelectorComponentSBConfig

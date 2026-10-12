@@ -44,6 +44,29 @@ export const WithMockData = {
   }),
 }
 
+// Table layout exposes the hosted column selector. The displayed columns start in a scrambled
+// order so that enabling order restoration is observable: after a transfer + Save the visible
+// table columns return to the main (columns) order.
+export const TableLayoutWithRestoredColumnOrder = {
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    layout: 'table',
+    displayedColumnKeys: ['date', 'product', 'amount'],
+    resizableColumnGroupSelectorDialog: true,
+    restoreColumnGroupSelectorOrder: true,
+  },
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultComponentActionsArgs,
+      componentStateChanged: componentStageChangedAction,
+      selectionChanged: selectionChangedAction,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)"></ocx-interactive-data-view>`,
+  }),
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {
