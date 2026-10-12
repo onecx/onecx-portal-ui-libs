@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { dialog } from './schema/dialog'
+import { dialog, dialogShape } from './schema/dialog'
 import { menubar, menubarShape } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
@@ -9,6 +9,7 @@ import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
 import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
+import type { CarouselShapeInput } from './schema/carousel'
 import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
 import { tabs, tabsShape } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
@@ -35,7 +36,7 @@ import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
-import { content } from './schema/content'
+import { content, contentShape } from './schema/content'
 import { pageHeader } from './schema/page-header'
 import { dataview } from './schema/dataview'
 import { dataviewShape } from './schema/dataview/dataview'
@@ -48,13 +49,13 @@ import { pageHeaderShape } from './schema/page-header/index'
 import { button, ButtonShapeInput } from './schema/button'
 
 type UsagesInput = {
-  dialog?: z.input<typeof dialog>
+  dialog?: z.input<typeof dialogShape>
   badge?: z.input<typeof badgeShape>
   menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
   dataTable?: z.input<typeof dataTableShape>
   tooltip?: z.input<typeof tooltipShape>
-  carousel?: z.input<typeof carousel>
+  carousel?: CarouselShapeInput
   fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
   diagram?: z.input<typeof diagramShape>
@@ -76,7 +77,7 @@ type UsagesInput = {
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
   pageHeader?: z.input<typeof pageHeaderShape>
-  content?: z.input<typeof content>
+  content?: z.input<typeof contentShape>
   dataview?: z.input<typeof dataviewShape>
   chip?: z.input<typeof chipShape>
   customGroupColumnSelector?: z.input<typeof customGroupColumnSelectorShape>

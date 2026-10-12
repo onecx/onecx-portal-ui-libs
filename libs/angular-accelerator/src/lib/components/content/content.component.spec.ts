@@ -57,7 +57,7 @@ describe('OcxContentComponent', () => {
       fixture.componentRef.setInput('title', testComponentTitle)
       fixture.detectChanges()
 
-      const expectedTitleClasses = ['font-medium', 'text-lg']
+      const expectedTitleClasses = ['ocx-content-title', 'font-medium', 'text-lg']
       expect(await ocxContentHarness.hasTitle(titleBaseId)).toEqual(true)
       expect(await ocxContentHarness.hasTitle(titleBaseId + '0')).toEqual(false)
       expect(await ocxContentHarness.getTitle(titleBaseId)).toEqual(testComponentTitle)
