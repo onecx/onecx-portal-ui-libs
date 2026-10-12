@@ -133,12 +133,3 @@ Code::
 * link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability`]
 * link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
 * link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation`]
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug and reading order.
-* Draft Outline commit (6108bdff) — bootstrap outline (topics only; no content baseline).
-* No old Dev Docs page exists for this Area.
-* Shell `main.ts` / `bootstrap.ts` / `app.module.ts` / `routes.service.ts` / `preloader.utils.ts` on `main` (read-only, linked by file).
-* Cross-checked against the already-written Area 7 pages `url-to-every-router.adoc` and `shell-routes-and-current-app.adoc` (URL-sync and route-matching) to avoid duplicating their content; no contradiction found.
-* No contradiction found against libs `docs/` or JSDoc.

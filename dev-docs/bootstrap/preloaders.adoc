@@ -133,17 +133,3 @@ Code::
 * link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig` (computes the `shareScope` an App resolves from)]
 * link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`toLoadRemoteEntryOptions`, `createRemoteConfig` (carry the `shareScope` onto the loaded remote)]
 * `@module-federation/enhanced/runtime` (`registerRemotes`, `loadRemote`) — the loader-entry API
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug and reading order.
-* Draft Outline commit (6108bdff) — bootstrap outline (topics only; no content baseline).
-* `startup-timeline.adoc` (Unit 1) — the preloader barrier in the startup sequence and the `Could not load preloader` surfacing.
-* `module-federation.adoc` (Unit 2) — the five-preloader / three-scope facts stated at a high level; this Unit covers the `Preloader` record, the loader list, the barrier mechanics and the `onecxPreloaders` flag in depth and defers the loader mechanism's MF framing to Unit 2 to avoid overlap.
-* `shared-dependencies.adoc` (Unit 3) — the scope-computation rule; this Unit references it rather than restating the full generator.
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/build-utils/get-onecx-shared-recommendation.adoc` and `docs/modules/onecx-portal-ui-libs/pages/libraries/build-utils/get-onecx-shared-library-config.adoc` — current libs docs checked; they describe helper defaults and customization, not Shell loader-specific overrides or startup failure paths.
-* `docs/modules/onecx-shell-ui/pages/onecx-shell-ui-docs.adoc` in `onecx/onecx-shell-ui` — Shell overview/setup/slot docs checked; no preloader or shared-scope mechanics coverage found there.
-* `docs/modules/docs-guides-ui/pages/module-federation/mf-preloaders.adoc`, `mf-dependancy-sharing.adoc`, and `module-federation-config.adoc` in `onecx/docs-guides-ui` — generic older background checked; they describe general MF/preloader concepts, not the current per-major scopes, loader overrides, or failure-path details documented here.
-* Shell `main.ts`, `preloader.utils.ts`, loader entry `src/main.ts` files, and loader `module-federation.config.ts` files on `main` (read-only, linked by file; loader list, `shareScope` per loader, success flags, override behavior, and `Promise.all` failure paths verified against current `main`).
-* No old Dev Docs page exists for this Area.
-* No contradiction found against libs `docs/` or JSDoc.
