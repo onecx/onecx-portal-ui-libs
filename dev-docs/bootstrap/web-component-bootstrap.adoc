@@ -88,7 +88,7 @@ Where the two genuinely differ:
 * link:module-federation.adoc[Module Federation in OneCX] (Unit 2) — how the app's root module is exposed and loaded as a remote.
 * link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4) — the share scope and Angular major the platform cache is keyed by.
 * link:../styling/dynamic-content-via-container.adoc[Dynamic content via container] (Area 4) — the consumer of the dynamic container and of the `DynamicAppId` element name.
-* link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) and Multiple-router problem & router wiring (`multiple-routers.adoc`, Unit 7, not yet written) — how the app's router follows the shared URL once mounted.
+* link:multiple-routers.adoc[Multiple-router problem & router wiring] (Unit 7) — how the App's router is wired at startup to follow the shared URL; link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) — how a runtime URL change is fanned out to every router once mounted.
 
 == Sources
 
