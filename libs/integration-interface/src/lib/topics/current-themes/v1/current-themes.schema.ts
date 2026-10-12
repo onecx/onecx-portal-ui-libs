@@ -11,7 +11,7 @@ import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
 import type { CarouselShapeInput } from './schema/carousel'
 import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
-import { tabs } from './schema/tabs'
+import { tabs, tabsShape } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
 import { FALLBACK_ORDER_DEFAULT, type RelaxedAxisKind } from './utils/axis-metadata'
 import { diagram, diagramShape } from './schema/diagram'
@@ -60,7 +60,7 @@ type UsagesInput = {
   dropdown?: z.input<typeof dropdownShape>
   diagram?: z.input<typeof diagramShape>
   groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
-  tabs?: z.input<typeof tabs>
+  tabs?: z.input<typeof tabsShape>
   toggleswitch?: z.input<typeof toggleSwitchShape>
   textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>

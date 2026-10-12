@@ -3,32 +3,32 @@ import { toColorString } from '../../mapper.utils';
 
 export const tooltipMappingRules: MappingRule[] = [
   {
-    from: 'usages.tooltip.defaultVariant.maxWidth',
+    from: 'usages.tooltip.maxWidth',
     to: 'components.tooltip.root.maxWidth',
   },
   {
-    from: 'usages.tooltip.defaultVariant.gutter',
+    from: 'usages.tooltip.gutter',
     to: 'components.tooltip.root.gutter',
   },
   {
-    from: 'usages.tooltip.defaultVariant.shadow',
+    from: 'usages.tooltip.shadow',
     to: 'components.tooltip.root.shadow',
   },
   {
-    from: 'usages.tooltip.defaultVariant.padding',
+    from: 'usages.tooltip.paddingX',
     to: 'components.tooltip.root.padding',
   },
   {
-    from: 'usages.tooltip.defaultVariant.border.radius',
+    from: 'usages.tooltip.border.radius',
     to: 'components.tooltip.root.borderRadius',
   },
   {
-    from: 'usages.tooltip.defaultVariant.background',
+    from: 'usages.tooltip.background',
     to: 'components.tooltip.colorScheme.{mode}.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.tooltip.defaultVariant.color',
+    from: 'usages.tooltip.color',
     to: 'components.tooltip.colorScheme.{mode}.root.color',
     transform: toColorString,
   },
