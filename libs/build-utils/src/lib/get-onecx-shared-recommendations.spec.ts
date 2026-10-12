@@ -6,8 +6,7 @@
  * @jest-environment jsdom
  */
 
-import { SharedLibraryConfig } from '@nx/module-federation'
-import { getOneCXSharedRecommendations } from './get-onecx-shared-recommendations'
+import { getOneCXSharedRecommendations, SharedLibraryConfig } from './get-onecx-shared-recommendations'
 
 describe('getOneCXSharedRecommendations', () => {
   it('returns false for non-OneCX shared libraries and does not mutate config', () => {
@@ -27,7 +26,7 @@ describe('getOneCXSharedRecommendations', () => {
     '@angular/core',
     '@onecx/whatever',
     'rxjs',
-    'primeng/api',
+    '@openng/optimus-ui/api',
     '@ngx-translate/core',
     '@ngrx/store',
     'react',

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { Component, inject } from '@angular/core'
-import { DynamicDialogModule } from 'primeng/dynamicdialog'
+import { DynamicDialogModule } from '@openng/optimus-ui/dynamicdialog'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import {

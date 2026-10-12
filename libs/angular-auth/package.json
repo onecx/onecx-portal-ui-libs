@@ -1,17 +1,17 @@
 {
   "name": "@onecx/angular-auth",
-  "version": "9.0.0-rc.13",
+  "version": "9.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onecx/onecx-portal-ui-libs"
   },
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
     "rxjs": "~7.8.0",
-    "@onecx/angular-integration-interface": "9.0.0-rc.13",
-    "@onecx/accelerator": "9.0.0-rc.13"
+    "@onecx/angular-integration-interface": "9.0.0-rc.14",
+    "@onecx/accelerator": "9.0.0-rc.14"
   },
   "publishConfig": {
     "access": "public"

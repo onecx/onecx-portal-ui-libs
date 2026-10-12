@@ -3,13 +3,13 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { Meta, applicationConfig, argsToTemplate, componentWrapperDecorator, moduleMetadata } from '@storybook/angular'
 import { StorybookTranslateModule } from '../../../storybook-translate.module'
-import { ButtonModule } from 'primeng/button'
-import { PrimeIcons } from 'primeng/api'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DialogInlineComponent } from './dialog-inline.component'
 import { DialogContentComponent } from '../dialog-content/dialog-content.component'
 import { DialogFooterComponent } from '../dialog-footer/dialog-footer.component'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
-import { TooltipModule } from 'primeng/tooltip'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { StorybookThemeModule } from '../../../storybook-theme.module'
 import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 
@@ -63,12 +63,12 @@ export const DialogInlineWithButtons = {
     config: {
       primaryButtonDetails: {
         key: 'KEY',
-        icon: PrimeIcons.BOOK,
+        icon: OpenngIcons.BOOK,
       },
       secondaryButtonIncluded: true,
       secondaryButtonDetails: {
         key: 'Times',
-        icon: PrimeIcons.TIMES,
+        icon: OpenngIcons.TIMES,
       },
     },
   },
@@ -89,12 +89,12 @@ export const DialogInlineWithCustomButtons = {
     config: {
       primaryButtonDetails: {
         key: 'KEY',
-        icon: PrimeIcons.BOOK,
+        icon: OpenngIcons.BOOK,
       },
       secondaryButtonIncluded: true,
       secondaryButtonDetails: {
         key: 'Times',
-        icon: PrimeIcons.TIMES,
+        icon: OpenngIcons.TIMES,
       },
       customButtons: [
         {

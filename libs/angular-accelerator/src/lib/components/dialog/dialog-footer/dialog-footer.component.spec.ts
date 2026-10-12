@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { PrimeIcons } from 'primeng/api'
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { OpenngIcons } from '@openng/optimus-ui/api'
+import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
@@ -89,12 +89,12 @@ describe('DialogFooterComponent', () => {
       config: {
         primaryButtonDetails: {
           key: 'CustomMain',
-          icon: PrimeIcons.CHECK,
+          icon: OpenngIcons.CHECK,
         },
         secondaryButtonIncluded: true,
         secondaryButtonDetails: {
           key: 'CustomSide',
-          icon: PrimeIcons.TIMES,
+          icon: OpenngIcons.TIMES,
         },
       },
       componentData: {},
@@ -104,8 +104,8 @@ describe('DialogFooterComponent', () => {
     expect(await dialogFooterHarness.getPrimaryButtonLabel()).toBe('CustomMain')
     expect(await dialogFooterHarness.getSecondaryButtonLabel()).toBe('CustomSide')
     // expect correct icon
-    expect(await dialogFooterHarness.getPrimaryButtonIcon()).toBe(PrimeIcons.CHECK)
-    expect(await dialogFooterHarness.getSecondaryButtonIcon()).toBe(PrimeIcons.TIMES)
+    expect(await dialogFooterHarness.getPrimaryButtonIcon()).toBe(OpenngIcons.CHECK)
+    expect(await dialogFooterHarness.getSecondaryButtonIcon()).toBe(OpenngIcons.TIMES)
   })
 
   it('should translate button keys', async () => {
@@ -382,9 +382,9 @@ describe('DialogFooterComponent', () => {
       expect(await dialogFooterHarness.getCustomButtonSeverity('custom2')).toBeUndefined()
     })
 
-    it('should render all PrimeNG severity values correctly on primary button', async () => {
+    it('should render all Optimus severity values correctly on primary button', async () => {
       // Test a representative set of severities to verify the feature works
-      // PrimeNG may not remove old severity classes when changing, so we test individually
+      // Optimus may not remove old severity classes when changing, so we test individually
       const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',
@@ -397,7 +397,7 @@ describe('DialogFooterComponent', () => {
       ]
 
       for (const severity of testSeverities) {
-        // Create a fresh component instance for each severity to avoid PrimeNG class accumulation
+        // Create a fresh component instance for each severity to avoid Optimus class accumulation
         fixture.destroy()
         fixture = TestBed.createComponent(DialogFooterComponent)
         component = fixture.componentInstance
@@ -421,7 +421,7 @@ describe('DialogFooterComponent', () => {
       }
     })
 
-    it('should render all PrimeNG severity values correctly on secondary button', async () => {
+    it('should render all Optimus severity values correctly on secondary button', async () => {
       const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',
@@ -460,7 +460,7 @@ describe('DialogFooterComponent', () => {
       }
     })
 
-    it('should render all PrimeNG severity values correctly on custom button', async () => {
+    it('should render all Optimus severity values correctly on custom button', async () => {
       const testSeverities: Array<'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast'> = [
         'primary',
         'secondary',

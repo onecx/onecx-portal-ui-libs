@@ -1,3 +1,38 @@
+## [9.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.13...v9.0.0-rc.14) (2026-10-07)
+
+### Features
+
+* add AiCompletionGatherer as transport between consumers and AI provider connector ([#1751](https://github.com/onecx/onecx-portal-ui-libs/issues/1751)) ([0fc949a](https://github.com/onecx/onecx-portal-ui-libs/commit/0fc949a0c136ad23ea038a7437d3cf315ab7a279))
+* add OneCXAiCompletionService ([#1789](https://github.com/onecx/onecx-portal-ui-libs/issues/1789)) ([a8de67f](https://github.com/onecx/onecx-portal-ui-libs/commit/a8de67f363b4b502d00418c2b4f61c793f988415))
+* extend shared config blacklist with React runtime subpaths and onecx subpaths ([#1615](https://github.com/onecx/onecx-portal-ui-libs/issues/1615)) ([90b96c0](https://github.com/onecx/onecx-portal-ui-libs/commit/90b96c02d9813f871bb980cda35512a3ac1c35bd))
+* implement issue - Pin [@onecx](https://github.com/onecx) peer dependency versions exactly instead of caret ranges ([#1690](https://github.com/onecx/onecx-portal-ui-libs/issues/1690)) ([a900061](https://github.com/onecx/onecx-portal-ui-libs/commit/a900061d6c756e0c779b21747ac6b7e37ad814f5)), closes [#673](https://github.com/onecx/onecx-portal-ui-libs/issues/673) [onecx/internal-tasks#673](https://github.com/onecx/internal-tasks/issues/673)
+* implement issue [#524](https://github.com/onecx/onecx-portal-ui-libs/issues/524) - Add per-button severity support to dialog buttons ([#1665](https://github.com/onecx/onecx-portal-ui-libs/issues/1665)) ([ff4f65d](https://github.com/onecx/onecx-portal-ui-libs/commit/ff4f65def6d437755f6049bafa676cfe3ac112a0))
+* implement issue [#640](https://github.com/onecx/onecx-portal-ui-libs/issues/640) - Restore dynamic-translation fallback in missing-translation handler (main) ([#1685](https://github.com/onecx/onecx-portal-ui-libs/issues/1685)) ([dd6297f](https://github.com/onecx/onecx-portal-ui-libs/commit/dd6297f9a11b562c2b2b694df3a38286c7e99f3f))
+* implement issue [#707](https://github.com/onecx/onecx-portal-ui-libs/issues/707) - Libs — Angular 21→22 migration ([#1738](https://github.com/onecx/onecx-portal-ui-libs/issues/1738)) ([ff97ccc](https://github.com/onecx/onecx-portal-ui-libs/commit/ff97ccc888c5d6fb1bd829fdd4da8f83baaabf22))
+* implement issue [#708](https://github.com/onecx/onecx-portal-ui-libs/issues/708) - Libs - PrimeNG→Optimus UI swap (Phase B) ([#1748](https://github.com/onecx/onecx-portal-ui-libs/issues/1748)) ([1770874](https://github.com/onecx/onecx-portal-ui-libs/commit/17708746ea231a791f3cbcdd1311e41d99ed6d90))
+* Sort dropdown loses options when Displayed Columns is empty ([#1668](https://github.com/onecx/onecx-portal-ui-libs/issues/1668)) ([0d62c12](https://github.com/onecx/onecx-portal-ui-libs/commit/0d62c1216bf53730d62696a764e0ba9aa6335ba2))
+
+### Bug Fixes
+
+* implement issue [#706](https://github.com/onecx/onecx-portal-ui-libs/issues/706) - Libs — Standardize CI on Node 24 ([#1737](https://github.com/onecx/onecx-portal-ui-libs/issues/1737)) ([1b745da](https://github.com/onecx/onecx-portal-ui-libs/commit/1b745da221222d24cb2c41056b37e31b98f0b82a))
+* restore execute bit on scripts ([#1800](https://github.com/onecx/onecx-portal-ui-libs/issues/1800)) ([477ff88](https://github.com/onecx/onecx-portal-ui-libs/commit/477ff88083c01269376f6a17c412cdfdeb8c9b7e))
+* Sonarqube difference error [#774](https://github.com/onecx/onecx-portal-ui-libs/issues/774) ([#1724](https://github.com/onecx/onecx-portal-ui-libs/issues/1724)) ([6c3bd63](https://github.com/onecx/onecx-portal-ui-libs/commit/6c3bd637e0ee44bacfc5bf92529c32b295ebc24d))
+* tooltip for disabled menu items ([#1733](https://github.com/onecx/onecx-portal-ui-libs/issues/1733)) ([01e04e6](https://github.com/onecx/onecx-portal-ui-libs/commit/01e04e65cab66af3783e57160db30917c166b787))
+* update empty message template in data list grid component ([#1705](https://github.com/onecx/onecx-portal-ui-libs/issues/1705)) ([ee04f8a](https://github.com/onecx/onecx-portal-ui-libs/commit/ee04f8a02c8baecaea0985cdb73c865cc6f7f0d8))
+* update js-yaml versions to 4.3.1 or 3.15.1 ([#1650](https://github.com/onecx/onecx-portal-ui-libs/issues/1650)) ([75ed5bd](https://github.com/onecx/onecx-portal-ui-libs/commit/75ed5bd7a5ece8bcf05dfefd326c4255dd967173))
+* v9 draggable dialog in ocx-column-group-selector ([#1700](https://github.com/onecx/onecx-portal-ui-libs/issues/1700)) ([f9432bf](https://github.com/onecx/onecx-portal-ui-libs/commit/f9432bfcb28afb9c81c7b4920af2deeb371a3777))
+* v9 filter column translation issues ([#1633](https://github.com/onecx/onecx-portal-ui-libs/issues/1633)) ([a1f10b4](https://github.com/onecx/onecx-portal-ui-libs/commit/a1f10b410e55851741842fa4f25b9af693290949))
+* v9 primeng autofocus issue ([#1708](https://github.com/onecx/onecx-portal-ui-libs/issues/1708)) ([13e3132](https://github.com/onecx/onecx-portal-ui-libs/commit/13e31329a5a758c1b21c50773e87a900f54e7776))
+* v9-portal-message-service change to warn ([#1644](https://github.com/onecx/onecx-portal-ui-libs/issues/1644)) ([25e3ce6](https://github.com/onecx/onecx-portal-ui-libs/commit/25e3ce6b60cd6ce58f03b8af4d2ae029f5a3cc9f))
+
+### Chores
+
+* **ci:** add feat/theme-v2 to pull request trigger branches ([#1717](https://github.com/onecx/onecx-portal-ui-libs/issues/1717)) ([645776b](https://github.com/onecx/onecx-portal-ui-libs/commit/645776bbed2fdad16b6370e7ed0c9c542ebb6314))
+
+### Refactoring
+
+* improve tooltip and aria-label for reset button in ocx-search-header ([#1754](https://github.com/onecx/onecx-portal-ui-libs/issues/1754)) ([2f617e0](https://github.com/onecx/onecx-portal-ui-libs/commit/2f617e05ea4ac7ec5a49b257af6d2ed0300b7d9c))
+
 ## [9.0.0-rc.13](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.12...v9.0.0-rc.13) (2026-07-20)
 
 ### Features

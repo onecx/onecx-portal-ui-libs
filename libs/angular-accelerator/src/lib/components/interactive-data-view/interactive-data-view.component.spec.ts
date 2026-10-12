@@ -2,7 +2,7 @@ import { SlotService } from '@onecx/angular-remote-components'
 import { TestBed } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -651,7 +651,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   })
 
   describe('template computed signals', () => {
-    it('should return childTableCell when no PrimeNG template is defined', () => {
+    it('should return childTableCell when no Optimus template is defined', () => {
       const { component } = createComponent(true)
 
       const mockTemplate = {} as TemplateRef<any>
@@ -661,7 +661,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._tableCell()).toBe(mockTemplate)
     })
 
-    it('should return PrimeNG template when defined for tableCell', () => {
+    it('should return Optimus template when defined for tableCell', () => {
       const { component } = createComponent(true)
 
       const mockPrimeTemplate = {} as TemplateRef<any>
@@ -672,11 +672,26 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'templates', [primeTemplateWrapper])
 
-      expect(component.primeNgTableCell()).toBe(mockPrimeTemplate)
+      expect(component.optimusTableCell()).toBe(mockPrimeTemplate)
       expect(component._tableCell()).toBe(mockPrimeTemplate)
     })
 
-    it('should prioritize PrimeNG template over childContent for dateTableCell', () => {
+    it('should return Optimus template when defined for columnHeader', () => {
+      const { component } = createComponent(true)
+
+      const mockPrimeTemplate = {} as TemplateRef<any>
+      const primeTemplateWrapper = {
+        getType: () => 'columnHeader',
+        template: mockPrimeTemplate,
+      } as PrimeTemplate
+
+      setInputSignal(component, 'templates', [primeTemplateWrapper])
+
+      expect(component.optimusColumnHeader()).toBe(mockPrimeTemplate)
+      expect(component._columnHeader()).toBe(mockPrimeTemplate)
+    })
+
+    it('should prioritize Optimus template over childContent for dateTableCell', () => {
       const { component } = createComponent(true)
 
       const childTemplate = {} as TemplateRef<any>
@@ -714,13 +729,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'templates', templates)
 
-      expect(component.primeNgGridItem()).toBe(gridItemTemplate)
-      expect(component.primeNgListItem()).toBe(listItemTemplate)
+      expect(component.optimusGridItem()).toBe(gridItemTemplate)
+      expect(component.optimusListItem()).toBe(listItemTemplate)
       expect(component._gridItem()).toBe(gridItemTemplate)
       expect(component._listItem()).toBe(listItemTemplate)
     })
 
-    it('should handle all table cell types with PrimeNG template prioritization', () => {
+    it('should handle all table cell types with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const relativeDateTableCellTemplate = {} as TemplateRef<any>
@@ -743,7 +758,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._numberTableCell()).toBe(numberTableCellTemplate)
     })
 
-    it('should handle list value templates with PrimeNG template prioritization', () => {
+    it('should handle list value templates with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const listValueTemplate = {} as TemplateRef<any>
@@ -772,7 +787,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._dateListValue()).toBe(dateListValueTemplate)
     })
 
-    it('should handle table filter cell templates with PrimeNG template prioritization', () => {
+    it('should handle table filter cell templates with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const tableFilterCellTemplate = {} as TemplateRef<any>
@@ -821,7 +836,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._topCenter()).toBe(topCenterTemplate)
     })
 
-    it('should fall back to child template for all template types when no PrimeNG template is found', () => {
+    it('should fall back to child template for all template types when no Optimus template is found', () => {
       const { component } = createComponent(true)
 
       const mockTemplate = {} as TemplateRef<any>
@@ -850,6 +865,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', mockTemplate)
       setInputSignal(component, 'childStringTableFilterCell', mockTemplate)
       setInputSignal(component, 'childNumberTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childColumnHeader', mockTemplate)
 
       expect(component._tableCell()).toBe(mockTemplate)
       expect(component._dateTableCell()).toBe(mockTemplate)
@@ -874,9 +890,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBe(mockTemplate)
       expect(component._stringTableFilterCell()).toBe(mockTemplate)
       expect(component._numberTableFilterCell()).toBe(mockTemplate)
+      expect(component._columnHeader()).toBe(mockTemplate)
     })
 
-    it('should return undefined for all template types when neither PrimeNG nor child template is defined', () => {
+    it('should return undefined for all template types when neither Optimus nor child template is defined', () => {
       const { component } = createComponent(true)
 
       setInputSignal(component, 'templates', [])
@@ -903,6 +920,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', undefined)
       setInputSignal(component, 'childStringTableFilterCell', undefined)
       setInputSignal(component, 'childNumberTableFilterCell', undefined)
+      setInputSignal(component, 'childColumnHeader', undefined)
 
       expect(component._tableCell()).toBeUndefined()
       expect(component._dateTableCell()).toBeUndefined()
@@ -927,6 +945,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBeUndefined()
       expect(component._stringTableFilterCell()).toBeUndefined()
       expect(component._numberTableFilterCell()).toBeUndefined()
+      expect(component._columnHeader()).toBeUndefined()
     })
   })
 

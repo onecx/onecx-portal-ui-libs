@@ -5,7 +5,17 @@
  * @jest-environment node
  */
 
-import * as fs from 'fs'
+// Make the real node:fs module spy-able. The default CJS-namespace that
+// `import * as fs` re-exports has read-only props, so `jest.spyOn(fs, 'existsSync')`
+// throws "Cannot redefine property". Re-spread the real module with
+// `__esModule: true` so it is treated as an ESM default whose props are writable,
+// while the real fs functions are preserved (the other tests rely on actual reads
+// of the real @angular/* package.json files).
+jest.mock('node:fs', () => {
+  const actual = jest.requireActual('node:fs')
+  return { ...actual, __esModule: true }
+})
+import * as fs from 'node:fs'
 import {
   getOneCXSharedLibraryConfig,
   onecxPackageFilter,
@@ -21,7 +31,7 @@ describe('get-onecx-shared-library-config', () => {
     it.each([
       ['@nx/angular'],
       ['@module-federation/enhanced'],
-      ['primeng/editor'],
+      ['@openng/optimus-ui/editor'],
       ['@onecx/angular-accelerator/testing'],
       ['@onecx/build-utils'],
       ['@onecx/build-utils/test-lib'],
@@ -88,7 +98,7 @@ describe('get-onecx-shared-library-config', () => {
       ['@angular/core'],
       ['@onecx/accelerator'],
       ['rxjs'],
-      ['primeng'],
+      ['@openng/optimus-ui'],
       ['@ngx-translate/core'],
       ['@ngrx/store'],
     ])('should set singleton/strictVersion/eager to false and preserve requiredVersion for %s', (pkg) => {
@@ -268,7 +278,7 @@ describe('get-onecx-shared-library-config', () => {
         rxjs: '^7.8.0',
         '@ngrx/store': '^21.0.0',
         '@ngx-translate/core': '^17.0.0',
-        primeng: '^21.0.0',
+        '@openng/optimus-ui': '^1.0.2',
         '@nx/angular': '^20.0.0',
         '@module-federation/enhanced': '^2.0.0',
         'some-build-tool': '^1.0.0',
@@ -281,7 +291,7 @@ describe('get-onecx-shared-library-config', () => {
       expect(result['rxjs']).toBeDefined()
       expect(result['@ngrx/store']).toBeDefined()
       expect(result['@ngx-translate/core']).toBeDefined()
-      expect(result['primeng']).toBeDefined()
+      expect(result['@openng/optimus-ui']).toBeDefined()
       expect(result['@nx/angular']).toBeUndefined()
       expect(result['@module-federation/enhanced']).toBeUndefined()
       expect(result['some-build-tool']).toBeUndefined()

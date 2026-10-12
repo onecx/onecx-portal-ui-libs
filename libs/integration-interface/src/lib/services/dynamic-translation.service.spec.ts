@@ -10,6 +10,15 @@ import { DynamicTranslationService, TranslationContext } from './dynamic-transla
 import { DynamicTranslationsMessageType } from '../topics/dynamic-translations/v1/dynamic-translations.model';
 import { ensureProperty, FakeTopic } from '@onecx/accelerator';
 import { ShellCapability } from '../models/shell-capability.model';
+// Make the real semver module spy-able. The default CJS-namespace that
+// `import * as semver` re-exports has read-only props, so
+// `jest.spyOn(semver, 'satisfies')` throws "Cannot redefine property". Re-spread
+// the real module with `__esModule: true` so it is treated as an ESM default whose
+// props are writable, while the real semver functions are preserved for the source.
+jest.mock('semver', () => {
+  const actual = jest.requireActual('semver');
+  return { ...actual, __esModule: true };
+});
 import * as semver from 'semver';
 import { LIB_NAME } from '../../version';
 

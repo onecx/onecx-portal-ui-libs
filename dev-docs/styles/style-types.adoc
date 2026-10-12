@@ -15,7 +15,7 @@ In the document head, there are plenty of different style sheets. These style sh
 * Application scoped - sheet that should be used only by the respective application.
 * Global scoped - sheet that should be available globally on the whole page.
 * Legacy - sheet that should be used only by respective content for legacy reasons.
-* PrimeNG - sheet that defines PrimeNG CSS rules used by PrimeNG components.
+* Optimus UI - sheet that defines Optimus UI CSS rules used by Optimus UI components.
 
 [#style-sheet-list]
 == Style Sheet List
@@ -25,15 +25,15 @@ There are plenty of style sheets on each page in OneCX. In order to distinguish 
 |===
 |Purpose |Location |Attribute |Description 
 
-|PrimeNG
-|PrimeNG library
-|data-primeng-style-id
-|Contains CSS (variables or other rules) for PrimeNG components.
+|Optimus UI
+|Optimus UI library
+|data-optimus-style-id
+|Contains CSS (variables or other rules) for Optimus UI components.
 
-|PrimeNG
+|Optimus UI
 |Generated based on theme overrides
 |data-variable-override-id="scopeId"
-|Contains CSS variable overrides for PrimeNG components for a respective scope.
+|Contains CSS variable overrides for Optimus UI components for a respective scope.
 
 |Application
 |Application's component
@@ -71,9 +71,9 @@ There are plenty of style sheets on each page in OneCX. In order to distinguish 
 |Contains CSS for dynamic content that requires portal layout styles legacy CSS rules.
 |=== 
 
-[#primeng]
-=== Purpose - PrimeNG
-PrimeNG style sheets are constructed by the PrimeNG library and modified by OneCX, and in the case of theme overrides, style sheets are constructed by OneCX completely.
+[#optimus]
+=== Purpose - Optimus UI
+Optimus UI style sheets are constructed by the Optimus UI library and modified by OneCX, and in the case of theme overrides, style sheets are constructed by OneCX completely.
 
 [#global]
 === Purpose - Global

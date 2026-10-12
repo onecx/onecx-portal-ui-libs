@@ -3,7 +3,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, Data, NavigationEnd, ParamMap, 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
 import { Topic } from '@onecx/accelerator'
-import { MenuItem } from 'primeng/api'
+import { MenuItem } from '@openng/optimus-ui/api'
 import { BehaviorSubject, filter, map, Observable } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
