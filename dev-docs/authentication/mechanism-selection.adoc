@@ -77,7 +77,7 @@ sequenceDiagram
 
 === Shell side
 
-The Shell calls the libs and consumes the gate. `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in four initialisers — `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer` — so workspace config, user profile and URL change resolve only once authentication has completed. The `AUTH_LOGOUT_BUTTON_CLICKED` subscription lives on the libs side (above); the emitting component is on the Shell side but its exact file is not identified in the checkout, so verify it against Shell `main` before relying on it.
+The Shell calls the libs and consumes the gate. `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in four initialisers — `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer` — so workspace config, user profile and URL change resolve only once authentication has completed. The `AUTH_LOGOUT_BUTTON_CLICKED` subscription lives on the libs side (above); its emitter is `link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[InitializationErrorPageComponent]`, whose `onLogout()` button publishes the event on the Shell's `portal-initialization-error-page` route.
 
 == Angular / React
 
@@ -125,3 +125,4 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/events/v1/event-type.ts[`integration-interface/src/lib/topics/events/v1/event-type.ts`]
 * link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts`]
 * link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
+* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts` (Shell)]
