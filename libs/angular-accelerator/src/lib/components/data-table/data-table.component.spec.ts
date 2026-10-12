@@ -36,6 +36,7 @@ class TestRouteComponent {}
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping"></ocx-data-table>`,
 })
 class GroupingHostComponent {
@@ -47,6 +48,7 @@ class GroupingHostComponent {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping">
       <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount" let-rowObject="rowObject" let-column="column">
@@ -265,7 +267,7 @@ describe('DataTableComponent', () => {
         GroupingGroupCellHostComponent,
         InlineGroupCellHostComponent,
       ],
-      imports: [AngularAcceleratorPrimeNgModule, BrowserAnimationsModule, AngularAcceleratorModule],
+      imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
         provideUserServiceMock(),
@@ -2638,6 +2640,7 @@ describe('DataTableComponent', () => {
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-data-table
       [rows]="rows"
