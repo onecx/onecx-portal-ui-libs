@@ -72,6 +72,17 @@ export class FilterViewComponent {
     this.stateService.availableColumns.set(value)
   }
 
+  /**
+   * The columns offered to the "Add Filter" dialog. When a host (e.g. the
+   * Interactive Data View) passes only the *active* (displayed) columns here, the
+   * dialog offers only those instead of every available column. This is intentionally
+   * kept separate from `columns` / the shared `availableColumns` state: the display
+   * (chips, filter table) must keep reading the full available set, and round-tripping
+   * a derived array back into shared state would clobber it and create a
+   * change-detection feedback loop.
+   */
+  readonly dialogColumns = input<DataTableColumn[] | undefined>(undefined)
+
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
     limit(filters, 3, { reverse: true })
@@ -118,16 +129,21 @@ export class FilterViewComponent {
    * dialog's column select offers. The Add Filter button (in both the chips and the
    * button/panel view) is only enabled when at least one such column exists, so a
    * user sees an empty filter state instead of a no-op click.
+   *
+   * The candidate set is {@link dialogColumns} when a host has narrowed the offer to
+   * the active columns, otherwise the full available set - so a standalone Filter View
+   * (no host) keeps offering every available column.
    */
-  readonly filterableColumns = computed<DataTableColumn[]>(() =>
-    this.stateService.availableColumns().filter(
+  readonly filterableColumns = computed<DataTableColumn[]>(() => {
+    const candidates = this.dialogColumns() ?? this.stateService.availableColumns()
+    return candidates.filter(
       (column) =>
         column.filterable &&
         (column.filterType === undefined ||
           column.filterType === FilterType.EQUALS ||
           column.filterType === FilterType.IS_NOT_EMPTY)
     )
-  )
+  })
 
   readonly templates = input<readonly PrimeTemplate[] | null | undefined>(undefined)
   readonly templates$ = toObservable(this.templates)

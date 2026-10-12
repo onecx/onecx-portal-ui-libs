@@ -9,7 +9,8 @@
       @if (!disableFilterView()) {
       <ocx-filter-view
         [filters]="stateService.filters()"
-        [columns]="filterViewColumns()"
+        [columns]="stateService.availableColumns()"
+        [dialogColumns]="filterViewColumns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"
