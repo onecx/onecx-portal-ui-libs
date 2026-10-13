@@ -86,7 +86,7 @@ Both return a Promise that awaits `currentMfe$` (when identity is not passed) an
 
 == Known issues
 
-* *Cache expiration unit mismatch.* The Shell defines `cacheExpirationTimeMs = 3600 * 1000` (milliseconds, intended as 1 hour) but passes it to `Date.setSeconds`, which treats it as seconds. The stored `expirationDate` therefore lies 3,600,000 seconds (≈1000 hours / 41 days 16 hours) in the future instead of 1 hour. Follow-up: pass seconds (3600) to `setSeconds`, or use `setTime`/`setMilliseconds` with the millisecond value. This documentation update made no Shell code changes.
+* *Cache expiration unit mismatch.* The Shell defines `cacheExpirationTimeMs = 3600 * 1000` (milliseconds, intended as 1 hour) but passes it to `Date.setSeconds`, which treats it as seconds. The stored `expirationDate` therefore lies 3,600,000 seconds (≈1000 hours / 41 days 16 hours) in the future instead of 1 hour. Follow-up: pass seconds (3600) to `setSeconds`, or use `setTime`/`setMilliseconds` with the millisecond value.
 
 == Related Units
 

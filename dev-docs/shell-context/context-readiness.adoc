@@ -119,3 +119,4 @@ Code::
 * link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]
 * link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`provideStandaloneProviders`]
 * link:{shell}/src/app/app.module.ts[`app.module.ts`] (`workspaceConfigInitializer`, `configurationServiceInitializer`) (Shell)
+* link:{libs}/integration-interface/src/lib/topics[topics directory] (Topic definitions)

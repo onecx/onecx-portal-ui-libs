@@ -36,7 +36,7 @@ sequenceDiagram
 
 link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload`] uses a fixed resolution order:
 
-1. **Inlined**: if `globalThis.APP_CONFIG` is present, it wins and nothing else is read. A host, such as the Shell's build or a test harness, uses this to pin the whole configuration.
+1. **Inlined**: if `globalThis.APP_CONFIG` is present, it wins and nothing else is read. A host, such as the Shell's build or a test environment, uses this to pin the whole configuration.
 2. **Default**: if `skipRemoteConfigLoad` is set, the injected `defaultConfig` is used as-is. The libs log the `📢 TKA001` banner, which tells the reader to remove the key to re-enable the remote load.
 3. **Remote**: otherwise, the injected `loadRemoteConfig` fetches the value from `remoteConfigURL` (default `assets/env.json`).
 
@@ -63,7 +63,7 @@ The Shell's link:{shell}/src/assets/env.json[`src/assets/env.json`] is the sourc
 * `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]: runs `configurationService.init()` as an `APP_INITIALIZER`, so the `configuration` Topic is published before the App's own bootstrap reads it.
 * link:{shell}/src/assets/env.json[`src/assets/env.json`]: the env file with the keys below as `${...}` placeholders.
 * link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`]: the build-time environment object that Angular injects. It is the origin of the `APP_CONFIG`/injected defaults that `ConfigurationService` reads.
-* link:{shell}/nginx/locations.conf[`nginx/locations.conf`]: the nginx locations that serve the Shell bundle and the `shell-bff` API. `env.json` is a static asset with no BFF route. Placeholder substitution happens at the deploy layer, before the file reaches the browser.
+* link:{shell}/nginx/locations.conf[`nginx/locations.conf`]: the nginx location blocks for the `shell-bff` API proxy and the `.map` source-map rewrite. `env.json` is not proxied through a BFF route here. Placeholder substitution happens at the deploy layer (the docker-spa-base entrypoint), before the file reaches the browser.
 
 An App that fetches `env.json` directly for *App Config* (see link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]) hits the same static `assets/` location. Apps in the libs use the `configuration` Topic instead.
 
@@ -135,7 +135,7 @@ The rest of the enum, such as the `ONECX_PORTAL_*_DISABLED` toggles, `TKIT_TOKEN
 
 * Resolution is identical: both call `resolveConfigPayload` and publish the merged value to the same `configuration` Topic. Angular reads with `ConfigurationService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)`; React reads with `useConfiguration().getProperty(CONFIG_KEY.KEYCLOAK_REALM)`.
 * The injected default differs. Angular reads `APP_CONFIG` as an optional `InjectionToken<LibConfig>`. React takes `defaultConfig` as a prop on `ConfigurationProvider`, with a `DEFAULT_LIB_CONFIG` fallback (`remoteConfigURL: 'assets/env.json'`, `skipRemoteConfigLoad: false`).
-* `angular-integration-interface` and link:{libs}/react-integration-interface/src/lib/model/config-key.model.ts[`react-integration-interface`] each define the `CONFIG_KEY` enum, so key names match across frameworks.
+* `angular-integration-interface` and link:{libs}/react-integration-interface/src/lib/model/config-key.model.ts[`react-integration-interface`] each define a `CONFIG_KEY` enum, and the React enum is a strict subset of the Angular one: the five auth keys `KEYCLOAK_TIME_SKEW`, `KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY`, `KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED`, `KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED` and `CUSTOM_AUTH_SHARE_SCOPE` exist only in the Angular enum.
 
 == Edge cases & pitfalls
 
@@ -182,3 +182,4 @@ Code::
 * link:{shell}/src/assets/env.json[`env.json`] (Shell)
 * link:{shell}/src/environments/environment.ts[`environment.ts`] (Shell)
 * link:{shell}/nginx/locations.conf[`nginx/locations.conf`] (Shell)
+* link:https://github.com/onecx/docker-spa-base/blob/2.39.0/entrypoint.sh[`entrypoint.sh`] (docker-spa-base, placeholder substitution) (Shell)
