@@ -63,7 +63,7 @@ The Shell is the consumer that turns those signals into concrete pages. Its rout
 * link:{shell}/src/app/app.routes.ts[`app.routes.ts`] registers the dedicated routes `portal-initialization-error-page` (initialization error) and `remote-loading-error-page` (remote/App load error).
 * link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] owns the catch-all route (not-found), drives the `globalLoading` flag while a remote module loads, and reacts to a module-load failure with a toast plus a navigation to the error page.
 * link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`] subscribes to `globalError$`; while a value is present it renders the global-error component in place of the normal viewport, and shows the full-screen loading spinner while content is loading.
-* The Shell also ships its own copies of the error and not-found pages under link:{shell}/src/app/error[`src/app/error`] and link:{shell}/src/app/not-found[`src/app/not-found`], separate from the reusable ones in the libraries.
+* The Shell also ships its own copies of the error and not-found pages, link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent`] and link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent`], separate from the reusable ones in the libraries.
 
 == Angular / React
 
@@ -75,10 +75,22 @@ The `globalError` and `globalLoading` Topics, and the Shell's routing and viewpo
 * *App load failure vs. global error are different pages.* Both are "an error after bootstrap", but the App-load failure navigates to the `remote-loading-error-page` route (rendered by `ErrorPageComponent`, which shows the requested path and a reload action), while a `globalError` value swaps the viewport to `ocx-shell-error`. They look similar but are different components reached by different means. Unit 3 separates the two.
 * *A `Topic` is page-global.* Publishing to `globalError` affects every instance of that Topic on the page; there is no per-App scoping.
 
+== Debugging
+
+Pick the failure mode from the symptom and the URL, then follow the mechanism in the owning Unit.
+
+* *You land on the init-error page* (route `portal-initialization-error-page`): the workspace config or user profile load failed. The `initializationErrorHandler` writes the problem to the URL fragment and logs the raw error with `console.error(error)` (link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`]). Read the fragment, or the page's fields, to see the `message`, `errorCode` and `detail`.
+* *You land on `remote-loading-error-page` and a toast appeared*: a remote App module failed to load. The Shell logs `Failed to load remote module: ${err}` and fires the `ERROR_MESSAGES.ON_REMOTE_LOAD_ERROR` toast (link:{shell}/src/app/shell/services/routes.service.ts[`onRemoteLoadError`]). The `err` in the log is the `loadRemote` rejection.
+* *The whole viewport swaps to a full-page error showing a code and a "Try Again" button*: a `string` error code is present on the `globalError` Topic. The viewport logs `global error` and holds the code in `globalErrMsg` (link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`]). The code rendered is the Topic value.
+* *You land on the not-found page*: the URL matched no route. No error log is involved; the Shell's catch-all route simply resolves here.
+
+General Topic and `window` inspection is in Area 13 (Diagnostics).
+
 == Related Units
 
 * link:./initialization-failures.adoc[Initialization failures & init-error page]: the mechanism behind failure mode 1.
-* App load failures & global errors (Unit 3, not yet written): failure modes 2 and 3.
+* link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the mechanisms behind failure modes 2 and 3.
+* link:./global-loading.adoc[Global loading]: the busy state the page shows while a module loads.
 * Area 7, Navigation & Routing, where the not-found page is selected.
 
 == Sources
@@ -95,8 +107,3 @@ Code::
 * link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Shell)]
 * link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent` (Shell)]
 * link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page; topic map only.
-* libs `docs/` and in-code JSDoc/README: no coverage of this Area found.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above.
