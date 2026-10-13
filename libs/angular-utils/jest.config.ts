@@ -11,7 +11,8 @@ export default {
   testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts', '<rootDir>/cdk/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
+    '@openng/optimus-ui-themes':
+      '<rootDir>/../../node_modules/@openng/optimus-ui-themes/dist/index.mjs',
   },
   transform: {
     '^.+\\.(mjs|js|html)$': [

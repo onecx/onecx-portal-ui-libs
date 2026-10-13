@@ -15,7 +15,7 @@ const sharedLibraryPatterns: RegExp[] = [
   /^@angular.*$/,
   /^@onecx.*$/,
   /^rxjs.*$/,
-  /^primeng.*$/,
+  /^@openng\/optimus-ui.*$/,
   /^@ngx-translate.*$/,
   /^@ngrx.*$/,
   /^react.*$/,
@@ -24,7 +24,7 @@ const sharedLibraryPatterns: RegExp[] = [
 
 /**
  * Provides recommendations for shared library configurations for specific OneCX-related libraries.
- * If the library name matches certain patterns (e.g., Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx), it modifies the shared configuration to set singleton, strictVersion, and eager to false.
+ * If the library name matches certain patterns (e.g., Angular, OneCX, RxJS, Optimus UI, ngx-translate, ngrx), it modifies the shared configuration to set singleton, strictVersion, and eager to false.
  * For non-matching libraries, it returns false and does not modify the configuration.
  * @param {string} libraryName - The name of the library being shared.
  * @param {SharedLibraryConfig} sharedConfig - The existing shared configuration for the library, which may be modified if recommendations are applied.

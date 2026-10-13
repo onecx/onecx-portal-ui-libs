@@ -1,0 +1,30 @@
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
+import { provideOptimus } from '@openng/optimus-ui/config'
+import { provideThemeConfigService } from '../services/theme-config.service'
+import { InjectionToken } from '@angular/core'
+import { provideAppStylesInitializer } from './app-styles-initializer'
+
+export type ThemeOverrides = (() => Promise<any> | any) | Promise<any> | any
+export const THEME_OVERRIDES = new InjectionToken<ThemeOverrides>('THEME_OVERRIDES')
+
+export interface ThemeConfigProviderOptions {
+  overrides?: ThemeOverrides
+  isAdvancedTheming?: boolean
+}
+
+export function provideThemeConfig(options?: ThemeConfigProviderOptions) {
+  const dynamicProviders = []
+  if (options?.overrides) {
+    dynamicProviders.push({
+      provide: THEME_OVERRIDES,
+      useValue: options.overrides,
+    })
+  }
+  return [
+    provideAnimationsAsync(),
+    provideOptimus({}),
+    provideThemeConfigService(options?.isAdvancedTheming ?? false),
+    provideAppStylesInitializer(),
+    ...dynamicProviders,
+  ]
+}

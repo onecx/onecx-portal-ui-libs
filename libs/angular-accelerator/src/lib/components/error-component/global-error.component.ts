@@ -1,10 +1,11 @@
-import { Component, effect, inject, model, signal } from '@angular/core'
+import { Component, effect, inject, model, signal, ChangeDetectionStrategy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
   standalone: false,
   selector: 'ocx-error',
   templateUrl: './global-error.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./global-error.component.scss'],
 })
 export class GlobalErrorComponent {

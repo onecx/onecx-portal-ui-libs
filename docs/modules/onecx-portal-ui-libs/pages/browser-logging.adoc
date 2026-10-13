@@ -136,7 +136,7 @@ These namespaces exist in the current repo:
 - `@onecx/angular-utils:guards`
 - `@onecx/angular-utils:mocks`
 - `@onecx/angular-utils:style`
-- `@onecx/angular-utils:theme/primeng`
+- `@onecx/angular-utils:theme/optimus`
 - `@onecx/angular-webcomponents`
 - `@onecx/integration-interface`
 - `@onecx/ngrx-accelerator`
