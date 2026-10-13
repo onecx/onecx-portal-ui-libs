@@ -83,7 +83,7 @@ Both fall back to an `@supports (@scope(...))` wrapper when the browser does not
 
 A CSS variable that must not be shared should either be overridden on the nested scope root or given a uniquely scoped name. Setting the variable on `:scope` inside a block keeps it anchored to that scope root, but it does not stop descendants from inheriting it in the normal CSS way. Ordinary rules need no extra wrapping: the `@scope` block already confines which elements they match.
 
-PrimeNG's `--p-` variables are additionally renamed per scope by `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` in `scope.utils.ts`, so each scope gets a `--<scopeId>-` prefixed copy. That rename is still only a sanitizer: `scopeIdentifierToVariablePrefix` replaces every non-alphanumeric/non-hyphen character with `-`, so two distinct ids can normalize to the same prefix.
+PrimeNG's `--p-` variables are also renamed per scope by `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` in `scope.utils.ts`, so each scope gets a `--<scopeId>-` prefixed copy. That rename is still only a sanitizer: `scopeIdentifierToVariablePrefix` replaces every non-alphanumeric/non-hyphen character with `-`, so two distinct ids can normalize to the same prefix.
 
 == Nested Remote Components
 

@@ -58,7 +58,7 @@ sequenceDiagram
 
 === Reading the proxy (the per-framework wrappers)
 
-Both framework wrappers read the proxy with `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensureProperty]`, which creates the `onecxAuth.authServiceProxy.v1` path on `globalThis` if it is missing and sets the leaf with `??=` (so it never overwrites the Shell's real proxy). Crucially, both wrappers read the *current* `window.onecxAuth` name: not the legacy `onecxAngularAuth` alias.
+Both framework wrappers read the proxy with `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensureProperty]`, which creates the `onecxAuth.authServiceProxy.v1` path on `globalThis` if it is missing and sets the leaf with `??=` (so it never overwrites the Shell's real proxy). Both wrappers read the *current* `window.onecxAuth` name: not the legacy `onecxAngularAuth` alias.
 
 * *Angular:* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[AuthProxyService]`: an injectable whose `getHeaderValues()` and `updateTokenIfNeeded()` call the proxy. When the proxy is absent, `updateTokenIfNeeded()` rejects with the message `No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.`
 * *React:* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]`: the `AuthServiceProxy` class with the same two methods, plus the exported singleton `authServiceProxy`. The same missing-proxy message is defined as the `MISSING_PROXY_ERROR` constant, which `link:{libs}/react-auth/src/lib/axios.ts[axiosFactory]` relies on (see the next Unit).

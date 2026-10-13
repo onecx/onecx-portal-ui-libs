@@ -65,7 +65,7 @@ Because the Shell writes the raw `--<name>` variables on `<html>`, every applica
 [#the-libs-leg]
 === The libraries leg (reading the theme)
 
-The libraries do not render the page; they give applications the handle to read the theme. The shared handle is `CurrentThemeTopic`; Angular additionally wraps it in a service (see Angular / React below). React applications construct a `CurrentThemeTopic` directly.
+The libraries do not render the page; they give applications the handle to read the theme. The shared handle is `CurrentThemeTopic`; Angular also wraps it in a service (see Angular / React below). React applications construct a `CurrentThemeTopic` directly.
 
 The two Units of this Area meet here: the theme that reaches the page (this Unit) is the same `Theme` that the component-library token mapping consumes. See link:{theme_to_tokens}[Theme → PrimeNG/PrimeReact tokens].
 

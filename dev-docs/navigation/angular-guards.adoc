@@ -40,7 +40,7 @@ link:{libs}/angular-utils/guards/src/utils/activate-guards-wrapper.utils.ts[`Act
 |`NAVIGATION_REQUESTED` |Wait on the `guardCheckPromise` stored on the state (the other apps' verdicts). If it resolves `false`, return `false` and skip the own guards. If it resolves `true`, run the own guards and return their result. |`combineToGuardResult`
 |===
 
-The combine functions (link:{libs}/angular-utils/guards/src/utils/guards-utils.utils.ts[`guards-utils.utils.ts`]) differ by mode on purpose. `combineToBoolean` collapses everything to `false` / `true`. `combineToGuardResult` additionally passes through a `UrlTree` or `RedirectCommand` if any own guard returned one (first one wins): so in `NAVIGATION_REQUESTED`, an *own* guard can still redirect the requesting navigation even after the cross-app check has passed.
+The combine functions (link:{libs}/angular-utils/guards/src/utils/guards-utils.utils.ts[`guards-utils.utils.ts`]) differ by mode on purpose. `combineToBoolean` collapses everything to `false` / `true`. `combineToGuardResult` also passes through a `UrlTree` or `RedirectCommand` if any own guard returned one (first one wins): so in `NAVIGATION_REQUESTED`, an *own* guard can still redirect the requesting navigation even after the cross-app check has passed.
 
 === The router-event wiring (`WebcomponentConnector`)
 

@@ -123,7 +123,7 @@ Because those elements are marked as already wrapped, link:{shell_wrapping_utils
 
 === Angular
 
-The libraries' application CSS-variable path and PrimeNG / token path are Angular-only. An application calls link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`provideThemeConfig({ overrides })`]; `overrides` may be a plain value, a `Promise`, or a factory function (resolved with `runInInjectionContext`, so the factory runs in the correct injection context). Setting `isAdvancedTheming: true` additionally switches on the PRIMENG / token channel via `IS_ADVANCED_THEMING`. The Workspace CSS path described above is implemented by the Angular Shell in link:{shell_app_module}[`src/app/app.module.ts`].
+The libraries' application CSS-variable path and PrimeNG / token path are Angular-only. An application calls link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`provideThemeConfig({ overrides })`]; `overrides` may be a plain value, a `Promise`, or a factory function (resolved with `runInInjectionContext`, so the factory runs in the correct injection context). Setting `isAdvancedTheming: true` also switches on the PRIMENG / token channel via `IS_ADVANCED_THEMING`. The Workspace CSS path described above is implemented by the Angular Shell in link:{shell_app_module}[`src/app/app.module.ts`].
 
 === React
 

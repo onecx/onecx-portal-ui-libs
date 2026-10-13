@@ -35,7 +35,7 @@ OneCX uses several stylesheet categories on the same page:
 * *Legacy portal-layout stylesheets*: compatibility styles that still need to reach older content.
 * *Shared theme / token styles*: variables and tokens that multiple applications may read.
 
-The important distinction is not just *what* a stylesheet is, but *who owns it* and *whether it is meant to leak across scope boundaries*.
+The important distinction is *who owns it* and *whether it is meant to leak across scope boundaries*, not simply *what* a stylesheet is.
 
 == How it works at a high level
 
