@@ -72,7 +72,7 @@ The Shell is itself a consumer of this chain. Its providers in link:{shell}/src/
 
 The loader, the combined loader and the *global cache* are Angular-specific: they are built around the `TranslateLoader` contract and `window.onecxTranslations`, so the cross-App "fetch once" guarantee described above is an Angular mechanism.
 
-React uses the same *language* decision (see link:./profile-and-language.adoc[Profile load & language decision]) but its own translation pipeline on top of i18next, described in the planned `react-translations.adoc` Unit. The two pieces that bridge the decision into i18next live in `@onecx/react-utils`:
+React uses the same *language* decision (see link:./profile-and-language.adoc[Profile load & language decision]) but its own translation pipeline on top of i18next, described in link:./react-translations.adoc[React translations]. The two pieces that bridge the decision into i18next live in `@onecx/react-utils`:
 
 * link:{libs}/react-utils/src/lib/utils/translationResources.ts[`translationResources.ts`]: `getTranslationPathFromMeta(metaUrl, path)` builds an i18next base `loadPath` from `import.meta.url`, and `registerPortalPageTranslations(instance, metaUrl, path)` points an existing i18next backend at the OneCX portal page translations (`<base>{{lng}}.json`). Both bail out (or throw) when `metaUrl` is a local `file://` URL.
 * link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge`]: a zero-render component that subscribes `useUserService().lang$` and calls `i18n.changeLanguage(lang)` only when `lang$` emits while `i18n.isInitialized` is true; pre-initialization emissions are ignored, so the bridge requires a later `lang$` emission to synchronise the language if one is needed.
@@ -100,9 +100,9 @@ There is no known issue in this Unit as of the current `main` code. The coordina
 == Related Units
 
 * link:./profile-and-language.adoc[Profile load & language decision]: provides the `lang$` stream this Unit consumes.
-* Remote Component translations (planned): `remote-component-translations.adoc`; Remote Components register their own `TRANSLATION_PATH` entries.
-* Missing-translation fallback (planned): `missing-translation-fallback.adoc`; what happens to a key this Unit could not load.
-* React translations (planned): `react-translations.adoc`; the i18next pipeline that sits beside this Angular chain.
+* link:./remote-component-translations.adoc[Remote Component translations]: Remote Components register their own `TRANSLATION_PATH` entries.
+* link:./missing-translation-fallback.adoc[Missing-translation fallback]: what happens to a key this Unit could not load.
+* link:./react-translations.adoc[React translations]: the i18next pipeline that sits beside this Angular chain.
 * link:../styling/primeng-style-scoping.adoc[4. PrimeNG/PrimeReact style scoping]: the `primeng` keys handed to the PrimeNG configuration on every language change.
 
 == Sources
@@ -122,9 +122,5 @@ Code::
 * link:{libs}/angular-utils/src/lib/utils/remote-component-translation-path-factory.utils.ts[`remoteComponentTranslationPathFactory` (deprecated)]
 * link:{libs}/react-utils/src/lib/utils/translationResources.ts[`getTranslationPathFromMeta`, `registerPortalPageTranslations` (`translationResources.ts`)]
 * link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge` (`translationBridge.tsx`)]
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic` base class (`topic.ts`)]
 * link:{shell}/src/app/app.module.ts[translation providers (Shell)]
-
-Verification Sources checked::
-* Draft Outline commit 6108bff, `dev-docs/translations/index.adoc`: the loader chain, the three cache scenarios and the React pipeline described there were re-verified line-by-line against current `main` code; all matched.
-* in-code JSDoc and `@deprecated` markers in the `angular-utils` translation utilities.
-* Shell `app.module.ts` (via the Shell repository, `main` branch) for the translation provider wiring.

@@ -99,7 +99,7 @@ The Shell owns the *supply*. It is the only participant that can provide *dynami
 == Angular / React
 
 * **Angular**: the `MultiLanguageMissingTranslationHandler` above is the whole mechanism; it is registered as the `MissingTranslationHandler` in the translation providers (the Shell does so in link:{shell}/src/app/app.module.ts[`app.module.ts`; Apps inherit it from link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorMissingTranslationHandler`], a thin subclass). It reads the static leg via `TranslateService.currentLoader` and the dynamic leg via the Angular `DynamicTranslationService`.
-* **React**: React uses i18next, not ngx-translate, so it has no `MissingTranslationHandler`. The React libraries in this repository only expose the capability helpers in link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`] (`setCapabilities`, `useShellCapability`); they do not automatically consume `DynamicTranslationService` or implement this fallback walk for missing keys. An App may call the framework-agnostic service explicitly if it wants a dynamic leg, but that is outside the built-in React library wiring. The i18next pipeline around it is described in the planned `react-translations.adoc` Unit.
+* **React**: React uses i18next, not ngx-translate, so it has no `MissingTranslationHandler`. The React libraries in this repository only expose the capability helpers in link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`] (`setCapabilities`, `useShellCapability`); they do not automatically consume `DynamicTranslationService` or implement this fallback walk for missing keys. An App may call the framework-agnostic service explicitly if it wants a dynamic leg, but that is outside the built-in React library wiring. The i18next pipeline around it is described in link:./react-translations.adoc[React translations].
 
 == Edge cases & pitfalls
 
@@ -114,7 +114,7 @@ The Shell owns the *supply*. It is the only participant that can provide *dynami
 
 * The handler logs under the `MultiLanguageMissingTranslationHandler` namespace: a debug line on entry, a warning when a single locale misses both legs, and a warning when the whole walk falls through to the raw key.
 * The dynamic service logs under `DynamicTranslationService`, including the capability check, the cache categorisation (missing/pending), the `REQUESTED` message and each `RECEIVED`.
-* The `dynamicTranslations` Topic (v1) traffic is visible with the general Topic tooling in the planned `tracing-communication.adoc` Unit (Area 13: Diagnostics).
+* The `dynamicTranslations` Topic (v1) traffic is visible with the general Topic tooling in link:../diagnostics/tracing-communication.adoc[13. Diagnostics, Tracing cross-App communication].
 * `globalThis['@onecx/integration-interface'].dynamicTranslationsCache` (Angular/React) and `window.onecx-shell-capabilities` are both inspectable from the console to confirm whether the dynamic leg is even active.
 
 [#known-issues]
@@ -131,7 +131,7 @@ The Shell owns the *supply*. It is the only participant that can provide *dynami
 * link:./remote-component-translations.adoc[Remote Component translations]: the paths that feed the static tables for Remote Components.
 * link:../integration-contract/versioning-and-capabilities.adoc[1. Integration Contract & Topics, Versioning & Shell capability negotiation], how the `onecx-shell-capabilities` list is meant to be populated.
 * link:../integration-contract/message-delivery.adoc[1. Integration Contract & Topics, Topic message delivery], the `REQUESTED`/`RECEIVED` Topic traffic.
-* React translations (planned): `react-translations.adoc`; the i18next pipeline that shares the same dynamic leg.
+* link:./react-translations.adoc[React translations]: the i18next pipeline that shares the same dynamic leg.
 
 == Sources
 
