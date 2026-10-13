@@ -6,7 +6,7 @@
 :shell_app_module: https://github.com/onecx/onecx-shell-ui/blob/main/src/app/app.module.ts
 :shell_wrapping_utils: https://github.com/onecx/onecx-shell-ui/blob/main/src/app/shell/utils/styles/update-required-wrapping-styles.utils.ts
 :theme_overrides_guide: https://onecx.github.io/docs/guides/current/angular/theming.html#theme-overrides
-:overview: ./overview.adoc
+:overview: ./README.adoc
 
 Theme overrides let a OneCX application adjust the appearance of the PrimeNG / PrimeReact components it renders, on top of the Workspace theme the libraries and Shell have already applied. This Unit covers the three override paths, Workspace *raw CSS overrides*, application *CSS-variable overrides*, and *PrimeNG design-token (preset) overrides*, and the precedence rules between them and against the default theme. It is the third Unit of the *Theming & Visual Assets* Area.
 

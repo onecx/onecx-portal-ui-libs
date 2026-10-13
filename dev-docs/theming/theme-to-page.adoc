@@ -11,7 +11,7 @@
 :current_theme_topic: {libs}/integration-interface/src/lib/topics/current-theme/v1/current-theme.topic.ts
 :theme_service: {libs}/angular-integration-interface/src/lib/services/theme.service.ts
 :topic_base: {libs}/accelerator/src/lib/topic/topic.ts
-:overview: ./overview.adoc
+:overview: ./README.adoc
 :theme_to_tokens: ./theme-to-primeng-tokens.adoc
 
 == Question answered

@@ -5,7 +5,7 @@
 :idseparator: -
 :libs: ../../libs
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
-:overview: ./overview.adoc
+:overview: ./README.adoc
 :image_model: {libs}/integration-interface/src/lib/topics/image-repository/image-repository.model.ts
 :image_topic: {libs}/integration-interface/src/lib/topics/image-repository/image-repository.topic.ts
 :image_service: {libs}/integration-interface/src/lib/services/image-repository.service.ts

@@ -5,7 +5,7 @@
 :idseparator: -
 :libs: ../../libs
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
-:overview: ./overview.adoc
+:overview: ./README.adoc
 :theme_to_page: ./theme-to-page.adoc
 :scope_utils: {libs}/angular-utils/src/lib/utils/scope.utils.ts
 :app_config: {libs}/angular-utils/theme/primeng/src/utils/application-config.ts
