@@ -9,7 +9,7 @@ This is Unit 5 of the link:README.adoc[Integration Contract & Topics] Area. It b
 
 == Question answered
 
-How is a request/response built on Topics — the `Gatherer` scatter/gather and the "RPC" Topics — and when should a unit use it instead of a plain, state-holding Topic?
+How is a request/response built on Topics, the `Gatherer` scatter/gather and the "RPC" Topics, and when should a unit use it instead of a plain, state-holding Topic?
 
 == Why it exists
 
@@ -57,9 +57,9 @@ sequenceDiagram
 
 The concrete `Gatherer`s are thin subclasses in `@onecx/integration-interface` that only fix name and version:
 
-* `AiCompletionGatherer` (`'aiCompletion', 1`) — link:{libs}/integration-interface/src/lib/gatherers/ai-completion/v1/ai-completion.gatherer.ts[`ai-completion.gatherer.ts`]
-* `AiContextGatherer` (`'aiContext', 1`) — link:{libs}/integration-interface/src/lib/gatherers/ai-context/v1/ai-context.gatherer.ts[`ai-context.gatherer.ts`]
-* `'GuardGatherer'`, built once per framework by the guards machinery — link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`guards-gatherer.service.ts`], link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`guards-gatherer.ts`]
+* `AiCompletionGatherer` (`'aiCompletion', 1`): link:{libs}/integration-interface/src/lib/gatherers/ai-completion/v1/ai-completion.gatherer.ts[`ai-completion.gatherer.ts`]
+* `AiContextGatherer` (`'aiContext', 1`): link:{libs}/integration-interface/src/lib/gatherers/ai-context/v1/ai-context.gatherer.ts[`ai-context.gatherer.ts`]
+* `'GuardGatherer'`, built once per framework by the guards machinery: link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`guards-gatherer.service.ts`], link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`guards-gatherer.ts`]
 
 === The RPC Topic (one asker, one answerer)
 
@@ -70,8 +70,8 @@ An RPC Topic is a `Topic` subclass fixed with `sendGetMessage = false` (link:{li
 
 Two RPC Topics exist:
 
-* `PermissionsRpcTopic` — `('permissionsRpc', 1, false)` (link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`permissions-rpc.topic.ts`]).
-* `DynamicTranslationsTopic` — `('dynamicTranslations', 1, false)`, with a `REQUESTED`/`RECEIVED` message pair (link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`dynamic-translations.topic.ts`]).
+* `PermissionsRpcTopic`: `('permissionsRpc', 1, false)` (link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`permissions-rpc.topic.ts`]).
+* `DynamicTranslationsTopic`: `('dynamicTranslations', 1, false)`, with a `REQUESTED`/`RECEIVED` message pair (link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`dynamic-translations.topic.ts`]).
 
 [NOTE]
 ====
@@ -134,11 +134,11 @@ For the `localStorage.debug` patterns, see the Area's link:README.adoc#debugging
 
 == Related Units
 
-* link:why-message-based.adoc[Why a message-based contract] — why everything is a Topic.
-* link:message-delivery.adoc[Topic message delivery] — the message types and the `publish`/resolve handshake this Unit relies on.
-* link:transports-and-tab-scope.adoc[Transports & tab scope] — where the traffic travels and why it is tab-scoped.
-* link:topic-lifecycle.adoc[Topic lifecycle] — where `Gatherer`/Topic instances are destroyed.
-* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation] — how an App decides whether the Shell will answer an RPC.
+* link:why-message-based.adoc[Why a message-based contract]: why everything is a Topic.
+* link:message-delivery.adoc[Topic message delivery]: the message types and the `publish`/resolve handshake this Unit relies on.
+* link:transports-and-tab-scope.adoc[Transports & tab scope]: where the traffic travels and why it is tab-scoped.
+* link:topic-lifecycle.adoc[Topic lifecycle]: where `Gatherer`/Topic instances are destroyed.
+* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: how an App decides whether the Shell will answer an RPC.
 * link:framework-adapters.adoc[Framework adapters]
 * link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13)
 

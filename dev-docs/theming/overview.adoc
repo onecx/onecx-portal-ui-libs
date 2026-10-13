@@ -11,12 +11,12 @@
 :icons: ./icons.adoc
 :images: ./images.adoc
 
-This page is the overview of the **Theming & Visual Assets** Area of the Dev Docs. It explains the problem the Area is about, how the work is split between the OneCX libraries in this repository and the {shell_repo}[OneCX Shell], and lists the Units that belong to the Area in reading order. It does not explain any single mechanism in depth — that is the job of the individual Unit pages, which follow the Unit template.
+This page is the overview of the **Theming & Visual Assets** Area of the Dev Docs. It explains the problem the Area is about, how the work is split between the OneCX libraries in this repository and the {shell_repo}[OneCX Shell], and lists the Units that belong to the Area in reading order. It does not explain any single mechanism in depth: that is the job of the individual Unit pages, which follow the Unit template.
 
 [#problem]
 == Problem
 
-A *theme* in OneCX is the suite of values — colours, fonts, favicon and logo — that makes the same pages look different per Workspace. The mechanism is split across two repositories and is only fully understood by reading both halves:
+A *theme* in OneCX is the suite of values, colours, fonts, favicon and logo, that makes the same pages look different per Workspace. The mechanism is split across two repositories and is only fully understood by reading both halves:
 
 * the **libraries** in this repository define the shared data structure (`Theme`), the channel that carries it (`CurrentThemeTopic`) and, for each framework, the code that turns theme values into usable CSS variables and component-library design tokens;
 * the **{shell_repo}[Shell]** reads the active Workspace's theme and puts the values on the page (theme variables on the root element, favicon and logo), so that every application loaded on the page can react to the same theme at runtime.
@@ -87,7 +87,7 @@ The Units of this Area, in reading order. Units that already exist are linked; p
 
 [NOTE]
 ====
-The older pages that once lived in this folder — Theming, Theming with PrimeNG and Theme Overrides — have been removed. They predated this Area; their content was checked against the Units above and is now superseded by the *Theme → page*, *Theme → PrimeNG/PrimeReact tokens*, *Theme Overrides* and *Icons* / *Images* Units.
+The older pages that once lived in this folder, Theming, Theming with PrimeNG and Theme Overrides, have been removed. They predated this Area; their content was checked against the Units above and is now superseded by the *Theme → page*, *Theme → PrimeNG/PrimeReact tokens*, *Theme Overrides* and *Icons* / *Images* Units.
 ====
 
 [NOTE]
@@ -98,6 +98,6 @@ The Dev Docs top index (the "slug map", tracked separately) plans this Area unde
 [#related-areas]
 == Related Areas
 
-* **Styling & Style Isolation** — how stylesheets are scoped so the theme variables of one application do not leak to another.
-* **Integration Contract & Topics** — the Topic mechanism that `CurrentThemeTopic` builds on.
-* **Application Bootstrap / Shell Context** — where the Shell loads the Workspace configuration that carries the active theme.
+* **Styling & Style Isolation**: how stylesheets are scoped so the theme variables of one application do not leak to another.
+* **Integration Contract & Topics**: the Topic mechanism that `CurrentThemeTopic` builds on.
+* **Application Bootstrap / Shell Context**: where the Shell loads the Workspace configuration that carries the active theme.

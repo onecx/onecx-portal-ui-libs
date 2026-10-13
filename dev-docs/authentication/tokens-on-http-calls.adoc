@@ -7,17 +7,17 @@
 
 == Question answered
 
-How the token headers produced by the Shell's auth service are actually attached to an App's outgoing HTTP requests — and which requests are skipped.
+How the token headers produced by the Shell's auth service are actually attached to an App's outgoing HTTP requests: and which requests are skipped.
 
 == Why it exists
 
-An App that needs a valid token on every backend call should not have to fetch headers and set them by hand in each request. Both framework libraries therefore ship an HTTP-level hook — an Angular `HttpInterceptor`, a React axios interceptor — that transparently makes sure the token is still fresh and sets the auth headers on the request. The Shell is the only place that ever holds or refreshes the token.
+An App that needs a valid token on every backend call should not have to fetch headers and set them by hand in each request. Both framework libraries therefore ship an HTTP-level hook, an Angular `HttpInterceptor`, a React axios interceptor, that transparently makes sure the token is still fresh and sets the auth headers on the request. The Shell is the only place that ever holds or refreshes the token.
 
 == How it works
 
 The core steps are similar across both implementations, but the frameworks differ in how they handle Shell readiness:
 
-. *Skip whitelisted requests.* Static assets are excluded — they are public and must not carry (or wait for) auth headers.
+. *Skip whitelisted requests.* Static assets are excluded: they are public and must not carry (or wait for) auth headers.
 . *Refresh the token if needed.* Call the proxy's `updateTokenIfNeeded()`.
 . *Attach the headers.* Call `getHeaderValues()` and set each returned header on the outgoing request.
 
@@ -40,24 +40,24 @@ sequenceDiagram
   I->>B: request + auth headers
 ----
 
-=== Angular — `TokenInterceptor`
+=== Angular: `TokenInterceptor`
 
 The `link:{libs}/angular-auth/src/lib/token.interceptor.ts[TokenInterceptor]` implements `HttpInterceptor`. It reads the proxy through `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[AuthProxyService]` and `AppStateService`. For each request:
 
 * it skips any request whose URL contains `'assets'` (the `WHITELIST`) and forwards it unchanged;
 * otherwise it pipes `from(this.appStateService.isAuthenticated$.isInitialized)` into `from(this.authService.updateTokenIfNeeded())`, then into a `mergeMap` that calls `getHeaderValues()`, sets *each* returned header on the request via `headers.set(header, value)`, clones the request with the new headers and handles it.
 
-So in the default Keycloak deployment the two headers attached are `Authorization: Bearer <access-token>` and `apm-principal-token: <id-token>` (the values the Shell's `KeycloakAuthService.getHeaderValues()` returns — see the link:./keycloak.adoc[Keycloak integration] Unit). A custom mechanism attaches whatever its `getHeaderValues()` returns.
+So in the default Keycloak deployment the two headers attached are `Authorization: Bearer <access-token>` and `apm-principal-token: <id-token>` (the values the Shell's `KeycloakAuthService.getHeaderValues()` returns: see the link:./keycloak.adoc[Keycloak integration] Unit). A custom mechanism attaches whatever its `getHeaderValues()` returns.
 
-=== React — `axiosFactory`
+=== React: `axiosFactory`
 
 The `link:{libs}/react-auth/src/lib/axios.ts[axiosFactory]` returns an `axios` instance with a request interceptor wired to the `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[authServiceProxy]` singleton. For each request:
 
 * it skips any request whose URL contains `'/assets/'` (the `WHITELIST`) and returns the config unchanged;
-* otherwise it `await authServiceProxy.updateTokenIfNeeded()` inside a `try/catch` — a rejection whose message equals `MISSING_PROXY_ERROR` is swallowed (graceful degradation against a too-old Shell), any other error is re-thrown;
+* otherwise it `await authServiceProxy.updateTokenIfNeeded()` inside a `try/catch`: a rejection whose message equals `MISSING_PROXY_ERROR` is swallowed (graceful degradation against a too-old Shell), any other error is re-thrown;
 * it then calls `authServiceProxy.getHeaderValues()` and, when the result is truthy, sets each *truthy* header value on `config.headers`.
 
-The returned instance is an `AuthenticatedAxiosInstance` — an `AxiosInstance` plus a `tokens` property initialised to `{ sessionExpired: false }`, which Apps can use to track token state.
+The returned instance is an `AuthenticatedAxiosInstance`: an `AxiosInstance` plus a `tokens` property initialised to `{ sessionExpired: false }`, which Apps can use to track token state.
 
 [source,typescript]
 ----
@@ -70,11 +70,11 @@ await api.get('/some/protected/endpoint')
 
 === Libs side
 
-* `link:{libs}/angular-auth/src/lib/token.interceptor.ts[token.interceptor.ts]` — the Angular `HttpInterceptor` (gate → refresh → header attach; `WHITELIST = ['assets']`).
-* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]` — the Angular proxy reader the interceptor uses.
-* `link:{libs}/react-auth/src/lib/axios.ts[axios.ts]` — the React `axiosFactory` (refresh → header attach, no explicit gate; `WHITELIST = ['/assets/']`; `AuthenticatedAxiosInstance`).
-* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the React proxy reader and `MISSING_PROXY_ERROR`.
-* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[app-state.service.ts]` — the `isAuthenticated$` gate is explicitly awaited by Angular; React does not await it directly and instead performs refresh/header calls without waiting for the gate.
+* `link:{libs}/angular-auth/src/lib/token.interceptor.ts[token.interceptor.ts]`: the Angular `HttpInterceptor` (gate → refresh → header attach; `WHITELIST = ['assets']`).
+* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]`: the Angular proxy reader the interceptor uses.
+* `link:{libs}/react-auth/src/lib/axios.ts[axios.ts]`: the React `axiosFactory` (refresh → header attach, no explicit gate; `WHITELIST = ['/assets/']`; `AuthenticatedAxiosInstance`).
+* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]`: the React proxy reader and `MISSING_PROXY_ERROR`.
+* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[app-state.service.ts]`: the `isAuthenticated$` gate is explicitly awaited by Angular; React does not await it directly and instead performs refresh/header calls without waiting for the gate.
 
 === Shell side
 
@@ -88,7 +88,7 @@ The Shell authenticates (publishing `isAuthenticated$`) and mounts the `window` 
 | Gate | Awaits `isAuthenticated$.isInitialized` | Does not await the readiness gate
 | Missing proxy | Error propagates (request fails) | `MISSING_PROXY_ERROR` swallowed; other errors re-thrown
 | Header attach | Sets every header returned, including empty values | Sets only *truthy* header values
-| Extras | — | Returns an `AuthenticatedAxiosInstance` with `tokens.sessionExpired`
+| Extras |: | Returns an `AuthenticatedAxiosInstance` with `tokens.sessionExpired`
 |===
 
 == Edge cases & pitfalls
@@ -97,12 +97,12 @@ The Shell authenticates (publishing `isAuthenticated$`) and mounts the `window` 
 * *Empty headers are treated differently.* The Angular interceptor calls `headers.set` for *every* header returned, so a header with an empty string value is still set; the React factory only sets a header when its value is truthy. Under the disabled mechanism (which returns `{}`) neither attaches anything, but for a provider that returns headers with empty values the two frameworks diverge.
 * *The gate is explicit in Angular only.* An Angular request that never sends headers is usually the `isAuthenticated$` Topic not resolving; in React, consumers must gate requests themselves when they require initialized authentication.
 * *A stale Shell degrades differently per framework.* Against a Shell that never mounted the proxy, the Angular interceptor's `updateTokenIfNeeded()` rejects (request fails); the React `axiosFactory` swallows the `MISSING_PROXY_ERROR` and proceeds with no auth headers.
-* *`axiosFactory`'s `tokens` is a starting point.* `tokens.sessionExpired` begins `false`; nothing in `axiosFactory` sets it — an App that tracks session expiry must update it itself.
+* *`axiosFactory`'s `tokens` is a starting point.* `tokens.sessionExpired` begins `false`; nothing in `axiosFactory` sets it: an App that tracks session expiry must update it itself.
 
 == Debugging
 
 * Log the request headers just before they hit the network to confirm `Authorization` / `apm-principal-token` (or the custom provider's headers) were attached.
-* In Angular, a request that hangs is usually the `isAuthenticated$` gate; confirm it resolved. In React, a request sent with no auth headers against a healthy Shell can mean `getHeaderValues()` returned empty or that the Shell mounted the proxy before authentication completed — verify the Shell's auth mechanism and whether the App gated requests where required.
+* In Angular, a request that hangs is usually the `isAuthenticated$` gate; confirm it resolved. In React, a request sent with no auth headers against a healthy Shell can mean `getHeaderValues()` returned empty or that the Shell mounted the proxy before authentication completed: verify the Shell's auth mechanism and whether the App gated requests where required.
 * Enable `@onecx/angular-auth:*` / `@onecx/react-auth:*` (prefixes in the respective `logger.utils.ts`) to see `Error updating token:` when a refresh rejects. General tooling lives in Area 13 (Diagnostics).
 
 == Related Units
@@ -110,7 +110,7 @@ The Shell authenticates (publishing `isAuthenticated$`) and mounts the `window` 
 * link:./obtaining-tokens.adoc[How Apps obtain tokens]
 * link:./keycloak.adoc[Keycloak integration]
 * link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
-* link:../README.adoc#integration-contract[1. Integration Contract & Topics] — `isAuthenticated$` is a plain Topic; its delivery semantics belong to that Area.
+* link:../README.adoc#integration-contract[1. Integration Contract & Topics]: `isAuthenticated$` is a plain Topic; its delivery semantics belong to that Area.
 
 == Sources
 

@@ -17,7 +17,7 @@ The libraries load every application's `styles.css` into the same document `<hea
 
 That boundary is a selector boundary, not an inheritance reset. It decides which selectors match; it does not break normal CSS inheritance. A custom property set on an application's `:scope` root can still flow to descendants, including descendants rendered by a nested Remote Component, unless a nearer rule overrides it.
 
-This page is about the *model* — the id, the attributes, the `@scope` block, nested Remote Components, and the custom-property rules — not about when stylesheets are fetched and removed (that is a separate Unit) and not about the browser fallback (link:{u8}[Unit 8]).
+This page is about the *model*, the id, the attributes, the `@scope` block, nested Remote Components, and the custom-property rules, not about when stylesheets are fetched and removed (that is a separate Unit) and not about the browser fallback (link:{u8}[Unit 8]).
 
 == How it works
 
@@ -25,7 +25,7 @@ A scoped stylesheet has four parts that must agree: an *id*, a *from* element, a
 
 === The scope id
 
-A scope id is a string of the form `productName|appId`. It is built by `scopeIdFromProductNameAndAppId` in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]; an empty product or app id is logged (namespace `scope.utils`) but the function still returns `productName|appId`. The Shell is the one application whose styles may reach across the page, so it uses a fixed id `shell-ui` (`shellScopeId`) and opts out of per-app scoping by running with `SKIP_STYLE_SCOPING` on — `getScopeIdentifier` returns the empty string in that case.
+A scope id is a string of the form `productName|appId`. It is built by `scopeIdFromProductNameAndAppId` in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]; an empty product or app id is logged (namespace `scope.utils`) but the function still returns `productName|appId`. The Shell is the one application whose styles may reach across the page, so it uses a fixed id `shell-ui` (`shellScopeId`) and opts out of per-app scoping by running with `SKIP_STYLE_SCOPING` on: `getScopeIdentifier` returns the empty string in that case.
 
 === The from/to attributes
 
@@ -59,14 +59,14 @@ A stylesheet then binds to a scope by writing an {scope_at_rule} block whose *fr
 }
 ----
 
-Inside the block, `:scope` names the element that opened the boundary. An application's own CSS is often written against `:root` or `html`, so before the block is emitted those selectors are rewritten to `:scope`. `createApplicationScopedCss` in link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] does exactly that — it rewrites `html` and `:root` to `:scope` (via `replaceRootAndHtmlWithScope`) and wraps the result in the `@scope`/`@supports` block. Because `:scope` is re-anchored to the `data-style-id` element, the app's root-level rules apply to the top of its own content, not to the page.
+Inside the block, `:scope` names the element that opened the boundary. An application's own CSS is often written against `:root` or `html`, so before the block is emitted those selectors are rewritten to `:scope`. `createApplicationScopedCss` in link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] does exactly that: it rewrites `html` and `:root` to `:scope` (via `replaceRootAndHtmlWithScope`) and wraps the result in the `@scope`/`@supports` block. Because `:scope` is re-anchored to the `data-style-id` element, the app's root-level rules apply to the top of its own content, not to the page.
 
 [cols="1,2", options="header"]
 |===
 |Selector inside the app's CSS |Rewritten to, inside the `@scope` block
 
 |`:root`, `html`
-|`:scope` — the element carrying `data-style-id`
+|`:scope`: the element carrying `data-style-id`
 
 |any other selector
 |unchanged, but only matched between the `from` and `to` boundaries
@@ -81,9 +81,9 @@ Both fall back to an `@supports (@scope(...))` wrapper when the browser does not
 
 === Variables vs ordinary rules
 
-A CSS variable that must not be shared should either be overridden on the nested scope root or given a uniquely scoped name. Setting the variable on `:scope` inside a block keeps it anchored to that scope root, but it does not stop descendants from inheriting it in the normal CSS way. Ordinary rules need no extra wrapping — the `@scope` block already confines which elements they match.
+A CSS variable that must not be shared should either be overridden on the nested scope root or given a uniquely scoped name. Setting the variable on `:scope` inside a block keeps it anchored to that scope root, but it does not stop descendants from inheriting it in the normal CSS way. Ordinary rules need no extra wrapping: the `@scope` block already confines which elements they match.
 
-PrimeNG's `--p-` variables are additionally renamed per scope by `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` in `scope.utils.ts`, so each scope gets a `--<scopeId>-` prefixed copy. That rename is still only a sanitizer: `scopeIdentifierToVariablePrefix` replaces every non-alphanumeric/non-hyphen character with `-`, so two distinct ids can normalize to the same prefix.
+PrimeNG's `--p-` variables are also renamed per scope by `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` in `scope.utils.ts`, so each scope gets a `--<scopeId>-` prefixed copy. That rename is still only a sanitizer: `scopeIdentifierToVariablePrefix` replaces every non-alphanumeric/non-hyphen character with `-`, so two distinct ids can normalize to the same prefix.
 
 == Nested Remote Components
 
@@ -111,20 +111,20 @@ The nesting is produced entirely by the Angular Slot, link:{libs}/angular-remote
 
 [NOTE]
 ====
-The scope *model* (ids, attributes, `@scope` blocks) is shared by Angular and React. What differs is *who places the attributes* and *who produces the scoped CSS* — see below.
+The scope *model* (ids, attributes, `@scope` blocks) is shared by Angular and React. What differs is *who places the attributes* and *who produces the scoped CSS*: see below.
 ====
 
 == Libs side / Shell side
 
 === Libs side
 
-* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — the scope id and the `data-style-*` / `data-intermediate-*` attribute constants, `getScopeIdentifier`, `scopePrimengCss`, `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix`, and `isCssScopeRuleSupported()`.
-* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] — `createApplicationScopedCss` (the `@scope`/`@supports` wrapper and the `:root`/`html` → `:scope` rewrite) and `getAppStyleByScope`.
-* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`] — places the nested scope attributes and drives the RC stylesheet load/removal.
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: the scope id and the `data-style-*` / `data-intermediate-*` attribute constants, `getScopeIdentifier`, `scopePrimengCss`, `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix`, and `isCssScopeRuleSupported()`.
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `createApplicationScopedCss` (the `@scope`/`@supports` wrapper and the `:root`/`html` → `:scope` rewrite) and `getAppStyleByScope`.
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`]: places the nested scope attributes and drives the RC stylesheet load/removal.
 
 === Shell side
 
-The Shell does not open per-app scopes (it runs with `SKIP_STYLE_SCOPING`), so it does not author `@scope` blocks for application content. Its role in the model is to (a) run with the fixed `shell-ui` id and (b) install the polyfill that rewrites the blocks on browsers without native {scope_at_rule} — link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts`], covered in link:{u8}[Unit 8]. The Shell also sets the `data-style-id` / `data-style-isolation` attributes on the Microfrontend content it mounts (the MFE side of the model); the RC side is the Slot above.
+The Shell does not open per-app scopes (it runs with `SKIP_STYLE_SCOPING`), so it does not author `@scope` blocks for application content. Its role in the model is to (a) run with the fixed `shell-ui` id and (b) install the polyfill that rewrites the blocks on browsers without native {scope_at_rule}: link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts`], covered in link:{u8}[Unit 8]. The Shell also sets the `data-style-id` / `data-style-isolation` attributes on the Microfrontend content it mounts (the MFE side of the model); the RC side is the Slot above.
 
 == Angular / React
 
@@ -135,7 +135,7 @@ The model is identical in both frameworks; the difference is the producer.
 
 == Edge cases & pitfalls
 
-* *Empty scope id.* `getScopeIdentifier` returns `''` when scoping is skipped (the Shell). `replacePrimengPrefix` treats `''` as "do nothing", and `scopePrimengCss` switches to the `shell-ui` from selector — so Shell content is styled by the Shell's own scope, not a per-app one.
+* *Empty scope id.* `getScopeIdentifier` returns `''` when scoping is skipped (the Shell). `replacePrimengPrefix` treats `''` as "do nothing", and `scopePrimengCss` switches to the `shell-ui` from selector: so Shell content is styled by the Shell's own scope, not a per-app one.
 * *`data-no-portal-layout-styles` without `data-style-id`.* The legacy portal-layout sheets target `[data-style-id]:not([data-no-portal-layout-styles])`, so a scope that never gets a `data-style-id` is not addressed by them and effectively has no `@scope` boundary at all.
 * *`html` in a class name.* `replaceRootAndHtmlWithScope` is a plain string replace of `html`; a selector that literally contains the word `html` outside a selector position would be over-replaced. Application CSS should select the root element, not contain the token `html` elsewhere.
 * *A nested scope with the same id.* Two scopes with the same `data-style-id` (e.g. the same app mounted twice) both open a boundary for that id; the `to` boundary is the *nearest* `data-style-isolation`, so the inner one still closes before the outer content resumes. Distinct `data-style-isolation` placement is what keeps the nesting correct.
@@ -148,24 +148,24 @@ In the devtools:
 
 * Inspect a content element: it should carry `data-style-id="productName|appId"` and, at its end, `data-style-isolation`. A nested Remote Component's root element carries the *component's* id.
 * Inspect the `<head>`: the app's `style[data-app-styles="productName|appId"]` should contain an `@scope(...)` (native) or `@supports (@scope(...))` (fallback) block whose from selector matches the `data-style-id` value.
-* If a rule from app A visibly affects app B, the from/to boundaries do not match — check that the `data-style-id` on the target content equals the `data-app-styles` value, and that a `data-style-isolation` closes the section before B's content.
+* If a rule from app A visibly affects app B, the from/to boundaries do not match: check that the `data-style-id` on the target content equals the `data-app-styles` value, and that a `data-style-isolation` closes the section before B's content.
 * If a custom property seems to "leak", check whether it is being inherited from an ancestor scope root. In that case the selector boundary is probably correct and the fix is an explicit override on the nested scope root or a uniquely scoped property name.
 
 The libs log under `scope.utils` when a scope id cannot be built and under `fetch-app-css` when a `styles.css` fetch fails. General runtime inspection is covered by the *Diagnostics* Area.
 
 == Related Units
 
-* link:{u8}[Scope polyfill] — what the Shell does with these blocks when `@scope` is not supported.
-* link:{area}[Styling & Style Isolation — Area overview]
-* `why-style-isolation.adoc` (scope model & stylesheet kinds), `stylesheet-loading.adoc` (load/removal & usage counting), `primeng-style-scoping.adoc` (PrimeNG/PrimeReact variables) — other Units of this Area.
-* *Remote Components & Slots* (the Slot that creates a nested scope) and *Bootstrap* (how the MFE/RC content that carries the attributes is mounted) — other Areas.
+* link:{u8}[Scope polyfill]: what the Shell does with these blocks when `@scope` is not supported.
+* link:{area}[Styling & Style Isolation: Area overview]
+* `why-style-isolation.adoc` (scope model & stylesheet kinds), `stylesheet-loading.adoc` (load/removal & usage counting), `primeng-style-scoping.adoc` (PrimeNG/PrimeReact variables): other Units of this Area.
+* *Remote Components & Slots* (the Slot that creates a nested scope) and *Bootstrap* (how the MFE/RC content that carries the attributes is mounted): other Areas.
 
 == Sources
 
 Code::
-* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — scope id, `data-style-*` attributes, `getScopeIdentifier`, `scopePrimengCss`, `replacePrimengPrefix`, `isCssScopeRuleSupported`
-* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] — `createApplicationScopedCss`, `replaceRootAndHtmlWithScope`, `getAppStyleByScope`
-* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`] — `SlotComponent` (`addDataStyleId`, `addDataStyleIsolation`, `updateComponentStyles`, `ngOnDestroy`)
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: scope id, `data-style-*` attributes, `getScopeIdentifier`, `scopePrimengCss`, `replacePrimengPrefix`, `isCssScopeRuleSupported`
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `createApplicationScopedCss`, `replaceRootAndHtmlWithScope`, `getAppStyleByScope`
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`]: `SlotComponent` (`addDataStyleId`, `addDataStyleIsolation`, `updateComponentStyles`, `ngOnDestroy`)
 * link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`app` context] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`remotes` context] (React)
 * link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopeCss`] (React)
 * link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]

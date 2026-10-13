@@ -30,7 +30,7 @@ flowchart TB
     Proxy[PermissionProxyService<br/>answer RPC requests]
   end
 
-  subgraph App[App — current MFE]
+  subgraph App[App: current MFE]
     US[UserService / PermissionService]
   end
 
@@ -52,16 +52,16 @@ Two repositories share the work. The *libs* define the Topics and the clients th
 
 Read the Units in this order. The first two explain the model and the Shell side; the other two build on them. Pages that have not been written yet are listed by their planned slug so links to them can be added without changing the map.
 
-. link:permission-model.adoc[Permission model & two Topics] — the push Topic (`permissions`, `string[]`) and the request/response Topic (`permissionsRpc`, `PermissionsRpc`), and why two are needed.
-. link:shell-loading-and-caching.adoc[Shell loading & caching] — the `appId|productName` cache, the `shareReplay` behaviour, the retry policy and the deny-all fallback.
-. link:checking-in-apps.adoc[Checking in Apps] — `PermissionService`, the `HAS_PERMISSION_CHECKER` token and template-based checks.
-. link:remote-component-permissions.adoc[Remote Component permissions] — consuming the RPC Topic from the Remote Component's side.
+. link:permission-model.adoc[Permission model & two Topics]: the push Topic (`permissions`, `string[]`) and the request/response Topic (`permissionsRpc`, `PermissionsRpc`), and why two are needed.
+. link:shell-loading-and-caching.adoc[Shell loading & caching]: the `appId|productName` cache, the `shareReplay` behaviour, the retry policy and the deny-all fallback.
+. link:checking-in-apps.adoc[Checking in Apps]: `PermissionService`, the `HAS_PERMISSION_CHECKER` token and template-based checks.
+. link:remote-component-permissions.adoc[Remote Component permissions]: consuming the RPC Topic from the Remote Component's side.
 
 
 == Related Areas
 
-* link:../integration-contract/gatherers-and-rpc-topics.adoc[Integration Contract & Topics] — the messaging mechanism, request/response patterns and versioning that both permission Topics ride on (Area 1).
-* link:../authentication/obtaining-tokens.adoc[Authentication] — permissions are per user, and the user (and their tokens) come from the Authentication Area (Area 8).
-* link:../shell-context/context-readiness.adoc[Shell Context & Runtime Configuration] — the Shell loading/failure patterns the permission loader shares with the other BFF data (Area 3).
-* link:../remote-components/slot-assignment.adoc[Remote Components & Slots] — Remote Components, whose permission checks are the main user of the RPC Topic (Area 6).
-* link:../diagnostics/tracing-communication.adoc[Diagnostics] — how to observe the `permissions` / `permissionsRpc` traffic at runtime (Area 13).
+* link:../integration-contract/gatherers-and-rpc-topics.adoc[Integration Contract & Topics]: the messaging mechanism, request/response patterns and versioning that both permission Topics ride on (Area 1).
+* link:../authentication/obtaining-tokens.adoc[Authentication]: permissions are per user, and the user (and their tokens) come from the Authentication Area (Area 8).
+* link:../shell-context/context-readiness.adoc[Shell Context & Runtime Configuration]: the Shell loading/failure patterns the permission loader shares with the other BFF data (Area 3).
+* link:../remote-components/slot-assignment.adoc[Remote Components & Slots]: Remote Components, whose permission checks are the main user of the RPC Topic (Area 6).
+* link:../diagnostics/tracing-communication.adoc[Diagnostics]: how to observe the `permissions` / `permissionsRpc` traffic at runtime (Area 13).

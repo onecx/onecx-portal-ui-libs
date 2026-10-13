@@ -11,7 +11,7 @@ Who owns authentication in a OneCX page, how the Shell chooses between the Keycl
 
 == Why it exists
 
-A OneCX page hosts the Shell plus one or more Apps. Each needs to know whether the user is authenticated and to send a valid token on outgoing requests, but none of them should own the login or the token state on its own — doing so would duplicate and desynchronise authentication across the page. OneCX therefore centralises the decision in the Shell: a single `AuthService` implementation is selected at startup, initialised once, and shared with the Apps through a small, versioned proxy on the global `window` object.
+A OneCX page hosts the Shell plus one or more Apps. Each needs to know whether the user is authenticated and to send a valid token on outgoing requests, but none of them should own the login or the token state on its own: doing so would duplicate and desynchronise authentication across the page. OneCX therefore centralises the decision in the Shell: a single `AuthService` implementation is selected at startup, initialised once, and shared with the Apps through a small, versioned proxy on the global `window` object.
 
 Centralising also has to stay flexible. Not every deployment uses Keycloak, some run a home-grown identity provider, and a developer may want a page with no authentication at all. The mechanism must therefore be *selectable by configuration* rather than hard-coded, so the same Shell build can drive Keycloak, a remote custom service, or nothing.
 
@@ -24,7 +24,7 @@ Everything is driven by the `link:{libs}/angular-integration-interface/src/lib/m
 
 | `keycloak` (default)
 | `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]`
-| Keycloak login/refresh flow — see the next Unit.
+| Keycloak login/refresh flow: see the next Unit.
 | `custom`
 | A service loaded as a remote Module Federation module
 | The remote's default export is an `AuthServiceFactory`; the Shell calls it with an injector so the remote can pull in shared services (see below).
@@ -36,14 +36,14 @@ Everything is driven by the `link:{libs}/angular-integration-interface/src/lib/m
 | Throws `Configured AuthService not found`.
 |===
 
-Every implementation — Keycloak, custom or disabled — conforms to the same `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` contract: `init(config?)`, `getHeaderValues()`, `logout()` and `updateTokenIfNeeded()`. The wrapper stores the selected instance in a private field and delegates those calls to it, so the rest of the page does not need to know which mechanism is active.
+Every implementation, Keycloak, custom or disabled, conforms to the same `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` contract: `init(config?)`, `getHeaderValues()`, `logout()` and `updateTokenIfNeeded()`. The wrapper stores the selected instance in a private field and delegates those calls to it, so the rest of the page does not need to know which mechanism is active.
 
 Once the concrete service is chosen, the wrapper initialises it and reports the result: `getInitResult()` awaits `authService.init()` and, *only if that resolves truthy*, publishes `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]`. That Topic is the authenticated gate: the Shell's own initialisers (workspace config, user profile, URL change) and the Apps' HTTP interceptors all await `isAuthenticated$.isInitialized` before proceeding. A falsy `init` result therefore leaves the page unauthenticated and those initialisers unresolved.
 
 Three further pieces make the mechanism usable across the page:
 
 * *Logout.* In its constructor the wrapper subscribes to the `link:{libs}/integration-interface/src/lib/topics/events/v1/event-type.ts[`EventsTopic`]` and filters for `EventType.AUTH_LOGOUT_BUTTON_CLICKED` (the value `'authentication#logoutButtonClicked'`); on that event it calls `authService?.logout()`. The emitting component lives on the Shell side; the subscription is on the libs side.
-* *The `window` proxy.* The wrapper mounts `window.onecxAuth.authServiceProxy.v1` with `updateTokenIfNeeded()` and `getHeaderValues()` in its constructor, using `??=` so it never overwrites a value the Shell already set. It mounts the same pair under the legacy `window.onecxAngularAuth.authServiceProxy.v1` name for older library versions (the shape is declared in `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]`). This is the bridge the Apps use — see the Related Units below.
+* *The `window` proxy.* The wrapper mounts `window.onecxAuth.authServiceProxy.v1` with `updateTokenIfNeeded()` and `getHeaderValues()` in its constructor, using `??=` so it never overwrites a value the Shell already set. It mounts the same pair under the legacy `window.onecxAngularAuth.authServiceProxy.v1` name for older library versions (the shape is declared in `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]`). This is the bridge the Apps use: see the Related Units below.
 * *Custom services get injection.* For the `custom` case the wrapper loads the remote module and calls its factory with an injector callback. `retrieveInjectables()` maps `Injectables.KEYCLOAK_AUTH_SERVICE` to the `KeycloakAuthService` instance and `Injectables.CONFIG` to the resolved `Config`, letting a custom provider reuse the built-in Keycloak service or the page configuration instead of re-implementing them.
 
 [source,mermaid]
@@ -72,16 +72,16 @@ sequenceDiagram
 * `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]` owns the selection switch, the `window` proxy, the logout subscription and the `isAuthenticated$` publish.
 * `link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`provideAuthService()`]` registers the wrapper, the `KeycloakAuthService` and `DisabledAuthService`, and an app initialiser that runs `AuthServiceWrapper.init()` once.
 * `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` (interface, `Injectables`, `AuthServiceFactory`), `link:{libs}/shell-auth/src/lib/auth_services/disabled-auth.service.ts[`DisabledAuthService`]` and `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]` (the `window` typings).
-* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]` — the `link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`IsAuthenticatedTopic`]` that exposes the gate.
-* `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`CONFIG_KEY`]` — the `AUTH_SERVICE` and `AUTH_SERVICE_CUSTOM_*` keys read at selection time.
+* `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.isAuthenticated$`]`: the `link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`IsAuthenticatedTopic`]` that exposes the gate.
+* `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`CONFIG_KEY`]`: the `AUTH_SERVICE` and `AUTH_SERVICE_CUSTOM_*` keys read at selection time.
 
 === Shell side
 
-The Shell calls the libs and consumes the gate. `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in four initialisers — `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer` — so workspace config, user profile and URL change resolve only once authentication has completed. The `AUTH_LOGOUT_BUTTON_CLICKED` subscription lives on the libs side (above); its emitter is `link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[InitializationErrorPageComponent]`, whose `onLogout()` button publishes the event on the Shell's `portal-initialization-error-page` route.
+The Shell calls the libs and consumes the gate. `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup. The same file awaits `appStateService.isAuthenticated$.isInitialized` in four initialisers, `styleInitializer`, `workspaceConfigInitializer`, `userProfileInitializer` and `urlChangeListenerInitializer`, so workspace config, user profile and URL change resolve only once authentication has completed. The `AUTH_LOGOUT_BUTTON_CLICKED` subscription lives on the libs side (above); its emitter is `link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[InitializationErrorPageComponent]`, whose `onLogout()` button publishes the event on the Shell's `portal-initialization-error-page` route.
 
 == Angular / React
 
-The selection and gating are framework-agnostic and live entirely in the Shell: the mechanism is chosen once, the proxy is mounted once, and `isAuthenticated$` is published once, regardless of framework. The only framework-specific part is *how an App reads the result* — an Angular App uses `AuthProxyService`/`TokenInterceptor`, a React App uses `authServiceProxy`/`axiosFactory`, and a Web Component reads the proxy off `window` directly. Those consumers are covered by the Units linked under Related Units.
+The selection and gating are framework-agnostic and live entirely in the Shell: the mechanism is chosen once, the proxy is mounted once, and `isAuthenticated$` is published once, regardless of framework. The only framework-specific part is *how an App reads the result*: an Angular App uses `AuthProxyService`/`TokenInterceptor`, a React App uses `authServiceProxy`/`axiosFactory`, and a Web Component reads the proxy off `window` directly. Those consumers are covered by the Units linked under Related Units.
 
 == Edge cases & pitfalls
 
@@ -95,7 +95,7 @@ The selection and gating are framework-agnostic and live entirely in the Shell: 
 
 * The Keycloak implementation logs under the `debug` namespace `@onecx/shell-auth:KeycloakAuthService:<level>` (the logger prefix is `@onecx/shell-auth`, set in `link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`); enable it with `DEBUG='@onecx/shell-auth:*'`.
 * Inspect `window.onecxAuth` and the legacy `window.onecxAngularAuth` in the devtools to confirm the proxy was mounted and to call `getHeaderValues()` by hand.
-* Confirm the gate by awaiting `isAuthenticated$.isInitialized` — the Angular `TokenInterceptor` waits on the same Promise, so a request that never sends headers is usually this Topic not resolving. General tooling lives in Area 13 (Diagnostics).
+* Confirm the gate by awaiting `isAuthenticated$.isInitialized`: the Angular `TokenInterceptor` waits on the same Promise, so a request that never sends headers is usually this Topic not resolving. General tooling lives in Area 13 (Diagnostics).
 
 == Known issues
 
@@ -108,7 +108,7 @@ The selection and gating are framework-agnostic and live entirely in the Shell: 
 * link:./obtaining-tokens.adoc[How Apps obtain tokens]
 * link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
 * link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration]
-* link:../README.adoc#integration-contract[1. Integration Contract & Topics] — the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
+* link:../README.adoc#integration-contract[1. Integration Contract & Topics]: the `Events` and `IsAuthenticated` Topics are plain Topics; their delivery semantics belong to that Area.
 
 == Sources
 

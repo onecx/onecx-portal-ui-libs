@@ -18,9 +18,9 @@ toc::[]
 
 == Problem
 
-A OneCX page is a single HTML document shared by the Shell and by every App and Remote Component that will appear on it. But the Shell does not know, at build time, which applications exist, what the user is asking for, or which of them owns the current URL — all of that arrives at runtime. Before the first App can render, a great deal of setup has to happen in one page: the Module Federation runtime has to be ready so that a separate App's code can be fetched and run *inside* the Shell's context, the Workspace configuration has to be fetched, the Shell's route table has to be built, and the matched App's federated remote has to be loaded and started.
+A OneCX page is a single HTML document shared by the Shell and by every App and Remote Component that will appear on it. But the Shell does not know, at build time, which applications exist, what the user is asking for, or which of them owns the current URL: all of that arrives at runtime. Before the first App can render, a great deal of setup has to happen in one page: the Module Federation runtime has to be ready so that a separate App's code can be fetched and run *inside* the Shell's context, the Workspace configuration has to be fetched, the Shell's route table has to be built, and the matched App's federated remote has to be loaded and started.
 
-The mechanisms this Area covers span the libraries in this repository and the Shell. The libraries provide the bootstrap primitives — how an application becomes a web component, how its router is wired to the shared URL, how a federated remote is registered and loaded, and how shared libraries are configured so many framework versions can coexist. The Shell owns the page-level startup: it loads the framework loaders, fetches the Workspace, builds the route table, and starts the matched application.
+The mechanisms this Area covers span the libraries in this repository and the Shell. The libraries provide the bootstrap primitives: how an application becomes a web component, how its router is wired to the shared URL, how a federated remote is registered and loaded, and how shared libraries are configured so many framework versions can coexist. The Shell owns the page-level startup: it loads the framework loaders, fetches the Workspace, builds the route table, and starts the matched application.
 
 == Big picture
 
@@ -55,30 +55,30 @@ The seven pages written so far:
 * *Module Federation in OneCX* (Unit 2) is the mechanism that makes the timeline possible: how an App or Remote Component is exposed as a federated remote, how it is registered and loaded at runtime, and how the per-framework share scope lets several framework versions run on one page.
 * *Shared dependency config & mismatch* (Unit 3) is the build-time half of Unit 2's share-scope rule: how `getOneCXSharedLibraryConfig` decides which packages are shared and into which scope, and what happens at runtime when a scope is missing or a version does not line up.
 * *Preloaders (build time and runtime)* (Unit 4) is the loader remotes Unit 1's barrier waits on: the five framework loaders, how they populate the `default` / `angular_21` / `react_19` scopes, the `Promise.all` barrier, and the `window.onecxPreloaders` failure handling.
-* *Loading the matched remote* (Unit 5) is the focused deep-dive on the step Unit 1 marks "load the matched App's remote": the route's `loadChildren` — `registerRemotes` + `loadRemote` of the matched App into the preloaded scope, the Angular-module vs `WebcomponentLoader` mount split, and the failure path that routes to `remote-loading-error-page`. Route matching itself stays with Navigation.
+* *Loading the matched remote* (Unit 5) is the focused deep-dive on the step Unit 1 marks "load the matched App's remote": the route's `loadChildren`: `registerRemotes` + `loadRemote` of the matched App into the preloaded scope, the Angular-module vs `WebcomponentLoader` mount split, and the failure path that routes to `remote-loading-error-page`. Route matching itself stays with Navigation.
 * *App bootstrap as web component* (Unit 6) is how the loaded module becomes a running web component: the Angular platform/`NgZone` reconciliation on `window`, `DynamicAppId`, the dynamic container, the legacy NgModule (`bootstrapModule`) vs standalone (`createApplication`) split, and the React element wrapper.
-* *Multiple-router problem & router wiring* (Unit 7) is why every App has its own router and how that router is wired at startup to follow the shared URL scoped to the app's `baseHref` slice — the Angular `initializeRouter` initializer, `WebcomponentConnector`, and the React `withSyncedRouter`/`RouterSync` wrapper — deferring the runtime URL fan-out to Navigation.
+* *Multiple-router problem & router wiring* (Unit 7) is why every App has its own router and how that router is wired at startup to follow the shared URL scoped to the app's `baseHref` slice, the Angular `initializeRouter` initializer, `WebcomponentConnector`, and the React `withSyncedRouter`/`RouterSync` wrapper, deferring the runtime URL fan-out to Navigation.
 
 == Unit map
 
 The Units of this Area, in reading order. All seven are written.
 
-. *index.html → first App timeline* — link:{u1}[startup-timeline.adoc] _(written)_
-. *Module Federation in OneCX* — link:{u2}[module-federation.adoc] _(written)_
-. *Shared dependency config & mismatch* — link:{u3}[shared-dependencies.adoc] _(written)_
-. *Preloaders (build time and runtime)* — link:{u4}[preloaders.adoc] _(written)_
-. *Loading the matched remote* — link:{u5}[loading-matched-remote.adoc] _(written)_
-. *App bootstrap as web component (Angular/React, legacy module Apps)* — link:{u6}[web-component-bootstrap.adoc] _(written)_
-. *Multiple-router problem & router wiring* — link:{u7}[multiple-routers.adoc] _(written)_
+. *index.html → first App timeline*: link:{u1}[startup-timeline.adoc] _(written)_
+. *Module Federation in OneCX*: link:{u2}[module-federation.adoc] _(written)_
+. *Shared dependency config & mismatch*: link:{u3}[shared-dependencies.adoc] _(written)_
+. *Preloaders (build time and runtime)*: link:{u4}[preloaders.adoc] _(written)_
+. *Loading the matched remote*: link:{u5}[loading-matched-remote.adoc] _(written)_
+. *App bootstrap as web component (Angular/React, legacy module Apps)*: link:{u6}[web-component-bootstrap.adoc] _(written)_
+. *Multiple-router problem & router wiring*: link:{u7}[multiple-routers.adoc] _(written)_
 
 == Reading order
 
-Start with Unit 1 for the startup sequence — it is the map of everything this Area covers. Then read Unit 2 to understand the Module Federation mechanism that loads the matched App. The remaining Units zoom in on parts of the same sequence: the shared-dependency config (Unit 3) that Unit 2 configures, the preloaders (Unit 4) that `main.ts` loads, loading the matched remote (Unit 5) as a focused deep-dive, bootstrapping an App as a web component (Unit 6), and wiring an App's router to the shared URL (Unit 7).
+Start with Unit 1 for the startup sequence: it is the map of everything this Area covers. Then read Unit 2 to understand the Module Federation mechanism that loads the matched App. The remaining Units zoom in on parts of the same sequence: the shared-dependency config (Unit 3) that Unit 2 configures, the preloaders (Unit 4) that `main.ts` loads, loading the matched remote (Unit 5) as a focused deep-dive, bootstrapping an App as a web component (Unit 6), and wiring an App's router to the shared URL (Unit 7).
 
 == Related Areas
 
-* *Shell Context & Runtime Configuration* — the `currentWorkspace$` / `currentMfe$` data the Shell publishes while bootstrapping, which the matched App reads once it is up.
-* *Navigation & Routing* — the URL-sync (`url-to-every-router`) and route-matching / Current App activation (`shell-routes-and-current-app`) that the matched App lands on; Unit 1 ends where those begin.
-* *Remote Components & Slots* — how a loaded Remote Component is placed into a Slot; its bootstrap is this Area's concern.
-* *Styling & Style Isolation* — the stylesheet loading triggered as part of the app initializers (`styleInitializer`).
-* *Errors, Loading & User Feedback* — the initialization-error and remote-loading-error pages the Shell routes to when a bootstrap step fails.
+* *Shell Context & Runtime Configuration*: the `currentWorkspace$` / `currentMfe$` data the Shell publishes while bootstrapping, which the matched App reads once it is up.
+* *Navigation & Routing*: the URL-sync (`url-to-every-router`) and route-matching / Current App activation (`shell-routes-and-current-app`) that the matched App lands on; Unit 1 ends where those begin.
+* *Remote Components & Slots*: how a loaded Remote Component is placed into a Slot; its bootstrap is this Area's concern.
+* *Styling & Style Isolation*: the stylesheet loading triggered as part of the app initializers (`styleInitializer`).
+* *Errors, Loading & User Feedback*: the initialization-error and remote-loading-error pages the Shell routes to when a bootstrap step fails.

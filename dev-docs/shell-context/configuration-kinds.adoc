@@ -7,7 +7,7 @@
 
 == Question answered
 
-What are the three kinds of settings that cross the App boundary in OneCX — *Configuration*, *App Config* and *Parameter* — who owns each one, and where does each value come from?
+What are the three kinds of settings that cross the App boundary in OneCX, *Configuration*, *App Config* and *Parameter*, who owns each one, and where does each value come from?
 
 == Why it exists
 
@@ -17,9 +17,9 @@ OneCX has three names for "a setting an App reads at runtime", and they are easy
 
 Each kind has its own owner and source:
 
-* *Configuration* — owned and produced by the **Shell**. The Shell resolves its runtime config from an inlined `APP_CONFIG` (when present), injected defaults (when `skipRemoteConfigLoad` is set), or a remote `env.json` fetched via `remoteConfigURL`. It publishes the merged result to the `configuration` Topic, and Apps only read it. Keys are a fixed, typed set (`TKIT_*`, `KEYCLOAK_*`, `ONECX_PORTAL_*`, `IS_SHELL`, ...).
-* *App Config* — owned by the **App** (and its build). The App fetches its *own* `assets/env.json` from a base URL and holds it in a local `BehaviorSubject`. It is *not* a Topic, so it is not shared with other Apps or the Shell.
-* *Parameter* — owned by the **Shell's back-end** (Parameter BFF) and published by the Shell. The Shell's `ParametersService` builds a request from the current Workspace and Remote Components, fetches missing values from the Parameter BFF, caches them, and publishes them on the `parameters` Topic. Unlike Configuration, it is a per-App list keyed by `productName` + `appId` + `key`, with typed values instead of strings. Apps read a value by `key` for their own `productName`/`appId`.
+* *Configuration*: owned and produced by the **Shell**. The Shell resolves its runtime config from an inlined `APP_CONFIG` (when present), injected defaults (when `skipRemoteConfigLoad` is set), or a remote `env.json` fetched via `remoteConfigURL`. It publishes the merged result to the `configuration` Topic, and Apps only read it. Keys are a fixed, typed set (`TKIT_*`, `KEYCLOAK_*`, `ONECX_PORTAL_*`, `IS_SHELL`, ...).
+* *App Config*: owned by the **App** (and its build). The App fetches its *own* `assets/env.json` from a base URL and holds it in a local `BehaviorSubject`. It is *not* a Topic, so it is not shared with other Apps or the Shell.
+* *Parameter*: owned by the **Shell's back-end** (Parameter BFF) and published by the Shell. The Shell's `ParametersService` builds a request from the current Workspace and Remote Components, fetches missing values from the Parameter BFF, caches them, and publishes them on the `parameters` Topic. Unlike Configuration, it is a per-App list keyed by `productName` + `appId` + `key`, with typed values instead of strings. Apps read a value by `key` for their own `productName`/`appId`.
 
 The split, by ownership:
 
@@ -51,11 +51,11 @@ Configuration and Parameter are asynchronous Topics, so reads must wait for `isI
 
 === Libs side
 
-* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`] — topic name `configuration`, version 1. The payload is a `Config`, a flat `Record<string, string>`.
-* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`] — topic name `parameters`, version 1. The payload is a `ParametersTopicPayload`: a list of `ApplicationParameters`, each `{ productName, appId, parameters }` where `parameters` is `Record<string, ParameterValue>` and `ParameterValue` is `boolean | number | string | object`.
-* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`] — the shared `resolveConfigPayload()` / `resolveConfig()` used by the Angular `ConfigurationService` and the React `ConfigurationProvider`. Order: inlined `APP_CONFIG`, then the injected default (when `skipRemoteConfigLoad`), then a remote `env.json` fetch.
-* link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`parameters.utils.ts`] — `findParameterValue(payload, key, productName, appId)`, the pure lookup both frameworks use to resolve one value.
-* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`] — the `CONFIG_KEY` enum: the *fixed* set of Configuration keys an App is expected to read (`TKIT_*`, `KEYCLOAK_*`, `ONECX_PORTAL_*_DISABLED`, `APP_BASE_HREF`, `IS_SHELL`, `AUTH_SERVICE*`, `POLYFILL_SCOPE_MODE`, ...). App Config and Parameter keys are free-form.
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]: topic name `configuration`, version 1. The payload is a `Config`, a flat `Record<string, string>`.
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]: topic name `parameters`, version 1. The payload is a `ParametersTopicPayload`: a list of `ApplicationParameters`, each `{ productName, appId, parameters }` where `parameters` is `Record<string, ParameterValue>` and `ParameterValue` is `boolean | number | string | object`.
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`]: the shared `resolveConfigPayload()` / `resolveConfig()` used by the Angular `ConfigurationService` and the React `ConfigurationProvider`. Order: inlined `APP_CONFIG`, then the injected default (when `skipRemoteConfigLoad`), then a remote `env.json` fetch.
+* link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`parameters.utils.ts`]: `findParameterValue(payload, key, productName, appId)`, the pure lookup both frameworks use to resolve one value.
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`]: the `CONFIG_KEY` enum: the *fixed* set of Configuration keys an App is expected to read (`TKIT_*`, `KEYCLOAK_*`, `ONECX_PORTAL_*_DISABLED`, `APP_BASE_HREF`, `IS_SHELL`, `AUTH_SERVICE*`, `POLYFILL_SCOPE_MODE`, ...). App Config and Parameter keys are free-form.
 * Configuration readers: link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`] (Angular) and link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider` / `useConfiguration`] (React). Both own a `ConfigurationTopic` and expose `getProperty(key)`, `getConfig()`, `setProperty(...)`.
 * App Config holder: link:{libs}/angular-integration-interface/src/lib/services/app-config-service.ts[`AppConfigService`] (Angular). Its `config$` is a plain `BehaviorSubject`, **not** a Topic, which makes it the only non-Topic settings holder in this Area. `init(baseUrl)` fetches `Location.joinWithSlash(baseUrl, 'assets/env.json')` and pushes the result into the subject.
 * Parameter readers: link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`] (Angular) and link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`ParametersProvider` / `useParameters`] (React). Both gate on the `PARAMETERS_TOPIC` Shell capability and resolve `productName`/`appId` from `currentMfe$` when not passed.
@@ -91,7 +91,7 @@ The implementations are parallel. The differences:
 
 * *Configuration source:* `ConfigurationService.init()` and the React `ConfigurationProvider.init()` log `ENV resolved from injected config` (inlined `APP_CONFIG`), `📢 TKA001: Remote config load is disabled...` (default), or nothing (remote `env.json`).
 * *Which kind you read:* a `configuration` Topic read comes from the Shell, an `AppConfigService` read from the App's own `env.json`, and a `parameters` read from the Shell's Parameter BFF (cached in `localStorage` under the Shell's key).
-* *Topic traffic:* for raw cross-App traffic, including `configuration` and `parameters`, see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+* *Topic traffic:* for raw cross-App traffic, including `configuration` and `parameters`, see Area 13 (Diagnostics): `tracing-communication.adoc`.
 
 == Known issues
 
@@ -100,11 +100,11 @@ The implementations are parallel. The differences:
 
 == Related Units
 
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate that Configuration and Parameter reads depend on.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — how the `configuration` and `parameters` Topics are published at bootstrap.
-* link:runtime-configuration.adoc[Runtime configuration] — the `env.json` placeholders and the `configuration` Topic keys in depth.
-* link:parameters.adoc[Parameters] — how Parameters are loaded and delivered in depth.
-* Area 1 (Integration Contract & Topics) — the Topic mechanism that carries Configuration and Parameter.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate that Configuration and Parameter reads depend on.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: how the `configuration` and `parameters` Topics are published at bootstrap.
+* link:runtime-configuration.adoc[Runtime configuration]: the `env.json` placeholders and the `configuration` Topic keys in depth.
+* link:parameters.adoc[Parameters]: how Parameters are loaded and delivered in depth.
+* Area 1 (Integration Contract & Topics): the Topic mechanism that carries Configuration and Parameter.
 
 == Sources
 

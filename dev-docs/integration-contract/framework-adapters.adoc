@@ -52,9 +52,9 @@ sequenceDiagram
 
 Each framework package builds on the same `@onecx/integration-interface` `Topic` classes:
 
-* `@onecx/angular-integration-interface` — `@Injectable` services (link:{libs}/angular-integration-interface/src/index.ts[`index.ts`]).
-* `@onecx/react-integration-interface` — React contexts and the `useTopic` hook (link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]).
-* `@onecx/ngrx-integration-interface` — ngrx store connectors (link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[`store-connectors/index.ts`]).
+* `@onecx/angular-integration-interface`: `@Injectable` services (link:{libs}/angular-integration-interface/src/index.ts[`index.ts`]).
+* `@onecx/react-integration-interface`: React contexts and the `useTopic` hook (link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]).
+* `@onecx/ngrx-integration-interface`: ngrx store connectors (link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[`store-connectors/index.ts`]).
 
 Four *framework-agnostic* adapters live in `@onecx/integration-interface` so both frameworks share them: `IconService`, `NotificationService`, `ImageRepositoryService` and `DynamicTranslationService` (link:{libs}/integration-interface/src/lib/services/icon.service.ts[`icon.service.ts`]). The framework layers stay thin; the Angular `IconService`, for example, imports the shared one (link:{libs}/angular-integration-interface/src/lib/services/icon.service.ts[`icon.service.ts`]).
 
@@ -117,12 +117,12 @@ In ngrx apps, store connectors subscribe the (shared) `Topic` and dispatch a sto
 
 == Related Units
 
-* link:why-message-based.adoc[Why a message-based contract] — why the contract is a `Topic`.
-* link:message-delivery.adoc[Topic message delivery] — the `asObservable`/`isInitialized` the adapters expose.
-* link:topic-lifecycle.adoc[Topic lifecycle] — where and what `destroy` releases.
-* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] — the request/response wrappers the adapters also expose.
-* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation] — capability checks the adapters branch on.
-* link:topic-catalogue.adoc[Topic & Gatherer catalogue] — the full list of the wrapped Topics.
+* link:why-message-based.adoc[Why a message-based contract]: why the contract is a `Topic`.
+* link:message-delivery.adoc[Topic message delivery]: the `asObservable`/`isInitialized` the adapters expose.
+* link:topic-lifecycle.adoc[Topic lifecycle]: where and what `destroy` releases.
+* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: the request/response wrappers the adapters also expose.
+* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: capability checks the adapters branch on.
+* link:topic-catalogue.adoc[Topic & Gatherer catalogue]: the full list of the wrapped Topics.
 * link:../state-management/shell-context-to-store.adoc[Shell context → App ngrx store] (Area 12).
 * link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13).
 

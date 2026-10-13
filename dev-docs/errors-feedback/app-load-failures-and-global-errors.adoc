@@ -6,11 +6,11 @@
 
 == Question answered
 
-After the page is running, there are two different failures that look alike — a remote App module that failed to load, and a value published to the `globalError` Topic. What detects each one, and what does the page show for each?
+After the page is running, there are two different failures that look alike: a remote App module that failed to load, and a value published to the `globalError` Topic. What detects each one, and what does the page show for each?
 
 == Why it exists
 
-Bootstrap is over by the time either of these can happen: the workspace is configured and the Shell's viewport is on screen. Two failure classes remain. One is *local* to the Shell's router — a Micro-Front-End module it asked for could not be downloaded or instantiated. The other is *page-global* — anything on the page (an App, the Shell, a Remote Component) can publish an error to the `globalError` Topic and ask the whole page to show it. They are reached by different means and must not be conflated, so this Unit treats them as two distinct mechanisms with two distinct destinations.
+Bootstrap is over by the time either of these can happen: the workspace is configured and the Shell's viewport is on screen. Two failure classes remain. One is *local* to the Shell's router, a Micro-Front-End module it asked for could not be downloaded or instantiated. The other is *page-global*, anything on the page (an App, the Shell, a Remote Component) can publish an error to the `globalError` Topic and ask the whole page to show it. They are reached by different means and must not be conflated, so this Unit treats them as two distinct mechanisms with two distinct destinations.
 
 == How it works
 
@@ -46,7 +46,7 @@ flowchart TD
 
 The libraries provide the *signal* and reusable building blocks; they do not decide what failure is which.
 
-* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`] — `Topic<string>`, name `globalError`, version 1. One error code for the whole page.
+* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`]: `Topic<string>`, name `globalError`, version 1. One error code for the whole page.
 * The Angular `AppStateService` re-exposes it so a component injects one service and reads `globalError$`: link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`].
 * A reusable error page for an App to render: link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent`] (selector `ocx-error`). It reads the `err` code and `return` URL from the query string and offers a reload. Note this is the *library's* component, distinct from the Shell's own (see *Edge cases*).
 
@@ -56,9 +56,9 @@ The Shell is the consumer that turns the signal into a concrete page.
 
 * link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`] owns the App-load path: `loadChildren()` drives the module load, and `onRemoteLoadError()` fires the toast and navigates to `remote-loading-error-page` on failure.
 * link:{shell}/src/app/app.routes.ts[`app.routes.ts`] registers the `remote-loading-error-page` route, lazy-loaded through `ErrorModule`.
-* link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent`] — the App-load failure page: reads the `requestedApplicationPath` route parameter, shows it, and reloads by setting `location.href` to the deployment path joined with that parameter.
-* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`] — subscribes to `globalError$` in `ngOnInit`; a non-`undefined` value sets `globalErrMsg`, and the template swaps the viewport for `ocx-shell-error` while it is set.
-* link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Shell)] — selector `ocx-shell-error`. Reads `err`/`return` from the query string (defaulting to `E1001_FAILED_START`), shows the code, and offers a *Try Again* reload.
+* link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent`]: the App-load failure page: reads the `requestedApplicationPath` route parameter, shows it, and reloads by setting `location.href` to the deployment path joined with that parameter.
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`]: subscribes to `globalError$` in `ngOnInit`; a non-`undefined` value sets `globalErrMsg`, and the template swaps the viewport for `ocx-shell-error` while it is set.
+* link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Shell)]: selector `ocx-shell-error`. Reads `err`/`return` from the query string (defaulting to `E1001_FAILED_START`), shows the code, and offers a *Try Again* reload.
 
 == Angular / React
 
@@ -72,11 +72,11 @@ The `globalError` Topic and the failure *mechanisms* are framework-agnostic: any
 
 == Related Units
 
-* link:./failure-taxonomy.adoc[Failure taxonomy map] — where these two failure modes sit among the others.
-* link:./initialization-failures.adoc[Initialization failures & init-error page] — the earlier failure mode, and the only one that carries details in the URL fragment.
-* link:./global-loading.adoc[Global loading] — the `globalLoading` flag `RoutesService` also drives during a module load.
-* Area 7 — Navigation & Routing — how the current route (and the not-found page) is selected.
-* Area 13 — Diagnostics — reading `window` state and Topic traffic to observe the `globalError` value.
+* link:./failure-taxonomy.adoc[Failure taxonomy map]: where these two failure modes sit among the others.
+* link:./initialization-failures.adoc[Initialization failures & init-error page]: the earlier failure mode, and the only one that carries details in the URL fragment.
+* link:./global-loading.adoc[Global loading]: the `globalLoading` flag `RoutesService` also drives during a module load.
+* Area 7, Navigation & Routing, how the current route (and the not-found page) is selected.
+* Area 13, Diagnostics, reading `window` state and Topic traffic to observe the `globalError` value.
 
 == Sources
 
@@ -84,7 +84,7 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`]
 * link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]
 * link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Angular, `ocx-error`)]
-* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService` — `loadChildren()` / `onRemoteLoadError()` (Shell)]
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`: `loadChildren()` / `onRemoteLoadError()` (Shell)]
 * link:{shell}/src/app/app.routes.ts[`app.routes.ts` (Shell)]
 * link:{shell}/src/app/error/components/error-page/error-page.component.ts[`ErrorPageComponent` (Shell)]
 * link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent` (Shell)]
@@ -92,6 +92,6 @@ Code::
 * link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext` (React)]
 
 Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`) — no prior errors-feedback page; only the general topics overview, which is topic delivery, not these mechanisms.
-* libs `docs/` and in-code JSDoc/README — no page covering the App-load or global-error destinations.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui` — basis for every claim above.
+* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page; only the general topics overview, which is topic delivery, not these mechanisms.
+* libs `docs/` and in-code JSDoc/README: no page covering the App-load or global-error destinations.
+* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above.

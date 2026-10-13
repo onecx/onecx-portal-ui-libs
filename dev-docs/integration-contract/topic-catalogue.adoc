@@ -38,154 +38,154 @@ Three columns need a definition:
 |1
 |Shell
 |Angular `AppStateService`; React `appStateContext`
-|Area 3 — Shell Context
+|Area 3: Shell Context
 
 |link:{libs}/integration-interface/src/lib/topics/current-theme/v1/current-theme.topic.ts[`CurrentThemeTopic`]
 |The currently active Theme.
 |1
 |Shell
 |Angular `ThemeService`; React `themeContext`
-|Area 5 — Theming
+|Area 5: Theming
 
 |link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.topic.ts[`UserProfileTopic`]
 |The signed-in user's profile.
 |1
 |Shell
 |Angular `UserService`; React `userContext`
-|Area 10 — Localization
+|Area 10: Localization
 
 |link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[`PermissionsTopic`]
 |The user's permissions, pushed to subscribers.
 |1
 |Shell
 |Angular `UserService`; React `userContext`
-|Area 9 — Permissions
+|Area 9: Permissions
 
 |link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]
 |Runtime configuration key/value pairs.
 |1
 |Shell and Apps/RC
 |Angular `ConfigurationService`; React `configurationContext`
-|Area 3 — Shell Context
+|Area 3: Shell Context
 
 |link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`]
 |The current App's page identity.
 |1
 |App/RC
 |Angular `AppStateService`; React `appStateContext`
-|Area 7 — Navigation
+|Area 7: Navigation
 
 |link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
 |The currently activated App/Remote Component (MFE).
 |1
 |Shell
 |Angular `AppStateService`; React `appStateContext`
-|Area 7 — Navigation
+|Area 7: Navigation
 
 |link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.topic.ts[`CurrentLocationTopic`]
 |The current browser location/URL.
 |1
 |Shell
 |Angular `AppStateService`; React `appStateContext`
-|Area 7 — Navigation
+|Area 7: Navigation
 
 |link:{libs}/integration-interface/src/lib/topics/is-authenticated/v1/isAuthenticated.topic.ts[`IsAuthenticatedTopic`]
 |Whether the current user is authenticated.
 |1
 |Shell
 |Angular `AppStateService`; React `appStateContext`
-|Area 8 — Authentication
+|Area 8: Authentication
 
 |link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`]
 |Whether a global loading indicator should show.
 |1
 |Shell and any App/RC
 |Angular `AppStateService`; React `appStateContext`
-|Area 11 — Errors & Feedback
+|Area 11: Errors & Feedback
 
 |link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`]
 |A global error to show the user.
 |1
 |Any App/RC
 |Angular `AppStateService`; React `appStateContext`
-|Area 11 — Errors & Feedback
+|Area 11: Errors & Feedback
 
 |link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]
 |Shell-owned named parameters Apps can read.
 |1
 |Shell
 |Angular `ParametersService`; React `parametersContext`
-|Area 3 — Shell Context
+|Area 3: Shell Context
 
 |link:{libs}/integration-interface/src/lib/topics/message/v1/message.topic.ts[`MessageTopic`]
 |User-facing toast/message to display.
 |1
 |Shell and Apps/RC
 |Angular `PortalMessageService`; React `portalMessageContext`
-|Area 11 — Errors & Feedback
+|Area 11: Errors & Feedback
 
 |link:{libs}/integration-interface/src/lib/topics/notification/v1/notification.topic.ts[`NotificationTopic`]
 |A notification event for the Shell's notification center.
 |1
 |Shell
 |shared `NotificationService`
-|Area 11 — Errors & Feedback
+|Area 11: Errors & Feedback
 
 |link:{libs}/integration-interface/src/lib/topics/icons/v1/icon.topic.ts[`IconTopic`]
 |Request/response for resolving an icon by name.
 |1
 |shared `IconService`
 |shared `IconService` (framework-agnostic)
-|Area 5 — Theming
+|Area 5: Theming
 
 |link:{libs}/integration-interface/src/lib/topics/image-repository/image-repository.topic.ts[`ImageRepositoryTopic`]
 |The Theme's image repository (logo, favicon, …).
 |1
 |Shell
 |Angular `ImageRepositoryService`; React `imageRepositoryContext`
-|Area 5 — Theming
+|Area 5: Theming
 
 |link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`]
 |The Workspace's Remote Component/Slot assignments.
 |1
 |Shell
 |Angular `RemoteComponentsService`; React `remoteComponentsContext`
-|Area 6 — Remote Components
+|Area 6: Remote Components
 
 |link:{libs}/integration-interface/src/lib/topics/resized-events/v1/resized-events.topic.ts[`ResizedEventsTopic`]
 |A Remote Component reporting its rendered size.
 |1
 |`ResizedEventsPublisher` (same file)
 |slot-size reporting code
-|Area 6 — Remote Components
+|Area 6: Remote Components
 
 |link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`PermissionsRpcTopic`]
 |RPC: ask the Shell for one `appId`/`productName`'s permissions.
 |1
 |Ask: RC `PermissionService`; answer: Shell
 |Angular `PermissionService`; React `permissionContext`
-|Area 9 — Permissions
+|Area 9: Permissions
 
 |link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`DynamicTranslationsTopic`]
 |RPC: request/receive dynamically-added translations.
 |1
 |shared `DynamicTranslationService`
 |shared `DynamicTranslationService` (framework-agnostic)
-|Area 10 — Localization
+|Area 10: Localization
 
 |link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]
 |Legacy navigation event (superseded by `CurrentLocationTopic`).
 |1
 |Shell (navigation)
 |ngrx `NavigatedEventStoreConnectorService`
-|Area 7 — Navigation
+|Area 7: Navigation
 
 |link:{libs}/angular-utils/src/lib/services/translation-cache.service.ts[`TranslationCacheTopic`]
 |Shared cache of loaded translation bundles.
 |2
 |`TranslationCacheService` (angular-utils)
 |angular `TranslationCacheService`
-|Area 10 — Localization
+|Area 10: Localization
 |===
 
 `IconTopic`, `PermissionsRpcTopic`, `DynamicTranslationsTopic`, `ResizedEventsTopic` and `EventsTopic` set `sendGetMessage = false`, so they carry requests rather than replayed shared state (link:message-delivery.adoc[Unit 2]).
@@ -196,7 +196,7 @@ Three columns need a definition:
 |===
 |Class |Purpose |Version |Where built |Consumers |Owning Area
 
-|`GuardGatherer` (not a named class) |Collects cross-App route guard results so the Shell can decide navigation. |1 |link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[Angular `GuardsGathererService`], link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[React `GuardsGatherer`] |the cross-App guards machinery (one instance per app on the page) |Area 7 — Navigation
+|`GuardGatherer` (not a named class) |Collects cross-App route guard results so the Shell can decide navigation. |1 |link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[Angular `GuardsGathererService`], link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[React `GuardsGatherer`] |the cross-App guards machinery (one instance per app on the page) |Area 7: Navigation
 |===
 
 The guards build a plain `Gatherer('GuardGatherer', 1, callback)`, not a named subclass (link:gatherers-and-rpc-topics.adoc[Unit 5]). This catalogue *deliberately excludes* the AI gatherers in `@onecx/integration-interface`: `AiCompletionGatherer` (`'aiCompletion', 1`, link:{libs}/integration-interface/src/lib/gatherers/ai-completion/v1/ai-completion.gatherer.ts[`ai-completion.gatherer.ts`]) and `AiContextGatherer` (`'aiContext', 1`, link:{libs}/integration-interface/src/lib/gatherers/ai-context/v1/ai-context.gatherer.ts[`ai-context.gatherer.ts`]).

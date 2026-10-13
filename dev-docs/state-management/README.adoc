@@ -8,7 +8,7 @@
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
 :dev-docs-index: ../README.adoc
 
-This Area explains how an App keeps an NgRx store in step with the rest of a OneCX page: how the Shell context that the Shell publishes is wired into an NgRx store, how App state that must survive a URL is serialised into the URL, and how App state is persisted and rehydrated across reloads. It covers NgRx only — the libraries in this repository expose NgRx-specific connectors and helpers; the React side has no store-equivalent here.
+This Area explains how an App keeps an NgRx store in step with the rest of a OneCX page: how the Shell context that the Shell publishes is wired into an NgRx store, how App state that must survive a URL is serialised into the URL, and how App state is persisted and rehydrated across reloads. It covers NgRx only: the libraries in this repository expose NgRx-specific connectors and helpers; the React side has no store-equivalent here.
 
 toc::[]
 
@@ -18,7 +18,7 @@ An App does not live in isolation. It runs inside a Shell together with the othe
 
 * The Shell publishes context (workspace, configuration, permissions, current MFE, current location, current theme, …) over Topics. An NgRx App wants that data in its *store*, not only as a service `Observable`.
 * A URL change can happen without the App's involvement (the Shell navigating, the browser back/forward button). An App whose state is derived from the URL needs a reliable way to read and write that slice of the URL.
-* A reload or a fresh tab discards the store. App-specific state that must survive this (a selected filter, a tab that was open) has to be persisted to `localStorage` and rehydrated — but an App may load its feature reducers lazily, so the rehydration step cannot blindly overwrite slices that are not loaded yet.
+* A reload or a fresh tab discards the store. App-specific state that must survive this (a selected filter, a tab that was open) has to be persisted to `localStorage` and rehydrated: but an App may load its feature reducers lazily, so the rehydration step cannot blindly overwrite slices that are not loaded yet.
 
 These are three different problems. The first is a *connection* between the Shell and the store; the second is a *round-trip* between the store and the URL; the third is a *round-trip* between the store and `localStorage`. The Units below cover each one.
 
@@ -52,7 +52,7 @@ flowchart LR
   LS -.-> |persist / rehydrate| LS2[(localStorage)]
 ----
 
-Reading it: the Shell publishes the context Topics and drives navigation / `current-location`; the store connectors turn both into `OneCxActions` dispatched into the `onecx` slice; the fragment-params helpers keep a URL-derived slice of state in sync with `window.location`, and App code can also update the shared URL through those helpers; the `localStorage` helpers persist and rehydrate App state across reloads. The Shell never touches the store directly — it is the publisher of the context, while URL updates can come from either the Shell or an App, and everything else is App-side wiring.
+Reading it: the Shell publishes the context Topics and drives navigation / `current-location`; the store connectors turn both into `OneCxActions` dispatched into the `onecx` slice; the fragment-params helpers keep a URL-derived slice of state in sync with `window.location`, and App code can also update the shared URL through those helpers; the `localStorage` helpers persist and rehydrate App state across reloads. The Shell never touches the store directly: it is the publisher of the context, while URL updates can come from either the Shell or an App, and everything else is App-side wiring.
 
 The Shell-side details (which Topics exist, when they are ready, how the URL is shared and activated) are not re-explained here. They belong to the other Areas: Area 3 (Shell Context & Runtime Configuration) for the context Topics, and Area 7 (Navigation & Routing) for the shared URL and `current-location`. This Area only describes what the NgRx side does with them.
 
@@ -60,9 +60,9 @@ The Shell-side details (which Topics exist, when they are ready, how the URL is 
 
 The Units of this Area, in reading order. Each Unit follows the link:{dev-docs-index}[Dev Docs index] slugs and the Unit template.
 
-. link:shell-context-to-store.adoc[Shell context → App ngrx store] — the store connectors, the `onecx` state slice (actions, reducer, selectors) and how each piece of Shell context becomes a dispatch.
-. link:url-synced-state.adoc[URL-synced state (fragment parameters)] — how state is serialised into the URL fragment, the navigation filters, and why fragment parameters rather than query parameters.
-. link:persisting-state.adoc[Persisting state across reloads with lazy feature slices] — how App state is persisted to `localStorage` and rehydrated without clobbering lazily loaded feature slices.
+. link:shell-context-to-store.adoc[Shell context → App ngrx store]: the store connectors, the `onecx` state slice (actions, reducer, selectors) and how each piece of Shell context becomes a dispatch.
+. link:url-synced-state.adoc[URL-synced state (fragment parameters)]: how state is serialised into the URL fragment, the navigation filters, and why fragment parameters rather than query parameters.
+. link:persisting-state.adoc[Persisting state across reloads with lazy feature slices]: how App state is persisted to `localStorage` and rehydrated without clobbering lazily loaded feature slices.
 
 Read Unit 1 first: it defines the `onecx` slice and the dispatch boundary that Units 2 and 3 build on (Unit 2's state is a feature slice the store connectors write into; Unit 3's rehydration merges into the same store). Units 2 and 3 are independent of each other and can be read in any order after that.
 
@@ -70,9 +70,9 @@ Read Unit 1 first: it defines the `onecx` slice and the dispatch boundary that U
 
 This Area depends on the Shell context and the URL contract and is consumed by Apps that use NgRx.
 
-* link:{dev-docs-index}[Dev Docs index] — the Area and Unit slug map.
-* Area 1 (Integration Contract & Topics) — the Topic mechanism the store connectors subscribe to.
-* Area 2 (Application Bootstrap) — when the App's store is initialised relative to the Shell's initializers.
-* Area 3 (Shell Context & Runtime Configuration) — the context Topics (workspace, configuration, permissions, current MFE, …) that the store connectors turn into store state.
-* Area 7 (Navigation & Routing) — the shared URL, `current-location` and the multiple-router problem that the fragment-params helpers operate on.
-* Area 10 (Localization) — the user profile that the `userProfileChanged` action is built to carry (see the Known issues in Unit 1).
+* link:{dev-docs-index}[Dev Docs index]: the Area and Unit slug map.
+* Area 1 (Integration Contract & Topics): the Topic mechanism the store connectors subscribe to.
+* Area 2 (Application Bootstrap): when the App's store is initialised relative to the Shell's initializers.
+* Area 3 (Shell Context & Runtime Configuration): the context Topics (workspace, configuration, permissions, current MFE, …) that the store connectors turn into store state.
+* Area 7 (Navigation & Routing): the shared URL, `current-location` and the multiple-router problem that the fragment-params helpers operate on.
+* Area 10 (Localization): the user profile that the `userProfileChanged` action is built to carry (see the Known issues in Unit 1).

@@ -74,7 +74,7 @@ It adds a fallback route when no Workspace route matches the Workspace base path
 
 *The Shell does not:*
 
-* route inside an App — below its mount path, the App's own router decides;
+* route inside an App: below its mount path, the App's own router decides;
 * call Apps' guards or resolve their sub-routes;
 * decide what the App shows: Apps follow the URL via the `current-location` Topic (see link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation] for the full flow).
 
@@ -111,11 +111,11 @@ None found in the code reviewed for this Unit.
 
 == Related Units
 
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — the Workspace and parameter distribution step.
-* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — what `current-mfe` carries.
-* link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation] — the full routing flow (Navigation Area).
-* link:../bootstrap/startup-timeline.adoc[Startup timeline] — when these initializers run relative to bootstrap.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the Workspace and parameter distribution step.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: what `current-mfe` carries.
+* link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation]: the full routing flow (Navigation Area).
+* link:../bootstrap/startup-timeline.adoc[Startup timeline]: when these initializers run relative to bootstrap.
 
 == Sources
 

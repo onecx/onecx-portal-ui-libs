@@ -22,9 +22,9 @@ The `currentMfe` context carries the current App's identity and base URL; the li
 
 The context is published on the link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`current-mfe` Topic] (raw name `currentMfe`, version 1). Its value is the link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`] model:
 
-* `appId`, `productName` — which product is current (used to key per-app lookups).
-* `remoteBaseUrl` — the current App's base URL. **The API base URL is resolved from this value.**
-* `baseHref`, `mountPath` — the (joined) base path the App is mounted at.
+* `appId`, `productName`: which product is current (used to key per-app lookups).
+* `remoteBaseUrl`: the current App's base URL. **The API base URL is resolved from this value.**
+* `baseHref`, `mountPath`: the (joined) base path the App is mounted at.
 * `shellName` (always `portal`), `version`, `displayName`, `remoteName`, `elementName`, `remote`.
 
 link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`] resolves the API base URL. It supplies the configuration surface a generated OpenAPI client expects (`basePath`, `selectHeaderContentType`, `selectHeaderAccept`, `isJsonMime`, `lookupCredential`, `encodeParam`). On construction it seeds a `BehaviorSubject` with the placeholder `./<apiPrefix>`. It then maps the *first* `currentMfe$` value to `Location.joinWithSlash(currentMfe.remoteBaseUrl, apiPrefix)`:
@@ -49,9 +49,9 @@ The `Topic` emits only after the Shell publishes a value (Unit 1), so `basePath`
 
 === Libs side
 
-* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`] / link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`] — the model and Topic in `integration-interface`.
-* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`] — the Angular accessor: a getter that lazily creates the `CurrentMfeTopic` and destroys it in `ngOnDestroy`. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider`] / `useAppState().currentMfe$` (created via `useTopic`).
-* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`] — the Angular API-base-URL resolver, exported from `@onecx/angular-utils`. The deprecated link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory`] uses the same pattern: it combines `currentMfe$` and `globalLoading$` to build the translation asset path from `remoteBaseUrl`.
+* link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/mfe-info.model.ts[`MfeInfo`] / link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]: the model and Topic in `integration-interface`.
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`]: the Angular accessor: a getter that lazily creates the `CurrentMfeTopic` and destroys it in `ngOnDestroy`. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`AppStateProvider`] / `useAppState().currentMfe$` (created via `useTopic`).
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`]: the Angular API-base-URL resolver, exported from `@onecx/angular-utils`. The deprecated link:{libs}/angular-utils/src/lib/utils/translation-path-factory.utils.ts[`translationPathFactory`] uses the same pattern: it combines `currentMfe$` and `globalLoading$` to build the translation asset path from `remoteBaseUrl`.
 
 === Shell side
 
@@ -77,7 +77,7 @@ The Shell produces the context and *republishes* it per navigation, not once at 
 
 * Log `currentMfe$` where the base URL is resolved. An empty `remoteBaseUrl` means the not-found page, or no product navigated into yet. A `basePath` still at `./<apiPrefix>` means the first `currentMfe$` has not arrived.
 * Check `currentMfe$.appId` / `productName` against the BFF route you expect.
-* For raw cross-App Topic traffic (including `currentMfe`), see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+* For raw cross-App Topic traffic (including `currentMfe`), see Area 13 (Diagnostics): `tracing-communication.adoc`.
 
 == Known issues
 
@@ -86,11 +86,11 @@ The Shell produces the context and *republishes* it per navigation, not once at 
 
 == Related Units
 
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate for `currentMfe$`.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — where the route list (and thus `remoteBaseUrl`) is loaded and published.
-* link:workspace-model-and-urls.adoc[Workspace model & URL building] — the sibling mechanism for cross-App *front-end* URLs from `current-workspace`.
-* Area 7 (Navigation & Routing) — `shell-routes-and-current-app.adoc`: how the Shell activates the Current App on navigation.
-* Area 9 (Permissions) and the `parameters` Unit — consumers of the current `appId` / `productName`.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate for `currentMfe$`.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: where the route list (and thus `remoteBaseUrl`) is loaded and published.
+* link:workspace-model-and-urls.adoc[Workspace model & URL building]: the sibling mechanism for cross-App *front-end* URLs from `current-workspace`.
+* Area 7 (Navigation & Routing): `shell-routes-and-current-app.adoc`: how the Shell activates the Current App on navigation.
+* Area 9 (Permissions) and the `parameters` Unit: consumers of the current `appId` / `productName`.
 
 == Sources
 

@@ -11,9 +11,9 @@ How do Apps and Remote Components become federated *remotes* that the Shell (and
 
 == Why it exists
 
-A OneCX page hosts the Shell plus many independently developed Apps and Remote Components. Each is built and released on its own schedule, and not all of them use the same framework or the same framework *version* — the Shell itself runs Angular while some Apps are React, and the Apps on one page may span several Angular majors. Yet they all run in the same JavaScript context, so OneCX shares the relevant packages through Module Federation instead of bundling private copies. For the covered Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx, React, and PrimeReact packages, the shared-library helper intentionally recommends `singleton: false` (plus `strictVersion: false`, `eager: false`), while the Shell separately reuses its own `NgZone` during bootstrap.
+A OneCX page hosts the Shell plus many independently developed Apps and Remote Components. Each is built and released on its own schedule, and not all of them use the same framework or the same framework *version*: the Shell itself runs Angular while some Apps are React, and the Apps on one page may span several Angular majors. Yet they all run in the same JavaScript context, so OneCX shares the relevant packages through Module Federation instead of bundling private copies. For the covered Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx, React, and PrimeReact packages, the shared-library helper intentionally recommends `singleton: false` (plus `strictVersion: false`, `eager: false`), while the Shell separately reuses its own `NgZone` during bootstrap.
 
-https://module-federation.io[Module Federation] is what makes this possible: each application *exposes* modules, and any other application *consumes* them at runtime by loading them as a federated remote and pulling code out of a shared *share scope*. This Unit covers the two sides — exposing and consuming — and the share-scope rule that lets different framework versions coexist. *When* a remote is loaded is a startup-timeline question (Unit 1); *why* and *how* a matched route loads a specific remote is Area 7, Unit 2. This Unit is about the mechanism itself.
+https://module-federation.io[Module Federation] is what makes this possible: each application *exposes* modules, and any other application *consumes* them at runtime by loading them as a federated remote and pulling code out of a shared *share scope*. This Unit covers the two sides, exposing and consuming, and the share-scope rule that lets different framework versions coexist. *When* a remote is loaded is a startup-timeline question (Unit 1); *why* and *how* a matched route loads a specific remote is Area 7, Unit 2. This Unit is about the mechanism itself.
 
 == How it works
 
@@ -46,7 +46,7 @@ The rule that makes multi-version coexistence work is the **share scope**:
 * *Selected framework majors are assigned generated share scopes.* The shared-config generator uses three scopes in practice: Angular 18–20 use `default`, Angular 21 uses `angular_21`, and React 19 uses `react_19`. The Shell's preloaders register the matching loader remotes into the same scopes, so the page resolves an App through the scope that matches that App's framework version.
 * *Framework libraries are deliberately *not* forced to be singletons.* The shared-config recommendations set `singleton: false`, `strictVersion: false`, `eager: false` for Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx, React and PrimeReact. Each App can therefore run its own framework version while non-singleton sharing still lets a page resolve the right copy per scope.
 
-The concrete entry for a remote — its *name* and *entry URL* — comes from the Workspace data (a route's `remoteEntryUrl`/`exposedModule` for Apps; a `RemoteComponent`'s `remoteEntryUrl`/`exposedModule` for Remote Components), not from any hard-coding.
+The concrete entry for a remote, its *name* and *entry URL*, comes from the Workspace data (a route's `remoteEntryUrl`/`exposedModule` for Apps; a `RemoteComponent`'s `remoteEntryUrl`/`exposedModule` for Remote Components), not from any hard-coding.
 
 == Libs side / Shell side
 
@@ -56,7 +56,7 @@ The libraries provide the *config* (build time) and the *consume helpers* (runti
 
 * *Build-time shared config.* link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig(dependencies, shouldGenerateSubDeps, options)`] turns a package `dependencies` map into a `Record<name, SharedLibraryConfig>`. For each dependency (and, when `shouldGenerateSubDeps` is set, each exported sub-package read from the dependency's `package.json`) it sets `requiredVersion` and the `shareScope` described above. It then applies link:{libs}/build-utils/src/lib/get-onecx-shared-recommendations.ts[`getOneCXSharedRecommendations`] to force the non-singleton flags for OneCX-relevant libraries, and finally lets an optional `configCallback` override any field. Packages matching the default blacklist (`@nx*`, `@module-federation*`, `@onecx/build-utils*`, plus a full-package blacklist of server/build-only sub-paths) are excluded. Apps build with this helper so that every App in the ecosystem shares the same set of scoped, non-singleton libraries.
 * *Runtime consume helpers.* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`get-load-remote-entry-options.utils.ts`] is the shared bridge to the federation runtime:
-  + `createRemoteConfig(entry, name, type, shareScope)` and `toLoadRemoteEntryOptions(r)` turn a route or a `RemoteComponent` into a federation `Remote` — `{ type, entry, name, shareScope }`. `type` is `'module'` for Angular / `WebComponentModule` and `'script'` otherwise; the remote `name` is `productName|appId` (or the MF-configured `remoteName` for `WebComponentScript`).
+  + `createRemoteConfig(entry, name, type, shareScope)` and `toLoadRemoteEntryOptions(r)` turn a route or a `RemoteComponent` into a federation `Remote`: `{ type, entry, name, shareScope }`. `type` is `'module'` for Angular / `WebComponentModule` and `'script'` otherwise; the remote `name` is `productName|appId` (or the MF-configured `remoteName` for `WebComponentScript`).
   + `getShellMfInstance()` returns the Shell's own `ModuleFederation` instance from `globalThis.onecxFederationInstance` (falling back to `getInstance` by name).
   + `registerAndLoadRemote(instance, remoteConfig, exposedModule)` does the `registerRemotes` + `loadRemote` pair in one step.
 * *Exposing a module.* The App-side bootstrap utilities are what put the exposed module onto the page as a usable custom element: `createEntrypoint` in link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`] (Angular) and link:{libs}/react-webcomponents/src/lib/bootstrap/webcomponent-bootstrap-vite.ts[`createViteAppWebComponent`] (React) both `customElements.define` the exposed component. *What* is exposed and *how* it is named is set in the App's Module Federation build config, not in these files; the files turn the loaded module into the element the Shell mounts.
@@ -65,9 +65,9 @@ The libraries provide the *config* (build time) and the *consume helpers* (runti
 
 The Shell is the primary *consumer*: it loads the framework loaders and then loads the App or Remote Component remotes.
 
-* *The Shell is itself a remote host.* link:{shell}/src/main.ts[`main.ts`] exposes its own federation instance globally (`(globalThis as any)['onecxFederationInstance'] = __FEDERATION__.__INSTANCES__[0]`) so that consumers — including the libs' `getShellMfInstance()` — can register remotes on the *Shell's* runtime. `app.module.ts` also sets the deprecated `window.onecxWebpackContainer` alias (see Known issues).
+* *The Shell is itself a remote host.* link:{shell}/src/main.ts[`main.ts`] exposes its own federation instance globally (`(globalThis as any)['onecxFederationInstance'] = __FEDERATION__.__INSTANCES__[0]`) so that consumers, including the libs' `getShellMfInstance()`, can register remotes on the *Shell's* runtime. `app.module.ts` also sets the deprecated `window.onecxWebpackContainer` alias (see Known issues).
 * *Framework loaders are loaded as remotes too.* Before the Shell module loads, `main.ts` uses `registerRemotes` + `loadRemote` (link:{shell}/src/app/shell/utils/preloader.utils.ts[`preloader.utils.ts`]) to pull in the Angular 18/19/20/21 and React 19 loaders, each from its own `mf-manifest.json` entry. Those entries are distinct remotes, but they only use the three share scopes above: `default` for Angular 18–20, `angular_21` for Angular 21, and `react_19` for React 19. Preloading is Unit 4.
-* *Apps are loaded as remotes.* When a route matches, `RoutesService.loadChildren` (link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`]) builds a `Remote` with `toLoadRemoteEntryOptions(r)`, calls `registerRemotes([remoteEntryOptions])`, and `loadRemote(remoteEntryOptions.name + '/' + exposedModule)`. If `r.technology === Technologies.Angular`, it returns the loaded module directly; otherwise — including `WebComponentModule` remotes — it returns the Shell's `WebcomponentLoaderModule`, which mounts the loaded web component.
+* *Apps are loaded as remotes.* When a route matches, `RoutesService.loadChildren` (link:{shell}/src/app/shell/services/routes.service.ts[`routes.service.ts`]) builds a `Remote` with `toLoadRemoteEntryOptions(r)`, calls `registerRemotes([remoteEntryOptions])`, and `loadRemote(remoteEntryOptions.name + '/' + exposedModule)`. If `r.technology === Technologies.Angular`, it returns the loaded module directly; otherwise, including `WebComponentModule` remotes, it returns the Shell's `WebcomponentLoaderModule`, which mounts the loaded web component.
 * *Remote Components are loaded as remotes.* `SlotService.loadComponent` (link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`slot.service.ts`]) does the same for a `RemoteComponent`: `toLoadRemoteEntryOptions(component)` + `getShellMfInstance()` + `registerAndLoadRemote(instance, options, component.exposedModule)`. The result is mounted into the Slot that hosts the component (Area 6).
 
 == Angular / React
@@ -80,7 +80,7 @@ The consume path is the same; the *type* and the *expose* differ.
 
 == Edge cases & pitfalls
 
-* *A remote is identified by *name*, and the name must match the producer's config.* `registerRemotes` and `loadRemote` use a string name. A mismatch between the Workspace's `remoteName`/`productName|appId` and the name the remote's own Module Federation config declares means `loadRemote` never resolves — a hard-to-diagnose blank App. This is why `WebComponentScript` needs the exact `remoteName`.
+* *A remote is identified by *name*, and the name must match the producer's config.* `registerRemotes` and `loadRemote` use a string name. A mismatch between the Workspace's `remoteName`/`productName|appId` and the name the remote's own Module Federation config declares means `loadRemote` never resolves: a hard-to-diagnose blank App. This is why `WebComponentScript` needs the exact `remoteName`.
 * *The entry is a URL, not a module.* `registerRemotes` takes an `entry` (a remote URL, e.g. a `mf-manifest.json` path). A wrong or unreachable `remoteEntryUrl` fails at load time; `loadPreloaderModule` and `loadChildren` both catch and surface the failure (the latter routes to the `remote-loading-error` page).
 * *Share scope must line up with the preloaded loader.* A remote that declares `shareScope: 'angular_21'` will resolve its shared framework packages from the Angular 21 loader only. If that loader was not preloaded (or failed, Unit 1), the App has no matching scope and its shared framework packages are unavailable.
 * *Non-singleton is intentional, not a bug.* Because framework libraries are shared with `singleton: false`, two Apps *can* end up with different framework versions on one page. Code that assumes a page-wide single framework version must instead read the version it was built against.
@@ -88,9 +88,9 @@ The consume path is the same; the *type* and the *expose* differ.
 
 == Debugging
 
-* The federation runtime logs can be enabled via the `__FEDERATION__` instance (`window.onecxFederationInstance`) — its `debug` flag turns on detailed remote-load logs.
+* The federation runtime logs can be enabled via the `__FEDERATION__` instance (`window.onecxFederationInstance`): its `debug` flag turns on detailed remote-load logs.
 * A failed `loadRemote` surfaces as a caught error: `Could not load preloader: <key>` for loaders (`main.ts`), and `Failed to load remote module: <err>` + a navigation to `remote-loading-error-page` for Apps (`routes.service.ts`).
-* To see what a consumer is asking for, inspect the `Remote` it builds (`{ type, entry, name, shareScope }`) — `entry` is the remote URL and `shareScope` must match a preloaded loader.
+* To see what a consumer is asking for, inspect the `Remote` it builds (`{ type, entry, name, shareScope }`): `entry` is the remote URL and `shareScope` must match a preloaded loader.
 
 == Known issues
 
@@ -98,12 +98,12 @@ The consume path is the same; the *type* and the *expose* differ.
 
 == Related Units
 
-* link:startup-timeline.adoc[index.html → first App timeline] — when a remote is loaded during startup.
-* `shared-dependencies.adoc` — the shared-library rules and the mismatch they prevent.
-* `preloaders.adoc` — the framework loaders registered and loaded as remotes.
-* `loading-matched-remote.adoc` — the `registerRemotes` + `loadRemote` step for the matched App.
-* Area 6 (Remote Components & Slots) — how a loaded Remote Component is placed into a Slot.
-* Area 7 (Navigation & Routing) — `shell-routes-and-current-app`: how a matched route's `loadChildren` is reached.
+* link:startup-timeline.adoc[index.html → first App timeline]: when a remote is loaded during startup.
+* `shared-dependencies.adoc`: the shared-library rules and the mismatch they prevent.
+* `preloaders.adoc`: the framework loaders registered and loaded as remotes.
+* `loading-matched-remote.adoc`: the `registerRemotes` + `loadRemote` step for the matched App.
+* Area 6 (Remote Components & Slots): how a loaded Remote Component is placed into a Slot.
+* Area 7 (Navigation & Routing): `shell-routes-and-current-app`: how a matched route's `loadChildren` is reached.
 
 == Sources
 

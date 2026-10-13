@@ -69,19 +69,19 @@ In other words, the app chooses the target, and the target is the Shell-created 
 
 === Libs side
 
-* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`] — bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
-* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`] — `getDynamicContainer` and `removeDynamicContainer`.
-* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`] — `DYNAMIC_CONTAINER` token declaration.
-* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`] — `OnecxOverlayContainer`, the optional `DYNAMIC_CONTAINER` replacement for the CDK overlay container.
-* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`] — `OnecxFullscreenOverlayContainer`, the fullscreen variant.
-* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — `data-onecx-dynamic-container` and the shared `data-style-*` keys used on the container.
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`]: bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
+* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`]: `getDynamicContainer` and `removeDynamicContainer`.
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: `DYNAMIC_CONTAINER` token declaration.
+* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`]: `OnecxOverlayContainer`, the optional `DYNAMIC_CONTAINER` replacement for the CDK overlay container.
+* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`]: `OnecxFullscreenOverlayContainer`, the fullscreen variant.
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `data-onecx-dynamic-container` and the shared `data-style-*` keys used on the container.
 
 === Shell side
 
-* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts`] — starts the dynamic-content listeners that cooperate with this path.
-* link:{dynamic_content_utils}[`dynamic-content.utils.ts`] — `createOnecxDynamicContainer`, the Shell-owned container creation and insertion path.
-* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts`] — the body wrapper excludes `data-onecx-dynamic-container` from the generic wrapping path and has a special CDK overlay path.
-* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts`] — the helper set that stamps and removes scope attributes for dynamic content in the Shell.
+* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts`]: starts the dynamic-content listeners that cooperate with this path.
+* link:{dynamic_content_utils}[`dynamic-content.utils.ts`]: `createOnecxDynamicContainer`, the Shell-owned container creation and insertion path.
+* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts`]: the body wrapper excludes `data-onecx-dynamic-container` from the generic wrapping path and has a special CDK overlay path.
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts`]: the helper set that stamps and removes scope attributes for dynamic content in the Shell.
 
 == Angular / React
 
@@ -121,26 +121,26 @@ General runtime inspection is covered by the *Diagnostics* Area.
 
 == Related Units
 
-* link:{u6}[Dynamic content via patching] — the companion option that stamps the portal child directly instead of reusing a container.
-* link:{u8}[Scope polyfill] — how the `@scope` blocks that this container feeds are rewritten on browsers without native {scope_at_rule}.
-* link:{area}[Styling & Style Isolation — Area overview]
+* link:{u6}[Dynamic content via patching]: the companion option that stamps the portal child directly instead of reusing a container.
+* link:{u8}[Scope polyfill]: how the `@scope` blocks that this container feeds are rewritten on browsers without native {scope_at_rule}.
+* link:{area}[Styling & Style Isolation: Area overview]
 * link:{u9}[PrimeNG/PrimeReact style scoping].
-* *Angular component styles* — the separate Unit that covers framework-encapsulated component CSS.
+* *Angular component styles*: the separate Unit that covers framework-encapsulated component CSS.
 
 == Sources
 
 Code::
-* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`] — bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
-* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`] — `getDynamicContainer`, `removeDynamicContainer`
-* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`] — `DYNAMIC_CONTAINER` token declaration
-* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`] — `OnecxOverlayContainer`
-* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`] — `OnecxFullscreenOverlayContainer`
-* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] — `data-onecx-dynamic-container`, shared `data-style-*` keys
-* link:{dynamic_content_utils}[`dynamic-content.utils.ts` (Shell)] — `createOnecxDynamicContainer`
-* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts` (Shell)] — generic-body wrapper exclusions and CDK special path
-* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts` (Shell)] — dynamic-content runtime bootstrap
-* link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`] — PrimeReact's patching-side portal integration
-* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts` (Shell)] — dynamic-content style-data helpers
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`]: bootstrap helpers that add the dynamic-container providers (`addDynamicContainerProvider`) and bind the proxy per entrypoint (`createEntrypoint`).
+* link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`]: `getDynamicContainer`, `removeDynamicContainer`
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: `DYNAMIC_CONTAINER` token declaration
+* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`onecx-overlay-container.ts`]: `OnecxOverlayContainer`
+* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`onecx-fullscreen-overlay-container.ts`]: `OnecxFullscreenOverlayContainer`
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `data-onecx-dynamic-container`, shared `data-style-*` keys
+* link:{dynamic_content_utils}[`dynamic-content.utils.ts` (Shell)]: `createOnecxDynamicContainer`
+* link:{shell}/src/app/shell/utils/styles/body-overwrites.utils.ts[`body-overwrites.utils.ts` (Shell)]: generic-body wrapper exclusions and CDK special path
+* link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts` (Shell)]: dynamic-content runtime bootstrap
+* link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`]: PrimeReact's patching-side portal integration
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts` (Shell)]: dynamic-content style-data helpers
 
 Verification Sources checked::
 * `dev-docs/styles/scoping.adoc` (the attribute model this container feeds)
