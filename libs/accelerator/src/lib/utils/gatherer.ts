@@ -7,7 +7,6 @@ import { acceleratorState } from '../declarations'
  * Implementation of the Scatter-Gather pattern.
  */
 export class Gatherer<Request, Response> {
-  private static id = 0
   private readonly topic: Topic<{ id: number; request: Request }>
   private readonly ownIds = new Set<number>()
   private readonly topicSub: Subscription | null = null
@@ -58,7 +57,7 @@ export class Gatherer<Request, Response> {
       throw new Error('Gatherer is not initialized')
     }
 
-    const id = Gatherer.id++
+    const id = acceleratorState['@onecx/accelerator'].gatherer.id++
     // Save the id to ownIds to prevent processing own requests.
     this.ownIds.add(id)
     acceleratorState['@onecx/accelerator'].gatherer.promises[id] = []
