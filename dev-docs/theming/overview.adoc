@@ -52,8 +52,10 @@ flowchart LR
   S1 -->|values read by apps| C3
 ----
 
-* **Theme → page** is the first stage: the Shell puts the theme's CSS variables, favicon and logo on the page and the libraries expose the current theme through the `CurrentThemeTopic`. See link:{theme_to_page}[Theme → page].
-* **Theme → PrimeNG/PrimeReact tokens** is the second stage: each framework maps the theme values onto the design tokens of the component library, so PrimeNG/PrimeReact components pick up the Workspace theme. See link:{theme_to_tokens}[Theme → PrimeNG/PrimeReact tokens].
+* *Theme → page* is the first stage: the Shell puts the theme's CSS variables, favicon and logo on the page and the libraries expose the current theme through the `CurrentThemeTopic`. See link:{theme_to_page}[Theme → page].
+* *Theme → PrimeNG/PrimeReact tokens* is the second stage: each framework maps the theme values onto the design tokens of the component library, so PrimeNG/PrimeReact components pick up the Workspace theme. See link:{theme_to_tokens}[Theme → PrimeNG/PrimeReact tokens].
+
+A Workspace can set two kinds of values. The theme's `properties` carry the colour, font and layout values under the `font`, `topbar`, `sidebar` and `general` sections (see link:{theme_to_page}[Theme → page] for the structure). The theme's `overrides` are the main way to change individual values on top of the preset; link:{theme_to_overrides}[Theme Overrides] lists the three override channels available. Whoever owns the Workspace owns the values: the Shell reads the active Workspace's theme and applies it to the page (the *how* and *who* the Theme → page Unit answers).
 
 [#unit-map]
 == Unit map
@@ -98,6 +100,6 @@ The Dev Docs top index (the "slug map", tracked separately) plans this Area unde
 [#related-areas]
 == Related Areas
 
-* **Styling & Style Isolation**: how stylesheets are scoped so the theme variables of one application do not leak to another.
-* **Integration Contract & Topics**: the Topic mechanism that `CurrentThemeTopic` builds on.
-* **Application Bootstrap / Shell Context**: where the Shell loads the Workspace configuration that carries the active theme.
+* *Styling & Style Isolation*: how stylesheets are scoped so the theme variables of one application do not leak to another.
+* *Integration Contract & Topics*: the Topic mechanism that `CurrentThemeTopic` builds on.
+* *Application Bootstrap / Shell Context*: where the Shell loads the Workspace configuration that carries the active theme.

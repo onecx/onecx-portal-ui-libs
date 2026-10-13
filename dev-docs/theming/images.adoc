@@ -65,15 +65,24 @@ The framework-agnostic `ImageRepositoryService` (link:{image_service}[`image-rep
 
 [source,typescript]
 ----
-async getUrl(names: string[], fallbackUrl?): Promise<string | undefined> {
-  if (!names || names.length === 0) return fallbackUrl
-  const imagePaths = await firstValueFrom(this.imageRepositoryTopic.asObservable())
-  const urls = imagePaths.images || {}
-  if (Object.entries(urls).length === 0) return fallbackUrl
-  for (const name of names) {
-    if (name in urls) return urls[name]
-  }
-  return fallbackUrl
+async getUrl(names: string[]): Promise<string | undefined>
+async getUrl(names: string[], fallbackUrl: string): Promise<string>
+async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {
+    if (!names || names.length === 0) {
+        return fallbackUrl;
+    }
+    const imagePaths = await firstValueFrom(this.imageRepositoryTopic.asObservable());
+    const urls = imagePaths.images || {};
+    const isUrlListEmpty = Object.entries(urls).length === 0;
+    if (isUrlListEmpty) {
+        return fallbackUrl;
+    }
+    for (const name of names) {
+        if (name in urls) {
+            return urls[name];
+        }
+    }
+    return fallbackUrl;
 }
 ----
 
@@ -140,11 +149,11 @@ link:{image_context_react}[`imageRepositoryContext.tsx`] (`@onecx/react-integrat
 
 == Edge cases & pitfalls
 
-* **It resolves the repository once per call.** `getUrl` reads the *first* `ImageRepositoryInfo` on the Topic at call time. If the theme (and therefore the repository) changes later, a value resolved earlier is not refreshed: re-call `getUrl` after the theme changes.
-* **`names` is an ordered fallback list, not a multi-image request.** The first name that exists wins. Order the list from most-specific to least-specific.
-* **An empty repository means "fallback".** If the Shell published an empty `images` map (its failure path) or none of your names exist, `getUrl` returns `fallbackUrl` or `undefined`. Guard against `undefined` before rendering an `<img>`.
-* **Backend-relative URLs need the prefix.** A repository value that is not an absolute `http(s)` URL is relative to the backend; use `ImageLogoUrlUtils.createLogoUrl` (or the equivalent in your app) to prefix the API base before it is usable.
-* **The topic is theme-scoped.** The Shell builds the map from the *active* theme. Before a theme is known the Shell waits, so the first publication may arrive after the first theme emission rather than immediately at startup.
+* *It resolves the repository once per call.* `getUrl` reads the *first* `ImageRepositoryInfo` on the Topic at call time. If the theme (and therefore the repository) changes later, a value resolved earlier is not refreshed: re-call `getUrl` after the theme changes.
+* *`names` is an ordered fallback list, not a multi-image request.* The first name that exists wins. Order the list from most-specific to least-specific.
+* *An empty repository means "fallback".* If the Shell published an empty `images` map (its failure path) or none of your names exist, `getUrl` returns `fallbackUrl` or `undefined`. Guard against `undefined` before rendering an `<img>`.
+* *Backend-relative URLs need the prefix.* A repository value that is not an absolute `http(s)` URL is relative to the backend; use `ImageLogoUrlUtils.createLogoUrl` (or the equivalent in your app) to prefix the API base before it is usable.
+* *The topic is theme-scoped.* The Shell builds the map from the *active* theme. Before a theme is known the Shell waits, so the first publication may arrive after the first theme emission rather than immediately at startup.
 
 == Debugging
 
@@ -171,8 +180,3 @@ Code::
 * Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
 ** link:{shell_image_repo}[`src/app/shell/services/image-repository.service.ts`]: Shell `ImageRepositoryService`: waits for the first theme, fetches the image kinds from the BFF, publishes the `images` map (empty on failure).
 ** link:{shell_app_module}[`src/app/app.module.ts`]: the `imageRepositoryServiceInitializer` that runs it on startup.
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff` (topic discovery only): cross-checked for the "images delivered via the image repository" Unit.
-* `onecx-shell-ui` `main` (read-only): the Shell `ImageRepositoryService` confirms the wait-for-theme / BFF lookup / publish flow documented above.
-* JSDoc in the source files above.
