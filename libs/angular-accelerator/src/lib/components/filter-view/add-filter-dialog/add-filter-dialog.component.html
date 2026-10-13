@@ -7,7 +7,7 @@
     id="ocxAddFilterColumnSelect"
     inputId="ocxAddFilterColumnInput"
     [autofocus]="true"
-    [options]="columnOptions()"
+    [options]="(columnOptions$ | async) ?? []"
     [optionLabel]="'label'"
     [optionValue]="'value'"
     [ngModel]="selectedColumnId()"
@@ -19,7 +19,7 @@
     class="w-full"
   ></p-select>
 
-  @if (valueOptions(); as values) {
+  @if (valueOptions$ | async; as values) {
   <label class="block text-sm font-medium" for="ocxAddFilterValueInput"
     >{{ 'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.VALUE_LABEL' | translate }}</label
   >

@@ -10,7 +10,7 @@
       <ocx-filter-view
         [filters]="stateService.filters()"
         [columns]="stateService.availableColumns()"
-        [dialogColumns]="filterViewColumns()"
+        [activeOrAllColumns]="activeOrAllColumns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"

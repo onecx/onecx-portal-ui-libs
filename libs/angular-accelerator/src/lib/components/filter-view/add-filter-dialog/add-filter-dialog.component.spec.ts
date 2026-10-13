@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
+import { firstValueFrom } from 'rxjs'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { ButtonModule } from '@openng/optimus-ui/button'
@@ -24,6 +25,9 @@ const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =
 describe('AddFilterDialogComponent (class logic)', () => {
   let fixture: ComponentFixture<AddFilterDialogComponent>
   let component: AddFilterDialogComponent
+
+  const valueOptions = async () => (await firstValueFrom(component.valueOptions$)) ?? []
+  const columnOptions = () => firstValueFrom(component.columnOptions$)
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -59,54 +63,55 @@ describe('AddFilterDialogComponent (class logic)', () => {
 
     expect(component.selectedColumnId()).toBe('c1')
     expect(component.column()?.id).toBe('c1')
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual(['a', 'b'])
     expect(options.map((o) => o.label)).toEqual(['a', 'b'])
   })
 
-  it('should only offer filterable columns and select the first filterable one', async () => {
+  it('should offer every passed column with its translated name', async () => {
     fixture.componentRef.setInput('columns', [
-      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
-      makeColumn({ id: 'c2', nameKey: 'C2' }),
-      makeColumn({ id: 'c3', nameKey: 'C3' }),
-    ])
-    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c2: 'x' }, { c3: 'y' }])
-    fixture.detectChanges()
-    await fixture.whenStable()
-
-    // The first filterable column is selected, not the first overall column.
-    expect(component.selectedColumnId()).toBe('c2')
-    expect(component.column()?.id).toBe('c2')
-    // Only the filterable columns are offered in the column select.
-    expect(component.columnOptions().map((o) => o.value)).toEqual(['c2', 'c3'])
-  })
-
-  it('should not offer a filterable column whose filterType the dialog cannot support', async () => {
-    fixture.componentRef.setInput('columns', [
-      makeColumn({ id: 'equals', nameKey: 'E', filterType: FilterType.EQUALS }),
-      makeColumn({ id: 'notEmpty', nameKey: 'N', filterType: FilterType.IS_NOT_EMPTY }),
-      makeColumn({ id: 'contains', nameKey: 'C', filterType: FilterType.CONTAINS }),
-    ])
-    fixture.componentRef.setInput('data', [{ equals: 'a' }, { notEmpty: true }, { contains: 'x' }])
-    fixture.detectChanges()
-    await fixture.whenStable()
-
-    // EQUALS and IS_NOT_EMPTY are supported; CONTAINS is not (it is a no-op downstream).
-    expect(component.columnOptions().map((o) => o.value)).toEqual(['equals', 'notEmpty'])
-  })
-
-  it('should not select a non-filterable preselected column', async () => {
-    fixture.componentRef.setInput('columns', [
-      makeColumn({ id: 'c1', nameKey: 'C1', filterable: false }),
+      makeColumn({ id: 'c1', nameKey: 'C1' }),
       makeColumn({ id: 'c2', nameKey: 'C2' }),
     ])
-    fixture.componentRef.setInput('preselectColumnId', 'c1')
-    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c2: 'x' }])
     fixture.detectChanges()
     await fixture.whenStable()
 
+    expect((await columnOptions()).map((o) => o.value)).toEqual(['c1', 'c2'])
+  })
+
+  it('should select the first column when the preselected column is not among the columns', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
+    fixture.componentRef.setInput('preselectColumnId', 'unknown')
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.selectedColumnId()).toBe('c1')
+  })
+
+  it('should keep the user selected column when the columns change', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1' }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    fixture.detectChanges()
+    component.onColumnChange('c2')
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1' }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    fixture.detectChanges()
+
     expect(component.selectedColumnId()).toBe('c2')
-    expect(component.columnOptions().map((o) => o.value)).toEqual(['c2'])
+  })
+
+  it('should select no column when there are no columns', async () => {
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.selectedColumnId()).toBeNull()
+    expect(component.column()).toBeNull()
+    expect(await firstValueFrom(component.valueOptions$)).toBeUndefined()
+    expect(component.dialogResult).toEqual([])
   })
 
   it('should respect preselectColumnId', async () => {
@@ -120,7 +125,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     await fixture.whenStable()
 
     expect(component.selectedColumnId()).toBe('c2')
-    expect((component.valueOptions() ?? []).map((o) => o.value)).toEqual(['x', 'y'])
+    expect((await valueOptions()).map((o) => o.value)).toEqual(['x', 'y'])
   })
 
   it('should pre-select values already filtered on the current column', async () => {
@@ -156,7 +161,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
 
     // The absent selection is not dropped - it stays selected and is available as an option.
     expect(component.selectedValues()).toEqual(['b', 'gone'])
-    const optionValues = (component.valueOptions() ?? []).map((o) => o.value)
+    const optionValues = (await valueOptions()).map((o) => o.value)
     expect(optionValues).toContain('b')
     expect(optionValues).toContain('gone')
   })
@@ -172,7 +177,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual([1, 2, 3])
     expect(options.map((o) => o.label)).toEqual(['1', '2', '3'])
   })
@@ -184,7 +189,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual(['01', 1])
     expect(component.selectedValues()).toEqual(['01'])
   })
@@ -200,7 +205,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     // Raw values are kept so filters still match the client-side string comparison.
     expect(options.map((o) => o.value)).toEqual(['2024-05-06T12:00:00.000Z', '2024-05-07T12:00:00.000Z'])
     // Labels are the formatted (locale dependent) date and differ from the raw value.
@@ -226,7 +231,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual([
       '2024-05-06T12:00:00.000Z',
       '2024-05-06T14:00:00+02:00',
@@ -252,7 +257,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     await fixture.whenStable()
 
     expect(component.column()?.id).toBe('c2')
-    expect((component.valueOptions() ?? []).map((o) => o.value)).toEqual(['1', '2'])
+    expect((await valueOptions()).map((o) => o.value)).toEqual(['1', '2'])
     expect(component.selectedValues()).toEqual(['2'])
   })
 
@@ -331,7 +336,7 @@ describe('AddFilterDialogComponent (class logic)', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const options = component.valueOptions() ?? []
+    const options = await valueOptions()
     expect(options).toHaveLength(2)
     expect(options.map((o) => o.value)).toEqual([true, false])
   })
@@ -392,5 +397,18 @@ describe('AddFilterDialogComponent (class logic)', () => {
     await fixture.whenStable()
 
     expect(component.dialogResult).toEqual([{ columnId: 'c1', value: 'a', filterType: FilterType.EQUALS }])
+  })
+
+  it('should translate option labels of TRANSLATION_KEY columns while keeping the raw key as value', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1', columnType: ColumnType.TRANSLATION_KEY }),
+    ])
+    fixture.componentRef.setInput('data', [{ c1: 'KEY_A' }, { c1: 'KEY_B' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const options = await valueOptions()
+    expect(options.map((o) => o.value)).toEqual(['KEY_A', 'KEY_B'])
+    expect(options.map((o) => o.label)).toHaveLength(2)
   })
 })

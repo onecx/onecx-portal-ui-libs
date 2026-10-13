@@ -20,7 +20,7 @@ import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
-import { limit } from '../../utils/filter.utils'
+import { getFilterableColumns, limit } from '../../utils/filter.utils'
 import { Popover } from '@openng/optimus-ui/popover'
 import { Row } from '../data-table/data-table.component'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -74,16 +74,8 @@ export class FilterViewComponent {
     this.stateService.availableColumns.set(value)
   }
 
-  /**
-   * The columns offered to the "Add Filter" dialog. When a host (e.g. the
-   * Interactive Data View) passes only the *active* (displayed) columns here, the
-   * dialog offers only those instead of every available column. This is intentionally
-   * kept separate from `columns` / the shared `availableColumns` state: the display
-   * (chips, filter table) must keep reading the full available set, and round-tripping
-   * a derived array back into shared state would clobber it and create a
-   * change-detection feedback loop.
-   */
-  readonly dialogColumns = input<DataTableColumn[] | undefined>(undefined)
+  /** Active columns passed by the host; the dialog offers all available columns when unset. */
+  readonly activeOrAllColumns = input<DataTableColumn[] | undefined>(undefined)
 
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
@@ -124,28 +116,9 @@ export class FilterViewComponent {
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewShowMoreChip = signal<TemplateRef<any> | undefined>(undefined)
 
-  /**
-   * The columns offered to the "Add Filter" dialog: only those that are marked
-   * {@link DataTableColumn.filterable} and whose {@link FilterType} the dialog can
-   * produce a working filter for (unset/EQUALS or IS_NOT_EMPTY) - the same set the
-   * dialog's column select offers. The Add Filter button (in both the chips and the
-   * button/panel view) is only enabled when at least one such column exists, so a
-   * user sees an empty filter state instead of a no-op click.
-   *
-   * The candidate set is {@link dialogColumns} when a host has narrowed the offer to
-   * the active columns, otherwise the full available set - so a standalone Filter View
-   * (no host) keeps offering every available column.
-   */
-  readonly filterableColumns = computed<DataTableColumn[]>(() => {
-    const candidates = this.dialogColumns() ?? this.stateService.availableColumns()
-    return candidates.filter(
-      (column) =>
-        column.filterable &&
-        (column.filterType === undefined ||
-          column.filterType === FilterType.EQUALS ||
-          column.filterType === FilterType.IS_NOT_EMPTY)
-    )
-  })
+  readonly filterableColumns = computed<DataTableColumn[]>(() =>
+    getFilterableColumns(this.activeOrAllColumns() ?? this.stateService.availableColumns())
+  )
 
   readonly templates = input<readonly PrimeTemplate[] | null | undefined>(undefined)
   readonly templates$ = toObservable(this.templates)
@@ -306,28 +279,16 @@ export class FilterViewComponent {
     this.stateService.filters.set(filters)
   }
 
-  /**
-   * Opens the "Add Filter" dialog. Only columns whose {@link DataTableColumn.filterable}
-   * flag is set are offered to the dialog - the same single source of truth the
-   * Table mode uses for its column header filters - so a column can be filtered
-   * here (List / Grid views) if and only if it is also filterable in the Table
-   * view. If no column is filterable the dialog is not opened at all.
-   */
+  /** Opens the "Add Filter" dialog for the filterable columns; does nothing if there are none. */
   onAddFilter(columnId?: string, event?: Event) {
     const columns = this.filterableColumns()
     if (columns.length === 0) {
       return
     }
 
-    // The element that opened the dialog (the add-filter chip or the manage-panel
-    // button). Captured synchronously while the click/keydown is being dispatched so
-    // that the PortalDialogService can return keyboard focus to it when the dialog
-    // closes (it only does so when an initiatorRef and onCloseFocus: 'initiator'
-    // are supplied).
     const initiatorRef = (event?.currentTarget ?? undefined) as HTMLElement | undefined
 
-    // The PortalDialogService translates the title itself but treats closeAriaLabel as a
-    // plain string, so resolve the translated label before opening the dialog.
+    // PortalDialogService does not translate closeAriaLabel
     void firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')).then(
       (closeAriaLabel) => {
         this.portalDialogService
@@ -346,19 +307,13 @@ export class FilterViewComponent {
             'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
             {
               closeAriaLabel,
-              // Keep the dialog readable with long column names and value labels, while
-              // capping it to the viewport so it never overflows narrow/mobile screens.
               width: 'min(350px, 90vw)',
-              // Return keyboard focus to the originating control once the dialog closes.
               initiatorRef,
               onCloseFocus: 'initiator',
             }
           )
           .subscribe((state) => {
-            // Only the primary (confirm) button applies the filters. Closing via the
-            // secondary (cancel) button, the X button or Escape must not apply the
-            // dialog's result - the dialog pre-selects the column's existing values,
-            // so its result is non-empty even when the user changed nothing.
+            // The result pre-selects existing values, so it is non-empty even when cancelled unchanged
             if (state?.button === 'primary' && state.result && state.result.length > 0) {
               this.applyFilters(state.result)
             }
@@ -367,14 +322,7 @@ export class FilterViewComponent {
     )
   }
 
-  /**
-   * Applies the filters produced by the Add Filter dialog. The dialog always
-   * edits the value set of a single column and pre-selects that column's
-   * existing filters in its value selector, so the produced filters are the
-   * column's complete, updated set - the column's previous filters are
-   * replaced outright. This mirrors the multi-select column header filter in
-   * the Table mode, which likewise replaces a column's whole filter set.
-   */
+  /** Replaces the existing filters of every column contained in `newFilters`. */
   applyFilters(newFilters: Filter[]) {
     const currentFilters = this.stateService.filters()
     const editedColumns = new Set(newFilters.map((f) => f.columnId))
