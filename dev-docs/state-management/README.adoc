@@ -24,7 +24,7 @@ These are three different problems. The first is a *connection* between the Shel
 
 == Big picture
 
-The Shell is the publisher of the context that the store needs. The libraries in this repository do two things. First, `ngrx-integration-interface` turns the Shell's context Topics into an NgRx slice: it defines the state shape, the actions, the reducer and the selectors, and ships one *store connector* service per piece of context that subscribes to the underlying Angular service/Topic and dispatches into the store. Second, `ngrx-accelerator` provides the framework-level helpers for the other two round-trips: the URL-synced state helpers (fragment-parameters) and the `localStorage` rehydration helpers (lazy-loading merge reducer and key configuration).
+The Shell is the publisher of the context that the store needs. The libraries in this repository do three things. First, `ngrx-integration-interface` turns the Shell's context Topics into an NgRx slice: it defines the state shape, the actions, the reducer and the selectors, and ships one *store connector* service per piece of context that subscribes to the underlying Angular service/Topic and dispatches into the store. Second, `ngrx-accelerator` provides the framework-level helpers for the other two round-trips and for authoring selectors: the URL-synced state helpers (fragment-parameters), the `localStorage` rehydration helpers (lazy-loading merge reducer and key configuration), and `createChildSelectors`, which mints a memoised selector for each key of a child slice. Third, `ngrx-linter-rules` is an ESLint plugin that keeps the effects boundary intact: it flags `Store.dispatch()` called inside an effect class and HTTP calls made outside of one.
 
 [source,mermaid]
 ----
@@ -63,8 +63,11 @@ The Units of this Area, in reading order. Each Unit follows the link:{dev-docs-i
 . link:shell-context-to-store.adoc[Shell context → App ngrx store]: the store connectors, the `onecx` state slice (actions, reducer, selectors) and how each piece of Shell context becomes a dispatch.
 . link:url-synced-state.adoc[URL-synced state (fragment parameters)]: how state is serialised into the URL fragment, the navigation filters, and why fragment parameters rather than query parameters.
 . link:persisting-state.adoc[Persisting state across reloads with lazy feature slices]: how App state is persisted to `localStorage` and rehydrated without clobbering lazily loaded feature slices.
+. link:ngrx-linter-rules.adoc[Enforcing the effects-only boundary with the ngrx linter rules]: the `@onecx/ngrx-linter-rules` ESLint plugin and its two rules.
 
-Read Unit 1 first: it defines the `onecx` slice and the dispatch boundary that Units 2 and 3 build on (Unit 2's state is a feature slice the store connectors write into; Unit 3's rehydration merges into the same store). Units 2 and 3 are independent of each other and can be read in any order after that.
+Read Unit 1 first: it defines the `onecx` slice and the dispatch boundary that Units 2 and 3 build on (Unit 2's state is a feature slice the store connectors write into; Unit 3's rehydration merges into the same store). Units 2, 3 and 4 are independent of each other and can be read in any order after that.
+
+`createChildSelectors`, the selector-authoring helper that ships with `ngrx-accelerator`, is documented inside Unit 1 (under the selectors) and named in the Big picture above rather than in its own Unit: it answers a single small question (how to mint per-key selectors for a child slice) that does not warrant a page of its own.
 
 == Related Areas
 
