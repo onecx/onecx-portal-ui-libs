@@ -1,4 +1,4 @@
-= Slot Rendering
+= Slot rendering
 :toc: macro
 :toc-title: Contents
 :toclevels: 2
@@ -52,6 +52,14 @@ The component is a web component, so it is not loaded as a component type: it is
 
 The component implements the link:{libs}/angular-remote-components/src/lib/model/remote-webcomponent.ts[`ocxRemoteWebcomponent`] contract, which simply declares the `ocxRemoteComponentConfig` property.
 
+=== Styling a component in relation to its slot
+
+A Remote Component's styles are scoped so they stay with the component, and the slot applies that scoping. For each child it renders, the slot marks the element for isolation with `data-style-id` set to `{productName}|{appId}` (from `scopeIdFromProductNameAndAppId`) and an empty `data-style-isolation` attribute. The Angular slot also loads the component's scoped stylesheet with `updateStylesForRcCreation(productName, appId, httpClient, baseUrl, slotName)`: it fetches the CSS from the component's `baseUrl`, applies the `@scope` rules for that scope id, and records a style usage keyed by the slot name.
+
+Keying the style usage by slot name is what ties a component's styling to its slot. The same component placed in two slots registers one usage per slot, so removing it from one slot leaves the other slot's copy styled. When the slot is destroyed it calls `removeAllRcUsagesFromStyles(scopeId, slotName)` for each component it hosted, dropping the usage and removing the style element when nothing else uses it. A component that does not want its own styles scoped provides the `SKIP_STYLE_SCOPING` token; that is a component decision, not a slot decision.
+
+The `@scope` mechanism and the `data-style-id`/`data-style-isolation` attributes are explained in the link:../styling/scope-model.adoc[`@scope` scoping model] (Area 4). This Unit owns only the slot's part: marking the child, and loading and unloading the component's scoped styles per slot.
+
 == Libs side / Shell side
 
 === Libs side
@@ -75,19 +83,19 @@ The component implements the link:{libs}/angular-remote-components/src/lib/model
 == Edge cases & pitfalls
 
 * *Web components need an `elementName`.* The web-component flavour is only selected when the configuration has an `elementName`. A web component whose configuration is missing it will not be rendered.
-* *`ocxRemoteComponentContext` is not set.* Some earlier documentation mentions a separate `ocxRemoteComponentContext` property carrying the slot name. The current code sets only `ocxRemoteComponentConfig`; no `ocxRemoteComponentContext` is written by the libs. If a component expects a slot name, it must obtain it another way.
+* *The slot writes no slot name to the element.* The slot sets only `ocxRemoteComponentConfig` on the rendered element; it writes no separate `ocxRemoteComponentContext` or slot-name property. A component that needs the slot name gets it through the `inputs` channel (see link:host-communication.adoc[Host communication]).
 * *Both flavours for the same component.* A component may implement both contracts (as the Shell's toast does) so that it works when hosted from either framework or either flavour.
 * *Angular components in a React slot* are not rendered at all: the React slot service throws during resolution (see link:slot-assignment.adoc[Assignment]).
 
 == Known issues
 
-The Draft Outline (commit `6108bdff`) documents an `ocxRemoteComponentContext` property that the current `main` code does not set. The actual behaviour is that only `ocxRemoteComponentConfig` is written; the "Known issues" note above records this so a follow-up can align the documentation.
+* *A component does not receive the slot name on the element.* The slot writes only `ocxRemoteComponentConfig` to the rendered element (see link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`]); it never writes a separate slot-name or context property. A component that needs to know which slot hosts it must read it from the `inputs` channel, for example the `slotGroupName` a Shell slot group passes (see link:host-communication.adoc[Host communication], link:shell-slots-catalogue.adoc[Shell Slots catalogue]).
 
 == Related Units
 
 * link:slot-assignment.adoc[Assignment]: how a slot gets the components it renders.
-* Remote Component config & host communication: the `RemoteComponentConfig` and the host↔component communication in depth. (`host-communication.adoc`, not yet written)
-* Slot size reporting: how a rendered slot publishes its dimensions. (`slot-size-reporting.adoc`, not yet written)
+* link:host-communication.adoc[Host communication]: the `RemoteComponentConfig` and the host/component communication in depth.
+* link:slot-size-reporting.adoc[Slot size reporting]: how a rendered slot publishes its dimensions.
 * link:../styling/scope-model.adoc[`@scope` scoping model] (Area 4): the style-isolation attributes set on slot children.
 
 == Sources
@@ -100,11 +108,8 @@ Code::
 * link:{libs}/angular-utils/src/lib/model/remote-component-config.model.ts[`RemoteComponentConfig`]
 * link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`]
 * link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scopeIdFromProductNameAndAppId`]
+* link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`updateStylesForRcCreation`, `removeAllRcUsagesFromStyles`]
+* link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`SKIP_STYLE_SCOPING`]
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`bootstrapRemoteComponent`]
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[Shell toast bootstrap] (Shell)
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca`: `dev-docs/remote-components/index.adoc`. Its "Remote Component Initialization" section matches the two flavours, but its claim about `ocxRemoteComponentContext` does not match the current code (see Known issues).
-* Libs JSDoc/READMEs: `SlotComponent` input/output JSDoc and the `@onecx/angular-remote-components` / `@onecx/angular-utils` package sources.
-* No prior Dev Docs page existed for this Area (per the Area ticket).

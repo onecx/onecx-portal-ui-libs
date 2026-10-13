@@ -1,4 +1,4 @@
-= Remote Component Config & Host Communication
+= Remote Component config & host communication
 :toc: macro
 :toc-title: Contents
 :toclevels: 2
@@ -77,7 +77,7 @@ flowchart LR
 
 The slot re-applies `inputs` and `outputs` whenever either of them, or the set of assigned components, changes, so a host can update the channel after the initial render.
 
-=== Config inside the component: the `REMOTE_COMPONENT_CONFIG` token
+=== Reading the config from dependency injection
 
 The config handed over by the slot is only what the host set. For a component's *own* code to read the config through dependency injection, it must provide the link:{libs}/angular-utils/src/lib/model/injection-tokens.ts[`REMOTE_COMPONENT_CONFIG`] token itself: an `InjectionToken<ReplaySubject<RemoteComponentConfig>>`. The slot does *not* provide this token. A Remote Component declares a provider in its own bootstrap, and inside `ocxInitRemoteComponent` pushes the received config into that `ReplaySubject`; internal DI consumers then `inject(REMOTE_COMPONENT_CONFIG)`. The `ReplaySubject(1)` means a consumer that resolves the token later still receives the last config, even after init has run.
 
@@ -120,7 +120,7 @@ The payload and the two contracts are identical across frameworks; the wiring of
 * link:slot-assignment.adoc[Assignment]: how the slot resolves the components it renders and fetches their permissions.
 * link:slot-rendering.adoc[Slot rendering]: the two flavours that deliver the config.
 * link:shell-slots-catalogue.adoc[Shell Slots catalogue]: the Shell's Slot Groups, which push `slotGroupName` through the `inputs` channel.
-* Slot size reporting: how a rendered slot publishes its dimensions. (`slot-size-reporting.adoc`)
+* link:slot-size-reporting.adoc[Slot size reporting]: how a rendered slot publishes its dimensions.
 * link:../styling/scope-model.adoc[`@scope` scoping model] (Area 4): the `data-style-id` derived from `productName`/`appId`.
 * link:../permissions/remote-component-permissions.adoc[Remote Component permissions] (Area 9): where the `permissions` field is resolved.
 
@@ -138,11 +138,6 @@ Code::
 * link:{libs}/react-remote-components/src/lib/components/slot.tsx[`SlotComponent` (React): `createComponent`, `setProps`, `updateComponentData`]
 * link:{libs}/react-remote-components/src/lib/models/slot-types.ts[`RemoteComponentInfo`, `SlotComponentConfiguration` (React)]
 * link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`PermissionService`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`]
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[Shell toast bootstrap] (Shell)
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca`: `dev-docs/remote-components/index.adoc` (topic coverage: config and host communication; no content baseline).
-* Libs JSDoc/READMEs: `SlotComponent` `inputs`/`outputs` JSDoc (examples for both the `OutputEmitterRef` and `EventEmitter` output patterns) and the `@onecx/angular-remote-components` / `@onecx/react-remote-components` package sources.
-* Sibling Units link:slot-assignment.adoc[Assignment] and link:slot-rendering.adoc[Slot rendering]: the two-flavour delivery this Unit builds on.
-* No prior Dev Docs page existed for this Area (per the Area ticket).

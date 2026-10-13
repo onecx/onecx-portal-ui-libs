@@ -1,4 +1,4 @@
-= Shell Slots Catalogue
+= Shell slots catalogue
 :toc: macro
 :toc-title: Contents
 :toclevels: 2
@@ -21,7 +21,7 @@ This Unit is a catalogue of the Shell's slot regions and the name mapping. It do
 
 == How it works
 
-=== Slot Groups
+=== Slot groups
 
 The Shell builds its regions out of a single building block: the link:{shell}/src/app/shell/components/slot-group/slot-group.component.ts[`ocx-shell-slot-group`] component. It takes a required `name` plus an optional `direction` (`row`, `row-reverse`, `column`, `column-reverse`; default `row`) and optional `slotInputs` / `slotOutputs`. It renders exactly three slots, one per end and one for the centre:
 
@@ -88,7 +88,7 @@ Note: this spatial sketch represents the component hierarchy and declaration ord
 
 There is also one standalone slot that is *not* a group: `<ocx-slot name="onecx-shell-extensions">`, used to append extra custom functionality at the end of the page.
 
-==== onecx-shell-extensions: extension slot (not a Slot Group)
+==== The onecx-shell-extensions slot (not a slot group)
 
 The Shell's `onecx-shell-extensions` slot is declared after the portal-viewport wrapper in the template and is explicitly commented as an "Extensions slot for adding custom functionality" in the source. This slot is a plain `<ocx-slot>` (the regular Slot component) and is not implemented as an `ocx-shell-slot-group`.
 
@@ -137,7 +137,7 @@ The normalised `{ components, slots: mapSlots(slots) }` is then published to the
 * link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`, `slotNamesMapping`]: the legacy-name normalisation and merge.
 * link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer`, `slotInitializer`]: publishes the normalised slots and initialises the `SlotService`.
 
-=== The Shell's own toast Remote Component
+=== The Shell's toast component
 
 The Shell's toast is a Remote Component that the Shell itself exposes. It is rendered through the same slot machinery (see link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications], Area 11) and implements both config contracts (see link:host-communication.adoc[Host communication]). It is only shown when the Workspace assigns it to a slot, which is how the general "assigned to a slot or not visible" rule from Area 11 applies to it here.
 
@@ -162,7 +162,7 @@ See the Shell toast `REMOTE_COMPONENT_CONFIG` type-mismatch note in link:host-co
 * link:slot-assignment.adoc[Assignment]: how the normalised slots are assigned and resolved.
 * link:slot-rendering.adoc[Slot rendering]: how the group's slots render their components.
 * link:host-communication.adoc[Host communication]: the `inputs`/`outputs` channel the groups use and the `slotGroupName` convenience.
-* Slot size reporting: how a slot group publishes its own dimensions. (`slot-size-reporting.adoc`)
+* link:slot-size-reporting.adoc[Slot size reporting]: how a slot group publishes its own dimensions.
 * link:../errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications] (Area 11): the Shell's toast Remote Component in depth.
 
 == Sources
@@ -178,10 +178,5 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`]
 * link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`]
 * link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`, `SLOT_SERVICE`]
+* link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`]
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[Shell toast Remote Component] (Shell)
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca`: `dev-docs/remote-components/index.adoc` (topic coverage: slot groups and legacy naming; no content baseline).
-* Shell `docs/` and JSDoc: the `slot-names-mapper.ts` doc comments describe the map-then-merge behaviour, matching the implementation.
-* Sibling Units link:slot-assignment.adoc[Assignment] and link:host-communication.adoc[Host communication]: the publishing and input/output channel this catalogue builds on.
-* No prior Dev Docs page existed for this Area (per the Area ticket).

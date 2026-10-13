@@ -1,4 +1,4 @@
-= Slot Assignment
+= Slot assignment
 :toc: macro
 :toc-title: Contents
 :toclevels: 2
@@ -23,7 +23,9 @@ Assignment happens in two stages.
 
 First, the Shell turns the raw Workspace configuration into the data every MFE can read. The Shell's `workspaceConfigInitializer` loads the workspace configuration and publishes it to the link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components.topic.ts[`RemoteComponentsTopic`]:
 
-The payload is a link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components-info.model.ts[`RemoteComponentsInfo`]: a `components` array (one link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`] per component) and a `slots` array of link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`] objects, each of which maps a slot name to a list of *component names*. This is the link between a slot and its components: the slot holds names, and each name resolves to an entry in the `components` array.
+The payload is a link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-components-info.model.ts[`RemoteComponentsInfo`], which is two arrays. The `slots` array holds link:{libs}/integration-interface/src/lib/topics/remote-components/v1/slot.model.ts[`Slot`] objects, and a `Slot` is exactly `{ name, components }`: a slot name and the *names* of the components assigned to it. The `components` array holds one link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent`] per available component, carrying its identity, how to load it and its `technology`. This is the link between a slot and its components: the slot holds names, and each name resolves to an entry in the `components` array by `RemoteComponent.name`.
+
+*Controlling the order of Remote Components in a slot.* There is no per-render ordering setting; a slot renders its components in the order they appear in its `components` array. To change the order, reorder that array in the Workspace configuration. The slot preserves the order it resolves: see link:slot-rendering.adoc[Slot rendering].
 
 Second, a slot on the page resolves its assigned components. The slot service (the link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[`SlotService`] in Angular, the link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[`SlotProvider`] in React) subscribes to the `RemoteComponentsTopic`. For a given slot name it:
 
@@ -94,9 +96,9 @@ No known issues are identified beyond the documented edge cases.
 == Related Units
 
 * link:slot-rendering.adoc[Slot rendering]: how the resolved components are instantiated and configured.
-* Remote Component config & host communication: how a rendered component receives its configuration. (`host-communication.adoc`, not yet written)
-* Shell Slots catalogue: the Shell's Slot Groups and legacy name mapping in depth. (`shell-slots-catalogue.adoc`, not yet written)
-* Slot size reporting: how a slot publishes its dimensions. (`slot-size-reporting.adoc`, not yet written)
+* link:host-communication.adoc[Host communication]: how a rendered component receives its configuration.
+* link:shell-slots-catalogue.adoc[Shell Slots catalogue]: the Shell's Slot Groups and legacy name mapping in depth.
+* link:slot-size-reporting.adoc[Slot size reporting]: how a slot publishes its dimensions.
 
 == Sources
 
@@ -114,8 +116,3 @@ Code::
 * link:{shell}/src/app/shell/utils/slot-names-mapper.ts[`mapSlots`, `slotNamesMapping`] (Shell)
 * link:{shell}/src/app/shell/components/slot-group/slot-group.component.html[Slot group template] (Shell)
 * link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[Portal viewport template] (Shell)
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca`: `dev-docs/remote-components/index.adoc` (topic coverage; no content baseline).
-* Libs `docs/`: `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc` (topic model only; no slot-assignment page).
-* No prior Dev Docs page existed for this Area (per the Area ticket), so there was no existing page to supersede.
