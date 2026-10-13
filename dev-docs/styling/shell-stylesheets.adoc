@@ -163,10 +163,3 @@ Code::
 * link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]: `addStyleToHead`
 * link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `replaceRootWithScope`
 * link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants]: `dataShellStylesKey` / `dataShellStylesAttribute`
-
-Verification Sources checked::
-* `dev-docs/styles/style-types.adoc` (the Style Sheet List table lists these three sheets and their attributes; the Shell/Global/Legacy rows describe the same load-on-initialisation behaviour: the attribute names there disagree with current code, recorded under link:#known-issues[Known issues])
-* `dev-docs/styles/concept.adoc` (the *Scoped Styles* / *Application Styles* framing), `dev-docs/styles/scoping.adoc` (the `data-no-portal-layout-styles` / `data-style-id` attributes the *from* selectors test)
-* `dev-docs/styles/scope-polyfill.adoc` (the fallback these `@supports (@scope(...))` blocks rely on)
-* in-code JSDoc of `shell-styles.utils.ts`, `legacy-style.utils.ts`, `style-data.utils.ts` and `scope.utils.ts`
-* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff])

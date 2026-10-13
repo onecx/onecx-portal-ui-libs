@@ -10,7 +10,7 @@
 
 == Question answered
 
-Why does OneCX need style isolation at all, and what kinds of stylesheets exist on a OneCX page?
+Why does OneCX keep each application's CSS inside its own content, and what kinds of stylesheets does that isolation have to keep apart?
 
 == Why it exists
 
@@ -37,7 +37,7 @@ OneCX uses several stylesheet categories on the same page:
 
 The important distinction is *who owns it* and *whether it is meant to leak across scope boundaries*, not simply *what* a stylesheet is.
 
-== How it works at a high level
+== How it works
 
 The libraries provide the scope vocabulary and the scoped-CSS helpers; the Shell initializes the polyfill and loads the Shell and legacy stylesheets. The Angular and React implementations both use the same scope ids and boundary attributes, but they place the scoped styles in different ways.
 
@@ -84,8 +84,3 @@ Code::
 * link:{shell}/src/app/shell/utils/styles/shell-styles.utils.ts[`shell-styles.utils.ts` (Shell)]
 * link:{shell}/src/app/shell/utils/styles/legacy-style.utils.ts[`legacy-style.utils.ts` (Shell)]
 * link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]
-
-Verification Sources checked::
-* `dev-docs/styles/concept.adoc`, `dev-docs/styles/style-types.adoc`, `dev-docs/styles/scoping.adoc`
-* `dev-docs/styles/scope-polyfill.adoc`
-* in-code JSDoc of `scope.utils.ts` and `app-styles-scope.utils.ts`

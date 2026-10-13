@@ -87,13 +87,9 @@ In other words, the app chooses the target, and the target is the Shell-created 
 
 === Angular
 
-Angular CDK and Angular Material are the primary consumers of this path. When a webcomponent is bootstrapped the bootstrap helpers add providers that supply `DYNAMIC_CONTAINER` (see libs/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts). During bootstrap `DYNAMIC_CONTAINER` is initially provided via a proxy token (`DYNAMIC_CONTAINER_PROXY`) and `createEntrypoint` binds the proxy callback per entrypoint. The `DYNAMIC_CONTAINER` token therefore resolves to a callback that delegates through that proxy and is shared for the same app / remote-component entrypoint rather than requiring manual app wiring.
+Angular CDK and Angular Material are the primary consumers of this path. To redirect CDK/Material overlays into the Shell dynamic container, an application registers `OnecxOverlayContainer` (or `OnecxFullscreenOverlayContainer`) as the `OverlayContainer` provider; the default CDK `OverlayContainer` does not consume `DYNAMIC_CONTAINER`, but those classes do. PrimeNG components that support `appendTo` can also be pointed at the container; the app sets that property, and OneCX supplies only the target and its scope data.
 
-Consumers that need the app's dynamic container should inject `DYNAMIC_CONTAINER` (or rely on existing integration points). `OnecxOverlayContainer` and `OnecxFullscreenOverlayContainer` inject this token; the default CDK `OverlayContainer` does not. To redirect CDK/Material overlays into the Shell dynamic container, an application must register `OnecxOverlayContainer` (or `OnecxFullscreenOverlayContainer`) as the `OverlayContainer` provider. When using the webcomponent bootstrap helpers the `DYNAMIC_CONTAINER` token is provided via a proxy (`DYNAMIC_CONTAINER_PROXY`) bound per entrypoint, so applications that use the webcomponent bootstrap path generally do not need to provide the token themselves.
-
-Because the container itself already carries the scope attributes, overlays inserted into it inherit the app's scope without needing an extra wrapper `div`.
-
-PrimeNG components that support `appendTo` can also be pointed at the dynamic container. The app is still responsible for setting that property on the component; OneCX only supplies the target container and the scope data on that container.
+When a webcomponent is bootstrapped, the bootstrap helpers (see libs/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts) provide `DYNAMIC_CONTAINER` through a proxy (`DYNAMIC_CONTAINER_PROXY`) that `createEntrypoint` binds per entrypoint, so the token resolves to a callback shared for the same app or remote-component entrypoint. An application on the webcomponent bootstrap path does not provide the token itself. Because the container already carries the scope attributes, overlays inside it inherit the app's scope without an extra wrapper `div`.
 
 === React
 
@@ -141,10 +137,3 @@ Code::
 * link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`dynamic-content-initializer.utils.ts` (Shell)]: dynamic-content runtime bootstrap
 * link:{react_dynamic_scoping}[`libs/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts`]: PrimeReact's patching-side portal integration
 * link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts` (Shell)]: dynamic-content style-data helpers
-
-Verification Sources checked::
-* `dev-docs/styles/scoping.adoc` (the attribute model this container feeds)
-* `dev-docs/styling/dynamic-content-via-patching.adoc` (the companion option and comparison point)
-* `dev-docs/styles/concept.adoc` and `dev-docs/styles/style-types.adoc` (the isolation framing and attribute table)
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/angular-utils/cdk.adoc` (the public Angular CDK API docs for the container classes)
-* the in-code source for `get-dynamic-container.utils.ts`, `onecx-overlay-container.ts`, `onecx-fullscreen-overlay-container.ts`, and `scope.utils.ts`
