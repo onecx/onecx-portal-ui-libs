@@ -208,7 +208,7 @@ Both frameworks share the same globals. Angular writes and reads `onecxTranslati
 
 * *No ownership guarantee.* Nothing stops a bundle from overwriting another's key. `ensureProperty` only protects against *first-writer-wins* on the leaf; it does not protect a key from being replaced wholesale. Treat the table above as the intended surface and inspect it before debugging.
 * *Values may not exist yet.* Most keys are created lazily with `??=`. Reading a key before its writer runs returns `undefined`; the auth reader in `angular-auth` handles this with a no-op default and a rejecting promise (`Error: No authServiceWrapper provided...`).
-* *`@onecx/angular-utils.guards.debug` is an unused declaration.* The guards package declares the global, but the current code does not write or read it. Guard logging is enabled through the logger namespace instead: `localStorage.debug = '@onecx/angular-utils:guards-utils:*'`.
+* *`@onecx/angular-utils.guards.debug` is an unused declaration.* The guards package declares the global, but the current code does not write or read it. Guard logging is enabled through the guards logger namespace instead: `localStorage.debug = '@onecx/angular-utils:guards:*'`.
 * *`onecxAngularAuth` is legacy.* It exists only so older library versions keep working. New code should read `onecxAuth`; the Shell writes both from the same `AuthServiceWrapper`.
 * *Two `@onecx/*` look-alikes.* `@onecx/accelerator` (accelerator lib) and `@onecx/integration-interface` / `@onecx/angular-utils` are separate top-level keys with unrelated sub-trees.
 
