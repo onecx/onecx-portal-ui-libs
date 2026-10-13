@@ -41,7 +41,7 @@ flowchart TD
 
 === Libs side
 
-`@onecx/react-integration-interface` provides the `UserProvider` / `lang$` (the shared decision); `@onecx/react-utils` provides the two React-specific pieces: the i18next `loadPath` helpers (`getTranslationPathFromMeta`, `registerPortalPageTranslations`) and the `TranslationBridge`. `@onecx/react-utils` also exports the provider scaffolding a React Remote Component wraps itself with: link:{libs}/react-utils/src/lib/utils/withBaseProviders.tsx[`withBaseProviders`] returns a component that nests `AppStateProvider` > `ConfigurationProvider` > `SyncedRouterProvider` > `UserProvider` > `TranslationBridge`, so the `lang$` stream and the bridge are in place around the component's own i18next usage. The App itself owns its i18next *instance* (initialisation, resources, backend); the libs only tell it *where* to load from and *which language* to switch to.
+`@onecx/react-integration-interface` provides the `UserProvider` / `lang$` (the shared decision); `@onecx/react-utils` provides the two React-specific pieces: the i18next `loadPath` helpers (`getTranslationPathFromMeta`, `registerPortalPageTranslations`) and the `TranslationBridge`. `@onecx/react-utils` also exports the provider wrapper a React Remote Component applies to itself: link:{libs}/react-utils/src/lib/utils/withBaseProviders.tsx[`withBaseProviders`] returns a component that nests `AppStateProvider` > `ConfigurationProvider` > `SyncedRouterProvider` > `UserProvider` > `TranslationBridge`, so the `lang$` stream and the bridge are in place around the component's own i18next usage. The App itself owns its i18next *instance* (initialisation, resources, backend); the libs only tell it *where* to load from and *which language* to switch to.
 
 === Shell side
 

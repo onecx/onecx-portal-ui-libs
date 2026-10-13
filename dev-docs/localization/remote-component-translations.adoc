@@ -63,7 +63,7 @@ The Shell does not translate Remote Components itself. It owns the *input* the w
 The loader chain and the shared cache are Angular-specific, so the *fetch once* guarantee a Remote Component inherits is an Angular one.
 
 * **Angular**: the Remote Component is bootstrapped as a module (or via link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`bootstrapRemoteComponent()`] for a web component); its `providers` include `provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/')`. The entry is picked up by the page's `OnecxTranslateLoader`.
-* **React**: a Remote Component has no equivalent of `window.onecxTranslations`; it relies on i18next's per-instance resource handling and the browser's HTTP cache rather than the shared cache. Its translation path is built with `getTranslationPathFromMeta` in link:{libs}/react-utils/src/lib/utils/translationResources.ts[`translationResources.ts`], as described in the planned `react-translations.adoc` Unit. The "fetch once, page-wide" guarantee therefore applies to the Angular side of the page only.
+* **React**: a Remote Component has no equivalent of `window.onecxTranslations`; it relies on i18next's per-instance resource handling and the browser's HTTP cache rather than the shared cache. Its translation path is built with `getTranslationPathFromMeta` in link:{libs}/react-utils/src/lib/utils/translationResources.ts[`translationResources.ts`], as described in link:./react-translations.adoc[React translations]. The "fetch once, page-wide" guarantee therefore applies to the Angular side of the page only.
 
 == Edge cases & pitfalls
 
@@ -90,7 +90,7 @@ There is no known issue in this Unit as of the current `main` code. The shared l
 * link:./missing-translation-fallback.adoc[Missing-translation fallback]: what a key a Remote Component could not load falls through to.
 * link:../remote-components/slot-rendering.adoc[Slot rendering]: where the component's `baseUrl` comes from.
 * link:../remote-components/host-communication.adoc[Remote Component config & host communication]: how the host hands the component its config.
-* React translations (planned): `react-translations.adoc`; the i18next pipeline a React Remote Component uses instead of the shared cache.
+* link:./react-translations.adoc[React translations]: the i18next pipeline a React Remote Component uses instead of the shared cache.
 
 == Sources
 
@@ -110,8 +110,3 @@ Code::
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`bootstrapRemoteComponent` (`webcomponent-bootstrap.utils.ts`)]
 * link:{libs}/react-utils/src/lib/utils/translationResources.ts[`getTranslationPathFromMeta`, `registerPortalPageTranslations` (`translationResources.ts`)]
 * link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`RemoteComponent` (`remote-component.model.ts`)]
-
-Verification Sources checked::
-* Draft Outline commit 6108bff: no prior page for this Area's Unit 3; the Remote Component translation path was cross-checked against the existing `dev-docs/topics/` and `dev-docs/remote-components/` pages and against the `@deprecated` markers in `angular-utils`.
-* in-code JSDoc and `@deprecated` markers in `remote-component-translation-path-factory.utils.ts`, `translation-path-factory.utils.ts` and `translation-path-from-meta.providers.ts`.
-* link:./app-translations.adoc[App translations load & sharing] and link:./profile-and-language.adoc[Profile load & language decision] (this Area) for the shared loader chain and the `lang$` stream.

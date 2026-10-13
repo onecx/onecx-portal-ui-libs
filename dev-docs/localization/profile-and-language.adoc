@@ -68,7 +68,7 @@ The libraries own the *decision*. The contract, the Topic and its payload, lives
 Two consumers turn the decision into a stream:
 
 * link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService`]: an Angular `Injectable` that holds the `UserProfileTopic` and a `BehaviorSubject` `lang$`. In its constructor it pipes `profile$` through `resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)` and subscribes the result to `lang$`.
-* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider`]: the React equivalent, described in the planned `react-translations.adoc` Unit; it builds the same `lang$` from the same `UserProfileTopic` and the same `resolveProfileLanguage` call.
+* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider`]: the React equivalent, described in link:./react-translations.adoc[React translations]; it builds the same `lang$` from the same `UserProfileTopic` and the same `resolveProfileLanguage` call.
 
 Because `lang$` is a `BehaviorSubject` seeded with `determineBrowserLanguage() ?? DEFAULT_LANG`, a framework that reads the stream before the profile arrives still has a sensible language (the browser language, or `'en'`). The profile Topic then upgrades it to the authoritative value once it is published.
 
@@ -85,7 +85,7 @@ The decision is identical on both sides: both call the same `resolveProfileLangu
 * **Angular**: `UserService` is `providedIn: 'root'` within each Angular application injector, so an App or `bootstrapRemoteComponent()`-driven Remote Component gets its own root-scoped `UserService`/`lang$` pair. Each instance still derives the same language from the shared profile Topic, so different Apps can observe separate streams that agree on the same value.
 * **React**: `UserProvider` builds the stream inside a `useMemo`/`useEffect` pair so it survives re-renders, and exposes it through `useUserService()`.
 
-Angular also keeps a deprecated helper on `UserService`, `useOldLangSetting(profile)`, which delegates to `resolveLegacyLanguage` and exists only so Apps on the old locale field keep working during migration; new code should read `resolveProfileLanguage`'s output instead.
+Angular also keeps a legacy helper on `UserService`, `useOldLangSetting(profile)`, which delegates to `resolveLegacyLanguage`. It exists so Apps that still read the old `accountSettings.localeAndTimeSettings.locale` field keep working. New code should read `resolveProfileLanguage`'s output instead.
 
 == Edge cases & pitfalls
 
@@ -123,8 +123,4 @@ Code::
 * link:{libs}/react-integration-interface/src/lib/api/constants.ts[`DEFAULT_LANG` (react `constants.ts`)]
 * link:{libs}/accelerator/src/lib/utils/get-normalized-browser-locales.utils.ts[`getNormalizedBrowserLocales` (accelerator)]
 * link:{shell}/src/app/app.module.ts[`userProfileInitializer` (Shell)]
-
-Verification Sources checked::
-* Draft Outline commit 6108bff: no prior page for this Area's Unit 1; the Topic/user-profile structure was cross-checked against the existing `dev-docs/topics/` pages.
-* in-code JSDoc and `@deprecated` markers in `user-language.utils.ts`, `user-profile.model.ts` and `UserService`.
-* Shell `app.module.ts` (via the Shell repository, `main` branch) for the `userProfileInitializer` location.
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic` base class (`topic.ts`)]
