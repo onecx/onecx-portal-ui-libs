@@ -7,7 +7,7 @@
 
 == Question answered
 
-How the token headers produced by the Shell's auth service are actually attached to an App's outgoing HTTP requests: and which requests are skipped.
+How the token headers produced by the Shell's auth service are actually attached to an App's outgoing HTTP requests, and which requests are skipped.
 
 == Why it exists
 
