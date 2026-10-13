@@ -38,7 +38,7 @@ The Shell reads permissions from its own Backend-for-Frontend (BFF). The generat
 
 `link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]` converts each backend route into an Angular route whose `canActivateChild` guard runs `updateAppEnvironment` → `updateAppState`. On a route whose `remoteBaseUrl` differs from the one currently loaded (or on the first load), `updateAppState` runs `Promise.all([updateMfeInfo, updatePermissions])`; `updatePermissions` resolves the list from the cache and publishes it on its own `PermissionsTopic` (the push Topic, `string[]`). This keeps every App's "current MFE permissions" in step with the active route.
 
-=== The RPC path (Remote Components)
+=== The RPC path (remote components)
 
 `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]` is the answerer on `PermissionsRpcTopic`, started by the `permissionProxyInitializer` in `link:{shell}/src/app/app.module.ts[`app.module.ts`]`. Its `init()` subscribes to its own `PermissionsRpcTopic` and, for every message whose `permissions` is `undefined` (i.e. a request), loads the list through the same cache and publishes the filled-in answer back to the RPC Topic.
 
@@ -106,9 +106,9 @@ All of the loading, caching and failure handling is in the Shell:
 == Related Units
 
 * link:permission-model.adoc[Permission model & two Topics]: the Topics this Shell code publishes on.
-* link:checking-in-apps.adoc[Checking in Apps]: how Apps consume the push Topic (planned).
-* link:remote-component-permissions.adoc[Remote Component permissions]: the RPC path from the consumer's side (planned).
-* link:../shell-context/runtime-configuration.adoc[Shell context & runtime configuration]: the Shell's own loading/failure patterns for BFF data, which mirror this one (Area 3, planned).
+* link:checking-in-apps.adoc[Checking in Apps]: how Apps consume the push Topic.
+* link:remote-component-permissions.adoc[Remote Component permissions]: the RPC path from the consumer's side.
+* link:../shell-context/runtime-configuration.adoc[Shell context & runtime configuration]: the Shell's own loading/failure patterns for BFF data, which mirror this one (Area 3).
 
 == Sources
 
@@ -122,7 +122,4 @@ Code::
 * link:{shell}/src/app/app.module.ts[`app.module.ts` (`permissionProxyInitializer`, `workspaceConfigInitializer`)]
 * link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[`PermissionsTopic`]
 * link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`PermissionsRpcTopic`]
-
-Verification Sources checked::
-* Shell `main` branch source (`onecx-shell-ui`): `permissions-cache.service.ts`, `permission-proxy.service.ts`, `routes.service.ts`, generated `permission.service.ts` and its request/response models. No dedicated Shell Dev Docs page for permission loading exists to diff against; the generated BFF models were used as the source for the endpoint contract.
-* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`): used for topic discovery only; it does not cover Shell loading/caching in depth, so there was no contradiction to resolve there.
+* link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService` (App-side push Topic consumer)]

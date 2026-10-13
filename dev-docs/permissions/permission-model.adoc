@@ -26,7 +26,7 @@ Both Topics extend the base `link:{libs}/accelerator/src/lib/topic/topic.ts[Topi
 
 The two Topics are defined in the framework-agnostic `@onecx/integration-interface` package, so the *contract* (names, versions, shapes) is identical for Angular and React Apps. Only the *consumers* differ by framework (see below). The transport itself, postMessage / BroadcastChannel, ordering, replay and init/resolve, belongs to the link:../integration-contract/message-delivery.adoc[Topic system] and is covered in Area 1; this Unit only gives the *meaning* of the two permission Topics.
 
-=== The push Topic: `PermissionsTopic`
+=== The push topic: `PermissionsTopic`
 
 `link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[permissions.topic.ts]`
 
@@ -34,7 +34,7 @@ The two Topics are defined in the framework-agnostic `@onecx/integration-interfa
 * The value type is `string[]`: the permission keys that apply to the *current* micro frontend.
 * Because it is a shared current value, the Shell is the only meaningful publisher and Apps subscribe to it. The Shell re-publishes the list whenever the current application changes (see link:shell-loading-and-caching.adoc[Shell loading & caching]).
 
-=== The RPC Topic: `PermissionsRpcTopic`
+=== The RPC topic: `PermissionsRpcTopic`
 
 `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[permissions-rpc.topic.ts]`
 
@@ -44,7 +44,7 @@ The two Topics are defined in the framework-agnostic `@onecx/integration-interfa
 It carries the requested `appId` and `productName`, with an optional list of permission keys.
 
 * The optional `permissions` field is the difference between a *request* and a *response*: a request has `permissions === undefined`; a response has it set to `string[]`.
-* It is used to check permissions for an application that is *not* the one currently in the foreground: the case that arises for Remote Components, which are rendered by one App but act on features owned by another.
+* It is used to check permissions for an application that is *not* the one currently in the foreground: the case that arises for Remote Components, which are rendered by one App but act on functionality owned by another application.
 
 The request/response exchange is a convention layered on a plain Topic (the topic does not itself know about "requests" and "responses"). It works because the Shell subscribes to the topic, filters to messages whose `permissions` is `undefined`, fetches the list and publishes an answer back on the same topic. The client filters the incoming stream down to the message that matches the `appId`/`productName` it asked about.
 
@@ -96,7 +96,7 @@ Only the consumers differ; the Topics themselves are shared.
 * Angular Remote Components call `link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[PermissionService].getPermissions(appId, productName)`, which caches the result per `${appId}:${productName}`, publishes the request and awaits the matching answer.
 * React Remote Components use `link:{libs}/react-remote-components/src/lib/contexts/permissionContext.tsx[PermissionProvider]` / `PermissionContext.getPermissions(appId, productName)`. It mirrors the Angular pattern: a per-`${appId}:${productName}` promise cache, a request publish, and a `firstValueFrom` filtered down to the matching, `Array.isArray(permissions)` message. The topic instance is obtained with `useTopic(undefined, PermissionsRpcTopic)`.
 
-A standalone (no-Shell) Angular app has no Shell to answer anything, so `link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[exposeStandalone]` publishes a `PermissionsTopic` directly with `providerConfig?.permissions ?? []`: the same "Shell pushes the current value" behaviour, done by the app itself.
+A standalone (no-Shell) Angular app has no Shell to answer anything. The `link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[provideStandaloneProviders()]` initializer publishes a `PermissionsTopic` directly with `providerConfig?.permissions ?? []`: the same "Shell pushes the current value" behaviour, done by the app itself.
 
 == Edge cases & pitfalls
 
@@ -115,8 +115,8 @@ To watch `permissions` and `permissionsRpc` traffic, set `localStorage.debug` to
 == Related Units
 
 * link:shell-loading-and-caching.adoc[Shell loading & caching]: how the Shell loads, caches and publishes the permission lists, and the deny-all fallback.
-* link:checking-in-apps.adoc[Checking in Apps]: `PermissionService`, `HAS_PERMISSION_CHECKER` and template checks (planned).
-* link:remote-component-permissions.adoc[Remote Component permissions]: the RPC Topic from the Remote Component's point of view (planned).
+* link:checking-in-apps.adoc[Checking in Apps]: `PermissionService`, `HAS_PERMISSION_CHECKER` and template checks.
+* link:remote-component-permissions.adoc[Remote Component permissions]: the RPC Topic from the Remote Component's point of view.
 * link:../integration-contract/message-delivery.adoc[Topic message delivery]: the shared transport, ordering and replay behind both Topics (Area 1).
 
 == Sources
@@ -131,12 +131,7 @@ Code::
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/permissions-store-connector-service.ts[`PermissionsStoreConnectorService`]
 * link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[Remote Component `PermissionService`]
 * link:{libs}/react-remote-components/src/lib/contexts/permissionContext.tsx[React `PermissionContext`]
-* link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`exposeStandalone` (standalone `PermissionsTopic` publish)]
+* link:{libs}/angular-standalone-shell/src/lib/utils/expose-standalone.utils.ts[`provideStandaloneProviders()` (standalone `PermissionsTopic` publish)]
 * link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService` (Shell, push publisher)]
 * link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService` (Shell, RPC answerer)]
 * link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell, `permissionProxyInitializer`)]
-
-Verification Sources checked::
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc`: `#permissions-topic` and `#permissions-rpc-topic` sections.
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/angular-integration-interface.adoc`: `UserService` permission table.
-* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`): used for topic discovery only; it describes the checker factory as a function-wrapper and lists the `*ocxIfPermission` directive in detail. The factory signature is wrong against current code (it is an Angular DI factory) and the directive belongs to link:checking-in-apps.adoc[Checking in Apps]; both recorded as follow-ups. Code wins.

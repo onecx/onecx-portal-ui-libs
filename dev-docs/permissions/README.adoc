@@ -11,6 +11,12 @@ OneCX decides what a user may see and do from permission *keys*. The Shell is th
 * how the Shell loads and caches the permission lists it serves, and
 * how Apps and Remote Components receive and check them.
 
+Three app types are impacted:
+
+* a **regular App** (the micro frontend that is currently in the foreground) checks its own permission list, delivered by the Shell over the push `permissions` Topic;
+* a **Remote Component** checks the permission list of *another* application by asking the Shell over the request/response `permissionsRpc` Topic;
+* a **standalone (no-Shell) App** has no Shell to answer, so it publishes its own `permissions` Topic and, by default, resolves every check against an always-allow checker.
+
 The data structures are framework-agnostic: the contract lives in the `@onecx/integration-interface` package of this repository, and the Shell talks to the same Topics from the other side. The Units below explain one question each; read them in the order listed under Unit map.
 
 == Big picture
