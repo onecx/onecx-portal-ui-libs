@@ -95,7 +95,7 @@ The implementations are parallel. The differences:
 
 == Known issues
 
-* *`AppConfigService.init` is never called by the libs.* Nothing in `onecx-portal-ui-libs` invokes `appConfigService.init(baseUrl)`; the ngrx `AppConfigStoreConnectorService` only *subscribes* to `config$`. The App must call `init` itself (for example at bootstrap, before the first render that reads it); otherwise the connector dispatches `appConfigChanged` with `{}`. Recorded for follow-up in the PR.
+* *`AppConfigService.init` is never called by the libs.* Nothing in `onecx-portal-ui-libs` invokes `appConfigService.init(baseUrl)`; the ngrx `AppConfigStoreConnectorService` only *subscribes* to `config$`. The App must call `init` itself (for example at bootstrap, before the first render that reads it); otherwise the connector dispatches `appConfigChanged` with `{}`.
 * *No React `AppConfigService`.* Only Angular ships the holder. React has no App-local, non-Topic equivalent; the intended replacement is the Configuration Topic. This is an asymmetry, not a bug.
 
 == Related Units
@@ -123,3 +123,4 @@ Code::
 * link:{shell}/src/app/app.module.ts[`app.module.ts`] (`configurationServiceInitializer`, `workspaceConfigInitializer`) (Shell)
 * link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell)
 * link:{shell}/src/assets/env.json[`env.json`] (Shell)
+* link:https://github.com/onecx/docker-spa-base/blob/2.39.0/entrypoint.sh[`entrypoint.sh`] (docker-spa-base, placeholder substitution) (Shell)

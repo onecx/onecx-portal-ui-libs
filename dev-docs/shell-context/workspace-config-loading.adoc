@@ -66,7 +66,7 @@ The Shell is the single producer of all three Topics.
 ** apply the theme;
 ** publish `remoteComponents$` (via `mapSlots`).
 * *Parameters:* link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell) reads a `localStorage` cache and builds a request from `currentWorkspace$` and `remoteComponents$`. It fetches missing values, updates the cache and publishes the result to the `parameters` Topic.
-* *Runtime configuration:* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `configurationService.init()`. It resolves inlined `APP_CONFIG`, injected defaults or link:{shell}/src/assets/env.json[`src/assets/env.json`] and publishes the `configuration` Topic. The Keycloak and other `TKIT_*` keys are seeded from link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`].
+* *Runtime configuration:* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `configurationService.init()`. It resolves inlined `APP_CONFIG`, injected defaults or link:{shell}/src/assets/env.json[`src/assets/env.json`] and publishes the `configuration` Topic. The build-time defaults (the Keycloak keys and `skipRemoteConfigLoad`) come from link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`].
 
 == Angular / React
 
@@ -91,8 +91,8 @@ The load path and the shared helpers (`workspace.utils.ts`, `parameters.utils.ts
 
 == Known issues
 
-* *`PortalApiConfiguration.basePath` setter trap.* The `basePath` setter throws `Error('Do not set basePath')` (link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`portal-api-configuration.utils.ts`]). The getter is filled asynchronously from the first `currentMfe$` value; earlier reads get the `./<apiPrefix>` placeholder. Follow-up recorded in the PR.
-* *`encocdeParam` setter typo.* The same file names the setter `encocdeParam` instead of `encodeParam`, so `configuration.encodeParam` cannot be reassigned through the intended accessor. Follow-up recorded in the PR.
+* *`PortalApiConfiguration.basePath` setter trap.* The `basePath` setter throws `Error('Do not set basePath')` (link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`portal-api-configuration.utils.ts`]). The getter is filled asynchronously from the first `currentMfe$` value; earlier reads get the `./<apiPrefix>` placeholder.
+* *`encocdeParam` setter typo.* The same file names the setter `encocdeParam` instead of `encodeParam`, so `configuration.encodeParam` cannot be reassigned through the intended accessor.
 
 == Related Units
 
