@@ -90,7 +90,7 @@ Most globals are *owned* by a library in this repository: the library writes the
 
 === Shell side
 
-The Shell writes three kinds of globals. It sets the auth proxies (`onecxAuth`, `onecxAngularAuth`) from link:{shell}/src/app/shell/services/[its auth service] once authentication is ready; it publishes the capability list via `ShellCapabilityService.setCapabilities(...)` in link:{shell}/src/bootstrap.ts[`src/bootstrap.ts`]; and at startup it exposes the Module Federation instance on `globalThis` and initialises the preloader registry in link:{shell}/src/main.ts[`src/main.ts`]. It also seeds a few keys directly in `src/index.html` (for example the current language in `localStorage.onecxLanguage`). The libs never need to know *how* the Shell produced these values — only the key name.
+The Shell writes three kinds of globals. It sets the auth proxies (`onecxAuth`, `onecxAngularAuth`) from the `AuthServiceWrapper` that the `@onecx/shell-auth` library instantiates when the Shell calls `provideAuthService()`; it publishes the capability list via `ShellCapabilityService.setCapabilities(...)` in link:{shell}/src/bootstrap.ts[`src/bootstrap.ts`]; and at startup it exposes the Module Federation instance on `globalThis` and initialises the preloader registry in link:{shell}/src/main.ts[`src/main.ts`]. The libs never need to know *how* the Shell produced these values — only the key name.
 
 == The inventory
 
@@ -182,7 +182,7 @@ The table lists every `window`/`globalThis` key that the current libraries read 
 
 |`onecxFederationInstance`
 |Shell — link:{shell}/src/main.ts[`src/main.ts`]
-|Apps reading the Module Federation instance
+|`@onecx/angular-utils` — link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`get-load-remote-entry-options.utils.ts`] (falls back to the runtime `getInstance`)
 |2. Application Bootstrap — Module Federation
 
 |`__FEDERATION__.__INSTANCES__`
@@ -196,10 +196,9 @@ The table lists every `window`/`globalThis` key that the current libraries read 
 |2. Application Bootstrap — Preloaders
 |===
 
-A separate pair of values is not a `window` key but is equally important at runtime and is set from the Shell's `src/index.html`:
+One related value is not a `window` key but is equally important at runtime:
 
-* `localStorage.debug` — the namespace patterns that enable link:logging.adoc[logging]. Written by the developer (or the Shell), read by the `debug` package.
-* `localStorage.onecxLanguage` — the current language choice, read by Apps (see *10. Localization*).
+* `localStorage.debug` — the namespace patterns that enable link:logging.adoc[logging]. Written by the developer, read by the `debug` package on load.
 
 == Angular / React
 
@@ -267,13 +266,9 @@ Code::
 * link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`] — `onecx-shell-capabilities` and the `ShellCapability` enum.
 * link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/functions/onecx-trigger-element.ts[`react-utils/.../onecx-trigger-element.ts`] and `.../functions/declarations.ts` — `onecxTriggerElement`.
 * link:{libs}/react-remote-components/src/lib/utils/getShellMfInstance.ts[`react-remote-components/src/lib/utils/getShellMfInstance.ts`] — `__FEDERATION__.__INSTANCES__` reader.
+* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts`] — `onecxFederationInstance` reader (Angular side, with a runtime `getInstance` fallback).
 * link:{shell}/src/main.ts[`src/main.ts` (Shell)] — `onecxFederationInstance`, `onecxPreloaders` writers.
 * link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)] — `setShellCapabilities(...)` writer.
 * link:{shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts[`src/app/shell/utils/styles/onecx-trigger-element.utils.ts`] — assigns `globalThis.onecxTriggerElement` from UI event handlers.
 * link:{shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts[`src/app/shell/utils/styles/dynamic-content-initializer.utils.ts`] — initializer that wires the event handlers that set `onecxTriggerElement`.
-
-Verification Sources checked::
-* link:{shell}/src/index.html[`src/index.html` (Shell)] — seeds `localStorage.debug` and `localStorage.onecxLanguage` inline; Shell `onecxShell` logger namespace.
-* `dev-docs/topics/overview.adoc` and `dev-docs/topics/debug.adoc` — pre-existing Topic pages that describe `@onecx/accelerator` state and the pre-v8 `window['@onecx/accelerator'].topic.debug` convention.
-* `docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc` — the `localStorage.debug` enabling contract.
-* JSDoc / `declare global` blocks on each key's declaring file (listed above).
+* link:{libs}/shell-auth/src/lib/provide-auth-service.ts[`shell-auth/src/lib/provide-auth-service.ts`] — the `provideAuthService()` entry the Shell calls to instantiate the `AuthServiceWrapper` that writes the auth proxies.
