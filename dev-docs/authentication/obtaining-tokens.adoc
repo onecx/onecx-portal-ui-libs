@@ -7,7 +7,7 @@
 
 == Question answered
 
-How an App (Angular, React or Web Component) reaches the Shell's auth service to read token headers and refresh the token — without talking to the identity provider directly.
+How an App (Angular, React or Web Component) reaches the Shell's auth service to read token headers and refresh the token: without talking to the identity provider directly.
 
 == Why it exists
 
@@ -21,7 +21,7 @@ window.onecxAuth.authServiceProxy.v1 = {
 }
 ----
 
-`getHeaderValues()` returns the headers an App should attach to a request; `updateTokenIfNeeded()` makes sure the token is still valid (refreshing it if it is about to expire). Because the proxy is a plain property on `window`, it is framework-agnostic — the same bridge serves Angular, React and Web Components. The versioned namespace (`authServiceProxy.v1`) lets the API grow without breaking existing Apps.
+`getHeaderValues()` returns the headers an App should attach to a request; `updateTokenIfNeeded()` makes sure the token is still valid (refreshing it if it is about to expire). Because the proxy is a plain property on `window`, it is framework-agnostic: the same bridge serves Angular, React and Web Components. The versioned namespace (`authServiceProxy.v1`) lets the API grow without breaking existing Apps.
 
 Apps should not touch `window` by hand; they read the proxy through a thin per-framework wrapper (`AuthProxyService` / `authServiceProxy`) that adds type safety and a clear error when the Shell is too old to have mounted the proxy.
 
@@ -31,10 +31,10 @@ Apps should not touch `window` by hand; they read the proxy through a thin per-f
 
 The `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[AuthServiceWrapper]` constructor mounts the proxy. It does so twice, using `??=` so an already-mounted proxy is never replaced:
 
-* `window.onecxAuth ??= {}` … then `window.onecxAuth.authServiceProxy.v1 ??= { updateTokenIfNeeded, getHeaderValues }` — the current name;
-* `window.onecxAngularAuth ??= {}` … then the same pair under `window.onecxAngularAuth.authServiceProxy.v1` — a *legacy alias* kept for older library versions.
+* `window.onecxAuth ??= {}` … then `window.onecxAuth.authServiceProxy.v1 ??= { updateTokenIfNeeded, getHeaderValues }`: the current name;
+* `window.onecxAngularAuth ??= {}` … then the same pair under `window.onecxAngularAuth.authServiceProxy.v1`: a *legacy alias* kept for older library versions.
 
-Both objects are declared in `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]` (the current and legacy shapes). The mounted methods delegate to the wrapper's `getHeaderValues()` and `updateTokenIfNeeded()`, which forward to the selected `AuthService`. So whichever mechanism is active — Keycloak, a custom remote service, or disabled — the proxy is the single, stable surface an App reads.
+Both objects are declared in `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]` (the current and legacy shapes). The mounted methods delegate to the wrapper's `getHeaderValues()` and `updateTokenIfNeeded()`, which forward to the selected `AuthService`. So whichever mechanism is active, Keycloak, a custom remote service, or disabled, the proxy is the single, stable surface an App reads.
 
 [source,mermaid]
 ----
@@ -58,10 +58,10 @@ sequenceDiagram
 
 === Reading the proxy (the per-framework wrappers)
 
-Both framework wrappers read the proxy with `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensureProperty]`, which creates the `onecxAuth.authServiceProxy.v1` path on `globalThis` if it is missing and sets the leaf with `??=` (so it never overwrites the Shell's real proxy). Crucially, both wrappers read the *current* `window.onecxAuth` name — not the legacy `onecxAngularAuth` alias.
+Both framework wrappers read the proxy with `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensureProperty]`, which creates the `onecxAuth.authServiceProxy.v1` path on `globalThis` if it is missing and sets the leaf with `??=` (so it never overwrites the Shell's real proxy). Crucially, both wrappers read the *current* `window.onecxAuth` name: not the legacy `onecxAngularAuth` alias.
 
-* *Angular:* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[AuthProxyService]` — an injectable whose `getHeaderValues()` and `updateTokenIfNeeded()` call the proxy. When the proxy is absent, `updateTokenIfNeeded()` rejects with the message `No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.`
-* *React:* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the `AuthServiceProxy` class with the same two methods, plus the exported singleton `authServiceProxy`. The same missing-proxy message is defined as the `MISSING_PROXY_ERROR` constant, which `link:{libs}/react-auth/src/lib/axios.ts[axiosFactory]` relies on (see the next Unit).
+* *Angular:* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[AuthProxyService]`: an injectable whose `getHeaderValues()` and `updateTokenIfNeeded()` call the proxy. When the proxy is absent, `updateTokenIfNeeded()` rejects with the message `No authServiceWrapper provided. Please update to the latest shell version to use the new auth mechanism.`
+* *React:* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]`: the `AuthServiceProxy` class with the same two methods, plus the exported singleton `authServiceProxy`. The same missing-proxy message is defined as the `MISSING_PROXY_ERROR` constant, which `link:{libs}/react-auth/src/lib/axios.ts[axiosFactory]` relies on (see the next Unit).
 
 [source,typescript]
 ----
@@ -75,15 +75,15 @@ const headers = authServiceProxy.getHeaderValues()
 
 === Libs side
 
-* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[auth-service-wrapper.ts]` — mounts both `window.onecxAuth` and the legacy `window.onecxAngularAuth` proxy with `??=` and delegates the two methods to the selected `AuthService`.
-* `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]` — the `window` typings for both proxy shapes.
-* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]` — the Angular reader (`AuthProxyService`).
-* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]` — the React reader (`AuthServiceProxy` + `authServiceProxy` singleton) and `MISSING_PROXY_ERROR`.
-* `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensure-property.utils.ts]` — the `ensureProperty` helper both readers use to access the proxy path safely.
+* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[auth-service-wrapper.ts]`: mounts both `window.onecxAuth` and the legacy `window.onecxAngularAuth` proxy with `??=` and delegates the two methods to the selected `AuthService`.
+* `link:{libs}/shell-auth/src/lib/declarations.ts[declarations.ts]`: the `window` typings for both proxy shapes.
+* `link:{libs}/angular-auth/src/lib/auth-proxy.service.ts[auth-proxy.service.ts]`: the Angular reader (`AuthProxyService`).
+* `link:{libs}/react-auth/src/lib/auth-proxy-service.ts[auth-proxy-service.ts]`: the React reader (`AuthServiceProxy` + `authServiceProxy` singleton) and `MISSING_PROXY_ERROR`.
+* `link:{libs}/accelerator/src/lib/utils/ensure-property.utils.ts[ensure-property.utils.ts]`: the `ensureProperty` helper both readers use to access the proxy path safely.
 
 === Shell side
 
-The Shell is where the proxy is *created*: importing `provideAuthService()` in `link:{shell}/src/app/app.module.ts[app.module.ts]` instantiates the wrapper, and the wrapper's constructor is what writes `window.onecxAuth` (and the legacy alias). The Apps in the same page — Angular, React or Web Component — are pure consumers: they read the proxy; they never mount it and never hold token state. A Web Component has no dedicated reader in this repository; it reads `window.onecxAuth.authServiceProxy.v1` off `window` directly.
+The Shell is where the proxy is *created*: importing `provideAuthService()` in `link:{shell}/src/app/app.module.ts[app.module.ts]` instantiates the wrapper, and the wrapper's constructor is what writes `window.onecxAuth` (and the legacy alias). The Apps in the same page, Angular, React or Web Component, are pure consumers: they read the proxy; they never mount it and never hold token state. A Web Component has no dedicated reader in this repository; it reads `window.onecxAuth.authServiceProxy.v1` off `window` directly.
 
 == Angular / React
 
@@ -96,15 +96,15 @@ The proxy itself is identical on both frameworks; only the reader differs.
 | Missing proxy | `updateTokenIfNeeded()` rejects with a descriptive error | same error, exported as `MISSING_PROXY_ERROR`
 |===
 
-Neither framework reads the legacy `window.onecxAngularAuth` alias — that alias exists so very old library versions keep working; current readers only use the `onecxAuth` name.
+Neither framework reads the legacy `window.onecxAngularAuth` alias: that alias exists so very old library versions keep working; current readers only use the `onecxAuth` name.
 
 == Edge cases & pitfalls
 
 * *Missing proxy = stale Shell.* If `window.onecxAuth.authServiceProxy.v1` was never mounted (the page is running against a Shell that predates the new mechanism), `updateTokenIfNeeded()` rejects with the "No authServiceWrapper provided" error. The Angular `TokenInterceptor` propagates that error; the React `axiosFactory` swallows it (see link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]).
-* *The proxy is idempotent.* Both the mount (`??=`) and the readers' `ensureProperty` use `??=`-style assignment, so constructing a reader — or initialising the wrapper more than once — never replaces a proxy the Shell already mounted.
+* *The proxy is idempotent.* Both the mount (`??=`) and the readers' `ensureProperty` use `??=`-style assignment, so constructing a reader, or initialising the wrapper more than once, never replaces a proxy the Shell already mounted.
 * *`updateTokenIfNeeded()` is the refresh trigger.* Apps that only call `getHeaderValues()` will keep sending whatever token the Shell currently holds; they should call `updateTokenIfNeeded()` first (the interceptors do).
 * *The legacy alias is not used by current readers.* Do not rely on `window.onecxAngularAuth` from an App; it is a backwards-compatibility shim.
-* *`getHeaderValues()` can be empty.* Before a successful `init()` — or under the disabled mechanism — the returned headers may be empty; see the next Unit for how each framework handles empty header values.
+* *`getHeaderValues()` can be empty.* Before a successful `init()`, or under the disabled mechanism, the returned headers may be empty; see the next Unit for how each framework handles empty header values.
 
 == Debugging
 

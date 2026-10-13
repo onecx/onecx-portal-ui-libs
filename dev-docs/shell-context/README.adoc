@@ -16,8 +16,8 @@ toc::[]
 
 An App does not know at build time which Workspace (portal) it runs in, which routes and endpoints exist, which configuration keys apply, or which parameters to honour. The Shell owns these answers and hands them over at runtime through the Topic contract of Area 1 (Integration Contract & Topics). Every other Area builds on two parts of this:
 
-* *readiness* — which Topics hold the Shell's context, and how an App knows a piece of it has arrived
-* *distribution* — how the Workspace configuration is loaded on the Shell side and fanned out to the `current-workspace`, `configuration` and `parameters` Topics and the services that read them.
+* *readiness*: which Topics hold the Shell's context, and how an App knows a piece of it has arrived
+* *distribution*: how the Workspace configuration is loaded on the Shell side and fanned out to the `current-workspace`, `configuration` and `parameters` Topics and the services that read them.
 
 == Big picture
 
@@ -70,14 +70,14 @@ Routing is split the same way: the Shell router owns the top-level path and moun
 
 The Units in reading order, using the link:{dev-docs-index}[Dev Docs index] slugs:
 
-. link:context-readiness.adoc[Context overview & readiness] — what context the Shell provides and how an App knows it is ready.
-. link:workspace-config-loading.adoc[Workspace config load & distribution] — how the Workspace configuration is loaded and fanned out to Topics/services.
-. link:workspace-model-and-urls.adoc[Workspace model & URL building] — the Workspace model and how cross-App URLs are built.
-. link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — how the Current App is described and the API base URL is resolved.
-. link:configuration-kinds.adoc[Configuration vs App Config vs Parameter] — the three kinds of settings, who owns each and where it comes from.
-. link:runtime-configuration.adoc[Runtime configuration] — env.json placeholders, the configuration Topic, cross-repo keys, and the Shell's nginx/BFF serving.
-. link:parameters.adoc[Parameters] — how Parameters are loaded and delivered to Apps.
-. link:shell-responsibilities.adoc[Shell responsibilities & routing boundary] — what the Shell does for every App, what must not break, and where its routing responsibility stops.
+. link:context-readiness.adoc[Context overview & readiness]: what context the Shell provides and how an App knows it is ready.
+. link:workspace-config-loading.adoc[Workspace config load & distribution]: how the Workspace configuration is loaded and fanned out to Topics/services.
+. link:workspace-model-and-urls.adoc[Workspace model & URL building]: the Workspace model and how cross-App URLs are built.
+. link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: how the Current App is described and the API base URL is resolved.
+. link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: the three kinds of settings, who owns each and where it comes from.
+. link:runtime-configuration.adoc[Runtime configuration]: env.json placeholders, the configuration Topic, cross-repo keys, and the Shell's nginx/BFF serving.
+. link:parameters.adoc[Parameters]: how Parameters are loaded and delivered to Apps.
+. link:shell-responsibilities.adoc[Shell responsibilities & routing boundary]: what the Shell does for every App, what must not break, and where its routing responsibility stops.
 
 Read Units 1 and 2 first: Units 5–7 assume their readiness and distribution mechanisms, and Units 3 and 4 build on the Workspace and `currentMfe$` they deliver. Use Unit 8 as a checklist before changing Shell code.
 
@@ -85,9 +85,9 @@ Read Units 1 and 2 first: Units 5–7 assume their readiness and distribution me
 
 This Area depends on the Topic contract and is used by the Areas below.
 
-* link:{dev-docs-index}[Dev Docs index] — the Area and Unit slug map.
-* Area 1, Integration Contract & Topics — the Topic mechanism these contexts are carried on (message delivery, transports, lifecycle).
-* Area 2, Application Bootstrap — when bootstrap runs relative to the Shell's initializers.
-* Area 7, Navigation & Routing — the `current-location` / Current App Topics that arrive alongside the workspace.
-* Area 10, Localization — the `i18n` and user-profile data that accompany the Workspace.
-* Area 12, State Management — how the Shell context is wired into an App's ngrx store.
+* link:{dev-docs-index}[Dev Docs index]: the Area and Unit slug map.
+* Area 1, Integration Contract & Topics: the Topic mechanism these contexts are carried on (message delivery, transports, lifecycle).
+* Area 2, Application Bootstrap: when bootstrap runs relative to the Shell's initializers.
+* Area 7, Navigation & Routing: the `current-location` / Current App Topics that arrive alongside the workspace.
+* Area 10, Localization: the `i18n` and user-profile data that accompany the Workspace.
+* Area 12, State Management: how the Shell context is wired into an App's ngrx store.

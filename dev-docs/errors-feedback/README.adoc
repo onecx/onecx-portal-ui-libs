@@ -7,16 +7,16 @@ This Area covers how a running OneCX page reacts to failure, what it shows while
 
 == Problem
 
-A OneCX page can fail at several different moments: before the workspace is even configured, while a remote module is being loaded, in the middle of a navigation, or at any time afterwards. Each of those moments needs its own reaction — a page, a spinner, a toast. The work is split between the libraries and the Shell: the libraries define the *Topics* and the reusable error/loading building blocks, and the Shell decides where a given failure lands and what the user actually sees. Until now this behaviour was only documented in short, partly outdated pages. This Area describes it from the current code of both repositories.
+A OneCX page can fail at several different moments: before the workspace is even configured, while a remote module is being loaded, in the middle of a navigation, or at any time afterwards. Each of those moments needs its own reaction: a page, a spinner, a toast. The work is split between the libraries and the Shell: the libraries define the *Topics* and the reusable error/loading building blocks, and the Shell decides where a given failure lands and what the user actually sees. Until now this behaviour was only documented in short, partly outdated pages. This Area describes it from the current code of both repositories.
 
 == Big picture
 
 The libraries expose four Topics that a page uses to signal or read state, plus a few reusable components and services:
 
-* `globalError` — a single, page-wide error signal (a `string`, e.g. an error code).
-* `globalLoading` — a single, page-wide loading flag (a `boolean`).
-* `message` — a Portal Message to show to the user (a toast).
-* `notification` — a structured cross-App notification.
+* `globalError`: a single, page-wide error signal (a `string`, e.g. an error code).
+* `globalLoading`: a single, page-wide loading flag (a `boolean`).
+* `message`: a Portal Message to show to the user (a toast).
+* `notification`: a structured cross-App notification.
 
 The Shell is the consumer that turns these into UI: an initialization-error page, a global-error page, a not-found page, the Shell's own toast Remote Component, and a route-area loading spinner (the PortalViewport spinner). The route-area spinner is a distinct Shell outcome driven by RoutesService.showContent$ (updated by RoutesService.loadChildren()); publishing the libraries' globalLoading Topic alone does not toggle it.
 
@@ -44,7 +44,7 @@ flowchart TD
   end
 ----
 
-IMPORTANT: The Shell's route-area spinner (the one rendered by the PortalViewportComponent) is bound to RoutesService.showContent$; RoutesService.loadChildren() updates that signal while route children are loading. This is a distinct signal from the libraries' globalLoading Topic — publishing globalLoading does not, by itself, toggle the PortalViewport spinner.
+IMPORTANT: The Shell's route-area spinner (the one rendered by the PortalViewportComponent) is bound to RoutesService.showContent$; RoutesService.loadChildren() updates that signal while route children are loading. This is a distinct signal from the libraries' globalLoading Topic: publishing globalLoading does not, by itself, toggle the PortalViewport spinner.
 
 [NOTE]
 ====
@@ -55,15 +55,15 @@ Anything that reaches the `globalError` or `globalLoading` Topic is *page-global
 
 Read the Units in the order below.
 
-. Failure taxonomy map — link:./failure-taxonomy.adoc[failure-taxonomy.adoc]
-. Initialization failures & init-error page — link:./initialization-failures.adoc[initialization-failures.adoc]
-. App load failures & global errors — link:./app-load-failures-and-global-errors.adoc[app-load-failures-and-global-errors.adoc]
-. Global loading — link:./global-loading.adoc[global-loading.adoc]
-. Portal Messages & Notifications — link:./portal-messages-and-notifications.adoc[portal-messages-and-notifications.adoc]
+. Failure taxonomy map: link:./failure-taxonomy.adoc[failure-taxonomy.adoc]
+. Initialization failures & init-error page: link:./initialization-failures.adoc[initialization-failures.adoc]
+. App load failures & global errors: link:./app-load-failures-and-global-errors.adoc[app-load-failures-and-global-errors.adoc]
+. Global loading: link:./global-loading.adoc[global-loading.adoc]
+. Portal Messages & Notifications: link:./portal-messages-and-notifications.adoc[portal-messages-and-notifications.adoc]
 
 == Related Areas
 
-* Area 1 (Integration Contract & Topics) — how the Topics this Area relies on are delivered across the page.
-* Area 7 (Navigation & Routing) — how the not-found page and the Current App route are selected.
-* Area 2 (Application Bootstrap) — the load path whose failure is covered by Unit 3.
-* Area 10 (Localization) — where the translated strings on the error and not-found pages come from.
+* Area 1 (Integration Contract & Topics): how the Topics this Area relies on are delivered across the page.
+* Area 7 (Navigation & Routing): how the not-found page and the Current App route are selected.
+* Area 2 (Application Bootstrap): the load path whose failure is covered by Unit 3.
+* Area 10 (Localization): where the translated strings on the error and not-found pages come from.

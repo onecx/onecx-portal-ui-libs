@@ -6,7 +6,7 @@
 
 == Question answered
 
-When something goes wrong in a OneCX page — during initialization, loading an App, or at any later point — which failure mode is it, and where does it end up on screen?
+When something goes wrong in a OneCX page, during initialization, loading an App, or at any later point, which failure mode is it, and where does it end up on screen?
 
 == Why it exists
 
@@ -16,15 +16,15 @@ A OneCX page can fail at several different moments, and the right reaction depen
 
 There are four distinct failure modes, and each has its own destination. The distinguishing factor is *timing* and *who detects the failure*:
 
-. *Initialization failure.* The Shell cannot build its own state — the workspace configuration or the user profile cannot be loaded. Detected by the Shell's initializers. Ends up on the **initialization-error page** (route `portal-initialization-error-page`). Covered in link:./initialization-failures.adoc[Unit 2].
+. *Initialization failure.* The Shell cannot build its own state: the workspace configuration or the user profile cannot be loaded. Detected by the Shell's initializers. Ends up on the **initialization-error page** (route `portal-initialization-error-page`). Covered in link:./initialization-failures.adoc[Unit 2].
 . *App load failure.* The Shell's routing tries to load a remote module (a Micro-Front-End) and the download or instantiation fails. Detected by the Shell's `RoutesService`, which fires a toast and navigates to the route `remote-loading-error-page`, rendered by a dedicated `ErrorPageComponent`. Covered in Unit 3.
 . *Global error.* Something publishes a value to the `globalError` Topic. Detected by the Shell's portal viewport, which subscribes to the Topic. Ends up on the **global-error page** (`ocx-shell-error`), which replaces the whole viewport. Covered in Unit 3.
 . *Not-found.* A URL matches no route. Detected by Angular's catch-all route. Ends up on the **not-found page**. Covered in Area 7.
 
 The `globalError` and `globalLoading` signals themselves are Topics defined in the libraries:
 
-* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`] — `Topic<string>`, name `globalError`, version 1. A single error code for the whole page.
-* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`] — `Topic<boolean>`, name `globalLoading`, version 1. A single loading flag for the whole page.
+* link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`]: `Topic<string>`, name `globalError`, version 1. A single error code for the whole page.
+* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`]: `Topic<boolean>`, name `globalLoading`, version 1. A single loading flag for the whole page.
 
 A `Topic` is page-global within a single browser tab: every instance on the page within that tab converges on the same value. Topics do not propagate between browser tabs. Both failures and the busy state therefore reach every part of the page within the same tab from a single source of truth. See Area 1 (Integration Contract & Topics) for the delivery mechanism.
 
@@ -53,8 +53,8 @@ The libraries provide the *signals* and the *reusable building blocks*; they do 
 * Two signal Topics: link:{libs}/integration-interface/src/lib/topics/global-error/v1/global-error.topic.ts[`GlobalErrorTopic`] and link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`].
 * The Angular `AppStateService` re-exposes these (and other) Topics so a component can inject one service and read `globalError$` / `globalLoading$`: link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`].
 * A reusable error component and a reusable loading indicator, both in `angular-accelerator`:
-** link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent`] (selector `ocx-error`) — a generic "error" page that reads an `err` code and a `return` URL from the query string and can reload.
-** link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`] (`[ocxLoadingIndicator]`) — toggles a loading indicator on a host element or as a full-page overlay.
+** link:{libs}/angular-accelerator/src/lib/components/error-component/global-error.component.ts[`GlobalErrorComponent`] (selector `ocx-error`): a generic "error" page that reads an `err` code and a `return` URL from the query string and can reload.
+** link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`] (`[ocxLoadingIndicator]`): toggles a loading indicator on a host element or as a full-page overlay.
 
 === Shell side
 
@@ -77,9 +77,9 @@ The `globalError` and `globalLoading` Topics, and the Shell's routing and viewpo
 
 == Related Units
 
-* link:./initialization-failures.adoc[Initialization failures & init-error page] — the mechanism behind failure mode 1.
-* App load failures & global errors (Unit 3, not yet written) — failure modes 2 and 3.
-* Area 7 — Navigation & Routing — where the not-found page is selected.
+* link:./initialization-failures.adoc[Initialization failures & init-error page]: the mechanism behind failure mode 1.
+* App load failures & global errors (Unit 3, not yet written): failure modes 2 and 3.
+* Area 7, Navigation & Routing, where the not-found page is selected.
 
 == Sources
 
@@ -97,6 +97,6 @@ Code::
 * link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent` (Shell)]
 
 Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`) — no prior errors-feedback page; topic map only.
-* libs `docs/` and in-code JSDoc/README — no coverage of this Area found.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui` — basis for every claim above.
+* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page; topic map only.
+* libs `docs/` and in-code JSDoc/README: no coverage of this Area found.
+* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above.

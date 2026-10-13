@@ -63,7 +63,7 @@ The nine pages in this Area so far:
 * *App/Remote Component stylesheet load & removal* (Unit 2) covers the load-on-demand and remove-on-unuse lifecycle with per-App/Slot usage counting.
 * *`@scope` scoping model* (Unit 3) covers how the `@scope` at-rule binds an application's styles to its content, including nested Remote Components.
 * *Shell's own stylesheets & legacy portal layout* (Unit 4) covers where the Shell's own and the legacy portal-layout stylesheets come from, how `styleInitializer` loads them, and how they are scoped.
-* *Angular component styles* (Unit 5) covers how Angular component styles — already encapsulated by the compiler — fit into style isolation and where the model takes over for their shared variables.
+* *Angular component styles* (Unit 5) covers how Angular component styles, already encapsulated by the compiler, fit into style isolation and where the model takes over for their shared variables.
 * *Dynamic content via patching* (Unit 6) covers how an overlay or dialog rendered outside the app's scope is stamped at creation time, attributed from the trigger element, and then wrapped once it reaches `document.body`.
 * *Dynamic content via container* (Unit 7) covers how out-of-scope content can instead be inserted into an app-owned dynamic container so it inherits the app's scope without being patched directly.
 * *Scope polyfill* (Unit 8) covers how the Shell rewrites scoped stylesheets when the browser does not support `@scope`.
@@ -73,15 +73,15 @@ The nine pages in this Area so far:
 
 The Units of this Area, in reading order. Units 1, 2, 3, 4, 5, 6, 7, 8 and 9 are written; the rest are planned.
 
-. *Why isolation & style kinds* — link:{u1}[why-style-isolation.adoc] _(written)_
-. *App/Remote Component stylesheet load & removal (usage counting)* — link:{u2}[stylesheet-loading.adoc] _(written)_
-. *`@scope` scoping model* — link:{u3}[scope-model.adoc] _(written)_
-. *Shell's own stylesheets & legacy portal layout* — link:{u4}[shell-stylesheets.adoc] _(written)_
-. *Angular component styles* — link:{u5}[angular-component-styles.adoc] _(written)_
-. *Dynamic content via patching* — link:{u6}[dynamic-content-via-patching.adoc] _(written)_
-. *Dynamic content via container* — link:{u7}[dynamic-content-via-container.adoc] _(written)_
-. *Scope polyfill* — link:{u8}[scope-polyfill.adoc] _(written)_
-. *PrimeNG/PrimeReact style scoping* — link:{u9}[primeng-style-scoping.adoc] _(written)_
+. *Why isolation & style kinds*: link:{u1}[why-style-isolation.adoc] _(written)_
+. *App/Remote Component stylesheet load & removal (usage counting)*: link:{u2}[stylesheet-loading.adoc] _(written)_
+. *`@scope` scoping model*: link:{u3}[scope-model.adoc] _(written)_
+. *Shell's own stylesheets & legacy portal layout*: link:{u4}[shell-stylesheets.adoc] _(written)_
+. *Angular component styles*: link:{u5}[angular-component-styles.adoc] _(written)_
+. *Dynamic content via patching*: link:{u6}[dynamic-content-via-patching.adoc] _(written)_
+. *Dynamic content via container*: link:{u7}[dynamic-content-via-container.adoc] _(written)_
+. *Scope polyfill*: link:{u8}[scope-polyfill.adoc] _(written)_
+. *PrimeNG/PrimeReact style scoping*: link:{u9}[primeng-style-scoping.adoc] _(written)_
 
 == Reading order
 
@@ -89,7 +89,7 @@ Start with Units 1 and 2 for the isolation problem statement and stylesheet cate
 
 == Related Areas
 
-* *Bootstrap* — how an App or Remote Component is loaded in the first place; stylesheet loading (Unit 2) is triggered by that bootstrap.
-* *Remote Components & Slots* — the Slot that hosts Remote Components is the caller of the RC style lifecycle (Unit 2).
-* *Theming & Visual Assets* — the Theme's CSS variables and PrimeNG/PrimeReact tokens flow into the scoped stylesheets described here.
-* *Diagnostics* — how to observe stylesheets at runtime once you understand the model.
+* *Bootstrap*: how an App or Remote Component is loaded in the first place; stylesheet loading (Unit 2) is triggered by that bootstrap.
+* *Remote Components & Slots*: the Slot that hosts Remote Components is the caller of the RC style lifecycle (Unit 2).
+* *Theming & Visual Assets*: the Theme's CSS variables and PrimeNG/PrimeReact tokens flow into the scoped stylesheets described here.
+* *Diagnostics*: how to observe stylesheets at runtime once you understand the model.

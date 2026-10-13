@@ -7,11 +7,11 @@
 
 == Question answered
 
-How does an App or a Remote Component, once its federated remote is loaded (Unit 5), become a running web component on the shared page — what does the bootstrap do differently for an Angular App versus a React App, and how do several frameworks on one page share a single Angular platform and `NgZone`?
+How does an App or a Remote Component, once its federated remote is loaded (Unit 5), become a running web component on the shared page: what does the bootstrap do differently for an Angular App versus a React App, and how do several frameworks on one page share a single Angular platform and `NgZone`?
 
 == Why it exists
 
-A loaded remote is still just a module. Before anything renders, it has to be turned into a *custom element* the Shell can instantiate, and that element has to be started with the right platform, the right change-detection zone, a unique application id, a container for its overlay/dynamic content, and — for an App — a router that follows the shared URL. On one page there may be the Shell plus several Apps and Remote Components built with *different* Angular majors and with React. They all run in the same document and the same JavaScript context, so the bootstrap cannot just assume a private platform or zone: it has to reconcile a shared platform and `NgZone` across frameworks and versions. This Unit covers that reconciliation and the element-creation step, for both frameworks.
+A loaded remote is still just a module. Before anything renders, it has to be turned into a *custom element* the Shell can instantiate, and that element has to be started with the right platform, the right change-detection zone, a unique application id, a container for its overlay/dynamic content, and, for an App, a router that follows the shared URL. On one page there may be the Shell plus several Apps and Remote Components built with *different* Angular majors and with React. They all run in the same document and the same JavaScript context, so the bootstrap cannot just assume a private platform or zone: it has to reconcile a shared platform and `NgZone` across frameworks and versions. This Unit covers that reconciliation and the element-creation step, for both frameworks.
 
 == How it works
 
@@ -25,39 +25,39 @@ The two frameworks reach the same endpoint by different routes: Angular does it 
 
 == Libs side / Shell side
 
-=== Libs side — Angular
+=== Libs side: Angular
 
 The Angular side is in link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`webcomponent-bootstrap.utils.ts`]. The two public entry points split on how the App was written:
 
-* *Legacy NgModule App — `bootstrapModule(module, appType, production)`.* This is the path the Shell itself uses (`bootstrap.ts` calls it with `appType: 'shell'`) and what a legacy NgModule App calls to start. It:
+* *Legacy NgModule App: `bootstrapModule(module, appType, production)`.* This is the path the Shell itself uses (`bootstrap.ts` calls it with `appType: 'shell'`) and what a legacy NgModule App calls to start. It:
   + rewrites the module's `APP_ID` provider to a link:{libs}/angular-webcomponents/src/lib/utils/dynamic-app-id.utils.ts[`DynamicAppId`] (`replaceOrAddAppId`, reading `module.ɵinj`),
   + installs a dynamic-container provider (`addDynamicContainerProvider`),
   + ensures a single cached platform via `cachePlatform(production)` and bootstraps the module on it with the shared `NgZone` (`getNgZone()`),
   + if `appType === 'shell'`, publishes the Shell's own `NgZone` back onto the shared window state (`setShellZone`) so a later microfrontend reuses it.
-  + It returns an `NgModuleRef` and does *not* `customElements.define` — a legacy App is booted as an NgModule, not as an element. The element for a web-component App is created by the entry-point path below.
+  + It returns an `NgModuleRef` and does *not* `customElements.define`: a legacy App is booted as an NgModule, not as an element. The element for a web-component App is created by the entry-point path below.
 * *Standalone / web-component App and Remote Component.* Two helpers:
-  + `bootstrapRemoteComponent(component, elementName, production, providers)` — for a Remote Component. It runs `replaceOrAddAppId` + `addDynamicContainerProvider` on the provided providers, creates the app with `createApplication({ providers: [ the shared NgZone if present, ...providers ] })`, calls `cachePlatform(production)`, adds a `**` fallback route (`adaptRemoteComponentRoutes`), and calls the shared `createEntrypoint(..., 'component')`.
-  + `createAppEntrypoint(component, elementName, injector)` — the public helper a standalone *App* calls to define its element from an existing injector (`createEntrypoint(..., 'microfrontend')`).
+  + `bootstrapRemoteComponent(component, elementName, production, providers)`: for a Remote Component. It runs `replaceOrAddAppId` + `addDynamicContainerProvider` on the provided providers, creates the app with `createApplication({ providers: [ the shared NgZone if present, ...providers ] })`, calls `cachePlatform(production)`, adds a `**` fallback route (`adaptRemoteComponentRoutes`), and calls the shared `createEntrypoint(..., 'component')`.
+  + `createAppEntrypoint(component, elementName, injector)`: the public helper a standalone *App* calls to define its element from an existing injector (`createEntrypoint(..., 'microfrontend')`).
 
 * *`createEntrypoint` (the element-defining core).* Common to both: it records the element name on the `DynamicAppId` (`appElementName`, used later by the styles host), wires the dynamic-container callback to `getDynamicContainer`/`removeDynamicContainer`, constructs a link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`], monkey-patches the component's `ngOnInit` (→ `connector.connect()`) and `ngOnDestroy` (→ `connector.disconnect()` + remove container), calls Angular's `createCustomElement`, patches the element's `connectedCallback` to stamp the `noPortalLayoutStyles` dataset key, and finally `customElements.define(elementName, ...)`.
 
-=== Libs side — shared platform and `NgZone` (the cross-framework contract)
+=== Libs side: shared platform and `NgZone` (the cross-framework contract)
 
 The reconciliation across frameworks and versions lives on `window` in link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`getWindowState`]:
 
-* *One platform per Angular version.* `cachePlatform(production)` keeps a `platformCache: Map<Version, PlatformRef>` under `window['@onecx/angular-webcomponents'].platformCache`. If a platform already exists for the *current* `VERSION` it is reused; otherwise `getPlatform() ?? platformBrowser()` creates one and it is cached. This is why two Angular apps built for the *same* major share one platform, while an Angular 21 app and an Angular 20 app get different platforms — matching the per-major share scopes of Units 2–4.
+* *One platform per Angular version.* `cachePlatform(production)` keeps a `platformCache: Map<Version, PlatformRef>` under `window['@onecx/angular-webcomponents'].platformCache`. If a platform already exists for the *current* `VERSION` it is reused; otherwise `getPlatform() ?? platformBrowser()` creates one and it is cached. This is why two Angular apps built for the *same* major share one platform, while an Angular 21 app and an Angular 20 app get different platforms: matching the per-major share scopes of Units 2–4.
 * *One `NgZone` shared across the page.* `getNgZone()` / `setNgZone` read and write `window['@onecx/angular-webcomponents'].ngZone`. The Shell (the first to bootstrap, `appType: 'shell'`) sets its `NgZone` there; every later Angular App/Remote Component reads it and passes it into `bootstrapModule` / `createApplication`. Change detection therefore runs in a single shared zone, which is what lets the Shell and Apps observe and react to the shared page coherently.
-* *`DynamicAppId`.* Because several apps on one page each need a distinct Angular `APP_ID` (used to scope generated classes), the bootstrap replaces the `APP_ID` with a `DynamicAppId` — a string wrapper that also carries `appElementName`. The `styles` / scope machinery (Area 4) reads the element name from it to attribute styles to the right element.
+* *`DynamicAppId`.* Because several apps on one page each need a distinct Angular `APP_ID` (used to scope generated classes), the bootstrap replaces the `APP_ID` with a `DynamicAppId`: a string wrapper that also carries `appElementName`. The `styles` / scope machinery (Area 4) reads the element name from it to attribute styles to the right element.
 
-=== Libs side — the dynamic container
+=== Libs side: the dynamic container
 
 `addDynamicContainerProvider` injects two tokens into the app: `DYNAMIC_CONTAINER_PROXY` (a mutable holder) and `DYNAMIC_CONTAINER` (a zero-arg `() => HTMLElement`). `createEntrypoint` fills the proxy with the real callbacks from link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`get-dynamic-container.utils.ts`]: `getDynamicContainer(tag, appElementName)` queries for an existing container element tagged `onecx-dynamic-<elementName>` and, if absent, calls `document.createOnecxDynamicContainer(tag, appElementName)` (a method the Shell installs on the document); `removeDynamicContainer` removes it. The Angular CDK overlay containers in this repository `inject(DYNAMIC_CONTAINER, { optional: true })` so dialogs and popovers open into the app's scoped container rather than leaking into the shared document (Area 4). Until `createEntrypoint` wires the proxy, its callbacks throw, which is a deliberate tripwire: the app was booted without the entry-point path that is supposed to fill them.
 
-=== Libs side — React
+=== Libs side: React
 
 The React side is in link:{libs}/react-webcomponents/src/lib/bootstrap/webcomponent-bootstrap-vite.ts[`webcomponent-bootstrap-vite.ts`]:
 
-* *Element definition.* `createViteAppWebComponent(component, elementName, classNames = [])` wraps the React component with `@r2wc/react-to-web-component` (`r2wc(component, { props: {} })`), patches `connectedCallback` to stamp the `mfeElement` and `noPortalLayoutStyles` dataset keys and to add any `classNames`, and `customElements.define(elementName, …)`. There is no React equivalent of the shared-platform/`NgZone` step — React has its own runtime and does not participate in the Angular platform cache.
+* *Element definition.* `createViteAppWebComponent(component, elementName, classNames = [])` wraps the React component with `@r2wc/react-to-web-component` (`r2wc(component, { props: {} })`), patches `connectedCallback` to stamp the `mfeElement` and `noPortalLayoutStyles` dataset keys and to add any `classNames`, and `customElements.define(elementName, …)`. There is no React equivalent of the shared-platform/`NgZone` step: React has its own runtime and does not participate in the Angular platform cache.
 
 === Shell side
 
@@ -67,7 +67,7 @@ The Shell does *not* bootstrap the App's framework. It loads the remote (Unit 5)
 
 Where the two genuinely differ:
 
-* *Platform / zone.* Angular apps share one platform per major and one `NgZone` via the `window` state described above; React apps do not — there is no shared-platform step for React.
+* *Platform / zone.* Angular apps share one platform per major and one `NgZone` via the `window` state described above; React apps do not: there is no shared-platform step for React.
 * *How the element is made.* Angular: `createCustomElement` inside `createEntrypoint`, driven by either `bootstrapModule` (legacy NgModule) or `createApplication` (standalone / Remote Component). React: `r2wc` inside `createViteAppWebComponent`.
 * *Fallback routing.* The Angular Remote Component path adds a `**` fallback route (`adaptRemoteComponentRoutes`) so the component's router is always activatable and answers guard requests; the React app relies on its own `BrowserRouter` and the `withSyncedRouter` wrapper (Area 7 / Unit 7).
 * *Dataset keys.* Angular stamps `noPortalLayoutStyles` (and the scope machinery reads the element name from `DynamicAppId`); React stamps `mfeElement` + `noPortalLayoutStyles`.
@@ -76,19 +76,19 @@ Where the two genuinely differ:
 
 * *Legacy NgModule vs standalone are not interchangeable.* `bootstrapModule` reads `module.ɵinj` (an NgModule internal) and returns an `NgModuleRef`; it is for NgModule-based apps (and the Shell). A standalone App/Remote Component must go through `createApplication` + `createAppEntrypoint` / `bootstrapRemoteComponent`. Mixing the two for the wrong kind of app is the common mistake.
 * *The `NgZone` is only shared if someone set it first.* `getNgZone()` returns whatever is on the window state; if nothing has set it (e.g. an App loaded before the Shell's `setShellZone` ran, or no Shell at all), the app runs on its own default zone. The Shell being the first bootstrapper is what makes the sharing actually happen.
-* *Platform cache is keyed by Angular version, not by app.* Apps on the same major share a platform; that is intended (Unit 2's non-singleton rule). It also means a platform, once created for a major, is not torn down — apps in that major coexist on it.
+* *Platform cache is keyed by Angular version, not by app.* Apps on the same major share a platform; that is intended (Unit 2's non-singleton rule). It also means a platform, once created for a major, is not torn down: apps in that major coexist on it.
 * *`DynamicAppId` must be a string-wrapped value.* `replaceOrAddAppId` only wraps an existing `APP_ID` if it was provided via `useValue` as a string; otherwise it warns and falls back to `ng`. A custom `APP_ID` provided a different way will not be wrapped.
-* *Two remotes, one element name.* `customElements.define` may only be called once per tag name — a second definition with the same `elementName` throws `NotSupportedError`, so a duplicated element name means one App fails to define (and to mount) its element.
+* *Two remotes, one element name.* `customElements.define` may only be called once per tag name: a second definition with the same `elementName` throws `NotSupportedError`, so a duplicated element name means one App fails to define (and to mount) its element.
 * *`adaptRemoteComponentRoutes` only for Remote Components.* It appends a `**` route to make the component's router activatable; it is not part of the full-App bootstrap and has no React analogue.
 * *The dynamic container depends on the Shell.* `getDynamicContainer` falls back to `document.createOnecxDynamicContainer`, a method the Shell installs. Outside the Shell (or before it runs), the overlay-container path that relies on `DYNAMIC_CONTAINER` has nothing to open into.
 
 == Related Units
 
-* link:loading-matched-remote.adoc[Loading the matched remote] (Unit 5) — the Shell step that loads this app and instantiates its element.
-* link:module-federation.adoc[Module Federation in OneCX] (Unit 2) — how the app's root module is exposed and loaded as a remote.
-* link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4) — the share scope and Angular major the platform cache is keyed by.
-* link:../styling/dynamic-content-via-container.adoc[Dynamic content via container] (Area 4) — the consumer of the dynamic container and of the `DynamicAppId` element name.
-* link:multiple-routers.adoc[Multiple-router problem & router wiring] (Unit 7) — how the App's router is wired at startup to follow the shared URL; link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) — how a runtime URL change is fanned out to every router once mounted.
+* link:loading-matched-remote.adoc[Loading the matched remote] (Unit 5): the Shell step that loads this app and instantiates its element.
+* link:module-federation.adoc[Module Federation in OneCX] (Unit 2): how the app's root module is exposed and loaded as a remote.
+* link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4): the share scope and Angular major the platform cache is keyed by.
+* link:../styling/dynamic-content-via-container.adoc[Dynamic content via container] (Area 4): the consumer of the dynamic container and of the `DynamicAppId` element name.
+* link:multiple-routers.adoc[Multiple-router problem & router wiring] (Unit 7), how the App's router is wired at startup to follow the shared URL; link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7), how a runtime URL change is fanned out to every router once mounted.
 
 == Sources
 

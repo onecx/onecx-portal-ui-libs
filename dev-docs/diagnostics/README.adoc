@@ -6,7 +6,7 @@
 
 == Problem
 
-A running OneCX page is a single browser page that hosts the Shell plus one or more Apps and Remote Components, all loaded from different bundles. When something is off — a Topic that never updates, a missing translation, a token that is not attached to a request, styles bleeding across Apps — the state you need to inspect is spread across several runtime mechanisms at once: the browser console, a set of `window`-level globals the libraries share, and the Topic/BroadcastChannel traffic that carries state between the Apps and the Shell.
+A running OneCX page is a single browser page that hosts the Shell plus one or more Apps and Remote Components, all loaded from different bundles. When something is off, a Topic that never updates, a missing translation, a token that is not attached to a request, styles bleeding across Apps, the state you need to inspect is spread across several runtime mechanisms at once: the browser console, a set of `window`-level globals the libraries share, and the Topic/BroadcastChannel traffic that carries state between the Apps and the Shell.
 
 This Area collects the tools for looking inside that running page. It does not re-explain the owning mechanisms (Topics, authentication, translations, styling); it points at them and gives you the concrete way to observe each of them at runtime.
 
@@ -18,12 +18,12 @@ Every diagnostic signal in OneCX comes from the same two places: the libraries i
 ----
 flowchart LR
   subgraph Browser[One page / one window]
-    subgraph Libs[Libs — this repository]
+    subgraph Libs[Libs: this repository]
       L1["Logger factory<br/>createLoggerFactory()"]
       L2["window globals<br/>(@onecx/accelerator, onecxAuth, …)"]
       L3["Topic / TopicPublisher<br/>postMessage + BroadcastChannel"]
     end
-    subgraph Shell[Shell — onecx-shell-ui]
+    subgraph Shell[Shell: onecx-shell-ui]
       S1["writes auth proxies,<br/>capabilities, MF instance"]
       S2["consumes Topics,<br/>reads logger namespaces"]
     end
@@ -38,9 +38,9 @@ flowchart LR
 
 Reading order within the Area:
 
-. link:logging.adoc[Logging] — the first tool to reach for, because it gates how visible everything else is.
-. link:window-state-inventory.adoc[Global `window` state inventory] — the shared, mutable surface; know what lives there before you read it.
-. link:tracing-communication.adoc[Tracing cross-App communication] — the dynamic layer: how state actually moves between Apps and the Shell.
+. link:logging.adoc[Logging]: the first tool to reach for, because it gates how visible everything else is.
+. link:window-state-inventory.adoc[Global `window` state inventory]: the shared, mutable surface; know what lives there before you read it.
+. link:tracing-communication.adoc[Tracing cross-App communication]: the dynamic layer: how state actually moves between Apps and the Shell.
 
 == Unit map
 
@@ -64,11 +64,11 @@ All Units of this Area, in reading order. Every Unit follows the Unit template.
 
 This Area is deliberately cross-cutting. It links to the Areas that own the mechanisms it helps you observe, and it is linked back from their `Debugging` sections.
 
-* link:../integration-contract/README.adoc[1. Integration Contract & Topics] — link:../integration-contract/topic-lifecycle.adoc[Topic lifecycle], link:../integration-contract/transports-and-tab-scope.adoc[Transports & tab scope] — the `Topic`/`TopicPublisher` classes and the message contract that this Area's tracing unit observes.
-* link:../bootstrap/README.adoc[2. Application Bootstrap] — link:../bootstrap/module-federation.adoc[Module Federation], link:../bootstrap/preloaders.adoc[Preloaders] — Module Federation and preloaders, which own the `__FEDERATION__` / `onecxFederationInstance` globals.
-* link:../shell-context/README.adoc[3. Shell Context & Runtime Configuration] — link:../shell-context/runtime-configuration.adoc[Runtime configuration] — where the Shell capability flags come from.
-* link:../styling/README.adoc[4. Styling & Style Isolation] — link:../styling/dynamic-content-via-patching.adoc[Dynamic content via patching] — dynamic content attribution and the `onecxTriggerElement` global.
-* link:../authentication/README.adoc[8. Authentication] — link:../authentication/obtaining-tokens.adoc[How Apps obtain tokens] — the `onecxAuth` / `onecxAngularAuth` auth-proxy globals.
-* link:../localization/README.adoc[10. Localization] — link:../localization/app-translations.adoc[App translations], link:../localization/dynamic-translations.adoc[Dynamic translations] — the `onecxTranslations` and `dynamicTranslationsCache` globals.
+* link:../integration-contract/README.adoc[1. Integration Contract & Topics], link:../integration-contract/topic-lifecycle.adoc[Topic lifecycle], link:../integration-contract/transports-and-tab-scope.adoc[Transports & tab scope], the `Topic`/`TopicPublisher` classes and the message contract that this Area's tracing unit observes.
+* link:../bootstrap/README.adoc[2. Application Bootstrap], link:../bootstrap/module-federation.adoc[Module Federation], link:../bootstrap/preloaders.adoc[Preloaders], Module Federation and preloaders, which own the `__FEDERATION__` / `onecxFederationInstance` globals.
+* link:../shell-context/README.adoc[3. Shell Context & Runtime Configuration], link:../shell-context/runtime-configuration.adoc[Runtime configuration], where the Shell capability flags come from.
+* link:../styling/README.adoc[4. Styling & Style Isolation], link:../styling/dynamic-content-via-patching.adoc[Dynamic content via patching], dynamic content attribution and the `onecxTriggerElement` global.
+* link:../authentication/README.adoc[8. Authentication], link:../authentication/obtaining-tokens.adoc[How Apps obtain tokens], the `onecxAuth` / `onecxAngularAuth` auth-proxy globals.
+* link:../localization/README.adoc[10. Localization], link:../localization/app-translations.adoc[App translations], link:../localization/dynamic-translations.adoc[Dynamic translations], the `onecxTranslations` and `dynamicTranslationsCache` globals.
 
 The Dev Docs are written from the current `main` branch of this repository and of the Shell. Where a mechanism is explained in full, this Area links to its owning Unit rather than repeating it.

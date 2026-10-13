@@ -94,11 +94,11 @@ In the browser console, run `globalThis['onecx-shell-capabilities']` (or `window
 
 == Related Units
 
-* link:why-message-based.adoc[Why a message-based contract] — the independence that makes versioning and capabilities necessary.
-* link:message-delivery.adoc[Topic message delivery] — how name and version gate message acceptance.
-* link:transports-and-tab-scope.adoc[Transports & tab scope] — how the version is part of the channel name.
+* link:why-message-based.adoc[Why a message-based contract]: the independence that makes versioning and capabilities necessary.
+* link:message-delivery.adoc[Topic message delivery]: how name and version gate message acceptance.
+* link:transports-and-tab-scope.adoc[Transports & tab scope]: how the version is part of the channel name.
 * link:topic-lifecycle.adoc[Topic lifecycle]
-* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] — the RPC asks that capabilities gate.
+* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: the RPC asks that capabilities gate.
 * link:framework-adapters.adoc[Framework adapters]
 * link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13)
 

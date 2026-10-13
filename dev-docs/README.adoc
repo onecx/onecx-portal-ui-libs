@@ -39,38 +39,38 @@ An Area ticket may change its Unit split after investigation, for example by spl
 ====
 
 [#integration-contract]
-.1. link:./integration-contract/README.adoc[Integration Contract & Topics] — `integration-contract/`
+.1. link:./integration-contract/README.adoc[Integration Contract & Topics]: `integration-contract/`
 [%collapsible]
 ====
 How Apps and the Shell communicate through Topics. This Area covers the messaging mechanism only. The meaning of each concrete Topic is described in the Area that owns it.
 
-. link:./integration-contract/why-message-based.adoc[Why a message-based contract] — `why-message-based.adoc`
-. link:./integration-contract/message-delivery.adoc[Topic message delivery (types, ordering, replay, init/resolve)] — `message-delivery.adoc`
-. link:./integration-contract/transports-and-tab-scope.adoc[Transports & tab scope (postMessage, BroadcastChannel v1/V2, tab id, fallback, who selects)] — `transports-and-tab-scope.adoc`
-. link:./integration-contract/topic-lifecycle.adoc[Topic lifecycle (publisher, destroy, deprecated syncable Topic)] — `topic-lifecycle.adoc`
-. link:./integration-contract/gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] — `gatherers-and-rpc-topics.adoc`
-. link:./integration-contract/versioning-and-capabilities.adoc[Versioning & Shell capability negotiation] — `versioning-and-capabilities.adoc`
-. link:./integration-contract/framework-adapters.adoc[Framework adapters] — `framework-adapters.adoc`
-. link:./integration-contract/topic-catalogue.adoc[Topic & Gatherer catalogue] — `topic-catalogue.adoc`
+. link:./integration-contract/why-message-based.adoc[Why a message-based contract]: `why-message-based.adoc`
+. link:./integration-contract/message-delivery.adoc[Topic message delivery (types, ordering, replay, init/resolve)]: `message-delivery.adoc`
+. link:./integration-contract/transports-and-tab-scope.adoc[Transports & tab scope (postMessage, BroadcastChannel v1/V2, tab id, fallback, who selects)]: `transports-and-tab-scope.adoc`
+. link:./integration-contract/topic-lifecycle.adoc[Topic lifecycle (publisher, destroy, deprecated syncable Topic)]: `topic-lifecycle.adoc`
+. link:./integration-contract/gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: `gatherers-and-rpc-topics.adoc`
+. link:./integration-contract/versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: `versioning-and-capabilities.adoc`
+. link:./integration-contract/framework-adapters.adoc[Framework adapters]: `framework-adapters.adoc`
+. link:./integration-contract/topic-catalogue.adoc[Topic & Gatherer catalogue]: `topic-catalogue.adoc`
 ====
 
 [#bootstrap]
-.2. link:./bootstrap/README.adoc[Application Bootstrap] — `bootstrap/`
+.2. link:./bootstrap/README.adoc[Application Bootstrap]: `bootstrap/`
 [%collapsible]
 ====
 From the Shell's `index.html` to a running App or Remote Component.
 
-. link:./bootstrap/startup-timeline.adoc[index.html → first App timeline] — `startup-timeline.adoc`
-. link:./bootstrap/module-federation.adoc[Module Federation in OneCX] — `module-federation.adoc`
-. link:./bootstrap/shared-dependencies.adoc[Shared dependency config & mismatch] — `shared-dependencies.adoc`
-. link:./bootstrap/preloaders.adoc[Preloaders (build time and runtime)] — `preloaders.adoc`
-. link:./bootstrap/loading-matched-remote.adoc[Loading the matched remote] — `loading-matched-remote.adoc`
-. link:./bootstrap/web-component-bootstrap.adoc[App bootstrap as web component (Angular/React, legacy module Apps)] — `web-component-bootstrap.adoc`
-. link:./bootstrap/multiple-routers.adoc[Multiple-router problem & router wiring] — `multiple-routers.adoc`
+. link:./bootstrap/startup-timeline.adoc[index.html → first App timeline]: `startup-timeline.adoc`
+. link:./bootstrap/module-federation.adoc[Module Federation in OneCX]: `module-federation.adoc`
+. link:./bootstrap/shared-dependencies.adoc[Shared dependency config & mismatch]: `shared-dependencies.adoc`
+. link:./bootstrap/preloaders.adoc[Preloaders (build time and runtime)]: `preloaders.adoc`
+. link:./bootstrap/loading-matched-remote.adoc[Loading the matched remote]: `loading-matched-remote.adoc`
+. link:./bootstrap/web-component-bootstrap.adoc[App bootstrap as web component (Angular/React, legacy module Apps)]: `web-component-bootstrap.adoc`
+. link:./bootstrap/multiple-routers.adoc[Multiple-router problem & router wiring]: `multiple-routers.adoc`
 ====
 
 [#shell-context]
-.3. Shell Context & Runtime Configuration — `shell-context/`
+.3. Shell Context & Runtime Configuration: `shell-context/`
 [%collapsible]
 ====
 The data the Shell provides to Apps, and where that data comes from.
@@ -86,37 +86,37 @@ The data the Shell provides to Apps, and where that data comes from.
 ====
 
 [#styling]
-.4. link:./styling/README.adoc[Styling & Style Isolation] — `styling/`
+.4. link:./styling/README.adoc[Styling & Style Isolation]: `styling/`
 [%collapsible]
 ====
 Where CSS comes from and how the styles of different Apps are kept apart.
 
-. link:./styling/why-style-isolation.adoc[Why isolation & style kinds] — `why-style-isolation.adoc`
-. link:./styling/stylesheet-loading.adoc[App/Remote Component stylesheet load & removal (usage counting)] — `stylesheet-loading.adoc`
-. link:./styling/scope-model.adoc[`@scope` scoping model] — `scope-model.adoc`
-. link:./styling/shell-stylesheets.adoc[Shell's own stylesheets & legacy portal layout] — `shell-stylesheets.adoc`
-. link:./styling/angular-component-styles.adoc[Angular component styles] — `angular-component-styles.adoc`
-. link:./styling/dynamic-content-via-patching.adoc[Dynamic content via patching] — `dynamic-content-via-patching.adoc`
-. link:./styling/dynamic-content-via-container.adoc[Dynamic content via container] — `dynamic-content-via-container.adoc`
-. link:./styling/scope-polyfill.adoc[Scope polyfill] — `scope-polyfill.adoc`
-. link:./styling/primeng-style-scoping.adoc[PrimeNG/PrimeReact style scoping] — `primeng-style-scoping.adoc`
+. link:./styling/why-style-isolation.adoc[Why isolation & style kinds]: `why-style-isolation.adoc`
+. link:./styling/stylesheet-loading.adoc[App/Remote Component stylesheet load & removal (usage counting)]: `stylesheet-loading.adoc`
+. link:./styling/scope-model.adoc[`@scope` scoping model]: `scope-model.adoc`
+. link:./styling/shell-stylesheets.adoc[Shell's own stylesheets & legacy portal layout]: `shell-stylesheets.adoc`
+. link:./styling/angular-component-styles.adoc[Angular component styles]: `angular-component-styles.adoc`
+. link:./styling/dynamic-content-via-patching.adoc[Dynamic content via patching]: `dynamic-content-via-patching.adoc`
+. link:./styling/dynamic-content-via-container.adoc[Dynamic content via container]: `dynamic-content-via-container.adoc`
+. link:./styling/scope-polyfill.adoc[Scope polyfill]: `scope-polyfill.adoc`
+. link:./styling/primeng-style-scoping.adoc[PrimeNG/PrimeReact style scoping]: `primeng-style-scoping.adoc`
 ====
 
 [#theming-assets]
-.5. Theming & Visual Assets — `theming-assets/`
+.5. Theming & Visual Assets: `theming-assets/`
 [%collapsible]
 ====
 The values a Theme provides (colors, favicon, logo), how they reach the page, and how icons and images are delivered.
 
-. Theme → page (variables, favicon, logo) — `theme-to-page.adoc`
-. Theme → PrimeNG/PrimeReact tokens — `theme-to-component-tokens.adoc`
-. Theme Overrides (CSS vs PRIMENG, precedence) — `theme-override-precedence.adoc`
-. Icons — `icons.adoc`
-. Images — `images.adoc`
+. Theme → page (variables, favicon, logo): `theme-to-page.adoc`
+. Theme → PrimeNG/PrimeReact tokens: `theme-to-component-tokens.adoc`
+. Theme Overrides (CSS vs PRIMENG, precedence): `theme-override-precedence.adoc`
+. Icons: `icons.adoc`
+. Images: `images.adoc`
 ====
 
 [#remote-components]
-.6. Remote Components & Slots — `remote-components/`
+.6. Remote Components & Slots: `remote-components/`
 [%collapsible]
 ====
 How the Workspace places Remote Components into Slots. Bootstrap, styles, permissions and translations of Remote Components are covered in Areas 2, 4, 9 and 10.
@@ -129,7 +129,7 @@ How the Workspace places Remote Components into Slots. Bootstrap, styles, permis
 ====
 
 [#navigation]
-.7. Navigation & Routing — `navigation/`
+.7. Navigation & Routing: `navigation/`
 [%collapsible]
 ====
 How a URL change reaches every router on the page, and how the Shell activates the Current App.
@@ -143,79 +143,79 @@ How a URL change reaches every router on the page, and how the Shell activates t
 ====
 
 [#authentication]
-.8. Authentication — `authentication/`
+.8. Authentication: `authentication/`
 [%collapsible]
 ====
 Who owns authentication and how Apps get tokens. The user profile is covered in Area 10.
 
-. Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating) — `mechanism-selection.adoc`
-. Keycloak integration — `keycloak.adoc`
-. Custom auth service contract — `custom-auth-service.adoc`
-. How Apps obtain tokens — `obtaining-tokens.adoc`
-. Tokens on HTTP calls — `tokens-on-http-calls.adoc`
+. Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating): `mechanism-selection.adoc`
+. Keycloak integration: `keycloak.adoc`
+. Custom auth service contract: `custom-auth-service.adoc`
+. How Apps obtain tokens: `obtaining-tokens.adoc`
+. Tokens on HTTP calls: `tokens-on-http-calls.adoc`
 ====
 
 [#permissions]
-.9. Permissions — `permissions/`
+.9. Permissions: `permissions/`
 [%collapsible]
 ====
 How permissions reach Apps and Remote Components and how they are checked.
 
-. Permission model & two Topics (push vs RPC) — `permission-model.adoc`
-. Shell loading & caching (deny-all fallback) — `shell-loading-and-caching.adoc`
+. Permission model & two Topics (push vs RPC): `permission-model.adoc`
+. Shell loading & caching (deny-all fallback): `shell-loading-and-caching.adoc`
 . link:./permissions/checking-in-apps.adoc[Checking in Apps]
 . link:./permissions/remote-component-permissions.adoc[Remote Component permissions]
 
 ====
 
 [#localization]
-.10. Localization — `localization/`
+.10. Localization: `localization/`
 [%collapsible]
 ====
 User profile, language choice, translations and formatting.
 
-. link:./localization/profile-and-language.adoc[Profile load & language decision] — `profile-and-language.adoc`
-. link:./localization/app-translations.adoc[App translations load & sharing] — `app-translations.adoc`
-. link:./localization/remote-component-translations.adoc[Remote Component translations] — `remote-component-translations.adoc`
-. link:./localization/missing-translation-fallback.adoc[Missing-translation fallback] — `missing-translation-fallback.adoc`
-. link:./localization/locale-and-timezone-formatting.adoc[Locale & timezone formatting] — `locale-and-timezone-formatting.adoc`
-. link:./localization/react-translations.adoc[React translations] — `react-translations.adoc`
-. link:./localization/dynamic-translations.adoc[Dynamic translations] — `dynamic-translations.adoc`
+. link:./localization/profile-and-language.adoc[Profile load & language decision]: `profile-and-language.adoc`
+. link:./localization/app-translations.adoc[App translations load & sharing]: `app-translations.adoc`
+. link:./localization/remote-component-translations.adoc[Remote Component translations]: `remote-component-translations.adoc`
+. link:./localization/missing-translation-fallback.adoc[Missing-translation fallback]: `missing-translation-fallback.adoc`
+. link:./localization/locale-and-timezone-formatting.adoc[Locale & timezone formatting]: `locale-and-timezone-formatting.adoc`
+. link:./localization/react-translations.adoc[React translations]: `react-translations.adoc`
+. link:./localization/dynamic-translations.adoc[Dynamic translations]: `dynamic-translations.adoc`
 ====
 
 [#errors-feedback]
-.11. Errors, Loading & User Feedback — `errors-feedback/`
+.11. Errors, Loading & User Feedback: `errors-feedback/`
 [%collapsible]
 ====
 The kinds of failure, where each one ends up, and how the user is informed.
 
-. Failure taxonomy map — `failure-taxonomy.adoc`
-. Initialization failures & init-error page — `initialization-failures.adoc`
+. Failure taxonomy map: `failure-taxonomy.adoc`
+. Initialization failures & init-error page: `initialization-failures.adoc`
 . link:./errors-feedback/app-load-failures-and-global-errors.adoc[App load failures & global errors]
 . link:./errors-feedback/global-loading.adoc[Global loading]
 . link:./errors-feedback/portal-messages-and-notifications.adoc[Portal Messages & Notifications (incl. the Shell's toast Remote Component, which shows only when assigned to a Slot)]
 ====
 
 [#state-management]
-.12. link:./state-management/README.adoc[State Management] — `state-management/`
+.12. link:./state-management/README.adoc[State Management]: `state-management/`
 [%collapsible]
 ====
 How the Shell context and the URL connect to an App's ngrx store. Covers ngrx only.
 
-. link:./state-management/shell-context-to-store.adoc[Shell context → App ngrx store] — `shell-context-to-store.adoc`
-. link:./state-management/url-synced-state.adoc[URL-synced state (fragment parameters)] — `url-synced-state.adoc`
-. link:./state-management/persisting-state.adoc[Persisting state across reloads with lazy feature slices] — `persisting-state.adoc`
+. link:./state-management/shell-context-to-store.adoc[Shell context → App ngrx store]: `shell-context-to-store.adoc`
+. link:./state-management/url-synced-state.adoc[URL-synced state (fragment parameters)]: `url-synced-state.adoc`
+. link:./state-management/persisting-state.adoc[Persisting state across reloads with lazy feature slices]: `persisting-state.adoc`
 ====
 
 [#diagnostics]
-.13. Diagnostics — `diagnostics/`
+.13. Diagnostics: `diagnostics/`
 [%collapsible]
 ====
 Tools for looking inside a running OneCX page. This Area links to the owning Areas instead of repeating their content.
 
-. Logging (mechanism, namespaces, enabling/filtering) — `logging.adoc`
-. Global `window` state inventory — `window-state-inventory.adoc`
-. Tracing cross-App communication — `tracing-communication.adoc`
+. Logging (mechanism, namespaces, enabling/filtering): `logging.adoc`
+. Global `window` state inventory: `window-state-inventory.adoc`
+. Tracing cross-App communication: `tracing-communication.adoc`
 ====
 
 == Writing a Unit

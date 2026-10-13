@@ -96,34 +96,34 @@ In the devtools:
 
 == Related Units
 
-* link:{u7}[Dynamic content via container] — the companion route that scopes content by inserting it into a Shell-created container instead of patching the semantic child directly.
-* link:{u8}[Scope polyfill] — how the scoped CSS blocks that these helpers feed are rewritten on browsers without native {scope_at_rule}.
-* link:{area}[Styling & Style Isolation — Area overview]
+* link:{u7}[Dynamic content via container]: the companion route that scopes content by inserting it into a Shell-created container instead of patching the semantic child directly.
+* link:{u8}[Scope polyfill]: how the scoped CSS blocks that these helpers feed are rewritten on browsers without native {scope_at_rule}.
+* link:{area}[Styling & Style Isolation: Area overview]
 
 == Sources
 
 Code::
-* link:{dynamic_content_initializer}[`dynamic-content-initializer.utils.ts`] — `dynamicContentInitializer()`
-* link:{ensure_create_onecx_element}[`dynamic-content.utils.ts`] — `ensureCreateOnecxElement()` / `document.createOnecxElement`
-* link:{ensure_create_onecx_dynamic_container}[`dynamic-content.utils.ts`] — `ensureCreateOnecxDynamicContainer()` / `document.createOnecxDynamicContainer`
-* link:{primeng_overwrites}[`primeng-overwrites.utils.ts`] — deprecated `document.createElementFromPrimeNg`
-* link:{material_overwrites}[`angular-material-overwrites.utils.ts`] — deprecated `document.createElementFromMaterial`
-* link:{trigger_listener}[`onecx-trigger-element.utils.ts`] — `initializeOnecxTriggerElementListener()`
-* link:{trigger_accessor}[`onecx-trigger-element.utils.ts`] — `getOnecxTriggerElement()`
-* link:{body_blacklist}[`body-overwrites.utils.ts`] — blacklist exceptions
-* link:{body_hooks}[`body-overwrites.utils.ts`] — `document.body.appendChild` / `removeChild` hooks
-* link:{body_wrap}[`body-overwrites.utils.ts`] — wrapper promotion path
-* link:{cdk_overlay_hook}[`body-overwrites.utils.ts`] — `cdk-overlay-container` special case
-* link:{wrap_with_div}[`style-data.utils.ts`] — `wrapWithDiv()`
-* link:{create_wrapper}[`style-data.utils.ts`] — `createWrapper()`
-* link:{observe_wrapper}[`style-data.utils.ts`] — `observeStyleDataWrapper()`
-* link:{find_wrapper}[`style-data.utils.ts`] — `findStyleDataWrapper()`
-* link:{remove_style_data}[`style-data.utils.ts`] — `removeStyleDataRecursive()`
-* link:{append_style_data}[`style-data.utils.ts`] — `appendStyleData()`
-* link:{append_intermediate_style_data}[`style-data.utils.ts`] — `appendIntermediateStyleData()`
-* link:{primeng_plugin_guide}[`add-required-plugin-to-primeng.adoc`] — local app-side rewrite guide
-* link:{material_plugin_guide}[`add-angular-material-plugin.adoc`] — local app-side rewrite guide
-* link:{help_ui_webpack}[`onecx-help-ui` webpack.config.js] — reviewed rewrite example
+* link:{dynamic_content_initializer}[`dynamic-content-initializer.utils.ts`]: `dynamicContentInitializer()`
+* link:{ensure_create_onecx_element}[`dynamic-content.utils.ts`]: `ensureCreateOnecxElement()` / `document.createOnecxElement`
+* link:{ensure_create_onecx_dynamic_container}[`dynamic-content.utils.ts`]: `ensureCreateOnecxDynamicContainer()` / `document.createOnecxDynamicContainer`
+* link:{primeng_overwrites}[`primeng-overwrites.utils.ts`]: deprecated `document.createElementFromPrimeNg`
+* link:{material_overwrites}[`angular-material-overwrites.utils.ts`]: deprecated `document.createElementFromMaterial`
+* link:{trigger_listener}[`onecx-trigger-element.utils.ts`]: `initializeOnecxTriggerElementListener()`
+* link:{trigger_accessor}[`onecx-trigger-element.utils.ts`]: `getOnecxTriggerElement()`
+* link:{body_blacklist}[`body-overwrites.utils.ts`]: blacklist exceptions
+* link:{body_hooks}[`body-overwrites.utils.ts`]: `document.body.appendChild` / `removeChild` hooks
+* link:{body_wrap}[`body-overwrites.utils.ts`]: wrapper promotion path
+* link:{cdk_overlay_hook}[`body-overwrites.utils.ts`]: `cdk-overlay-container` special case
+* link:{wrap_with_div}[`style-data.utils.ts`]: `wrapWithDiv()`
+* link:{create_wrapper}[`style-data.utils.ts`]: `createWrapper()`
+* link:{observe_wrapper}[`style-data.utils.ts`]: `observeStyleDataWrapper()`
+* link:{find_wrapper}[`style-data.utils.ts`]: `findStyleDataWrapper()`
+* link:{remove_style_data}[`style-data.utils.ts`]: `removeStyleDataRecursive()`
+* link:{append_style_data}[`style-data.utils.ts`]: `appendStyleData()`
+* link:{append_intermediate_style_data}[`style-data.utils.ts`]: `appendIntermediateStyleData()`
+* link:{primeng_plugin_guide}[`add-required-plugin-to-primeng.adoc`]: local app-side rewrite guide
+* link:{material_plugin_guide}[`add-angular-material-plugin.adoc`]: local app-side rewrite guide
+* link:{help_ui_webpack}[`onecx-help-ui` webpack.config.js]: reviewed rewrite example
 
 Verification Sources checked::
 * `dev-docs/styles/concept.adoc`

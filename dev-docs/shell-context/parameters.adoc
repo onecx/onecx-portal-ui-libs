@@ -90,11 +90,11 @@ Both return a Promise that awaits `currentMfe$` (when identity is not passed) an
 
 == Related Units
 
-* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter] — how Parameters sit alongside the other two settings kinds.
-* link:runtime-configuration.adoc[Runtime configuration] — the other (deployment-wide, string-valued) settings channel.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — the bootstrap step that triggers `parametersService.initialize()`.
-* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — the `currentMfe$` that parameters resolve `productName`/`appId` against.
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate.
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: how Parameters sit alongside the other two settings kinds.
+* link:runtime-configuration.adoc[Runtime configuration]: the other (deployment-wide, string-valued) settings channel.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the bootstrap step that triggers `parametersService.initialize()`.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: the `currentMfe$` that parameters resolve `productName`/`appId` against.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
 
 == Sources
 

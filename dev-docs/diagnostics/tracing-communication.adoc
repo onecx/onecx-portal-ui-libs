@@ -38,9 +38,9 @@ All three message types are subclasses of link:{libs}/accelerator/src/lib/topic/
 
 A message travels over one of three transports, selected per message by the `@onecx/accelerator.topic.useBroadcastChannel` global (default `'V2'`):
 
-. **`window.postMessage`** — the baseline, used when the flag is `false`. Sent with target `'*'`, so it reaches every topic in the page.
-. **BroadcastChannel V1** — channel `Topic-<name>|<version>`, used when the flag is `true`.
-. **BroadcastChannel V2** — channel `TopicV2-<name>|<version>-<tabId>`, used when the flag is `'V2'`. The `<tabId>` is a per-page value so V2 traffic is scoped to one page load.
+. **`window.postMessage`**: the baseline, used when the flag is `false`. Sent with target `'*'`, so it reaches every topic in the page.
+. **BroadcastChannel V1**: channel `Topic-<name>|<version>`, used when the flag is `true`.
+. **BroadcastChannel V2**: channel `TopicV2-<name>|<version>-<tabId>`, used when the flag is `'V2'`. The `<tabId>` is a per-page value so V2 traffic is scoped to one page load.
 
 The transport is chosen per message in `TopicPublisher.sendMessage`. If `BroadcastChannel` is not available in the browser, the flag is forced to `false` and the code falls back to `postMessage`, logging `BroadcastChannel not supported...`.
 
@@ -70,15 +70,15 @@ A subscriber only applies a `TopicNext` if the message's `name` and `version` ma
 
 === Libs side
 
-The `accelerator` library provides the whole mechanism — `Topic`, `TopicPublisher`, the message classes, the `Message.id` counter, and the statistics counters in link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`logs.utils.ts`]. Apps and Remote Components instantiate `Topic`s against a `name`/`version` and either publish to or subscribe from them; both sides are the same code.
+The `accelerator` library provides the whole mechanism: `Topic`, `TopicPublisher`, the message classes, the `Message.id` counter, and the statistics counters in link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`logs.utils.ts`]. Apps and Remote Components instantiate `Topic`s against a `name`/`version` and either publish to or subscribe from them; both sides are the same code.
 
 === Shell side
 
-The Shell is a peer participant in the same Topic graph: it publishes and consumes the same topics (current location, parameters, permissions, events, …) so that every App and Remote Component on the page converges on the same values. From a tracing standpoint the Shell is indistinguishable from an App — it is another set of `Topic`/`TopicPublisher` instances sharing the same `window` and `localStorage.debug`. If a value is right in one App and wrong in another, the divergence is in the shared traffic, not in either side's code.
+The Shell is a peer participant in the same Topic graph: it publishes and consumes the same topics (current location, parameters, permissions, events, …) so that every App and Remote Component on the page converges on the same values. From a tracing standpoint the Shell is indistinguishable from an App: it is another set of `Topic`/`TopicPublisher` instances sharing the same `window` and `localStorage.debug`. If a value is right in one App and wrong in another, the divergence is in the shared traffic, not in either side's code.
 
 == Angular / React
 
-There is no Angular/React split: both use the identical `accelerator` classes and the identical `window`/BroadcastChannel transports. The only difference is *where the instances live* — an Angular service creates a `Topic` as an RxJS source, a React hook subscribes through the same `asObservable()`. The transport and ordering rules are the same.
+There is no Angular/React split: both use the identical `accelerator` classes and the identical `window`/BroadcastChannel transports. The only difference is *where the instances live*: an Angular service creates a `Topic` as an RxJS source, a React hook subscribes through the same `asObservable()`. The transport and ordering rules are the same.
 
 == Capability flags
 
@@ -89,7 +89,7 @@ Topics themselves do not negotiate; the *page* advertises a list of Shell capabi
 * `activenessAwareMenus`
 * `dynamicTranslationsTopic`
 
-An App checks `hasShellCapability(...)` to decide whether to use a feature rather than fall back. In the current Shell, `link:{shell}/src/bootstrap.ts[bootstrap.ts]` registers `PARAMETERS_TOPIC`, `CURRENT_LOCATION_TOPIC` and `ACTIVENESS_AWARE_MENUS` but *not* `DYNAMIC_TRANSLATIONS_TOPIC` — see Known issues.
+An App checks `hasShellCapability(...)` to decide whether to use a feature rather than fall back. In the current Shell, `link:{shell}/src/bootstrap.ts[bootstrap.ts]` registers `PARAMETERS_TOPIC`, `CURRENT_LOCATION_TOPIC` and `ACTIVENESS_AWARE_MENUS` but *not* `DYNAMIC_TRANSLATIONS_TOPIC`: see Known issues.
 
 == Edge cases & pitfalls
 
@@ -100,7 +100,7 @@ An App checks `hasShellCapability(...)` to decide whether to use a feature rathe
 
   `Message was dropped because of equal timestamps, because there was an old style message in the system. Please upgrade all libraries to the latest version.`
 
-  That is the signature of a partially-upgraded page — some bundle is still on a pre-`id` message format.
+  That is the signature of a partially-upgraded page: some bundle is still on a pre-`id` message format.
 
 == Debugging
 
@@ -147,22 +147,22 @@ The globals this Unit reads are catalogued in link:window-state-inventory.adoc[G
 
 == Related Units
 
-* link:logging.adoc[Logging] — the `@onecx/accelerator:Topic:*` / `Gatherer:*` namespaces used above.
-* link:window-state-inventory.adoc[Global `window` state inventory] — the `@onecx/accelerator.topic.*` and `onecxMessageId` globals.
-* *1. Integration Contract & Topics* — the message contract, transports, Gatherers and RPC topics this Unit traces.
-* *3. Shell Context & Runtime Configuration* — the capability flags.
+* link:logging.adoc[Logging]: the `@onecx/accelerator:Topic:*` / `Gatherer:*` namespaces used above.
+* link:window-state-inventory.adoc[Global `window` state inventory]: the `@onecx/accelerator.topic.*` and `onecxMessageId` globals.
+* *1. Integration Contract & Topics*: the message contract, transports, Gatherers and RPC topics this Unit traces.
+* *3. Shell Context & Runtime Configuration*: the capability flags.
 
 == Sources
 
 Code::
-* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`] — `Topic`: listener registration, `onWindowMessage`, transport selection, `disableBroadcastChannel*`, init, ordering, the equal-timestamp warning.
-* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`] — `TopicPublisher`: `publish`, `sendMessage`, `createBroadcastChannel`.
-* link:{libs}/accelerator/src/lib/topic/message.ts[`accelerator/src/lib/topic/message.ts`] — `Message`, `onecxMessageId`.
-* link:{libs}/accelerator/src/lib/topic/topic-message.ts[`accelerator/src/lib/topic/topic-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-data-message.ts[`topic-data-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-resolve-message.ts[`topic-resolve-message.ts`] — the message classes.
-* link:{libs}/accelerator/src/lib/topic/topic-message-type.ts[`accelerator/src/lib/topic/topic-message-type.ts`] — `TopicMessageType`.
-* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`] — `useBroadcastChannel`, `tabId`, `initDate` globals.
-* link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`accelerator/src/lib/utils/logs.utils.ts`] — statistics counters and `statsEnabled`.
-* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`] — Gatherer namespaces.
-* link:{libs}/accelerator/src/lib/topic/syncable-topic.ts[`accelerator/src/lib/topic/syncable-topic.ts`] — deprecated `SyncableTopic`.
-* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`] — capability flags.
-* link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)] — the capabilities the Shell registers.
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`]: `Topic`: listener registration, `onWindowMessage`, transport selection, `disableBroadcastChannel*`, init, ordering, the equal-timestamp warning.
+* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`]: `TopicPublisher`: `publish`, `sendMessage`, `createBroadcastChannel`.
+* link:{libs}/accelerator/src/lib/topic/message.ts[`accelerator/src/lib/topic/message.ts`]: `Message`, `onecxMessageId`.
+* link:{libs}/accelerator/src/lib/topic/topic-message.ts[`accelerator/src/lib/topic/topic-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-data-message.ts[`topic-data-message.ts`], link:{libs}/accelerator/src/lib/topic/topic-resolve-message.ts[`topic-resolve-message.ts`]: the message classes.
+* link:{libs}/accelerator/src/lib/topic/topic-message-type.ts[`accelerator/src/lib/topic/topic-message-type.ts`]: `TopicMessageType`.
+* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`]: `useBroadcastChannel`, `tabId`, `initDate` globals.
+* link:{libs}/accelerator/src/lib/utils/logs.utils.ts[`accelerator/src/lib/utils/logs.utils.ts`]: statistics counters and `statsEnabled`.
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`]: Gatherer namespaces.
+* link:{libs}/accelerator/src/lib/topic/syncable-topic.ts[`accelerator/src/lib/topic/syncable-topic.ts`]: deprecated `SyncableTopic`.
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`integration-interface/src/lib/utils/shell-capability.utils.ts`] and link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`shell-capability.model.ts`]: capability flags.
+* link:{shell}/src/bootstrap.ts[`src/bootstrap.ts` (Shell)]: the capabilities the Shell registers.

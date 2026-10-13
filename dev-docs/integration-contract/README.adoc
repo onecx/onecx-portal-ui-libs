@@ -39,14 +39,14 @@ sequenceDiagram
 
 Units in reading order:
 
-. link:why-message-based.adoc[Why a message-based contract] — why units communicate only through Topics, and what that forbids.
-. link:message-delivery.adoc[Topic message delivery] — message types, ordering by id and timestamp, late-subscriber replay and the init/resolve handshake.
-. link:transports-and-tab-scope.adoc[Transports & tab scope] — postMessage vs BroadcastChannel v1/V2, the per-tab `tabId`, fallback between transports and who selects one.
-. link:topic-lifecycle.adoc[Topic lifecycle] — Topic creation and publishing, what `destroy` releases and leaves behind, where the adapters destroy, and the deprecated syncable Topic.
-. link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] — the `Gatherer` scatter/gather and the RPC Topics, and when to use them instead of a plain Topic.
-. link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation] — Topic versions, how the Shell advertises its capabilities and how Apps and Remote Components check them to adapt to older or newer Shells.
-. link:framework-adapters.adoc[Framework adapters] — how Angular services, React contexts and ngrx store connectors wrap the `Topic`, who owns and destroys each instance, and how a Topic value reaches the ngrx store.
-. link:topic-catalogue.adoc[Topic & Gatherer catalogue] — every shared `Topic` and `Gatherer` the libraries define, with version, publisher, consumers and owning Area.
+. link:why-message-based.adoc[Why a message-based contract]: why units communicate only through Topics, and what that forbids.
+. link:message-delivery.adoc[Topic message delivery]: message types, ordering by id and timestamp, late-subscriber replay and the init/resolve handshake.
+. link:transports-and-tab-scope.adoc[Transports & tab scope]: postMessage vs BroadcastChannel v1/V2, the per-tab `tabId`, fallback between transports and who selects one.
+. link:topic-lifecycle.adoc[Topic lifecycle]: Topic creation and publishing, what `destroy` releases and leaves behind, where the adapters destroy, and the deprecated syncable Topic.
+. link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: the `Gatherer` scatter/gather and the RPC Topics, and when to use them instead of a plain Topic.
+. link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: Topic versions, how the Shell advertises its capabilities and how Apps and Remote Components check them to adapt to older or newer Shells.
+. link:framework-adapters.adoc[Framework adapters]: how Angular services, React contexts and ngrx store connectors wrap the `Topic`, who owns and destroys each instance, and how a Topic value reaches the ngrx store.
+. link:topic-catalogue.adoc[Topic & Gatherer catalogue]: every shared `Topic` and `Gatherer` the libraries define, with version, publisher, consumers and owning Area.
 
 == Related Areas
 
@@ -58,8 +58,8 @@ Units in reading order:
 
 All Topics log under `@onecx/accelerator:Topic:<name>` and all Gatherers under `@onecx/accelerator:Gatherer:<name>`. Set `localStorage.debug` and reload the page:
 
-* `localStorage.debug = '@onecx/accelerator:Topic:*'` (or `:Gatherer:*`) — every Topic or Gatherer.
-* `localStorage.debug = '@onecx/accelerator:Topic:<name>'` (or `:Gatherer:<name>`) — one concrete instance.
-* `localStorage.debug = '@onecx/accelerator:Topic:*:error'` — errors only.
+* `localStorage.debug = '@onecx/accelerator:Topic:*'` (or `:Gatherer:*`): every Topic or Gatherer.
+* `localStorage.debug = '@onecx/accelerator:Topic:<name>'` (or `:Gatherer:<name>`): one concrete instance.
+* `localStorage.debug = '@onecx/accelerator:Topic:*:error'`: errors only.
 
 Each Unit's *Debugging* section adds only what is specific to it. For general cross-App tracing, see link:../diagnostics/tracing-communication.adoc[Area 13], also listed under each Unit's Related Units.

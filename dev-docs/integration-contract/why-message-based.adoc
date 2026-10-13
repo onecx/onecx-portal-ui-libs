@@ -63,7 +63,7 @@ The accelerator logs every Topic under `@onecx/accelerator:Topic:<name>` with th
 
 == Related Units
 
-* link:message-delivery.adoc[Topic message delivery] — the concrete message types and ordering.
+* link:message-delivery.adoc[Topic message delivery]: the concrete message types and ordering.
 * link:transports-and-tab-scope.adoc[Transports & tab scope]
 * link:topic-lifecycle.adoc[Topic lifecycle]
 * link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]

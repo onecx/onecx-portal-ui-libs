@@ -56,20 +56,20 @@ Encoding `name|version` in the channel name lets the browser filter traffic befo
 
 All units in a tab share one state object, `globalThis['@onecx/accelerator'].topic`. The first library to load sets its defaults lazily:
 
-* `useBroadcastChannel` — `'V2'`.
-* `tabId` — `Math.ceil(performance.now())`.
-* `initDate` — `Date.now()`.
+* `useBroadcastChannel`: `'V2'`.
+* `tabId`: `Math.ceil(performance.now())`.
+* `initDate`: `Date.now()`.
 
 Only the accelerator changes `useBroadcastChannel`, demoting it as messages arrive, so arrival order matters. A v2 message leaves the flag unchanged.
 
-*Example 1 — Mixed library generations.* App A (current, v2), App B (legacy v1-only) and App C (`postMessage`-only) share a tab:
+*Example 1: Mixed library generations.* App A (current, v2), App B (legacy v1-only) and App C (`postMessage`-only) share a tab:
 
 . A sends on the tab-scoped v2 channel (`'V2'`).
 . B sends on v1. The flag drops to `true`, so all later sends, including A's, use v1.
 . C sends via `window.postMessage`. The flag drops to `false`, so later sends use `postMessage`.
 . Read channels stay open, so a later v1 or window message flips the flag again (a v1 message sets it back to `true`).
 
-*Example 2 — No `BroadcastChannel` in the browser.* The first `Topic` constructed sets `useBroadcastChannel = false` before any channel opens, so every later `Topic` sends via `window.postMessage`. The publisher also checks for `BroadcastChannel` before each send and falls back to `postMessage`.
+*Example 2: No `BroadcastChannel` in the browser.* The first `Topic` constructed sets `useBroadcastChannel = false` before any channel opens, so every later `Topic` sends via `window.postMessage`. The publisher also checks for `BroadcastChannel` before each send and falls back to `postMessage`.
 
 Delivery stays correct across channels because a subscriber accepts only the latest value by id/timestamp (link:message-delivery.adoc[Unit 2]).
 

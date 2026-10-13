@@ -19,10 +19,10 @@ The Workspace model carries this data, and a few pure helpers turn it into URLs.
 
 The Workspace is published on the link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`current-workspace` Topic] (registered with the raw name `currentPortal`, version 1). Its value is the link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`] model:
 
-* `baseUrl` — the Workspace root and the fallback base when a route has none.
-* `workspaceName` / `portalName` — the Workspace name. `portalName` is deprecated in favour of `workspaceName`.
-* `routes` — an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`]. Each `Route` is one product/app entry point: `appId`, `productName`, `baseUrl`, `url`, `remoteEntryUrl`, `exposedModule`, `pathMatch`, … and `endpoints`.
-* `endpoints` — on each route, an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`] of shape `{ name?, path? }`.
+* `baseUrl`: the Workspace root and the fallback base when a route has none.
+* `workspaceName` / `portalName`: the Workspace name. `portalName` is deprecated in favour of `workspaceName`.
+* `routes`: an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`]. Each `Route` is one product/app entry point: `appId`, `productName`, `baseUrl`, `url`, `remoteEntryUrl`, `exposedModule`, `pathMatch`, … and `endpoints`.
+* `endpoints`: on each route, an array of link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`] of shape `{ name?, path? }`.
 * `homePage`, `i18n`, `displayName`, and several deprecated fields (see Edge cases).
 
 URL building lives in pure functions in link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`], shared by both frameworks:
@@ -32,10 +32,10 @@ URL building lives in pure functions in link:{libs}/integration-interface/src/li
 
 `constructRouteUrl` resolves in four steps:
 
-. *Match the route* — `filterRouteFromList` picks the `Route` whose `appId` and `productName` both match. With no match, it warns and returns the Workspace `baseUrl`. With several matches, it warns and uses the first.
-. *Pick the base* — the route's `baseUrl` if set, otherwise the Workspace `baseUrl`. Without an `endpointName`, this is the result.
-. *Resolve the endpoint* — `constructEndpointUrl` → `dissolveEndpoint` finds the endpoint by `name` and follows `[[alias]]` chains: an endpoint whose `path` contains `[[other]]` is replaced by the endpoint named `other`. `fillParamsForPath` then fills `{param}` placeholders from `endpointParameters`.
-. *Join* — `joinWithSlash` joins base and endpoint path with a single slash.
+. *Match the route*: `filterRouteFromList` picks the `Route` whose `appId` and `productName` both match. With no match, it warns and returns the Workspace `baseUrl`. With several matches, it warns and uses the first.
+. *Pick the base*: the route's `baseUrl` if set, otherwise the Workspace `baseUrl`. Without an `endpointName`, this is the result.
+. *Resolve the endpoint*: `constructEndpointUrl` → `dissolveEndpoint` finds the endpoint by `name` and follows `[[alias]]` chains: an endpoint whose `path` contains `[[other]]` is replaced by the endpoint named `other`. `fillParamsForPath` then fills `{param}` placeholders from `endpointParameters`.
+. *Join*: `joinWithSlash` joins base and endpoint path with a single slash.
 
 [source,mermaid]
 ----
@@ -56,10 +56,10 @@ flowchart TD
 
 The libs provide the model, the pure helpers, and a thin reactive consumer per framework.
 
-* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`] — the data shape, in `integration-interface`.
-* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`] — the framework-agnostic builders. `constructRouteUrl` and `doesUrlExistForWorkspace` are the entry points. `filterRouteFromList`, `constructBaseUrlFromWorkspace`, `dissolveEndpoint`, `fillParamsForPath` and `joinWithSlash` are the steps. The entry points take an optional `warn` handler (default `console.warn`) and pass it down. They warn and *degrade instead of throwing* (see Edge cases).
-* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`] — the Angular consumer. `getUrl(productName, appId, endpointName?, endpointParameters?)` and `doesUrlExistFor(productName, appId, endpointName?)` map `AppStateService.currentWorkspace$` through the helpers and return `Observable<string>` / `Observable<boolean>`. Both pass `logger.warn` as the `warn` handler.
-* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`] — the React equivalent. It reads `useAppState().currentWorkspace$` and must be called inside an `AppStateProvider`.
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`], link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/endpoint.model.ts[`Endpoint`]: the data shape, in `integration-interface`.
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`]: the framework-agnostic builders. `constructRouteUrl` and `doesUrlExistForWorkspace` are the entry points. `filterRouteFromList`, `constructBaseUrlFromWorkspace`, `dissolveEndpoint`, `fillParamsForPath` and `joinWithSlash` are the steps. The entry points take an optional `warn` handler (default `console.warn`) and pass it down. They warn and *degrade instead of throwing* (see Edge cases).
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]: the Angular consumer. `getUrl(productName, appId, endpointName?, endpointParameters?)` and `doesUrlExistFor(productName, appId, endpointName?)` map `AppStateService.currentWorkspace$` through the helpers and return `Observable<string>` / `Observable<boolean>`. Both pass `logger.warn` as the `warn` handler.
+* link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`]: the React equivalent. It reads `useAppState().currentWorkspace$` and must be called inside an `AppStateProvider`.
 
 === Shell side
 
@@ -100,11 +100,11 @@ Both read `currentWorkspace$` and inherit its readiness contract: gate on `isIni
 
 == Related Units
 
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate for `current-workspace`.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — where the `Workspace` is loaded from the BFF and published.
-* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — the sibling "current app" context (`currentMfe$`) and where the API base URL comes from.
-* Area 2 (Application Bootstrap) — how a route's `remoteEntryUrl` is used to load the matched remote.
-* Area 7 (Navigation & Routing) — the `current-location` / Current App Topics that arrive alongside the workspace.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate for `current-workspace`.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: where the `Workspace` is loaded from the BFF and published.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: the sibling "current app" context (`currentMfe$`) and where the API base URL comes from.
+* Area 2 (Application Bootstrap): how a route's `remoteEntryUrl` is used to load the matched remote.
+* Area 7 (Navigation & Routing): the `current-location` / Current App Topics that arrive alongside the workspace.
 
 == Sources
 

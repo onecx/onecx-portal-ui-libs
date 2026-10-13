@@ -14,7 +14,7 @@ Before a OneCX page can render any App it must configure itself: load the worksp
 
 == How it works
 
-The Shell wraps its two initializers — the workspace-configuration load and the user-profile load — in an RxJS `retry` plus a `catchError`. When the retries are exhausted, the `catchError` hands the error to a single function, `initializationErrorHandler`, which:
+The Shell wraps its two initializers, the workspace-configuration load and the user-profile load, in an RxJS `retry` plus a `catchError`. When the retries are exhausted, the `catchError` hands the error to a single function, `initializationErrorHandler`, which:
 
 . Inspects the error. For an `HttpErrorResponse` it reads the RFC 7807 problem details (`detail`, `errorCode`, `invalidParams`, `params`); for a generic `ErrorEvent` it reads only the message.
 . Packs the result into `URLSearchParams` with the keys `message`, `requestedUrl` (the current `location.href`), `detail`, `errorCode`, `invalidParams` and `params`.
@@ -51,18 +51,18 @@ The initialization failure is a Shell concern, so the libraries are mostly absen
 
 Everything else lives in the Shell:
 
-* link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`] — builds the parameters, reads the problem details, and performs the guarded navigation.
-* link:{shell}/src/app/app.module.ts[`app.module.ts`] — the two initializers (`workspaceConfigInitializer`, `userProfileInitializer`) that call the handler in a `catchError`, each after `retry({ delay: 500, count: 3 })`.
-* link:{shell}/src/app/app.routes.ts[`app.routes.ts`] — registers the route `portal-initialization-error-page`, lazy-loaded through `InitErrorModule`.
-* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent`] — reads the fragment, exposes the fields on an Observable, and offers a logout button that publishes the `authentication#logoutButtonClicked` event. The template assigns each displayed value a stable id (`onecxInitializationErrorMessage`, `onecxInitializationErrorRequestedUrl`, …) so they can be located or translated reliably.
+* link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`]: builds the parameters, reads the problem details, and performs the guarded navigation.
+* link:{shell}/src/app/app.module.ts[`app.module.ts`]: the two initializers (`workspaceConfigInitializer`, `userProfileInitializer`) that call the handler in a `catchError`, each after `retry({ delay: 500, count: 3 })`.
+* link:{shell}/src/app/app.routes.ts[`app.routes.ts`]: registers the route `portal-initialization-error-page`, lazy-loaded through `InitErrorModule`.
+* link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent`]: reads the fragment, exposes the fields on an Observable, and offers a logout button that publishes the `authentication#logoutButtonClicked` event. The template assigns each displayed value a stable id (`onecxInitializationErrorMessage`, `onecxInitializationErrorRequestedUrl`, …) so they can be located or translated reliably.
 
 == Angular / React
 
-The current init-error page is an Angular component and the initializers use Angular DI and the Angular Router. A React Shell would run the same capture-and-redirect flow: parse the error, encode the fields into the URL, navigate to the init-error route, and decode them there. The mechanism — details carried in the URL fragment so they survive the route change — does not depend on the framework.
+The current init-error page is an Angular component and the initializers use Angular DI and the Angular Router. A React Shell would run the same capture-and-redirect flow: parse the error, encode the fields into the URL, navigate to the init-error route, and decode them there. The mechanism, details carried in the URL fragment so they survive the route change, does not depend on the framework.
 
 == Edge cases & pitfalls
 
-* *Details are in the fragment, not the query string.* The `initializationErrorHandler` navigates with `{ fragment: params.toString() }` and the page reads `route.fragment`. If something were to read the query string instead, it would see nothing. (See *Known issues* — the Area's planning notes referred to these as "query parameters".)
+* *Details are in the fragment, not the query string.* The `initializationErrorHandler` navigates with `{ fragment: params.toString() }` and the page reads `route.fragment`. If something were to read the query string instead, it would see nothing. (See *Known issues*: the Area's planning notes referred to these as "query parameters".)
 * *Re-entry guard.* The handler only navigates when the fragment does not already contain the target path. This is what stops the init-error page from redirecting into itself when its own request fails.
 * *Problem details are optional.* `detail`, `errorCode`, `params` and `invalidParams` are only present on an HTTP problem-detail response; for a plain error event they are empty, and the page hides any field that is empty.
 
@@ -72,9 +72,9 @@ The handler reads problem details only from `HttpErrorResponse` and `ErrorEvent`
 
 == Related Units
 
-* link:./failure-taxonomy.adoc[Failure taxonomy map] — where the initialization failure sits among the other failure modes.
-* Area 3 — Shell Context & Runtime Configuration — the workspace configuration and profile loads that can fail here.
-* Area 8 — Authentication — the logout event the init-error page fires.
+* link:./failure-taxonomy.adoc[Failure taxonomy map]: where the initialization failure sits among the other failure modes.
+* Area 3, Shell Context & Runtime Configuration, the workspace configuration and profile loads that can fail here.
+* Area 8, Authentication, the logout event the init-error page fires.
 
 == Sources
 
@@ -86,5 +86,5 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]
 
 Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`) — no prior errors-feedback page.
-* Current `main` code of `onecx-shell-ui` — basis for every claim above, including the fragment-vs-query-parameter discrepancy.
+* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page.
+* Current `main` code of `onecx-shell-ui`: basis for every claim above, including the fragment-vs-query-parameter discrepancy.

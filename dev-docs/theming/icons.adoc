@@ -31,11 +31,11 @@ The framework-agnostic half lives in `@onecx/integration-interface`. An applicat
 
 link:{icon_model}[`icon.model.ts`] defines the shapes used across the boundary:
 
-* `IconClassType` — the rendering style: `'svg' | 'background' | 'background-before'`.
-* `IconCache` — a resolved icon: `{ name, type, body, parent? }`, where `body` is the SVG payload.
-* `IconRequested` — `{ type: 'IconRequested', name }` — a request for one real icon name.
-* `IconsReceived` — `{ type: 'IconsReceived' }` — the Shell's signal that it finished loading/injecting the requested icons.
-* `Icon` — `IconRequested | IconsReceived`, the Topic's message type.
+* `IconClassType`: the rendering style: `'svg' | 'background' | 'background-before'`.
+* `IconCache`: a resolved icon: `{ name, type, body, parent? }`, where `body` is the SVG payload.
+* `IconRequested`, `{ type: 'IconRequested', name }`, a request for one real icon name.
+* `IconsReceived`, `{ type: 'IconsReceived' }`, the Shell's signal that it finished loading/injecting the requested icons.
+* `Icon`: `IconRequested | IconsReceived`, the Topic's message type.
 
 === The class name
 
@@ -52,9 +52,9 @@ onecx-theme-icon-${classType}-${normalizeIconName(name)}
 
 The resolved icons are shared page-wide on `globalThis.onecxIcons` (declared in link:{icon_declarations}[`declarations.ts`] as `Record<string, IconCache | null | undefined>`). Its three states drive the whole flow:
 
-* `undefined` — requested, not loaded yet;
-* `null` — loaded and *not found* (so consumers can stop waiting);
-* `IconCache` — available.
+* `undefined`: requested, not loaded yet;
+* `null`: loaded and *not found* (so consumers can stop waiting);
+* `IconCache`: available.
 
 Because the cache lives on `globalThis`, the Shell and every application on the page read and write the same object.
 
@@ -71,7 +71,7 @@ export class IconTopic extends Topic<Icon> {
 }
 ----
 
-It is a Topic named `icon` at version `1`, constructed with `sendGetMessage = false`. That last argument matters: the Topic does *not* send a `TopicGet` on construction, so an application never asks the Shell for the current icon state — the application only *pushes* `IconRequested`, and relies on the shared cache for anything already loaded.
+It is a Topic named `icon` at version `1`, constructed with `sendGetMessage = false`. That last argument matters: the Topic does *not* send a `TopicGet` on construction, so an application never asks the Shell for the current icon state: the application only *pushes* `IconRequested`, and relies on the shared cache for anything already loaded.
 
 The request/reply round trip:
 
@@ -94,9 +94,9 @@ sequenceDiagram
 
 `@onecx/integration-interface` provides the framework-agnostic `IconService` (link:{icon_service}[`icon.service.ts`]):
 
-* `requestIcon(name, classType = 'background-before'): string` — returns the generated class name immediately. If `name` is not yet a key of `globalThis.onecxIcons`, it marks the entry as `undefined` and publishes `{ type: 'IconRequested', name }` on the Topic. It never awaits anything.
-* `requestIconAsync(name, classType?, fallbackClass?): Promise<string | null>` — calls `requestIcon` first, then reads `globalThis.onecxIcons[name]`: if it is already `null` it resolves to `fallbackClass` (or `null`) immediately, if it is already an `IconCache` it resolves to the class name immediately, and only while the entry is still `undefined` does it wait for the first `IconsReceived` before resolving.
-* `destroy()` — destroys the Topic (removes the message listener / closes channels).
+* `requestIcon(name, classType = 'background-before'): string`: returns the generated class name immediately. If `name` is not yet a key of `globalThis.onecxIcons`, it marks the entry as `undefined` and publishes `{ type: 'IconRequested', name }` on the Topic. It never awaits anything.
+* `requestIconAsync(name, classType?, fallbackClass?): Promise<string | null>`: calls `requestIcon` first, then reads `globalThis.onecxIcons[name]`: if it is already `null` it resolves to `fallbackClass` (or `null`) immediately, if it is already an `IconCache` it resolves to the class name immediately, and only while the entry is still `undefined` does it wait for the first `IconsReceived` before resolving.
+* `destroy()`: destroys the Topic (removes the message listener / closes channels).
 
 The library owns *only* the request and the class-name/cache contract. It does not fetch any SVG, does not own the CSS, and does not populate the cache.
 
@@ -106,7 +106,7 @@ The Shell is the loader and the CSS authority (separate repository, read-only he
 
 * Subscribes to `IconTopic` and filters for `IconRequested` messages.
 * Batches them (a ~100 ms `bufferTime`) so several applications asking at once collapse into one load.
-* For each missing name it fetches the icon and writes the result into `globalThis.onecxIcons` — an `IconCache` when found, `null` when not.
+* For each missing name it fetches the icon and writes the result into `globalThis.onecxIcons`: an `IconCache` when found, `null` when not.
 * Injects the CSS for the requested render styles into a single global `<style>` element (a `mask`/`currentColor` rule for `svg`, and a base64 `data:image/svg+xml` rule for `background` / `background-before`).
 * Publishes `{ type: 'IconsReceived' }` once the batch is done.
 
@@ -140,24 +140,24 @@ There is no React-specific icon context. React applications construct the shared
 
 == Related Units
 
-* link:{overview}[Theming & Visual Assets overview] — the Area this Unit belongs to.
-* link:theme-to-page.adoc[Theme → page] — where the theme (and the icon set's theme scoping) is applied to the page.
-* link:images.adoc[Images] — the sibling Unit covering images delivered via the image repository.
+* link:{overview}[Theming & Visual Assets overview]: the Area this Unit belongs to.
+* link:theme-to-page.adoc[Theme → page]: where the theme (and the icon set's theme scoping) is applied to the page.
+* link:images.adoc[Images]: the sibling Unit covering images delivered via the image repository.
 
 == Sources
 
 Code::
-* link:{icon_model}[`integration-interface/.../icons/v1/icon.model.ts`] — `Icon`, `IconCache`, `IconClassType`, `IconRequested`, `IconsReceived`.
-* link:{icon_topic}[`integration-interface/.../icons/v1/icon.topic.ts`] — `IconTopic` (`icon`, v1, `sendGetMessage = false`).
-* link:{icon_service}[`integration-interface/.../services/icon.service.ts`] — `IconService`, `generateClassName`, `normalizeIconName`, `ensureIconCache`.
-* link:{icon_declarations}[`integration-interface/.../lib/declarations.ts`] — the `globalThis.onecxIcons` global declaration.
-* link:{icon_service_angular}[`angular-integration-interface/.../services/icon.service.ts`] — the Angular `providedIn: 'root'` wrapper.
-* link:{topic_base}[`accelerator/.../topic/topic.ts`] — the `Topic` base class and its `sendGetMessage` flag.
+* link:{icon_model}[`integration-interface/.../icons/v1/icon.model.ts`]: `Icon`, `IconCache`, `IconClassType`, `IconRequested`, `IconsReceived`.
+* link:{icon_topic}[`integration-interface/.../icons/v1/icon.topic.ts`]: `IconTopic` (`icon`, v1, `sendGetMessage = false`).
+* link:{icon_service}[`integration-interface/.../services/icon.service.ts`]: `IconService`, `generateClassName`, `normalizeIconName`, `ensureIconCache`.
+* link:{icon_declarations}[`integration-interface/.../lib/declarations.ts`]: the `globalThis.onecxIcons` global declaration.
+* link:{icon_service_angular}[`angular-integration-interface/.../services/icon.service.ts`]: the Angular `providedIn: 'root'` wrapper.
+* link:{topic_base}[`accelerator/.../topic/topic.ts`]: the `Topic` base class and its `sendGetMessage` flag.
 * Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
-** link:{shell_icon_loader}[`src/app/shell/services/icon-loader.service.ts`] — `ShellIconLoaderService`: batches `IconRequested`, loads icons into `globalThis.onecxIcons`, injects CSS, publishes `IconsReceived`.
-** link:{shell_app_module}[`src/app/app.module.ts`] — the `shellIconLoaderServiceInitializer` that runs the loader on startup.
+** link:{shell_icon_loader}[`src/app/shell/services/icon-loader.service.ts`]: `ShellIconLoaderService`: batches `IconRequested`, loads icons into `globalThis.onecxIcons`, injects CSS, publishes `IconsReceived`.
+** link:{shell_app_module}[`src/app/app.module.ts`]: the `shellIconLoaderServiceInitializer` that runs the loader on startup.
 
 Verification Sources checked::
-* `docs/…/service/icon-service.adoc` and `docs/…/libraries/integration-interface.adoc` (Antora) — match on the global cache states, the class-name format, and the `IconRequested` → `IconsReceived` flow. Note: the Antora `IconTopic` table lists a `classType` field on `IconRequested`, which the model on `main` does not carry (`IconRequested` is `{ type, name }`); the code is the baseline, so this page omits that field.
-* `onecx-shell-ui` `main` (read-only) — `ShellIconLoaderService.init()` confirms the batch/load/inject/`IconsReceived` behaviour documented above.
+* `docs/…/service/icon-service.adoc` and `docs/…/libraries/integration-interface.adoc` (Antora): match on the global cache states, the class-name format, and the `IconRequested` → `IconsReceived` flow. Note: the Antora `IconTopic` table lists a `classType` field on `IconRequested`, which the model on `main` does not carry (`IconRequested` is `{ type, name }`); the code is the baseline, so this page omits that field.
+* `onecx-shell-ui` `main` (read-only): `ShellIconLoaderService.init()` confirms the batch/load/inject/`IconsReceived` behaviour documented above.
 * JSDoc in the source files above.

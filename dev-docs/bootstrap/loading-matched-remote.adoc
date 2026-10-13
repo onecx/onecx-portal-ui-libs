@@ -11,15 +11,15 @@ Once the Shell's `Router` has matched the current URL to a generated route, how 
 
 == Why it exists
 
-Matching a URL to a route (which App owns it, in what order, the not-found fallback) is a *routing* concern — it is owned by Area 7, link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation]. The question this Unit answers is the next, distinct step: the matched route's loader is a Module Federation *load*. The Shell does not have the App's code locally; it only has a remote's identity (`remoteEntryUrl`, a name, a share scope, a technology). Turning that record into a running module — and putting that module in front of the user, either as an Angular route the Shell's router renders or as a custom element the Shell appends — is the bootstrap's job. This Unit is the focused deep-dive on that one seam; it is the step Unit 1's timeline marks as "load the matched App's remote".
+Matching a URL to a route (which App owns it, in what order, the not-found fallback) is a *routing* concern; it is owned by Area 7, link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation]. The question this Unit answers is the next, distinct step: the matched route's loader is a Module Federation *load*. The Shell does not have the App's code locally; it only has a remote's identity (`remoteEntryUrl`, a name, a share scope, a technology). Turning that record into a running module, and putting that module in front of the user, either as an Angular route the Shell's router renders or as a custom element the Shell appends, is the bootstrap's job. This Unit is the focused deep-dive on that one seam; it is the step Unit 1's timeline marks as "load the matched App's remote".
 
 == How it works
 
 Framework-agnostic, the matched remote is loaded by the Shell in one place: the route's `loadChildren` loader (the mechanism behind Area 7's "Current App activation"). The order inside that loader is fixed:
 
 . *Go dark.* Turn the content off (`showContent$`) and publish `globalLoading = true` so the page shows a loading state while the remote is fetched.
-. *Prepare the App's environment.* Load the App's styles and publish the Current App — `currentMfe$` (identity, base href, `elementName`) — and the App's permissions (Area 7 owns the meaning of `currentMfe$`; here it is just the value the loader publishes before loading).
-. *Build the remote record.* Convert the route's data into a Module Federation `Remote` — `{ type, entry, name, shareScope }` — from the libraries.
+. *Prepare the App's environment.* Load the App's styles and publish the Current App, `currentMfe$` (identity, base href, `elementName`), and the App's permissions (Area 7 owns the meaning of `currentMfe$`; here it is just the value the loader publishes before loading).
+. *Build the remote record.* Convert the route's data into a Module Federation `Remote`, `{ type, entry, name, shareScope }`, from the libraries.
 . *Register and load.* `registerRemotes([remote])` and then `loadRemote(remote.name + '/' + exposedModule)` against the Shell's own federation instance (Unit 2).
 . *Return the mount.* If the route's technology is Angular, return the loaded Angular module so the Shell's router renders it as the active route; for every other technology, return the Shell's `WebcomponentLoaderModule`, which mounts the loaded web component as a custom element.
 . *Fail loudly.* If any of the load steps reject, surface a Portal Message, navigate to the `remote-loading-error-page`, and rethrow so the route stays unmatched.
@@ -48,7 +48,7 @@ sequenceDiagram
   Load -.loadRemote rejects.-> Mount: -> remote-loading-error-page (rethrow)
 ----
 
-The load is *always* a `registerRemotes` + `loadRemote` pair — the same primitives the framework preloaders (Unit 4) use, and the same ones Unit 2 describes. What is specific to this Unit is that the remote being loaded is the *matched App's* remote, its record is built from the Workspace route, and its result is a *mount* (an Angular module or a web-component element), not just a module.
+The load is *always* a `registerRemotes` + `loadRemote` pair: the same primitives the framework preloaders (Unit 4) use, and the same ones Unit 2 describes. What is specific to this Unit is that the remote being loaded is the *matched App's* remote, its record is built from the Workspace route, and its result is a *mount* (an Angular module or a web-component element), not just a module.
 
 == Libs side / Shell side
 
@@ -58,10 +58,10 @@ The libraries turn the route's data into a loadable `Remote` and expose the load
 
 * *`toLoadRemoteEntryOptions(r)`* builds the `Remote` from a route record (`{ remoteEntryUrl, productName, appId, technology, shareScope, remoteName }`):
   + `entry` is the route's `remoteEntryUrl`; `shareScope` is `r.shareScope ?? 'default'`.
-  + `type` is `'module'` for `Angular` and `WebComponentModule` technologies, and `'script'` otherwise — a `WebComponentScript` is loaded as a plain script tag.
+  + `type` is `'module'` for `Angular` and `WebComponentModule` technologies, and `'script'` otherwise: a `WebComponentScript` is loaded as a plain script tag.
   + `name` comes from `getRemoteName(r)`: normally `productName|appId`, but for `WebComponentScript` it is the MF-configured `remoteName`, because that remote defines its exposed component on a global that must be addressed by the name the remote's own build config declared (Unit 2).
 * *`createRemoteConfig(entry, name, type, shareScope)`* is the lower-level helper that builds the same `Remote` shape directly.
-* *`getShellMfInstance()`* returns the federation instance a consumer registers on: it prefers the Shell's `globalThis.onecxFederationInstance` (set in `main.ts`) and falls back to `getInstance()` by the Shell's instance name. This is how *any* consumer — including the Remote Component loader in Area 6 — targets the Shell's runtime.
+* *`getShellMfInstance()`* returns the federation instance a consumer registers on: it prefers the Shell's `globalThis.onecxFederationInstance` (set in `main.ts`) and falls back to `getInstance()` by the Shell's instance name. This is how *any* consumer, including the Remote Component loader in Area 6, targets the Shell's runtime.
 * *`registerAndLoadRemote(instance, remoteConfig, exposedModule)`* is the `registerRemotes` + `loadRemote` pair in one call (it strips a leading `./` from the exposed module). The Remote Component loader (`SlotService.loadComponent`, Area 6) uses this; the Shell's own App loading calls `registerRemotes`/`loadRemote` directly for the same reason.
 
 The libraries therefore provide the *data → remote* translation and the *instance + load* helpers. The Shell owns the *decision* (which route matched) and the *result* (how the loaded thing is mounted).
@@ -71,22 +71,22 @@ The libraries therefore provide the *data → remote* translation and the *insta
 The Shell runs the whole sequence in link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.loadChildren`], which is the lazy loader Area 7's matched route points at.
 
 * *The load.* `loadChildren(r, joinedBaseUrl)` sets `globalLoading`, runs `updateAppEnvironment` (styles + `currentMfe$` + permissions), then `toLoadRemoteEntryOptions(r)` → `registerRemotes([remoteEntryOptions])` → `loadRemote(remoteEntryOptions.name + '/' + exposedModule)`, stripping a leading `./` from `exposedModule`. On success: if `r.technology === Technologies.Angular` it returns the loaded module (`m[exposedModule]`); otherwise it returns `WebcomponentLoaderModule`. `globalLoading` is cleared in a `finally`, so a failed load still releases the loading state.
-* *The App's environment is published before the load.* `updateAppEnvironment` loads the App's styles (`updateStylesForMfeChange`) and calls `updateAppState`, which — when this is a fresh or a changed Current App (first load, or `currentMfe.remoteBaseUrl !== r.url`) — publishes `currentMfe$` (with `baseHref`, `remoteBaseUrl`, `appId`, `productName`, `elementName`, `version`, …) and the App's permissions in parallel, under the loading state. The values are the Current App's identity; their *meaning* and readiness are Area 7's and Area 3's.
-* *The non-Angular mount.* For every technology but `Angular` — `WebComponent`, `WebComponentScript`, and `WebComponentModule`, the technologies a React App is built under — the loader returns link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.module.ts[`WebcomponentLoaderModule`]. That module has a single `**` route rendering link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`], whose `ngAfterContentInit` waits for the first `currentMfe$` value, requires an `elementName` (throwing if it is missing), creates `document.createElement(elementName)`, stamps it with the scoping dataset keys (style id, style isolation, `mfeElement` — Area 4), and appends it into its `#wrapper` div. The element is the web component the App defined (Unit 6); creating it is what instantiates that App.
-* *The failure path.* `onRemoteLoadError` logs `Failed to load remote module`, raises a Portal Message, navigates to `remote-loading-error-page` (carrying `requestedApplicationPath`), and rethrows — so the Shell's router keeps the route unmatched and the error page shows.
+* *The App's environment is published before the load.* `updateAppEnvironment` loads the App's styles (`updateStylesForMfeChange`) and calls `updateAppState`, which, when this is a fresh or a changed Current App (first load, or `currentMfe.remoteBaseUrl !== r.url`), publishes `currentMfe$` (with `baseHref`, `remoteBaseUrl`, `appId`, `productName`, `elementName`, `version`, …) and the App's permissions in parallel, under the loading state. The values are the Current App's identity; their *meaning* and readiness are Area 7's and Area 3's.
+* *The non-Angular mount.* For every technology but `Angular`, `WebComponent`, `WebComponentScript`, and `WebComponentModule`, the technologies a React App is built under, the loader returns link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.module.ts[`WebcomponentLoaderModule`]. That module has a single `**` route rendering link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`], whose `ngAfterContentInit` waits for the first `currentMfe$` value, requires an `elementName` (throwing if it is missing), creates `document.createElement(elementName)`, stamps it with the scoping dataset keys (style id, style isolation, `mfeElement`, Area 4), and appends it into its `#wrapper` div. The element is the web component the App defined (Unit 6); creating it is what instantiates that App.
+* *The failure path.* `onRemoteLoadError` logs `Failed to load remote module`, raises a Portal Message, navigates to `remote-loading-error-page` (carrying `requestedApplicationPath`), and rethrows: so the Shell's router keeps the route unmatched and the error page shows.
 
 == Angular / React
 
 The load is identical; the *mount* and the remote `type` differ.
 
-* *Angular.* A route with `technology: Angular` loads as `type: 'module'` and `loadChildren` returns the Angular module directly; the Shell's `Router` renders it as the active route. There is no intermediate element — the App's code is a route component the Shell already hosts.
+* *Angular.* A route with `technology: Angular` loads as `type: 'module'` and `loadChildren` returns the Angular module directly; the Shell's `Router` renders it as the active route. There is no intermediate element: the App's code is a route component the Shell already hosts.
 * *React (and other web components).* A React route loads through `WebcomponentLoaderModule`: the loader appends a custom element named after `currentMfe.elementName`, and instantiating that element starts the App inside it. The React App then follows the shared URL with its own `BrowserRouter` (Unit 6, `withSyncedRouter`). The same loader is used for Angular `WebComponentModule` remotes and for plain `WebComponent`/`WebComponentScript` remotes.
-* *The name that must match.* For `WebComponentScript` remotes the loader must use the remote's own MF `remoteName` (not `productName|appId`), because the exposed component is addressed on a global by the name the remote declared. A mismatch means `loadRemote` never resolves — the same name-must-match rule Unit 2 calls out, applied here.
+* *The name that must match.* For `WebComponentScript` remotes the loader must use the remote's own MF `remoteName` (not `productName|appId`), because the exposed component is addressed on a global by the name the remote declared. A mismatch means `loadRemote` never resolves: the same name-must-match rule Unit 2 calls out, applied here.
 
 == Edge cases & pitfalls
 
-* *The load is gated by `globalLoading`, not by the router.* The loader publishes `globalLoading` on and off around the fetch. Because the clear happens in a `finally`, a failed load does not leave the page permanently on the loading spinner — it instead routes to the error page (and the error page is what the user sees, not a blank screen).
-* *The environment publish is conditional.* `currentMfe$` and permissions are published only when the Current App is actually changing (first load or a different `remoteBaseUrl`). Re-matching the same App does not republish — so a consumer must not expect a fresh `currentMfe$` emission when the same App re-activates.
+* *The load is gated by `globalLoading`, not by the router.* The loader publishes `globalLoading` on and off around the fetch. Because the clear happens in a `finally`, a failed load does not leave the page permanently on the loading spinner: it instead routes to the error page (and the error page is what the user sees, not a blank screen).
+* *The environment publish is conditional.* `currentMfe$` and permissions are published only when the Current App is actually changing (first load or a different `remoteBaseUrl`). Re-matching the same App does not republish: so a consumer must not expect a fresh `currentMfe$` emission when the same App re-activates.
 * *The mount is a custom element, so its identity matters.* For the non-Angular path the App only starts when `document.createElement(elementName)` is called by the loader. If `elementName` is missing from the route, the loader throws; if two remotes try to define the same element name, the second `customElements.define` throws `NotSupportedError`, so one App fails to mount (Unit 6).
 * *The share scope must line up with a preloaded loader.* `shareScope` (defaulting to `default`) selects which scope the App resolves its shared framework packages from. If the matching loader was not preloaded, the App loads but may not be able to bootstrap (Unit 3 and Unit 4).
 * *`registerRemotes` + `loadRemote` can be reached from other consumers too.* `getShellMfInstance()` / `registerAndLoadRemote()` are the same primitives a Remote Component loader uses (Area 6); the Shell's App path is just the most prominent caller.
@@ -100,11 +100,11 @@ The load is identical; the *mount* and the remote `type` differ.
 
 == Related Units
 
-* link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation] (Area 7) — building the route table, matching the URL, and the `currentMfe$` identity this loader publishes.
-* link:module-federation.adoc[Module Federation in OneCX] (Unit 2) — the `registerRemotes` / `loadRemote` / share-scope mechanics this loader is built from.
-* link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4) — the share scopes this remote must resolve from, and the other `registerRemotes` + `loadRemote` caller.
-* link:web-component-bootstrap.adoc[App bootstrap as web component] (Unit 6) — how the loaded module becomes the custom element the loader instantiates.
-* link:startup-timeline.adoc[index.html → first App timeline] (Unit 1) — where this load sits in the startup sequence.
+* link:../navigation/shell-routes-and-current-app.adoc[Shell routes & Current App activation] (Area 7): building the route table, matching the URL, and the `currentMfe$` identity this loader publishes.
+* link:module-federation.adoc[Module Federation in OneCX] (Unit 2): the `registerRemotes` / `loadRemote` / share-scope mechanics this loader is built from.
+* link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4): the share scopes this remote must resolve from, and the other `registerRemotes` + `loadRemote` caller.
+* link:web-component-bootstrap.adoc[App bootstrap as web component] (Unit 6): how the loaded module becomes the custom element the loader instantiates.
+* link:startup-timeline.adoc[index.html → first App timeline] (Unit 1): where this load sits in the startup sequence.
 
 == Sources
 

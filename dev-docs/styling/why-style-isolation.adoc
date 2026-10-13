@@ -16,7 +16,7 @@ Why does OneCX need style isolation at all, and what kinds of stylesheets exist 
 
 A OneCX page is not a single application. It hosts the Shell, at least one Microfrontend, and often many Remote Components, each of which ships CSS that would otherwise be global to the whole document. Style isolation keeps each application's CSS bound to the content it owns so one app does not quietly restyle another app or the Shell.
 
-The full scope model — the scope id, the `data-style-*` attributes, nested Remote Components, and how `@scope` matches rules — is covered in link:{u3}[Unit 3]. This page only explains *why* style isolation exists and *which kinds of stylesheets* appear on the page.
+The full scope model, the scope id, the `data-style-*` attributes, nested Remote Components, and how `@scope` matches rules, is covered in link:{u3}[Unit 3]. This page only explains *why* style isolation exists and *which kinds of stylesheets* appear on the page.
 
 The core pieces are:
 
@@ -30,10 +30,10 @@ The scoping primitive is the CSS link:https://developer.mozilla.org/en-US/docs/W
 
 OneCX uses several stylesheet categories on the same page:
 
-* *Application stylesheets* — the CSS that belongs to a specific MFE or Remote Component.
-* *Shell stylesheets* — the Shell's own page-level styles.
-* *Legacy portal-layout stylesheets* — compatibility styles that still need to reach older content.
-* *Shared theme / token styles* — variables and tokens that multiple applications may read.
+* *Application stylesheets*: the CSS that belongs to a specific MFE or Remote Component.
+* *Shell stylesheets*: the Shell's own page-level styles.
+* *Legacy portal-layout stylesheets*: compatibility styles that still need to reach older content.
+* *Shared theme / token styles*: variables and tokens that multiple applications may read.
 
 The important distinction is not just *what* a stylesheet is, but *who owns it* and *whether it is meant to leak across scope boundaries*.
 
@@ -73,7 +73,7 @@ If a stylesheet appears in the wrong place, first check which category it belong
 * link:{u2}[App/Remote Component stylesheet load & removal (usage counting)]
 * link:{u3}[`@scope` scoping model]
 * link:{u8}[Scope polyfill]
-* link:{area}[Styling & Style Isolation — Area overview]
+* link:{area}[Styling & Style Isolation: Area overview]
 
 == Sources
 

@@ -6,13 +6,13 @@
 
 == Question answered
 
-How does the Shell load a user's permission list from the backend, cache it, and publish it onto the two permission Topics — including what happens when the backend call fails?
+How does the Shell load a user's permission list from the backend, cache it, and publish it onto the two permission Topics: including what happens when the backend call fails?
 
 == Why it exists
 
 The Shell is the only component that can ask the backend for a user's permissions, so it sits between the backend and the permission Topics described in link:permission-model.adoc[Permission model & two Topics]. Two problems force the design:
 
-* The same permission list is requested through two different paths — the push Topic (when a route is activated) and the RPC Topic (when a Remote Component asks). Without a cache, the Shell would hit the backend twice for the same `appId`/`productName`.
+* The same permission list is requested through two different paths: the push Topic (when a route is activated) and the RPC Topic (when a Remote Component asks). Without a cache, the Shell would hit the backend twice for the same `appId`/`productName`.
 * The backend is a network call that can be slow or fail. The Shell needs a defined, safe behaviour when it cannot load a list, and it must not let a Remote Component's request block or take down the host application.
 
 This Unit covers that loading, caching and failure handling. It does not re-explain the Topics themselves.
@@ -25,7 +25,7 @@ The Shell reads permissions from its own Backend-for-Frontend (BFF). The generat
 
 `link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService`]` is a `providedIn: 'root'` singleton that holds a `permissions` map keyed by strings, with observable permission lists as its values, and exposes `getPermissions(appId, productName, cacheMissFkt)`. The behaviour is:
 
-* The cache key is `appId + '|' + productName` — a string concatenation, not an object or a Topic name.
+* The cache key is `appId + '|' + productName`: a string concatenation, not an object or a Topic name.
 * On a *cache hit* it returns the stored `Observable<string[]>` as-is.
 * On a *cache miss* it calls the supplied `cacheMissFkt(appId, productName)`, pipes the result through `shareReplay()`, stores that shared observable under the key and returns it.
 
@@ -42,7 +42,7 @@ The Shell reads permissions from its own Backend-for-Frontend (BFF). The generat
 
 `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]` is the answerer on `PermissionsRpcTopic`, started by the `permissionProxyInitializer` in `link:{shell}/src/app/app.module.ts[`app.module.ts`]`. Its `init()` subscribes to its own `PermissionsRpcTopic` and, for every message whose `permissions` is `undefined` (i.e. a request), loads the list through the same cache and publishes the filled-in answer back to the RPC Topic.
 
-The deny-all fallback lives here. `retry({ delay: 500, count: 3 })` re-attempts the BFF call three times, half a second apart. If every attempt fails, `catchError` logs `Unable to load permissions for ` with the failed `appId` and `productName` via `console.error`, then returns `of({ permissions: [] })` — an empty list. An empty list means "the user has no permissions", which is the safe default: rather than hang a Remote Component on a request that can never be answered, the Shell answers with *deny everything*. The answer is published on the RPC Topic and the requesting component's `firstValueFrom` (filtered to the matching `appId`/`productName`) resolves.
+The deny-all fallback lives here. `retry({ delay: 500, count: 3 })` re-attempts the BFF call three times, half a second apart. If every attempt fails, `catchError` logs `Unable to load permissions for ` with the failed `appId` and `productName` via `console.error`, then returns `of({ permissions: [] })`: an empty list. An empty list means "the user has no permissions", which is the safe default: rather than hang a Remote Component on a request that can never be answered, the Shell answers with *deny everything*. The answer is published on the RPC Topic and the requesting component's `firstValueFrom` (filtered to the matching `appId`/`productName`) resolves.
 
 === Where each path lives
 
@@ -85,18 +85,18 @@ The library side is thin here: it defines the Topics the Shell publishes on and 
 
 All of the loading, caching and failure handling is in the Shell:
 
-* `link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService`]` — the `appId|productName` → `shareReplay()` cache.
-* `link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updatePermissions`]` — the push publisher.
-* `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]` — the RPC answerer, and the owner of the retry and deny-all fallback.
-* `link:{shell}/src/app/shared/generated/api/permission.service.ts[`PermissionBffService`]` — the BFF client.
+* `link:{shell}/src/app/shell/services/permissions-cache.service.ts[`PermissionsCacheService`]`: the `appId|productName` → `shareReplay()` cache.
+* `link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updatePermissions`]`: the push publisher.
+* `link:{shell}/src/app/shell/services/permission-proxy.service.ts[`PermissionProxyService`]`: the RPC answerer, and the owner of the retry and deny-all fallback.
+* `link:{shell}/src/app/shared/generated/api/permission.service.ts[`PermissionBffService`]`: the BFF client.
 
 == Edge cases & pitfalls
 
 * The cache is keyed on `appId|productName` and lives for the whole session (`shareReplay`, `providedIn: 'root'`). The Shell never re-validates a list: if a user's permissions change mid-session, the Shell keeps serving the cached value. There is no invalidation on logout/login within the same Shell instance in the code.
-* The two paths are **not** equally resilient. The RPC path has `retry({ delay: 500, count: 3 })` and a `catchError` deny-all; the push path (`updatePermissions`) has *neither* — it calls the BFF and `firstValueFrom`s the result directly. A BFF failure on the push path therefore rejects the `canActivateChild` guard, which fails the navigation, instead of publishing an empty list. The consequences of this asymmetry are recorded in the Known issues section below.
+* The two paths are **not** equally resilient. The RPC path has `retry({ delay: 500, count: 3 })` and a `catchError` deny-all; the push path (`updatePermissions`) has *neither*: it calls the BFF and `firstValueFrom`s the result directly. A BFF failure on the push path therefore rejects the `canActivateChild` guard, which fails the navigation, instead of publishing an empty list. The consequences of this asymmetry are recorded in the Known issues section below.
 * The deny-all fallback produces `permissions: []`. Consumers must treat an empty list as "deny", not as "not loaded yet". On the RPC path an empty array is a *final answer*, distinct from the "request not yet answered" state the requesters wait for.
 * The cache key uses `|` as a separator. It is stable as long as `appId` and `productName` do not themselves contain `|`; treat the separator as part of the key contract.
-* A cache hit returns the *shared* observable. A value loaded via the push path is what a later RPC request for the same application will see, even if the RPC client would have triggered its own retry/fallback — the fallback only runs when there is genuinely nothing in the cache.
+* A cache hit returns the *shared* observable. A value loaded via the push path is what a later RPC request for the same application will see, even if the RPC client would have triggered its own retry/fallback: the fallback only runs when there is genuinely nothing in the cache.
 
 [#known-issues]
 == Known issues
@@ -105,10 +105,10 @@ All of the loading, caching and failure handling is in the Shell:
 
 == Related Units
 
-* link:permission-model.adoc[Permission model & two Topics] — the Topics this Shell code publishes on.
-* link:checking-in-apps.adoc[Checking in Apps] — how Apps consume the push Topic (planned).
-* link:remote-component-permissions.adoc[Remote Component permissions] — the RPC path from the consumer's side (planned).
-* link:../shell-context/runtime-configuration.adoc[Shell context & runtime configuration] — the Shell's own loading/failure patterns for BFF data, which mirror this one (Area 3, planned).
+* link:permission-model.adoc[Permission model & two Topics]: the Topics this Shell code publishes on.
+* link:checking-in-apps.adoc[Checking in Apps]: how Apps consume the push Topic (planned).
+* link:remote-component-permissions.adoc[Remote Component permissions]: the RPC path from the consumer's side (planned).
+* link:../shell-context/runtime-configuration.adoc[Shell context & runtime configuration]: the Shell's own loading/failure patterns for BFF data, which mirror this one (Area 3, planned).
 
 == Sources
 
@@ -125,4 +125,4 @@ Code::
 
 Verification Sources checked::
 * Shell `main` branch source (`onecx-shell-ui`): `permissions-cache.service.ts`, `permission-proxy.service.ts`, `routes.service.ts`, generated `permission.service.ts` and its request/response models. No dedicated Shell Dev Docs page for permission loading exists to diff against; the generated BFF models were used as the source for the endpoint contract.
-* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`) — used for topic discovery only; it does not cover Shell loading/caching in depth, so there was no contradiction to resolve there.
+* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`): used for topic discovery only; it does not cover Shell loading/caching in depth, so there was no contradiction to resolve there.

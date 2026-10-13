@@ -12,7 +12,7 @@ How does the host slot flow obtain the permission list of a *different* applicat
 
 A Remote Component is rendered inside one App but acts on features that may belong to another application. It therefore cannot rely on the "current micro frontend" permission list that the push Topic delivers to the host App (see link:checking-in-apps.adoc[Checking in Apps]). The host slot orchestration asks, per application, for that application's permission list by name, and the permission client talks to the request/response Topic (see link:permission-model.adoc[Permission model & two Topics]) to resolve it.
 
-This Unit covers the host-side slot orchestration and permission client only — the host asks, the client resolves, and the embedded Remote Component receives the resolved permissions. The Shell side (loading, caching, deny-all fallback) is covered in link:shell-loading-and-caching.adoc[Shell loading & caching].
+This Unit covers the host-side slot orchestration and permission client only: the host asks, the client resolves, and the embedded Remote Component receives the resolved permissions. The Shell side (loading, caching, deny-all fallback) is covered in link:shell-loading-and-caching.adoc[Shell loading & caching].
 
 == How it works
 
@@ -21,7 +21,7 @@ A host slot's permission check is a request/response exchange over the RPC Topic
 * A *request* is `{ appId, productName }` with `permissions === undefined`.
 * An *answer* is the same `appId`/`productName` with `permissions` filled in as `string[]`.
 
-The permission client publishes the request and then reads the topic until it receives a matching, filled-in message. The contract is not enforced by the topic itself — it is a convention the client upholds: it filters incoming messages on `appId`, `productName` *and* `Array.isArray(permissions)`, so it picks up a valid answer for that tuple and not unrelated traffic (or its own outgoing request, which also travels on the topic). Because the protocol has only `appId` and `productName`, a single reply can satisfy every client that is currently waiting on the same tuple.
+The permission client publishes the request and then reads the topic until it receives a matching, filled-in message. The contract is not enforced by the topic itself: it is a convention the client upholds: it filters incoming messages on `appId`, `productName` *and* `Array.isArray(permissions)`, so it picks up a valid answer for that tuple and not unrelated traffic (or its own outgoing request, which also travels on the topic). Because the protocol has only `appId` and `productName`, a single reply can satisfy every client that is currently waiting on the same tuple.
 
 The permission client also caches the answer per `${appId}:${productName}`. The cache holds a *promise* (or the same pending promise in React) for the first question; any later question for the same application reuses it. This prevents repeated RPC requests from the same host slot flow. Separately, the Shell's shared `PermissionsCacheService` deduplicates the backend/BFF load after the request reaches the Shell, which is why the client cache stores a promise rather than a reactive stream.
 
@@ -48,17 +48,17 @@ sequenceDiagram
 
 === Host slot flow
 
-The libs ship two small host-slot implementations that orchestrate remote component loading and permission propagation — one for Angular Remote Components and one for React Remote Components.
+The libs ship two small host-slot implementations that orchestrate remote component loading and permission propagation: one for Angular Remote Components and one for React Remote Components.
 
-* `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[PermissionsRpcTopic]` — the framework-agnostic Topic: `name: 'permissionsRpc'`, `version: 1`, `sendGetMessage: false`. No `TopicGet` is posted on creation, so there is no replay of a "current" answer — a client only receives answers it has triggered.
-* `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.model.ts[PermissionsRpc]` — the value shape `{ appId, productName, permissions? }`. The optional `permissions` is what distinguishes a request from an answer.
+* `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[PermissionsRpcTopic]`, the framework-agnostic Topic: `name: 'permissionsRpc'`, `version: 1`, `sendGetMessage: false`. No `TopicGet` is posted on creation, so there is no replay of a "current" answer, a client only receives answers it has triggered.
+* `link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.model.ts[PermissionsRpc]`: the value shape `{ appId, productName, permissions? }`. The optional `permissions` is what distinguishes a request from an answer.
 
 On top of the Topic, each framework ships a slot orchestrator plus a permission client:
 
 * Angular: `link:{libs}/angular-remote-components/src/lib/services/slot.service.ts[SlotService]` asks `PermissionService.getPermissions(appId, productName)` while building the `SlotComponentConfiguration`, and `link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[SlotComponent]` awaits the returned permission promise together with the component type before calling `ocxInitRemoteComponent(...)` or assigning `ocxRemoteComponentConfig`. `link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[PermissionService]` is the host-side permission client that lazily creates a `PermissionsRpcTopic`, keeps a `Map<string, Promise<string[]>>` keyed by `${appId}:${productName}`, and exposes `getPermissions(appId, productName)`. On a cache miss it builds `firstValueFrom(topic.pipe(filter(...), map(m => m.permissions ?? [])))`, stores that promise in the cache, then publishes the request. `ngOnDestroy` destroys the topic instance. Because the service is `providedIn: 'root'`, that cache is scoped to one Angular root injector; separate Angular roots get separate caches.
-* React: `link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[SlotProvider]` asks `usePermission().getPermissions(appId, productName)` while building each slot entry, and `link:{libs}/react-remote-components/src/lib/components/slot.tsx[SlotComponent]` awaits the returned permission promise together with the loaded component before assigning `ocxRemoteComponentConfig`. `link:{libs}/react-remote-components/src/lib/contexts/permissionContext.tsx[PermissionProvider]` / `PermissionContext` is the host-side permission client that builds a `Map<string, Promise<string[]>>` in `useMemo`, obtains the topic via `useTopic(undefined, PermissionsRpcTopic)`, and exposes the same `getPermissions(appId, productName)`. The `Map` lives for one `PermissionProvider` instance, so two React trees — or two separate providers in the same tree — do not share the same cache. `link:{libs}/react-remote-components/src/lib/hooks/usePermission.ts[usePermission()]` returns the context and throws when called outside a `PermissionProvider`.
+* React: `link:{libs}/react-remote-components/src/lib/contexts/slotContext.tsx[SlotProvider]` asks `usePermission().getPermissions(appId, productName)` while building each slot entry, and `link:{libs}/react-remote-components/src/lib/components/slot.tsx[SlotComponent]` awaits the returned permission promise together with the loaded component before assigning `ocxRemoteComponentConfig`. `link:{libs}/react-remote-components/src/lib/contexts/permissionContext.tsx[PermissionProvider]` / `PermissionContext` is the host-side permission client that builds a `Map<string, Promise<string[]>>` in `useMemo`, obtains the topic via `useTopic(undefined, PermissionsRpcTopic)`, and exposes the same `getPermissions(appId, productName)`. The `Map` lives for one `PermissionProvider` instance, so two React trees, or two separate providers in the same tree, do not share the same cache. `link:{libs}/react-remote-components/src/lib/hooks/usePermission.ts[usePermission()]` returns the context and throws when called outside a `PermissionProvider`.
 
-Both implementations are intentionally minimal — no retries, no deny-all fallback. That behaviour is owned by the Shell (see below). The Angular `PermissionService` is `providedIn: 'root'`, so every consumer in the same Angular root injector shares the same service and cache whether or not `AngularRemoteComponentsModule` was imported; separate Angular roots get separate instances.
+Both implementations are intentionally minimal: no retries, no deny-all fallback. That behaviour is owned by the Shell (see below). The Angular `PermissionService` is `providedIn: 'root'`, so every consumer in the same Angular root injector shares the same service and cache whether or not `AngularRemoteComponentsModule` was imported; separate Angular roots get separate instances.
 
 === Shell side
 
@@ -66,32 +66,32 @@ The Shell is the *answerer* on the Topic: `link:{shell}/src/app/shell/services/p
 
 == Angular / React
 
-The framework difference is only in the shape of the host slot flow and permission client — both consume the same Topic with the same request/answer contract and the same cache key.
+The framework difference is only in the shape of the host slot flow and permission client: both consume the same Topic with the same request/answer contract and the same cache key.
 
 * Angular: `SlotService.getComponentsForSlot(slotName)` asks the `PermissionService` for each remote component, and `SlotComponent` awaits both `componentType` and `permissions` before creating the embedded Angular component or assigning the web component config. The `PermissionService` is `providedIn: 'root'`, so a Remote Component that imports `AngularRemoteComponentsModule` and a host App that has done so share the same instance; the same Remote Component that renders in two Apps on the same page also shares it. In other words, the cache is scoped to one Angular root injector, not to one library import.
-* React: `SlotProvider.getComponentsForSlot(slotName)` asks `usePermission().getPermissions(appId, productName)` for each remote component, and `SlotComponent` awaits both `componentType` and `permissions` before assigning the web component config. The `PermissionProvider` creates one cache `Map` per provider instance, so two Remote Components rendered in different host Apps have independent caches — each keeps its own pending promise for the same `appId`/`productName`. The Shell answers both; that is the intended cost of the request/response shape, because the Shell's own `PermissionsCacheService` deduplicates the BFF call.
+* React: `SlotProvider.getComponentsForSlot(slotName)` asks `usePermission().getPermissions(appId, productName)` for each remote component, and `SlotComponent` awaits both `componentType` and `permissions` before assigning the web component config. The `PermissionProvider` creates one cache `Map` per provider instance, so two Remote Components rendered in different host Apps have independent caches: each keeps its own pending promise for the same `appId`/`productName`. The Shell answers both; that is the intended cost of the request/response shape, because the Shell's own `PermissionsCacheService` deduplicates the BFF call.
 
-There is no Angular/React "override" list or template-based check in this Unit's scope — the Remote Component client only exposes `getPermissions(appId, productName)`. To check a key against the returned list, the Remote Component code does its own `permissions.includes(key)` (or `every` for an array). This is deliberately separate from the App-side `ocxIfPermission` directive (see link:checking-in-apps.adoc[Checking in Apps]).
+There is no Angular/React "override" list or template-based check in this Unit's scope: the Remote Component client only exposes `getPermissions(appId, productName)`. To check a key against the returned list, the Remote Component code does its own `permissions.includes(key)` (or `every` for an array). This is deliberately separate from the App-side `ocxIfPermission` directive (see link:checking-in-apps.adoc[Checking in Apps]).
 
 == Edge cases & pitfalls
 
 * *The cache is per Angular root injector / React `PermissionProvider` instance.* Two Remote Components in different host Apps (or two separate React trees) do *not* share a cache; each triggers its own request. The host-side promise cache avoids duplicate RPC requests within the same root, while the Shell's own cache is what keeps the BFF call bounded.
 * *The promise stays cached forever.* The cache holds a promise, not a resolved value. If the answer never arrives (e.g. the Shell is absent), the promise never settles and neither does `getPermissions`. There is no timeout in the client code.
-* *An empty list is a valid answer.* When the Shell's deny-all fallback kicks in, the Remote Component resolves to `[]`. Treat `[]` as "deny", not as "not yet loaded" — it is the final answer.
+* *An empty list is a valid answer.* When the Shell's deny-all fallback kicks in, the Remote Component resolves to `[]`. Treat `[]` as "deny", not as "not yet loaded": it is the final answer.
 * *The filter is strict.* The client filters on `appId`, `productName` *and* `Array.isArray(permissions)`. A consumer that relaxes that filter would pick up its own outgoing request (which has `permissions === undefined`) or an unrelated message for the same `appId`/`productName` on the topic.
 * *The Angular service is `providedIn: 'root'`.* In the same Angular root injector, all consumers share the one `PermissionService` instance and its cache even if some of them never imported `AngularRemoteComponentsModule`. A separate Angular root gets its own instance and its own cache.
 
 == Debugging
 
-`PermissionsRpcTopic` traffic is a plain Topic (no `TopicGet`), so the request and the answer are two separate messages on `permissionsRpc`. Enable the topic's debug namespace (`@onecx/accelerator:Topic:*` via `localStorage.debug`) and watch: the outgoing `{ appId, productName }` (with `permissions` `undefined`) and the incoming `{ appId, productName, permissions: [...] }`. To trace the Shell's side of the exchange (retry, deny-all) see link:shell-loading-and-caching.adoc[Shell loading & caching]; general tooling is covered in link:../diagnostics/tracing-communication.adoc[Area 13 — Diagnostics].
+`PermissionsRpcTopic` traffic is a plain Topic (no `TopicGet`), so the request and the answer are two separate messages on `permissionsRpc`. Enable the topic's debug namespace (`@onecx/accelerator:Topic:*` via `localStorage.debug`) and watch: the outgoing `{ appId, productName }` (with `permissions` `undefined`) and the incoming `{ appId, productName, permissions: [...] }`. To trace the Shell's side of the exchange (retry, deny-all) see link:shell-loading-and-caching.adoc[Shell loading & caching]; general tooling is covered in link:../diagnostics/tracing-communication.adoc[Area 13: Diagnostics].
 
 == Related Units
 
-* link:permission-model.adoc[Permission model & two Topics] — the two permission Topics and why they are separate.
-* link:shell-loading-and-caching.adoc[Shell loading & caching] — the Shell answerer, the `shareReplay` cache and the deny-all fallback.
-* link:checking-in-apps.adoc[Checking in Apps] — how the *host App* (the one that renders the Remote Component) checks permissions for the *current* micro frontend, using the push Topic.
-* link:../integration-contract/message-delivery.adoc[Topic message delivery] — the transport and replay mechanics behind `PermissionsRpcTopic` (Area 1).
-* link:../remote-components/slot-assignment.adoc[Remote Component slot assignment] — where Remote Components live on the page and why they need to ask for another application's permissions (Area 6).
+* link:permission-model.adoc[Permission model & two Topics]: the two permission Topics and why they are separate.
+* link:shell-loading-and-caching.adoc[Shell loading & caching]: the Shell answerer, the `shareReplay` cache and the deny-all fallback.
+* link:checking-in-apps.adoc[Checking in Apps]: how the *host App* (the one that renders the Remote Component) checks permissions for the *current* micro frontend, using the push Topic.
+* link:../integration-contract/message-delivery.adoc[Topic message delivery]: the transport and replay mechanics behind `PermissionsRpcTopic` (Area 1).
+* link:../remote-components/slot-assignment.adoc[Remote Component slot assignment]: where Remote Components live on the page and why they need to ask for another application's permissions (Area 6).
 
 == Sources
 
@@ -110,6 +110,6 @@ Code::
 * link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell, `permissionProxyInitializer`)]
 
 Verification Sources checked::
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc` — `#permissions-rpc-topic` section: "read the user's permissions related to any application … request-response fashion … `permissions` property undefined", and the note that `@onecx/angular-remote-components` ships an Injectable `PermissionService` for this purpose.
-* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`) — used for topic discovery only; it does not cover the Remote Component consumer in depth, so there was no contradiction to resolve there.
-* In-code JSDoc for the Angular/React Remote Component `PermissionService`/`PermissionContext` — the libs `docs/` pages do not yet have a dedicated page for `@onecx/angular-remote-components` or `@onecx/react-remote-components` permission handling, so the source JSDoc was used as the baseline. Listed as a follow-up.
+* `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc`: `#permissions-rpc-topic` section: "read the user's permissions related to any application … request-response fashion … `permissions` property undefined", and the note that `@onecx/angular-remote-components` ships an Injectable `PermissionService` for this purpose.
+* Draft Outline commit `6108bdff` (`dev-docs/permissions/index.adoc`): used for topic discovery only; it does not cover the Remote Component consumer in depth, so there was no contradiction to resolve there.
+* In-code JSDoc for the Angular/React Remote Component `PermissionService`/`PermissionContext`: the libs `docs/` pages do not yet have a dedicated page for `@onecx/angular-remote-components` or `@onecx/react-remote-components` permission handling, so the source JSDoc was used as the baseline. Listed as a follow-up.

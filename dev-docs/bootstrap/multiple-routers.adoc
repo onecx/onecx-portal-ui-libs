@@ -23,11 +23,11 @@ Framework-agnostic, the wiring has the same shape in both frameworks, because th
 . *Drive the router from the shared location, not from its own history.* At startup the router is navigated to the current shared URL, then it is kept in step with that URL through the shared location channel (the `CurrentLocationTopic`, or the Shell's `navigated` event when the capability is absent). Navigation is flagged with a *router-sync* state so the App's own guards and history can tell an external sync apart from a user-initiated navigation.
 . *Make the router always activatable.* A catch-all route is added so that, even for a URL the App does not declare (or a Remote Component with no routes of its own), the router resolves instead of erroring and can still answer guard requests.
 
-Both frameworks reach the same endpoint by different machinery — Angular does it with an app initializer plus a `WebcomponentConnector`; React does it with a `BrowserRouter` wrapped by a sync provider. Runtime propagation of a URL change to all routers is deferred to Area 7.
+Both frameworks reach the same endpoint by different machinery: Angular does it with an app initializer plus a `WebcomponentConnector`; React does it with a `BrowserRouter` wrapped by a sync provider. Runtime propagation of a URL change to all routers is deferred to Area 7.
 
 == Libs side / Shell side
 
-=== Libs side — Angular
+=== Libs side: Angular
 
 The Angular side has two parts that must both run for a router to come up correctly.
 
@@ -37,18 +37,18 @@ The Angular side has two parts that must both run for a router to come up correc
 * *The connector is hooked into the element's lifecycle.* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-bootstrap.utils.ts[`createEntrypoint`] constructs a `WebcomponentConnector`, monkey-patches the component's `ngOnInit` to call `connector.connect()` and `ngOnDestroy` to call `connector.disconnect()`. So the router wiring switches on exactly when the App's root element is created and destroyed by the Shell (Unit 6 / Unit 5).
 * *`getLocation` splits the URL into deployment vs application path.* link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation()`] returns `window.location` enriched with `deploymentPath` (the sub-folder the Shell is deployed under, derived from the `<base href>`) and `applicationPath` (the rest, which identifies workspace and app). The connector strips the `deploymentPath` length off `location.pathname` before feeding the router, so the router only ever sees the application path.
 
-=== Libs side — React
+=== Libs side: React
 
 The React side wraps the standard `BrowserRouter` in a sync provider so it follows the shared location the same way.
 
 * *`withSyncedRouter` / `SyncedRouterProvider`.* link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter(Component)`] is the higher-order component an App wraps its root in; it renders the app inside link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider`], which is simply `BrowserRouter` → `RouterSync` → children.
-* *`RouterSync` subscribes to the shared location and republishes its own navigations.* In link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`syncedLocationContext.tsx`], `RouterSync` uses `useTopic(undefined, CurrentLocationTopic)`. On a topic message whose URL is `/`/empty or starts with the `<base href>`, and that differs from the current `pathname`, it sets a `skipPublishUntil` guard and updates the local location (it does *not* call `navigate()`, because the Shell has already moved `window.location` and the `BrowserRouter` will pick that up). A `useLayoutEffect` then publishes the app's own `pathname` changes back onto `CurrentLocationTopic` so the Shell can update the browser URL — the `skipPublishUntil` guard suppresses publishing a URL that just arrived *from* the topic, which is what breaks the echo loop.
+* *`RouterSync` subscribes to the shared location and republishes its own navigations.* In link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`syncedLocationContext.tsx`], `RouterSync` uses `useTopic(undefined, CurrentLocationTopic)`. On a topic message whose URL is `/`/empty or starts with the `<base href>`, and that differs from the current `pathname`, it sets a `skipPublishUntil` guard and updates the local location (it does *not* call `navigate()`, because the Shell has already moved `window.location` and the `BrowserRouter` will pick that up). A `useLayoutEffect` then publishes the app's own `pathname` changes back onto `CurrentLocationTopic` so the Shell can update the browser URL: the `skipPublishUntil` guard suppresses publishing a URL that just arrived *from* the topic, which is what breaks the echo loop.
 * *`useSyncedLocation` reads the synced payload.* link:{libs}/react-webcomponents/src/lib/hooks/useSyncedLocation.ts[`useSyncedLocation()`] returns the current `SyncedLocationContext` payload and throws if the app is not inside a `SyncedRouterProvider` (i.e. not wrapped with the HOC).
 * *`useAppHref` / `normalizeHref` build the app's href.* link:{libs}/react-webcomponents/src/lib/hooks/useAppHref.ts[`useAppHref()`] reads `currentMfe$` (for `baseHref`) and `currentWorkspace$` (for `baseUrl`), combines the configured `APP_BASE_HREF` with the MFE `baseHref` through link:{libs}/react-webcomponents/src/lib/utils/href.utils.ts[`normalizeHref`] / `removeTrailingSlash`, and exposes the normalized href the app uses to build links into its own slice.
 
 === Shell side
 
-The Shell does not wire an App's router. It bootstraps its own module with the libs `bootstrapModule(AppModule, 'shell', …)` (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]) and, for the non-Angular case, mounts the App by creating its element (link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`]) — which is what instantiates the App and therefore runs the Angular `connect()` / the React `RouterSync`. The actual router wiring described above lives in the App's own bootstrap code (its app initializer / `WebcomponentConnector`, or its `withSyncedRouter` wrapper); the Shell only provides the shared location the routers follow and mounts the element that turns the wiring on.
+The Shell does not wire an App's router. It bootstraps its own module with the libs `bootstrapModule(AppModule, 'shell', …)` (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]) and, for the non-Angular case, mounts the App by creating its element (link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`]): which is what instantiates the App and therefore runs the Angular `connect()` / the React `RouterSync`. The actual router wiring described above lives in the App's own bootstrap code (its app initializer / `WebcomponentConnector`, or its `withSyncedRouter` wrapper); the Shell only provides the shared location the routers follow and mounts the element that turns the wiring on.
 
 == Angular / React
 
@@ -61,7 +61,7 @@ Where the two genuinely differ:
 
 == Edge cases & pitfalls
 
-* *`initializeRouter` must be registered as an app initializer.* If the App does not register it, routes carry no `mfeInfo`, so `getBaseHrefOfRoute` logs the warning and the `startsWith` matcher cannot slice the `baseHref` — the App's routes will not line up with the shared URL.
+* *`initializeRouter` must be registered as an app initializer.* If the App does not register it, routes carry no `mfeInfo`, so `getBaseHrefOfRoute` logs the warning and the `startsWith` matcher cannot slice the `baseHref`: the App's routes will not line up with the shared URL.
 * *The `**` fallback is load-bearing, not cosmetic.* It keeps the router activatable for URLs the App does not declare (including a Remote Component that has no routes of its own) and lets it always respond to guard requests scattered across the page.
 * *React's `skipPublishUntil` must be honoured.* If the guard is skipped, a topic-driven navigation is published right back, producing an echo loop between the App and the Shell over `CurrentLocationTopic`.
 * *The initial sync can be reverted.* On `GuardsCheckEnd` in `INITIAL_ROUTER_SYNC` mode, if the first URL does not activate (e.g. it landed on a guarded route), the connector publishes a `revertNavigation` event. This is expected behaviour when the App loads directly onto a route that guards reject.
@@ -73,9 +73,9 @@ Log namespaces are `WebcomponentConnector` (Angular sync + guard-state decisions
 
 == Related Units
 
-* link:web-component-bootstrap.adoc[App bootstrap as web component] (Unit 6) — the element/lifecycle step that calls `WebcomponentConnector.connect()` and mounts the React provider.
-* link:module-federation.adoc[Module Federation in OneCX] (Unit 2) — how the App whose router is wired here is exposed and loaded as a remote.
-* link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) — the runtime fan-out this Unit defers: how a single shared-URL change reaches every router on the page.
+* link:web-component-bootstrap.adoc[App bootstrap as web component] (Unit 6): the element/lifecycle step that calls `WebcomponentConnector.connect()` and mounts the React provider.
+* link:module-federation.adoc[Module Federation in OneCX] (Unit 2): how the App whose router is wired here is exposed and loaded as a remote.
+* link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7): the runtime fan-out this Unit defers: how a single shared-URL change reaches every router on the page.
 
 == Sources
 

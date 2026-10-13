@@ -48,13 +48,13 @@ Apps read everything downstream from these three Topics. The values originate on
 
 The libs define the three Topics and the pure helpers that turn a `Workspace` into URLs and parameter values. The helpers are framework-agnostic and shared by Angular and React.
 
-* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`] — carries the `Workspace` (topic name `currentPortal`). The model is link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`]: `baseUrl`, `workspaceName`, `routes` (each link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`] has `appId`, `productName`, `baseUrl`, `endpoints`), `homePage`, `microfrontendRegistrations`, `i18n`, and many `@deprecated` fields.
-* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`] — the URL builders. `constructRouteUrl(workspace, appId, productName, endpointName?, endpointParameters?)` finds the route by `appId`/`productName`, then the endpoint (following `[[alias]]` chains), then fills `{param}` placeholders. `doesUrlExistForWorkspace(...)` checks that a route or endpoint exists.
-* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`] — the Angular consumer. `getUrl(...)` and `doesUrlExistFor(...)` map `AppStateService.currentWorkspace$` through these helpers. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`].
-* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`] — carries `{ parameters: ApplicationParameters[] }`, one entry per `productName`/`appId` with a `parameters` map. link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`findParameterValue` (`parameters.utils.ts`)] looks up a value by `key`, `productName` and `appId`.
-* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`] — the Angular consumer. `get(key, defaultValue, productName?, appId?)` checks the `PARAMETERS_TOPIC` Shell capability, resolves missing `productName`/`appId` from `currentMfe$`, then reads through `findParameterValue`. React mirrors it with `ParametersProvider` / `useParameters`.
-* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`] — a base for generated API clients. It takes the API `basePath` from `currentMfe$.remoteBaseUrl` instead of a hard-coded value, so generated clients call the right host. See link:current-app-and-api-base-url.adoc[Current App & API base URL resolution].
-* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload` (`configuration.utils.ts`)] — the configuration resolution shared by `ConfigurationService` and the React `ConfigurationProvider`. For readiness, see link:context-readiness.adoc[Context overview & readiness].
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`CurrentWorkspaceTopic`]: carries the `Workspace` (topic name `currentPortal`). The model is link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/workspace.model.ts[`Workspace`]: `baseUrl`, `workspaceName`, `routes` (each link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/route.model.ts[`Route`] has `appId`, `productName`, `baseUrl`, `endpoints`), `homePage`, `microfrontendRegistrations`, `i18n`, and many `@deprecated` fields.
+* link:{libs}/integration-interface/src/lib/utils/workspace.utils.ts[`workspace.utils.ts`]: the URL builders. `constructRouteUrl(workspace, appId, productName, endpointName?, endpointParameters?)` finds the route by `appId`/`productName`, then the endpoint (following `[[alias]]` chains), then fills `{param}` placeholders. `doesUrlExistForWorkspace(...)` checks that a route or endpoint exists.
+* link:{libs}/angular-integration-interface/src/lib/services/workspace.service.ts[`WorkspaceService`]: the Angular consumer. `getUrl(...)` and `doesUrlExistFor(...)` map `AppStateService.currentWorkspace$` through these helpers. React mirrors it with link:{libs}/react-integration-interface/src/lib/contexts/useWorkspace.ts[`useWorkspace`].
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]: carries `{ parameters: ApplicationParameters[] }`, one entry per `productName`/`appId` with a `parameters` map. link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`findParameterValue` (`parameters.utils.ts`)] looks up a value by `key`, `productName` and `appId`.
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`]: the Angular consumer. `get(key, defaultValue, productName?, appId?)` checks the `PARAMETERS_TOPIC` Shell capability, resolves missing `productName`/`appId` from `currentMfe$`, then reads through `findParameterValue`. React mirrors it with `ParametersProvider` / `useParameters`.
+* link:{libs}/angular-utils/src/lib/utils/portal-api-configuration.utils.ts[`PortalApiConfiguration`]: a base for generated API clients. It takes the API `basePath` from `currentMfe$.remoteBaseUrl` instead of a hard-coded value, so generated clients call the right host. See link:current-app-and-api-base-url.adoc[Current App & API base URL resolution].
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload` (`configuration.utils.ts`)]: the configuration resolution shared by `ConfigurationService` and the React `ConfigurationProvider`. For readiness, see link:context-readiness.adoc[Context overview & readiness].
 
 === Shell side
 
@@ -87,7 +87,7 @@ The load path and the shared helpers (`workspace.utils.ts`, `parameters.utils.ts
 
 * Log the `configuration` source: `ENV resolved from injected config` (inlined), `📢 TKA001: Remote config load is disabled...` (default), or a silent remote fetch.
 * Before debugging URL resolution, check `currentWorkspace$.isInitialized` to confirm the workspace arrived.
-* For raw cross-App Topic traffic (including `parameters`), see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+* For raw cross-App Topic traffic (including `parameters`), see Area 13 (Diagnostics): `tracing-communication.adoc`.
 
 == Known issues
 
@@ -96,11 +96,11 @@ The load path and the shared helpers (`workspace.utils.ts`, `parameters.utils.ts
 
 == Related Units
 
-* link:context-readiness.adoc[Context overview & readiness] — the readiness gate (`isInitialized`) these loads resolve.
-* link:workspace-model-and-urls.adoc[Workspace model & URL building] — the `Workspace` model and URL building in depth.
-* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution] — `currentMfe$` and API base-URL resolution.
-* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter] — the three settings kinds.
-* link:parameters.adoc[Parameters] — Parameters in depth.
+* link:context-readiness.adoc[Context overview & readiness]: the readiness gate (`isInitialized`) these loads resolve.
+* link:workspace-model-and-urls.adoc[Workspace model & URL building]: the `Workspace` model and URL building in depth.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: `currentMfe$` and API base-URL resolution.
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: the three settings kinds.
+* link:parameters.adoc[Parameters]: Parameters in depth.
 
 == Sources
 

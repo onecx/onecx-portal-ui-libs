@@ -7,7 +7,7 @@
 
 == Question answered
 
-How does the Shell resolve and serve its *runtime configuration* — the env keys an App reads from the `configuration` Topic — and which of those keys cross the Shell/App boundary?
+How does the Shell resolve and serve its *runtime configuration*, the env keys an App reads from the `configuration` Topic, and which of those keys cross the Shell/App boundary?
 
 == Why it exists
 
@@ -36,9 +36,9 @@ sequenceDiagram
 
 link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload`] uses a fixed resolution order:
 
-1. **Inlined** — if `globalThis.APP_CONFIG` is present, it wins and nothing else is read. A host, such as the Shell's build or a test harness, uses this to pin the whole configuration.
-2. **Default** — if `skipRemoteConfigLoad` is set, the injected `defaultConfig` is used as-is. The libs log the `📢 TKA001` banner, which tells the reader to remove the key to re-enable the remote load.
-3. **Remote** — otherwise, the injected `loadRemoteConfig` fetches the value from `remoteConfigURL` (default `assets/env.json`).
+1. **Inlined**: if `globalThis.APP_CONFIG` is present, it wins and nothing else is read. A host, such as the Shell's build or a test harness, uses this to pin the whole configuration.
+2. **Default**: if `skipRemoteConfigLoad` is set, the injected `defaultConfig` is used as-is. The libs log the `📢 TKA001` banner, which tells the reader to remove the key to re-enable the remote load.
+3. **Remote**: otherwise, the injected `loadRemoteConfig` fetches the value from `remoteConfigURL` (default `assets/env.json`).
 
 `resolveConfigPayload` returns the raw object. The caller merges it over its defaults and publishes the result to the `configuration` Topic. The caller is the Angular `ConfigurationService.init()` (link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`]) or the React `ConfigurationProvider.init()` (link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`]). In the Shell, `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] runs `init()` at bootstrap, so the Shell is the *producer* of the `configuration` Topic.
 
@@ -52,18 +52,18 @@ The Shell's link:{shell}/src/assets/env.json[`src/assets/env.json`] is the sourc
 
 === Libs side
 
-* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`] — topic name `configuration`, version 1. The payload is a flat `Config = Record<string, string>`.
-* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`] — `resolveConfigPayload`, `resolveConfig` and `getInlinedConfig`. This is the only place that decides between inlined, default and remote, so both frameworks resolve identically.
-* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`] — the `CONFIG_KEY` enum, the typed set of keys that `ConfigurationService.getProperty` accepts.
-* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`] — the `APP_CONFIG` `InjectionToken<LibConfig>`: `{ appId, portalId, skipRemoteConfigLoad, remoteConfigURL }`. `skipRemoteConfigLoad` and `remoteConfigURL` steer the resolution order.
-* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`] (Angular) and link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`] (React) — the two `init()` implementations that call `resolveConfigPayload` and publish.
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]: topic name `configuration`, version 1. The payload is a flat `Config = Record<string, string>`.
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`]: `resolveConfigPayload`, `resolveConfig` and `getInlinedConfig`. This is the only place that decides between inlined, default and remote, so both frameworks resolve identically.
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`]: the `CONFIG_KEY` enum, the typed set of keys that `ConfigurationService.getProperty` accepts.
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: the `APP_CONFIG` `InjectionToken<LibConfig>`: `{ appId, portalId, skipRemoteConfigLoad, remoteConfigURL }`. `skipRemoteConfigLoad` and `remoteConfigURL` steer the resolution order.
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`] (Angular) and link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`] (React): the two `init()` implementations that call `resolveConfigPayload` and publish.
 
 === Shell side
 
-* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] — runs `configurationService.init()` as an `APP_INITIALIZER`, so the `configuration` Topic is published before the App's own bootstrap reads it.
-* link:{shell}/src/assets/env.json[`src/assets/env.json`] — the env file with the keys below as `${...}` placeholders.
-* link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`] — the build-time environment object that Angular injects. It is the origin of the `APP_CONFIG`/injected defaults that `ConfigurationService` reads.
-* link:{shell}/nginx/locations.conf[`nginx/locations.conf`] — the nginx locations that serve the Shell bundle and the `shell-bff` API. `env.json` is a static asset with no BFF route. Placeholder substitution happens at the deploy layer, before the file reaches the browser.
+* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]: runs `configurationService.init()` as an `APP_INITIALIZER`, so the `configuration` Topic is published before the App's own bootstrap reads it.
+* link:{shell}/src/assets/env.json[`src/assets/env.json`]: the env file with the keys below as `${...}` placeholders.
+* link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`]: the build-time environment object that Angular injects. It is the origin of the `APP_CONFIG`/injected defaults that `ConfigurationService` reads.
+* link:{shell}/nginx/locations.conf[`nginx/locations.conf`]: the nginx locations that serve the Shell bundle and the `shell-bff` API. `env.json` is a static asset with no BFF route. Placeholder substitution happens at the deploy layer, before the file reaches the browser.
 
 An App that fetches `env.json` directly for *App Config* (see link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]) hits the same static `assets/` location. Apps in the libs use the `configuration` Topic instead.
 
@@ -150,7 +150,7 @@ The rest of the enum, such as the `ONECX_PORTAL_*_DISABLED` toggles, `TKIT_TOKEN
 * Check the log to see which source won: `ENV resolved from injected config` (inlined), `📢 TKA001: Remote config load is disabled...` (default), or no log (remote).
 * Read the published value: `await configurationService.config$.isInitialized`, then `await configurationService.getConfig()`, or the React `getConfig()`.
 * Check that the Shell substituted the placeholders: at runtime, the raw `env.json` must contain no `${...}` tokens. If it does, the Shell deploy step that fills them did not run.
-* For raw cross-App Topic traffic, see Area 13 (Diagnostics) — `tracing-communication.adoc`.
+* For raw cross-App Topic traffic, see Area 13 (Diagnostics): `tracing-communication.adoc`.
 
 == Known issues
 
@@ -158,11 +158,11 @@ None found in the code reviewed for this Unit.
 
 == Related Units
 
-* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter] — where Configuration sits relative to the other two settings kinds.
-* link:workspace-config-loading.adoc[Workspace config load & distribution] — the bootstrap order that runs `configurationServiceInitializer`.
-* link:context-readiness.adoc[Context overview & readiness] — the `isInitialized` gate.
-* Area 8 (Authentication) — the consumers of the `KEYCLOAK_*` and `AUTH_SERVICE*` keys.
-* Area 4 (Styling & Style Isolation) — the consumer of `POLYFILL_SCOPE_MODE`.
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: where Configuration sits relative to the other two settings kinds.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the bootstrap order that runs `configurationServiceInitializer`.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
+* Area 8 (Authentication): the consumers of the `KEYCLOAK_*` and `AUTH_SERVICE*` keys.
+* Area 4 (Styling & Style Isolation): the consumer of `POLYFILL_SCOPE_MODE`.
 
 == Sources
 
