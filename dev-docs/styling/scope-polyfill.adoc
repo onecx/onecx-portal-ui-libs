@@ -75,10 +75,6 @@ The Shell is the only consumer and the only place the polyfill runs:
 * *Mode matters.* Performance mode (default) is a one-pass rewrite that can leak a rule outside its scope; precision mode rewrites per element and is accurate but slower. A rule that visibly bleeds across apps on an older browser is a mode question, not a model one.
 * *Un-nestable rules.* `@keyframes` and `@font-face` cannot sit inside a selector, so the polyfill lifts them to the top of the sheet: they remain global even in a scoped sheet.
 
-== Known issues
-
-* React `scopeCss` in link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts`] emits a bare `@scope(...) { ... }` block. The Shell fallback only deconstructs `@supports (@scope(...))` wrappers, so those React-generated rules are not rewritten by the unsupported-browser polyfill path. Follow-up: align the React producer with the fallback wrapper or teach the Shell polyfill to consume bare `@scope` blocks too.
-
 == Debugging
 
 In the devtools:
@@ -88,6 +84,10 @@ In the devtools:
 * *Bleed-through.* A rule that applies outside its scope on an unsupported browser is the documented performance-mode leakage: the one-pass rewrite does not re-anchor every selector to the exact matching element. Confirm the mode first: in performance mode (the default) this is the expected trade-off; in precision mode a cross-scope leak is a genuine defect worth reporting.
 
 Whether a specific element was re-scoped after a DOM change can be followed through `updateStyleSheets` → `getChangedStyleIdSelectors` → `nodeToStyleIdSelectors`. General runtime inspection is covered by the *Diagnostics* Area.
+
+== Known issues
+
+* React `scopeCss` in link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts`] emits a bare `@scope(...) { ... }` block. The Shell fallback only deconstructs `@supports (@scope(...))` wrappers, so those React-generated rules are not rewritten by the unsupported-browser polyfill path. Follow-up: align the React producer with the fallback wrapper or teach the Shell polyfill to consume bare `@scope` blocks too.
 
 == Related Units
 
@@ -105,8 +105,3 @@ Code::
 * link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `isCssScopeRuleSupported`
 * link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: the `@supports (@scope(...))` producer
 * link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts` (React)]: `scopeCss`
-
-Verification Sources checked::
-* `dev-docs/styles/scope-polyfill.adoc` (the older page describing the same mechanism; the current `polyfill.ts` precision/performance split is the baseline)
-* in-code JSDoc of `src/scope-polyfill/polyfill.ts`
-* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff])

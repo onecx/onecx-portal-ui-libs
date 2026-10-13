@@ -169,9 +169,3 @@ Code::
 * link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`app` context] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`remotes` context] (React)
 * link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopeCss`] (React)
 * link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]
-
-Verification Sources checked::
-* `dev-docs/styles/scoping.adoc` (attribute table and expected behaviour), `dev-docs/styles/style-types.adoc`, `dev-docs/styles/concept.adoc`
-* `dev-docs/styles/scope-polyfill.adoc` (the fallback this model relies on; cross-checked against the current `polyfill.ts` precision/performance split)
-* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff])
-* in-code JSDoc of `scope.utils.ts` and `app-styles-scope.utils.ts`

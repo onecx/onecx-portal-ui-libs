@@ -124,13 +124,3 @@ Code::
 * link:{primeng_plugin_guide}[`add-required-plugin-to-primeng.adoc`]: local app-side rewrite guide
 * link:{material_plugin_guide}[`add-angular-material-plugin.adoc`]: local app-side rewrite guide
 * link:{help_ui_webpack}[`onecx-help-ui` webpack.config.js]: reviewed rewrite example
-
-Verification Sources checked::
-* `dev-docs/styles/concept.adoc`
-* `dev-docs/styles/style-types.adoc`
-* `dev-docs/styles/scoping.adoc`
-* `dev-docs/styling/dynamic-content-via-container.adoc`
-* `../../docs/modules/onecx-portal-ui-libs/pages/migrations/angular-19/add-required-plugin-to-primeng.adoc`
-* `../../docs/modules/onecx-portal-ui-libs/pages/migrations/angular-19/add-angular-material-plugin.adoc`
-* `https://github.com/onecx/onecx-help-ui/blob/3a7dd5d26dcc23b473a4a79a1054fe373a6ab658/webpack.config.js`
-* the linked Shell source files above

@@ -124,6 +124,7 @@ Code::
 * link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`custom-use-style.service.ts`]: `CustomUseStyle.use` / `applyOverrides`.
 * link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]: `provideAppStylesInitializer`.
 * link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `getAppStyleByScope`, `replaceRootWithScope`.
+* link:{libs}/react-utils/src/lib/styling/primeReact[styling/primeReact]: the React scoping package (the per-app scoped style container and the `attachPrimeReactScoper` observer).
 * link:{libs}/react-utils/src/lib/styling/primeReact/theme/scopedStyleContainer.ts[`scopedStyleContainer.ts`]: `getOrCreateScopedStyleContainer`, `extractComponentName`, `getRealStyleContainer`.
 * link:{libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx[`StyleRegistry.tsx`]: scoped `styleContainer` on `PrimeReactProvider`.
 * link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`scopingFunctionality/index.ts`]: `attachPrimeReactScoper`.
@@ -131,11 +132,3 @@ Code::
 * link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`contexts/app/index.tsx`] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`contexts/remotes/index.tsx`]: `PrimeReactStyleProvider`.
 * link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts[`dynamicScoping/index.ts`]: `createPortal` patch for PrimeReact overlays.
 * link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)]: the Shell's own PrimeNG/`provideThemeConfig` wiring.
-
-Verification Sources checked::
-* `dev-docs/styles/primeng-scoping.adoc` (older page): the `provideThemeConfig` → `CustomUseStyle` → scope + theme-overrides mechanism re-verified against current `main`; the webpack `document.createElement` / `Theme.setLoadedStyleName` build-time replacements it prescribes are no longer required (recorded under link:#known-issues[Known issues]).
-* `dev-docs/styles/scoping.adoc`, `dev-docs/styles/style-types.adoc` (older pages): the `data-style-id` / `data-style-isolation` boundary and the PrimeNG `data-primeng-style-id` / `data-variable-override-id` sheets.
-* `dev-docs/styling/scope-model.adoc`, `dev-docs/styling/scope-polyfill.adoc` (current Units): the `@scope` model and the `@supports` fallback these styles rely on.
-* `dev-docs/theming/theme-to-primeng-tokens.adoc` (current): cross-checked for the `--p-` / `--<scopeId>-` token hand-off and the React scoped `styleContainer`.
-* Draft Outline (https://github.com/markuczy/onecx-portal-ui-libs/commit/6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca[6108bdff]).
-* in-code JSDoc and `@deprecated` markers in the `theme/primeng` and `styling/primeReact` subpackages.
