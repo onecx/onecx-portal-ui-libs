@@ -17,12 +17,14 @@ An App reads the Shell context from Topics; that is the contract of Area 1 and A
 
 The mechanism has two layers. The lower layer is a fixed NgRx slice, framework-agnostic in shape but shipped inside the NgRx library. The upper layer is a set of thin Angular services, one per piece of context, that subscribe to the underlying Angular service or Topic and dispatch into that slice.
 
-The slice is defined by four modules (link:{libs}/ngrx-integration-interface/src/lib/store-connector[`store-connector`]):
+The slice is defined by four files (link:{libs}/ngrx-integration-interface/src/lib/store-connector[`store-connector`]):
 
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-state.ts[`OneCxState`]: the state shape. It is a flat object with one optional field per piece of context: `location`, `permissions`, `config`, `currentMfe`, `currentPage`, `currentTheme`, `currentWorkspace`, `appConfig`, `userProfile`. Every field is optional because every piece of context arrives independently and at a different time.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-actions.ts[`OneCxActions`]: a `createActionGroup` under the source `OneCX`. There is one action per field: `navigated`, `permissionsChanged`, `configChanged`, `currentMfeChanged`, `currentPageChanged`, `currentThemeChanged`, `currentWorkspaceChanged`, `appConfigChanged`, `userProfileChanged`.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-reducer.ts[`oneCxReducer`]: a `createReducer` with one `on()` branch per action. Each branch copies the state and writes the incoming value into the matching field. The slice starts as an empty object `{}`, so a field is simply `undefined` until the first corresponding action arrives.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-selectors.ts[`getOneCxSelectors`]: the read side. `createOneCxSelector()` is a `createFeatureSelector('onecx')`; `getOneCxSelectors(selectState = createOneCxSelector())` returns one memoised selector per field (`selectLocation`, `selectPermissions`, `selectConfig`, `selectCurrentMfe`, `selectCurrentPage`, `selectCurrentTheme`, `selectCurrentWorkspace`, `selectAppConfig`, `selectUserProfile`) plus a derived `selectBackNavigationPossible` (`!!location && !location.isFirst`). The `selectState` argument is injectable, so an App can point the selectors at a differently-named slice if it does not register the feature under the default `onecx` key.
+
+Beyond the slice, `ngrx-accelerator` ships one general selector helper that an App uses on top of any feature: link:{libs}/ngrx-accelerator/src/lib/utils/selectors/create-child-selectors.ts[`createChildSelectors(featureSelector, initialChildState)`]. Given a feature selector and an example of the child state shape, it walks the keys of the child state and returns one memoised selector per key, named `select<Key>` (the key capitalised). It is the selector half of the same helper family that supplies the URL and `localStorage` units; here it is noted because it is the `ngrx-accelerator` answer to "how do I get a memoised selector for each field of a child slice" without writing a `createSelector` per field. It is exported from the package root (see link:{libs}/ngrx-accelerator/src/index.ts[`src/index.ts`]).
 
 The store connector layer sits on top of it. For each field there is an `@Injectable` service, registered with `provideEnvironmentInitializer` so that the App's environment initialisation instantiates it once at bootstrap. Each service subscribes to the corresponding Angular service or Topic in its constructor and dispatches the matching `OneCxActions.*` on every value. Because the underlying Topics are readiness-gated (Area 3), the first dispatch happens automatically when the context first becomes available, and subsequent dispatches keep the field in step.
 
@@ -65,7 +67,7 @@ The Angular services the connectors read (`AppStateService`, `ConfigurationServi
 
 The Shell side of this Unit is the *source* of everything the connectors subscribe to, and it is covered by the owning Areas rather than re-explained here. The Shell publishes the context Topics, `current-workspace`, `configuration`, `current-mfe`, `current-page`, `current-theme`, and drives the `current-location` / `current-mfe` Topics; its bootstrap order decides when each is ready. See Area 3 (Shell Context & Runtime Configuration) for the context Topics and readiness, and Area 7 (Navigation & Routing) for the URL and `current-location`.
 
-The one Shell-side detail that matters to this Unit is the `CURRENT_LOCATION_TOPIC` capability. The `NavigatedEventStoreConnectorService` branches on `ShellCapabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)`: when the Shell advertises it, the connector reads the richer `CurrentLocationTopic`; otherwise it uses the legacy `EventsTopic` `NAVIGATED` events. Both feed the same `navigated` action and the same `location` field. The Shell's initializer that wires these Topics is `app.module.ts` (see the `workspaceConfigInitializer` described in Area 3); link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell).
+The one Shell-side detail that matters to this Unit is the `CURRENT_LOCATION_TOPIC` capability. The `NavigatedEventStoreConnectorService` branches on `ShellCapabilityService.hasCapability(Capability.CURRENT_LOCATION_TOPIC)`: when the Shell advertises it, the connector reads the richer `CurrentLocationTopic`; otherwise it uses the legacy `EventsTopic` `NAVIGATED` events. Both feed the same `navigated` action and the same `location` field. On the Shell side the `current-location` values come from `app.module.ts`: a module-level `currentLocationTopic` plus the patched `history.pushState`/`replaceState` publish each navigation, and `urlChangeListenerInitializer` publishes the first one (see Area 3 and Area 7); link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell).
 
 == Angular / React
 
@@ -75,7 +77,7 @@ The whole slice and every connector are Angular: they use `provideEnvironmentIni
 
 * *Every field is optional until first published.* `OneCxState` starts at `{}`, and each field is `undefined` until its connector dispatches for the first time. Selectors therefore return `undefined` on cold reads: gate a first read on the underlying Topic's `isInitialized` (Area 3), not on the selector.
 * *The connectors are only as good as their source.* A connector subscribes to the Angular service/Topic and dispatches what it sees. If the Shell has not published (or authentication has not finished, so `current-workspace` never arrives), the corresponding field simply never gets a value. This is readiness, not a bug: see Area 3.
-* *`navigated` has two sources.* The `NavigatedEventStoreConnectorService` picks `currentLocation$` or the `EventsTopic` based on the `CURRENT_LOCATION_TOPIC` capability. The two sources carry slightly different payloads (`CurrentLocationTopicPayload` vs the `NAVIGATED` event payload); both are stored verbatim into `location`, so the `isFirst` flag used by `selectBackNavigationPossible` is only meaningful from the richer `current-location` source.
+* *`navigated` has two sources.* The `NavigatedEventStoreConnectorService` picks `currentLocation$` or the `EventsTopic` based on the `CURRENT_LOCATION_TOPIC` capability. Both sources carry an `isFirst` flag (`CurrentLocationTopicPayload.isFirst` and `NavigatedEventPayload.isFirst`), so the `isFirst` flag used by `selectBackNavigationPossible` is available from either source, not only the `current-location` one. The two payload shapes differ otherwise: `url` is optional in the `current-location` payload and required in the `NAVIGATED` payload, and both land verbatim in `location`.
 * *Do not add your own `on()` to `oneCxReducer`.* The reducer is a closed slice. If an App wants to react to these values, it derives them with `createSelector` on top of `getOneCxSelectors`: it should not fork the reducer.
 * *The default feature key is `onecx`.* `createOneCxSelector()` is `createFeatureSelector('onecx')`. If an App registers the feature under a different key, it must pass its own `selectState` into `getOneCxSelectors`, or the selectors will read the wrong (empty) slice.
 
@@ -104,6 +106,8 @@ Code::
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-actions.ts[`OneCxActions`]: the `OneCX` action group.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-reducer.ts[`oneCxReducer`]: one `on()` per action.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/onecx-selectors.ts[`getOneCxSelectors` / `createOneCxSelector`]: the feature selector and derived selectors.
+* link:{libs}/ngrx-accelerator/src/lib/utils/selectors/create-child-selectors.ts[`createChildSelectors`]: the general per-key child-selector helper (exported from `ngrx-accelerator`).
+* link:{libs}/ngrx-accelerator/src/index.ts[`@onecx/ngrx-accelerator` public API]: the barrel that exports `createChildSelectors`.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[`store-connectors` barrel]: the eight connector exports.
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/configuration-store-connector-service.ts[`ConfigurationStoreConnectorService`]
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/app-config-store-connector-service.ts[`AppConfigStoreConnectorService`]
@@ -114,12 +118,7 @@ Code::
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-workspace-store-connector-service.ts[`CurrentWorkspaceStoreConnectorService`]
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`NavigatedEventStoreConnectorService`]
 * link:{libs}/ngrx-integration-interface/src/index.ts[`@onecx/ngrx-integration-interface` public API]
+* link:{libs}/ngrx-integration-interface[`@onecx/ngrx-integration-interface` package root]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector[`store-connector` directory]: where the slice and the connectors live.
 * link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]: the Angular service/Topic wrapper the connectors read.
-* link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell): the Shell initializer that wires the context Topics (see Area 3).
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and Known-issues rules.
-* Dev Docs top index (`README.adoc`): Area 12 slug `state-management/` and the Unit slugs.
-* The three known issues listed in the template (`userProfileChanged` is the Area 12 entry): confirmed against the code above.
-* Draft Outline commit (6108bdff): topic/store map only; no content baseline.
-* No contradiction found against the `@onecx/ngrx-integration-interface` README or the Topic base-class code; the Shell is linked by file only (read-only for this work).
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell): the Shell initializers that publish the context Topics (see Area 3).

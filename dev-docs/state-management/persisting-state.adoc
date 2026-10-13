@@ -106,12 +106,5 @@ Code::
 * link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer`]: the lazy-safe `mergeReducer` callback (and its `overwriteMerge` / `arrayMerge` options).
 * link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration`, `KeyConfiguration`, `NestedKeyConfiguration`, `Options`]: the typed nested key configuration.
 * link:{libs}/ngrx-accelerator/src/index.ts[`@onecx/ngrx-accelerator` public API]: the barrel that exports both helpers.
+* link:{libs}/ngrx-accelerator[`@onecx/ngrx-accelerator` package root]
 * `ngrx-store-localstorage`: the persistence package the App supplies; the helpers configure its `localStorageSync` meta-reducer, `mergeReducer`, and key configuration. (Not a direct dependency of the libraries; provided by the App.)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and Known-issues rules.
-* Dev Docs top index (`README.adoc`): the `persisting-state.adoc` slug for Area 12.
-* `@onecx/ngrx-accelerator` `package.json`: confirms `deepmerge` is a peer (used by `lazyLoadingMergeReducer`) and that `ngrx-store-localstorage` is *not* a direct dependency (the App supplies it).
-* `create-nested-key-configuration.ts` JSDoc/types: the per-key `Options` shape.
-* Draft Outline commit (6108bdff): topic map only; no content baseline.
-* No contradiction found against the `@onecx/ngrx-accelerator` README; the Shell is not referenced for this Unit (rehydration is App-side).
