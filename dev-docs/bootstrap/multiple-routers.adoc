@@ -93,10 +93,3 @@ Code::
 * link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`Capability.CURRENT_LOCATION_TOPIC`]
 * link:{shell}/src/bootstrap.ts[`bootstrap.ts` (`bootstrapModule(AppModule, 'shell', …)`)] (Shell)
 * link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent` (mounts the element that turns the wiring on)] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source-link and Known-issues rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug (`multiple-routers.adoc`) and reading order; Area 7 slug for the runtime fan-out cross-link.
-* Draft Outline commit (6108bdff) — bootstrap outline (router-wiring section; topics only, no content baseline).
-* `web-component-bootstrap.adoc` (Unit 6) and `module-federation.adoc` (Unit 2) — the element/lifecycle and MF expose facts this Unit builds on; Unit 6 defers the router wiring to this page and to Area 7.
-* No contradiction found against libs `docs/` or in-code JSDoc/README. No test change required (documentation only).

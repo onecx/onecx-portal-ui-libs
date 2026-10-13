@@ -88,7 +88,7 @@ Where the two genuinely differ:
 * link:module-federation.adoc[Module Federation in OneCX] (Unit 2) — how the app's root module is exposed and loaded as a remote.
 * link:preloaders.adoc[Preloaders (build time and runtime)] (Unit 4) — the share scope and Angular major the platform cache is keyed by.
 * link:../styling/dynamic-content-via-container.adoc[Dynamic content via container] (Area 4) — the consumer of the dynamic container and of the `DynamicAppId` element name.
-* link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) and Multiple-router problem & router wiring (`multiple-routers.adoc`, Unit 7, not yet written) — how the app's router follows the shared URL once mounted.
+* link:multiple-routers.adoc[Multiple-router problem & router wiring] (Unit 7) — how the App's router is wired at startup to follow the shared URL; link:../navigation/url-to-every-router.adoc[URL change → every router] (Area 7) — how a runtime URL change is fanned out to every router once mounted.
 
 == Sources
 
@@ -98,19 +98,11 @@ Code::
 * link:{libs}/angular-webcomponents/src/lib/utils/get-dynamic-container.utils.ts[`DYNAMIC_CONTAINER_PROXY`, `getDynamicContainer`, `removeDynamicContainer`]
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector` (`connect` / `disconnect`)]
 * link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`DYNAMIC_CONTAINER` token]
-* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`OneCXOverlayContainer` (consumes `DYNAMIC_CONTAINER`)]
-* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`OneCXFullscreenOverlayContainer` (consumes `DYNAMIC_CONTAINER`)]
+* link:{libs}/angular-utils/cdk/src/lib/onecx-overlay-container.ts[`OnecxOverlayContainer` (consumes `DYNAMIC_CONTAINER`)]
+* link:{libs}/angular-utils/cdk/src/lib/onecx-fullscreen-overlay-container.ts[`OnecxFullscreenOverlayContainer` (consumes `DYNAMIC_CONTAINER`)]
 * link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`onecxDynamicContainerSelectorPrefix`, `dataNoPortalLayoutStylesKey`, `dataMfeElementKey`]
 * link:{libs}/react-webcomponents/src/lib/bootstrap/webcomponent-bootstrap-vite.ts[`createViteAppWebComponent`]
 * link:{libs}/react-webcomponents/src/lib/wrapper/withSyncedRouter.tsx[`withSyncedRouter`]
 * link:{libs}/react-webcomponents/src/lib/contexts/syncedLocationContext.tsx[`SyncedRouterProvider` / `RouterSync`]
 * link:{shell}/src/bootstrap.ts[`bootstrap.ts` (`bootstrapModule(AppModule, 'shell', …)`)] (Shell)
 * link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent` (`createElement(elementName)`)] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug and reading order.
-* Draft Outline commit (6108bdff) — bootstrap outline (web-component-bootstrap section; topics only, no content baseline).
-* `startup-timeline.adoc` (Unit 1) and `module-federation.adoc` (Unit 2) — the `bootstrapModule` / `createCustomElement` and expose facts already stated at a high level; this Unit deep-dives the platform/`NgZone` window-state contract, `DynamicAppId`, the dynamic container, and the legacy vs standalone split, deferring the MF expose to Unit 2 and the router wiring to Unit 7 / Area 7.
-* `scope.utils.ts` and the CDK overlay containers — the `DYNAMIC_CONTAINER` consumer and the dataset/selector keys.
-* No contradiction found against libs `docs/` or JSDoc. No test change required (documentation only).

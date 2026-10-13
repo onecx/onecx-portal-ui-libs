@@ -119,12 +119,3 @@ Code::
 * link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.loadChildren` (`toLoadRemoteEntryOptions`, `registerRemotes`, `loadRemote`)] (Shell)
 * link:{shell}/src/app/shell/utils/preloader.utils.ts[`loadPreloaderModule` / `ensurePreloaderModuleLoaded` (`registerRemotes`, `loadRemote`)] (Shell)
 * `@module-federation/enhanced` (`registerRemotes`, `loadRemote`, `getInstance`) and `@module-federation/runtime-core` (runtime API)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug and reading order.
-* Draft Outline commit (6108bdff) — module-federation outline (topics only; no content baseline).
-* `build-utils` JSDoc (the `getOneCXSharedLibraryConfig` example) — the `@module-federation/enhanced` vs `@angular-architects` config shapes.
-* No old Dev Docs page exists for this Area.
-* Shell `main.ts` / `routes.service.ts` / `preloader.utils.ts` on `main` (read-only, linked by file).
-* No contradiction found against libs `docs/` or JSDoc.

@@ -11,23 +11,23 @@ When an App or Remote Component is built, how does OneCX decide *which* packages
 
 == Why it exists
 
-A OneCX page runs the Shell plus many independently built Apps in one JavaScript context. If every App bundled its own copy of the framework, one page would carry several copies of `@angular/core` / `react` and friends — wasted memory and, worse, the kind of "two copies of the same library" bugs that break singletons. Module Federation (Unit 2) is the mechanism that shares packages instead of copying them. But sharing is only safe when it is *consistent*: an App must know, at build time, exactly which packages it expects to receive from the page rather than bundle itself, and the page must actually provide compatible copies of exactly those packages.
+A OneCX page runs the Shell plus many independently built Apps in one JavaScript context. If every App bundled its own copy of the framework, one page would carry several copies of `@angular/core` / `react` and friends — wasted memory and the "two copies of the same library" bugs that break singletons. Module Federation (Unit 2) is the mechanism that shares packages instead of copying them. But sharing is only safe when it is *consistent*: an App must know, at build time, exactly which packages it expects to receive from the page, and the page must actually provide compatible copies of exactly those packages.
 
-That consistency is what this Unit is about. OneCX centralises the decision in a single build-time helper — link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig`] — so that every App and Remote Component in the ecosystem shares the *same* set of scoped libraries, with `singleton: false` / `strictVersion: false` / `eager: false` as the helper defaults. Effective configs can still override those defaults later — for example the Shell's `pre_loaders/angular-21/module-federation.config.ts` forces `@angular/*` to `singleton: true`, and `pre_loaders/react-19/module-federation.config.ts` does the same for `@onecx/*` plus a selected React package list. It makes two decisions per package: (1) is this package shared at all, and (2) which *share scope* does it go into, and which flags are forced on it. *Unit 2 states the share-scope rule at a high level; this Unit is the build-time deep dive* — how the generator computes each entry, and what a version or scope mismatch does when the App runs. *When* a remote is loaded is Unit 1; the loader mechanism that populates the scopes is Unit 4; the `registerRemotes`/`loadRemote` pair itself is Unit 2 and Unit 5.
+That consistency is what this Unit is about. OneCX centralises the decision in a single build-time helper — link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig`] — so that every App and Remote Component in the ecosystem shares the *same* set of scoped libraries, with `singleton: false` / `strictVersion: false` / `eager: false` as the helper defaults (effective configs can override them later; the Shell's per-loader configs do — see the Shell side). It makes two decisions per package: is it shared at all, and which scope it goes into with which flags. *Unit 2 states the share-scope rule at a high level; this Unit is the build-time deep dive* — how the generator computes each entry, and what a version or scope mismatch does when the App runs.
 
 == How it works
 
 The mechanism has a build-time half and a runtime half, and the invariant that ties them together is the **share scope**.
 
-*Build time.* An application calls `getOneCXSharedLibraryConfig(dependencies, shouldGenerateSubDeps, options)` with its `package.json` `dependencies`. The generator turns that map into a `Record<packageName, SharedLibraryConfig>` — one `shared` entry per shared package — which the app passes straight into its Module Federation config (`shared: ...`, and, for the `@module-federation/enhanced` toolchain, a top-level `shareScope`). For every package it decides:
+*Build time.* An application calls `getOneCXSharedLibraryConfig(dependencies, shouldGenerateSubDeps, options)` with its `package.json` `dependencies`. The generator turns that map into a `Record<packageName, SharedLibraryConfig>` — one `shared` entry per shared package — which the app passes into its Module Federation config. For every package it decides:
 
 * *Shared at all?* Only packages whose name matches the `sharedLibraryPatterns` (Angular, OneCX, RxJS, PrimeNG, ngx-translate, ngrx, React, PrimeReact) are shared. A package that does *not* match is dropped from the shared map entirely — it is bundled privately into the app. So the framework and OneCX libraries are shared, and everything else is not.
 * *Which scope?* The scope is computed from the app's *own* framework major, React first: if the app's `react` major is ≥ 19 it uses `react_<major>` (e.g. `react_19`); otherwise, if its `@angular/core` major is ≥ 21 it uses `angular_<major>` (e.g. `angular_21`); otherwise it falls back to `default`. The `requiredVersion` of each shared entry is the version the app declared for that dependency.
-* *Which flags?* For every package that matched a pattern, `getOneCXSharedRecommendations` defaults to `singleton: false`, `strictVersion: false`, `eager: false`. This is the deliberate baseline that makes many framework versions coexist: nothing is forced to a page-wide single copy, so each scope can carry the copy an App was built against. Effective configs can still override that baseline later; the current Shell does so in `pre_loaders/angular-21/module-federation.config.ts` for `@angular/*` and in `pre_loaders/react-19/module-federation.config.ts` for `@onecx/*` plus a selected React package list.
+* *Which flags?* For every package that matched a pattern, `getOneCXSharedRecommendations` defaults to `singleton: false`, `strictVersion: false`, `eager: false`. This is the deliberate baseline that makes many framework versions coexist: nothing is forced to a page-wide single copy, so each scope can carry the copy an App was built against. Effective configs can override that baseline later (the Shell's per-loader configs do — see the Shell side).
 
 *Runtime.* The Shell loads each App's remote with a `shareScope` — `toLoadRemoteEntryOptions` reads `r.shareScope` from the Workspace route and falls back to `'default'` when it is absent — and it loads the framework loaders (Unit 4) into the fixed scopes `default` / `angular_21` / `react_19`. When the App's remote is loaded, it resolves its shared packages out of that scope.
 
-The load-bearing invariant, independent of framework: **the scope an app's packages are *built into* must match the scope the Shell *provides* (a preloaded loader) and the scope the remote is *loaded with*.** When they agree, the App resolves its framework packages from the page and shares the page's copies. When they do not, the App may resolve against a scope that has no compatible copy of its framework packages, and the App may not bootstrap.
+The load-bearing invariant: **the scope an app's packages are *built into* must match the scope the Shell *provides* (a preloaded loader) and the scope the remote is *loaded with*.** When they agree, the App resolves its framework packages from the page. When they do not, the App may resolve against a scope with no compatible copy of its framework and may not bootstrap.
 
 [source,mermaid]
 ----
@@ -78,11 +78,10 @@ The Shell does not recompute an App's scope from its framework; it *trusts the W
 
 == Angular / React
 
-The scope rule is shared by both frameworks but is *ordered* React-first, which is the only real difference a reader needs:
+The scope rule (How it works) is the same for both frameworks but is *ordered* React-first:
 
-* *React apps.* An app whose `react` major is ≥ 19 is scoped to `react_<major>` (`react_19`). React is checked before Angular, so a React app never lands in an `angular_N` scope.
-* *Angular apps.* An app whose `@angular/core` major is ≥ 21 is scoped to `angular_<major>` (`angular_21`). Angular 18/19/20 (major ≤ 20) — and anything with no recognised major — fall back to the shared `default` scope.
-* *The practical effect.* Angular 18–20 are pooled in one `default` bucket; Angular 21 and React 19 each get their own scope. An Angular 21 app and a React 19 app resolve their framework from different scopes on the same page and never touch each other's copies (Unit 2).
+* *React before Angular.* A React app is resolved first, so it can never land in an `angular_N` scope.
+* *The practical effect.* Angular 18–20 pool into one `default` scope; Angular 21 and React 19 each get their own, so an Angular 21 app and a React 19 app resolve their framework from different scopes and never touch each other's copies (Unit 2).
 
 == Edge cases & pitfalls
 
@@ -90,6 +89,7 @@ The scope rule is shared by both frameworks but is *ordered* React-first, which 
 * *Build scope and runtime scope must agree, and they are computed differently.* The build scope is derived from the App's own framework major; the runtime load scope comes from the Workspace route's `shareScope` (defaulting to `'default'`). A route that loads an Angular 21 App with `shareScope` absent (or the wrong value) loads that App into a scope that may not contain a compatible copy of the framework packages it was built against.
 * *A framework major with no preloaded loader yields no verified provider for that scope.* The generator will happily emit `angular_22` for an App built against `@angular/core` 22, but the Shell only preloads `default`, `angular_21`, and `react_19` (Unit 4). There is no `angular_22` loader, so that scope is not pre-populated by the current Shell and an Angular 22 App may fail to resolve its framework if no compatible provider is otherwise available.
 * *The helper's `singleton: false` default tolerates drift within a major, not the wrong scope.* Because shared framework libraries are non-singleton by default, two Apps in the *same* scope can run different patch/minor versions without a hard collision — that is the design. The default is not universal: the current Shell loader configs override selected Angular 21 / React 19 packages to `singleton: true`. What none of these settings rescues is a remote loaded into a scope that lacks a compatible provider for its framework: a scope mismatch can still become a load failure.
+* *A shared library can be newer in the App than in the preloader.* The `requiredVersion` of a shared entry is the version the App declared in its own `package.json`, but the copy actually populated into the shared scope is the one the *preloader* bundles from its own dependencies (Unit 4). So a React 19 App built against a newer `@onecx/*` than the `react_19` loader bundles still declares that newer version as its `requiredVersion`, yet resolves the copy the loader provided. Because `strictVersion` defaults to `false` — and the `react_19` loader additionally forces `@onecx/*` to `singleton: true` — the version difference does not hard-fail the load; the App runs the preloader's (possibly older) copy and breaks only if it relies on newer `@onecx/*` APIs that copy lacks.
 * *`configCallback` is a deliberate escape hatch.* An app can override the recommendations (for example forcing `singleton: true` on one package, or `includeSecondaries` for the `@angular-architects` toolchain). That is supported, but it makes that App's shared set diverge from the ecosystem default — a source of exactly the mismatches this Unit describes if done inconsistently.
 * *Sub-package sharing depends on build-time resolution.* When `shouldGenerateSubDeps` is set, sub-packages are read from each dependency's `package.json` `exports`. If a package cannot be resolved in the build environment, it is skipped with a `[build-utils] Shared Config: skipping <dep>` log and its sub-packages are not shared.
 
@@ -97,7 +97,7 @@ The scope rule is shared by both frameworks but is *ordered* React-first, which 
 
 * *Compare three scopes.* For a failing App, line up (1) the scope its packages were *built* into (the `shareScope` in its generated `shared` map), (2) the scope the Shell *loads* it with (the Workspace route's `shareScope`, via `toLoadRemoteEntryOptions`), and (3) the scopes the Shell *populated* (the preloaded loaders, Unit 4). The mismatch is always a disagreement between two of these.
 * *Inspect the `Remote`.* The Shell loads an App with `{ type, entry, name, shareScope }` (Unit 2); `entry` is the remote URL and `shareScope` must name a populated scope.
-* *Watch the console.* A preloader whose `loadRemote` rejected prints `Could not load preloader: <windowKey>` (Unit 4) — that is the most common signal that a scope may be missing a compatible provider; a failed `loadRemote` of the App itself surfaces as a load error and routes to the Shell's remote-loading-error page (Unit 1).
+* *Watch the console.* A preloader whose `loadRemote` rejected prints `Could not load preloader: <windowKey>` (Unit 4) — the most common signal that a scope is missing a compatible provider; a failed `loadRemote` of the App itself surfaces as a load error and routes to the Shell's remote-loading-error page (Unit 1).
 
 == Related Units
 
@@ -119,17 +119,3 @@ Code::
 * link:{shell}/pre_loaders/angular-21/module-federation.config.ts[`pre_loaders/angular-21/module-federation.config.ts` (`@angular/*` overridden to `singleton: true`)] (Shell)
 * link:{shell}/pre_loaders/react-19/module-federation.config.ts[`pre_loaders/react-19/module-federation.config.ts` (`@onecx/*` and selected React packages overridden to `singleton: true`)] (Shell)
 * `@module-federation/enhanced` (`shared` / `shareScope` semantics) and `@module-federation/runtime-core` (runtime API)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`) — sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`) — Area 2 slug and reading order.
-* Draft Outline commit (6108bdff) — bootstrap outline (topics only; no content baseline).
-* `build-utils` JSDoc (the `getOneCXSharedLibraryConfig` example) — the `@module-federation/enhanced` vs `@angular-architects/module-federation` config shapes and the `configCallback`/`packageFilterCallback` overrides.
-* `module-federation.adoc` (Unit 2) — the share-scope rule and the helper defaults stated at a high level; this Unit covers the build-time deep dive and the mismatch, and defers the loader mechanism to `preloaders.adoc` (Unit 4) to avoid overlap.
-* `startup-timeline.adoc` (Unit 1) — the preloader barrier and load-failure surfacing.
-* `docs/modules/onecx-portal-ui-libs/pages/libraries/build-utils/get-onecx-shared-recommendation.adoc` and `docs/modules/onecx-portal-ui-libs/pages/libraries/build-utils/get-onecx-shared-library-config.adoc` — current libs docs checked; they describe helper defaults and customization, not Shell loader-specific overrides or runtime failure paths.
-* `docs/modules/onecx-shell-ui/pages/onecx-shell-ui-docs.adoc` in `onecx/onecx-shell-ui` — Shell overview/setup/slot docs checked; no preloader or share-scope mechanics coverage found there.
-* `docs/modules/docs-guides-ui/pages/module-federation/mf-preloaders.adoc`, `mf-dependancy-sharing.adoc`, and `module-federation-config.adoc` in `onecx/docs-guides-ui` — generic older background checked; they describe general MF/preloader concepts, not the current per-major scopes, loader overrides, or failure-path details documented here.
-* Shell `main.ts`, `preloader.utils.ts`, and loader `module-federation.config.ts` files on `main` (read-only, linked by file).
-* No old Dev Docs page exists for this Area.
-* No contradiction found against libs `docs/` or JSDoc.
