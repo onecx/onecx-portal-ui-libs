@@ -15,7 +15,7 @@ Unit 4 fixes the *protocol*: a navigation carries a `GuardsNavigationState`, a `
 
 == How it works
 
-The React implementation is a set of plain classes plus hooks; there is no `WebcomponentConnector` analogue in the React libs. The app composes the pieces itself: it creates a gatherer tied to its own `navigate` function, then builds wrapped guard helpers from its current route matches, and runs the activation / deactivation checks in response to location changes. The guards read the mode from the navigation state and behave differently in each mode.
+The React implementation is a set of plain classes plus hooks; there is no `WebcomponentConnector` analogue in the React libs. The app composes the pieces itself: it creates a gatherer tied to its own `navigate` function, then builds wrapped guard helpers from its current route matches, and runs the activation / deactivation checks in response to location changes.
 
 === Collecting the route guards (`wrapGuards`)
 
@@ -24,7 +24,7 @@ link:{libs}/react-utils/src/lib/guards/utils/wrap-guards.utils.ts[`wrapGuards`] 
 . *Reads the guards from the route `handle`.* link:{libs}/react-utils/src/lib/guards/utils/guard-handles.utils.ts[`getGuardsFromMatches`] walks the `UIMatch[]` and, for each match, reads `match.handle` as a link:{libs}/react-utils/src/lib/guards/utils/guard-handles.utils.ts[`GuardsHandle`], `{ canMatch?, canActivate?, canActivateChild?, canDeactivate? }`, and concatenates each array into one list. A React app declares its guards in the route `handle` rather than in the `Route` object.
 . *Builds wrapper helpers.* It constructs one `ActivateGuardsWrapper` and one `DeactivateGuardsWrapper` (plain classes, given the gatherer and controller) and returns a link:{libs}/react-utils/src/lib/guards/utils/wrap-guards.utils.ts[`WrappedGuards`] object with four async helpers: `canMatch()`, `canActivateChild()`, `canActivate()` (all delegate to the activate wrapper with the matching guard list) and `canDeactivate(nextLocation)` (delegates to the deactivate wrapper). Each helper calls its wrapper with a `GuardExecutionContext` built from `matches` and `location` (`params` taken from the last match); the deactivation context also carries `nextLocation`.
 
-So instead of replacing route guards with a wrapper (Angular), React exposes the collected guards as functions the app invokes. The four helper kinds map to React Router's guard lifecycle; note there is an extra `canMatch` stage (a pre-`canActivate` check) that has no Angular equivalent.
+So instead of replacing route guards with a wrapper (Angular), React exposes the collected guards as functions the app invokes. The four helper kinds map to React Router's guard lifecycle, with an extra `canMatch` pre-`canActivate` stage.
 
 === The mode-aware wrappers
 
@@ -130,11 +130,3 @@ Code::
 * link:{libs}/react-utils/src/lib/guards/hooks/use-guard-deactivation.ts[`useGuardDeactivation`]
 * link:{libs}/accelerator/src/lib/utils/create-logger.utils.ts[`createLoggerFactory`: `debug`-package namespaces]
 * link:{shell}/src/app/app.module.ts[history patch / listener: `revertNavigation` handling] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and diagram rules.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (guard section only; no content baseline).
-* Old Dev Docs `dev-docs/guards/` (both pages removed): the `GUARD_MODE` / "fake navigation" story (Angular lifecycle) and the console debug switch; the shared `GUARD_MODE` semantics were cross-checked against `guards-navigation-controller.ts` and the React wrappers (no contradiction), and the documented debug switch is *not* honoured by the code (see *Known issues*).
-* Antora docs `docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc`: the `localStorage.debug` mechanism the guard loggers actually use.
-* No contradiction found against other libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

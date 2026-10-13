@@ -122,12 +122,3 @@ Code::
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] (`connect`/`disconnect`, `connectRouterGuards`, `wrapGuardsOnRouteRecognized`, `gatherGuardsOnGuardsCheckStart`, `resolveGuardsOnGuardsCheckEnd`)
 * link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] (`revertNavigation` publisher)
 * link:{shell}/src/app/app.module.ts[history patch / listener: `revertNavigation` handling] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and diagram rules.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (guard section only; no content baseline).
-* Old Dev Docs `dev-docs/guards/` (both pages removed): the `GUARD_MODE` / "fake navigation" / gatherer story and the console debug switch; cross-checked against `wrap-guards.utils.ts`, the wrappers and `webcomponent-connector.utils.ts`. The modes story matched the code; the documented debug switch is *not* honoured by the code (see *Known issues*).
-* Antora docs `docs/modules/onecx-portal-ui-libs/pages/migrations/angular-20/updated-guards-usage.adoc`: supported guard types (`canActivate` / `canDeactivate` / `canActivateChild`) and the filtering of deprecated string guards, matching `wrapGuards`.
-* Antora docs `docs/modules/onecx-portal-ui-libs/pages/browser-logging.adoc`: the `localStorage.debug` mechanism the guard loggers actually use.
-* No contradiction found against other libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).
