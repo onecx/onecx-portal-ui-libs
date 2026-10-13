@@ -100,29 +100,11 @@ export const Default = {
   argTypes: dialogArgTypes,
 }
 
-export const ResizableDialog = {
-  render: Template,
-  args: {
-    ...defaultComponentArgs,
-    resizableColumnGroupSelectorDialog: true,
-  },
-  argTypes: dialogArgTypes,
-}
-
 export const RestoreColumnOrder = {
   render: Template,
   args: {
     ...defaultComponentArgs,
     restoreColumnGroupSelectorOrder: true,
-  },
-  argTypes: dialogArgTypes,
-}
-
-export const RestoreColumnOrderDisabled = {
-  render: Template,
-  args: {
-    ...defaultComponentArgs,
-    restoreColumnGroupSelectorOrder: false,
   },
   argTypes: dialogArgTypes,
 }
