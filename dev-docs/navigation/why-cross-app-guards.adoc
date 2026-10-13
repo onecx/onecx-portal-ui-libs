@@ -135,10 +135,3 @@ Code::
 * link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`GuardsGatherer`] (React)
 * link:{libs}/react-utils/src/lib/guards/hooks/use-guards-gatherer.ts[`useGuardsGatherer`]
 * link:{shell}/src/app/app.module.ts[history patch / listener: `revertNavigation` handling] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and diagram rules.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (guard section only; no content baseline).
-* Old Dev Docs `dev-docs/guards/` (both pages, now removed): the `GUARD_MODE` flows, the "fake navigation" / gatherer story and the console debug switch; the modes story is superseded by the per-framework Units (link:angular-guards.adoc[Angular guards], link:react-guards.adoc[React guards]) and the code (fake-navigation via `onSameUrlNavigation: 'reload'`) is the baseline, no contradiction found.
-* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

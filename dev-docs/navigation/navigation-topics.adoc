@@ -150,11 +150,4 @@ Code::
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-page-store-connector-service.ts[`CurrentPageStoreConnectorService`]
 * link:{shell}/src/app/app.module.ts[history patch, `urlChangeListenerInitializer`] (Shell publisher of `current-location`) (Shell)
 * link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService.updateMfeInfo`] (Shell publisher of `current-mfe`) (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, source-link and diagram rules.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (topic list only; no content baseline).
-* Antora docs `docs/modules/onecx-portal-ui-libs/pages/libraries/integration-interface.adoc`: `#current-mfe-topic` and `#current-page-topic` (publisher, payload, deprecated fields).
-* Old Dev Docs `dev-docs/guards/` (both pages, now removed): cross-checked the `current-location` / `isFirst` semantics it references; the guard detail is superseded by the per-framework Units (link:angular-guards.adoc[Angular guards], link:react-guards.adoc[React guards]).
-* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).
+* link:{libs}/integration-interface/src/index.ts[`@onecx/integration-interface`] (the Topic subclasses' package entry point)

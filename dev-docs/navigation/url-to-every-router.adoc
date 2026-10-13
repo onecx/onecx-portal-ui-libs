@@ -65,7 +65,7 @@ Each app is a follower. The libraries give the app a handle on the same `current
   + On connect it performs an *initial* `router.navigateByUrl(initialUrl, { replaceUrl: true, state: { isRouterSync, isInitialRouterSync } })`, so the app's router starts aligned with the shared URL.
   + It then subscribes to `appStateService.currentLocation$`. Each emission recomputes the URL from `location.pathname` minus `getLocation().deploymentPath` (plus search and hash); when it differs from the last URL it navigated to, it calls `router.navigateByUrl(url, { replaceUrl: true, state: { isRouterSync: true } })`.
   + The `isRouterSync: true` state is what the Shell's patched history recognises: an app re-pointing its own router in response to the Topic is *not* a new real navigation, so it must not re-publish. That is the one-way valve that stops the loop.
-* *Capability fallback.* If the Shell does not advertise the `currentLocationTopic` capability (link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapabilityService`]), the connector falls back to the older link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] `navigated` event. `EventsTopic` is marked `@deprecated` in favour of the dedicated `CurrentLocationTopic`; treat it as the legacy channel only.
+* *Capability fallback.* The connector checks the `currentLocationTopic` capability with `hasCapability(Capability.CURRENT_LOCATION_TOPIC)`, where `Capability` is the link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability`] enum. If the Shell does not advertise that capability, the connector falls back to the older link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] `navigated` event. The `navigated` event type (`NavigatedEvent`) is the part marked `@deprecated`, in favour of the dedicated `CurrentLocationTopic`; treat it as the legacy channel only.
 * *The deployment base.* `getLocation()` (link:{libs}/accelerator/src/lib/utils/path.utils.ts[`path.utils.ts`]) returns `window.location` enriched with `deploymentPath` (the base the Shell is deployed under) and `applicationPath` (the rest). Both the Shell and the apps strip `deploymentPath` before comparing URLs, so the same relative URL is what every router sees.
 * *The route table is scoped to this app.* `initializeRouter` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`webcomponent-router-initializer.utils.ts`]) rewrites each route's `redirectTo` to the MFE base href and appends a `**` catch-all, then `resetConfig`s. The `startsWith(prefix)` `UrlMatcher` (link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`webcomponent-router.utils.ts`]) matches URLs under the MFE base. Together this means an app's router only *claims* the URL when the URL is actually inside the app's own base href: which is what makes "one URL, every router" coherent across apps that each own a different slice of the path.
 
@@ -112,7 +112,7 @@ Code::
 * link:{libs}/integration-interface/src/lib/topics/current-location/v1/current-location.model.ts[`CurrentLocationTopicPayload`]
 * link:{libs}/integration-interface/src/lib/topics/current-page/v1/current-page.topic.ts[`CurrentPageTopic`]
 * link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] (deprecated fallback)
-* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`Capability.CURRENT_LOCATION_TOPIC`]
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability.CURRENT_LOCATION_TOPIC`]
 * link:{libs}/accelerator/src/lib/topic/topic.ts[`Topic`] (base: `TopicGet`, `isInitialized`)
 * link:{libs}/accelerator/src/lib/utils/path.utils.ts[`getLocation`]
 * link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentLocation$`]
@@ -127,10 +127,3 @@ Code::
 * link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`useTopic`]
 * link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/navigated-event-store-connector-service.ts[`NavigatedEventStoreConnectorService`]
 * link:{shell}/src/app/app.module.ts[history patch, `urlChangeListenerInitializer`, `workspaceConfigInitializer`] (Shell)
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, diagram/source rules.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (topics only; the guard deep-dive there maps to Units 4–6).
-* Old Dev Docs `dev-docs/guards/` (both pages, now removed): `GUARD_MODE` / router-sync semantics, cross-checked against `guard-navigation.model.ts` and `webcomponent-connector.utils.ts`; the guard detail is superseded by the per-framework Units (link:angular-guards.adoc[Angular guards], link:react-guards.adoc[React guards]).
-* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).

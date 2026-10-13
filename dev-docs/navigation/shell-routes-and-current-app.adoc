@@ -108,16 +108,10 @@ Code::
 * link:{shell}/src/app/app.module.ts[`workspaceConfigInitializer` → `routesService.init(...).then(urlChangeListenerInitializer)`] (Shell)
 * link:{shell}/src/app/not-found/not-found.module.ts[`NotFoundModule`] (Shell)
 * link:{shell}/src/app/not-found/components/not-found-page/not-found-page.component.ts[`PageNotFoundComponent`] (Shell)
+* link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.module.ts[`WebcomponentLoaderModule`] (Shell)
 * link:{shell}/src/app/shell/web-component-loader/webcomponent-loader.component.ts[`WebcomponentLoaderComponent`] (Shell)
 * link:{shell}/src/app/shared/generated[generated `Route` / BFF route types] (Shell)
 * link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/current-mfe.topic.ts[`CurrentMfeTopic`]
 * link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService.currentMfe$`]
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router-initializer.utils.ts[`initializeRouter`]
 * link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-router.utils.ts[`startsWith`]
-
-Verification Sources checked::
-* Unit template (`unit-template.adoc`): sections, size limit, Known-issues rule.
-* Dev Docs top index (`README.adoc`): Area 7 slug and reading order.
-* Draft Outline commit (6108bdff): navigation-routing outline (routes-service section only; no content baseline).
-* Old Dev Docs `dev-docs/guards/` (both pages, now removed): the `INITIAL_ROUTER_SYNC`/revert story, cross-checked against `routes.service.ts` and `app.module.ts`; the guard detail is superseded by the per-framework Units (link:angular-guards.adoc[Angular guards], link:react-guards.adoc[React guards]).
-* No contradiction found against libs `docs/` or JSDoc; the Shell is linked by file only (read-only for this work).
