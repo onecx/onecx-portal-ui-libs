@@ -66,6 +66,16 @@ The current init-error page is an Angular component and the initializers use Ang
 * *Re-entry guard.* The handler only navigates when the fragment does not already contain the target path. This is what stops the init-error page from redirecting into itself when its own request fails.
 * *Problem details are optional.* `detail`, `errorCode`, `params` and `invalidParams` are only present on an HTTP problem-detail response; for a plain error event they are empty, and the page hides any field that is empty.
 
+== Debugging
+
+* *Read the URL fragment first.* Everything the page displays comes from the fragment after `#`, parsed with `URLSearchParams`. The keys are `message`, `requestedUrl`, `detail`, `errorCode`, `invalidParams` and `params`. A fragment with an `errorCode` or `detail` means the back-end returned a problem-detail response; an empty `detail` and `errorCode` mean the failure was a plain `ErrorEvent`.
+* *Check the console for the raw error.* `initializationErrorHandler` starts with `console.error(error)` (link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`]), so the unmodified error object is logged before the fields are extracted.
+* *Inspect the rendered fields by their id.* The page assigns a stable id to each value (`onecxInitializationErrorMessage`, `onecxInitializationErrorRequestedUrl`, `onecxInitializationErrorDetail`, `onecxInitializationErrorErrorCode`, `onecxInitializationErrorInvalidParams`, `onecxInitializationErrorParams`), so you can read the DOM without parsing the fragment (link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent`]).
+* *Confirm the retry behaviour.* Each initializer retries with `retry({ delay: 500, count: 3 })` before the `catchError` runs (link:{shell}/src/app/app.module.ts[`app.module.ts`]). A failure that redirects after roughly three attempts at 500 ms intervals is the retry path, not a first-request failure.
+* *Rule out the re-entry guard.* If a second failure on the error page itself does not re-navigate, that is the `!params.toString().includes('portal-initialization-error-page')` guard working, not a dropped error.
+
+General Topic and `window` inspection is in Area 13 (Diagnostics).
+
 == Known issues
 
 The handler reads problem details only from `HttpErrorResponse` and `ErrorEvent` instances. The issue body and the Area's planning notes describe the problem details as being carried "in query parameters". The code carries them in the URL **fragment** instead (link:{shell}/src/app/shell/utils/initialization-error-handler.utils.ts[`initializationErrorHandler`]). This Unit documents the actual behaviour; the discrepancy is recorded as a follow-up for the Dev Docs planning.
@@ -84,7 +94,3 @@ Code::
 * link:{shell}/src/app/app.routes.ts[`app.routes.ts` (Shell)]
 * link:{shell}/src/app/init-error/components/initialization-error-page/initialization-error-page.component.ts[`InitializationErrorPageComponent` (Shell)]
 * link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`]
-
-Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page.
-* Current `main` code of `onecx-shell-ui`: basis for every claim above, including the fragment-vs-query-parameter discrepancy.

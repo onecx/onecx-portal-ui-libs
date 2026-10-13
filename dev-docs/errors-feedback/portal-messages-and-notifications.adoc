@@ -1,4 +1,4 @@
-= Portal Messages & Notifications
+= Portal messages & notifications
 :idprefix:
 :idseparator: -
 :libs: ../../libs
@@ -16,7 +16,7 @@ An App needs to tell the user something happened, "saved", "something failed", "
 
 Both mechanisms are a Topic that an App publishes and the page (or another App) consumes. The *display* of the message, though, is deliberately owned by a single Remote Component in the Shell.
 
-=== Portal Message (`message` Topic)
+=== The `message` Topic: toast messages
 
 . An App builds a message. In the libraries the message shape is the link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`PortalMessage`], and the payload is assembled by link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`buildPortalMessagePayload(severity, message, summary, detail)`], which merges the severity and the (optionally translated) `summary`/`detail` into the message.
 . The App publishes the payload to the `message` Topic.
@@ -33,7 +33,7 @@ flowchart TD
   C -- no --> E["no viewer; message not shown"]
 ----
 
-=== Notification (`notification` Topic)
+=== The `notification` Topic: cross-App messages
 
 A link:{libs}/integration-interface/src/lib/topics/notification/v1/notification.model.ts[`Notification`] is a structured cross-App message: it carries a `type`, an `address`, HTTP-style `headers`, and a `body` with sender/receiver ids, a `persist` flag and `contentMeta`. It is meant to be read by *another App* (or by a later stage of the page), not rendered directly by the Shell. The libraries expose a link:{libs}/integration-interface/src/lib/services/notification.service.ts[`NotificationService`] that owns the `notification` Topic so an App can publish to it. The current Shell has no notification UI; the Topic is consumed by Apps.
 
@@ -68,6 +68,15 @@ The *publishing* side is symmetric. Angular Apps use link:{libs}/angular-integra
 * *PrimeNG does not change-detect automatically for toasts.* The Shell's toast component calls `detectChanges()` inside a `setTimeout` after adding a message; PrimeNG otherwise delays stacking/pushing messages until change detection runs.
 * *A Notification is not a toast.* The `notification` Topic and the `message` Topic are different: a Notification is structured data for another App (with `address`, `headers`, `body`, `persist`), while a Portal Message is a user-facing toast. Publishing a Notification does not show a toast, and vice versa.
 
+== Debugging
+
+* *No toast appears even though the App published.* The Shell only shows a message that reaches the toast Remote Component, and that component is only mounted when the Workspace assigns it to a Slot (link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`OneCXShellToastComponent`]). Confirm the `ocx-shell-toast` remote is present in the DOM; if it is absent, the Workspace has not assigned it, and no amount of publishing will render a toast. This is the most common cause.
+* *A toast appears but stacked, delayed, or blank.* The Shell's toast component forces change detection with `setTimeout(() => this.cdr.detectChanges())` after each `messageService.add(message)`, because PrimeNG does not detect toasts automatically. If messages arrive faster than a frame, they are queued and rendered together when detection runs; a missing summary means the `summaryKey` had no translation (see *Edge cases*).
+* *Verify what an App actually published.* The payload the App builds with `buildPortalMessagePayload` is what the `message` Topic carries (link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`buildPortalMessagePayload`]). Read the Topic value from `window` or the Topic inspector to check `severity`, `summary` and `detail` before suspecting the Shell.
+* *A Notification "does nothing".* The `notification` Topic has no Shell UI; it is for another App. Check the consuming App subscribed to the Topic. If no App consumes it, publishing is expected to have no visible effect.
+
+General Topic inspection is in Area 13 (Diagnostics).
+
 == Related Units
 
 * link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the App-load-failure path publishes a Portal Message (the "remote load error" toast).
@@ -90,8 +99,3 @@ Code::
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`OneCXShellToastComponent` (Shell)]
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[`shell-toast.component.bootstrap.ts` (Shell)]
 * link:{shell}/src/app/remotes/shell-toast/shell-toast.component.main.ts[`shell-toast.component.main.ts` (Shell)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`): the general topics overview mentions "messaging, notifications" as the Topic set; no page for these mechanisms.
-* libs `docs/` and in-code JSDoc/README: the `portal-message.utils.ts` JSDoc and the `shell-toast.component.ts` comment confirm the payload shape and that the toast component is expected to move out of the Shell later.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above, including the Slot-gating consequence.

@@ -18,7 +18,13 @@ The libraries expose four Topics that a page uses to signal or read state, plus 
 * `message`: a Portal Message to show to the user (a toast).
 * `notification`: a structured cross-App notification.
 
-The Shell is the consumer that turns these into UI: an initialization-error page, a global-error page, a not-found page, the Shell's own toast Remote Component, and a route-area loading spinner (the PortalViewport spinner). The route-area spinner is a distinct Shell outcome driven by RoutesService.showContent$ (updated by RoutesService.loadChildren()); publishing the libraries' globalLoading Topic alone does not toggle it.
+The Shell is the consumer that turns these into UI: an initialization-error page, a global-error page, a not-found page, the Shell's own toast Remote Component, and a route-area loading spinner (the PortalViewport spinner).
+
+The three questions this Area answers, and where the answer lives:
+
+* *What error pages can be seen.* The Shell shows four user-facing screens: the initialization-error page, the App-load error page, the global-error page, and the not-found page. Unit 1, link:./failure-taxonomy.adoc[Failure taxonomy map], maps each failure mode to its screen.
+* *Who controls which error page.* The libraries define the Topics and the reusable components; the Shell decides what a failure becomes, from the route it navigates to to the toast it mounts. Units 2 to 4 work this out per mechanism.
+* *How to debug failures.* Each Unit has a Debugging section; general tooling is in Area 13 (Diagnostics).
 
 [source,mermaid]
 ----
@@ -51,15 +57,15 @@ IMPORTANT: The Shell's route-area spinner (the one rendered by the PortalViewpor
 Anything that reaches the `globalError` or `globalLoading` Topic is *page-global*: the value is shared across every Topic instance on the page. See Area 1 (Integration Contract & Topics) for the delivery mechanism.
 ====
 
-== Units
+== Unit map
 
-Read the Units in the order below.
+All Units of this Area, in reading order. Every Unit follows the link:../unit-template.adoc[Unit template].
 
-. Failure taxonomy map: link:./failure-taxonomy.adoc[failure-taxonomy.adoc]
-. Initialization failures & init-error page: link:./initialization-failures.adoc[initialization-failures.adoc]
-. App load failures & global errors: link:./app-load-failures-and-global-errors.adoc[app-load-failures-and-global-errors.adoc]
-. Global loading: link:./global-loading.adoc[global-loading.adoc]
-. Portal Messages & Notifications: link:./portal-messages-and-notifications.adoc[portal-messages-and-notifications.adoc]
+. link:./failure-taxonomy.adoc[Failure taxonomy map]: the four failure modes and the screen or signal each one lands on.
+. link:./initialization-failures.adoc[Initialization failures & init-error page]: how a workspace-config or user-profile failure is captured, carried in the URL fragment, and rendered.
+. link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the two post-bootstrap failures (a remote module that fails to load, and a `globalError` value) and their distinct destinations.
+. link:./global-loading.adoc[Global loading]: the page-wide `globalLoading` flag and the separate route-area spinner it does not drive.
+. link:./portal-messages-and-notifications.adoc[Portal Messages & Notifications]: the `message` and `notification` Topics and the Shell's toast Remote Component.
 
 == Related Areas
 

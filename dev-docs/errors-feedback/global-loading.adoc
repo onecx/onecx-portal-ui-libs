@@ -70,6 +70,14 @@ The Shell is the only place the route-area spinner lives, and it is driven by it
 * *`showContent$` is reset by the Router, not by `loadChildren`.* `loadChildren()` turns the spinner *on*; it is a `NavigationEnd`/`NavigationSkipped` Router event that turns it *off*. If navigation never settles, the spinner would stay: which is why the reset is wired to the Router, not to the end of the `loadRemote` call.
 * *First load vs. subsequent loads.* `loadChildren()` always hides content (`showContent$ = false`) and publishes `globalLoading` `true` around the module load. The extra environment refresh in `updateAppState()` only publishes `globalLoading` and sets `showContent$` when the App's `remoteBaseUrl` differs from the one already loaded and the flag was not already on: so re-entering an already-loaded App does not necessarily re-publish the flag.
 
+== Debugging
+
+* *A module is loading.* `loadChildren()` logs `➡ Load remote module <exposedModule>` when it starts the download and `Load remote module <exposedModule> finished.` when it succeeds (link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]). While it runs, `showContent$` is `false` (the spinner is up) and `globalLoading` is `true`. A spinner that stays after `finished.` means navigation never settled: the reset comes from a `NavigationEnd`/`NavigationSkipped` Router event, not from the end of the load.
+* *An App reports busy but the Shell spinner is absent.* Read `showContent$` and `globalLoading` separately. If `globalLoading` is `true` while `showContent$` is `true`, an App published the Topic on its own; the Shell's route-area spinner is bound only to `showContent$`, so it will not show. This is the expected behaviour, not a fault.
+* *The spinner is up but no module load started.* Check whether `NavigationEnd`/`NavigationSkipped` fired; `showContent$` returns to `true` only on those Router events.
+
+General Topic and `window` inspection is in Area 13 (Diagnostics).
+
 == Related Units
 
 * link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: what happens when the module load this flag guards *fails*.
@@ -89,8 +97,3 @@ Code::
 * link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[`portal-viewport.component.html` (Shell)]
 * link:{shell}/src/app/shell/components/app-loading-spinner/app-loading-spinner.component.ts[`AppLoadingSpinnerComponent` (Shell)]
 * link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext` (React)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page; the general topics overview covers Topic delivery, not the spinner-vs-flag distinction.
-* libs `docs/` and in-code JSDoc/README: the `LoadingIndicatorDirective`/`LoadingIndicatorComponent` TSDoc confirms the reusable indicator is distinct from the Shell's spinner; no page covers `showContent$`.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above, including the spinner binding in the Shell template.

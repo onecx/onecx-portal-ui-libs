@@ -70,6 +70,14 @@ The `globalError` Topic and the failure *mechanisms* are framework-agnostic: any
 * *App load failure vs. global error are different pages.* The App-load failure navigates to the `remote-loading-error-page` route (rendered by `ErrorPageComponent`, which shows the requested path and a reload action) and also fires a toast. A `globalError` value swaps the viewport to `ocx-shell-error` and fires no toast. They look similar but are different components reached by different means.
 * *The `ocx-shell-error` query parameters are not the trigger.* The Shell's global-error component still reads `err`/`return` from the query string, but the *viewport* is driven by the `globalError$` value, not by a query string. An App publishes the Topic value to make the error appear; it does not navigate to a query-parameterised URL.
 
+== Debugging
+
+* *App-load failure.* The `loadRemote` call is bracketed by two log lines in link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]: `➡ Load remote module <exposedModule>` before the download and `Load remote module <exposedModule> finished.` after a successful one. If the first appears without the second, the load failed. On failure `onRemoteLoadError` logs `Failed to load remote module: ${err}` (the `err` is the `loadRemote` rejection) and fires the `ERROR_MESSAGES.ON_REMOTE_LOAD_ERROR` toast; the page then shows the `requestedApplicationPath` that the failed load was trying to reach.
+* *Global error.* The viewport subscribes to `globalError$` and logs `global error` on every non-`undefined` value (link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent`]). The code the `ocx-shell-error` page shows is the `string` on the Topic; read it from `window` or the Topic inspector to identify the App that published it. Because the viewport is Topic-driven, the error appears with no navigation: there is no route or query string to inspect.
+* *Telling them apart.* A toast plus the `remote-loading-error-page` route means the module load failed. A viewport swap with no navigation and no toast means a `globalError` value is set.
+
+General Topic and `window` inspection is in Area 13 (Diagnostics).
+
 == Related Units
 
 * link:./failure-taxonomy.adoc[Failure taxonomy map]: where these two failure modes sit among the others.
@@ -90,8 +98,3 @@ Code::
 * link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.ts[`PortalViewportComponent` (Shell)]
 * link:{shell}/src/app/shell/components/error-component/global-error.component.ts[`GlobalErrorComponent` (Shell, `ocx-shell-error`)]
 * link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext` (React)]
-
-Verification Sources checked::
-* Dev Docs Draft Outline (commit `6108bdff`): no prior errors-feedback page; only the general topics overview, which is topic delivery, not these mechanisms.
-* libs `docs/` and in-code JSDoc/README: no page covering the App-load or global-error destinations.
-* Current `main` code of `onecx-portal-ui-libs` and `onecx-shell-ui`: basis for every claim above.
