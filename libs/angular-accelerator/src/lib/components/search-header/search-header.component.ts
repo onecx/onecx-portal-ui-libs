@@ -74,7 +74,13 @@ export class SearchHeaderComponent implements AfterContentInit, AfterViewInit {
   }
   @Input() searchConfigPermission: string | string[] | undefined
   @Input() searchButtonDisabled = false
+  @Input() searchButtonLabel = ''
+  @Input() searchButtonAriaLabel = ''
+  @Input() searchButtonTooltip = ''
   @Input() resetButtonDisabled = false
+  @Input() resetButtonLabel = ''
+  @Input() resetButtonAriaLabel = ''
+  @Input() resetButtonTooltip = ''
   @Input() pageName: string | undefined = getLocation().applicationPath
 
   @Output() searched: EventEmitter<any> = new EventEmitter()
