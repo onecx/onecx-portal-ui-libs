@@ -367,28 +367,28 @@ export class InteractiveDataViewComponent implements OnInit {
     return optimusTopCenter ?? childTopCenter ?? undefined
   })
 
-  childTopLeft = contentChild<TemplateRef<any> | undefined>('topLeft')
-  optimusTopLeft = computed(() => {
+  childTopStart = contentChild<TemplateRef<any> | undefined>('topStart')
+  optimusTopStart = computed(() => {
     const templates = this.templates()
-    const topLeftTemplate = templates.find((t) => t.getType() === 'topLeft')
-    return topLeftTemplate?.template ?? undefined
+    const topStartTemplate = templates.find((t) => t.getType() === 'topStart')
+    return topStartTemplate?.template ?? undefined
   })
-  _topLeft = computed(() => {
-    const optimusTopLeft = this.optimusTopLeft()
-    const childTopLeft = this.childTopLeft()
-    return optimusTopLeft ?? childTopLeft ?? undefined
+  _topStart = computed(() => {
+    const optimusTopStart = this.optimusTopStart()
+    const childTopStart = this.childTopStart()
+    return optimusTopStart ?? childTopStart ?? undefined
   })
 
-  childTopRight = contentChild<TemplateRef<any> | undefined>('topRight')
-  optimusTopRight = computed(() => {
+  childTopEnd = contentChild<TemplateRef<any> | undefined>('topEnd')
+  optimusTopEnd = computed(() => {
     const templates = this.templates()
-    const topRightTemplate = templates.find((t) => t.getType() === 'topRight')
-    return topRightTemplate?.template ?? undefined
+    const topEndTemplate = templates.find((t) => t.getType() === 'topEnd')
+    return topEndTemplate?.template ?? undefined
   })
-  _topRight = computed(() => {
-    const optimusTopRight = this.optimusTopRight()
-    const childTopRight = this.childTopRight()
-    return optimusTopRight ?? childTopRight ?? undefined
+  _topEnd = computed(() => {
+    const optimusTopEnd = this.optimusTopEnd()
+    const childTopEnd = this.childTopEnd()
+    return optimusTopEnd ?? childTopEnd ?? undefined
   })
 
   childListValue = contentChild<TemplateRef<any> | undefined>('listValue')
