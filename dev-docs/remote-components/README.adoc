@@ -52,7 +52,7 @@ flowchart LR
   SLOT --> RC["Remote Component<br/>instance rendered into the slot"]
 ----
 
-The data the Shell publishes is defined in the libs. A `Slot` maps a slot name to the names of the Remote Components assigned to it, and a `RemoteComponent` carries its identity (`appId`, `productName`), how to load it (`remoteEntryUrl`, `exposedModule`) and its `technology` (see link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`remote-component.model.ts`]).
+The data the Shell publishes is defined in the libs. A *Slot* is a named region of the page: it maps a slot `name` to the names of the Remote Components assigned to it. A *Remote Component* is a self-contained UI piece that one MFE exposes and a host renders; its `RemoteComponent` record carries its identity (`appId`, `productName`), how to load it (`remoteEntryUrl`, `exposedModule`) and its `technology` (see link:{libs}/integration-interface/src/lib/topics/remote-components/v1/remote-component.model.ts[`remote-component.model.ts`]).
 
 == Unit map
 

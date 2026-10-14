@@ -1,4 +1,4 @@
-= Slot Size Reporting
+= Slot size reporting
 :toc: macro
 :toc-title: Contents
 :toclevels: 2
@@ -97,7 +97,7 @@ The size stream starts at `{ width: -1, height: -1 }` before the first observati
 
 Because the Shell's Slot Groups measure themselves (a Shell, i.e. Angular, concern), `SLOT_GROUP_RESIZED` is always available from the Shell regardless of the host framework. Only the per-slot `SLOT_RESIZED` is framework-dependent.
 
-=== Concrete consumer example: Workspace topbar logo
+=== A concrete consumer: the Workspace topbar logo
 
 The Workspace UI's topbar logo component demonstrates a practical (non-normative) consumer of the size events:
 
@@ -145,10 +145,3 @@ Code::
 
 Usage example (Workspace UI)::
 * link:https://github.com/onecx/onecx-workspace-ui/blob/deef7f41c8f61ef447fdbb2a5de4c5d86ced4a1f/src/app/remotes/topbar-logo/topbar-logo.component.ts#L77[onecx/onecx-workspace-ui@deef7f41: OneCXTopbarLogoComponent (see line 77)]
-
-
-Verification Sources checked::
-* Draft Outline commit `6108bdff79ea8dce5a15df5fd0b6b1e48dc7edca`: `dev-docs/remote-components/index.adoc` (topic coverage: slot size reporting; no content baseline).
-* Libs JSDoc: `ResizedEventsTopic.requestEvent` documents the "register then receive an immediate update" intent, matching the `REQUESTED_EVENTS_CHANGED` re-publish.
-* Sibling Units link:slot-rendering.adoc[Slot rendering] and link:shell-slots-catalogue.adoc[Shell Slots catalogue]: the slot/group elements that perform the measuring.
-* No prior Dev Docs page existed for this Area (per the Area ticket).
