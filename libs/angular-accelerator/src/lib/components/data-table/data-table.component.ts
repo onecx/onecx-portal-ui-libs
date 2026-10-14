@@ -559,9 +559,12 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
 
         const isTranslationKeyColumn =
           this.columns.find((c) => c.id === currentFilterColumn?.id)?.columnType === ColumnType.TRANSLATION_KEY
+        // Also translate the values of filters the user has already selected, so they stay readable in the
+        // dropdown even when they no longer appear in the current result set (e.g. the table is empty).
+        const valuesToTranslate = [...new Set([...columnValues, ...currentFilters])]
         const translateObservable = isTranslationKeyColumn
-          ? this.translateColumnValues(columnValues as string[])
-          : of(Object.fromEntries(columnValues.map((cv) => [cv, cv])))
+          ? this.translateColumnValues(valuesToTranslate as string[])
+          : of(Object.fromEntries(valuesToTranslate.map((cv) => [cv, cv])))
         // This creates dropown object with text as label and key as value sp when event is fired for filter change. 
         // Key is being passed down and stored in local storage
         return translateObservable.pipe(
