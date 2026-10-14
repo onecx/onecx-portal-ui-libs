@@ -5,7 +5,7 @@
 :idseparator: -
 :libs: ../../libs
 :shell: https://github.com/onecx/onecx-shell-ui/blob/main
-:overview: ./overview.adoc
+:overview: ./README.adoc
 :icon_model: {libs}/integration-interface/src/lib/topics/icons/v1/icon.model.ts
 :icon_topic: {libs}/integration-interface/src/lib/topics/icons/v1/icon.topic.ts
 :icon_service: {libs}/integration-interface/src/lib/services/icon.service.ts
@@ -126,11 +126,11 @@ There is no React-specific icon context. React applications construct the shared
 
 == Edge cases & pitfalls
 
-* **`requestIcon` is synchronous and optimistic.** It returns the class name before the icon has loaded. The element renders with the class immediately and the icon "pops in" when the Shell injects the CSS. Use `requestIconAsync` when the icon must be present before the UI shows (or to degrade to a `fallbackClass`).
-* **`requestIconAsync` resolves only on `IconsReceived`.** If the icon is missing (cache entry `null`) it resolves to `fallbackClass` (or `null`); if it is already available it resolves without waiting. Do not assume it always waits.
-* **No `TopicGet` is sent.** `IconTopic` is created with `sendGetMessage = false`, so a fresh application does not pull the current icon state from the Shell. Anything already in `globalThis.onecxIcons` (loaded by the Shell or another app) is found silently; only names absent from the cache trigger an `IconRequested`.
-* **The `classType` does not travel on the Topic.** `IconRequested` carries only the name; the `classType` is used locally to build the class name. The Shell injects the CSS per style, so the class name is what couples a request to a rendered style.
-* **The class name is normalized, the Topic name is not.** `mdi:home` maps to `onecx-theme-icon-…-mdi-home`, but the `IconRequested` message still carries the real `mdi:home` name, which is what the Shell looks up.
+* *`requestIcon` is synchronous and optimistic.* It returns the class name before the icon has loaded. The element renders with the class immediately and the icon "pops in" when the Shell injects the CSS. Use `requestIconAsync` when the icon must be present before the UI shows (or to degrade to a `fallbackClass`).
+* *`requestIconAsync` resolves only on `IconsReceived`.* If the icon is missing (cache entry `null`) it resolves to `fallbackClass` (or `null`); if it is already available it resolves without waiting. Do not assume it always waits.
+* *No `TopicGet` is sent.* `IconTopic` is created with `sendGetMessage = false`, so a fresh application does not pull the current icon state from the Shell. Anything already in `globalThis.onecxIcons` (loaded by the Shell or another app) is found silently; only names absent from the cache trigger an `IconRequested`.
+* *The `classType` does not travel on the Topic.* `IconRequested` carries only the name; the `classType` is used locally to build the class name. The Shell injects the CSS per style, so the class name is what couples a request to a rendered style.
+* *The class name is normalized, the Topic name is not.* `mdi:home` maps to `onecx-theme-icon-…-mdi-home`, but the `IconRequested` message still carries the real `mdi:home` name, which is what the Shell looks up.
 
 == Debugging
 
@@ -156,8 +156,3 @@ Code::
 * Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
 ** link:{shell_icon_loader}[`src/app/shell/services/icon-loader.service.ts`]: `ShellIconLoaderService`: batches `IconRequested`, loads icons into `globalThis.onecxIcons`, injects CSS, publishes `IconsReceived`.
 ** link:{shell_app_module}[`src/app/app.module.ts`]: the `shellIconLoaderServiceInitializer` that runs the loader on startup.
-
-Verification Sources checked::
-* `docs/…/service/icon-service.adoc` and `docs/…/libraries/integration-interface.adoc` (Antora): match on the global cache states, the class-name format, and the `IconRequested` → `IconsReceived` flow. Note: the Antora `IconTopic` table lists a `classType` field on `IconRequested`, which the model on `main` does not carry (`IconRequested` is `{ type, name }`); the code is the baseline, so this page omits that field.
-* `onecx-shell-ui` `main` (read-only): `ShellIconLoaderService.init()` confirms the batch/load/inject/`IconsReceived` behaviour documented above.
-* JSDoc in the source files above.

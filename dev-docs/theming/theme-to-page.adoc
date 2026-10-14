@@ -11,7 +11,7 @@
 :current_theme_topic: {libs}/integration-interface/src/lib/topics/current-theme/v1/current-theme.topic.ts
 :theme_service: {libs}/angular-integration-interface/src/lib/services/theme.service.ts
 :topic_base: {libs}/accelerator/src/lib/topic/topic.ts
-:overview: ./overview.adoc
+:overview: ./README.adoc
 :theme_to_tokens: ./theme-to-primeng-tokens.adoc
 
 == Question answered
@@ -24,7 +24,7 @@ The same set of pages has to look different depending on the Workspace the user 
 
 == How it works
 
-The theme travels from the backend to the page in two parallel legs that both start from the same `Theme` value.
+The theme travels from the backend to the page in two legs that both start from the same `Theme` value.
 
 [#the-theme-model]
 === The `Theme` model
@@ -52,11 +52,11 @@ It is a Topic named `currentTheme` at version `1`. The Shell is the publisher of
 [#the-shell-leg]
 === The Shell leg (page decoration)
 
-The Shell is the part that physically puts the theme on the page. It is a separate repository (read-only here), linked via `github.com/onecx/onecx-shell-ui/blob/main/...`. Concretely, in the Shell's startup initialiser link:{shell_app_module}#L106[workspaceConfigInitializer], the loaded Workspace config's theme is parsed (`theme.properties` is a JSON string, parsed into the same nested map documented above) and passed to link:{shell_app_module}#L314[`applyThemeVariables(themeService, theme)`]:
+The Shell is the part that physically puts the theme on the page. It is a separate repository (read-only here), linked via `github.com/onecx/onecx-shell-ui/blob/main/...`. In the Shell's startup initialiser link:{shell_app_module}[`workspaceConfigInitializer` in `src/app/app.module.ts`], the loaded Workspace config's theme is parsed (`theme.properties` is a JSON string, parsed into the same nested map documented above) and handed to link:{shell_app_module}[`applyThemeVariables(themeService, theme)`] in the same file:
 
-* **publish the topic.** `applyThemeVariables` calls `themeService.currentTheme$.publish(theme)`: the same `ThemeService` from `@onecx/angular-integration-interface` (this repository) that applications subscribe to. This is the cross-repository hand-off: the Shell publishes, the libraries deliver.
-* **apply the CSS variables.** It iterates `theme.properties` and calls `document.documentElement.style.setProperty(`--${key}`, value)` for every value, so each theme variable is available on the root `<html>` element as e.g. `var(--primary-color)`.
-* **apply CSS overrides.** For `OverrideType.CSS` entries in `theme.overrides` it injects a `<style data-css-overrides>` block into `<head>`.
+* *publish the topic.* `applyThemeVariables` calls `themeService.currentTheme$.publish(theme)`: the same `ThemeService` from `@onecx/angular-integration-interface` (this repository) that applications subscribe to. This is the cross-repository hand-off: the Shell publishes, the libraries deliver.
+* *apply the CSS variables.* It iterates `theme.properties` and calls `document.documentElement.style.setProperty(`--${key}`, value)` for every value, so each theme variable is available on the root `<html>` element as e.g. `var(--primary-color)`.
+* *apply CSS overrides.* For `OverrideType.CSS` entries in `theme.overrides` it injects a `<style data-css-overrides>` block into `<head>`.
 
 Favicon and logo are handled in the Shell's viewport component (link:{shell_viewport}): on the first `currentTheme$` emission it fetches `theme.faviconUrl` (falling back to a BFF lookup by theme name), converts it to a data URL and sets it on the document's `<link rel="icon">`. The logo is carried on the `Theme` (`logoUrl`) for the Shell's slot/remote-component consumers; the viewport gates the whole app on `currentTheme$` and exposes `logoLoadingEmitter` for the logo-load state.
 
@@ -93,9 +93,13 @@ React applications construct a `CurrentThemeTopic` directly and subscribe to it.
 
 == Edge cases & pitfalls
 
-* **No active theme.** A Workspace may have no active theme; `properties` can be empty or absent. Consumers must tolerate a theme with no `properties` rather than assume the sections are present.
-* **Late arrival.** The topic delivers the *current* theme on subscription and then emits on change. Code that reacts to the theme should handle both an initial emission and subsequent updates, not assume the first subscription is the only one.
-* **Variables vs. tokens are different stages.** Reaching the page as `var(--primary-color)` (this Unit) is not the same as being turned into a PrimeNG/PrimeReact design token. Do not conflate the two; the second stage is a separate Unit.
+* *No active theme.* A Workspace may have no active theme; `properties` can be empty or absent. Consumers must tolerate a theme with no `properties` rather than assume the sections are present.
+* *Late arrival.* The topic delivers the *current* theme on subscription and then emits on change. Code that reacts to the theme should handle both an initial emission and subsequent updates, not assume the first subscription is the only one.
+* *Variables vs. tokens are different stages.* Reaching the page as `var(--primary-color)` (this Unit) is not the same as being turned into a PrimeNG/PrimeReact design token. Do not conflate the two; the second stage is a separate Unit.
+
+== Known issues
+
+* *A "theme v2" schema is not on `main`.* A structured v2 schema has been proposed (`ThemePropertiesV2` with `primitives` / `usages` / `regionOverrides`, a Zod schema, a mapper, and Shell selection between v1 and v2 via `light-dark()` CSS). None of that exists in the code: there is no such schema folder, no mapper, and no `light-dark()` usage, and `Theme.properties` is still the flat v1 map documented above. This page therefore documents the shipped v1 flat `properties` structure; the structured v2 schema is a planned feature, not the current behaviour.
 
 == Related Units
 
@@ -111,16 +115,6 @@ Code::
 * link:{theme_service}[`angular-integration-interface/.../services/theme.service.ts`]: `ThemeService.currentTheme$` (Angular).
 * link:{topic_base}[`accelerator/.../topic/topic.ts`]: the `Topic` base class.
 * Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
-** link:{shell_app_module}#L106[`src/app/app.module.ts` → `workspaceConfigInitializer`]: loads the Workspace config, parses `theme.properties`.
-** link:{shell_app_module}#L314[`src/app/app.module.ts` → `applyThemeVariables`]: publishes `currentTheme$`, sets `--<name>` vars on `<html>`, injects `OverrideType.CSS` blocks.
-** link:{shell_viewport}#L81[`src/app/shell/components/portal-viewport/portal-viewport.component.ts`]: favicon from `faviconUrl` (BFF fallback), logo state, app gated on `currentTheme$`.
-
-Verification Sources checked::
-* `dev-docs/theming/overview.adoc` (current): confirms the Area split and the Theme → page / Theme → tokens relationship.
-* `dev-docs/theming/theme-to-primeng-tokens.adoc` (current): cross-checked for the theme→tokens hand-off described as the second stage.
-* Draft Outline commit `6108bdff` (see below): cross-checked for the "theme v2" question.
-* `onecx-shell-ui` `main` (read-only clone): `applyThemeVariables` in `src/app/app.module.ts` and the viewport component confirm the Shell leg documented above (publish + `--<name>` on `<html>` + favicon).
-
-== Known issues
-
-* **"theme v2" is not on `main`.** The Draft Outline commit `6108bdff` describes a "Theme V2 schema": a structured `ThemePropertiesV2` (`primitives` / `usages` / `regionOverrides`) with a Zod schema, a mapper pipeline and Shell selection between v1 and v2 using `light-dark()` CSS. None of that code exists on current `main`: there is no `current-themes` schema folder, no mapper, no `light-dark()` usage, and `Theme.properties` is still the flat v1 map documented above. A `feat/theme-v2` branch is referenced in CI (`645776bb`). This page therefore documents the shipped v1 flat `properties` structure; the structured v2 schema is a planned feature and a follow-up, not the current behaviour.
+** link:{shell_app_module}[`workspaceConfigInitializer` in `src/app/app.module.ts`]: loads the Workspace config, parses `theme.properties`.
+** link:{shell_app_module}[`applyThemeVariables` in `src/app/app.module.ts`]: publishes `currentTheme$`, sets `--<name>` vars on `<html>`, injects `OverrideType.CSS` blocks.
+** link:{shell_viewport}[`PortalViewportComponent` in `src/app/shell/components/portal-viewport/portal-viewport.component.ts`]: favicon from `faviconUrl` (BFF fallback), logo state, app gated on `currentTheme$`.
