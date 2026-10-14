@@ -1,8 +1,8 @@
-import { Component, computed, effect, inject, Input, input, output } from '@angular/core'
+import { Component, computed, effect, inject, Input, input, output, ChangeDetectionStrategy } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
-import { SelectChangeEvent } from 'primeng/select'
+import { SelectChangeEvent } from '@openng/optimus-ui/select'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
 export type ListGridSort = { sortColumn: string; sortDirection: DataSortDirection }
@@ -14,6 +14,7 @@ export interface DataListGridSortingComponentState {
   standalone: false,
   selector: 'ocx-data-list-grid-sorting',
   templateUrl: './data-list-grid-sorting.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {

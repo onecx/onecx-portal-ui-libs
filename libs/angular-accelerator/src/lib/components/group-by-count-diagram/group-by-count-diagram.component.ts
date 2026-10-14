@@ -5,6 +5,7 @@ import {
   input,
   model,
   output,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { combineLatest, map, mergeMap, of } from 'rxjs'
@@ -22,6 +23,7 @@ export interface GroupByCountDiagramComponentState {
 @Component({
   standalone: false,
   selector: 'ocx-group-by-count-diagram',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './group-by-count-diagram.component.html',
 })
 export class GroupByCountDiagramComponent {

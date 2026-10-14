@@ -5,7 +5,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 import { provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { TranslationConnectionService } from './translation-connection.service'
 import { of, Subject } from 'rxjs'
-import { PrimeNG } from 'primeng/config'
+import { Optimus } from '@openng/optimus-ui/config'
 
 const mockTranslationChangeEvent: TranslationChangeEvent = {
   translations: {},
@@ -28,7 +28,7 @@ describe('TranslationConnectionService', () => {
   let service: TranslationConnectionService
   let userService: UserService
   let translateService: TranslateService
-  let configuration: PrimeNG
+  let configuration: Optimus
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,13 +36,13 @@ describe('TranslationConnectionService', () => {
         provideUserServiceMock(),
         provideTranslateTestingService({}),
         TranslationConnectionService,
-        PrimeNG
+        Optimus
       ],
     })
 
     userService = TestBed.inject(UserService)
     translateService = TestBed.inject(TranslateService)
-    configuration = TestBed.inject(PrimeNG)
+    configuration = TestBed.inject(Optimus)
   })
 
 
@@ -57,7 +57,7 @@ describe('TranslationConnectionService', () => {
     expect(translateService.getCurrentLang()).toBe('de')
   }))
 
-  it('should set primeng configuration on translation events', fakeAsync(() => {
+  it('should set optimus configuration on translation events', fakeAsync(() => {
     const translationChangeSubject = new Subject<TranslationChangeEvent>()
     const langChangeSubject = new Subject<LangChangeEvent>()
     const fallbackLangChangeSubject = new Subject<FallbackLangChangeEvent>()

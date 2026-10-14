@@ -1,10 +1,10 @@
 import { Type } from '@angular/core'
 import { DialogButton, DialogInitiator } from '../services/portal-dialog.service'
-import { PrimeIcon } from '../utils/primeicon.utils'
+import { OptimusIcon } from '../utils/optimus-icon.utils'
 
 /**
- * PrimeNG button severity values matching PrimeNG's documented button severity options.
- * PrimeNG uses 'warn' (not 'warning') as the severity value for warning buttons.
+ * Optimus button severity values matching Optimus's documented button severity options.
+ * Optimus uses 'warn' (not 'warning') as the severity value for warning buttons.
  */
 export type DialogButtonSeverity =
   | 'primary'
@@ -28,7 +28,7 @@ export type DialogButtonSeverity =
  * }
  * const buttonDetails: ButtonDialogButtonDetails = {
  *   key: 'MY_KEY',
- *   icon: PrimeIcons.TIMES,
+ *   icon: OpenngIcons.TIMES,
  *   parameters: {
  *     value: 'meeting'
  *   }
@@ -38,13 +38,13 @@ export type DialogButtonSeverity =
 export interface ButtonDialogButtonDetails {
   key: string
   id?: string
-  icon?: PrimeIcon
+  icon?: OptimusIcon
   parameters?: Record<string, unknown>
   tooltipKey?: string
   tooltipPosition?: 'right' | 'left' | 'top' | 'bottom' | string | undefined
   /**
-   * Optional PrimeNG button severity.
-   * When omitted, the button renders with PrimeNG's default appearance (no explicit severity class).
+   * Optional Optimus button severity.
+   * When omitted, the button renders with Optimus's default appearance (no explicit severity class).
    * Allowed values: 'primary', 'secondary', 'success', 'info', 'warn', 'help', 'danger', 'contrast'
    */
   severity?: DialogButtonSeverity

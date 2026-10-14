@@ -9,9 +9,9 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import type { Filter } from '../../model/filter.model'
 import { of, take } from 'rxjs'
-import { ButtonModule } from 'primeng/button'
-import { PopoverModule } from 'primeng/popover'
-import { TooltipModule } from 'primeng/tooltip'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { PopoverModule } from '@openng/optimus-ui/popover'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 
 const makeColumn = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
@@ -40,7 +40,7 @@ describe('FilterViewComponent (class logic)', () => {
     fixture = TestBed.createComponent(FilterViewComponent)
     component = fixture.componentInstance
 
-    // Minimal stubs to avoid accessing real PrimeNG components
+    // Minimal stubs to avoid accessing real Optimus components
     ;(component as any).manageButton = () => {
       return {
         el: {
