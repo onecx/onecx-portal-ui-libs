@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   Input,
@@ -15,7 +16,7 @@ import {
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
-import { combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
+import { combineLatest, debounceTime, first, map } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { findTemplate } from '../../utils/template.utils'
@@ -23,7 +24,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { getFilterableColumns, limit } from '../../utils/filter.utils'
 import { Popover } from '@openng/optimus-ui/popover'
 import { Row } from '../data-table/data-table.component'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { Button } from '@openng/optimus-ui/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
@@ -56,6 +57,7 @@ export interface FilterViewComponentState {
 export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly destroyRef = inject(DestroyRef)
   
   ColumnType = ColumnType
   FilterType = FilterType
@@ -289,8 +291,10 @@ export class FilterViewComponent {
     const initiatorRef = (event?.currentTarget ?? undefined) as HTMLElement | undefined
 
     // PortalDialogService does not translate closeAriaLabel
-    void firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')).then(
-      (closeAriaLabel) => {
+    this.translateService
+      .get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')
+      .pipe(first(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((closeAriaLabel) => {
         this.portalDialogService
           .openDialog<Filter[]>(
             'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE',
@@ -318,8 +322,7 @@ export class FilterViewComponent {
               this.applyFilters(state.result)
             }
           })
-      }
-    )
+      })
   }
 
   /** Replaces the existing filters of every column contained in `newFilters`. */
@@ -377,19 +380,13 @@ export class FilterViewComponent {
   private annouceFilterCount() {
     const currentCount = this.stateService.filters()?.length ?? 0
 
-    if (currentCount === 0) {
-      firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')).then(
-        (translatedText: string) => {
-          this.liveAnnouncer.announce(translatedText)
-        }
-      )
-      return
-    }
+    const text$ =
+      currentCount === 0
+        ? this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')
+        : this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })
 
-    firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })).then(
-      (translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText)
-      }
-    )
+    text$.pipe(first(), takeUntilDestroyed(this.destroyRef)).subscribe((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 }

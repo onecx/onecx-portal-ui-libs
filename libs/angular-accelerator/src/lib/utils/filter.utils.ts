@@ -54,7 +54,7 @@ export function formatFilterValueLabel(column: DataTableColumn, value: unknown, 
     : String(value)
 }
 
-export function buildColumnFilters(column: DataTableColumn, values: unknown): Filter[] {
+export function buildColumnFilters(column: DataTableColumn, values: unknown[]): Filter[] {
   const filterType = column.filterType ?? FilterType.EQUALS
-  return Array.isArray(values) ? values.map((value) => ({ columnId: column.id, value, filterType })) : []
+  return values.map((value) => ({ columnId: column.id, value, filterType }))
 }

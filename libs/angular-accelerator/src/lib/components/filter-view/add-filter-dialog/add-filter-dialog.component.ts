@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, LOCALE_ID, computed, effect, inject, input, linkedSignal } from '@angular/core'
+import { Component, LOCALE_ID, computed, effect, inject, input, linkedSignal, untracked } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -62,9 +62,13 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
     () => this.columns().find((column) => column.id === this.selectedColumnId()) ?? null
   )
 
-  readonly selectedValues = linkedSignal<unknown[]>(() => {
-    const column = this.column()
-    return column ? getExistingFilterValues(column, this.existingFilters()) : []
+  // Re-seeded only when the selected column changes, so the user's draft survives input updates
+  readonly selectedValues = linkedSignal<string | null, unknown[]>({
+    source: this.selectedColumnId,
+    computation: (columnId) => {
+      const column = untracked(this.columns).find((candidate) => candidate.id === columnId)
+      return column ? getExistingFilterValues(column, untracked(this.existingFilters)) : []
+    },
   })
 
   readonly columnOptions$: Observable<SelectItem[]> = toObservable(this.columns).pipe(
@@ -104,6 +108,10 @@ export class AddFilterDialogComponent implements DialogResult<Filter[]>, DialogP
 
   onColumnChange(columnId: string | null) {
     this.selectedColumnId.set(columnId)
+  }
+
+  onValuesChange(values: unknown[] | null) {
+    this.selectedValues.set(values ?? [])
   }
 
   private toSelectItem(label: string, value: unknown): SelectItem {

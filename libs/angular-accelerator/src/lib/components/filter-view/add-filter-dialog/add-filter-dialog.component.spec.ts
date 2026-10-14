@@ -316,12 +316,52 @@ describe('AddFilterDialogComponent (class logic)', () => {
     // The PrimeNG MultiSelect clear icon emits `null`, not `[]`. This must not
     // throw inside the sync effect; it should disable the button and reset the
     // result so a stale (pre-removal) filter is never applied.
-    ;(component.selectedValues as any).set(null)
+    component.onValuesChange(null)
     fixture.detectChanges()
     await fixture.whenStable()
 
+    expect(component.selectedValues()).toEqual([])
     expect(component.dialogResult).toEqual([])
     expect(enabledStates[enabledStates.length - 1]).toBe(false)
+  })
+
+  it('should keep the user draft when the columns or existing filters inputs change', async () => {
+    const columns = [makeColumn({ id: 'c1', nameKey: 'C1' }), makeColumn({ id: 'c2', nameKey: 'C2' })]
+    fixture.componentRef.setInput('columns', columns)
+    fixture.componentRef.setInput('data', [{ c1: 'a' }, { c1: 'b' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    component.onValuesChange(['a', 'b'])
+    fixture.componentRef.setInput('columns', [...columns])
+    fixture.componentRef.setInput('existingFilters', [{ columnId: 'c1', value: 'b', filterType: FilterType.EQUALS }])
+    fixture.detectChanges()
+
+    expect(component.selectedValues()).toEqual(['a', 'b'])
+  })
+
+  it('should discard the uncommitted draft when switching away from a column and back', async () => {
+    fixture.componentRef.setInput('columns', [
+      makeColumn({ id: 'c1', nameKey: 'C1' }),
+      makeColumn({ id: 'c2', nameKey: 'C2' }),
+    ])
+    fixture.componentRef.setInput('data', [{ c1: 'a', c2: 'x' }])
+    fixture.componentRef.setInput('existingFilters', [{ columnId: 'c1', value: 'a', filterType: FilterType.EQUALS }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    component.onValuesChange([])
+    component.onColumnChange('c2')
+    expect(component.selectedValues()).toEqual([])
+
+    component.onColumnChange('c1')
+    expect(component.selectedValues()).toEqual(['a'])
+  })
+
+  it('should select no values when there is no column', () => {
+    fixture.detectChanges()
+
+    expect(component.selectedValues()).toEqual([])
   })
 
   it('should offer the fixed yes/no options for an IS_NOT_EMPTY column', async () => {

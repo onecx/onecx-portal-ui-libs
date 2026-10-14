@@ -30,7 +30,7 @@
     [optionLabel]="'label'"
     [optionValue]="'value'"
     [ngModel]="selectedValues()"
-    (ngModelChange)="selectedValues.set($event)"
+    (ngModelChange)="onValuesChange($event)"
     [filter]="true"
     [showClear]="true"
     [maxSelectedLabels]="3"

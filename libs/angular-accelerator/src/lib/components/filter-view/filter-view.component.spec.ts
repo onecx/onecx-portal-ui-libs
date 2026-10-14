@@ -11,7 +11,7 @@ import { DataViewStateService } from '../../services/data-view-state.service'
 import { PortalDialogService } from '../../services/portal-dialog.service'
 import type { Filter } from '../../model/filter.model'
 import { FilterType } from '../../model/filter.model'
-import { of, take } from 'rxjs'
+import { of, Subject, take } from 'rxjs'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { PopoverModule } from '@openng/optimus-ui/popover'
 import { TooltipModule } from '@openng/optimus-ui/tooltip'
@@ -273,6 +273,19 @@ describe('FilterViewComponent (class logic)', () => {
 
     const openDialogSpy = portalDialogService.openDialog as jest.Mock
     expect(openDialogSpy).not.toHaveBeenCalled()
+  })
+
+  it('should not open the add filter dialog when the component is destroyed before the translation resolves', () => {
+    const translations = new Subject<string>()
+    jest.spyOn(TestBed.inject(TranslateService), 'get').mockReturnValue(translations)
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+
+    component.onAddFilter('c2')
+    fixture.destroy()
+    translations.next('close')
+
+    expect(portalDialogService.openDialog).not.toHaveBeenCalled()
   })
 
   it('should replace the whole filter set of the added column on applyFilters', () => {

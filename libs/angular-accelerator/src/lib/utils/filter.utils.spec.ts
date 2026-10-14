@@ -1,6 +1,7 @@
 import { ColumnType } from '../model/column-type.model'
 import { DataTableColumn } from '../model/data-table-column.model'
 import { Filter, FilterType } from '../model/filter.model'
+import { RowListGridData } from '../model/row-list-grid-data.model'
 import {
   buildColumnFilters,
   formatFilterValueLabel,
@@ -13,6 +14,8 @@ import {
 
 const column = (overrides: Partial<DataTableColumn> = {}): DataTableColumn =>
   ({ id: 'c1', nameKey: 'C1', columnType: ColumnType.STRING, filterable: true, ...overrides }) as DataTableColumn
+
+const rows = (...values: unknown[]): RowListGridData[] => values.map((c1, index) => ({ id: `row-${index}`, c1 }))
 
 describe('filter.utils', () => {
   describe('limit', () => {
@@ -66,7 +69,7 @@ describe('filter.utils', () => {
 
   describe('getFilterOptionValues', () => {
     it('should return distinct non-empty values and append existing values missing from the data', () => {
-      const data = [{ c1: 'a' }, { c1: 'b' }, { c1: 'a' }, { c1: '' }, { c1: null }, { c1: undefined }]
+      const data = rows('a', 'b', 'a', '', null, undefined)
       const filters: Filter[] = [
         { columnId: 'c1', value: 'b', filterType: FilterType.EQUALS },
         { columnId: 'c1', value: 'gone', filterType: FilterType.EQUALS },
@@ -79,7 +82,13 @@ describe('filter.utils', () => {
     it('should compare values by their string representation', () => {
       const filters: Filter[] = [{ columnId: 'c1', value: '1', filterType: FilterType.EQUALS }]
 
-      expect(getFilterOptionValues(column(), [{ c1: 1 }], filters)).toEqual([1])
+      expect(getFilterOptionValues(column(), rows(1), filters)).toEqual([1])
+    })
+
+    it('should keep a numeric string that only exists as a filter distinct from other numeric values', () => {
+      const filters: Filter[] = [{ columnId: 'c1', value: '01', filterType: FilterType.EQUALS }]
+
+      expect(getFilterOptionValues(column(), rows(1), filters)).toEqual([1, '01'])
     })
   })
 
@@ -115,8 +124,8 @@ describe('filter.utils', () => {
       ])
     })
 
-    it('should return no filters for a non-array selection', () => {
-      expect(buildColumnFilters(column(), null)).toEqual([])
+    it('should return no filters for an empty selection', () => {
+      expect(buildColumnFilters(column(), [])).toEqual([])
     })
   })
 })

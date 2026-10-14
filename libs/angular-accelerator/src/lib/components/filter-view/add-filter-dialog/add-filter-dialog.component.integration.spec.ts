@@ -9,7 +9,7 @@ import {
 } from '@onecx/angular-integration-interface/mocks'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
-import { PortalDialogService, providePortalDialogService } from '../../../services/portal-dialog.service'
+import { DialogState, PortalDialogService, providePortalDialogService } from '../../../services/portal-dialog.service'
 import { AddFilterDialogComponent } from './add-filter-dialog.component'
 import type { DataTableColumn } from '../../../model/data-table-column.model'
 import { ColumnType } from '../../../model/column-type.model'
@@ -40,7 +40,7 @@ class AddFilterDialogHost {
     existingFilters: Filter[] = [],
     preselectColumnId?: string,
     initiatorRef?: HTMLElement
-  ): Promise<{ button?: string; result?: Filter[] } | null> {
+  ): Promise<DialogState<Filter[]> | null | undefined> {
     return this.portalDialogService
       .openDialog<Filter[]>(
         'TITLE',
@@ -106,7 +106,7 @@ describe('AddFilterDialogComponent (integration / harness)', () => {
   // dialog.
   function openDialog(
     extra?: { existingFilters?: Filter[]; preselectColumnId?: string; initiatorRef?: HTMLElement }
-  ): Promise<{ button?: string; result?: Filter[] } | null> {
+  ): Promise<DialogState<Filter[]> | null | undefined> {
     return host.open(
       columns,
       data,
