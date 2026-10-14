@@ -35,7 +35,7 @@ sequenceDiagram
   PS->>Cache: read
   PS->>BFF: getParameters (missing/expired only)
   BFF-->>PS: values
-  PS->>Cache: write (3,600,000s expiry; about 1000h / 41d16h)
+  PS->>Cache: write (3,600,000s expiry, about 1000h / 41d16h)
   PS->>Topic: publish(payload)
   App->>Topic: get(key) (gated on PARAMETERS_TOPIC capability)
   Topic-->>App: findParameterValue -> value or default
