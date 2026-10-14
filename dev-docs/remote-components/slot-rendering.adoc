@@ -60,6 +60,8 @@ Keying the style usage by slot name is what ties a component's styling to its sl
 
 The `@scope` mechanism and the `data-style-id`/`data-style-isolation` attributes are explained in the link:../styling/scope-model.adoc[`@scope` scoping model] (Area 4). This Unit owns only the slot's part: marking the child, and loading and unloading the component's scoped styles per slot.
 
+Styling keeps a component's rules with it; it does not make the component aware of the slot's pixel size. A component that needs to react to the slot resizing (for example, to reflow a chart or collapse on a narrow viewport) uses the size-reporting channel, not styling: see link:slot-size-reporting.adoc[Slot size reporting].
+
 == Libs side / Shell side
 
 === Libs side
