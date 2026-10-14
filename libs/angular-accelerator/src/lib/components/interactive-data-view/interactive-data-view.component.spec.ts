@@ -771,15 +771,15 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const gridItemSubtitleLinesTemplate = {} as TemplateRef<any>
       const listItemSubtitleLinesTemplate = {} as TemplateRef<any>
       const topCenterTemplate = {} as TemplateRef<any>
-      const topLeftTemplate = {} as TemplateRef<any>
-      const topRightTemplate = {} as TemplateRef<any>
+      const topStartTemplate = {} as TemplateRef<any>
+      const topEndTemplate = {} as TemplateRef<any>
 
       const templates = [
         { getType: () => 'gridItemSubtitleLines', template: gridItemSubtitleLinesTemplate } as PrimeTemplate,
         { getType: () => 'listItemSubtitleLines', template: listItemSubtitleLinesTemplate } as PrimeTemplate,
         { getType: () => 'topCenter', template: topCenterTemplate } as PrimeTemplate,
-        { getType: () => 'topLeft', template: topLeftTemplate } as PrimeTemplate,
-        { getType: () => 'topRight', template: topRightTemplate } as PrimeTemplate,
+        { getType: () => 'topStart', template: topStartTemplate } as PrimeTemplate,
+        { getType: () => 'topEnd', template: topEndTemplate } as PrimeTemplate,
       ]
 
       setInputSignal(component, 'templates', templates)
@@ -787,8 +787,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._gridItemSubtitleLines()).toBe(gridItemSubtitleLinesTemplate)
       expect(component._listItemSubtitleLines()).toBe(listItemSubtitleLinesTemplate)
       expect(component._topCenter()).toBe(topCenterTemplate)
-      expect(component._topLeft()).toBe(topLeftTemplate)
-      expect(component._topRight()).toBe(topRightTemplate)
+      expect(component._topStart()).toBe(topStartTemplate)
+      expect(component._topEnd()).toBe(topEndTemplate)
     })
 
     it('should fall back to child template for all template types when no Optimus template is found', () => {
@@ -808,8 +808,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childGridItem', mockTemplate)
       setInputSignal(component, 'childListItem', mockTemplate)
       setInputSignal(component, 'childTopCenter', mockTemplate)
-      setInputSignal(component, 'childTopLeft', mockTemplate)
-      setInputSignal(component, 'childTopRight', mockTemplate)
+      setInputSignal(component, 'childTopStart', mockTemplate)
+      setInputSignal(component, 'childTopEnd', mockTemplate)
       setInputSignal(component, 'childListValue', mockTemplate)
       setInputSignal(component, 'childTranslationKeyListValue', mockTemplate)
       setInputSignal(component, 'childNumberListValue', mockTemplate)
@@ -835,8 +835,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._gridItem()).toBe(mockTemplate)
       expect(component._listItem()).toBe(mockTemplate)
       expect(component._topCenter()).toBe(mockTemplate)
-      expect(component._topLeft()).toBe(mockTemplate)
-      expect(component._topRight()).toBe(mockTemplate)
+      expect(component._topStart()).toBe(mockTemplate)
+      expect(component._topEnd()).toBe(mockTemplate)
       expect(component._listValue()).toBe(mockTemplate)
       expect(component._translationKeyListValue()).toBe(mockTemplate)
       expect(component._numberListValue()).toBe(mockTemplate)
@@ -867,8 +867,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childGridItem', undefined)
       setInputSignal(component, 'childListItem', undefined)
       setInputSignal(component, 'childTopCenter', undefined)
-      setInputSignal(component, 'childTopLeft', undefined)
-      setInputSignal(component, 'childTopRight', undefined)
+      setInputSignal(component, 'childTopStart', undefined)
+      setInputSignal(component, 'childTopEnd', undefined)
       setInputSignal(component, 'childListValue', undefined)
       setInputSignal(component, 'childTranslationKeyListValue', undefined)
       setInputSignal(component, 'childNumberListValue', undefined)
@@ -894,8 +894,8 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._gridItem()).toBeUndefined()
       expect(component._listItem()).toBeUndefined()
       expect(component._topCenter()).toBeUndefined()
-      expect(component._topLeft()).toBeUndefined()
-      expect(component._topRight()).toBeUndefined()
+      expect(component._topStart()).toBeUndefined()
+      expect(component._topEnd()).toBeUndefined()
       expect(component._listValue()).toBeUndefined()
       expect(component._translationKeyListValue()).toBeUndefined()
       expect(component._numberListValue()).toBeUndefined()
@@ -912,7 +912,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
   })
 
-  describe('header content projection (topLeft / topRight / topCenter)', () => {
+  describe('header content projection (topStart / topEnd / topCenter)', () => {
     const createHostFixture = (Host: any) => {
       const slotService = {
         isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
@@ -935,47 +935,43 @@ describe('InteractiveDataViewComponent (class logic)', () => {
         template: `<ocx-interactive-data-view>${innerTemplate}</ocx-interactive-data-view>`,
       })(class {})
 
-    describe('topLeft', () => {
-      it('should render projected #topLeft content and hide the default left-hand controls', () => {
+    describe('topStart', () => {
+      it('should render projected #topStart content alongside the default left-hand controls', () => {
         const fixture = createHostFixture(
-          hostWith(`<ng-template #topLeft><span data-testid="top-left-custom">TOP_LEFT</span></ng-template>`)
+          hostWith(`<ng-template #topStart><span data-testid="top-start-custom">TOP_START</span></ng-template>`)
         )
 
-        expect(fixture.nativeElement.textContent).toContain('TOP_LEFT')
-        expect(fixture.nativeElement.querySelector('ocx-data-layout-selection')).toBeNull()
-        expect(fixture.nativeElement.querySelector('ocx-filter-view')).toBeNull()
+        expect(fixture.nativeElement.textContent).toContain('TOP_START')
+        expect(fixture.nativeElement.querySelector('ocx-data-layout-selection')).not.toBeNull()
       })
 
-      it('should render projected pTemplate="topLeft" content and hide the default left-hand controls', () => {
+      it('should render projected pTemplate="topStart" content alongside the default left-hand controls', () => {
         const fixture = createHostFixture(
-          hostWith(`<ng-template pTemplate="topLeft"><span data-testid="top-left-custom">TOP_LEFT_PRIME</span></ng-template>`)
+          hostWith(`<ng-template pTemplate="topStart"><span data-testid="top-start-custom">TOP_START_PRIME</span></ng-template>`)
         )
 
-        expect(fixture.nativeElement.textContent).toContain('TOP_LEFT_PRIME')
-        expect(fixture.nativeElement.querySelector('ocx-data-layout-selection')).toBeNull()
-        expect(fixture.nativeElement.querySelector('ocx-filter-view')).toBeNull()
+        expect(fixture.nativeElement.textContent).toContain('TOP_START_PRIME')
+        expect(fixture.nativeElement.querySelector('ocx-data-layout-selection')).not.toBeNull()
       })
     })
 
-    describe('topRight', () => {
-      it('should render projected #topRight content and hide the default right-hand controls', () => {
+    describe('topEnd', () => {
+      it('should render projected #topEnd content alongside the default right-hand controls', () => {
         const fixture = createHostFixture(
-          hostWith(`<ng-template #topRight><span data-testid="top-right-custom">TOP_RIGHT</span></ng-template>`)
+          hostWith(`<ng-template #topEnd><span data-testid="top-end-custom">TOP_END</span></ng-template>`)
         )
 
-        expect(fixture.nativeElement.textContent).toContain('TOP_RIGHT')
-        expect(fixture.nativeElement.querySelector('ocx-data-list-grid-sorting')).toBeNull()
-        expect(fixture.nativeElement.querySelector('ocx-custom-group-column-selector')).toBeNull()
+        expect(fixture.nativeElement.textContent).toContain('TOP_END')
+        expect(fixture.nativeElement.querySelector('ocx-data-list-grid-sorting')).not.toBeNull()
       })
 
-      it('should render projected pTemplate="topRight" content and hide the default right-hand controls', () => {
+      it('should render projected pTemplate="topEnd" content alongside the default right-hand controls', () => {
         const fixture = createHostFixture(
-          hostWith(`<ng-template pTemplate="topRight"><span data-testid="top-right-custom">TOP_RIGHT_PRIME</span></ng-template>`)
+          hostWith(`<ng-template pTemplate="topEnd"><span data-testid="top-end-custom">TOP_END_PRIME</span></ng-template>`)
         )
 
-        expect(fixture.nativeElement.textContent).toContain('TOP_RIGHT_PRIME')
-        expect(fixture.nativeElement.querySelector('ocx-data-list-grid-sorting')).toBeNull()
-        expect(fixture.nativeElement.querySelector('ocx-custom-group-column-selector')).toBeNull()
+        expect(fixture.nativeElement.textContent).toContain('TOP_END_PRIME')
+        expect(fixture.nativeElement.querySelector('ocx-data-list-grid-sorting')).not.toBeNull()
       })
     })
 
