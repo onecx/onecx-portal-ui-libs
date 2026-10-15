@@ -16,7 +16,7 @@ import {
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
-import { combineLatest, debounceTime, first, map } from 'rxjs'
+import { combineLatest, debounceTime, first, map, mergeMap, tap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { findTemplate } from '../../utils/template.utils'
@@ -293,36 +293,42 @@ export class FilterViewComponent {
     // PortalDialogService does not translate closeAriaLabel
     this.translateService
       .get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')
-      .pipe(first(), takeUntilDestroyed(this.destroyRef))
-      .subscribe((closeAriaLabel) => {
-        this.portalDialogService
-          .openDialog<Filter[]>(
-            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE',
-            {
-              type: AddFilterDialogComponent,
-              inputs: {
-                columns,
-                data: this.stateService.data(),
-                existingFilters: this.stateService.filters(),
-                preselectColumnId: columnId,
+      .pipe(
+        first(),
+        mergeMap((closeAriaLabel) =>
+          this.portalDialogService
+            .openDialog<Filter[]>(
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE',
+              {
+                type: AddFilterDialogComponent,
+                inputs: {
+                  columns,
+                  data: this.stateService.data(),
+                  existingFilters: this.stateService.filters(),
+                  preselectColumnId: columnId,
+                },
               },
-            },
-            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON',
-            'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
-            {
-              closeAriaLabel,
-              width: 'min(350px, 90vw)',
-              initiatorRef,
-              onCloseFocus: 'initiator',
-            }
-          )
-          .subscribe((state) => {
-            // The result pre-selects existing values, so it is non-empty even when cancelled unchanged
-            if (state?.button === 'primary' && state.result && state.result.length > 0) {
-              this.applyFilters(state.result)
-            }
-          })
-      })
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON',
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
+              {
+                closeAriaLabel,
+                width: 'min(350px, 90vw)',
+                initiatorRef,
+                onCloseFocus: 'initiator',
+              }
+            )
+            .pipe(
+              tap((state) => {
+                // The result pre-selects existing values, so it is non-empty even when cancelled unchanged
+                if (state?.button === 'primary' && state.result && state.result.length > 0) {
+                  this.applyFilters(state.result)
+                }
+              })
+            )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe()
   }
 
   /** Replaces the existing filters of every column contained in `newFilters`. */

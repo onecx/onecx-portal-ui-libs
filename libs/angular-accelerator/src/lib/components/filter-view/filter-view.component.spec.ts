@@ -288,6 +288,22 @@ describe('FilterViewComponent (class logic)', () => {
     expect(portalDialogService.openDialog).not.toHaveBeenCalled()
   })
 
+  it('should not apply the dialog result when the component is destroyed before the dialog closes', () => {
+    stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
+    stateService.data.set([{ c2: 'v' }] as any)
+    stateService.filters.set([])
+
+    // Simulate an open dialog that emits its state only after the component is destroyed.
+    const dialogClose = new Subject<{ button: string; result: Filter[] }>()
+    ;(portalDialogService.openDialog as jest.Mock).mockReturnValueOnce(dialogClose)
+
+    component.onAddFilter('c2')
+    fixture.destroy()
+    dialogClose.next({ button: 'primary', result: [{ columnId: 'c2', value: 'v', filterType: FilterType.EQUALS }] })
+
+    expect(stateService.filters()).toEqual([])
+  })
+
   it('should replace the whole filter set of the added column on applyFilters', () => {
     stateService.filters.set([
       { columnId: 'c1', value: 'old', filterType: FilterType.EQUALS } as Filter,
