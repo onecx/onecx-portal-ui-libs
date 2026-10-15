@@ -73,7 +73,7 @@ The three-part contract is:
 | A `PrimeNgComponentSettingsApplier` registered in `PRIMENG_COMPONENT_SETTINGS_APPLIERS` that pushes resolved settings to live PrimeNG instances by monkey-patching the component prototype.
 
 | **Reactive wiring** (OneCX)
-| The `useAcceleratorTableThemeDefaults()` composable that subscribes to the current themes, gates on V2 availability, and mirrors each mapped table setting into a signal that the accelerator components read.
+| The `useAcceleratorTableThemeDefaults()` composable — shared by the table-family components (DataTableComponent, DataViewComponent, and InteractiveDataViewComponent). It subscribes to the current themes, gates on V2 availability, and mirrors each mapped table setting into signals those table-family accelerator components read.
 |===
 
 [#navigation]
@@ -257,7 +257,7 @@ link:{mapper_cluster_root}/helpers.ts[helpers.ts] provides the value conversions
 | `asEnum<TValue extends string>(allowed)`
 | Keeps the value when it is one of `allowed`, else `undefined`.
 | `mapValues(mapping)`
-| Maps one set of string literals to another (for example `{ start: 'left', end: 'right' }`); drops anything not in the mapping.
+| Maps one set of string literals to another (for example `{ start: 'left', end: 'right' }`). Example: `mapValues({ start: 'left', end: 'right' })('start')` -> `'left'`, `mapValues({ start: 'left', end: 'right' })('end')` -> `'right'`; an unsupported input such as `'middle'` is dropped (the transform returns `undefined`), so the mapper omits the target field.
 
 | `asObservable(source)`
 | Returns the RxJS `Observable` exposed by an `Observable` *or* a OneCX `Topic` (anything with `asObservable()`). Used by the reactive wiring so it can subscribe to either without a runtime type guard.
@@ -268,19 +268,16 @@ Returning `undefined` from any transform (including `asBoolean`/`asNumber` on a 
 [#public-surface]
 === Public export surface vs internal helpers
 
-The feature's **public** surface is the single barrel link:{mapper_cluster_root}/index.ts[index.ts], which is re-exported by the package barrel (link:../../../../libs/angular-utils/src/index.ts[angular-utils/src/index.ts]). It exposes, and intentionally limits exposure to, exactly:
+The feature's public surface is the single barrel link:{mapper_cluster_root}/index.ts[index.ts], re-exported by the package barrel (link:../../../../libs/angular-utils/src/index.ts[angular-utils/src/index.ts]). It intentionally limits exposure to these provider-facing exports:
 
-[source,typescript]
-----
-export * from './usage-settings.utils'              // mapThemeUsageSettings
-export * from './providers/accelerator/table/table.mapper'      // mapAcceleratorTableSettings, AcceleratorTableInputDefaults
-export * from './providers/accelerator/table/table.wiring'      // useAcceleratorTableThemeDefaults
-export * from './providers/primeng/carousel/carousel.mapper'    // mapPrimeNgCarouselSettings, PrimeNgCarouselInputDefaults
-export * from './providers/primeng/component-settings-applier.token' // PRIMENG_COMPONENT_SETTINGS_APPLIERS, PrimeNgComponentSettingsApplier
-export * from './providers/primeng/carousel/carousel-component-settings.service' // CarouselComponentSettingsService
-----
+* mapThemeUsageSettings — the extraction function (from usage-settings.utils)
+* mapAcceleratorTableSettings, AcceleratorTableInputDefaults — the accelerator table mapper and its input-defaults interface (providers/accelerator/table/table.mapper)
+* useAcceleratorTableThemeDefaults — the V2-gated wiring composable shared by the table-family accelerator components (providers/accelerator/table/table.wiring)
+* mapPrimeNgCarouselSettings, PrimeNgCarouselInputDefaults — the PrimeNG carousel mapper and its input-defaults interface (providers/primeng/carousel/carousel.mapper)
+* PRIMENG_COMPONENT_SETTINGS_APPLIERS, PrimeNgComponentSettingsApplier — the applier registry token and runtime applier interface (providers/primeng/component-settings-applier.token)
+* CarouselComponentSettingsService — the provider-specific service that applies carousel settings at runtime (providers/primeng/carousel/carousel-component-settings.service)
 
-Everything else in the cluster is **internal** — imported *relative* to the feature directory, not re-exported from the package:
+Everything else in the cluster is internal — imported relatively to the feature directory and not re-exported from the package:
 
 * `helpers.ts` — `defineUsageSettingsMapper`, the transforms, `asObservable`.
 * `types.ts` — `ThemeUsageSettingsMapDefinition`, `ThemeUsageSettingsMappingEntry`, `ThemeUsageSettingsDefinitionMapper`, `ThemeUsageSettingsTransform`.
