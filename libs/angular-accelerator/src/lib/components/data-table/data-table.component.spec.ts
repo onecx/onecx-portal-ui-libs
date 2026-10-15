@@ -34,8 +34,8 @@ describe('DataTableComponent', () => {
       SEARCH_RESULTS_FOUND: '{{results}} Results Found',
       NO_SEARCH_RESULTS_FOUND: 'No Results Found',
     },
-    PROCEDURE_STEP: {
-      APPOINTMENT_BOOKING: 'Appointment booking',
+    BOOK_GENRE: {
+      FICTION: 'Fiction',
     },
   }
 
@@ -1098,7 +1098,8 @@ describe('DataTableComponent', () => {
     const statusColumn = mockColumns.find((c) => c.id === 'status')!
 
     it('should show the translated label for a selected filter whose rows are no longer present', async () => {
-      const selectedKey = 'PROCEDURE_STEP.APPOINTMENT_BOOKING'
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      component.columns = mockColumns
       component.filters = [{ columnId: 'status', value: selectedKey }] as any
       // The search criteria narrows the result set so the selected option no longer appears as a row.
       component.rows = []
@@ -1111,12 +1112,12 @@ describe('DataTableComponent', () => {
 
       expect(option).toBeDefined()
       // Regression: the raw key was shown instead of the translation once the row set became empty.
-      expect(option!.label).toBe('Appointment booking')
+      expect(option!.label).toBe('Fiction')
     })
 
     it('should show translated labels for the visible rows while keeping the selected filter', async () => {
-      const selectedKey = 'PROCEDURE_STEP.APPOINTMENT_BOOKING'
-      const otherKey = 'PROCEDURE_STEP.OTHER'
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      const otherKey = 'BOOK_GENRE.NON_FICTION'
       component.columns = mockColumns
       component.rows = [{ id: 'r1', status: otherKey } as any]
       component.filters = [{ columnId: 'status', value: selectedKey }] as any
@@ -1129,7 +1130,7 @@ describe('DataTableComponent', () => {
       expect(options.map((o) => o.value)).toEqual(expect.arrayContaining([otherKey, selectedKey]))
       expect(options.find((o) => o.value === otherKey)!.label).toBe(otherKey)
       // The orphaned, still-selected filter stays readable with its translation.
-      expect(options.find((o) => o.value === selectedKey)!.label).toBe('Appointment booking')
+      expect(options.find((o) => o.value === selectedKey)!.label).toBe('Fiction')
     })
   })
 

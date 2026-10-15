@@ -569,26 +569,16 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
         // Key is being passed down and stored in local storage
         return translateObservable.pipe(
           map((translatedValues) => {
-            return Object.entries(translatedValues)
-              .map(([key, translatedValue]) => ({
-                label: translatedValue,
-                value: key,
-                toFilterBy: translatedValue,
-              }) as SelectItem)
-              // Concat existing user selected filters that are not in the current column values to ensure they remain visible in the dropdown.
-              .concat(
-                currentFilters
-                  .filter(filterValue => !columnValues.includes(filterValue as string))
-                  .map(filterValue => ({
-                    label: translatedValues[filterValue as string] || filterValue,
-                    value: filterValue,
-                    toFilterBy: translatedValues[filterValue as string] || filterValue,
-                  }) as SelectItem)
-              )
-              // Remove duplicates
-              .filter((item, index, self) => 
-                self.findIndex(i => i.value === item.value) === index
-              )
+            // valuesToTranslate already contains the selected filters, so the single translated
+            // map covers both the visible rows and any selected filter that has no matching row.
+            return Object.entries(translatedValues).map(
+              ([key, translatedValue]) =>
+                ({
+                  label: translatedValue,
+                  value: key,
+                  toFilterBy: translatedValue,
+                }) as SelectItem
+            )
           }),
           map((options) => {
             return {
