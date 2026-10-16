@@ -392,10 +392,13 @@ describe('CustomGroupColumnSelectorComponent', () => {
       component.actionColumnPositionModel.set('right')
 
       // Simulate the user highlighting an item without moving it: the models are untouched,
-      // so save must stay disabled.
-      const pickList = { SOURCE_LIST: -1, TARGET_LIST: 1, setSelectionList: jest.fn(), cd: { markForCheck: jest.fn() } }
-      pickList.setSelectionList(-1, [c1])
+      // so save must stay disabled even though the real PickList reports a selection.
+      const pickListMock = { SOURCE_LIST: -1, TARGET_LIST: 1, setSelectionList: jest.fn(), cd: { markForCheck: jest.fn() } }
+      // viewChild() produces a read-only signal, so substitute a writable one for this test.
+      Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
+      component.pickList().setSelectionList(component.pickList().SOURCE_LIST, [c1])
 
+      expect(pickListMock.setSelectionList).toHaveBeenCalledWith(-1, [c1])
       expect(component.columnsChanged()).toBe(false)
       expect(component.actionSettingsChanged()).toBe(false)
       expect(component.canSave()).toBe(false)
