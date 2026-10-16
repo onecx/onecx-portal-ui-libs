@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`carousel schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "container": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.md}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "padding": "{{primitives.space.md}}",
+    },
+    "content": Object {
+      "gap": "{{primitives.space.md}}",
+    },
+    "indicator": Object {
+      "defaultVariant": Object {
+        "active": Object {
+          "background": "{{primitives.defaultVariant.state.active.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}",
+            "style": "{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
+        },
+        "defaultState": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+            "offset": "{{primitives.border.offset.none}}",
+            "radius": "{{primitives.border.radius.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+            "width": "{{primitives.border.width.none}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "focus": Object {
+          "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+            "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+            "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+      },
+      "focusRing": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.md}}",
+        "shadow": "{{primitives.shadow.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "height": "{{primitives.space.md}}",
+      "width": "{{primitives.space.md}}",
+    },
+    "item": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.none}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "paddingX": "{{primitives.space.md}}",
+      "paddingY": "{{primitives.space.md}}",
+    },
+    "navigationButton": Object {
+      "defaultVariant": Object {
+        "defaultState": Object {
+          "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+            "offset": "{{primitives.border.offset.none}}",
+            "radius": "{{primitives.border.radius.md}}",
+            "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+            "width": "{{primitives.border.width.md}}",
+          },
+          "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+        },
+        "disabled": Object {
+          "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+          "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+        },
+        "focus": Object {
+          "background": "{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+            "style": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
+        },
+        "hover": Object {
+          "background": "{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}",
+          "border": Object {
+            "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+            "style": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}",
+          },
+          "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
+        },
+      },
+      "focusRing": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.border.radius.md}}",
+        "shadow": "{{primitives.shadow.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "padding": "{{primitives.space.sm}}",
+    },
+  },
+  "transitionDuration": "{{primitives.transition.duration}}",
+}
+`;

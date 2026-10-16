@@ -35,7 +35,7 @@ export const tabRules: CssRule[] = [
     declarations: [
       {
         property: 'transition-duration',
-        from: 'usages.tabs.tab.activeBar.transition.duration',
+        from: 'usages.tabs.tab.defaultState.activeBar.transition.duration',
       },
     ],
   },
