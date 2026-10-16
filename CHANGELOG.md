@@ -1,3 +1,16 @@
+## [7.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.13.1...v7.14.0) (2026-10-15)
+
+### Features
+
+* add ai-completion.service ([#1799](https://github.com/onecx/onecx-portal-ui-libs/issues/1799)) ([eda677a](https://github.com/onecx/onecx-portal-ui-libs/commit/eda677a1c91b6dd2bf12174994be7521692d2c81))
+* add AiCompletionGatherer as transport between consumers and AI provider connector ([#1751](https://github.com/onecx/onecx-portal-ui-libs/issues/1751)) ([#1758](https://github.com/onecx/onecx-portal-ui-libs/issues/1758)) ([0d6edfc](https://github.com/onecx/onecx-portal-ui-libs/commit/0d6edfcb04fac8ebd79430f62576099af63e86f2))
+* add configurable search header buttons (v6) ([#1802](https://github.com/onecx/onecx-portal-ui-libs/issues/1802)) ([21baa58](https://github.com/onecx/onecx-portal-ui-libs/commit/21baa58103579aef0e11191fa0997c923439eb3a))
+
+### Bug Fixes
+
+* **data-table:** translate selected translation_key filter when its rows are absent ([#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819)) ([5ddecc5](https://github.com/onecx/onecx-portal-ui-libs/commit/5ddecc511174f7615fa394fd591678874be819d5))
+* resolve gatherer id issues when using multiple gatherers ([#1810](https://github.com/onecx/onecx-portal-ui-libs/issues/1810)) ([13d8d58](https://github.com/onecx/onecx-portal-ui-libs/commit/13d8d5820b48eb11783572d66dbd11adfb3d31d2))
+
 ## [7.13.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.13.0...v7.13.1) (2026-09-29)
 
 ### Bug Fixes
