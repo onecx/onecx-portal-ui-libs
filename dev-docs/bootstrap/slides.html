@@ -138,6 +138,7 @@
 <!-- ============ AGENDA ============ -->
 <section>
   <h2>Today</h2>
+  <p class="small muted">Primer first — how <b>web components</b> work, the primitives behind every part below.</p>
   <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:40px">
     <div class="box b-lib" style="padding:18px"><div class="pill bg-lib">1</div><h3 style="margin-top:12px">Why bootstrap?</h3><p class="small muted">one line, many jobs</p></div>
     <div class="box b-shell" style="padding:18px"><div class="pill bg-shell">2</div><h3 style="margin-top:12px">Startup timeline</h3><p class="small muted">stage by stage</p></div>
@@ -147,6 +148,144 @@
   </div>
   <div style="margin-top:50px;display:flex;align-items:center;gap:10px" class="small muted">
     <span>Area 2 · Bootstrap</span><div style="flex:1;height:4px;background:linear-gradient(90deg,var(--lib),var(--app) 70%,var(--guard))"></div><span>Area 7 · Navigation</span>
+  </div>
+</section>
+
+<!-- ============ PRIMER ============ -->
+<section class="divider">
+  <div class="num">P</div>
+  <h1>How web components work</h1>
+  <p class="muted">The browser-native primitives every part of this talk stands on</p>
+</section>
+
+<!-- what a custom element is -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · the primitive</div>
+  <h2>A tag with a brain</h2>
+  <div class="row" style="margin-top:20px;align-items:center">
+    <div class="col">
+      <div class="box b-app" style="height:340px;display:flex;flex-direction:column;justify-content:center">
+        <span class="lbl c-app">how it looks in the DOM</span>
+<pre class="code light" style="margin:10px 0;font-size:0.5em">&lt;ocx-workspace-component&gt;
+  <span class="c">… the whole workspace app,
+      rendered right here …</span>
+&lt;/ocx-workspace-component&gt;</pre>
+        <div class="tiny muted" style="text-align:center">an ordinary DOM node — like a <code>&lt;div&gt;</code>, but with behavior</div>
+      </div>
+    </div>
+    <div style="font-size:2em;align-self:center" data-from="1">→</div>
+    <div class="col" data-from="1">
+      <div class="box b-lib"><span class="lbl c-lib">what it really is</span>
+<pre class="code light" style="margin-top:8px;font-size:0.5em"><span class="k">class</span> <span class="t">OcxWorkspaceComponent</span> <span class="k">extends</span> <span class="t">HTMLElement</span> {
+  <span class="a">connectedCallback</span>() {  }    <span class="c">// "I'm in the DOM"</span>
+  <span class="a">disconnectedCallback</span>() { }  <span class="c">// "I left the DOM"</span>
+}</pre>
+        <div class="tiny" style="margin-top:10px">The browser builds this class <b>for you</b> whenever it sees the tag.</div>
+      </div>
+      <div class="cap" style="margin-top:16px" data-from="2">No framework needed to <b>use</b> it. To the Shell it's just a node: <code>createElement</code> · <code>append</code> · <code>remove</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- define -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · step 1 of 2</div>
+  <h2><code>customElements.define</code> — teach the browser a tag</h2>
+  <div class="row" style="align-items:center;margin-top:10px">
+    <div class="col">
+<pre class="code" style="font-size:0.5em"><span class="hl"><span class="a">customElements</span>.<span class="a">define</span>(
+  <span class="s">'ocx-workspace-component'</span>,
+  OcxWorkspaceComponent
+)</span>
+<span class="c">// register the name + the class</span>
+<span class="c">// the name must contain a "-"</span></pre>
+    </div>
+    <div style="width:440px">
+      <div class="box" style="text-align:center"><b class="small">After this…</b><div class="tiny muted">the tag <b>exists</b> — but nothing is running yet</div></div>
+      <div class="stack" style="margin-top:16px">
+        <div class="cap" data-until="1">Define ≠ instantiate. <code>define</code> runs <b>once per page, per name</b>.</div>
+        <div class="cap off" data-from="1">Register the same name twice → <code class="c-bad">NotSupportedError</code>.<br><span class="muted">so element names must be unique per page.</span></div>
+      </div>
+      <div class="box" style="margin-top:16px;border-color:var(--ok)" data-from="2"><b class="tiny c-ok">The app owns this.</b><div class="tiny">It happens once, during bootstrap (Part 3 · Patches 6+7).</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- instantiate / lifecycle -->
+<section>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+  <div class="kicker">Primer · step 2 of 2</div>
+  <h2><code>createElement</code> + <code>append</code> — the app comes alive</h2>
+  <div class="row" style="margin-top:10px">
+    <div class="col">
+<pre class="code" style="font-size:0.5em"><span class="c">// the Shell does this — it's all it does:</span>
+<span class="k">const</span> el = <span class="hl">document.<span class="a">createElement</span>(
+  <span class="s">'ocx-workspace-component'</span>)</span>
+<span class="c">// → plain node, nothing runs yet</span>
+
+<span class="hl">wrapper.<span class="a">appendChild</span>(el)</span>
+<span class="c">// → connectedCallback() fires</span>
+<span class="c">//   → the app starts (ngOnInit → connect)</span></pre>
+    </div>
+    <div style="width:470px">
+      <div class="box b-app"><span class="lbl c-app">the element's lifecycle</span>
+        <div class="seq" style="margin-top:10px">
+          <div><span class="n bg-app">1</span><span><code>createElement</code> → node made, <b>not yet connected</b></span></div>
+          <div data-from="1"><span class="n bg-app">2</span><span><code>append</code> into the DOM → <code>connectedCallback</code> → <b>app boots</b></span></div>
+          <div data-from="2"><span class="n bg-shell">3</span><span><code>remove</code> from the DOM → <code>disconnectedCallback</code> → app torn down</span></div>
+        </div>
+      </div>
+      <div class="cap" style="margin-top:16px" data-from="3"><b>The app's whole lifetime = the element's time in the DOM.</b> In → <code>connectedCallback</code> · out → <code>disconnectedCallback</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- define vs instantiate -->
+<section>
+  <div class="kicker">Primer · why this matters</div>
+  <h2>The app <span class="c-lib">defines</span> · the Shell <span class="c-shell">instantiates</span></h2>
+  <svg viewBox="0 0 1180 360" style="width:100%;margin-top:10px">
+    <defs><marker id="pv" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    <rect x="40" y="60" width="340" height="240" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+    <text x="210" y="95" text-anchor="middle" font-weight="800" font-size="20" fill="#7c3aed">App (libs)</text>
+    <text x="210" y="120" text-anchor="middle" font-size="14" fill="#64748b">once, at bootstrap</text>
+    <rect x="70" y="150" width="280" height="58" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/><text x="210" y="178" text-anchor="middle" font-family="monospace" font-size="15" fill="#7c3aed">customElements.define(name, El)</text><text x="210" y="199" text-anchor="middle" font-size="13" fill="#64748b">teaches the browser the tag</text>
+    <text x="210" y="248" text-anchor="middle" font-size="14">defines the <tspan font-weight="700">class</tspan></text>
+    <rect x="800" y="60" width="340" height="240" rx="16" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/>
+    <text x="970" y="95" text-anchor="middle" font-weight="800" font-size="20" fill="#475569">Shell</text>
+    <text x="970" y="120" text-anchor="middle" font-size="14" fill="#64748b">every navigation</text>
+    <rect x="830" y="150" width="280" height="58" rx="10" fill="white" stroke="#475569" stroke-width="2"/><text x="970" y="178" text-anchor="middle" font-family="monospace" font-size="15" fill="#475569">createElement + append</text><text x="970" y="199" text-anchor="middle" font-size="13" fill="#64748b">→ connectedCallback → app boots</text>
+    <text x="970" y="248" text-anchor="middle" font-size="14">instantiates a <tspan font-weight="700">living instance</tspan></text>
+    <path d="M385 179 C 560 179, 620 179, 825 179" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#pv)"/>
+    <text x="605" y="158" text-anchor="middle" font-size="15" fill="#64748b">reuses the registered class</text>
+  </svg>
+  <p class="small" style="text-align:center;margin-top:4px">The Shell never touches the app's framework — it just makes a DOM node. <b>Insertion is the boot signal.</b></p>
+  <p class="tiny muted" style="text-align:center;margin-top:2px">There's a third web-component tool — Shadow DOM (style isolation). OneCX apps instead render into the light DOM and let the Shell scope their styles to the element.</p>
+</section>
+
+<!-- demo -->
+<section class="demo">
+  <div class="kicker">Primer · try it</div>
+  <h2>Watch it come alive</h2>
+  <div class="row" style="margin-top:16px">
+    <div style="width:360px">
+      <div class="box" style="text-align:center"><b class="small">The Shell</b>
+        <div class="tiny muted" style="margin:8px 0 12px">it only creates &amp; removes a node</div>
+        <button id="wc-mount">createElement + append</button>
+        <div style="margin-top:8px"><button id="wc-unmount" disabled>remove</button></div>
+      </div>
+      <div class="tiny muted" style="margin-top:12px">The element is <b>defined once</b>. Each button just moves the node in / out of the DOM — that's the whole boot / shutdown.</div>
+    </div>
+    <div class="col">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="box b-app" style="min-height:230px"><span class="lbl c-app">the page (DOM)</span>
+          <div id="wc-stage" style="margin-top:14px;min-height:160px;display:grid;place-items:center;color:var(--muted)">&lt;wrapper&gt; — empty</div></div>
+        <div class="box" style="min-height:230px"><span class="lbl">lifecycle log</span>
+          <div class="log" id="wc-log" style="height:196px;margin-top:8px"></div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -821,18 +960,20 @@ component.prototype.<span class="a">ngOnDestroy</span> = <span class="k">functio
   </table>
 </section>
 
-<!-- Ideas -->
+<!-- Part 3 summary: everything bootstrap touches -->
 <section>
-  <div style="display:flex;align-items:center;gap:20px"><h2 style="margin:0">What else could live here?</h2><span class="stamp">IDEAS · NOT IMPLEMENTED</span></div>
-  <p class="small muted">Because every app passes through the same function, a new central concern costs <b>one libs release</b>, not N app releases.</p>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px">
-    <div class="box hypo"><b class="small">Default providers</b><div class="tiny">HTTP interceptors, error handler, translation defaults added to every app</div></div>
-    <div class="box hypo"><b class="small">Telemetry</b><div class="tiny">bootstrap duration, mount/unmount per element</div></div>
-    <div class="box hypo"><b class="small">Compatibility checks</b><div class="tiny">warn when a Shell capability the app needs is missing</div></div>
-    <div class="box hypo"><b class="small">Error boundary</b><div class="tiny">bootstrap failure → friendly fallback instead of empty area</div></div>
-    <div class="box hypo"><b class="small">Debug hooks</b><div class="tiny">one switch to log router / guard / topic traffic per app</div></div>
-    <div class="box hypo"><b class="small">Your idea?</b><div class="tiny">anything every app would otherwise copy-paste</div></div>
-  </div>
+  <div class="kicker c-lib">Part 3 · the whole picture</div>
+  <h2>Everything the bootstrap touches</h2>
+  <table class="t" style="font-size:0.44em;margin-top:8px">
+    <tr><th style="width:24%">Area</th><th style="width:34%">What gets wired</th><th>So the app doesn't have to</th></tr>
+    <tr><td><b class="c-lib">Element identity</b></td><td><code>APP_ID</code> → <code>DynamicAppId</code>, with <code>appElementName</code> as an injectable</td><td>the injector knows its own element → styles &amp; translations target the right app</td></tr>
+    <tr><td><b class="c-lib">Dynamic container</b></td><td><code>DYNAMIC_CONTAINER</code> proxy → per-app container on <code>body</code></td><td>dialogs / overlays render <b>inside</b> the app's style scope and are removed with it</td></tr>
+    <tr><td><b class="c-lib">Shared platform &amp; zone</b></td><td>one <code>PlatformRef</code> per Angular version + one <code>NgZone</code> (Shell's)</td><td>change detection stays consistent across apps on the page</td></tr>
+    <tr><td><b class="c-lib">Router + guards setup</b></td><td>patched <code>ngOnInit</code> → <code>connect()</code>: router sync + guard wrapper</td><td>the app writes <b>no</b> navigation-sync or guard-bridging code (Parts 4–5)</td></tr>
+    <tr><td><b class="c-lib">Style scoping</b></td><td><code>noPortalLayoutStyles</code> stamp + Shell styles host</td><td>component CSS reaches the app element; portal layout doesn't bleed in</td></tr>
+    <tr><td><b class="c-lib">Lifecycle &amp; teardown</b></td><td>patched <code>ngOnDestroy</code> → <code>disconnect()</code> + container removed</td><td>leaving the app closes subscriptions and cleans up automatically</td></tr>
+  </table>
+  <div class="cap lib" style="margin-top:16px"><b>One bootstrap, every concern.</b> The app's own code is just the entrypoint + routes — everything above rides along centrally.</div>
 </section>
 
 <!-- Bridge: connector -->
@@ -1161,6 +1302,32 @@ router.<span class="a">navigateByUrl</span>(url, {
     <div class="row" style="align-items:center"><div class="box b-lib" style="width:200px;text-align:center"><b class="small c-lib">connector</b></div><div>→</div>
       <div class="box b-topic" style="width:330px;border-radius:40px;text-align:center"><b class="small c-topic">EventsTopic</b><div class="tiny mono">revertNavigation · navigated (legacy)</div></div><div>→</div><div class="tiny col">Shell <code>history.back()</code></div></div>
   </div>
+</section>
+
+<!-- Part 4 summary: navigation utilities — central vs in-app -->
+<section>
+  <div class="kicker k-nav">Part 4 · summary</div>
+  <h2>The navigation utilities — who owns what</h2>
+  <div class="grid2" style="margin-top:16px">
+    <div class="box b-lib"><div class="pill bg-lib" style="margin-bottom:10px">Done centrally · you write none</div>
+      <ul class="tiny" style="margin-top:4px">
+        <li><b>Patched <code>history</code></b> → every URL change publishes <code>CurrentLocationTopic</code> <span class="muted">(Shell)</span></li>
+        <li><b><code>isRouterSync</code></b> → the echo breaker; followers move silently with <code>replaceUrl</code></li>
+        <li><b>Shell follows</b> → longest-first match picks the app, loads it, sets <code>currentMfe$</code></li>
+        <li><b><code>WebcomponentConnector</code></b> → initial router sync + follows the topic <span class="muted">(via patched <code>ngOnInit</code>)</span></li>
+        <li>Route <b>guards</b> bridged across apps <span class="muted">(Part 5)</span></li>
+      </ul>
+    </div>
+    <div class="box b-app"><div class="pill bg-app" style="margin-bottom:10px">You wire into the app</div>
+      <ul class="tiny" style="margin-top:4px">
+        <li><b><code>startsWith('')</code></b> route matcher → makes your routes mount-path agnostic</li>
+        <li><b><code>initializeRouter</code></b> (APP_INITIALIZER) → stamps <code>mfeInfo</code>/baseHref, prefixes string <code>redirectTo</code>, adds the <code>**</code> catch-all</li>
+        <li>Your routes &amp; <code>provideRouter</code> — the ordinary Angular setup</li>
+        <li><span class="muted">React:</span> <b><code>withSyncedRouter(App)</code></b>, <code>SyncedRouterProvider</code>, <code>useSyncedLocation()</code> / <code>useAppHref()</code></li>
+      </ul>
+    </div>
+  </div>
+  <div class="cap nav" style="margin-top:16px"><b>The split is the point.</b> Apps ship only their routes + two small helpers; <b>all the cross-router sync stays in the Shell and the connector</b>, so a new app inherits it for free.</div>
 </section>
 
 <!-- ============ PART 5 ============ -->
@@ -1497,6 +1664,27 @@ localStorage.debug = <span class="s">'@onecx/react-utils:guards*'</span>
   </div>
 </section>
 
+<!-- ============ Q&A ============ -->
+<section class="divider">
+  <div class="num">Q</div>
+  <h1>Questions &amp; ideas</h1>
+  <p class="muted">Open the floor</p>
+</section>
+
+<!-- Ideas (moved here from Part 3) -->
+<section>
+  <div style="display:flex;align-items:center;gap:20px"><h2 style="margin:0">What else could live here?</h2><span class="stamp">IDEAS · NOT IMPLEMENTED</span></div>
+  <p class="small muted">Because every app passes through the same function, a new central concern costs <b>one libs release</b>, not N app releases.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px">
+    <div class="box hypo"><b class="small">Default providers</b><div class="tiny">HTTP interceptors, error handler, translation defaults added to every app</div></div>
+    <div class="box hypo"><b class="small">Telemetry</b><div class="tiny">bootstrap duration, mount/unmount per element</div></div>
+    <div class="box hypo"><b class="small">Compatibility checks</b><div class="tiny">warn when a Shell capability the app needs is missing</div></div>
+    <div class="box hypo"><b class="small">Error boundary</b><div class="tiny">bootstrap failure → friendly fallback instead of empty area</div></div>
+    <div class="box hypo"><b class="small">Debug hooks</b><div class="tiny">one switch to log router / guard / topic traffic per app</div></div>
+    <div class="box hypo"><b class="small">Your idea?</b><div class="tiny">anything every app would otherwise copy-paste</div></div>
+  </div>
+</section>
+
 <section class="center" style="display:flex!important;flex-direction:column;justify-content:center;">
   <h1>Questions?</h1>
   <p class="muted">Bootstrap <span class="c-lib">&amp;</span> Navigation</p>
@@ -1529,6 +1717,45 @@ localStorage.debug = <span class="s">'@onecx/react-utils:guards*'</span>
   Reveal.on('slidechanged', (e) => applySteps(e.currentSlide));
   Reveal.on('fragmentshown', () => applySteps(Reveal.getCurrentSlide()));
   Reveal.on('fragmenthidden', () => applySteps(Reveal.getCurrentSlide()));
+
+  // Web-component demo: define a tag once, then the "Shell" just creates / removes the node.
+  (function () {
+    if (!customElements.get('demo-element')) {
+      customElements.define('demo-element', class extends HTMLElement {
+        connectedCallback() {
+          this.textContent = '✓ the app is alive (connectedCallback ran)';
+        }
+        disconnectedCallback() { this.textContent = ''; }
+      });
+    }
+    const stage = document.getElementById('wc-stage');
+    const log = document.getElementById('wc-log');
+    const mount = document.getElementById('wc-mount');
+    const unmount = document.getElementById('wc-unmount');
+    if (!stage) return;
+    let el = null;
+    const line = (cls, html) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; log.appendChild(d); log.scrollTop = log.scrollHeight; };
+    const reset = () => { if (el) { el.remove(); el = null; } stage.innerHTML = '&lt;wrapper&gt; — empty'; log.innerHTML = ''; unmount.disabled = true; };
+    mount.onclick = () => {
+      if (el) return;
+      log.innerHTML = '';
+      el = document.createElement('demo-element');
+      line('dim', 'createElement(&#39;demo-element&#39;)');
+      stage.innerHTML = '';
+      stage.appendChild(el);                 // → connectedCallback fires
+      line('ok', '✓ appended → <b>connectedCallback()</b>');
+      mount.disabled = true; unmount.disabled = false;
+    };
+    unmount.onclick = () => {
+      if (!el) return;
+      el.remove();                           // → disconnectedCallback fires
+      el = null;
+      stage.innerHTML = '&lt;wrapper&gt; — empty';
+      line('bad', '✗ removed → <b>disconnectedCallback()</b>');
+      mount.disabled = false; unmount.disabled = true;
+    };
+    reset();
+  })();
 
   // Keep Reveal from hijacking keys typed into demo inputs.
   document.querySelectorAll('.demo input, .demo select').forEach((el) => el.addEventListener('keydown', (e) => e.stopPropagation()));
