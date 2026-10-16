@@ -26,6 +26,7 @@ import { menuMappingRules } from './usages/menu.rules'
 import { breadcrumbRules } from './usages/breadcrumb.rules'
 import { dataviewMappingRules } from './usages/dataview.rules'
 import { buttonMappingRules } from './usages/button.rules'
+import { multiselectMappingRules } from './usages/multiselect.rules'
 
 export const usageMappingRules: MappingRule[] = [
   ...badgeMappingRules,
@@ -56,4 +57,5 @@ export const usageMappingRules: MappingRule[] = [
   ...breadcrumbRules,
   ...dataviewMappingRules,
   ...buttonMappingRules,
+  ...multiselectMappingRules,
 ]

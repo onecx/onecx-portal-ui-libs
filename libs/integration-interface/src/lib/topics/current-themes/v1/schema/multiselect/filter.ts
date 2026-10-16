@@ -1,33 +1,32 @@
-import z from 'zod'
+/**
+ * Filter component schema inside the multiselect overlay. Contains the filter text input and
+ * the select-all checkbox (both are flat children, dependency: nothing).
+ */
+import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { MultiselectCheckboxSchema } from './checkbox'
-import { MultiselectInputSchema } from './input'
+import { multiselectCheckboxDefaults, multiselectCheckboxShape } from './checkbox'
+import { multiselectFilterInputDefaults, multiselectFilterInputShape } from './input'
 import { icon, withRef } from '../primitives'
 
-/**
- * Filter component schema inside multiselect overlay.
- */
-export class MultiselectFilterSchema {
-  private static readonly tokens = {
-    paddingX: withRef(z.string()).default('{{primitives.space.sm}}'),
-    paddingY: withRef(z.string()).default('{{primitives.space.sm}}'),
-  }
+export const multiselectFilterShape = z
+  .object({
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    checkbox: multiselectCheckboxShape.prefault({}),
+    input: multiselectFilterInputShape.prefault({}),
+    filterIcon: icon.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectFilterShape' })
 
-  private static readonly defaultFilterIcon = {
+export const multiselectFilterDefaults = {
+  paddingX: '{{primitives.space.sm}}',
+  paddingY: '{{primitives.space.sm}}',
+  checkbox: multiselectCheckboxDefaults,
+  input: multiselectFilterInputDefaults,
+  filterIcon: {
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
     size: '{{primitives.icon.size.sm}}',
     paddingX: '{{primitives.space.sm}}',
     paddingY: '{{primitives.space.sm}}',
-  }
-
-  static readonly schema = z
-    .object({
-      ...this.tokens,
-      checkbox: (MultiselectCheckboxSchema.schema as typeof MultiselectCheckboxSchema.schema).prefault({}),
-      input: (MultiselectInputSchema.schema as typeof MultiselectInputSchema.schema).prefault({}),
-      filterIcon: icon.default({
-        ...this.defaultFilterIcon,
-      }),
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectFilter' })
+  },
 }
