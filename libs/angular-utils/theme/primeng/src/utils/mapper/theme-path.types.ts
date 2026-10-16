@@ -149,6 +149,7 @@ export type ThemePath =
   | `usages.paginator.${LeafPaths<NonNullable<Usages['paginator']>>}`
   | `usages.skeleton.${LeafPaths<NonNullable<Usages['skeleton']>>}`
   | `usages.button.${LeafPaths<NonNullable<Usages['button']>>}`
+  | `usages.multiselect.${LeafPaths<NonNullable<Usages['multiselect']>>}`
 // ─── Preset Paths (to) ───────────────────────────────────────────────────────
 
 /**

@@ -15,6 +15,7 @@ export const multiselectListItemsShape = z
     emptyMessage: multiselectEmptyMessageShape.prefault({}),
     paddingX: withRef(z.string()).optional(),
     paddingY: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'multiselectListItemsShape' })
 
@@ -24,4 +25,5 @@ export const multiselectListItemsDefaults = {
   emptyMessage: multiselectEmptyMessageDefaults,
   paddingX: '{{primitives.space.sm}}',
   paddingY: '{{primitives.space.sm}}',
+  gap: '{{primitives.space.sm}}',
 }

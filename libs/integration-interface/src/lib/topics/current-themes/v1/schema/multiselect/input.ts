@@ -57,7 +57,7 @@ export const multiselectFilterInputDefaults = {
       ...commonBorder,
       color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
       style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
-      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.shadow}}',
+      shadow: '{{primitives.defaultVariant.state.focus.defaultSeverity.focusRing.shadow}}',
     },
   },
   // Named states only carry border.color/style — width/offset/radius are static and only

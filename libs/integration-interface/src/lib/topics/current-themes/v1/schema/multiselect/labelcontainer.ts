@@ -21,6 +21,7 @@ const multiselectLabelContainerSizeShape = z.object({
 const multiselectLabelContainerStateShape = z
   .object({
     background: withRef(z.string()).optional(),
+    color: color.optional(),
     placeholderColor: color.optional(),
     border: border.optional(),
     dropdownIcon: icon.optional(),
@@ -46,6 +47,7 @@ const stateTokens = (state: 'defaultState' | 'hover' | 'focus' | 'invalid' | 'di
   const ref = state === 'defaultState' ? 'defaultState' : `state.${state}`
   return {
     background: `{{primitives.defaultVariant.${ref}.defaultSeverity.bg}}`,
+    color: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
     placeholderColor: `{{primitives.defaultVariant.${ref}.defaultSeverity.contrast}}`,
     border: {
       color: `{{primitives.defaultVariant.${ref}.defaultSeverity.border.color}}`,

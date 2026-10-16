@@ -44,8 +44,8 @@ export const multiselectListItemDefaults = {
     border: {
       width: '{{primitives.border.width.none}}',
       offset: '{{primitives.border.offset.none}}',
-      color: '{{primitives.border.color.none}}',
-      style: '{{primitives.border.style.none}}',
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
       radius: '{{primitives.border.radius.sm}}',
     },
     background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
@@ -54,7 +54,7 @@ export const multiselectListItemDefaults = {
       style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
       width: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}',
       offset: '{{primitives.focusRing.offset.none}}',
-      shadow: '{{primitives.focus.shadow.none}}',
+      shadow: '{{primitives.focusRing.shadow.none}}',
     },
   },
   hover: {

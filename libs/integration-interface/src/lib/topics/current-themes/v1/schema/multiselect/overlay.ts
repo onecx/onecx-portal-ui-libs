@@ -31,7 +31,7 @@ export const multiselectOverlayDefaults = {
     width: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.width}}',
     offset: '{{primitives.border.offset.none}}',
     radius: '{{primitives.border.radius.md}}',
-    shadow: '{{primitives.border.shadow.none}}',
+    shadow: '{{primitives.shadow.none}}',
   },
   paddingX: '{{primitives.space.md}}',
   paddingY: '{{primitives.space.md}}',

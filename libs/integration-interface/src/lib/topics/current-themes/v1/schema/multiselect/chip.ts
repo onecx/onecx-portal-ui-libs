@@ -60,7 +60,7 @@ export const multiselectChipDefaults = {
       width: '{{primitives.border.width.md}}',
       offset: '{{primitives.border.offset.none}}',
       radius: '{{primitives.border.radius.md}}',
-      shadow: '{{primitives.border.shadow.none}}',
+      shadow: '{{primitives.shadow.none}}',
     },
   },
   // Named states only carry border.color/style — width/offset/radius are static and only
