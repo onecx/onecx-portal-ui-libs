@@ -1,0 +1,82 @@
+= Migrate OneCX App from Angular 22 to Angular 23
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+[IMPORTANT]
+====
+ This guide is a work in progress. Angular 23 support and the Angular Material + Tailwind CSS change to the OneCX UI libraries are not final yet. This is a larger, multi-stage effort: the detailed, step-by-step guides are being published here as each area is finalized.
+====
+
+This guide explains how to migrate a OneCX application to **Angular 23** and the accompanying changes to the OneCX UI libraries.
+
+Angular 23 support builds on Angular 22 support. The OneCX libraries have already moved from PrimeNG to **Optimus UI** with Angular 22 (see the xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide]). With Angular 23, the OneCX UI libraries take the next step: the `@onecx/*` accelerator components are rebuilt on **Angular Material**, styled with **Tailwind CSS** — a library maintained by the Angular team itself and closely aligned with the framework's direction.
+
+For the high-level plan and rough timing, see the xref:onecx-docs-overview:release-overview.adoc[Release Overview].
+
+[#why-were-changing]
+== Why we're changing
+
+Rebuilding the OneCX components on Angular Material + Tailwind CSS is what unlocks the OneCX theming roadmap:
+
+* **Theming.** Angular Material is natively driven by CSS variables, so the OneCX brand theme can be applied directly through CSS custom properties rather than a PrimeNG preset.
+* **Alignment with the framework.** Angular Material is maintained by the Angular team and tracks the framework's own direction (signals, modern control flow, and future rendering changes).
+* **First-party components.** Where Material has no equivalent, OneCX provides its own first-party components.
+
+[#optimus-ui-support-retained]
+== Optimus UI support is retained
+
+This migration changes what OneCX's own components are built with. It does **not** remove support for Optimus UI at the application level.
+
+The utilities applications need to *run* or to *configure* PrimeNG/Optimus UI continue to support Optimus UI:
+
+* The theme configuration provider is re-exported for Optimus (renamed to its Optimus counterpart).
+* The template and icon utilities continue to support their Optimus equivalents.
+
+Applications that rely on the PrimeNG-style API are not forced to change. OneCX libraries remain **library-agnostic at the application level**: you may continue using Optimus UI, another component library, or Angular Material — the choice is yours, on your own timeline.
+
+[#what-you-need-to-do]
+== What you need to do
+
+The one change that applies to every application is the same: pick up the Angular 23 support for the OneCX UI libraries when it ships.
+
+* If you keep your application's UI on Optimus UI (PrimeNG-style components), that is all you need to do.
+* If you want to adopt Angular Material + Tailwind CSS alongside OneCX, you additionally migrate your own components — see xref:migration-steps[Migration steps].
+
+[#migration-steps]
+== Migration steps
+
+The detailed, step-by-step guides for adopting Angular Material + Tailwind CSS are being published as each area is finalized. The migration is planned across the following areas; each will link to its own guide once it is available:
+
+* **Theming** — moving from PrimeNG/Optimus design tokens to Material Design 3 tokens with Tailwind CSS.
+* **Layout utilities** — replacing PrimeFlex utility classes with Tailwind CSS utilities.
+* **Components** — migrating the PrimeNG-backed components to their Angular Material equivalents (or OneCX first-party components where Material has no equivalent).
+* **Optimus UI** — configuring your application to keep using Optimus UI (the PrimeNG-compatible fork) for the PrimeNG/Optimus utilities, if you choose that path.
+
+Until those guides are published, no component-level changes are required on your part: OneCX will continue to support library-agnostic integration, and applications that stay on Optimus UI or another component library need only pick up the new library version.
+
+[#faq]
+== FAQ
+
+Do I have to migrate my application to Angular Material?::
+No. OneCX libraries remain library-agnostic, and Optimus UI support is retained. You may continue using Optimus UI, another component library, or Angular Material — the choice is yours.
+
+Will my application break if I don't migrate?::
+No. OneCX is not removing support for other component libraries at the application level. This migration changes what OneCX's own accelerator components are built with internally.
+
+Will the component APIs change?::
+The goal is to keep every component's public API stable — selectors, inputs, outputs, and published harnesses. Where an intentional change is required, it will be documented in the relevant step-by-step guide.
+
+Where can I follow along with progress?::
+The step-by-step guides are published on this page as each area is finalized, and rough timing for the Angular 23 release is tracked on the xref:onecx-docs-overview:release-overview.adoc[Release Overview].
+
+[#related-resources]
+== Related resources
+
+* xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide] (the previous version)
+* https://material.angular.io/guide/getting-started[Angular Material Getting Started]
+* https://tailwindcss.com/docs/installation[Tailwind CSS Installation]
+* https://github.com/primefaces/optimus-ui[Optimus UI Repository]
