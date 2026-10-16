@@ -31,9 +31,17 @@ If the following packages are used in your project, update them to ensure compat
 | `^21.0.0`
 | Required when using `@onecx/ngrx-accelerator`
 
+| `ngrx-store-localstorage`
+| `^21.0.0`
+| Updated for Angular 21 compatibility
+
 | `@ngx-translate/core`, `@ngx-translate/http-loader`
 | `^17.0.0`
 | Required by OneCX translation utilities
+
+| `@angular-architects/module-federation`
+| `^21.0.0`
+| Updated for Angular 21 compatibility
 
 | `ngx-build-plus`
 | `^21.0.0`
