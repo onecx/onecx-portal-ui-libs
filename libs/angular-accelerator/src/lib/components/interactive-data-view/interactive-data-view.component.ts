@@ -217,6 +217,13 @@ export class InteractiveDataViewComponent implements OnInit {
       .filter(Boolean) as DataTableColumn[]
   })
 
+  /** Displayed columns of the active column group; all available columns if no group is configured. */
+  readonly activeOrAllColumns = computed<DataTableColumn[]>(() => {
+    const activeGroupKey = this.stateService.activeColumnGroupKey() ?? this.defaultGroupKey()
+    const activeColumns = this.displayedColumns()
+    return activeGroupKey ? activeColumns : this.stateService.availableColumns()
+  })
+
   // Track whether displayed columns have ever been non-empty (to suppress warning on initial empty state)
   private readonly _hasHadColumns = signal<boolean>(false)
 

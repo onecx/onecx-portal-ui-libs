@@ -2,6 +2,7 @@ import { Meta, applicationConfig, moduleMetadata } from '@storybook/angular'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { ActivatedRoute } from '@angular/router'
 import { SlotService } from '@onecx/angular-remote-components'
@@ -24,6 +25,9 @@ import { MenuModule } from '@openng/optimus-ui/menu'
 import { PickListModule } from '@openng/optimus-ui/picklist'
 import { SelectButtonModule } from '@openng/optimus-ui/selectbutton'
 import { DialogModule } from '@openng/optimus-ui/dialog'
+import { DialogMessageContentComponent } from '../dialog/dialog-message-content/dialog-message-content.component'
+import { DialogContentComponent } from '../dialog/dialog-content/dialog-content.component'
+import { DialogFooterComponent } from '../dialog/dialog-footer/dialog-footer.component'
 import { DataViewModule } from '@openng/optimus-ui/dataview'
 import { SelectModule } from '@openng/optimus-ui/select'
 import { FormsModule } from '@angular/forms'
@@ -43,6 +47,7 @@ import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { action } from 'storybook/actions'
 import { UserService } from '@onecx/angular-integration-interface'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { providePortalDialogService } from '../../services/portal-dialog.service'
 
 export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewComponent> = {
   title: 'Components/InteractiveDataViewComponent',
@@ -51,6 +56,19 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
     applicationConfig({
       providers: [
         importProvidersFrom(BrowserModule),
+        importProvidersFrom(BrowserAnimationsModule),
+        // The Filter View's "Add Filter" dialog opens through the real
+        // PortalDialogService. The provider (mirroring portal-dialog.service.spec.ts)
+        // supplies DialogService + PortalDialogService; DynamicDialogConfig /
+        // DynamicDialogRef are resolved from the service's own element injector, not
+        // DI, so they no longer need to be declared here.
+        providePortalDialogService(),
+        // TranslateService must live in the environment (app) injector, not just the
+        // NgModule injector (moduleMetadata): the Add Filter dialog is created dynamically
+        // by the DialogService, whose injector chain is rooted at the env injector.
+        // Without this the dynamically-created content/footer components fail with
+        // NG0201 (no TranslateService) and the dialog renders empty.
+        importProvidersFrom(StorybookTranslateModule),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -96,7 +114,13 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         DataListGridComponent,
         DataListGridSortingComponent,
         FilterViewComponent,
-        TooltipOnOverflowDirective
+        TooltipOnOverflowDirective,
+        // The PortalDialogService opens its dialogs through these non-standalone shell
+        // components (content / footer / message), so they must be declared in a module
+        // for the Filter View's "Add Filter" dialog to render in this Storybook.
+        DialogMessageContentComponent,
+        DialogContentComponent,
+        DialogFooterComponent,
       ],
       imports: [
         TableModule,
@@ -118,7 +142,7 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
         ChipModule,
         SkeletonModule,
         TooltipModule,
-        OcxTooltipDirective
+        OcxTooltipDirective,
       ],
     }),
   ],
@@ -132,6 +156,9 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
 
 export const defaultInteractiveDataViewArgs = {
   columns: [
+    // product / available / date are filterable, amount is not - the same single
+    // source of truth for the Table column header filters and the "Add Filter"
+    // dialog in the List / Grid views (see data-table-column.model.ts).
     {
       id: 'product',
       columnType: ColumnType.STRING,
@@ -145,6 +172,7 @@ export const defaultInteractiveDataViewArgs = {
       columnType: ColumnType.NUMBER,
       nameKey: 'Amount',
       sortable: true,
+      filterable: false,
       predefinedGroupKeys: ['test', 'test1', 'all'],
     },
     {
