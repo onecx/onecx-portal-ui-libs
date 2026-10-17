@@ -205,7 +205,7 @@ export const defaultInteractiveDataViewArgs = {
       product: 'Bananas',
       amount: 10,
       imagePath:
-        'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1pYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       date: new Date(2022, 1, 1, 13, 14, 55, 120),
     },
     {
