@@ -34,7 +34,13 @@ $clr-neutral-700: #262626;
   }
 }
 
-:host ::ng-deep .filterMultiSelect:focus-within {
+// Keyboard focus indicator for the header filter. The rule above removes the theme focus ring
+// (box-shadow), so restore a visible outline for keyboard focus only. :focus-visible alone is not
+// enough: the focused element is a text <input>, which browsers always treat as focus-visible, even
+// when the multiselect focuses it after a mouse click. A mouse click also opens the overlay, so
+// hiding the outline while the overlay is open keeps it off for mouse users; the open overlay is
+// the visible state while it is shown.
+:host ::ng-deep .filterMultiSelect:has(:focus-visible):not(.p-multiselect-open) {
   outline: 2px solid $clr-neutral-700;
   outline-offset: 1px;
 }

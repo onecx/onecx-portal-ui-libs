@@ -355,32 +355,60 @@ describe('DataTableComponent', () => {
       expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
 
-    it('should expose a keyboard-focusable, accessible-labelled filter control in the column header', async () => {
-      // Ensure the status column has filter options so its filter multiselect is rendered.
-      component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
-      fixture.detectChanges()
+    describe('keyboard access to the column header filter', () => {
+      const getStatusFilterFocusInput = (): HTMLInputElement => {
+        const headers = Array.from(fixture.nativeElement.querySelectorAll('th')) as HTMLElement[]
+        const statusHeader = headers.find((th) => th.textContent?.includes('STATUS'))
+        expect(statusHeader).toBeTruthy()
+        // The filter multiselect's focusable element is its combobox focus input.
+        const focusInput = statusHeader?.querySelector('.filterMultiSelect input[role="combobox"]') as HTMLInputElement
+        expect(focusInput).toBeTruthy()
+        return focusInput
+      }
 
-      const headers = Array.from(fixture.nativeElement.querySelectorAll('th')) as HTMLElement[]
-      const statusHeader = headers.find((th) => th.textContent?.includes('STATUS'))
-      expect(statusHeader).toBeTruthy()
+      const expectFilterOperableByKeyboard = async (focusInput: HTMLInputElement) => {
+        const onFilterChosenSpy = jest.spyOn(component, 'onFilterChosen')
 
-      // The filter multiselect's only focusable element is its combobox input. It is hidden
-      // with the clip-based .p-hidden-accessible pattern (not display:none), so it stays in the
-      // tab order and is the element a keyboard user Tabs to and operates.
-      const focusInput = statusHeader.querySelector('input[role="combobox"]') as HTMLElement
-      expect(focusInput).toBeTruthy()
+        focusInput.focus()
+        fixture.detectChanges()
+        expect(document.activeElement).toBe(focusInput)
+        // (onFocus) still wires the focused column as the current filter column
+        expect(onFilterChosenSpy).toHaveBeenCalledWith(expect.objectContaining({ id: 'status' }))
+        expect(focusInput.getAttribute('aria-label')).toBeTruthy()
 
-      // Tab-reachable: a positive tabindex alone is not proof (display:none elements keep one),
-      // so also assert the element is not display:none — that is what actually removes it from
-      // the tab order. Together with a non-negative tabindex this proves a keyboard user's Tab
-      // will land on it.
-      expect(focusInput.tabIndex).toBeGreaterThanOrEqual(0)
-      expect(window.getComputedStyle(focusInput).display).not.toBe('none')
-      // Exposes an accessible name and that it opens a listbox
-      expect(focusInput.getAttribute('aria-haspopup')).toBe('listbox')
-      const ariaLabel = focusInput.getAttribute('aria-label')
-      expect(ariaLabel).toBeTruthy()
-      expect(ariaLabel).not.toHaveLength(0)
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', key: 'Enter', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('true')
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('false')
+      }
+
+      it('should focus and open/close an EQUALS column filter with the keyboard', async () => {
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
+
+      it('should focus and open/close an IS_NOT_EMPTY column filter with the keyboard', async () => {
+        component.columns = [
+          {
+            columnType: ColumnType.STRING,
+            id: 'status',
+            nameKey: 'COLUMN_HEADER_NAME.STATUS',
+            filterable: true,
+            filterType: FilterType.IS_NOT_EMPTY,
+          } as any,
+        ]
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: '' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
     })
   })
 
