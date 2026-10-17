@@ -354,6 +354,30 @@ describe('DataTableComponent', () => {
 
       expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
+
+    it('should expose a keyboard-focusable, accessible-labelled filter control in the column header', async () => {
+      // Ensure the status column has filter options so its filter multiselect is rendered.
+      component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
+      fixture.detectChanges()
+
+      const headers = Array.from(fixture.nativeElement.querySelectorAll('th')) as HTMLElement[]
+      const statusHeader = headers.find((th) => th.textContent?.includes('STATUS'))
+      expect(statusHeader).toBeTruthy()
+
+      // The filter multiselect's only focusable element is its combobox input. It is hidden
+      // with the clip-based .p-hidden-accessible pattern (not display:none), so it stays in the
+      // tab order and is the element a keyboard user Tabs to and operates.
+      const focusInput = statusHeader.querySelector('input[role="combobox"]') as HTMLElement
+      expect(focusInput).toBeTruthy()
+
+      // Tab-reachable
+      expect(focusInput.tabIndex).toBeGreaterThanOrEqual(0)
+      // Exposes an accessible name and that it opens a listbox
+      expect(focusInput.getAttribute('aria-haspopup')).toBe('listbox')
+      const ariaLabel = focusInput.getAttribute('aria-label')
+      expect(ariaLabel).toBeTruthy()
+      expect(ariaLabel).not.toHaveLength(0)
+    })
   })
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {

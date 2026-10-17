@@ -34,6 +34,11 @@ $clr-neutral-700: #262626;
   }
 }
 
+:host ::ng-deep .filterMultiSelect:focus-within {
+  outline: 2px solid $clr-neutral-700;
+  outline-offset: 1px;
+}
+
 .pi {
   border: none;
   background: none;
