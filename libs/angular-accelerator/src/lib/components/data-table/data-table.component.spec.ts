@@ -370,8 +370,12 @@ describe('DataTableComponent', () => {
       const focusInput = statusHeader.querySelector('input[role="combobox"]') as HTMLElement
       expect(focusInput).toBeTruthy()
 
-      // Tab-reachable
+      // Tab-reachable: a positive tabindex alone is not proof (display:none elements keep one),
+      // so also assert the element is not display:none — that is what actually removes it from
+      // the tab order. Together with a non-negative tabindex this proves a keyboard user's Tab
+      // will land on it.
       expect(focusInput.tabIndex).toBeGreaterThanOrEqual(0)
+      expect(window.getComputedStyle(focusInput).display).not.toBe('none')
       // Exposes an accessible name and that it opens a listbox
       expect(focusInput.getAttribute('aria-haspopup')).toBe('listbox')
       const ariaLabel = focusInput.getAttribute('aria-label')
