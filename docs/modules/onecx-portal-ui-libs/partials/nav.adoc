@@ -33,3 +33,4 @@
 *** xref:onecx-portal-ui-libs:components/data-list-grid.adoc[DataListGrid]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
+*** xref:onecx-portal-ui-libs:components/custom-group-column-selector.adoc[CustomGroupColumnSelector]
