@@ -221,6 +221,30 @@
 
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
+    @if (groupingColumn(); as groupColumn) { @if (isRowGroupStart(rowObject)) {
+    <tr class="ocx-data-table-group-row">
+      <th
+        scope="rowgroup"
+        [attr.colspan]="getGroupColspan()"
+        [attr.data-group-key]="getGroupForRow(rowObject)?.key ?? ''"
+      >
+        @if (groupCell(); as customGroupCell) {
+        <ng-container
+          [ngTemplateOutlet]="customGroupCell"
+          [ngTemplateOutletContext]="getGroupContext(rowObject)"
+        ></ng-container>
+        } @else {
+        <ng-container
+          [ngTemplateOutlet]="cell() ?? columnTemplates[groupColumn.id]"
+          [ngTemplateOutletContext]="{
+            rowObject: getGroupForRow(rowObject)?.firstRow ?? rowObject,
+            column: groupColumn
+          }"
+        ></ng-container>
+        }
+      </th>
+    </tr>
+    } }
     <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {

@@ -29,6 +29,7 @@ export class DataTableHarness extends ContentContainerComponentHarness {
 
   getHeaderColumns = this.locatorForAll(TableHeaderColumnHarness)
   getRows = this.locatorForAll(TableRowHarness)
+  getGroupCells = this.locatorForAll('th[scope="rowgroup"]')
   getPaginator = this.locatorFor(PPaginatorHarness)
   getOverflowMenu = this.locatorForOptional(PMenuHarness)
 
@@ -110,6 +111,36 @@ export class DataTableHarness extends ContentContainerComponentHarness {
       throw new Error('Given column is null')
     }
     return await column.hasClass('p-datatable-frozen-column')
+  }
+
+  async getGroupCellLabels(): Promise<(string | null)[]> {
+    const cells = await this.getGroupCells()
+    return Promise.all(cells.map((cell) => cell.text()))
+  }
+
+  async getGroupCellScopes(): Promise<(string | null)[]> {
+    const cells = await this.getGroupCells()
+    return Promise.all(cells.map((cell) => cell.getAttribute('scope')))
+  }
+
+  async getGroupCellColspans(): Promise<number[]> {
+    const cells = await this.getGroupCells()
+    const values: number[] = []
+    for (const cell of cells) {
+      const colspan = await cell.getAttribute('colspan')
+      values.push(colspan === null || colspan === undefined ? NaN : Number(colspan))
+    }
+    return values
+  }
+
+  async getGroupCellRowspans(): Promise<number[]> {
+    const cells = await this.getGroupCells()
+    const values: number[] = []
+    for (const cell of cells) {
+      const rowspan = await cell.getAttribute('rowspan')
+      values.push(rowspan === null || rowspan === undefined ? NaN : Number(rowspan))
+    }
+    return values
   }
 
   getExpansionColumnHeaderElement = this.locatorForOptional('[name="expansion-column-header"]')
