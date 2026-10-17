@@ -1,0 +1,470 @@
+= Theme V2 Usage Settings — PrimeNG
+
+:idprefix:
+:idseparator: -
+:toc: macro
+:toclevels: 2
+:source-highlighter: highlight.js
+:schema_root: ../../../../libs/integration-interface/src/lib/topics/current-themes/v1
+:primeng_provider_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/providers/primeng
+:mapper_cluster_root: ../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers
+:theme_service_root: ../../../../libs/angular-utils/theme/primeng/src/services
+
+This guide covers the **PrimeNG-native** path for Theme V2 usage settings: how a usage's `settings` object becomes default values for a PrimeNG component's inputs. It pairs with link:index.adoc[the architecture reference], which defines the shared machinery (`mapThemeUsageSettings`, `defineUsageSettingsMapper`, `PrimeNgComponentThemingSettingsRuntime`, `PRIMENG_COMPONENT_SETTINGS_APPLIERS`) — read that first if you have not.
+
+Two sections:
+
+* <<existing-carousel>> — how to *configure* the existing Carousel usage settings (no code), with the tested revision, the schema shape, and the observed runtime behavior.
+* <<new-select>> — a complete, reproducible recipe for *adding* a new PrimeNG usage-settings mapping: the `dropdown` usage's settings mapped onto the PrimeNG `Select` component.
+
+toc::[]
+
+[#conventions]
+== Conventions and Test Environment
+
+Both recipes below were authored and verified against this repository state. Record these in any recipe so a reader (human or agent) can reproduce the result:
+
+[cols="1,3"]
+|===
+| Item | Value
+
+| **Tested revision**
+| `5f6447523c859d6a29dcba6f1e0dea4854e740af` (branch `ai-workflow/wf_fb80a1f725e801d0df48/f6d5d5cabb6e6564`).
+| **Working directory**
+| The repository root (the directory containing `angular.json` / `nx.json`). All relative paths in this guide are from here.
+| **PrimeNG version**
+| `21.1.3`. In PrimeNG 21 the `Dropdown` component is exported as **`Select`** (`import { Select } from 'primeng/select'`). The schema usage is still named `dropdown`; the PrimeNG *component* it maps to is `Select`.
+| **Node / toolchain**
+| The workspace's pinned toolchain; commands are run with `npx nx`.
+| **Verification commands**
+| `npx nx test angular-utils --no-interactive` (unit tests for the mappers, services, and runtime bridge), `npx nx lint angular-utils`, `npx nx build angular-utils`.
+|===
+
+The PrimeNG path has one non-obvious fact that shapes every recipe here: **PrimeNG-native components are themed by monkey-patching the component prototype and pushing resolved settings to *live instances***. A usage setting is applied *after* a component instance is created, and only when that instance did not set the input explicitly. This is what makes "component-appropriate refresh" a per-component decision (see <<refresh>>).
+
+[#existing-carousel]
+== Existing: Configuring the Carousel Usage Settings
+
+The `carousel` usage is already wired end to end. You can configure its settings from a theme with no code changes.
+
+[#carousel-schema]
+=== Schema shape
+
+The `carousel` usage's settings shape (`{schema_root}/schema/carousel/settings.ts`) is:
+
+[source,typescript]
+----
+export const carouselSettingsShape = z.object({
+  orientation:      withRef(z.enum(['horizontal', 'vertical'])).optional(),
+  showIndicators:   withRef(z.boolean()).optional(),
+  showNavigators:   withRef(z.boolean()).optional(),
+  circular:         withRef(z.boolean()).optional(),
+  autoplayInterval: withRef(z.number()).optional(),
+})
+// usage: settings: carouselSettingsShape.optional()  // no schema-level defaults
+----
+
+There are **no schema-level defaults** for `carousel`, so a theme that does not set `usages.carousel.settings` leaves every field absent, and the component keeps its own native defaults.
+
+[#carousel-mapper]
+=== Mapper
+
+`mapPrimeNgCarouselSettings` (`{primeng_provider_root}/carousel/carousel.mapper.ts`) maps the settings straight onto the PrimeNG `Carousel` inputs of the same names:
+
+[source,typescript]
+----
+export interface PrimeNgCarouselInputDefaults {
+  orientation?: 'horizontal' | 'vertical'
+  showIndicators?: boolean
+  showNavigators?: boolean
+  circular?: boolean
+  autoplayInterval?: number
+}
+
+export const mapPrimeNgCarouselSettings = defineUsageSettingsMapper<
+  ThemeUsageSettings<'carousel'>,
+  PrimeNgCarouselInputDefaults
+>({
+  orientation:      { from: 'orientation',      transform: asEnum(['horizontal', 'vertical']) },
+  showIndicators:   { from: 'showIndicators',   transform: asBoolean },
+  showNavigators:   { from: 'showNavigators',   transform: asBoolean },
+  circular:         { from: 'circular',         transform: asBoolean },
+  autoplayInterval: { from: 'autoplayInterval', transform: asNumber },
+})
+// targetKeys: ['orientation', 'showIndicators', 'showNavigators', 'circular', 'autoplayInterval']
+----
+
+[#carousel-configure]
+=== How to configure it (no code)
+
+Add a `settings` object to the `carousel` usage of a v2 theme:
+
+[source,json]
+----
+{
+  "usages": {
+    "carousel": {
+      "settings": {
+        "circular": true,
+        "showIndicators": true,
+        "autoplayInterval": 4000
+      }
+    }
+  }
+}
+----
+
+When Theme V2 is active, these become the default `circular`, `showIndicators` and `autoplayInterval` on PrimeNG `Carousel` instances that do not bind those inputs explicitly. A `{{...}}` reference inside a settings value is resolved upstream by the reference pipeline before this point; unsupported values are dropped per-field (see link:index.adoc#transforms[the transform helpers]).
+
+[#carousel-behavior]
+=== Observed runtime behavior (what to expect)
+
+The `CarouselComponentSettingsService` (`{primeng_provider_root}/carousel/carousel-component-settings.service.ts`) owns the runtime for `Carousel` and supplies a component-appropriate `refreshInstance`:
+
+[source,typescript]
+----
+runtime = new PrimeNgComponentThemingSettingsRuntime<Carousel, PrimeNgCarouselDefaults>({
+  componentType: Carousel,
+  trackedKeys: mapPrimeNgCarouselSettings.targetKeys,
+  resolveDefaults: (properties) => mapThemeUsageSettings(properties, 'carousel', mapPrimeNgCarouselSettings) ?? {},
+  refreshInstance: (instance) => this.refreshInstance(instance),
+})
+// ...
+private refreshInstance(instance: Carousel): void {
+  const allowAutoplay = Boolean(instance.autoplayInterval)
+  if (allowAutoplay) instance.startAutoplay?.() else instance.stopAutoplay?.()
+  if (instance.circular && instance.value) instance.setCloneItems?.()
+  instance.createStyle?.()
+  instance.calculatePosition?.()
+  instance.cd?.markForCheck()
+}
+----
+
+Because `Carousel` derives internal state (autoplay timers, cloned items for circular mode, layout positions) *from* its inputs, assigning the inputs is not enough — the service recomputes that state. Concretely:
+
+* Setting `circular: true` from the theme triggers `setCloneItems()` so the wrap-around works.
+* Setting `autoplayInterval` triggers `startAutoplay()`; clearing it stops autoplay.
+* Any change recomputes style/position and marks the view for check.
+
+Expected results you can assert in a test (see <<tests>>):
+
+* A theme with `circular: true` on a `Carousel` that does not bind `[circular]` results in `carousel.circular === true` and cloned items present.
+* A `Carousel` that *does* bind `[circular]="false"` keeps `circular === false` even when the theme sets `true` (explicit wins).
+* A theme that omits `autoplayInterval` does not start autoplay.
+
+[#new-select]
+== New: Mapping the `dropdown` Usage to the PrimeNG `Select` Component
+
+This is a complete, reproducible recipe for adding a *new* PrimeNG usage-settings mapping. It maps the existing `dropdown` usage's `settings` onto the PrimeNG `Select` component.
+
+**Why this usage/component pair:** the `dropdown` usage already has a `settings` sub-schema (so `dropdown` is a `ThemeUsageNameWithSettings`) but has no mapper, service, or applier yet — it is a clean, realistic addition. In PrimeNG 21 the `Dropdown` component is exported as `Select`.
+
+**What is NOT in scope** (and why): no change to `theme-config.service.ts` (the activation step loops the existing applier registry — see <<activation>>), no change to the reference-resolution pipeline (reference resolution is upstream), and no structural-compatibility spec (that is an accelerator-only concern — PrimeNG's target inputs come from the PrimeNG package, not a sibling library).
+
+[#select-prereq]
+=== Prerequisites
+
+* You are at the tested revision (<<conventions>>) or a descendant where the `dropdown` usage still declares its `settings` shape.
+* You can run `npx nx test angular-utils --no-interactive`.
+* `primeng/select` is available (it is a PrimeNG 21 export — confirm with `node -p "require('primeng/package.json').version"` returning `21.x`).
+
+Verify the target inputs exist before mapping them. The `Select` component declares inputs for the settings below:
+
+[source,bash]
+----
+# Confirm the PrimeNG component and the inputs you will map.
+ls node_modules/primeng/types/primeng-select.d.ts
+grep -E "filter|showClear|virtualScroll|selectOnFocus|autoOptionFocus" node_modules/primeng/types/primeng-select.d.ts
+----
+
+Expected: the file exists and `filter`, `showClear`, `virtualScroll`, `selectOnFocus` and `autoOptionFocus` are declared inputs. (Map only inputs that are declared; the schema `dropdown` settings shape also includes `fluid`, `readonly`, `editable`, `scrollHeight`, `loadingIcon`, `filterLocale`, `virtualScrollItemSize` — map the subset you want the theme to control.)
+
+[#select-schema]
+=== Step 1 — Confirm the `dropdown` usage settings schema
+
+No schema change is required — the `dropdown` usage already declares settings. Read it to confirm which fields to map (`{schema_root}/schema/dropdown.ts`):
+
+[source,typescript]
+----
+// dropdownSettingsShape (subset shown) — every field .optional(), no inline defaults
+filter?: boolean
+showClear?: boolean
+virtualScroll?: boolean
+selectOnFocus?: boolean
+autoOptionFocus?: boolean
+// ... fluid, readonly, editable, scrollHeight, loadingIcon, filterLocale, virtualScrollItemSize
+// usage: settings: dropdownSettingsShape.optional()
+----
+
+Because `dropdown` declares a `settings` field, `'dropdown'` is already a member of `ThemeUsageNameWithSettings`, and `ThemeUsageSettings<'dropdown'>` already resolves to this settings type. (If you ever add a *new* settings field to the shape, that is the only schema edit needed — the eligible-usage type updates automatically.)
+
+[#select-mapper]
+=== Step 2 — Add the mapper
+
+Create `{primeng_provider_root}/select/select.mapper.ts`:
+
+[source,typescript]
+----
+import { asBoolean, defineUsageSettingsMapper } from '../../../helpers'
+import type { ThemeUsageSettings } from '../../../types'
+
+export interface PrimeNgSelectInputDefaults {
+  filter?: boolean
+  showClear?: boolean
+  virtualScroll?: boolean
+  selectOnFocus?: boolean
+  autoOptionFocus?: boolean
+}
+
+export const mapPrimeNgSelectSettings = defineUsageSettingsMapper<
+  ThemeUsageSettings<'dropdown'>,
+  PrimeNgSelectInputDefaults
+>({
+  filter:          { from: 'filter',          transform: asBoolean },
+  showClear:       { from: 'showClear',       transform: asBoolean },
+  virtualScroll:   { from: 'virtualScroll',   transform: asBoolean },
+  selectOnFocus:   { from: 'selectOnFocus',   transform: asBoolean },
+  autoOptionFocus: { from: 'autoOptionFocus', transform: asBoolean },
+})
+----
+
+Notes:
+
+* The imports are **relative to the feature directory** (`../../../helpers`, `../../../types`), exactly as `carousel.mapper.ts` does. Do not import the shared cluster from the package barrel.
+* `from` is pinned to a real `dropdown` settings key by the type system — a typo is a compile error.
+* `mapPrimeNgSelectSettings.targetKeys` is `['filter', 'showClear', 'virtualScroll', 'selectOnFocus', 'autoOptionFocus']`.
+
+Verify it compiles: `npx nx build angular-utils`.
+
+[#select-service]
+=== Step 3 — Add the component-settings service + runtime
+
+Create `{primeng_provider_root}/select/select-component-settings.service.ts`. This mirrors `carousel-component-settings.service.ts`, but with a **Select-appropriate** `refreshInstance`:
+
+[source,typescript]
+----
+import { Injectable } from '@angular/core'
+import { Select } from 'primeng/select'
+import { mapThemeUsageSettings } from '../../../usage-settings.utils'
+import { PrimeNgComponentThemingSettingsRuntime } from '../component-settings-runtime.utils'
+import { mapPrimeNgSelectSettings } from './select.mapper'
+import type { ThemePropertiesV2 } from '@onecx/integration-interface'
+import type { PrimeNgSelectInputDefaults } from './select.mapper'
+
+type PrimeNgSelectDefaults = Partial<PrimeNgSelectInputDefaults>
+
+@Injectable({ providedIn: 'root' })
+export class SelectComponentSettingsService {
+  private readonly runtime = new PrimeNgComponentThemingSettingsRuntime<Select, PrimeNgSelectDefaults>({
+    componentType: Select,
+    trackedKeys: mapPrimeNgSelectSettings.targetKeys,
+    resolveDefaults: (properties) =>
+      mapThemeUsageSettings(properties, 'dropdown', mapPrimeNgSelectSettings) ?? {},
+    refreshInstance: (instance) => this.refreshInstance(instance),
+  })
+
+  applyThemeProperties(properties: ThemePropertiesV2 | undefined): void {
+    this.runtime.applyThemeProperties(properties)
+  }
+
+  // Select is a single-selection input: it does not derive clone-item / autoplay /
+  // layout state from its inputs the way Carousel does. Assigning the inputs is the
+  // whole effect; just let Angular detect the change.
+  private refreshInstance(instance: Select): void {
+    instance.cd?.markForCheck()
+  }
+}
+----
+
+**`refreshInstance` is the component-appropriate decision.** The Carousel service recomputes derived state (autoplay, clones, layout). `Select` holds its selection internally and does not derive that kind of layout state from `filter`/`showClear`/`virtualScroll`/`selectOnFocus`/`autoOptionFocus`, so `markForCheck` is enough. If you later map a Select input that *does* require re-deriving internal state, extend `refreshInstance` the same way the Carousel service does — do not copy Carousel's clone/autoplay logic wholesale.
+
+Verify: `npx nx build angular-utils`.
+
+[#select-register]
+=== Step 4 — Register the applier in the factory
+
+Edit `{primeng_provider_root}/component-settings-applier.token.ts` to add the new service to the factory. The factory currently returns `[inject(CarouselComponentSettingsService)]`:
+
+[source,typescript]
+----
+import { InjectionToken, inject } from '@angular/core'
+import { CarouselComponentSettingsService } from './carousel/carousel-component-settings.service'
+import { SelectComponentSettingsService } from './select/select-component-settings.service'
+
+export const PRIMENG_COMPONENT_SETTINGS_APPLIERS = new InjectionToken<readonly PrimeNgComponentSettingsApplier[]>(
+  'PRIME_NG_COMPONENT_SETTINGS_APPLIERS',
+  {
+    providedIn: 'root',
+    factory: () => [inject(CarouselComponentSettingsService), inject(SelectComponentSettingsService)],
+  }
+)
+----
+
+[#select-export]
+=== Step 5 — Export from the feature barrel
+
+Add the provider-specific public exports to `{mapper_cluster_root}/index.ts` (the shared cluster stays internal). Two new lines, next to the existing carousel exports:
+
+[source,typescript]
+----
+export * from './providers/primeng/select/select.mapper'
+export * from './providers/primeng/select/select-component-settings.service'
+----
+
+**Do not** export `PrimeNgComponentThemingSettingsRuntime`, `defineUsageSettingsMapper`, or the transforms from provider files — they stay internal and are imported relatively (see link:index.adoc#public-surface[the public export surface]).
+
+Verify: `npx nx build angular-utils`.
+
+[#activation]
+=== Step 6 — Activation (no `theme-config.service.ts` change)
+
+`ThemeConfigService` (`{theme_service_root}/theme-config.service.ts`) injects `PRIMENG_COMPONENT_SETTINGS_APPLIERS` and, inside `applyThemeVariablesV2`, iterates **every** registered applier:
+
+[source,typescript]
+----
+// inside applyThemeVariablesV2, after region overrides are folded and before mapThemeToPreset:
+for (const applier of this.componentSettingsAppliers) {
+  applier.applyThemeProperties(properties)
+}
+----
+
+Because it loops the registry, **registering the service in the factory (Step 4) is the entire activation.** There is no per-applier switch and no second edit to `theme-config.service.ts`. The appliers only run when Theme V2 is available (the constructor routes to v2 only when `themeVersionAvailable(2)`), so the mapping is inert on v1.
+
+[#tests]
+=== Step 7 — Tests
+
+Add `{primeng_provider_root}/select/select-component-settings.service.spec.ts`. Follow the pattern of the existing `carousel-component-settings.service.spec.ts`: construct the service *before* any `Select` instance (that patches the prototype once), host a `Select` in `TestBed`, apply theme properties, and assert the fields.
+
+[source,typescript]
+----
+import { Component, type Type } from '@angular/core'
+import { TestBed } from '@angular/core/testing'
+import { SelectModule } from 'primeng/selectmodule'
+import { Select } from 'primeng/select'
+import { By } from '@angular/platform-browser'
+import { ThemePropertiesV2 } from '@onecx/integration-interface'
+import { SelectComponentSettingsService } from './select-component-settings.service'
+
+describe('SelectComponentSettingsService', () => {
+  // Constructing the service FIRST patches the Select prototype before the instance exists.
+  const service = new SelectComponentSettingsService()
+
+  @Component({
+    template: '<p-select [options]="options" [optionsLabel]="option => option.label" [optionsValue]="option => option.value"></p-select>',
+    imports: [SelectModule],
+  })
+  class HostComponent {
+    options = [{ label: 'One', value: 1 }, { label: 'Two', value: 2 }]
+  }
+
+  function host(): { select: Select } {
+    const fixture = TestBed.configureTestingModule({ imports: [HostComponent as Type<any>] })
+      .createComponent(HostComponent)
+    fixture.detectChanges()
+    const select = fixture.debugElement.query(By.directive(Select))!.componentInstance as Select
+    return { select }
+  }
+
+  it('applies the dropdown usage settings to a Select that did not bind them', () => {
+    const { select } = host()
+    expect(select.filter).toBeUndefined()
+    service.applyThemeProperties({
+      usages: { dropdown: { settings: { filter: true, showClear: true } } },
+    } as unknown as ThemePropertiesV2)
+    expect(select.filter).toBe(true)
+    expect(select.showClear).toBe(true)
+  })
+
+  it('does not override an explicitly bound input', () => {
+    const { select } = host()
+    select.filter = false            // simulate a bound/explicit input value
+    service.applyThemeProperties({
+      usages: { dropdown: { settings: { filter: true } } },
+    } as unknown as ThemePropertiesV2)
+    expect(select.filter).toBe(false) // explicit (recorded via ngOnChanges) wins
+  })
+
+  it('omits fields the theme does not set', () => {
+    const { select } = host()
+    service.applyThemeProperties({
+      usages: { dropdown: { settings: { showClear: true } } },
+    } as unknown as ThemePropertiesV2)
+    expect(select.showClear).toBe(true)
+    expect(select.filter).toBeUndefined()   // untouched, not set to undefined
+  })
+})
+----
+
+(If the host template's `[options]`/bindings above are not accepted by your PrimeNG 21 `Select` template syntax, bind the minimal required inputs — the assertions target only the five mapped fields.)
+
+Run: `npx nx test angular-utils --no-interactive`. Expected: the new spec passes alongside the existing carousel spec; the existing specs are unaffected.
+
+[#lifecycle]
+== Lifecycle, Explicit-Input Tracking, and Refresh
+
+The reusable bridge `PrimeNgComponentThemingSettingsRuntime` (`{primeng_provider_root}/component-settings-runtime.utils.ts`) is what makes every PrimeNG provider behave the same way. Read it before writing a new service, because the rules below are *guarantees of the runtime*, not of any one component:
+
+[#lifecycle-wrapping]
+=== Lifecycle wrapping (patched once)
+
+The runtime patches the component's **prototype** a single time (guarded by an internal `patched` flag):
+
+* `ngOnChanges` is wrapped to **record explicit inputs** and then call the original.
+* `ngAfterContentInit` is wrapped to **register the instance and apply the current defaults** for the first time, then call the original. (The runtime warns if a component does not define `ngAfterContentInit`.)
+* `ngOnDestroy` is wrapped to **unregister the instance** so a destroyed component is no longer targeted.
+
+Because the patch is on the prototype and guarded, it is safe to instantiate the service multiple times and safe to create instances in any order, *provided the service is constructed before the instances you want to theme* (this is why the spec constructs the service first).
+
+[#explicit-tracking]
+=== Explicit-input tracking (sticky)
+
+`ngOnChanges` records a tracked input into a per-instance explicit set **the first time** it appears in a `changes` map. The set is **additive-only — it never shrinks**. Consequences:
+
+* Once a tracked input is explicitly set (even once), the theme will **never** overwrite it for that instance.
+* Removing the binding, or letting the value become `undefined`, does **not** restore the theme default — the key stays marked explicit (this is "explicit is sticky").
+* An explicit `false` is preserved: the runtime only writes a theme value when `value !== undefined`, the value is not `undefined`-tracked-explicit, and `instance[key] !== value`.
+
+A theme value is written to an instance only when **all** of these hold: the resolved value is `!== undefined`, the key was **not** recorded explicit, and `instance[key]` is not already equal to it. When at least one tracked key changes, the runtime calls the provider's `refreshInstance` (see below).
+
+[#refresh]
+=== Refresh is component-appropriate
+
+Assigning inputs does not always recompute a component's derived state. Each provider supplies its own `refreshInstance`:
+
+* **Carousel** recomputes autoplay timers, clone items (circular), and layout, then `markForCheck` — because `Carousel` *derives* internal state from its inputs.
+* **Select** (this recipe) only `markForCheck` — because `Select` holds its selection internally and does not derive layout/clone state from the mapped inputs.
+
+Choose `refreshInstance` for the component you are mapping. The general rule: *if the component derives internal, non-recomputable-from-inputs state that the mapped inputs affect, recompute it in `refreshInstance`; otherwise `markForCheck` is sufficient.* Copying another component's refresh logic (e.g. Carousel's clone/autoplay) onto a component that has no such state is wrong and should be avoided.
+
+[#troubleshooting-prime]
+== Troubleshooting
+
+[cols="1,2"]
+|===
+| Symptom | Cause / fix
+
+| Settings have no effect; nothing applied.
+| Theme V2 is not active. The appliers only run inside `applyThemeVariablesV2`, which is reached only when `themeVersionAvailable(2)` is true. Confirm the theme reports v2 and the app resolves v2.
+
+| A bound input is still overwritten by the theme.
+| The key was not recorded explicit. Explicit tracking happens in `ngOnChanges`; a value set *before* the instance is registered (or set outside Angular's change flow) is not tracked. Bind the input in the template so `ngOnChanges` sees it.
+
+| `ngOnChanges`/prototype not patched for a component.
+| The service was constructed *after* the instances. Construct (inject) the component-settings service before the component instances it themes, as the spec does.
+
+| A settings field is silently dropped.
+| The value failed its transform (e.g. a non-boolean where `asBoolean` is expected, or a string not in `asEnum`'s allowed set). The field is omitted by design; check the value's type/shape against the schema.
+
+| A `{{...}}` reference in a setting is applied verbatim.
+| Reference resolution is upstream. If the properties reaching the mapper still contain an unresolved reference, the transform drops the field. Resolve references upstream (see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]).
+
+| A field is written to the instance but the component does not react.
+| The component derives state from the input and `refreshInstance` is a no-op. Extend `refreshInstance` to recompute that state (see <<refresh>>).
+|===
+
+[#see-also-prime]
+== See Also
+
+* link:index.adoc[Theme V2 Usage Settings — architecture reference]
+* link:onecx.adoc[Theme V2 Usage Settings — OneCX provider guide]
+* link:../theme-v2.adoc[Theme V2 Architecture]
