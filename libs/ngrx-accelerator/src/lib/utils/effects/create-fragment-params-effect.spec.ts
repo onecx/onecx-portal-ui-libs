@@ -40,4 +40,33 @@ describe('createFragmentParamsEffect', () => {
             relativeTo: activatedRoute
         }));
     });
+
+    it('passes the params after the prefix to the reducer as a plain record', async () => {
+        const activatedRoute = { fragment: of('search?param=1&test=key') } as any;
+        const reducer = jest.fn().mockImplementation((state, _action) => ({ ...state, page: 2 }));
+
+        const effect$ = createFragmentParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
+        const result = firstValueFrom(effect$);
+        actionsSubject.next({ type: actionType });
+        await result;
+
+        expect(reducer).toHaveBeenCalledWith({ param: '1', test: 'key' }, { type: actionType });
+        expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({
+            fragment: 'search?param=1&test=key&page=2',
+        }));
+    });
+
+    it('omits null and undefined values from the fragment', async () => {
+        const activatedRoute = { fragment: of('search?param=1') } as any;
+        const reducer = jest.fn().mockImplementation(() => ({ name: 'x', a: null, b: undefined }));
+
+        const effect$ = createFragmentParamsEffect(actions$, actionType as any, router, activatedRoute, reducer);
+        const result = firstValueFrom(effect$);
+        actionsSubject.next({ type: actionType });
+        await result;
+
+        expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({
+            fragment: 'search?name=x',
+        }));
+    });
 });
