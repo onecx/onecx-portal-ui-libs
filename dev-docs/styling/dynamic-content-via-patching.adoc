@@ -1,0 +1,126 @@
+= Dynamic content via patching
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u6: ./dynamic-content-via-patching.adoc
+:u7: ./dynamic-content-via-container.adoc
+:u8: ./scope-polyfill.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+:dynamic_content_initializer: {shell}/src/app/shell/utils/styles/dynamic-content-initializer.utils.ts
+:ensure_create_onecx_element: {shell}/src/app/shell/utils/styles/dynamic-content.utils.ts
+:ensure_create_onecx_dynamic_container: {shell}/src/app/shell/utils/styles/dynamic-content.utils.ts
+:primeng_overwrites: {shell}/src/app/shell/utils/styles/primeng-overwrites.utils.ts
+:material_overwrites: {shell}/src/app/shell/utils/styles/angular-material-overwrites.utils.ts
+:trigger_listener: {shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts
+:trigger_accessor: {shell}/src/app/shell/utils/styles/onecx-trigger-element.utils.ts
+:body_blacklist: {shell}/src/app/shell/utils/styles/body-overwrites.utils.ts
+:body_hooks: {shell}/src/app/shell/utils/styles/body-overwrites.utils.ts
+:body_wrap: {shell}/src/app/shell/utils/styles/body-overwrites.utils.ts
+:cdk_overlay_hook: {shell}/src/app/shell/utils/styles/body-overwrites.utils.ts
+:wrap_with_div: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:create_wrapper: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:observe_wrapper: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:find_wrapper: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:remove_style_data: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:append_style_data: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:append_intermediate_style_data: {shell}/src/app/shell/utils/styles/style-data.utils.ts
+:primeng_plugin_guide: ../../docs/modules/onecx-portal-ui-libs/pages/migrations/angular-19/add-required-plugin-to-primeng.adoc
+:material_plugin_guide: ../../docs/modules/onecx-portal-ui-libs/pages/migrations/angular-19/add-angular-material-plugin.adoc
+:help_ui_webpack: https://github.com/onecx/onecx-help-ui/blob/3a7dd5d26dcc23b473a4a79a1054fe373a6ab658/webpack.config.js
+
+== Question answered
+
+How does an overlay or dialog that renders outside an app's scoped subtree still pick up that app's style data when OneCX intercepts creation, and how are wrapping and cleanup handled once the node reaches `document.body`?
+
+== Why it exists
+
+The {scope_at_rule} model (link:{u8}[Unit 8]) confines an app's rules to the DOM subtree that carries its `data-style-id`. Overlays and dialogs are frequently created outside that subtree and therefore need creation-time attribution plus a body-time promotion step so they receive the correct scoped styles.
+
+This Unit documents the framework-agnostic patching contract only: app or library helpers stamp temporary style data onto the semantic node before insertion, then the Shell promotes or cleans up that data when the node reaches `document.body`. The container-based alternative is link:{u7}[Dynamic content via container].
+
+== How it works
+
+Two responsibilities cooperate:
+
+* Build-time rewrites performed by app or library build tooling arrange for calls that resolve the owning app and stamp short-lived `data-intermediate-style-*` attributes on the semantic node that will later reach `document.body`. The helper implementations referenced here are implemented in the Shell runtime; app/library build tooling simply rewrites calls to invoke them.
+* Shell-side code watches global insertion and removal, promotes those temporary markers into permanent scope data or wrappers, and removes the wrapper again when the dynamic node disappears.
+
+== Libs side / Shell side
+
+=== App/library build rewrites (build-time)
+
+The interception point is the app or library build plumbing: local build tooling rewrites the library/framework calls so that, at runtime, they invoke Shell-owned helper implementations. App and library authors are responsible for configuring those build-time rewrites; the helper code itself lives in the Shell runtime. The local migration guides for link:{primeng_plugin_guide}[PrimeNG] and link:{material_plugin_guide}[Angular Material / CDK] describe the required Webpack rewrites, and the reviewed link:{help_ui_webpack}[`onecx-help-ui` webpack.config.js] shows the concrete `ModifySourcePlugin` / `ReplaceOperation` rules that perform these replacements.
+
+Note: the helper implementations and the body-hooks they rely on are owned and maintained in the Shell; apps/libraries only opt into them by applying the build rewrites.
+
+The document-level helper inventory is:
+
+* link:{primeng_overwrites}[`ensurePrimengDynamicDataIncludesIntermediateStyleData()`] exposes `document.createElementFromPrimeNg` as a deprecated compatibility hook. It resolves style data from the PrimeNG context element first, falls back to the current trigger element, and writes temporary attributes with link:{append_intermediate_style_data}[`appendIntermediateStyleData()`].
+* link:{material_overwrites}[`ensureMaterialDynamicDataIncludesIntermediateStyleData()`] exposes `document.createElementFromMaterial` as a deprecated compatibility hook. It resolves style data from the current trigger element and also writes temporary attributes with link:{append_intermediate_style_data}[`appendIntermediateStyleData()`].
+* link:{ensure_create_onecx_element}[`ensureCreateOnecxElement()`] exposes `document.createOnecxElement` as the framework-agnostic helper. It reads style data from the caller's injector first, falls back to link:{trigger_accessor}[`getOnecxTriggerElement()`], and then writes `data-intermediate-style-*` attributes via link:{append_intermediate_style_data}[`appendIntermediateStyleData()`].
+* link:{ensure_create_onecx_dynamic_container}[`ensureCreateOnecxDynamicContainer()`] exposes `document.createOnecxDynamicContainer`. Unlike the patching helpers above, it reads permanent style data from the named app element, writes that data with link:{append_style_data}[`appendStyleData()`], marks the container with `data-onecx-dynamic-container`, appends it to `document.body`, and hands off to link:{u7}[Unit 7]'s container-based flow.
+
+For the patching route, the important libs-side rule is scope: stamp only the semantic content node that the Shell will later observe, not unrelated portal host elements.
+
+=== Shell side
+
+The Shell wires the runtime together through link:{dynamic_content_initializer}[`dynamicContentInitializer()`], which installs the body hooks, registers `document.createOnecxElement`, registers `document.createOnecxDynamicContainer`, installs the PrimeNG and Material compatibility shims, and starts link:{trigger_listener}[`initializeOnecxTriggerElementListener()`].
+
+The trigger path is global but still framework-agnostic. link:{trigger_listener}[`initializeOnecxTriggerElementListener()`] records the last hovered or focused element, and link:{trigger_accessor}[`getOnecxTriggerElement()`] falls back to the first `.onecx-body` descendant carrying `data-style-id` when there is no live trigger.
+
+The append/remove path is also global. link:{body_hooks}[`ensureBodyChangesIncludeStyleData()`] overwrites `document.body.appendChild` and `document.body.removeChild`, while link:{body_blacklist}[`blackListConditions`] keeps three cases out of the generic wrapper path:
+
+* `cdk-overlay-container`, which instead uses link:{cdk_overlay_hook}[`overwriteAngularMaterialOverlayContainer()`] so the container itself receives the fresh style data;
+* `cdk-visually-hidden`, which is appended untouched;
+* nodes already marked with `data-onecx-dynamic-container`, which belong to the Unit 7 container flow and must not be wrapped a second time.
+
+For every other appended element, link:{body_wrap}[`wrapWithStyleData()`] combines style data found on the child with trigger-derived fallback data, wraps the node through link:{wrap_with_div}[`wrapWithDiv()`] and link:{create_wrapper}[`createWrapper()`], then removes the temporary/intermediate markers from the child with link:{remove_style_data}[`removeStyleDataRecursive()`]. When the node is later removed, link:{body_hooks}[`document.body.removeChild` inside `ensureBodyChangesIncludeStyleData()`] uses link:{find_wrapper}[`findStyleDataWrapper()`] to remove the enclosing wrapper instead of the bare child, and link:{observe_wrapper}[`observeStyleDataWrapper()`] deletes empty wrappers automatically.
+
+== Edge cases & pitfalls
+
+* *Stale trigger element.* `getOnecxTriggerElement()` reflects the last hover/focus event, so delayed or fully programmatic overlays can inherit the wrong owner when no injector-scoped data is available.
+* *No scoped ancestor.* If neither the helper nor the fallback trigger can resolve style data, the created node stays unattributed.
+* *Blacklist exceptions are intentional.* `cdk-overlay-container`, `cdk-visually-hidden`, and `data-onecx-dynamic-container` nodes are excluded so the Shell does not wrap nodes that have dedicated handling already.
+* *Cleanup depends on wrapper removal.* The patching route stays correct only if the Shell removes wrapper elements together with the dynamic child and lets empty wrappers self-delete.
+
+== Debugging
+
+In the devtools:
+
+* Check whether the created semantic node carries temporary `data-intermediate-style-*` attributes before it reaches `document.body`.
+* If the node is appended under `body` but not scoped, inspect whether the Shell created a wrapper `div` or matched one of the blacklist exceptions documented in link:{body_blacklist}[`body-overwrites.utils.ts`].
+* If the wrong app's styles are applied, inspect the current trigger resolution path in link:{trigger_listener}[`onecx-trigger-element.utils.ts`] and whether injector-scoped style data was available first.
+* If wrappers remain after content closes, inspect the wrapper lookup and cleanup helpers in link:{find_wrapper}[`style-data.utils.ts`], link:{observe_wrapper}[`style-data.utils.ts`], and link:{remove_style_data}[`style-data.utils.ts`].
+
+== Related Units
+
+* link:{u7}[Dynamic content via container]: the companion route that scopes content by inserting it into a Shell-created container instead of patching the semantic child directly.
+* link:{u8}[Scope polyfill]: how the scoped CSS blocks that these helpers feed are rewritten on browsers without native {scope_at_rule}.
+* link:{area}[Styling & Style Isolation: Area overview]
+
+== Sources
+
+Code::
+* link:{dynamic_content_initializer}[`dynamic-content-initializer.utils.ts`]: `dynamicContentInitializer()`
+* link:{ensure_create_onecx_element}[`dynamic-content.utils.ts`]: `ensureCreateOnecxElement()` / `document.createOnecxElement`
+* link:{ensure_create_onecx_dynamic_container}[`dynamic-content.utils.ts`]: `ensureCreateOnecxDynamicContainer()` / `document.createOnecxDynamicContainer`
+* link:{primeng_overwrites}[`primeng-overwrites.utils.ts`]: deprecated `document.createElementFromPrimeNg`
+* link:{material_overwrites}[`angular-material-overwrites.utils.ts`]: deprecated `document.createElementFromMaterial`
+* link:{trigger_listener}[`onecx-trigger-element.utils.ts`]: `initializeOnecxTriggerElementListener()`
+* link:{trigger_accessor}[`onecx-trigger-element.utils.ts`]: `getOnecxTriggerElement()`
+* link:{body_blacklist}[`body-overwrites.utils.ts`]: blacklist exceptions
+* link:{body_hooks}[`body-overwrites.utils.ts`]: `document.body.appendChild` / `removeChild` hooks
+* link:{body_wrap}[`body-overwrites.utils.ts`]: wrapper promotion path
+* link:{cdk_overlay_hook}[`body-overwrites.utils.ts`]: `cdk-overlay-container` special case
+* link:{wrap_with_div}[`style-data.utils.ts`]: `wrapWithDiv()`
+* link:{create_wrapper}[`style-data.utils.ts`]: `createWrapper()`
+* link:{observe_wrapper}[`style-data.utils.ts`]: `observeStyleDataWrapper()`
+* link:{find_wrapper}[`style-data.utils.ts`]: `findStyleDataWrapper()`
+* link:{remove_style_data}[`style-data.utils.ts`]: `removeStyleDataRecursive()`
+* link:{append_style_data}[`style-data.utils.ts`]: `appendStyleData()`
+* link:{append_intermediate_style_data}[`style-data.utils.ts`]: `appendIntermediateStyleData()`
+* link:{primeng_plugin_guide}[`add-required-plugin-to-primeng.adoc`]: local app-side rewrite guide
+* link:{material_plugin_guide}[`add-angular-material-plugin.adoc`]: local app-side rewrite guide
+* link:{help_ui_webpack}[`onecx-help-ui` webpack.config.js]: reviewed rewrite example

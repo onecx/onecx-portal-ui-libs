@@ -1,0 +1,95 @@
+= React translations
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+How does a React App load its translations and keep them in step with the single page-wide language: and how does that differ from the Angular chain in link:./app-translations.adoc[App translations load & sharing]?
+
+== Why it exists
+
+The Angular half of a OneCX page loads translations through a dedicated `TranslateLoader` chain and a page-wide global cache (`window.onecxTranslations`), so the same file is fetched once and shared across every Angular App. React Apps do not share that machinery: i18next is *per-instance* and React has no equivalent of the shared cache. A React App therefore needs its own, small pipeline: but it must still (a) translate the *same* language the rest of the page decided, and (b) load its own per-App translation files from its own base URL. The design reuses the one shared decision (`lang$`) and adds only the two React pieces that Angular does not need: a helper that points an i18next backend at the portal page's translation files, and a bridge component that pushes the `lang$` stream into `i18n.changeLanguage`.
+
+== How it works
+
+The framework-agnostic part is exactly what link:./profile-and-language.adoc[Profile load & language decision] already covers: `UserProfileTopic` carries the profile and `resolveProfileLanguage` collapses it into one `lang$`. React only has to *consume* that stream and *point i18next at the right files*. Two small pieces in `@onecx/react-utils` do that.
+
+[source,mermaid]
+----
+flowchart TD
+  P["UserProfileTopic"] --> D["resolveProfileLanguage()"]
+  D --> L["UserProvider: lang$"]
+  L --> B["TranslationBridge (react-utils)"]
+  B -->|i18n.isInitialized?| I["i18n.changeLanguage(lang)"]
+  F["getTranslationPathFromMeta(import.meta.url)"] --> BP["i18next backend loadPath<br/>&lt;base&gt;{{lng}}.json"]
+  BP --> I
+  I --> R["React App renders i18next translations"]
+----
+
+* **The same `lang$`.** link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider`] builds the exact same stream the Angular `UserService` does: a `BehaviorSubject` seeded with `determineBrowserLanguage() ?? DEFAULT_LANG`, then driven by `profile$` piped through `resolveProfileLanguage(profile, DEFAULT_LANG, getNormalizedBrowserLocales)`. It is exposed to the tree through `useUserService().lang$`. (Why and how the language is decided is link:./profile-and-language.adoc[Profile load & language decision]; this Unit only uses the result.)
+* **Pointing i18next at the files.** link:{libs}/react-utils/src/lib/utils/translationResources.ts[`getTranslationPathFromMeta(metaUrl, path = 'assets/i18n/')`] builds an i18next base `loadPath` from `import.meta.url`: it strips the calling module's file name and appends the segment (so a React App under its own base URL points i18next at *its own* `assets/i18n/`), and throws when `metaUrl` is a `file://` URL. `registerPortalPageTranslations(instance, metaUrl, path = 'onecx-react-utils/assets/i18n/')` goes one step further: it sets the i18next backend's `loadPath` to `<base>{{lng}}.json` (both `instance.options.backend` and the live `backendConnector.backend.options`), so the portal page's shared translation files are loaded by i18next's own backend. It is a no-op for `file://` URLs.
+* **The bridge.** link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge`] is a zero-render component: it reads `useTranslation().i18n` and `useUserService().lang$`, and in a `useEffect` subscribes `lang$`, calling `i18n.changeLanguage(lang)` **only when `i18n.isInitialized` is true**. Pre-initialization emissions are deliberately ignored, so a `lang$` emission that arrives before i18next has finished initialising is *not* applied: the bridge needs a later `lang$` emission to synchronise the language.
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/react-integration-interface` provides the `UserProvider` / `lang$` (the shared decision); `@onecx/react-utils` provides the two React-specific pieces: the i18next `loadPath` helpers (`getTranslationPathFromMeta`, `registerPortalPageTranslations`) and the `TranslationBridge`. `@onecx/react-utils` also exports the provider wrapper a React Remote Component applies to itself: link:{libs}/react-utils/src/lib/utils/withBaseProviders.tsx[`withBaseProviders`] returns a component that nests `AppStateProvider` > `ConfigurationProvider` > `SyncedRouterProvider` > `UserProvider` > `TranslationBridge`, so the `lang$` stream and the bridge are in place around the component's own i18next usage. The App itself owns its i18next *instance* (initialisation, resources, backend); the libs only tell it *where* to load from and *which language* to switch to.
+
+=== Shell side
+
+The Shell is not a React App, so it does not use this pipeline; its own translations go through the Angular chain in link:./app-translations.adoc[App translations load & sharing]. It participates the same way as for Angular: by fetching the signed-in profile and publishing it to the `UserProfileTopic` (the `userProfileInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]): which is what feeds `UserProvider`'s `lang$`. The Shell does not do anything React-translation-specific.
+
+== Angular / React
+
+This Unit *is* the React side; the comparison is the whole point.
+
+* **Angular**: a `TranslateLoader` chain plus a page-wide `window.onecxTranslations` cache gives the "fetch once, shared across every App" guarantee (link:./app-translations.adoc[App translations load & sharing]).
+* **React**, there is no shared cache. Each i18next instance loads its own resources and relies on i18next's per-instance resource handling plus the browser's HTTP cache for de-duplication. Concretely that means: the same translation file *may* be requested by more than one React App on the page (each instance loads its own copy), whereas the Angular side fetches it once. The frameworks use the same `lang$` decision, so they should converge on the same language; however, the `TranslationBridge` only applies `lang$` emissions observed while `i18n.isInitialized` is true, an emission that occurs before initialization can leave i18next on the language it initialised with until a later `lang$` emission. Only the *caching* model differs.
+
+Dynamic translations are *not* wired automatically into the React translation libraries. The React libraries expose the capability helpers in link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`] (`setCapabilities`, `useShellCapability`), but they do not call `getTranslations()` or consume the framework-agnostic `DynamicTranslationService` for missing-key fallback. A React App may still choose to call the shared service explicitly; that wiring is outside the built-in React translation path documented here.
+
+== Edge cases & pitfalls
+
+* **`file://` URLs.** Both `getTranslationPathFromMeta` and `registerPortalPageTranslations` bail (throw, or no-op) when `import.meta.url` is a local `file://` URL; a React App must be served over HTTP and the bundler must expose `import.meta.url`.
+* **A `lang$` emission before i18next initialises.** `TranslationBridge` ignores emissions while `i18n.isInitialized` is `false`. If that is the *only* emission (e.g. the profile's language never changes after the bridge mounts), i18next stays on the language it initialised with. A later `lang$` emission is what actually switches it.
+* **Per-instance loading, not page-wide.** Because there is no `window.onecxTranslations`, two React Apps on one page can each fetch the same `<lng>.json`; de-duplication is left to the browser HTTP cache. The Angular "fetch once" guarantee does not apply to the React side.
+* **i18next backend wiring.** `registerPortalPageTranslations` sets `loadPath` on both `instance.options.backend` and the active `backendConnector.backend.options`; if an App configures its own backend *after* this call, the portal `loadPath` can be overridden.
+
+== Debugging
+
+* `useUserService().lang$` (inside the `UserProvider` tree) is the single language React uses; log it to confirm the value i18next is being switched to.
+* `i18n.isInitialized` and `i18n.language` (from `useTranslation().i18n`) show whether the bridge has actually applied the language and which i18next is active.
+* To confirm the file location, log the `loadPath` on the i18next backend after `registerPortalPageTranslations`; it should be `<base>{{lng}}.json` under the App's own `import.meta.url` base.
+* General `window` state and Topic tooling is in link:../diagnostics/tracing-communication.adoc[13. Diagnostics].
+
+== Known issues
+
+There is no known defect in this Unit as of the current `main` code, but two constraints matter in practice: the bridge only applies `lang$` emissions seen after `i18n.isInitialized`, and the React libs do not automatically wire missing-key fallback or dynamic-translation consumption into i18next.
+
+== Related Units
+
+* link:./profile-and-language.adoc[Profile load & language decision]: the `lang$` and `resolveProfileLanguage` this Unit consumes; the language every framework must use.
+* link:./app-translations.adoc[App translations load & sharing]: the Angular loader chain and `window.onecxTranslations` cache this React pipeline is contrasted with.
+* link:./remote-component-translations.adoc[Remote Component translations]: how a Remote Component (including a React one wrapped by `withBaseProviders`) adds its own base URL.
+* link:./dynamic-translations.adoc[Dynamic translations]: the shared dynamic-translation mechanism a React App may call explicitly when it needs more than the built-in i18next path.
+* link:./locale-and-timezone-formatting.adoc[Locale & timezone formatting]: the same `lang$` drives date/number formatting; React formats its own values with `Intl` keyed by it.
+
+== Sources
+
+Code::
+* link:{libs}/react-integration-interface/src/lib/contexts/userContext.tsx[`UserProvider`, `useUserService` (userContext.tsx)]
+* link:{libs}/react-integration-interface/src/lib/api/constants.ts[`DEFAULT_LANG` (react `constants.ts`)]
+* link:{libs}/react-utils/src/lib/utils/translationResources.ts[`getTranslationPathFromMeta`, `registerPortalPageTranslations` (translationResources.ts)]
+* link:{libs}/react-utils/src/lib/utils/translationBridge.tsx[`TranslationBridge` (translationBridge.tsx)]
+* link:{libs}/react-utils/src/lib/utils/withBaseProviders.tsx[`withBaseProviders` (withBaseProviders.tsx)]
+* link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveProfileLanguage` (user-language.utils.ts)]
+* link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`setCapabilities`, `useShellCapability` (shellCapability.ts)]
+* link:{shell}/src/app/app.module.ts[`userProfileInitializer` (Shell)]

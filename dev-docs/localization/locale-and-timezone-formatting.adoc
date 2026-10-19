@@ -1,0 +1,127 @@
+= Locale & timezone formatting
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+Once the page has decided *which language* to use, how do the locale and timezone settings actually drive the formatting of dates and numbers that reach the user?
+
+== Why it exists
+
+Choosing a language is only the first half of localization. A date or a number must also be rendered in the conventions of the user's locale (month names, digit grouping, calendar, time format) and, ideally, the user's timezone. A OneCX page has two constraints that shape the mechanism:
+
+* The language is decided once, in a single framework-agnostic place (link:./profile-and-language.adoc[Profile load & language decision]), but every framework on the page must *format* with it: and each framework formats through its own engine (Angular's locale-data-driven pipes, a React App's own `Intl` calls).
+* On the Angular side the locale cannot be a static string baked in at build time: the page may change language at runtime when the profile arrives, so whatever Angular's pipes and injected code read for "the locale" must track the live language stream.
+
+The design answers this by keeping one *source of truth*, the `lang$` stream from the profile decision, and adapting it to each framework: on Angular by making `LOCALE_ID` a *live* value bound to `lang$` and by lazily registering the matching Angular locale data, and on React by handing the same language straight to the App's own `Intl` usage.
+
+== How it works
+
+The framework-agnostic core is one fact: **the profile decision produces one page-wide language stream, `lang$`, and every framework-specific formatter is fed from that stream** (see link:./profile-and-language.adoc[Profile load & language decision]). The language is read from the profile's `settings.locales`, falling back to the legacy `accountSettings.localeAndTimeSettings.locale` and then to the browser, in `link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveProfileLanguage`]` / `link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveLegacyLanguage`]. Those two fields, plus the timezone, live on the link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.model.ts[`UserProfile`]: `settings.locales` (`string[]`) and `accountSettings.localeAndTimeSettings` (`{locale, timezone}`, each optional `string`).
+
+Formatting then happens per framework against that one language input, with different runtime behaviour depending on whether the consumer is Angular locale-data lookup or native `Intl`.
+
+[source,mermaid]
+----
+flowchart TD
+  P["UserProfileTopic"] --> D["resolveProfileLanguage()<br/>(one language, Unit 1)"]
+  D --> L["lang$"]
+  L --> A["Angular: LOCALE_ID = DynamicLocaleId<br/>(valueOf() -> lang$.getValue())"]
+  L --> S["startup: localeLoaders[lang] -> registerLocaleData<br/>(for Angular pipes)"]
+  A --> AP["Angular pipes read LOCALE_ID when the pipe runs"]
+  AP --> F["Angular pipes format via Angular locale data"]
+  A --> NI["Native Intl usage (DateUtils, apps) uses the locale argument directly"]
+  NI --> F2["Intl.DateTimeFormat(localeArg, options): native engine"]
+  S --> AP
+  L --> R["React: App formats its own dates/numbers<br/>with native Intl, keyed by the same lang$"]
+  NI -. runtime limitation .-> N["Passing a DynamicLocaleId object directly to native Intl can be treated as an empty locale list, so Intl may fall back to the runtime default."]
+----
+
+* **One language input, from the profile.** The language is the output of `resolveProfileLanguage` (link:./profile-and-language.adoc[Profile load & language decision]). Both frameworks consume that same `lang$`, but the effective runtime result still depends on each formatter's own engine and update rules.
+* **The profile fields.** `settings.locales` is the modern, multi-entry preference list; `accountSettings.localeAndTimeSettings.locale` is the legacy single value; and `accountSettings.localeAndTimeSettings.timezone` is the IANA timezone the user has chosen. Note that *only the locale reaches the formatters*: see link:#timezone[Timezone] below.
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/angular-integration-interface` / `@onecx/angular-utils` turn the one language into something Angular's formatting machinery can use, and expose a small date helper for direct calls.
+
+* **A live `LOCALE_ID`.** Instead of a static string, `@onecx/angular-utils` provides `LOCALE_ID` as link:{libs}/angular-utils/src/lib/utils/dynamic-locale-id.utils.ts[`DynamicLocaleId`]: an object whose `valueOf()` returns `userService.lang$.getValue()` (its current value) and which proxies the remaining `String` methods. That keeps the injected locale readable from the latest `lang$`, but Angular pipes and native `Intl` do not consume it the same way. It is wired in both link:{libs}/angular-utils/src/lib/providers/angular-utils.providers.ts[`provideAngularUtils()`] and the `providers` of link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorModule`].
+* **Registering the locale data at startup.** Angular's date/currency pipes rely on Angular locale data (the objects passed to `registerLocaleData`) to format according to a locale. This is distinct from the browser's native `Intl` engine: native `Intl` does not consult Angular's `registerLocaleData` and formats using the host runtime's locale data and matching behaviour.
+
+`@onecx/angular-utils` ships link:{libs}/angular-utils/src/lib/utils/angular-locales.ts[`localeLoaders`], an auto-generated `Record<locale, () => Promise<any>>` mapping supported locales to dynamic `import`s of `@angular/common/locales` data. `provideAngularUtils()` adds a `provideAppInitializer` that reads the *current* `lang$` value and, if a loader mapping exists, calls `localeLoaders[lang]?.().then(data => registerLocaleData(data.default ?? data))`. An absent loader mapping is silently skipped; if a loader exists but its dynamic import or registration rejects, that rejection is caught and a warning is logged (not thrown). `AngularAcceleratorModule` adds its own `APP_INITIALIZER` that instead does `firstValueFrom(userService.lang$.pipe(skip(1)))`: it waits for the *second* `lang$` emission (the profile-driven value) and then registers that locale's data. The two initializers therefore cover the bootstrap language and the authoritative language; the `DynamicLocaleId` keeps the *injected* value live either way.
+* **Angular pipe update limits.** Angular's link:https://angular.dev/api/common/DatePipe[`DatePipe`] runs only on pure input changes, and Angular ships only `en-US` locale data by default. Changing the internal language value inside the injected `DynamicLocaleId` object does not by itself force an already-bound `DatePipe` to rerun; a primitive input change or new object reference is still required.
+* **A direct date formatter.** For code that formats without a template pipe, link:{libs}/angular-accelerator/src/lib/utils/dateutils.ts[`DateUtils.localizedDate(value)`] builds `new Intl.DateTimeFormat(this.locale, this.options)`, `this.locale` is the injected `LOCALE_ID` (the `DynamicLocaleId` object) and `this.options` is a fixed date+time shape (`month: 'short'`, `day: '2-digit'`, `year: 'numeric'`, `hour`, `minute`, `second: '2-digit'`), and returns `''` for a nullish value. Because this call goes straight to native `Intl`, it needs a primitive locale string for reliable locale selection; passing the `DynamicLocaleId` object itself can fall back to the runtime default locale instead.
+
+Important runtime note: a Node reproduction shows the difference directly: `Intl.getCanonicalLocales(object) === []`, `new Intl.DateTimeFormat(object).resolvedOptions().locale === 'en-US'`, while `new Intl.DateTimeFormat(object.valueOf()).resolvedOptions().locale === 'de-DE'`. That matches the current `DateUtils.localizedDate` risk because it passes the `DynamicLocaleId` object, not `valueOf()`, to native `Intl`.
+
+Framework-agnostic date helpers that need to sidestep the local timezone at all are in link:{libs}/accelerator/src/lib/utils/date.utils.ts[`date.utils.ts`]: `isValidDate` and `getUTCDateWithoutTimezoneIssues`, which preserves the input date's local year/month/day by rebuilding them as UTC midnight.
+
+=== Shell side
+
+The Shell owns the *input*: it is the only participant that fetches the signed-in profile and publishes it to the `UserProfileTopic`, so it is what supplies `settings.locales`, the legacy `locale` and the `timezone` the formatters above read. That publishing happens in the Shell's user-profile initialiser, wired into its providers in link:{shell}/src/app/app.module.ts[`app.module.ts`] (`userProfileInitializer`). The initialiser also computes a *normalised* locale list for itself, `profile.settings.locales ? normalizeLocales(profile.settings.locales) : getNormalizedBrowserLocales()`, but publishes the profile to the Topic; the formatting decisions on the page still run through `resolveProfileLanguage` over the published profile (see link:./profile-and-language.adoc#known-issues[Profile load & language decision, Known issues] for why the published `settings.locales` shape matters).
+
+[#timezone]
+=== Timezone
+
+The profile carries a timezone (`accountSettings.localeAndTimeSettings.timezone`), but the shared formatters do not read it. `DateUtils.localizedDate` calls native `Intl.DateTimeFormat(locale, options)` with no `timeZone` option, so it formats in the runtime's local zone. Angular `DatePipe` also uses the local system timezone unless the caller passes a timezone argument or configures `DATE_PIPE_DEFAULT_OPTIONS`; the profile timezone is not consumed by the shared libs. In other words, today the *locale* drives formatting and the *timezone* is carried in the model but not applied by the shared code. The only timezone handling in the shared libs is the defensive `getUTCDateWithoutTimezoneIssues`, which preserves the input's local calendar components at UTC midnight: it does not preserve the original UTC calendar date and it does not format in a chosen zone.
+
+== Angular / React
+
+* **Angular**: `LOCALE_ID` is the live `DynamicLocaleId`, `registerLocaleData` is called at startup for the relevant locale, and Angular pipes format through Angular locale data when they rerun. `DateUtils.localizedDate` is separate: it calls native `Intl` directly with the injected locale object.
+* **React**: there is no library `LOCALE_ID` and no shared `Intl` helper in `@onecx/react-utils`. A React App holds the same `lang$` (see link:./react-translations.adoc[React translations]) and formats its own dates and numbers directly with the browser `Intl` APIs, keyed by that language. The framework-agnostic `date.utils.ts` helpers (`isValidDate`, `getUTCDateWithoutTimezoneIssues`) are usable from React as well because they have no Angular dependency.
+
+== Edge cases & pitfalls
+
+* **Locale data not registered for the active language.** Native `Intl.DateTimeFormat` calls continue to run (they use the host runtime's engine and built-in locale matching), but Angular's `date`/`currency` pipes depend on Angular's registered locale data. In Angular 21, a requested locale-data lookup can raise a "missing locale data" error if the parent/required data are unavailable; this is distinct from an absent loader mapping. Specifically:
+  * An absent `localeLoaders[lang]` mapping is silently skipped (no warning).
+  * If a loader mapping exists but its dynamic import or `registerLocaleData` rejects, that rejection is caught and a warning is logged (`Could not load locale data for '<lang>'`) rather than throwing.
+  * If Angular's own runtime lookup for parent/auxiliary locale data fails, Angular may throw a missing-locale-data error; relying solely on the absence of a loader mapping is not sufficient to avoid that condition. Register the correct `@angular/common/locales` data to ensure pipes work as expected.
+* **Angular pipes do not rerun on `DynamicLocaleId` mutation alone.** `DatePipe` is pure, so an existing binding reruns only when its date input changes as a primitive or object reference. A later `lang$` change updates what `DynamicLocaleId.valueOf()` would return, but that alone does not refresh existing pipe output.
+* **Two different startup emissions.** `provideAngularUtils` registers data for the *current* `lang$` value at app start (the browser/default seed), while `AngularAcceleratorModule` waits for `skip(1)`: the profile-driven value. If a profile-driven language has no `localeLoaders` entry, that locale's data is never registered; `DynamicLocaleId` still reports the latest language, but Angular pipes can still fail on missing locale data and native `Intl` calls can still fall back if they receive the locale object instead of a primitive string.
+* **`lang$` before the profile arrives.** The first emission is the browser/default language; formatting keyed to it reflects that until the profile upgrades the stream. Code that formats once at construction (rather than re-reading on change) can show the bootstrap language.
+* **Timezone is not applied by the shared code.** A page showing a user in, say, `Asia/Tokyo` still renders clock times in the *viewer's* local zone unless an App explicitly passes a `timeZone` option to `Intl`. See link:#timezone[Timezone].
+* **Day-boundary drift.** `getUTCDateWithoutTimezoneIssues` keeps the input date's local calendar components (`getFullYear()`, `getMonth()`, `getDate()`) and turns those into UTC midnight. Use it when a calendar *day* must stay stable across timezones; do not read it as "preserve the original UTC calendar date."
+
+== Debugging
+
+* The language every formatter uses is `UserService.lang$` (Angular) / `useUserService().lang$` (React): the same stream documented in link:./profile-and-language.adoc[Profile load & language decision]. Log it to confirm the locale in use.
+* To see whether locale data was registered, watch the console for the `Could not load locale data for '<lang>'` warning from the app initializers: note that this warning indicates a loader or import failed; an absent mapping by itself is skipped without a warning. By contrast, Angular's missing-locale-data runtime errors (when they occur) indicate an internal lookup failed and must be addressed by ensuring the correct `@angular/common/locales` data are registered.
+* To confirm the timezone actually applied, log `new Intl.DateTimeFormat(<locale>).resolvedOptions().timeZone`: it will be the browser's zone unless an App overrides it.
+* General Topic / `window` tooling lives in link:../diagnostics/tracing-communication.adoc[13. Diagnostics].
+
+== Known issues
+
+* Runtime limitation: `DateUtils.localizedDate` currently passes the `DynamicLocaleId` object directly to native `Intl` constructors. In many JS runtimes `Intl.getCanonicalLocales(obj)` returns an empty list for such objects (even if `obj.valueOf()` yields a locale string), which causes native `Intl` to fall back to the host/runtime default locale. This means a direct `Intl` call may not reflect the `lang$` value in some environments. Follow-up: consider changing `DateUtils` to pass a primitive locale string (for example `String(this.locale)` or `this.locale.valueOf()`) to native `Intl`, or ensure a string is always supplied where native `Intl` is invoked.
+* Angular's locale-sensitive pipes depend on Angular locale data and pure-change reruns. Only `en-US` locale data ships by default, and a `lang$` change by itself does not force an existing `DatePipe` binding to recompute. Apps that need immediate re-rendering must trigger a pure input change as well as ensure the matching locale data are registered.
+* The timezone field in the profile is intentionally not applied by the shared formatters; Apps that require per-user timezones must pass a `timeZone` option to their `Intl` calls or a timezone argument/default for Angular `DatePipe`.
+
+The above are trade-offs or follow-ups rather than unknown bugs in the current `main` code. The rest of the Unit's model and pipelines are correct given the runtime behavior described above.
+
+== Related Units
+
+* link:./profile-and-language.adoc[Profile load & language decision]: the `lang$` and profile fields this Unit formats from; the language every formatter uses.
+* link:./app-translations.adoc[App translations load & sharing]: the translation pipeline; formatting is the *other* half of what a language setting changes.
+* link:./react-translations.adoc[React translations]: the React pipeline that supplies the same `lang$` a React App formats with.
+* link:../styling/primeng-style-scoping.adoc[4. PrimeNG/PrimeReact style scoping]: the `primeng` translation keys are handed to the component configuration on every language change; a related runtime reaction to the same `lang$`.
+* link:../diagnostics/tracing-communication.adoc[13. Diagnostics]: observing the profile Topic and the resolved language.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/user-profile/v1/user-profile.model.ts[`UserProfile` model: `settings.locales`, `accountSettings.localeAndTimeSettings` (user-profile.model.ts)]
+* link:{libs}/integration-interface/src/lib/utils/user-language.utils.ts[`resolveProfileLanguage`, `resolveLegacyLanguage` (user-language.utils.ts)]
+* link:{libs}/angular-utils/src/lib/utils/dynamic-locale-id.utils.ts[`DynamicLocaleId` (dynamic-locale-id.utils.ts)]
+* link:{libs}/angular-utils/src/lib/providers/angular-utils.providers.ts[`provideAngularUtils`: `LOCALE_ID` and the `provideAppInitializer` (angular-utils.providers.ts)]
+* link:{libs}/angular-utils/src/lib/utils/angular-locales.ts[`localeLoaders` (angular-locales.ts, auto-generated)]
+* link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorModule`: `LOCALE_ID` and `appInitializer` (angular-accelerator.module.ts)]
+* link:{libs}/angular-accelerator/src/lib/utils/dateutils.ts[`DateUtils.localizedDate` (dateutils.ts)]
+* link:{libs}/accelerator/src/lib/utils/date.utils.ts[`isValidDate`, `getUTCDateWithoutTimezoneIssues` (date.utils.ts)]
+* link:{shell}/src/app/app.module.ts[`userProfileInitializer`: locale computation (Shell)]

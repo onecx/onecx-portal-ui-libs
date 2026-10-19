@@ -1,0 +1,124 @@
+= Angular guards
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does the cross-App guard protocol (Unit 4) get implemented on the Angular side: how an app's own `Route` guards are wrapped so they run mode-aware, and how the `WebcomponentConnector` wires the Gatherer and the router events so a navigation only proceeds once every app on the page has consented?
+
+== Why it exists
+
+Unit 4 fixes the *protocol*: a navigation carries a `GuardsNavigationState` on the router's extras, `GuardsNavigationStateController.getMode` maps it to a `GUARD_MODE`, and a `GuardGatherer` collects each other app's boolean verdict before the shared URL may move. That protocol is framework-agnostic. Angular supplies its own concrete pieces: the guards are Angular `Route` guards (`canActivate` / `canDeactivate` / `canActivateChild`) attached to route configs, and the trigger points are Angular's router events. This Unit documents those Angular specifics: `wrapGuards` (which rewrites a route's guards into a single mode-aware wrapper), the `ActivateGuardsWrapper` / `DeactivateGuardsWrapper` that decide what to do per mode, the `GuardsGatherer` service that performs the fake navigation an app runs when it is asked to check its guards, and the `WebcomponentConnector` router-event wiring that ties all of it together. The React-side equivalents (hooks, `guardCheckKey`, plain-class gatherer) are Unit 6; the protocol they both implement is Unit 4.
+
+== How it works
+
+The Angular implementation is a set of wrappers plus one router-event controller. When the app's router recognises a route, the connector wraps that route's guards; when the router runs its guard lifecycle, the connector starts the cross-app `gather`, stores the resulting promise on the navigation state, and, for the initial sync and guard-check cases, finalises the outcome. The wrapped guards read the mode from that state and behave differently in each mode.
+
+=== Wrapping the route's guards (`wrapGuards`)
+
+link:{libs}/angular-utils/guards/src/utils/wrap-guards.utils.ts[`wrapGuards`] is called by the connector for every route the router recognises. For a route (and recursively its children) it:
+
+. *Saves the originals.* `saveOriginalGuards` copies `canActivate` / `canDeactivate` / `canActivateChild` into the route's `canActivateGuardList` / `canDeactivateGuardList` / `canActivateChildGuardList` (the link:{libs}/angular-utils/guards/src/utils/wrap-guards.utils.ts[`OnecxRoute`] extension). Only function guards are kept: deprecated string guards and non-function values are filtered out, and a guard that is already a wrapper is skipped. This is what makes the wrapper idempotent.
+. *Replaces them with a single wrapper.* Each `canActivate` / `canDeactivate` / `canActivateChild` array is swapped for one wrapper function that calls `ActivateGuardsWrapper.canActivate` / `DeactivateGuardsWrapper.canDeactivate` with the saved guard list as an argument. The wrapper is tagged with the `WRAPPED_GUARD_TAG` symbol so a second `wrapGuards` pass over the same route detects it and does not wrap again (`isWrappingRequired`).
+. *Forces the guards to always run.* `forceGuardRun` sets `route.runGuardsAndResolvers = 'always'`. This matters for the `GUARD_CHECK` fake navigation: the target route is already the active one, and without this Angular would skip the guard check on a same-URL navigation.
+
+So after wrapping, the app's *own* route guards are preserved untouched in the `*GuardList`, and what the router actually executes is a mode-aware wrapper that delegates to them.
+
+=== The mode-aware wrappers
+
+link:{libs}/angular-utils/guards/src/utils/activate-guards-wrapper.utils.ts[`ActivateGuardsWrapper`] and link:{libs}/angular-utils/guards/src/utils/deactivate-guards-wrapper.utils.ts[`DeactivateGuardsWrapper`] read the mode from `router.getCurrentNavigation().extras.state` via `getMode` and branch on it. Both resolve each saved guard through `resolveToPromise` (Promise / Observable / plain value), defaulting a guard that throws or does not implement the method to `true`. The branch, and how the combined result is produced, is:
+
+[cols="1,2,1", options="header"]
+|===
+|Mode |What the wrapper does |Combine function
+|`INITIAL_ROUTER_SYNC` |Run the own guards for the current route. If they fail, the connector publishes `revertNavigation` on `GuardsCheckEnd` (Shell moves the URL back). |`combineToBoolean`
+|`ROUTER_SYNC` |Run the own guards, then *always* return `true` via `executeRouterSyncGuard()`: the URL has already moved and is agreed, so the outcome cannot veto it. |`combineToBoolean`
+|`GUARD_CHECK` |Run the own guards for the target route as a check. If the result is `false`, immediately `guardsGatherer.resolveRoute(futureUrl, false)`: this app vetoes the requesting app. If `true`, the positive verdict is resolved later by the connector on `GuardsCheckEnd`. |`combineToBoolean`
+|`NAVIGATION_REQUESTED` |Wait on the `guardCheckPromise` stored on the state (the other apps' verdicts). If it resolves `false`, return `false` and skip the own guards. If it resolves `true`, run the own guards and return their result. |`combineToGuardResult`
+|===
+
+The combine functions (link:{libs}/angular-utils/guards/src/utils/guards-utils.utils.ts[`guards-utils.utils.ts`]) differ by mode on purpose. `combineToBoolean` collapses everything to `false` / `true`. `combineToGuardResult` also passes through a `UrlTree` or `RedirectCommand` if any own guard returned one (first one wins): so in `NAVIGATION_REQUESTED`, an *own* guard can still redirect the requesting navigation even after the cross-app check has passed.
+
+=== The router-event wiring (`WebcomponentConnector`)
+
+The link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] owns the trigger points. On `connect()` it calls `guardsGatherer.activate()` and subscribes to the router events through three handlers (`connectRouterGuards`):
+
+. *`RoutesRecognized` → wrap.* `wrapGuardsOnRouteRecognized` walks the recognised route snapshot and calls `wrapGuards` on each `routeConfig` (recursing into children), so the guards are wrapped before any guard check runs.
+. *`GuardsCheckStart` → gather.* `gatherGuardsOnGuardsCheckStart` reads the mode; only in `NAVIGATION_REQUESTED` does it act: it calls `guardsGatherer.gather({ url: event.urlAfterRedirects })`, collapses the returned verdicts with `combineToBoolean`, and stores the promise on the navigation state via `createNavigationRequestedState`. That promise is exactly the `guardCheckPromise` the `NAVIGATION_REQUESTED` wrapper waits on. In `INITIAL_ROUTER_SYNC` / `GUARD_CHECK` / `ROUTER_SYNC` it does nothing (nothing to gather).
+. *`GuardsCheckEnd` → finalise.* `resolveGuardsOnGuardsCheckEnd` branches on the mode:
+.. `INITIAL_ROUTER_SYNC`: if `!event.shouldActivate` (the initial route's guards rejected the navigation), publish `{ type: 'revertNavigation' }` on the link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] so the Shell moves the shared URL back.
+.. `GUARD_CHECK`: if `event.shouldActivate` (the check passed), the positive verdict has not been sent yet, so the connector calls `guardsGatherer.resolveRoute(event.urlAfterRedirects, true)` and then cancels the fake navigation with `router.navigateByUrl(router.url, { skipLocationChange: true, state: { isRouterSync: true } })` so it does not commit.
+.. `ROUTER_SYNC` / `NAVIGATION_REQUESTED`: nothing to do; the own navigation proceeds or cancels on its own.
+
+=== The fake navigation (`GuardsGatherer`)
+
+link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardsGatherer`] is an `@Injectable({ providedIn: 'root' })` that owns one accelerator `Gatherer` named `GuardGatherer` (request `{ url }`, response `boolean`). When *another* app asks this app to check its guards, `activate()` has registered a callback (`executeGuardsCallback`) that runs: it performs a *fake* `router.navigateByUrl(routeUrl, { state: createGuardCheckState(), onSameUrlNavigation: 'reload' })`, a `GUARD_CHECK` navigation that runs the target route's guards without committing, and stores a resolver in a `guardsChecks` map keyed by the normalised URL. The wrapper (the `GUARD_CHECK` branch) resolves the map with `false` on a veto; the connector resolves it with `true` on success. `gather` / `resolveRoute` both normalise the URL (ensure a leading `/`, strip a trailing `/`) so a request and its verdict always map to the same key.
+
+== Libs side / Shell side
+
+=== Libs side
+
+Everything the app needs is in the libs:
+
+* *The model & controller.* link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`guard-navigation.model.ts`] (`GuardsNavigationState`, the flag constants, the `GUARD_MODE` enum) and link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController`] (`getMode`, the `create*State` helpers): shared with Unit 4.
+* *The wrappers.* `wrapGuards`, `ActivateGuardsWrapper`, `DeactivateGuardsWrapper` and the combine/resolve helpers in the `guards` utils above.
+* *The gatherer.* `GuardsGatherer` (fake navigation, `guardsChecks` map, URL normalisation).
+* *The connector.* `WebcomponentConnector`: the router-event wiring and the `revertNavigation` publisher.
+
+=== Shell side
+
+The Shell participates at one point only: it *responds* to the `revertNavigation` event that an app publishes when its initial router sync is rejected (the patched-history / listener code in link:{shell}/src/app/app.module.ts[`app.module.ts`] calls `history.back()`). The Shell does not itself run Angular guard checks: it moves the shared URL, and the guard protocol is what decides whether that move was allowed.
+
+== Angular / React
+
+This Unit covers the Angular plumbing. Where the React implementation differs (guards come from the route `handle` instead of `Route` config, the gatherer is a plain class used through `useGuardsGatherer`, and a `guardCheckKey` state flag forces re-checking on the same URL), see link:react-guards.adoc[React guards]. The protocol, the four modes, the Gatherer round trip and the `revertNavigation` signal are identical in both and are fixed in link:why-cross-app-guards.adoc[Why cross-App guards].
+
+== Edge cases & pitfalls
+
+* *The fake navigation must not commit.* The `GUARD_CHECK` navigation is a check, not a navigation. It is enforced twice: `runGuardsAndResolvers: 'always'` (so the check runs even on an already-active route) plus the connector cancelling it on success with `navigateByUrl(..., { skipLocationChange: true, state: { isRouterSync: true } })`. A `GUARD_CHECK` that accidentally commits would move the URL without the other apps having consented.
+* *A missing `guardCheckPromise` defaults to allow.* In `NAVIGATION_REQUESTED`, if the promise is absent from the state the wrapper logs a warning and uses `Promise.resolve(true)` rather than block: a missing promise is treated as "nothing to wait for".
+* *`ROUTER_SYNC` cannot veto.* In `ROUTER_SYNC` mode the wrapper returns `true` via `executeRouterSyncGuard()` regardless of the guards' outcome. This is the mechanism behind Unit 4's point that a departing app's `canDeactivate` guards run after the URL has already moved and cannot stop it.
+* *String guards are silently dropped.* `saveOriginalGuards` filters out non-function guards (deprecated string guards and similar), so a route that lists a string guard is wrapped with an *empty* list and passes. Guard the route with function guards only.
+* *Wrapping is idempotent.* The `WRAPPED_GUARD_TAG` symbol plus `isWrappingRequired` prevent a second `RoutesRecognized` from wrapping an already-wrapped route; without it the guard list would grow on every recognition.
+* *The gatherer throws when not active.* `gather` / `resolveRoute` / `executeGuardsCallback` throw `Guards gatherer is not active` if called before `activate()` (or after `deactivate()`). The connector `activate()`s it in `connect()` and `deactivate()`s it in `disconnect()`.
+* *Class-based guards are resolved through the `Injector`.* Both wrappers handle a guard given as a `Type` (resolving it via `Injector.get`) as well as a plain function, so either form in a route works.
+
+== Debugging
+
+* *Enable the guard logs with the `debug` package.* The guard code logs through the `debug` namespace `@onecx/angular-utils:guards` (built by `createLoggerFactory`). In the DevTools console set `localStorage.debug = '@onecx/angular-utils:guards*'` and reload to see the mode and each guard-check callback as it runs.
+* *The old one-line switch no longer works.* The old guard-debug page (`dev-docs/guards/`, removed) documented `window['@onecx/angular-utils'].guards ??= { debug: true }`. That property is still written (see link:{libs}/angular-utils/guards/src/declarations.ts[`declarations.ts`]) but no guard code reads it: logging is driven by `localStorage.debug` instead. See *Known issues*.
+* *Watch the verdict traffic.* The cross-app verdicts ride on the `GuardGatherer` gatherer, whose own `debug` namespace is `@onecx/accelerator:Gatherer:GuardGatherer` (request `{ url }`, response `boolean`). See Area 13 (Diagnostics: `tracing-communication.adoc`).
+* *A `navigationId === -1` warning* from the Shell's history patch (Unit 1) frequently appears around a rejected initial sync: that is the `revertNavigation` path firing.
+
+== Known issues
+
+* *The documented guard debug switch is inert.* The superseded `dev-docs/guards/` debug page (now removed) told readers to set `window['@onecx/angular-utils'].guards ??= { debug: true }` to enable guard debug logs. In the current code that flag is never read: the guard loggers are created with `createLoggerFactory('@onecx/angular-utils:guards')` and are controlled by the `debug` package (i.e. `localStorage.debug`), not by that `window` property (link:{libs}/angular-utils/guards/src/utils/logger.utils.ts[`logger.utils.ts`], link:{libs}/accelerator/src/lib/utils/create-logger.utils.ts[`createLoggerFactory`]). The `window['@onecx/angular-utils'].guards` object is still created as an empty placeholder (link:{libs}/angular-utils/guards/src/declarations.ts[`declarations.ts`]), so the documented command appears to run but has no effect. Documented here as the actual behaviour; enabling guard logs via the switch is a follow-up (PR).
+
+== Related Units
+
+* link:why-cross-app-guards.adoc[Why cross-App guards]: the framework-agnostic protocol (state, `GUARD_MODE`, the Gatherer round trip) this Unit implements for Angular.
+* link:url-to-every-router.adoc[URL change → every router]: the `isRouterSync` and `revertNavigation` signals the guard machinery shares with the URL contract.
+* link:navigation-topics.adoc[Page & workspace Topics during navigation]: the Topics that change only when a navigation the guards allow actually moves the URL.
+* link:react-guards.adoc[React guards]: the React-side equivalents (hooks, `guardCheckKey`, plain-class gatherer).
+* Area 1 (Integration Contract & Topics): the `Gatherer` (request/response Topic) that carries the verdicts.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/guards/src/model/guard-navigation.model.ts[`GuardsNavigationState`, `GUARD_MODE`, flag constants]
+* link:{libs}/angular-utils/guards/src/services/guards-navigation-controller.service.ts[`GuardsNavigationStateController`] (`getMode`, `create*State`, `getGuardCheckPromise`)
+* link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`GuardsGatherer`] (`gather`, `resolveRoute`, `activate`/`deactivate`, fake-navigation callback, URL normalisation)
+* link:{libs}/angular-utils/guards/src/utils/wrap-guards.utils.ts[`wrapGuards`, `OnecxRoute`, `WRAPPED_GUARD_TAG`, `forceGuardRun`, `isWrappingRequired`]
+* link:{libs}/angular-utils/guards/src/utils/activate-guards-wrapper.utils.ts[`ActivateGuardsWrapper`]
+* link:{libs}/angular-utils/guards/src/utils/deactivate-guards-wrapper.utils.ts[`DeactivateGuardsWrapper`]
+* link:{libs}/angular-utils/guards/src/utils/guards-utils.utils.ts[`combineToGuardResult`, `combineToBoolean`, `executeRouterSyncGuard`, `resolveToPromise`, `getUrlFromSnapshot`, `logGuardsDebug`]
+* link:{libs}/angular-utils/guards/src/utils/logger.utils.ts[`createLogger`: namespace `@onecx/angular-utils:guards`]
+* link:{libs}/angular-utils/guards/src/declarations.ts[`window['@onecx/angular-utils'].guards` placeholder]
+* link:{libs}/accelerator/src/lib/utils/create-logger.utils.ts[`createLoggerFactory`: `debug`-package namespaces]
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`Gatherer`] (request/response base)
+* link:{libs}/angular-webcomponents/src/lib/utils/webcomponent-connector.utils.ts[`WebcomponentConnector`] (`connect`/`disconnect`, `connectRouterGuards`, `wrapGuardsOnRouteRecognized`, `gatherGuardsOnGuardsCheckStart`, `resolveGuardsOnGuardsCheckEnd`)
+* link:{libs}/integration-interface/src/lib/topics/events/v1/events-topic.ts[`EventsTopic`] (`revertNavigation` publisher)
+* link:{shell}/src/app/app.module.ts[history patch / listener: `revertNavigation` handling] (Shell)
