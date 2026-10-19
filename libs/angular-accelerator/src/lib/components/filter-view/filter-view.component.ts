@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   Input,
@@ -15,19 +16,21 @@ import {
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
-import { combineLatest, debounceTime, firstValueFrom, map } from 'rxjs'
+import { combineLatest, debounceTime, first, map, mergeMap, tap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { findTemplate } from '../../utils/template.utils'
 import { ObjectUtils } from '../../utils/objectutils'
-import { limit } from '../../utils/filter.utils'
+import { getFilterableColumns, limit } from '../../utils/filter.utils'
 import { Popover } from '@openng/optimus-ui/popover'
 import { Row } from '../data-table/data-table.component'
-import { toObservable } from '@angular/core/rxjs-interop'
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { Button } from '@openng/optimus-ui/button'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
+import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
+import { PortalDialogService } from '../../services/portal-dialog.service'
 
 export type FilterViewDisplayMode = 'chips' | 'button'
 export type FilterViewRowDisplayData = {
@@ -54,6 +57,7 @@ export interface FilterViewComponentState {
 export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly destroyRef = inject(DestroyRef)
   
   ColumnType = ColumnType
   FilterType = FilterType
@@ -71,6 +75,9 @@ export class FilterViewComponent {
   set columns(value: DataTableColumn[]) {
     this.stateService.availableColumns.set(value)
   }
+
+  /** Active columns passed by the host; the dialog offers all available columns when unset. */
+  readonly activeOrAllColumns = input<DataTableColumn[] | undefined>(undefined)
 
   readonly displayMode = input<FilterViewDisplayMode>('button')
   readonly selectDisplayedChips = input<(filters: Filter[], columns: DataTableColumn[]) => Filter[]>((filters) =>
@@ -105,9 +112,15 @@ export class FilterViewComponent {
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
 
+  private readonly portalDialogService = inject(PortalDialogService)
+
   readonly filterViewNoSelection = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewChipContent = signal<TemplateRef<any> | undefined>(undefined)
   readonly filterViewShowMoreChip = signal<TemplateRef<any> | undefined>(undefined)
+
+  readonly filterableColumns = computed<DataTableColumn[]>(() =>
+    getFilterableColumns(this.activeOrAllColumns() ?? this.stateService.availableColumns())
+  )
 
   readonly templates = input<readonly PrimeTemplate[] | null | undefined>(undefined)
   readonly templates$ = toObservable(this.templates)
@@ -268,6 +281,67 @@ export class FilterViewComponent {
     this.stateService.filters.set(filters)
   }
 
+  /** Opens the "Add Filter" dialog for the filterable columns; does nothing if there are none. */
+  onAddFilter(columnId?: string, event?: Event) {
+    const columns = this.filterableColumns()
+    if (columns.length === 0) {
+      return
+    }
+
+    const initiatorRef = (event?.currentTarget ?? undefined) as HTMLElement | undefined
+
+    // PortalDialogService does not translate closeAriaLabel
+    this.translateService
+      .get('OCX_FILTER_VIEW.ADD_FILTER.DIALOG.ARIA_CLOSE_LABEL')
+      .pipe(
+        first(),
+        mergeMap((closeAriaLabel) =>
+          this.portalDialogService
+            .openDialog<Filter[]>(
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.TITLE',
+              {
+                type: AddFilterDialogComponent,
+                inputs: {
+                  columns,
+                  data: this.stateService.data(),
+                  existingFilters: this.stateService.filters(),
+                  preselectColumnId: columnId,
+                },
+              },
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CONFIRM_BUTTON',
+              'OCX_FILTER_VIEW.ADD_FILTER.DIALOG.CANCEL_BUTTON',
+              {
+                closeAriaLabel,
+                width: 'min(350px, 90vw)',
+                initiatorRef,
+                onCloseFocus: 'initiator',
+              }
+            )
+            .pipe(
+              tap((state) => {
+                // The result pre-selects existing values, so it is non-empty even when cancelled unchanged
+                if (state?.button === 'primary' && state.result && state.result.length > 0) {
+                  this.applyFilters(state.result)
+                }
+              })
+            )
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe()
+  }
+
+  /** Replaces the existing filters of every column contained in `newFilters`. */
+  applyFilters(newFilters: Filter[]) {
+    const currentFilters = this.stateService.filters()
+    const editedColumns = new Set(newFilters.map((f) => f.columnId))
+
+    this.stateService.filters.set([
+      ...currentFilters.filter((f) => !editedColumns.has(f.columnId)),
+      ...newFilters,
+    ])
+  }
+
   focusTrigger() {
     const trigger = this.trigger()
     const manageButton = this.manageButton()
@@ -312,19 +386,13 @@ export class FilterViewComponent {
   private annouceFilterCount() {
     const currentCount = this.stateService.filters()?.length ?? 0
 
-    if (currentCount === 0) {
-      firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')).then(
-        (translatedText: string) => {
-          this.liveAnnouncer.announce(translatedText)
-        }
-      )
-      return
-    }
+    const text$ =
+      currentCount === 0
+        ? this.translateService.get('OCX_FILTER_VIEW.NO_FILTERS')
+        : this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })
 
-    firstValueFrom(this.translateService.get('OCX_FILTER_VIEW.SELECTED_FILTERS_COUNT', { results: currentCount })).then(
-      (translatedText: string) => {
-        this.liveAnnouncer.announce(translatedText)
-      }
-    )
+    text$.pipe(first(), takeUntilDestroyed(this.destroyRef)).subscribe((translatedText: string) => {
+      this.liveAnnouncer.announce(translatedText)
+    })
   }
 }
