@@ -35,6 +35,16 @@ export const WithMockData = {
   },
 }
 
+export const WithTooltipData = {
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    columns: defaultComponentArgs.columns.map((column) =>
+      column.id === 'product' ? { ...column, tooltipKey: 'Product name and details' } : column,
+    ),
+  },
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {

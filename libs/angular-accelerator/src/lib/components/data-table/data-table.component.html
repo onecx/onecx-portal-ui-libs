@@ -304,7 +304,15 @@
   <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
 
-<ng-template #columnHeaderLabel let-column="column">{{ column.nameKey | translate }}</ng-template>
+<ng-template #columnHeaderLabel let-column="column">
+  <span
+    class="column-header-label"
+    [ocxTooltip]="column.tooltipKey !== undefined ? (column.tooltipKey | translate) : (column.nameKey | translate)"
+    tooltipPosition="top"
+  >
+    {{ column.nameKey | translate }}
+  </span>
+</ng-template>
 
 <ng-template #columnHeaderSortButton let-column="column">
   @if (column.sortable) {

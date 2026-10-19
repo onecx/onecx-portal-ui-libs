@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
@@ -245,6 +245,129 @@ describe('DataTableComponent', () => {
   it('loads dataTableHarness', async () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     expect(dataTable).toBeTruthy()
+  })
+
+  describe('column header tooltips', () => {
+    beforeEach(() => {
+      translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
+      translateService.setTranslation('de', { COLUMN_HEADER_NAME: { NAME: 'Bezeichnung' } }, true)
+    })
+
+    it('should use the tooltip text literally when it is not a translation key', fakeAsync(() => {
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'Product details' }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Name')
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Product details')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it('should translate the tooltip when it matches a translation key and update it when the language changes', fakeAsync(() => {
+      translateService.setTranslation('en', { CUSTOM_TOOLTIP: 'Custom tooltip' }, true)
+      translateService.setTranslation('de', { CUSTOM_TOOLTIP: 'Eigener Tooltip' }, true)
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Custom tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+      translateService.use('de')
+      fixture.detectChanges()
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Bezeichnung')
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Eigener Tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it('should not show a tooltip when the custom text is empty', fakeAsync(() => {
+      component.columns = [{ ...mockColumns[0], tooltipKey: '' }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Name')
+      expect(document.querySelector('.p-tooltip')).toBeNull()
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it.each([
+      { sortable: false, filterable: false },
+      { sortable: true, filterable: false },
+      { sortable: false, filterable: true },
+      { sortable: true, filterable: true },
+    ])('should show the translated label on hover for %o', fakeAsync(({ sortable, filterable }: { sortable: boolean; filterable: boolean }) => {
+      component.columns = [{ ...mockColumns[0], sortable, filterable }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      expect(label.textContent?.trim()).toBe('Name')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Name')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+      expect(document.querySelector('.p-tooltip')).toBeNull()
+    }))
+
+    it('should use the current language for the tooltip', fakeAsync(() => {
+      component.columns = [mockColumns[0]]
+      fixture.detectChanges()
+      translateService.use('de')
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Bezeichnung')
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Bezeichnung')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it('should not add a tabindex to the column label', () => {
+      component.columns = [mockColumns[0]]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      expect(label.hasAttribute('tabindex')).toBe(false)
+    })
+
+    it('should mark tooltip header labels for the non-pointer cursor style', () => {
+      component.columns = [mockColumns[0]]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] .column-header-label')
+      expect(label.classList.contains('column-header-label')).toBe(true)
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {

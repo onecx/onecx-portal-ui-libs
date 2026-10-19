@@ -4,6 +4,7 @@ import { FilterType } from './filter.model'
 export interface DataTableColumn {
   columnType: ColumnType
   nameKey: string
+  tooltipKey?: string
   id: string
   sortable?: boolean
   filterable?: boolean
