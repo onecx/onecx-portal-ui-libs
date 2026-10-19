@@ -79,12 +79,18 @@
         [draggableColumnGroupSelectorDialog]="draggableColumnGroupSelectorDialog()"
       ></ocx-custom-group-column-selector>
       }
-      @if (_topEnd(); as topEndTemplate) {
+      @if (stateService.layout() === 'table' && _topEnd(); as topEndTemplate) {
       <div>
         <ng-container [ngTemplateOutlet]="topEndTemplate"> </ng-container>
       </div>
       }
     </div>
+
+    @if (stateService.layout() !== 'table' && _topEnd(); as topEndTemplate) {
+    <div>
+      <ng-container [ngTemplateOutlet]="topEndTemplate"> </ng-container>
+    </div>
+    }
   </div>
 </div>
 <div class="p-3" [ngClass]="contentStyleClass()" id="interactiveDataViewContent">
