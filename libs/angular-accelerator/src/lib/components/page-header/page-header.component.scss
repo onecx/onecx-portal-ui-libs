@@ -100,7 +100,7 @@
 }
 
 
-// Primng Bug: Tooltip not being shown for disabled menu items
+// Optimus UI Bug: Tooltip not being shown for disabled menu items
 // Keep the disabled item non-clickable while allowing the <li> to hover
 .p-menu .p-menu-item.p-disabled{
   pointer-events: auto;

@@ -2,7 +2,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { merge, mergeMap, Subscription } from 'rxjs'
-import { PrimeNG } from 'primeng/config';
+import { Optimus } from '@openng/optimus-ui/config';
 
 @Injectable()
 export class TranslationConnectionService implements OnDestroy {
@@ -12,7 +12,7 @@ export class TranslationConnectionService implements OnDestroy {
   constructor() {
     const userService = inject(UserService)
     const translateService = inject(TranslateService)
-    const configuration = inject(PrimeNG)
+    const configuration = inject(Optimus)
 
     this.languageSub = userService.lang$.subscribe((lang) => translateService.use(lang))
 
@@ -20,7 +20,7 @@ export class TranslationConnectionService implements OnDestroy {
       translateService.onLangChange,
       translateService.onTranslationChange,
       translateService.onFallbackLangChange)
-      .pipe(mergeMap(() => translateService.get('primeng')))
+      .pipe(mergeMap(() => translateService.get('optimus')))
       .subscribe((res) => configuration.setTranslation(res))
   }
 

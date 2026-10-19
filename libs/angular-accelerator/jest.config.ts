@@ -37,7 +37,8 @@ export default {
   },
   transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|d3-(.*))'],
   moduleNameMapper: {
-    '@primeng/themes': '<rootDir>/../../node_modules/@primeng/themes/index.mjs',
+    '@openng/optimus-ui-themes':
+      '<rootDir>/../../node_modules/@openng/optimus-ui-themes/dist/index.mjs',
   },
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',

@@ -1,0 +1,164 @@
+= Request/response: Gatherers & RPC Topics
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This is Unit 5 of the link:README.adoc[Integration Contract & Topics] Area. It builds on link:why-message-based.adoc[Unit 1] and link:message-delivery.adoc[Unit 2].
+
+== Question answered
+
+How is a request/response built on Topics, the `Gatherer` scatter/gather and the "RPC" Topics, and when should a unit use it instead of a plain, state-holding Topic?
+
+== Why it exists
+
+A plain `Topic` is a *shared value*, replayed to every instance (link:message-delivery.adoc[Unit 2]). That fits Shell-owned state such as workspace, theme and user profile, but not two other relationships a OneCX page needs (link:why-message-based.adoc[Unit 1]):
+
+* *One asker, one answerer.* An App or Remote Component must ask the owner for data such as its permissions or a parameter value, and wait for the reply. A plain Topic cannot collect a reply.
+* *One asker, every instance answers.* A guard decides whether a route change may proceed. Guards run in *every* App on the page before a cross-App navigation, and the caller blocks until *all* answers are in.
+
+Both shapes build on the `Topic` and its awaitable `publish`: the `Gatherer` for many answerers, the RPC Topic for one designated answerer.
+
+== How it works
+
+Both shapes set `sendGetMessage = false` on their internal `Topic` (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`], constructor). This suppresses the start-up `TopicGet` (link:message-delivery.adoc[Unit 2]), because a channel that carries requests must not replay state.
+
+=== The `Gatherer` (scatter/gather)
+
+`Gatherer<Request, Response>` (link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]) is the framework-agnostic scatter/gather. Its internal `Topic` carries only `{ id, request }` messages.
+
+* *Answering.* `new Gatherer(name, version, callback)` creates the `Topic` with `sendGetMessage = false` and subscribes to it. For each `{ id, request }` that this instance did not create, it pushes a new `Promise` into the shared array `acceleratorState['@onecx/accelerator'].gatherer.promises[id]`, runs `callback(request)`, and resolves the promise with the response.
+* *Asking.* `gather(request)` takes the next id, records it as owned by this instance, and seeds an empty promise array for it. It then publishes `{ id, request }` and **`await`s the publish**. Afterwards it reads the array, deletes the shared entry, and returns `Promise.all(promises)`.
+
+The `await` on `topic.publish` makes the gather correct: `publish` resolves only after the message and its `TopicResolve` are processed (link:message-delivery.adoc[Unit 2]), so every peer has registered its promise by then.
+
+*Self-identification.* The publish also reaches the asker's own instance. Each instance keeps a `Set` of the ids it generated (`ownIds`), and `isOwnerOfRequest` skips those, so an instance never answers its own question. `destroy()` unsubscribes, destroys the internal `Topic`, and deletes this instance's still-pending entries from the shared promise map (link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]).
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Caller
+  participant Local as Gatherer (local)
+  participant Remote as Gatherer (remote)
+
+  Caller->>Local: gather(request)
+  Local->>Local: id = Gatherer.id++, promises[id] = []
+  Local->>Remote: publish({ id, request })
+  Note over Caller: await publish (waits for all peers to register)
+  Local->>Local: ownIds has id -> skip
+  Remote->>Remote: not own -> promises[id].push(P)
+  Remote->>Remote: callback(request) -> response
+  Remote->>Remote: resolve(response)
+  Note over Caller: publish resolved
+  Caller->>Caller: Promise.all(promises[id]) -> Response[]
+----
+
+
+The concrete `Gatherer`s are thin subclasses in `@onecx/integration-interface` that only fix name and version:
+
+* `AiCompletionGatherer` (`'aiCompletion', 1`): link:{libs}/integration-interface/src/lib/gatherers/ai-completion/v1/ai-completion.gatherer.ts[`ai-completion.gatherer.ts`]
+* `AiContextGatherer` (`'aiContext', 1`): link:{libs}/integration-interface/src/lib/gatherers/ai-context/v1/ai-context.gatherer.ts[`ai-context.gatherer.ts`]
+* `'GuardGatherer'`, built once per framework by the guards machinery: link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`guards-gatherer.service.ts`], link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`guards-gatherer.ts`]
+
+=== The RPC Topic (one asker, one answerer)
+
+An RPC Topic is a `Topic` subclass fixed with `sendGetMessage = false` (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`]). The asker subscribes with a filter for the matching answer, then publishes the request; the answer on the same topic resolves the subscription. No promise array is involved.
+
+* *Ask.* A Remote Component's `PermissionService.getPermissions(appId, productName)` awaits `firstValueFrom(permissionsTopic$.pipe(filter(...)))` for a message matching `appId` and `productName`. It then publishes `{ appId, productName }` on the `PermissionsRpcTopic`. When the Shell republishes `{ appId, productName, permissions }`, the subscription resolves and the caller's promise completes (link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`permission.service.ts`]).
+* *Answer.* The Shell's `permission-proxy.service.ts` filters the same topic for unanswered requests (`message.permissions === undefined`), loads the permissions, and republishes them (link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts`]).
+
+Two RPC Topics exist:
+
+* `PermissionsRpcTopic`: `('permissionsRpc', 1, false)` (link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`permissions-rpc.topic.ts`]).
+* `DynamicTranslationsTopic`: `('dynamicTranslations', 1, false)`, with a `REQUESTED`/`RECEIVED` message pair (link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`dynamic-translations.topic.ts`]).
+
+[NOTE]
+====
+`PermissionsRpcTopic` differs from the plain `PermissionsTopic` (`('permissions', 1)`, link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[`permissions.topic.ts`]). The plain topic *pushes* the user's permissions to subscribers. The RPC topic is *pulled* on demand for a specific `appId`/`productName`. Both coexist.
+====
+
+=== Which shape to use
+
+[cols="1,3", options="header"]
+|===
+|Shape |Use when
+
+|Plain Topic
+|Many units read shared state that must be replayed to late subscribers (workspace, theme, parameters pushed by the Shell).
+
+|`Gatherer`
+|One asker needs the answers of *every* instance, combined into one result. Examples: guards across Apps, or a provider whose location is unknown and that may be absent (AI completion).
+
+|RPC Topic
+|One asker asks a single *designated* answerer for a value that answerer owns. Example: a Remote Component asking the Shell for its permissions.
+|===
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `@onecx/accelerator` provides the framework-agnostic `Gatherer` and the `Topic`/`publish`/resolve handshake beneath it (link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`], link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`], link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`topic-publisher.ts`]).
+* `@onecx/integration-interface` provides the concrete `Gatherer`s and RPC Topics shared by the Shell and Apps (link:{libs}/integration-interface/src/index.ts[`index.ts`]).
+* The Angular and React adapters wrap these, so App code never touches the raw `Topic`. The guards wrappers (`@onecx/angular-utils/guards`, `@onecx/react-utils/guards`) are the largest real users of the `Gatherer`.
+
+=== Shell side
+
+The Shell answers the `PermissionsRpcTopic` in link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts`] and publishes the parameter state a Remote Component may pull (link:{shell}/src/app/shell/services/parameters.service.ts[`parameters.service.ts`]). It never uses a `Gatherer` to answer; it publishes. Where a capability is absent, the Shell never answers, and the App-side fallback (Unit 6) decides what to do.
+
+== Angular / React
+
+The contract is identical in both frameworks. Only the wrapper differs, and both delegate all cross-unit traffic to the same `Gatherer`/`Topic`.
+
+* *Angular.* An `@Injectable` service owns one `Topic` or `Gatherer` instance. `PermissionService` caches a `PermissionsRpcTopic` and a promise map keyed by `appId:productName` (link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`permission.service.ts`]). `GuardsGathererService` activates a `Gatherer` and destroys it in `ngOnDestroy` (link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`guards-gatherer.service.ts`]).
+* *React.* Classes and hooks wrap the same shapes. `GuardsGatherer` is a plain class wired to React Router's `navigate`; the component that created it destroys it (link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`guards-gatherer.ts`]). Parameter pulls live in a context provider that reads the `ParametersTopic` (link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`parametersContext.tsx`]).
+
+== Edge cases & pitfalls
+
+* *The `await` on `publish` is load-bearing.* Without it, a `Gatherer` collects the promise array before peers register and silently loses responses. Do not "optimise" it away (link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]).
+* *The asker is always skipped.* Because of `ownIds`, a `Gatherer` with only one instance returns `[]`, not a self-answer.
+* *Scope is tab-scoped by default.* `Gatherer` and RPC traffic uses the normal Topic transport, so it stays inside one tab; only the legacy v1 fallback reaches other tabs (link:transports-and-tab-scope.adoc[Unit 3]).
+* *RPC Topics have no built-in timeout.* The ask is a `firstValueFrom` on a filtered subscription (link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`permission.service.ts`]). If the answerer is absent, for example an older Shell, the promise never resolves. This RPC has no Shell capability to probe, so a capability check cannot prevent the call. Compare link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation] (Unit 6).
+* *No replay for requests.* With `sendGetMessage = false`, a new RPC topic or `Gatherer` replays nothing at construction. An answer arrives only for a request published while the asker was listening.
+
+== Debugging
+
+* The `Gatherer` logs each request, answer and collected result under `@onecx/accelerator:Gatherer:<name>`, created per instance in link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`].
+* RPC Topics log under the usual `@onecx/accelerator:Topic:<name>`.
+
+For the `localStorage.debug` patterns, see the Area's link:README.adoc#debugging-conventions[Debugging conventions].
+
+== Known issues
+
+* *The old Gatherer page overstates the scope.* The Draft Outline (commit `6108bdf`, `dev-docs/gatherer/index.adoc`) says the `Gatherer` reaches "all MFE instances" "across tabs, iframes, web components". On `main`, the default transport is the tab-scoped v2 `BroadcastChannel` (link:transports-and-tab-scope.adoc[Unit 3]), so a gather reaches only instances *in the same tab* (the App and its hosted Remote Components), except via the legacy v1 fallback. The old wording is recorded as a follow-up.
+
+== Related Units
+
+* link:why-message-based.adoc[Why a message-based contract]: why everything is a Topic.
+* link:message-delivery.adoc[Topic message delivery]: the message types and the `publish`/resolve handshake this Unit relies on.
+* link:transports-and-tab-scope.adoc[Transports & tab scope]: where the traffic travels and why it is tab-scoped.
+* link:topic-lifecycle.adoc[Topic lifecycle]: where `Gatherer`/Topic instances are destroyed.
+* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: how an App decides whether the Shell will answer an RPC.
+* link:framework-adapters.adoc[Framework adapters]
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13)
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`]
+* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`]
+* link:{libs}/integration-interface/src/index.ts[`integration-interface/src/index.ts`]
+* link:{libs}/integration-interface/src/lib/gatherers/ai-completion/v1/ai-completion.gatherer.ts[`integration-interface/.../ai-completion.gatherer.ts`]
+* link:{libs}/integration-interface/src/lib/gatherers/ai-context/v1/ai-context.gatherer.ts[`integration-interface/.../ai-context.gatherer.ts`]
+* link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`integration-interface/.../permissions-rpc.topic.ts`]
+* link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.model.ts[`integration-interface/.../permissions-rpc.model.ts`]
+* link:{libs}/integration-interface/src/lib/topics/permissions/v1/permissions.topic.ts[`integration-interface/.../permissions.topic.ts`]
+* link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`integration-interface/.../dynamic-translations.topic.ts`]
+* link:{libs}/angular-utils/guards/src/services/guards-gatherer.service.ts[`angular-utils/guards/.../guards-gatherer.service.ts`]
+* link:{libs}/react-utils/src/lib/guards/services/guards-gatherer.ts[`react-utils/.../guards-gatherer.ts`]
+* link:{libs}/angular-remote-components/src/lib/services/permission.service.ts[`angular-remote-components/.../permission.service.ts`]
+* link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`react-integration-interface/.../parametersContext.tsx`]
+* link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts` (Shell)]
+* link:{shell}/src/app/shell/services/parameters.service.ts[`parameters.service.ts` (Shell)]

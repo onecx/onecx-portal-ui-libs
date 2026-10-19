@@ -8,7 +8,7 @@ import { AppConfigService, UserService } from '@onecx/angular-integration-interf
 import { AngularRemoteComponentsModule } from '@onecx/angular-remote-components'
 
 import { firstValueFrom, skip } from 'rxjs'
-import { AngularAcceleratorPrimeNgModule } from './angular-accelerator-primeng.module'
+import { AngularAcceleratorOptimusModule } from './angular-accelerator-optimus.module'
 import { ColumnGroupSelectionComponent } from './components/column-group-selection/column-group-selection.component'
 import { CustomGroupColumnSelectorComponent } from './components/custom-group-column-selector/custom-group-column-selector.component'
 import { DataLayoutSelectionComponent } from './components/data-layout-selection/data-layout-selection.component'
@@ -39,6 +39,7 @@ import { TooltipOnOverflowDirective } from './directives/tooltipOnOverflow.direc
 import { DynamicPipe } from './pipes/dynamic.pipe'
 import { OcxTimeAgoPipe } from './pipes/ocxtimeago.pipe'
 import { FilterViewComponent } from './components/filter-view/filter-view.component'
+import { AddFilterDialogComponent } from './components/filter-view/add-filter-dialog/add-filter-dialog.component'
 import { TemplateDirective } from './directives/template.directive'
 import { OcxContentComponent } from './components/content/content.component'
 import { OcxContentContainerComponent } from './components/content-container/content-container.component'
@@ -53,9 +54,10 @@ import { GlobalErrorComponent } from './components/error-component/global-error.
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
-import { MessageService } from 'primeng/api'
+import { MessageService } from '@openng/optimus-ui/api'
 import { ConsentComponent } from './components/consent/consent.component'
 import { LIB_VERSION } from '../version'
+import { providePortalDialogService } from './services/portal-dialog.service'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
 
@@ -73,13 +75,14 @@ function appInitializer(userService: UserService) {
 @NgModule({
   imports: [
     CommonModule,
-    AngularAcceleratorPrimeNgModule,
+    AngularAcceleratorOptimusModule,
     AngularRemoteComponentsModule,
     TranslateModule,
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
-    OcxTooltipDirective
+    OcxTooltipDirective,
+    AddFilterDialogComponent
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -132,7 +135,7 @@ function appInitializer(userService: UserService) {
       multi: true,
     },
     provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-accelerator/assets/i18n/'),
-    provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-accelerator/assets/i18n/primeng/'),
+    provideTranslationPathFromMeta(import.meta.url, 'onecx-angular-accelerator/assets/i18n/optimus/'),
     provideMultiLanguageIdentifier('@onecx/angular-accelerator', LIB_VERSION, 'lib'),
     {
       provide: MessageService,
@@ -140,6 +143,7 @@ function appInitializer(userService: UserService) {
     },
     AppConfigService,
     provideTranslationConnectionService(),
+    providePortalDialogService(),
   ],
   exports: [
     AngularRemoteComponentsModule,

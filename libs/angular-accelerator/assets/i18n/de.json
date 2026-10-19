@@ -146,7 +146,28 @@
       "REMOVE_FILTER_TITLE": "Filter löschen",
       "REMOVE_FILTER_ARIA_LABEL": "Filter löschen"
     },
-    "PANEL_TITLE": "Filter"
+    "PANEL_TITLE": "Filter",
+    "ADD_FILTER": {
+      "BUTTON": "Filter hinzufügen",
+      "ARIA_LABEL": "Neuen Filter hinzufügen",
+      "DETAIL": "Neuen Filter hinzufügen",
+      "NO_FILTERABLE_COLUMNS": "Keine filterbaren Spalten verfügbar",
+      "DIALOG": {
+        "TITLE": "Filter hinzufügen",
+        "COLUMN_LABEL": "Spalte",
+        "COLUMN_PLACEHOLDER": "Spalte auswählen",
+        "COLUMN_ARIA_LABEL": "Spalte zum Filtern auswählen",
+        "VALUE_LABEL": "Wert(e)",
+        "VALUE_EMPTY_MESSAGE": "Keine Werte für diese Spalte verfügbar",
+        "VALUE_FILTER_PLACEHOLDER": "Werte durchsuchen",
+        "VALUE_PLACEHOLDER": "Wert(e) auswählen",
+        "VALUE_FILTER_ARIA_LABEL": "Verfügbare Werte filtern",
+        "VALUE_SELECTION_HEADER": "Einen oder mehrere Werte auswählen",
+        "CONFIRM_BUTTON": "Hinzufügen",
+        "CANCEL_BUTTON": "Abbrechen",
+        "ARIA_CLOSE_LABEL": "Dialog Filter hinzufügen schließen"
+      }
+    }
   },
   "OCX_SEARCH_HEADER": {
     "TOGGLE_BUTTON": {

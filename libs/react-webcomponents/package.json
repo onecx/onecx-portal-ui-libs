@@ -1,6 +1,6 @@
 {
   "name": "@onecx/react-webcomponents",
-  "version": "9.0.0-rc.13",
+  "version": "9.0.0-rc.14",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -23,12 +23,10 @@
   "peerDependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "@onecx/accelerator": "9.0.0-rc.13",
-    "@onecx/react-integration-interface": "9.0.0-rc.13",
-    "@onecx/integration-interface": "9.0.0-rc.13",
-    "react-router": "^7.13.0"
-  },
-  "dependencies": {
+    "@onecx/accelerator": "9.0.0-rc.14",
+    "@onecx/react-integration-interface": "9.0.0-rc.14",
+    "@onecx/integration-interface": "9.0.0-rc.14",
+    "react-router": "^7.13.0",
     "@r2wc/react-to-web-component": "^2.1.0"
   },
   "publishConfig": {

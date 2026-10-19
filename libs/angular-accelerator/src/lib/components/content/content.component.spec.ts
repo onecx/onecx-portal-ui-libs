@@ -3,11 +3,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { OcxContentComponent } from './content.component'
 import { OcxContentDirective } from '../../directives/content.directive'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-content title="Test 1">
       <p>Content inside of ocx-content with title</p>

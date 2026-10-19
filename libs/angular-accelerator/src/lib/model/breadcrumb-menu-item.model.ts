@@ -1,5 +1,5 @@
 import { QueryParamsHandling } from '@angular/router'
-import { MenuItem } from 'primeng/api'
+import { MenuItem } from '@openng/optimus-ui/api'
 export interface BreadCrumbMenuItem {
   labelKey?: string
   icon?: string
