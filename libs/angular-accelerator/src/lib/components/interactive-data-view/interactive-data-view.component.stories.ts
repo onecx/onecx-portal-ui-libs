@@ -156,13 +156,13 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
       </div>
     </ng-template>
     <ng-template #grid let-item>
-      <div class="w-3 px-4 py-2 card m-0 mr-4">
+      <div class="w-1/4 px-4 py-2 card m-0 mr-4">
         <p>{{item.product}}</p>
         <p-progressBar [value]="item.amount" showValue="false"/>
       </div>
   </ng-template>
   <ng-template #topCenter>
-    <input pInputText placeholder="Custom input injected via template" class="border-round w-18rem p-2" />
+    <input pInputText placeholder="Custom input injected via template" class="rounded-border w-[18rem] p-2" />
   </ng-template>
   </ocx-interactive-data-view>`,
 })
