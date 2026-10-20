@@ -2,7 +2,7 @@ import type { CssRule } from '../../mapper.types';
 
 // CSS rules for properties that have no PrimeNG preset equivalent.
 // Add a CssRule entry only when the property genuinely cannot be expressed
-// via a mapping rule. See dev-docs/theming/theme-v2.adoc § Adding a New CSS Rule.
+// via a mapping rule. See dev-docs/theming/theme-v2/theme-v2.adoc § Adding a New CSS Rule.
 //
 // Ripple's `background` IS a preset token (mapped in mapping-rules/usages/
 // ripple.rules.ts to `components.ripple...root.background`). Only `opacity` is
