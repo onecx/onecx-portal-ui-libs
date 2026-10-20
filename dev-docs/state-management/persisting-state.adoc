@@ -1,0 +1,110 @@
+= Persisting state across reloads with lazy feature slices
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does an NgRx App persist part of its state to `localStorage` and rehydrate it after a reload: without the rehydration step clobbering feature slices that are loaded lazily and may not exist yet?
+
+== Why it exists
+
+A reload (or a fresh tab) discards the in-memory store. App state that must survive this, the last open tab, a saved filter, a draft value, has to be written to `localStorage` while the App runs and read back when the store is initialised. The standard tool for that is `ngrx-store-localstorage`'s `localStorageSync` meta-reducer: it serialises the store (or a slice of it) to `localStorage` and rehydrates it back on startup.
+
+The catch is *lazy-loaded feature slices*. A OneCX App does not necessarily load every feature reducer at bootstrap; some are added later with `store.addFeature` / `createReducer` for a lazy route. `ngrx-store-localstorage` rehydrates by *merging* the stored JSON into the current store state. If the rehydration runs before a lazily loaded slice is registered, or if the stored JSON is merged over a slice that a different part of the App is already using, the merge can overwrite live state with stale `localStorage` data, or write to a slice that has not been defined yet. The two helpers in this Unit exist to make that rehydration *lazy-safe*: the merge reducer only rehydrates slices that are already present in the store, and the key-configuration helper gives a typed way to describe which (nested) keys to persist and how.
+
+This Unit covers the two helpers. The general `localStorage` serialisation/deserialisation is `ngrx-store-localstorage`'s job; the App supplies that package. The libraries supply the merge reducer callback and the key configuration that make it work with OneCX's lazy store.
+
+== How it works
+
+There are two independent helpers, both in `ngrx-accelerator`, and both plain TypeScript with no NgRx dependency (they plug into the `localStorageSync` configuration the App passes to its store setup).
+
+=== The merge reducer: `lazyLoadingMergeReducer`
+
+link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer(state, rehydratedState, action)`] is the `mergeReducer` callback for `ngrx-store-localstorage`. It is called with the *current* in-memory state, the *rehydrated* state read from `localStorage`, and the action, and returns the state to use. The behaviour:
+
+. `keysToRehydrate = Object.keys(rehydratedState).filter((key) => state[key])`: keep only the top-level keys that are **already present and truthy** in the current in-memory state. A lazily loaded slice that has not been registered yet is `undefined` in `state`, so it is *not* rehydrated now.
+. If there is nothing to rehydrate, the function returns `state` unchanged.
+. Otherwise it builds `stateToRehydrate` containing only those keys and merges it into `state` with `deepmerge`, using a custom `arrayMerge` of `overwriteMerge`: for arrays the *rehydrated* (source) array fully replaces the current one, rather than being concatenated element by element. That is the "the stored list is authoritative" semantics you want for a persisted list (e.g. a list of open tabs).
+. It then `delete`s each rehydrated key from `rehydratedState`, so the (now-consumed) stored copy does not leak back into the caller.
+
+The effect, in one line: *only the feature slices that are loaded now are refreshed from `localStorage`; everything else is left alone.* When a lazy slice is registered later, a subsequent rehydration/merge (or the App's own write) populates it. The `state[key]` guard is what makes the rehydration idempotent with respect to lazy loading.
+
+[source,mermaid]
+----
+flowchart TB
+  LS[localStorage JSON] --> REH[rehydratedState]
+  MEM[in-memory store] --> CUR[state]
+  REH --> CHK{key present in state?}
+  CUR --> CHK
+  CHK -->|yes| MERGE[deepmerge with arrayMerge = overwrite]
+  CHK -->|no, lazy slice not loaded| SKIP[leave alone]
+  MERGE --> OUT[new state]
+  SKIP --> OUT
+----
+
+=== The key configuration: `createNestedKeyConfiguration`
+
+link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration(nestedKeyConfiguration)`] and its types describe *which* keys to persist and *how* to transform them. `ngrx-store-localstorage` takes a `KeyConfiguration`: a map of key names to an array of sub-keys to persist, optionally with per-key `Options` (`serialize`, `deserialize`, `reviver`, `replacer`, `encrypt`, `decrypt`, `filter`, `space`). This module defines:
+
+* `Options`: the per-key transform options (`serialize`, `deserialize`, `reviver`, `replacer`, `encrypt`, `decrypt`, `filter`, `space`).
+* `KeyConfiguration` and `NestedKeyConfiguration`: the nested shape, where each entry maps a key to a list of strings / numbers / nested configurations, or to a `CommonKeyConfigurationTypes` value (`Options` or a `(key, value) => value` transform function).
+* `createNestedKeyConfiguration`: a thin typed wrapper: it casts a `(string | NestedKeyConfiguration)[]` to `KeyConfiguration[]`. It exists so an App can build a *nested* key configuration (persist only the inner keys of a feature slice, not the whole slice) with a simpler argument type and hand it to `ngrx-store-localstorage`.
+
+Together the two helpers cover the two sides of the round-trip: `createNestedKeyConfiguration` decides *what* is written to / read from `localStorage` (and how it is transformed), and `lazyLoadingMergeReducer` decides *how* the read-back is merged into a store that may be only partially loaded.
+
+== Libs side / Shell side
+
+=== Libs side
+
+Both helpers live in link:{libs}/ngrx-accelerator[`@onecx/ngrx-accelerator`] and are exported from the package root (link:{libs}/ngrx-accelerator/src/index.ts[`src/index.ts`]):
+
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer`]: the lazy-safe `mergeReducer` callback.
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration` / `KeyConfiguration` / `NestedKeyConfiguration` / `Options`]: the typed nested key configuration.
+
+They are dependency-light: `lazyLoadingMergeReducer` uses `deepmerge` (a peer of the library), and `createNestedKeyConfiguration` has no runtime dependencies. Neither imports `@ngrx/store`: they are meant to be passed into the `localStorageSync` setup the App owns. So the App is expected to add `ngrx-store-localstorage` itself and wire these helpers into its `localStorageSync` / `mergeReducer` / key-configuration options. The store slice being persisted is typically a feature slice (including the `onecx` slice from Unit 1 if the App wants to persist the Shell context too).
+
+=== Shell side
+
+This Unit has no Shell side to describe: `localStorage` rehydration is entirely App-side, and the Shell does not read or write the App's `localStorage` keys. The Shell's own runtime configuration and Workspace (Area 3) are re-fetched from the server/BFF on each bootstrap; they are not sourced from the App's `localStorage`. The Shell is therefore only referenced for completeness: the App's store is isolated from the Shell's configuration by design.
+
+== Angular / React
+
+Both helpers are framework-agnostic plain TypeScript. They are written for an NgRx store, which in practice means an Angular App (NgRx is the Angular store), but nothing in the code is Angular-specific: any framework that uses an NgRx store and `ngrx-store-localstorage` can use them. A React App using Redux (not NgRx) would need equivalent helpers for its own persistence layer; the libraries do not ship those.
+
+== Edge cases & pitfalls
+
+* *Only loaded slices are rehydrated: deliberately.* The `state[key]` guard in `lazyLoadingMergeReducer` means a lazily loaded slice is *not* rehydrated at startup. If an App expects a lazy slice's persisted value to be present immediately, it will find it absent until the slice is loaded. That is the intended lazy-safe behaviour, but it is a common source of "my persisted value is missing on load" reports.
+* *`state[key]` uses truthiness, not presence.* The filter is `state[key]` (truthy), not `state[key] !== undefined`. A slice whose current in-memory value is `null` or `false` (a falsy-but-defined value) would be skipped by the rehydration. Feature slices are normally objects (truthy), so this rarely matters, but a slice deliberately initialised to `null` would not be rehydrated.
+* *Arrays are overwritten, not merged.* `arrayMerge` is set to `overwriteMerge`, so a persisted array fully replaces the current one. If an App relies on `deepmerge`'s default (concatenate) array behaviour for some other key, that does not apply here.
+* *The stored copy is mutated.* `lazyLoadingMergeReducer` `delete`s the rehydrated keys from the `rehydratedState` argument. The function has a side effect on its input; a caller that reuses the same `rehydratedState` object afterwards will see those keys removed.
+* *Encryption / transforms are per-key.* `Options.encrypt` / `decrypt` / `serialize` / `deserialize` are configured per key via the key configuration. A key left without a `decrypt` will not have its `localStorage` value decrypted on rehydration.
+* *The App must own `ngrx-store-localstorage`.* These helpers configure that package but do not depend on it. An App that forgets to install and wire `ngrx-store-localstorage` gets nothing: the helpers alone do not persist anything.
+
+== Debugging
+
+* *Is the merge running?* `lazyLoadingMergeReducer` is a `mergeReducer` callback; log inside it (or the wrapper) and print `Object.keys(rehydratedState)` and `Object.keys(state)`. The set difference is exactly which slices *will not* be rehydrated this pass.
+* *Is a key persisted?* Check `window.localStorage` for the key the `createNestedKeyConfiguration` setup targets, and compare the stored JSON with the value `serialize` / `decrypt` should produce. A mismatch there points at the `Options` for that key, not at the merge.
+* *Is the lazy slice loaded?* In the store, confirm the slice's top-level key is present (and truthy) in the in-memory state before expecting it to be rehydrated. For general store inspection, see Area 13 (Diagnostics).
+
+== Known issues
+
+None found in the code reviewed for this Unit. The two helpers behave as intended: the merge only touches slices that are already loaded (the lazy-safe behaviour is the point), and the `delete` of consumed keys from `rehydratedState` has no observable effect in the normal single-call rehydration flow (see Edge cases for the mutation footgun).
+
+== Related Units
+
+* link:shell-context-to-store.adoc[Shell context → App ngrx store]: the `onecx` slice this Unit can persist if the App wants to survive reloads for Shell context.
+* link:url-synced-state.adoc[URL-synced state (fragment parameters)]: the other "state that must survive" round-trip, against the URL instead of `localStorage`.
+* Area 2 (Application Bootstrap): when the store is first initialised and lazily loaded slices are registered.
+* Area 13 (Diagnostics): inspecting the store and `localStorage` at runtime.
+
+== Sources
+
+Code::
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/lazy-loading-merge-reducer.ts[`lazyLoadingMergeReducer`]: the lazy-safe `mergeReducer` callback (and its `overwriteMerge` / `arrayMerge` options).
+* link:{libs}/ngrx-accelerator/src/lib/utils/local-storage/create-nested-key-configuration.ts[`createNestedKeyConfiguration`, `KeyConfiguration`, `NestedKeyConfiguration`, `Options`]: the typed nested key configuration.
+* link:{libs}/ngrx-accelerator/src/index.ts[`@onecx/ngrx-accelerator` public API]: the barrel that exports both helpers.
+* link:{libs}/ngrx-accelerator[`@onecx/ngrx-accelerator` package root]
+* `ngrx-store-localstorage`: the persistence package the App supplies; the helpers configure its `localStorageSync` meta-reducer, `mergeReducer`, and key configuration. (Not a direct dependency of the libraries; provided by the App.)
