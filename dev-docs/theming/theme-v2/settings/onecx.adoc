@@ -22,7 +22,7 @@ toc::[]
 [#conventions]
 == Conventions and Test Environment
 
-Both recipes below were authored and verified against this repository state. Record these in any recipe so a reader (human or agent) can reproduce the result:
+Both recipes below were authored against this repository state (the `dataTable` recipe describes mappings that already exist and were verified against the code and its tests; the `dataview` recipe is a *proposed* mapping that does not exist yet, and its steps are specified so a reader — human or agent — can add and verify it). Record these in any recipe so a reader (human or agent) can reproduce the result:
 
 [cols="1,3"]
 |===
@@ -143,7 +143,8 @@ When Theme V2 is active, these become the default `checkboxColumnPosition` (`rig
 Consequences of this wiring:
 
 * **V2 gate** — `themeVersionAvailable(2, injector)` must resolve `true` for a theme to pass the `filter(Boolean)`; otherwise the signals are never set (they stay `undefined`). On a v1 theme the components therefore use their hardcoded fallbacks.
-* **Overwrite per emission** — every accepted theme *overwrites* each signal with the mapped value (which may be `undefined`). A later theme that omits a setting **clears** that signal, so the component falls back to its hardcoded default. This is the OneCX-side "missing/removed value" behavior (see link:index.adoc#precedence[the provider-difference summary]).
+* **Overwrite per emission** — every *accepted* theme *overwrites* each signal with the mapped value (which may be `undefined`). A later **V2** theme that omits a setting therefore **clears** that signal, so the component falls back to its hardcoded default. This is the OneCX-side "missing/removed value" behavior (see link:index.adoc#precedence[the provider-difference summary]).
+* **V2 → v1 transition keeps the old value** — the gate only *blocks* non-V2 emissions; it does not *clear* the signals. If a V2 theme has already set a signal and a later **non-V2** (v1-only) emission arrives, that emission is dropped by `themeVersionAvailable(2, …)` and the signal keeps its **previous V2 value** — it does *not* become `undefined`. The component therefore keeps rendering with the last V2 default rather than falling back to its hardcoded default. This is different from the "V2 theme omits the setting" case above, where the signal *is* cleared. (Conversely, a v1→V2 transition is normal: the first accepted V2 theme writes the signal.)
 * **Torn down with the caller** — `takeUntilDestroyed(destroyRef)` unsubscribes when the calling component is destroyed.
 
 [#data-table-precedence]
@@ -211,9 +212,9 @@ So the theme default *reflows into the dialog* until the user explicitly saves a
 
 This is a complete, reproducible recipe for adding a *new* accelerator usage-settings mapping. It maps **one** concrete setting from the existing `dataview` usage's `settings` shape — `paginatorPosition` — onto a new `paginatorPosition` input on the `DataView` component, end to end.
 
-**Why this usage/component pair:** the `dataview` usage already has a `settings` sub-schema (so `dataview` is a `ThemeUsageNameWithSettings`), and `DataViewComponent` is the natural host — but the `dataview` usage has no mapper or wiring yet, and `DataView` does not yet expose a `paginatorPosition` input. It is a clean, realistic addition that mirrors the existing `dataTable` recipe one-to-one.
+**Why this usage/component pair:** the `dataview` usage already has a `settings` sub-schema (so `dataview` is a `ThemeUsageNameWithSettings`), and `DataViewComponent` is the natural host — but the `dataview` usage has no mapper or wiring yet, and `DataView` does not yet expose a `paginatorPosition` input. It is a clean, realistic addition that mirrors the existing `dataTable` recipe. (It is one step longer than `dataTable` in one respect only: because `DataView` delegates rendering to `ocx-data-list-grid`, the resolved value also needs a passthrough `paginatorPosition` input on that child — see Step 4.)
 
-**What is NOT in scope** (and why): no change to `theme-config.service.ts` (that is the *PrimeNG* activation path; the accelerator path has no registry), no change to the reference-resolution pipeline (reference resolution is upstream — see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]), and no change to the `dataview` usage's *schema* (the `paginatorPosition` field already exists; if you needed a *new* settings field, that would be the only schema edit, and the eligible-usage type updates automatically).
+**What is NOT in scope** (and why): no change to `theme-config.service.ts` (that is the *PrimeNG* activation path; the accelerator path has no registry), no change to the reference-resolution pipeline (the reactive wiring reads `theme.properties?.v2` directly and never calls `resolveThemeRefs` — see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]), and no change to the `dataview` usage's *schema* (the `paginatorPosition` field already exists; if you needed a *new* settings field, that would be the only schema edit, and the eligible-usage type updates automatically).
 
 [#dataview-prereq]
 === Prerequisites
@@ -243,10 +244,14 @@ export const dataviewSettingsShape = z.object({
   // ...
 })
 export const dataviewSettingsDefaults = { /* ... */ paginatorPosition: 'bottom', /* ... */ }
-// usage: settings: dataviewSettingsShape.optional()   // <- NO prefault: no schema defaults carried
+// usage: settings: dataviewSettingsShape.optional()
+// dataviewDefaults.settings includes { paginatorPosition: 'bottom', ... }, so applyDefaultsRecursive
+// still applies a schema default to paginatorPosition (see the note below)
 ----
 
-Note the contrast with `dataTable`: the `dataview` usage is `settings: dataviewSettingsShape.optional()` with **no** `prefault`, so `mapThemeUsageSettings` reads only the values a theme author *explicitly* set (a present `dataview` usage with an empty/absent `settings` object yields `undefined` for `paginatorPosition`, and the component then uses its hardcoded fallback).
+The `dataview` usage is `settings: dataviewSettingsShape.optional()` — **not** `prefault` like `dataTable`. That `.optional()` vs `prefault({})` difference is *not* what decides whether the settings carry defaults: `applyDefaultsRecursive` applies a `.default()` to every key present in the **defaults tree** (`dataviewDefaults`), and `dataviewDefaults.settings` includes `paginatorPosition: 'bottom'` (and a few others). So the *resolved* `dataview` schema does carry a `paginatorPosition` default. (See link:index.adoc#settings-in-a-usage[the schema-contract section] for the full rule.)
+
+At runtime this default does **not** change what the mapper sees, though: the v2 settings path never parses a theme through the resolved zod schema (see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]), so `mapThemeUsageSettings` reads the raw `theme.properties?.v2` values. A present `dataview` usage with an empty/absent `settings` object therefore still yields `undefined` for `paginatorPosition` in the mapper, and the component then uses its hardcoded fallback (which this recipe sets to `'bottom'` to match `dataviewSettingsDefaults.paginatorPosition`).
 
 Because `dataview` declares a `settings` field, `'dataview'` is already a member of `ThemeUsageNameWithSettings`, and `ThemeUsageSettings<'dataview'>` already resolves to this settings type.
 
@@ -378,22 +383,39 @@ paginatorPositionResolved = computed(
 
 Because this uses `??`, an explicit `paginatorPosition` (bound in the template) always wins; a theme default applies only when the input is not set; and the `'bottom'` fallback applies when neither is present.
 
-Bind the resolved value to the paginator in the template. The `DataView` template renders PrimeNG `p-dataview` paginators (`[paginator]="listGridPaginator()"` / `[paginator]="tablePaginator()"`); pass the resolved position to each so the theme default reflows into the rendered paginator:
+Bind the resolved value to the paginator in the template. Note that the `DataView` template does **not** render PrimeNG `p-dataView` directly — it delegates rendering to the accelerator children `ocx-data-list-grid` (grid/list layout) and `ocx-data-table` (table layout). The PrimeNG `p-dataView` that actually shows a positioned paginator lives *inside* `ocx-data-list-grid`, so the resolved value is plumbed down in two hops.
+
+**Hop 1 — `data-view.component.html`.** Pass the resolved signal to the child. The existing `[paginator]` on that element is the *boolean* show/hide flag (unrelated to position), so add a separate `[paginatorPosition]` binding:
 
 [source,html]
 ----
-[paginator]="listGridPaginator()"
-[position]="paginatorPositionResolved()"
+<ocx-data-list-grid
+  ...
+  [paginator]="listGridPaginator()"
+  [paginatorPosition]="paginatorPositionResolved()"
+>
+</ocx-data-list-grid>
 ----
 
-(If the PrimeNG `p-dataview` `position` binding is not the correct attribute name for your PrimeNG version, bind the equivalent paginator position input — the point of the recipe is that the *resolved* signal is what the template consumes.)
+**Hop 2 — `DataListGridComponent`.** Add a `paginatorPosition` input to `DataListGridComponent` (`{accel_root}/data-list-grid/data-list-grid.component.ts`) and bind it onto the inner `p-dataView` in `data-list-grid.component.html`. PrimeNG 21's `p-dataView` position input is `paginatorPosition` (`'top' | 'bottom' | 'both'`), **not** `position`:
+
+[source,html]
+----
+<p-dataView
+  [paginator]="paginator()"
+  [paginatorPosition]="paginatorPosition()"
+  ...>
+</p-dataView>
+----
+
+Because the *table* layout (`ocx-data-table`) exposes no paginator-position input, the position reflows only the grid/list paginator — the point of the recipe is that the *resolved* signal is what the template consumes, plumbed down to the PrimeNG element that actually exposes the input.
 
 Verify: `npx nx build angular-accelerator`.
 
 [#dataview-register]
 === Step 5 — Export from the feature barrel
 
-Add the two provider-specific public exports to the feature barrel (`../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/index.ts`), next to the existing `table` exports:
+Add the two provider-specific public exports to the feature barrel (`../../../../libs/angular-utils/src/lib/utils/theme-v2-usage-settings-mappers/index.ts` — four levels up from this doc's directory, matching the `{accel_provider_root}` prefix), next to the existing `table` exports:
 
 [source,typescript]
 ----
@@ -411,7 +433,7 @@ Unlike the PrimeNG path, there is **no registry to update** for accelerator mapp
 * `DataViewComponent` calls `useAcceleratorDataViewThemeDefaults()` and reads the signal in `paginatorPositionResolved`, so the mapping is live the moment the component renders.
 * The only gate is the V2 availability check inside the wiring (`themeVersionAvailable(2, injector)`), so on a v1 theme the signal stays `undefined` and the component uses its `'bottom'` fallback.
 
-There is no edit to `theme-config.service.ts`, and no change to any other existing component.
+There is no edit to `theme-config.service.ts`, and the only *other* existing component touched is `DataListGridComponent` (the passthrough `paginatorPosition` input added in Step 4 so the resolved value reaches the inner `p-dataView`).
 
 [#dataview-struct]
 === Step 7 — Structural-compatibility spec (accelerator)
@@ -422,6 +444,7 @@ Because the mapper lives in `angular-utils` and the component lives in `angular-
 ----
 import { mapAcceleratorDataViewSettings } from '@onecx/angular-utils'
 import { DataViewComponent } from '../components/data-view/data-view.component'
+import { assertMapperTargetsCoverInputs } from './index'
 
 it('should only map dataview settings to keys the DataView component declares as inputs', () => {
   assertMapperTargetsCoverInputs(mapAcceleratorDataViewSettings.targetKeys, [DataViewComponent])
@@ -525,7 +548,7 @@ The same setting (`paginatorPosition`) under different inputs, for the new `data
 | Yes | `undefined` (nothing to map) | `bottom` (fallback)
 
 | `settings: {}` (usage present, field omitted)
-| Yes | `undefined` (no `prefault` on `dataview`) | `bottom` (fallback)
+| Yes | `undefined` (the runtime reads the raw theme value, not the schema default) | `bottom` (fallback)
 
 | `settings: { paginatorPosition: 'top' }`
 | Yes | `top` | `top`
@@ -571,8 +594,8 @@ See link:index.adoc#structural-compatibility[Structural-Compatibility Guarantees
 | A settings field is silently dropped.
 | The value failed its transform (e.g. a string outside `asEnum`'s allowed set, or a non-boolean where `asBoolean` is expected). The field is omitted by design and the component falls back. Check the value's type/shape against the schema.
 
-| A `{{...}}` reference in a setting is applied verbatim or dropped.
-| Reference resolution is upstream. If unresolved references reach the wiring, the transform drops the field. Resolve references upstream (see link:index.adoc#reference-resolution-boundary[the reference-resolution boundary]).
+| A `{{...}}` reference in a setting does not resolve to its value.
+| The wiring reads `theme.properties?.v2` directly and never calls `resolveThemeRefs`, so the mapper sees the unresolved `{{...}}` string. Its transform then drops the field and the component falls back — by design, not a bug. (See link:index.adoc#reference-resolution-boundary[the reference-resolution boundary].)
 
 | The structural-compat spec fails with a specific missing key.
 | A rename on the mapper or on the component's `input()`. Realign the two names (the mapper writes the component input name, not the schema key — e.g. `actionColumnSticky` → `frozenActionColumn`).

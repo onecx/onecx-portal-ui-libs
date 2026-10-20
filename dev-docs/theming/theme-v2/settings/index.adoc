@@ -165,12 +165,13 @@ export const carouselSettingsShape = z.object({
 })
 ----
 
-Two usages illustrate the two ways a `settings` object can be wired into the usage:
+Whether a `settings` subtree carries schema-level defaults is determined by the *defaults tree* passed to `applyDefaultsRecursive` — **not** by whether the shape member is declared `.optional()` or `.prefault({})`. `applyDefaultsRecursive` walks the shape and applies `.default(value)` to every key present in the defaults tree, recursing into sub-objects; keys absent from the defaults tree stay `.optional()`. So a member declared `.optional()` *does* get a default if the defaults tree contains that key:
 
-* The `dataTable` usage uses `settings: dataTableSettingsShape.prefault({})` with a `dataTableSettingsDefaults` object (`{ checkboxColumnPosition: 'start', actionColumnPosition: 'end', actionColumnSticky: false }`), so the resolved schema carries defaults.
-* The `carousel` usage uses `settings: carouselSettingsShape.optional()` with **no** inline defaults, so `settings` only ever carries values a theme author explicitly set.
+* `dataTable` declares `settings: dataTableSettingsShape.prefault({})` **and** its defaults tree (`dataTableDefaults`) includes a `settings` object (`{ checkboxColumnPosition: 'start', actionColumnPosition: 'end', actionColumnSticky: false }`) — so the resolved `dataTable` schema carries defaults on those settings.
+* `dataview` declares `settings: dataviewSettingsShape.optional()` — *not* `prefault` — **but** its defaults tree (`dataviewDefaults`) also includes a `settings` object (`{ paginatorPosition: 'bottom', ... }`), so the resolved `dataview` schema carries a default on `paginatorPosition` too. The `.optional()`/`.prefault` distinction on the shape member is therefore *not* what decides whether settings get defaults; the defaults tree is.
+* `carousel` declares `settings: carouselSettingsShape.optional()` and its defaults tree (`carouselDefaults`) has **no** `settings` key, so the `carousel` settings subtree gets *no* defaults and only ever carries values a theme author explicitly set.
 
-Both are eligible usages. The presence or absence of schema-level defaults does not change *which* settings are eligible to be mapped — it only changes the values a fully-defaulted theme reports. See <<precedence>> and the provider guides for the runtime consequences of each.
+One caveat that matters at runtime: these defaults are applied by `applyDefaultsRecursive` when the **schema** is built, and they only ever materialise if a consumer *parses a theme through that resolved schema*. The v2 settings path does **not** do that — nothing in the runtime parses a theme through the zod schema (see <<reference-resolution-boundary>>), so the settings mappers read the raw theme values regardless of the schema's defaults. The presence or absence of schema-level defaults therefore does not change *which* settings are eligible to be mapped, and it does not change what a runtime theme feeds the mapper; it only affects what a separate consumer that explicitly parses the theme through the resolved schema would see.
 
 [#shared-mapper-cluster]
 == The Shared Mapper Cluster
@@ -197,7 +198,7 @@ export function mapThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings,
 It reads `properties.usages[usageName].settings` and hands that object to the mapper. Two boundaries matter here:
 
 * It returns `undefined` (not `{}`) when the usage — or its `settings` object — is absent. Callers decide how to treat "no settings".
-* **It performs no CSS axis-fallback resolution.** It reads the `settings` values from the (already-resolved) theme properties as-is. The `withRef(...)` reference syntax inside a settings value is resolved *upstream* by the reference-resolution pipeline before these properties reach this function. Neither this extraction step nor any provider mapper performs CSS-style reference fallback.
+* **It performs no CSS axis-fallback resolution and no reference resolution.** It reads the `settings` values from the theme properties it is given, as-is. In particular it does **not** resolve `{{...}}` references: reference resolution happens only inside `mapThemeToPreset` (`resolveThemeRefs`), which the PrimeNG path calls *after* the settings appliers have run, and the accelerator path does not call it at all (see <<reference-resolution-boundary>>). A `withRef(...)` value that is still an unresolved `{{...}}` string when it reaches a mapper is dropped by that mapper's transform (see <<transforms>>).
 
 [#mapper-definition]
 === Mapper definitions and transforms — `defineUsageSettingsMapper` + `helpers`
@@ -256,6 +257,7 @@ link:{mapper_cluster_root}/helpers.ts[helpers.ts] provides the value conversions
 
 | `asEnum<TValue extends string>(allowed)`
 | Keeps the value when it is one of `allowed`, else `undefined`.
+
 | `mapValues(mapping)`
 | Maps one set of string literals to another (for example `{ start: 'left', end: 'right' }`). Example: `mapValues({ start: 'left', end: 'right' })('start')` -> `'left'`, `mapValues({ start: 'left', end: 'right' })('end')` -> `'right'`; an unsupported input such as `'middle'` is dropped (the transform returns `undefined`), so the mapper omits the target field.
 
@@ -288,10 +290,12 @@ New provider mappers and services are added to the public barrel *only for their
 [#reference-resolution-boundary]
 == Where Reference Resolution Happens
 
-Theme values can reference other values with the `{{path.to.value}}` syntax. A usage setting declared as `withRef(z.boolean())` may carry such a reference in a raw theme.
+Theme values can reference other values with the `{{path.to.value}}` syntax. A usage setting declared as `withRef(z.boolean())` may carry such a reference in a raw theme. The important thing to get right is *where* those references are resolved — it is easy to assume they are resolved "upstream" of the settings pipeline and they are not:
 
-* **Reference resolution is an upstream concern**, performed by the token/reference pipeline (`resolveThemeRefs`, covered in the link:../theme-v2.adoc#reference-resolution[architecture document]). By the time `ThemePropertiesV2` reaches `mapThemeUsageSettings` or the reactive wiring, the properties have already been resolved.
-* **Neither settings extraction nor a provider mapper does CSS-style axis-fallback or reference resolution.** Do not describe `mapThemeUsageSettings` or a `defineUsageSettingsMapper` mapper as resolving `{{...}}` references or walking fallback scopes. If a settings value still contains an unresolved reference or an unsupported value, the transform drops it (see <<transforms>>) and the field is omitted.
+* **Reference resolution is not an upstream/pre-processing concern for the settings path.** The only place `{{...}}` references are resolved is `resolveThemeRefs`, and that runs *inside* `mapThemeToPreset` (the token-to-preset/CSS pipeline, covered in the link:../theme-v2.adoc#reference-resolution[architecture document]). Nothing in the v2 runtime *parses* the theme through the zod schema (so the schema-level defaults are not applied either) or runs `resolveThemeRefs` before the settings mappers.
+* **On the PrimeNG path, the settings appliers run *before* `mapThemeToPreset`.** Inside `applyThemeVariablesV2`, `ThemeConfigService` loops the applier registry *first*, then calls `mapThemeToPreset(properties)` — the one place refs are resolved. So the `settings` object the appliers hand to `mapThemeUsageSettings` can still contain unresolved `{{...}}` strings, and the mapper must cope with that.
+* **On the OneCX/accelerator path, the reactive wiring reads `theme.properties?.v2` directly** and never calls `resolveThemeRefs`, so a `{{...}}` reference in a settings value reaches the mapper unresolved as well.
+* **Neither settings extraction nor a provider mapper does CSS-style axis-fallback or reference resolution.** If a settings value still contains an unresolved reference (or any unsupported value) when it reaches the mapper, the transform drops it (see <<transforms>>) and the field is omitted — the component then falls back. This is exactly what `carousel.mapper.spec.ts` asserts: `mapPrimeNgCarouselSettings({ orientation: '{{primitives.orientation}}', ... })` maps every field to `undefined`.
 
 [#primeng-path]
 == The PrimeNG Path (Overview)
@@ -306,7 +310,7 @@ PrimeNG-native components are themed by **monkey-patching the component prototyp
 
 The runtime bridge's behavior that a recipe must respect:
 
-* **Lifecycle wrapping** — `ngAfterContentInit` registers an instance and applies the current defaults for the first time; `ngOnChanges` records explicit inputs and re-applies on later changes; `ngOnDestroy` unregisters the instance so a destroyed component is no longer targeted.
+* **Lifecycle wrapping** — `ngAfterContentInit` registers an instance and applies the current defaults to it for the first time; `ngOnChanges` records which inputs were set explicitly (it does *not* itself re-apply the theme defaults); `ngOnDestroy` unregisters the instance so a destroyed component is no longer targeted. Defaults are re-applied to live instances only when a theme change flows through `applyThemeProperties`, which iterates the tracked instances.
 * **Tracked instances** — a `Set` of live instances, plus a `WeakMap` of per-instance explicit-input sets.
 * **Sticky explicit inputs** — once a tracked input appears in a `changes` map it is recorded as explicit and the set only grows. Removing the binding or letting the value become `undefined` does **not** restore the theme default for that instance (see <<precedence>>).
 * **Refresh, not just assignment** — assigning inputs is not enough when a component derives internal state from them. Each provider supplies a component-appropriate `refreshInstance` (Carousel's recomputes autoplay/layout; a simpler component may only need `markForCheck`). See link:primeng.adoc[primeng.adoc] for the component-specific guidance.
