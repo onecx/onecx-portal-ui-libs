@@ -367,6 +367,30 @@ export class InteractiveDataViewComponent implements OnInit {
     return optimusTopCenter ?? childTopCenter ?? undefined
   })
 
+  childTopStart = contentChild<TemplateRef<any> | undefined>('topStart')
+  optimusTopStart = computed(() => {
+    const templates = this.templates()
+    const topStartTemplate = templates.find((t) => t.getType() === 'topStart')
+    return topStartTemplate?.template ?? undefined
+  })
+  _topStart = computed(() => {
+    const optimusTopStart = this.optimusTopStart()
+    const childTopStart = this.childTopStart()
+    return optimusTopStart ?? childTopStart ?? undefined
+  })
+
+  childTopEnd = contentChild<TemplateRef<any> | undefined>('topEnd')
+  optimusTopEnd = computed(() => {
+    const templates = this.templates()
+    const topEndTemplate = templates.find((t) => t.getType() === 'topEnd')
+    return topEndTemplate?.template ?? undefined
+  })
+  _topEnd = computed(() => {
+    const optimusTopEnd = this.optimusTopEnd()
+    const childTopEnd = this.childTopEnd()
+    return optimusTopEnd ?? childTopEnd ?? undefined
+  })
+
   childListValue = contentChild<TemplateRef<any> | undefined>('listValue')
   optimusListValue = computed(() => {
     const templates = this.templates()

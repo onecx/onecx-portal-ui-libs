@@ -170,6 +170,12 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
   <ng-template #topCenter>
     <input pInputText placeholder="Custom input injected via template" class="border-round w-18rem p-2" />
   </ng-template>
+  <ng-template #topStart>
+    <span class="text-muted">Custom topStart content</span>
+  </ng-template>
+  <ng-template #topEnd>
+    <span class="text-muted">Custom topEnd content</span>
+  </ng-template>
   </ocx-interactive-data-view>`,
 })
 
