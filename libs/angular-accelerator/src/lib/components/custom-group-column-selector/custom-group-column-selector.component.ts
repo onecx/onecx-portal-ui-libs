@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
+import { PickList } from 'primeng/picklist'
 import { DataTableColumn } from '../../model/data-table-column.model'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }
@@ -64,6 +65,12 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @Input() draggableColumnGroupSelectorDialog = true
+  /** Whether the column selection dialog can be resized. Defaults to false in v7. */
+  @Input() resizableColumnGroupSelectorDialog = false
+  /** Whether column transfers restore both lists to the configured column order. */
+  @Input() restoreColumnGroupSelectorOrder = false
+
+  @ViewChild(PickList) pickList?: PickList
 
   @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
   @Output() actionColumnConfigChanged: EventEmitter<ActionColumnChangedEvent> = new EventEmitter()
@@ -74,6 +81,33 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   frozenActionColumnModel = false
   actionColumnPositionModel: 'left' | 'right' = 'right'
   visible = false
+
+  /** Whether at least one column is selected as active. */
+  get hasActiveColumns(): boolean {
+    return this.displayedColumnsModel.length > 0
+  }
+
+  /** Whether active column membership or order differs from the committed selection. */
+  get columnsChanged(): boolean {
+    return (
+      this.displayedColumnsModel.length !== this.displayedColumns.length ||
+      this.displayedColumnsModel.some((column, index) => column.id !== this.displayedColumns[index]?.id)
+    )
+  }
+
+  /** Whether either action-column setting differs from the committed value. */
+  get actionSettingsChanged(): boolean {
+    return (
+      this.frozenActionColumnModel !== this.frozenActionColumn ||
+      this.actionColumnPositionModel !== this.actionColumnPosition
+    )
+  }
+
+  /** Save requires an active column and an actual configuration change. */
+  get canSave(): boolean {
+    return this.hasActiveColumns && (this.columnsChanged || this.actionSettingsChanged)
+  }
+
   alignmentOptions = [
     {
       label: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.LEFT',
@@ -107,6 +141,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   }
 
   onOpenCustomGroupColumnSelectionDialogClick() {
+    this.resetColumnSelection()
     this.displayedColumnsModel = [...this.displayedColumns]
     this.hiddenColumnsModel = this.columns.filter(
       (column) => !this.displayedColumnsModel.map((c) => c.id).includes(column.id)
@@ -116,22 +151,57 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     this.visible = true
   }
 
-  onSaveClick() {
-    this.visible = false
-    const colIdsBefore = this.displayedColumns.map((column) => column.id)
-    const colIdsAfter = this.displayedColumnsModel.map((column) => column.id)
+  syncColumnModels(restoreMainOrder = false) {
+    if (restoreMainOrder) {
+      const activeIds = new Set(this.displayedColumnsModel.map((column) => column.id))
+      const inactiveIds = new Set(this.hiddenColumnsModel.map((column) => column.id))
+      const configuredColumns = this.columns
+      const configuredIds = new Set(configuredColumns.map((column) => column.id))
 
-    if (!colIdsAfter.every((colId, i) => colId === colIdsBefore[i]) || colIdsAfter.length != colIdsBefore.length) {
+      this.displayedColumnsModel = [
+        ...configuredColumns.filter((column) => activeIds.has(column.id)),
+        ...this.displayedColumnsModel.filter((column) => !configuredIds.has(column.id)),
+      ]
+      this.hiddenColumnsModel = [
+        ...configuredColumns.filter((column) => inactiveIds.has(column.id)),
+        ...this.hiddenColumnsModel.filter((column) => !configuredIds.has(column.id)),
+      ]
+      return
+    }
+
+    this.displayedColumnsModel = [...this.displayedColumnsModel]
+    this.hiddenColumnsModel = [...this.hiddenColumnsModel]
+  }
+
+  resetColumnSelection() {
+    if (!this.pickList) {
+      return
+    }
+
+    this.pickList.setSelectionList(this.pickList.SOURCE_LIST, [])
+    this.pickList.setSelectionList(this.pickList.TARGET_LIST, [])
+    this.pickList.cd.markForCheck()
+  }
+
+  onSaveClick() {
+    if (!this.canSave) {
+      return
+    }
+
+    // Capture both comparisons before emitting: a synchronous parent update from the first event
+    // must not suppress the second event when both parts of the configuration changed.
+    const columnsChanged = this.columnsChanged
+    const actionSettingsChanged = this.actionSettingsChanged
+    this.visible = false
+
+    if (columnsChanged) {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
       this.componentStateChanged.emit({
         displayedColumns: [...this.displayedColumnsModel],
       })
     }
 
-    if (
-      this.frozenActionColumn != this.frozenActionColumnModel ||
-      this.actionColumnPosition != this.actionColumnPositionModel
-    ) {
+    if (actionSettingsChanged) {
       this.actionColumnConfigChanged.emit({
         frozenActionColumn: this.frozenActionColumnModel,
         actionColumnPosition: this.actionColumnPositionModel,

@@ -29,6 +29,8 @@ type CustomGroupColumnSelectorInputs = Pick<
   | 'activeColumnsLabel'
   | 'inactiveColumnsLabel'
   | 'draggableColumnGroupSelectorDialog'
+    | 'resizableColumnGroupSelectorDialog'
+    | 'restoreColumnGroupSelectorOrder'
 >
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
@@ -94,6 +96,15 @@ const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
   draggableColumnGroupSelectorDialog: true,
+  resizableColumnGroupSelectorDialog: false,
+  restoreColumnGroupSelectorOrder: false,
+}
+
+const dialogArgTypes = {
+  draggableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+  resizableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+  restoreColumnGroupSelectorOrder: { control: { type: 'boolean' } },
+  actionColumnConfigChanged: { action: 'actionColumnConfigChanged' },
 }
 
 export const Default = {
@@ -101,9 +112,25 @@ export const Default = {
   args: {
     ...defaultComponentArgs,
   },
-  argTypes: {
-    actionColumnConfigChanged: { action: 'actionColumnConfigChanged' },
+  argTypes: dialogArgTypes,
+}
+
+export const RestoreColumnOrder = {
+  render: Template,
+  args: {
+    ...defaultComponentArgs,
+    columns: [
+      { id: 'first', columnType: ColumnType.STRING, nameKey: 'First', sortable: false },
+      { id: 'second', columnType: ColumnType.STRING, nameKey: 'Second', sortable: false },
+      { id: 'third', columnType: ColumnType.STRING, nameKey: 'Third', sortable: false },
+    ],
+    displayedColumns: [
+      { id: 'first', columnType: ColumnType.STRING, nameKey: 'First', sortable: false },
+      { id: 'third', columnType: ColumnType.STRING, nameKey: 'Third', sortable: false },
+    ],
+    restoreColumnGroupSelectorOrder: true,
   },
+  argTypes: dialogArgTypes,
 }
 
 export default CustomGroupColumnSelectorComponentSBConfig

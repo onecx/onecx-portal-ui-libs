@@ -115,6 +115,9 @@ export const InteractiveDataViewComponentSBConfig: Meta<InteractiveDataViewCompo
   ],
   argTypes: {
     selectDisplayedChips: { type: 'function', control: false },
+    draggableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+    resizableColumnGroupSelectorDialog: { control: { type: 'boolean' } },
+    restoreColumnGroupSelectorOrder: { control: { type: 'boolean' } },
   },
 }
 export const InteractiveDataViewTemplate: StoryFn = (args) => ({
@@ -185,6 +188,9 @@ export const defaultInteractiveDataViewArgs = {
   editPermission: 'TEST_MGMT#TEST_EDIT',
   viewPermission: 'TEST_MGMT#TEST_VIEW',
   defaultGroupKey: 'test',
+  draggableColumnGroupSelectorDialog: true,
+  resizableColumnGroupSelectorDialog: false,
+  restoreColumnGroupSelectorOrder: false,
 }
 
 export const defaultInteractiveDataViewArgTypes = {
