@@ -154,8 +154,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
     })
   })
 
-  it('should default the new dialog and order options to false', () => {
-    expect(component.resizableColumnGroupSelectorDialog).toBe(false)
+  it('should preserve the default dialog resizing and default order restoration to false', () => {
+    expect(component.resizableColumnGroupSelectorDialog).toBe(true)
     expect(component.restoreColumnGroupSelectorOrder).toBe(false)
   })
 

@@ -149,8 +149,8 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() expandable = false
   @Input() frozenExpandColumn = false
   @Input() draggableColumnGroupSelectorDialog = true
-  /** Whether the hosted column selector dialog can be resized; defaults to false in v7. */
-  @Input() resizableColumnGroupSelectorDialog = false
+  /** Whether the hosted column selector dialog can be resized; defaults to true for v7. */
+  @Input() resizableColumnGroupSelectorDialog = true
   /** Whether transfers in the hosted selector restore the configured column order. */
   @Input() restoreColumnGroupSelectorOrder = false
   @Input() expandedRows: Row[] | string[] | number[] = []

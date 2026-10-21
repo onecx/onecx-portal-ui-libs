@@ -65,8 +65,8 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() frozenActionColumn = false
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @Input() draggableColumnGroupSelectorDialog = true
-  /** Whether the column selection dialog can be resized. Defaults to false in v7. */
-  @Input() resizableColumnGroupSelectorDialog = false
+  /** Whether the column selection dialog can be resized. Defaults to true for v7 . */
+  @Input() resizableColumnGroupSelectorDialog = true
   /** Whether column transfers restore both lists to the configured column order. */
   @Input() restoreColumnGroupSelectorOrder = false
 
