@@ -83,10 +83,16 @@ function generateColumns(count: number) {
   return data
 }
 
+const sharedUnsplashImage =
+  'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+
 function generateRows(rowCount: number, columnCount: number) {
   const data = []
   for (let i = 0; i < rowCount; i++) {
     const row = {} as any
+    row.product = `Product ${i + 1}`
+    row.imagePath = sharedUnsplashImage
+    row.amount = (i + 1) * 10
     for (let j = 0; j < columnCount; j++) {
       row[j + 1] = `Test value for ${j + 1}`
     }

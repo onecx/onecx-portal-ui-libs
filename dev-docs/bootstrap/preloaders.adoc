@@ -1,0 +1,135 @@
+= Preloaders (build time and runtime)
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+What do the OneCX *preloaders* do, at build time and at runtime, and why does the Shell preload a separate loader for each supported Angular major and React 19 so that many framework versions can run on one page?
+
+== Why it exists
+
+A OneCX page can host Apps built against several framework majors at once: some Angular 18/19/20, some Angular 21, some React 19. Each of those apps needs compatible framework packages resolved out of a share scope that *contains* that framework. The shared-library helper defaults matched packages to `singleton: false` (Unit 2 and Unit 3), but the effective Shell loader configs can still override selected packages to `singleton: true`: for example `pre_loaders/angular-21/module-federation.config.ts` does so for `@angular/*`, and `pre_loaders/react-19/module-federation.config.ts` does so for `@onecx/*` plus a selected React package list. The scope must already be populated before the App's own remote is loaded, or the App may resolve against a scope with no compatible provider and may not bootstrap.
+
+Preloaders are the mechanism that pre-populates those scopes. They are small federated remotes, one per supported framework version, that the Shell loads *before* any App. Each one, when loaded into its scope, pulls the matching framework packages into that scope. This Unit covers both halves of the word "preloader": the *build-time* role (a loader is declared, and an App declares which scope it belongs to) and the *runtime* role (the Shell loads the five loaders and waits on a barrier before starting the Shell module), and the failure handling around the `window.onecxPreloaders` flag. *Unit 2 is the Module Federation mechanism and Unit 3 is the shared-config rule; this Unit is about the loader remotes and the barrier specifically.* *When* the barrier sits in the startup sequence is Unit 1.
+
+== How it works
+
+A preloader is a declarative record that says: *here is a federated remote (a loader) that, loaded into this share scope, makes this framework version available here.* The runtime and build-time roles are both expressions of that one record.
+
+*Runtime (the Shell's half).* `main.ts` loads the five framework loaders, `angular18Preloader`, `angular19Preloader`, `angular20Preloader`, `angular21Preloader`, `react19Preloader`, and gates the whole Shell on them. Each loader is itself a federated remote whose entry is a `mf-manifest.json`; loading it is the same `registerRemotes` + `loadRemote` pair as any remote (Unit 2), but the loaded module is a *loader*, not an App. The Shell `registerRemotes`es each loader into its declared `shareScope` and `loadRemote`s it; when the loader loads successfully (i.e. when `loadRemote` resolves successfully), it has placed that framework's shared packages into the scope. Only once every loader has either loaded or failed does `main.ts` `import('./bootstrap')`; this step is the barrier.
+
+*Build time (the App's half).* An App (or Remote Component) does not know anything about loaders. It only declares, through its Module Federation config, the *share scope* it will resolve its shared framework packages from. That scope is computed by `getOneCXSharedLibraryConfig` (Unit 3) from the App's own framework major: `react_19` for React ≥ 19, `angular_21` for Angular ≥ 21, and `default` otherwise. So the "build-time role of a preloader" is really: *the App commits to one of the fixed scopes that a preloader is responsible for populating.* The Shell and the App never reference each other's code: they only agree on the scope name.
+
+The invariant: **every framework scope an App might resolve from must be populated by a preloader that the Shell loads, and the App's scope name must match one of the scopes a preloader populates.** The loaders exist precisely so the scopes are non-empty before the first App is loaded.
+
+[source,mermaid]
+----
+flowchart TB
+  subgraph app["App / Remote Component (build time)"]
+    A["MF config: shareScope =<br/>react_19 | angular_21 | default<br/>(getOneCXSharedLibraryConfig, Unit 3)"]
+  end
+  subgraph shell["Shell main.ts (runtime)"]
+    F["window.onecxPreloaders = {}"]
+    R["registerRemotes + loadRemote<br/>each loader into its shareScope"]
+    E["ensurePreloaderModuleLoaded<br/>(poll the onecxPreloaders flag)"]
+    B["Promise.all barrier"]
+    S["import('./bootstrap')"]
+    F --> R --> E --> B --> S
+  end
+  subgraph scopes["Share scopes populated"]
+    D1["default<br/>(Angular 18 / 19 / 20)"]
+    A21["angular_21<br/>(Angular 21)"]
+    R19["react_19<br/>(React 19)"]
+  end
+  A -. "scope name must match a populated scope" .-> B
+  R --> D1
+  R --> A21
+  R --> R19
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries contribute the *scope decision* and the *loader's own shared config*; the loaders themselves are built as their own apps/remotes.
+
+* *The scope decision.* link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig`] is where an App learns which scope it belongs to. It emits a `shareScope` per shared package: `react_<major>` when the app's `react` major is ≥ 19, else `angular_<major>` when its `@angular/core` major is ≥ 21, else `default`. This is the build-time half of the preloader contract: the App names the scope it will resolve from, and it names it *only* by its framework major. The full rule is Unit 3; here it matters only as the thing that must match a preloaded scope.
+* *The loader is a normal remote consumer.* A loader remote (for example the Angular 21 loader) is built like any other OneCX app: it declares its shared framework packages through the same helper (Unit 3) and exposes a loader module (for example `Angular21Loader`). Its role at runtime is simply to have those framework packages in the scope it is loaded into.
+* *Loading a remote into a scope.* When the Shell (or another consumer) later loads an App into a given scope, it does so with link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`toLoadRemoteEntryOptions`] / `createRemoteConfig`, which carry the `shareScope` onto the `Remote`. The preloader contract only requires that the named scope is one the preloaded loaders populated.
+
+=== Shell side
+
+The Shell owns the *entire runtime half*: the loader list, the loading, the barrier, and the failure flag. It is all in two files.
+
+* *The loader list and their scopes.* link:{shell}/src/app/shell/utils/preloader.utils.ts[`preloader.utils.ts`] defines a `Preloader` record, `{ name, relativeRemoteEntryUrl, windowKey, exposedModule, shareScope }`, and the five constants:
+[cols="3,2,2", options="header", width="100%"]
+|===
+|Loader |Entry (`relativeRemoteEntryUrl`) |`shareScope`
+
+|`angular18/19/20Preloader`
+|`pre_loaders/onecx-angular-NN-loader/mf-manifest.json`
+|`default`
+
+|`angular21Preloader`
+|`pre_loaders/onecx-angular-21-loader/mf-manifest.json`
+|`angular_21`
+
+|`react19Preloader`
+|`pre_loaders/onecx-react-19-loader/mf-manifest.json`
+|`react_19`
+|===
+Note the grouping: the three Angular 18/19/20 loaders all share `default`, while Angular 21 and React 19 each get their own scope. The `windowKey` (`angular-18`, `angular-21`, `react-19`, …) is the key used for the `window.onecxPreloaders` flag and for the `Could not load preloader` warning.
+
+* *Loading each loader.* `loadPreloaderModule(preloader)` dynamically imports `@module-federation/enhanced/runtime`, `registerRemotes`es `{ type: 'module', entry: ${getLocation().deploymentPath}${preloader.relativeRemoteEntryUrl}, name: preloader.name, shareScope: preloader.shareScope }`, and `loadRemote(preloader.name + '/' + preloader.exposedModule)`. The loader's entry is resolved relative to the deployment path: `getLocation()` in the Shell reads the document's `<base>` href and derives `deploymentPath` (the Shell's own `getLocation`, not the `accelerator` `getLocation` in Unit 1).
+* *The barrier.* `ensurePreloaderModuleLoaded(preloader)` resolves as soon as `window.onecxPreloaders[preloader.windowKey]` is set, either already set (the load finished, or it failed and was flagged) or set while polling every 50 ms. link:{shell}/src/main.ts[`main.ts`] runs `Promise.all([...preloaders.map(loadPreloaderModule), ...preloaders.map(ensurePreloaderModuleLoaded)])` and only then `import('./bootstrap').catch(console.error)`. That is what makes the loader population complete before the Shell module, and therefore before any App, starts.
+* *Failure handling.* On a rejected `loadRemote`, `loadPreloaderModule` does *not* reject the barrier: it warns `Could not load preloader: <windowKey>` and sets `window.onecxPreloaders[windowKey] = true`. That flag is deliberately the "handled" marker, so `ensurePreloaderModuleLoaded` still resolves and the Shell still boots: but that loader contributes no packages. For `default`, another successful Angular 18/19/20 loader may already have populated compatible packages in the same scope; later App failure is therefore conditional on no compatible provider being available there. By contrast, failures in the dynamic `import('@module-federation/enhanced/runtime')` or `registerRemotes(...)` setup path are outside that `.catch(...)`, so they can still reject the startup `Promise.all` in `main.ts` and prevent Shell bootstrap.
+
+== Angular / React
+
+The framework split is exactly the scope split the loaders encode:
+
+* *Angular.* Angular 18, 19 and 20 all resolve from the single shared `default` scope (three loaders, one scope). Angular 21 resolves from its own `angular_21` scope. So an Angular 19 App and an Angular 20 App share the `default` loader's packages, while an Angular 21 App gets a separate, isolated copy.
+* *React.* React 19 resolves from `react_19`. There is a single React loader in the current set.
+* *Why they can coexist.* Because each distinct framework version lives in its own scope and the shared-library helper defaults matched packages to non-singleton sharing (Unit 2 and Unit 3), an Angular 21 App and a React 19 App on the same page resolve different framework copies and never collide. The effective loader configs are more specific: `pre_loaders/angular-21/module-federation.config.ts` forces `@angular/*` singleton within the Angular 21 loader, and `pre_loaders/react-19/module-federation.config.ts` forces singleton sharing for `@onecx/*` plus its selected React package list. The three Angular 18–20 majors coexist in `default` for the same reason.
+
+== Edge cases & pitfalls
+
+* *A rejected `loadRemote` is swallowed, not always fatal.* `loadPreloaderModule` catches only the `loadRemote` rejection, warns `Could not load preloader: <windowKey>`, and sets the `onecxPreloaders` flag. The barrier still resolves and the Shell boots; for `angular_21` or `react_19`, the missing loader leaves that framework unavailable unless some compatible provider is otherwise available, while for `default` another successful Angular 18/19/20 loader may already have populated compatible packages. So a page that "works" at startup can still be missing a framework that a later App needs.
+* *The flag is a "done, not succeeded" marker.* `window.onecxPreloaders[windowKey]` is set to `true` both when the load succeeds and when a `loadRemote` failure is handled, and `ensurePreloaderModuleLoaded` only checks for its *presence*. Successful loads set the flag in the five loader entry modules (`pre_loaders/angular-18/src/main.ts`, `pre_loaders/angular-19/src/main.ts`, `pre_loaders/angular-20/src/main.ts`, `pre_loaders/angular-21/src/main.ts`, `pre_loaders/react-19/src/main.ts`). The barrier therefore guarantees the loaders were *attempted* or *handled*, not that they all *succeeded*. To know whether a specific framework is actually usable, check the console warning rather than the flag.
+* *A `Promise.all` over two arrays.* `main.ts` passes both `preloaders.map(loadPreloaderModule)` and `preloaders.map(ensurePreloaderModuleLoaded)` into a single `Promise.all`. The `loadPreloaderModule` side performs the load and only swallows a rejected `loadRemote`; the `ensurePreloaderModuleLoaded` side waits for the flag. The barrier waits for *all ten* promises, all loads issued and all flags resolved, before continuing, and an uncaught setup failure can still reject that `Promise.all`.
+* *Scope names are fixed strings, not derived.* The Shell hard-codes `default`, `angular_21`, `react_19` as the loader scopes. An App built for a major with no loader (for example Angular 22, which `getOneCXSharedLibraryConfig` would scope to `angular_22`) names a scope no preloader populates (Unit 3); if no compatible provider is otherwise available there, it may not bootstrap.
+* *Loader entries are deployment-relative.* Each loader's entry is `${deploymentPath}${relativeRemoteEntryUrl}`, so the loaders are expected at a fixed path (`pre_loaders/…`) under the deployment base. A deployment that does not serve those `mf-manifest.json` files makes every corresponding loader fail (and, per the previous point, be silently swallowed).
+
+== Debugging
+
+* *Read `window.onecxPreloaders`.* After startup it maps `windowKey` → `true` for every loader that was attempted. Its presence alone does not mean success (see *The flag is a "done, not succeeded" marker*); pair it with the console.
+* *Watch the console for `Could not load preloader: <windowKey>`.* This is the primary signal that a loader's `loadRemote` rejected. For example, `Could not load preloader: angular-21` means Angular 21 Apps may not resolve their framework unless another compatible provider is available.
+* *Check the scope an App resolves from.* The App's scope (from `getOneCXSharedLibraryConfig`, Unit 3) must be one of `default`, `angular_21`, `react_19`. If an App was built into any other scope, there is no preloader for it.
+* *Inspect a loader's `Remote`.* `loadPreloaderModule` builds `{ type: 'module', entry, name, shareScope }`; `entry` should point at a reachable `pre_loaders/<loader>/mf-manifest.json`.
+
+== Related Units
+
+* link:module-federation.adoc[Module Federation in OneCX] (Unit 2): the `registerRemotes`/`loadRemote` mechanics and the share-scope rule the preloaders rely on.
+* link:shared-dependencies.adoc[Shared dependency config & mismatch] (Unit 3): how an App computes the scope its shared packages go into, and the mismatch a missing/empty scope causes.
+* link:startup-timeline.adoc[index.html → first App timeline] (Unit 1): where the `Promise.all` preloader barrier sits in startup.
+* `loading-matched-remote.adoc` (Unit 5): the later `registerRemotes` + `loadRemote` of the matched App into one of these scopes.
+* Area 7 (Navigation & Routing): `shell-routes-and-current-app`: how the matched route and its `shareScope` are reached.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/shell/utils/preloader.utils.ts[`Preloader`, `angular18Preloader` / `angular19Preloader` / `angular20Preloader` / `angular21Preloader` / `react19Preloader`, `loadPreloaderModule`, `ensurePreloaderModuleLoaded`, `getLocation`] (Shell)
+* link:{shell}/src/main.ts[`main.ts` (federation instance, `window.onecxPreloaders`, the `Promise.all` barrier, `import('./bootstrap')`)] (Shell)
+* link:{shell}/pre_loaders/angular-18/src/main.ts[`pre_loaders/angular-18/src/main.ts` (`window.onecxPreloaders['angular-18'] = true` on successful load)] (Shell)
+* link:{shell}/pre_loaders/angular-19/src/main.ts[`pre_loaders/angular-19/src/main.ts` (`window.onecxPreloaders['angular-19'] = true` on successful load)] (Shell)
+* link:{shell}/pre_loaders/angular-20/src/main.ts[`pre_loaders/angular-20/src/main.ts` (`window.onecxPreloaders['angular-20'] = true` on successful load)] (Shell)
+* link:{shell}/pre_loaders/angular-21/src/main.ts[`pre_loaders/angular-21/src/main.ts` (`window.onecxPreloaders['angular-21'] = true` on successful load)] (Shell)
+* link:{shell}/pre_loaders/react-19/src/main.ts[`pre_loaders/react-19/src/main.ts` (`window.onecxPreloaders['react-19'] = true` on successful load)] (Shell)
+* link:{shell}/pre_loaders/angular-21/module-federation.config.ts[`pre_loaders/angular-21/module-federation.config.ts` (`@angular/*` overridden to `singleton: true`)] (Shell)
+* link:{shell}/pre_loaders/react-19/module-federation.config.ts[`pre_loaders/react-19/module-federation.config.ts` (`@onecx/*` and selected React packages overridden to `singleton: true`)] (Shell)
+* link:{libs}/build-utils/src/lib/get-onecx-shared-library-config.ts[`getOneCXSharedLibraryConfig` (computes the `shareScope` an App resolves from)]
+* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`toLoadRemoteEntryOptions`, `createRemoteConfig` (carry the `shareScope` onto the loaded remote)]
+* `@module-federation/enhanced/runtime` (`registerRemotes`, `loadRemote`): the loader-entry API

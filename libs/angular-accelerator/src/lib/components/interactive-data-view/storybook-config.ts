@@ -199,24 +199,29 @@ export const defaultInteractiveDataViewArgs = {
       product: 'Apples',
       amount: 2,
       available: false,
-      imagePath: '',
+      imagePath:
+        'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       date: new Date(2022, 1, 1, 13, 14, 55, 120),
     },
     {
       id: 2,
       product: 'Bananas',
       amount: 10,
-      imagePath: '',
+      imagePath:
+        'https://images.unsplash.com/photo-1710092662335-065cdbfb9781?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       date: new Date(2022, 1, 1, 13, 14, 55, 120),
     },
     {
       id: 3,
       product: 'Strawberries',
       amount: 5,
-      imagePath: '',
+      imagePath:
+        'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       date: new Date(2022, 1, 3, 13, 14, 55, 120),
     },
   ],
+  titleLineId: 'product',
+  subtitleLineIds: ['amount'],
   emptyResultsMessage: 'No results',
   deletePermission: 'TEST_MGMT#TEST_DELETE',
   editPermission: 'TEST_MGMT#TEST_EDIT',
