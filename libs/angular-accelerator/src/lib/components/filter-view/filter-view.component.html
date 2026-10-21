@@ -1,5 +1,5 @@
 @if (stateService.availableColumns(); as columns) { @if (stateService.filters(); as filters) {
-<div class="flex flex-wrap align-items-center gap-2">
+<div class="flex flex-wrap items-center gap-2">
   @if (displayMode() === 'chips') {
   <ng-container *ocxIfBreakpoint="'desktop'; elseTemplate: noChipsContent">
     @if (selectDisplayedChips()(filters, columns); as selectedFilters) {
@@ -36,7 +36,7 @@
       "
       [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
     >
-      <span class="p-chip-text flex flex-nowrap align-items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
+      <span class="p-chip-text flex flex-nowrap items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
       translate }} <i class="pi pi-plus" aria-hidden="true"></i> </span>
     </p-chip>
     @if (filters.length <= 0) { @if (filterViewNoSelection()) {
@@ -128,8 +128,8 @@
     <p-popover #op [style]="panelStyle()" (onHide)="focusTrigger()">
       <ng-template pTemplate="content">
         <div pFocusTrap>
-          <div class="flex justify-content-between align-items-center mb-2">
-            <div class="flex align-items-center gap-3">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center gap-3">
               <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
               <p-button
                 id="ocxFilterViewAddFilter"

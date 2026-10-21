@@ -32,7 +32,7 @@
   "dependencies": {},
   "exports": {
     ".": {
-      "style": "./assets/styles.scss"
+      "style": "./assets/tailwind.css"
     },
     "./migrations.json": "./migrations.json"
   },
