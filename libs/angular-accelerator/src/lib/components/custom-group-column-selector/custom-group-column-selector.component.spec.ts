@@ -14,13 +14,19 @@ import { By } from '@angular/platform-browser'
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
   let fixture: ComponentFixture<CustomGroupColumnSelectorComponent>
-  
+
   const makeColumn = (id: string): DataTableColumn => ({ id, nameKey: id }) as any
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CustomGroupColumnSelectorComponent],
-      imports: [CommonModule, AngularAcceleratorOptimusModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [
+        CommonModule,
+        AngularAcceleratorOptimusModule,
+        FormsModule,
+        TranslateModule.forRoot(),
+        OcxTooltipDirective,
+      ],
       providers: [provideTranslateTestingService({}), DataViewStateService],
     }).compileComponents()
 
@@ -259,8 +265,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
       const frozenSpy = jest.spyOn(component.stateService.actionColumnConfigFrozen, 'set')
       const positionSpy = jest.spyOn(component.stateService.actionColumnConfigPosition, 'set')
 
-      component.stateService.actionColumnConfigFrozen.set(true)
-      component.stateService.actionColumnConfigPosition.set('left')
+      component.frozenActionColumn = true
+      component.actionColumnPosition = 'left'
 
       expect(frozenSpy).toHaveBeenCalledWith(true)
       expect(positionSpy).toHaveBeenCalledWith('left')
@@ -393,7 +399,12 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       // Simulate the user highlighting an item without moving it: the models are untouched,
       // so save must stay disabled even though the real PickList reports a selection.
-      const pickListMock = { SOURCE_LIST: -1, TARGET_LIST: 1, setSelectionList: jest.fn(), cd: { markForCheck: jest.fn() } }
+      const pickListMock = {
+        SOURCE_LIST: -1,
+        TARGET_LIST: 1,
+        setSelectionList: jest.fn(),
+        cd: { markForCheck: jest.fn() },
+      }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
       component.pickList().setSelectionList(component.pickList().SOURCE_LIST, [c1])
@@ -580,11 +591,9 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     it('should call the reset before the dialog becomes visible', () => {
       let visibleAtReset: boolean | undefined
-      jest
-        .spyOn(component, 'resetColumnSelection')
-        .mockImplementation(() => {
-          visibleAtReset = component.visible()
-        })
+      jest.spyOn(component, 'resetColumnSelection').mockImplementation(() => {
+        visibleAtReset = component.visible()
+      })
 
       component.onOpenCustomGroupColumnSelectionDialogClick()
 
@@ -663,21 +672,41 @@ describe('CustomGroupColumnSelectorComponent', () => {
       fixture.componentRef.setInput('columns', [a, b, c])
       fixture.componentRef.setInput('displayedColumns', [a, c])
 
-      // First opening: drive a selection on the real PickList to simulate a stale user highlight.
       component.onOpenCustomGroupColumnSelectionDialogClick()
       fixture.detectChanges()
       const pickList = component.pickList()
+      if (!pickList) {
+        throw new Error('Expected the real PickList to exist after opening the dialog')
+      }
       pickList.setSelectionList(pickList.SOURCE_LIST, [a])
-      expect(pickList.selectedItemsSource.map((column: DataTableColumn) => column.id)).toEqual(['A'])
+      pickList.setSelectionList(pickList.TARGET_LIST, [b])
+      expect(pickList.selectedItemsSource).toEqual([a])
+      expect(pickList.selectedItemsTarget).toEqual([b])
 
-      // Close and reopen: the reset must clear the selection state and leave no visible highlight.
       component.onCancelClick()
       fixture.detectChanges()
+
+      expect(component.visible()).toBe(false)
+      expect(component.pickList()).toBe(pickList)
+      expect(pickList.selectedItemsSource).toEqual([a])
+      expect(pickList.selectedItemsTarget).toEqual([b])
+
+      const setSelectionListSpy = jest.spyOn(pickList, 'setSelectionList')
+
       component.onOpenCustomGroupColumnSelectionDialogClick()
+
+      expect(setSelectionListSpy).toHaveBeenCalledTimes(2)
+      expect(setSelectionListSpy).toHaveBeenNthCalledWith(1, pickList.SOURCE_LIST, [])
+      expect(setSelectionListSpy).toHaveBeenNthCalledWith(2, pickList.TARGET_LIST, [])
+      expect(pickList.selectedItemsSource).toEqual([])
+      expect(pickList.selectedItemsTarget).toEqual([])
+
       fixture.detectChanges()
 
-      expect(component.pickList().selectedItemsSource).toEqual([])
-      expect(component.pickList().selectedItemsTarget).toEqual([])
+      expect(component.visible()).toBe(true)
+      expect(component.pickList()).toBe(pickList)
+      expect(pickList.selectedItemsSource).toEqual([])
+      expect(pickList.selectedItemsTarget).toEqual([])
       expect(document.querySelectorAll('.p-listbox-option[aria-selected="true"]').length).toBe(0)
     })
   })
