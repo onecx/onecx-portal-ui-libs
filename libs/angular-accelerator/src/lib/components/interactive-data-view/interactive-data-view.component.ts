@@ -28,6 +28,7 @@ import { Observable, startWith } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 import { Filter } from '../../model/filter.model'
 import { limit } from '../../utils/filter.utils'
 import {
@@ -305,6 +306,19 @@ export class InteractiveDataViewComponent implements OnInit {
     const optimusListItemSubtitleLines = this.optimusListItemSubtitleLines()
     const childListItemSubtitleLines = this.childListItemSubtitleLines()
     return optimusListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
+  })
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  groupCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  childGroupCell = contentChild<TemplateRef<any> | undefined>('groupCell')
+  optimusGroupCell = computed(() => {
+    const templates = this.templates()
+    const groupCellTemplate = templates.find((t) => t.getType() === 'groupCell')
+    return groupCellTemplate?.template ?? undefined
+  })
+  _groupCell = computed(() => {
+    return this.groupCellTemplate() ?? this.optimusGroupCell() ?? this.childGroupCell() ?? undefined
   })
 
   childStringTableCell = contentChild<TemplateRef<any> | undefined>('stringTableCell')
