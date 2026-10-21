@@ -29,8 +29,8 @@ type CustomGroupColumnSelectorInputs = Pick<
   | 'activeColumnsLabel'
   | 'inactiveColumnsLabel'
   | 'draggableColumnGroupSelectorDialog'
-    | 'resizableColumnGroupSelectorDialog'
-    | 'restoreColumnGroupSelectorOrder'
+  | 'resizableColumnGroupSelectorDialog'
+  | 'restoreColumnGroupSelectorOrder'
 >
 const CustomGroupColumnSelectorComponentSBConfig: Meta<CustomGroupColumnSelectorComponent> = {
   title: 'Components/CustomGroupColumnSelectorComponent',
