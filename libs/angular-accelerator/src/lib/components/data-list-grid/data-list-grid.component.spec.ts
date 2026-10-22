@@ -1309,7 +1309,6 @@ describe('DataListGridComponent', () => {
         {
           OCX_DATA_LIST_GRID: {
             ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
-            ROW_ACTION_NAME_ONLY: '{{action}}',
             MORE_ACTIONS_ARIA_LABEL: 'More actions',
             MENU: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
           },
@@ -1321,7 +1320,6 @@ describe('DataListGridComponent', () => {
         {
           OCX_DATA_LIST_GRID: {
             ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
-            ROW_ACTION_NAME_ONLY: '{{action}}',
             MORE_ACTIONS_ARIA_LABEL: 'Weitere Aktionen',
             MENU: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
           },
@@ -1343,8 +1341,6 @@ describe('DataListGridComponent', () => {
     async function render() {
       fixture.autoDetectChanges()
       await fixture.whenStable()
-      await new Promise((resolve) => setTimeout(resolve, 100))
-      fixture.detectChanges()
     }
 
     it('should name built-in action buttons with the item label and keep them unique', async () => {
@@ -1366,11 +1362,17 @@ describe('DataListGridComponent', () => {
       expect(labels).toEqual(['Bearbeiten: First item', 'Bearbeiten: Second item'])
     })
 
-    it('should prefer rowLabelField over the title line and fall back to the id', async () => {
+    it('should prefer rowLabelField over the title line and fall back to the id', () => {
       expect(component.rowLabel({ id: 'x', name: 'N', other: 'O' })).toBe('N')
       fixture.componentRef.setInput('rowLabelField', 'other')
       expect(component.rowLabel({ id: 'x', name: 'N', other: 'O' })).toBe('O')
       expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
+    })
+
+    it('should not use a title line pointing at a translation key column as label', () => {
+      fixture.componentRef.setInput('columns', [{ id: 'name', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'N' }])
+      fixture.detectChanges()
+      expect(component.rowLabel({ id: 'x', name: 'STATUS.ACTIVE' })).toBe('x')
     })
 
     it('should never render an empty aria-label for actions without labelKey and warn', async () => {

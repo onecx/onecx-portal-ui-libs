@@ -216,8 +216,10 @@
                   class="p-button-rounded p-button-danger p-button-text"
                   title="{{ 'OCX_FILTER_VIEW.TABLE.REMOVE_FILTER_TITLE' | translate }}"
                   [attr.aria-label]="
-                    'OCX_FILTER_VIEW.TABLE.REMOVE_FILTER_ROW_ARIA_LABEL'
-                      | translate: { column: (rowObject['column'] | translate), value: rowObject['value'] }
+                    removeFilterValue(rowObject) !== undefined
+                      ? ('OCX_FILTER_VIEW.TABLE.REMOVE_FILTER_ROW_ARIA_LABEL'
+                        | translate: { column: (rowObject['column'] | translate), value: removeFilterValue(rowObject) })
+                      : ('OCX_FILTER_VIEW.TABLE.REMOVE_FILTER_ARIA_LABEL' | translate)
                   "
                   icon="pi pi-trash"
                   (click)="onFilterDelete(rowObject)"

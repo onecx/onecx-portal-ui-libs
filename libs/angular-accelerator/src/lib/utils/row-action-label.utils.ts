@@ -1,5 +1,7 @@
 import { isDevMode } from '@angular/core'
+import { ColumnType } from '../model/column-type.model'
 import { DataAction } from '../model/data-action'
+import { DataTableColumn } from '../model/data-table-column.model'
 import { ObjectUtils } from './objectutils'
 
 function toLabel(value: unknown): string {
@@ -33,15 +35,24 @@ export function getRowLabel(row: any, candidateFields: (string | undefined | nul
  * Such actions would otherwise render a button without an accessible name.
  *
  * @param actions the actions to check
- * @param component name of the component used in the message
  */
-export function warnOnActionsWithoutLabelKey(actions: DataAction[], component: string): void {
+export function warnOnActionsWithoutLabelKey(actions: DataAction[]): void {
   if (!isDevMode()) return
   actions
     .filter((action) => !action.labelKey)
     .forEach((action) =>
       console.warn(
-        `${component}: action${action.id ? ` "${action.id}"` : ''} has no labelKey. A generic fallback label is used for its accessible name; please provide a labelKey.`
+        `Row action${action.id ? ` "${action.id}"` : ''} has no labelKey. A generic fallback label is used for its accessible name; please provide a labelKey.`
       )
     )
+}
+
+/**
+ * Returns the ids of the columns whose values are suitable as a row label
+ * (plain text or numbers; no translation keys, dates or relative dates).
+ */
+export function getLabelColumnIds(columns: DataTableColumn[]): string[] {
+  return columns
+    .filter((c) => !c.columnType || c.columnType === ColumnType.STRING || c.columnType === ColumnType.NUMBER)
+    .map((c) => c.id)
 }

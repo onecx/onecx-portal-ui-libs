@@ -44,7 +44,7 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { getRowLabel, warnOnActionsWithoutLabelKey } from '../../utils/row-action-label.utils'
+import { getLabelColumnIds, getRowLabel } from '../../utils/row-action-label.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { RowListGridData } from '../../model/row-list-grid-data.model'
 
@@ -503,10 +503,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
-      warnOnActionsWithoutLabelKey(this.stateService.additionalActions(), 'DataListGridComponent')
-    })
-
-    effect(() => {
       const data = this.stateService.data()
       // Not track previousData change to avoid the trigger
       untracked(() => {
@@ -615,8 +611,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     this.pageSize = event.rows
   }
 
+  private readonly rowLabelFields = computed(() => {
+    // title/subtitle lines may point at translation keys or dates, which make no sense as a label
+    const labelColumnIds = getLabelColumnIds(this.stateService.columns())
+    const isLabelField = (id: string | undefined) =>
+      !!id && (!this.stateService.columns().some((c) => c.id === id) || labelColumnIds.includes(id))
+    return [this.rowLabelField(), this.titleLineId(), ...(this.subtitleLineIds() ?? [])].map((id, i) =>
+      i === 0 || isLabelField(id) ? id : undefined
+    )
+  })
+
   rowLabel(item: any): string {
-    return getRowLabel(item, [this.rowLabelField(), this.titleLineId(), ...(this.subtitleLineIds() ?? [])])
+    return getRowLabel(item, this.rowLabelFields())
   }
 
   fieldIsTruthy(object: any, key: any) {

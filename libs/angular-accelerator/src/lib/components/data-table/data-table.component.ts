@@ -46,7 +46,7 @@ import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { getRowLabel, warnOnActionsWithoutLabelKey } from '../../utils/row-action-label.utils'
+import { getLabelColumnIds, getRowLabel } from '../../utils/row-action-label.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 
@@ -621,10 +621,6 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     effect(() => {
-      warnOnActionsWithoutLabelKey(this.stateService.additionalActions(), 'DataTableComponent')
-    })
-
-    effect(() => {
       const columns = this.stateService.columns()
       const obs = columns.map((c) => this.getTemplate(c, TemplateType.CELL))
       const filterObs = columns.map((c) => this.getTemplate(c, TemplateType.FILTERCELL))
@@ -1052,8 +1048,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return () => handleActionSync(this.router, action, row)
   }
   
+  private readonly rowLabelFields = computed(() => [
+    this.rowLabelField(),
+    ...getLabelColumnIds(this.stateService.columns()),
+  ])
+
   rowLabel(rowObject: any): string {
-    return getRowLabel(rowObject, [this.rowLabelField(), ...this.stateService.columns().map((c) => c.id)])
+    return getRowLabel(rowObject, this.rowLabelFields())
   }
 
   getRowSummary(rowObject: any): string {

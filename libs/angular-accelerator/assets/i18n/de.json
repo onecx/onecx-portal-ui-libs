@@ -76,7 +76,6 @@
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})",
     "MORE_ACTIONS": "Weitere Aktionen",
     "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
-    "ROW_ACTION_NAME_ONLY": "{{action}}",
     "EXPAND_ROW_ARIA_LABEL": "Zeilendetails umschalten: {{row}}",
     "ACTIONS": {
       "VIEW": "Anzeigen",
@@ -111,7 +110,6 @@
       "DEFAULT": "Aktion"
     },
     "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
-    "ROW_ACTION_NAME_ONLY": "{{action}}",
     "MORE_ACTIONS_ARIA_LABEL": "Weitere Aktionen",
     "MORE_ACTIONS_TOOLTIP": "Weitere Aktionen anzeigen"
   },

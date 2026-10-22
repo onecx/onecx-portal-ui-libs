@@ -1153,7 +1153,6 @@ describe('DataTableComponent', () => {
       translateService.setTranslation('en', {
         OCX_DATA_TABLE: {
           ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
-          ROW_ACTION_NAME_ONLY: '{{action}}',
           EXPAND_ROW_ARIA_LABEL: 'Toggle row details: {{row}}',
           MORE_ACTIONS: 'More actions',
           ACTIONS: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
@@ -1162,7 +1161,7 @@ describe('DataTableComponent', () => {
       translateService.setTranslation('de', {
         OCX_DATA_TABLE: {
           ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
-          ROW_ACTION_NAME_ONLY: '{{action}}',
+          EXPAND_ROW_ARIA_LABEL: 'Zeilendetails umschalten: {{row}}',
           MORE_ACTIONS: 'Weitere Aktionen',
           ACTIONS: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
         },
@@ -1187,6 +1186,23 @@ describe('DataTableComponent', () => {
       const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
       expect(labels).toEqual(['Edit: First row', 'Delete: First row', 'Edit: Second row', 'Delete: Second row'])
       expect(new Set(labels).size).toBe(labels.length)
+      const ids = buttons('button[id]').map((b) => b.id)
+      expect(new Set(ids).size).toBe(ids.length)
+    })
+
+    it('should not use translation key, date or relative date columns as row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.columns = [
+        { id: 'status', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'S' },
+        { id: 'startDate', columnType: ColumnType.DATE, nameKey: 'D' },
+        { id: 'modificationDate', columnType: ColumnType.RELATIVE_DATE, nameKey: 'M' },
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+      ] as any
+      fixture.detectChanges()
+      expect(
+        component.rowLabel({ id: 'r1', status: 'STATUS.ACTIVE', startDate: '2023-09-12T09:34:11Z', name: 'Nice name' })
+      ).toBe('Nice name')
+      expect(component.rowLabel({ id: 'r2', status: 'STATUS.ACTIVE' })).toBe('r2')
     })
 
     it('should use the translated action name in German without English text', () => {
@@ -1251,6 +1267,15 @@ describe('DataTableComponent', () => {
 
       const labels = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))
       expect(labels).toEqual(['Toggle row details: First row', 'Toggle row details: Second row'])
+      const titles = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('title'))
+      expect(titles).toEqual(labels)
+
+      translateService.use('de')
+      fixture.detectChanges()
+      expect(buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))).toEqual([
+        'Zeilendetails umschalten: First row',
+        'Zeilendetails umschalten: Second row',
+      ])
     })
 
     function userServiceMockPublish(permissions: string[]) {
