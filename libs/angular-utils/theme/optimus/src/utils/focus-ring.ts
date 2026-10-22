@@ -3,7 +3,7 @@
  *
  * Resolves the colours of the OneCX focus ring (WCAG 2.4.7, 1.4.11) from the theme colours:
  *  - `color`: ring on light surfaces. At least {@link MIN_RING_CONTRAST}:1 against the content surface and the body background.
- *  - `inverseColor`: ring on dark surfaces such as the top bar and the menu. At least {@link MIN_RING_CONTRAST}:1 against
+ *  - `inverseColor`: ring on dark surfaces such as the top bar. At least {@link MIN_RING_CONTRAST}:1 against
  *    the top bar background.
  *
  * Algorithm: start at the primary colour; if it does not reach the contrast against all backgrounds, mix it towards
@@ -29,6 +29,7 @@ export interface FocusRingColors {
 
 type Rgb = [number, number, number]
 
+// INFO: the alpha channel of rgba() colours is ignored, colours are treated as opaque.
 export function parseColor(color: string | null | undefined): Rgb | undefined {
   if (!color) return undefined
   const c = color.trim()

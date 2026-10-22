@@ -24,6 +24,7 @@ describe('ThemeConfig', () => {
     const themeConfig = new ThemeConfig(themeVariables)
 
     const result = themeConfig.getConfig()
+    expect(contrastRatio(result['semantic'].extend.onecx.focus.ring.color, '#ffffff')).toBeGreaterThanOrEqual(3)
     expect(result['semantic'].extend.onecx).toEqual({
       primary: { color: '#ababab' },
       font: { size: '14px' },

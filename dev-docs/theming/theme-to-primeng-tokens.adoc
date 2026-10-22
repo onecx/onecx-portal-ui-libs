@@ -79,7 +79,7 @@ The preset defines one focus ring for the whole platform (WCAG 2.4.7, 1.4.11, 2.
 
 |`semantic.extend.onecx.focusRingInverseColor`
 |`--p-onecx-focus-ring-inverse-color`
-|Ring on dark surfaces such as the top bar and the menu. At least 3:1 against the top bar background.
+|Ring on dark surfaces such as the top bar (and a dark menu, if the theme defines one). Checked for at least 3:1 against the top bar background only; themes with a dark menu background must verify it against `sidebar.menu-bg-color`.
 
 |`semantic.formField.focusRing`
 |`--p-form-field-focus-ring-*`
