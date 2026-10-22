@@ -73,7 +73,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly columnsChanged = computed(() => {
     const model = this.displayedColumnsModel()
     const committed = this.displayedColumns()
-    return model.length !== committed.length || model.some((column, index) => column.id !== committed[index]?.id)
+    return model.length !== committed.length || model.some((column, index) => column.id !== committed[index].id)
   })
 
   /**
