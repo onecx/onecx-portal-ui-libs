@@ -46,6 +46,8 @@ export interface FilterViewComponentState {
   filters?: Filter[]
 }
 
+let nextPanelId = 0
+
 @Component({
   standalone: false,
   selector: 'ocx-filter-view',
@@ -111,7 +113,8 @@ export class FilterViewComponent {
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
-  readonly panelId = 'ocxFilterViewPanel'
+  /** Unique per instance so aria-controls never points at another filter view's panel. */
+  readonly panelId = `ocxFilterViewPanel-${nextPanelId++}`
   readonly panelPt = { root: { id: this.panelId } }
   readonly panelOpen = signal(false)
   /**
@@ -207,6 +210,10 @@ export class FilterViewComponent {
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
   constructor() {    
+    // the popover is destroyed while open (template switch): onHide never fires, so reset the trigger state
+    effect(() => {
+      if (!this.panel()) this.panelOpen.set(false)
+    })
     effect(() => {
       const t = this.templates()
 

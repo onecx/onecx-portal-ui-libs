@@ -7,7 +7,8 @@ import { join } from 'path'
  * 1. A `p-button` host element has no role. Attributes such as aria-*, tabindex or key handlers on the host are
  *    invalid ARIA (axe aria-allowed-attr) and create a second tab stop. They belong on the inner native button
  *    (use the `pt` pass-through option `{ root: { ... } }`).
- * 2. Native buttons that toggle a popup menu must announce `aria-haspopup`.
+ * 2. Buttons (native or p-button) that toggle a popup via a template reference named menu, op, overlay or popover
+ *    must announce `aria-haspopup`. Triggers that open popups from component code are not detected.
  */
 const componentsDir = join(__dirname)
 
@@ -51,7 +52,7 @@ function attributeNames(tag: string): string[] {
   return names
 }
 
-const forbiddenOnHost = /^(\[attr\.)?aria-|^\[?tabindex\]?$|^\(key(down|up|press)(\.|\))/i
+const forbiddenOnHost = /^(\[attr\.)?aria-|^\[?(attr\.)?tabindex\]?$|^\(key(down|up|press)(\.|\))/i
 
 describe('popup trigger guard', () => {
   const files = htmlFiles(componentsDir)
@@ -83,12 +84,14 @@ describe('popup trigger guard', () => {
     ])
   })
 
-  it('requires aria-haspopup on native buttons that toggle a popup menu', () => {
-    const offenders = files.flatMap((file) =>
-      openingTags(readFileSync(file, 'utf8'), 'button')
-        .filter((tag) => /\(click\)="[^"]*\bmenu\b/.test(tag) && !/aria-haspopup=/.test(tag))
+  it('requires aria-haspopup on buttons that toggle a popup', () => {
+    const toggles = /\((click|onClick)\)="[^"]*\b(menu|op|overlay|popover)\b/
+    const offenders = files.flatMap((file) => {
+      const html = readFileSync(file, 'utf8')
+      return [...openingTags(html, 'button'), ...openingTags(html, 'p-button')]
+        .filter((tag) => toggles.test(tag) && !/aria-haspopup=|\[?pt\]?=/.test(tag))
         .map((tag) => `${file.replace(componentsDir, '')}: ${tag.slice(0, 60)}`)
-    )
+    })
     expect(offenders).toEqual([])
   })
 })

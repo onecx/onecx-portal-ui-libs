@@ -15,8 +15,6 @@ import type { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { PortalDialogService } from '../../services/portal-dialog.service'
 
-jest.setTimeout(60000)
-
 describe('FilterViewComponent popup trigger semantics', () => {
   let fixture: ComponentFixture<FilterViewComponent>
   let host: HTMLElement
@@ -93,5 +91,23 @@ describe('FilterViewComponent popup trigger semantics', () => {
   it('gives the p-popover an accessible name from the panel title', () => {
     const popover = fixture.debugElement.query(By.directive(Popover)).componentInstance
     expect(popover.ariaLabel).toBe('OCX_FILTER_VIEW.PANEL_TITLE')
+  })
+
+  it('uses a unique panel id per instance', () => {
+    const other = TestBed.createComponent(FilterViewComponent)
+    expect(other.componentInstance.panelId).not.toBe(fixture.componentInstance.panelId)
+  })
+
+  it('resets aria-expanded when the popover goes away while open', async () => {
+    const popover = fixture.debugElement.query(By.directive(Popover)).componentInstance
+    popover.onShow.emit({})
+    fixture.detectChanges()
+    expect(innerButton().getAttribute('aria-expanded')).toBe('true')
+
+    fixture.componentRef.setInput('columns', [])
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    expect(fixture.componentInstance.panelOpen()).toBe(false)
   })
 })
