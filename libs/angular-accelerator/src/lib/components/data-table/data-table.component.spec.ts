@@ -21,6 +21,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import userEvent from '@testing-library/user-event'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -250,6 +251,72 @@ describe('DataTableComponent', () => {
 
   it('should create the data table component', () => {
     expect(component).toBeTruthy()
+  })
+
+  describe('sortable header accessibility', () => {
+    const headers = () => Array.from(fixture.nativeElement.querySelectorAll('th[scope="col"]')) as HTMLElement[]
+
+    it('should expose aria-sort only on the sorted column and update it after sorting', async () => {
+      const user = userEvent.setup()
+      expect(headers().filter((h) => h.hasAttribute('aria-sort'))).toHaveLength(0)
+
+      const first = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      await user.click(first.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(headers().filter((h) => h.hasAttribute('aria-sort'))).toEqual([first])
+      expect(first.getAttribute('aria-sort')).toBe('ascending')
+
+      await user.click(first.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(first.getAttribute('aria-sort')).toBe('descending')
+
+      const second = headers().filter((h) => h.querySelector('.sortButton'))[1]
+      await user.click(second.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(first.hasAttribute('aria-sort')).toBe(false)
+      expect(second.getAttribute('aria-sort')).toBe('ascending')
+    })
+
+    it('should not make the header cell a tab stop and should have one sort button per sortable header', () => {
+      const sortable = headers().filter((h) => h.querySelector('.sortButton'))
+      expect(sortable.length).toBeGreaterThan(0)
+      for (const th of sortable) {
+        expect(th.hasAttribute('tabindex')).toBe(false)
+        expect(th.querySelectorAll('button.sortButton')).toHaveLength(1)
+      }
+    })
+
+    it('should sort exactly once on Enter and on Space of the focused sort button', async () => {
+      const user = userEvent.setup()
+      const sortedSpy = jest.spyOn(component.stateService.sortDirection, 'set')
+      const th = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      const button = th.querySelector('.sortButton') as HTMLElement
+
+      button.focus()
+      await user.keyboard('{Enter}')
+      fixture.detectChanges()
+      expect(sortedSpy).toHaveBeenCalledTimes(1)
+      expect(th.getAttribute('aria-sort')).toBe('ascending')
+
+      await user.keyboard(' ')
+      fixture.detectChanges()
+      expect(sortedSpy).toHaveBeenCalledTimes(2)
+      expect(th.getAttribute('aria-sort')).toBe('descending')
+    })
+
+    it('should reach the sort button of the first sortable header with a single Tab from the previous stop', async () => {
+      const user = userEvent.setup()
+      const th = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      const button = th.querySelector('.sortButton') as HTMLElement
+      const stopsInHeader = Array.from(th.querySelectorAll<HTMLElement>('button, a[href], input, [tabindex]')).filter(
+        (e) => e.getAttribute('tabindex') !== '-1'
+      )
+      expect(stopsInHeader[0]).toBe(button)
+      await user.tab()
+      let guard = 0
+      while (document.activeElement !== button && guard++ < 50) await user.tab()
+      expect(document.activeElement).toBe(button)
+    })
   })
 
   describe('DataViewStateService provider factory', () => {
