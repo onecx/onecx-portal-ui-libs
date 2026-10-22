@@ -293,7 +293,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       // Simulate the user highlighting an item without moving it: the models are untouched,
       // so save must stay disabled even though the real PickList reports a selection.
-      const pickListMock = { selectedItemsSource: [] as DataTableColumn[], selectedItemsTarget: [] as DataTableColumn[], triggerChangeDetection: jest.fn() }
+      const pickListMock = { selectedItemsSource: [] as DataTableColumn[], selectedItemsTarget: [] as DataTableColumn[], cd: { markForCheck: jest.fn() } }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
       component.pickList().selectedItemsSource = [c1]
@@ -460,12 +460,12 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(() => component.resetColumnSelection()).not.toThrow()
     })
 
-    it('should clear both source and target selection and trigger change detection', () => {
-      const triggerChangeDetection = jest.fn()
+    it('should clear both source and target selection and mark the change detector for check', () => {
+      const markForCheck = jest.fn()
       const pickListMock = {
         selectedItemsSource: [makeColumn('c1')] as DataTableColumn[],
         selectedItemsTarget: [makeColumn('c2')] as DataTableColumn[],
-        triggerChangeDetection,
+        cd: { markForCheck },
       }
       // viewChild() produces a read-only signal, so substitute a writable one for this test.
       Object.defineProperty(component, 'pickList', { value: signal(pickListMock), configurable: true })
@@ -474,7 +474,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
       expect(pickListMock.selectedItemsSource).toEqual([])
       expect(pickListMock.selectedItemsTarget).toEqual([])
-      expect(triggerChangeDetection).toHaveBeenCalled()
+      expect(markForCheck).toHaveBeenCalled()
     })
 
     it('should call the reset before the dialog becomes visible', () => {
@@ -579,11 +579,11 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(pickList.selectedItemsSource).toEqual([a])
       expect(pickList.selectedItemsTarget).toEqual([b])
 
-      const triggerChangeDetectionSpy = jest.spyOn(pickList, 'triggerChangeDetection')
+      const markForCheckSpy = jest.spyOn(pickList.cd, 'markForCheck')
 
       component.onOpenCustomGroupColumnSelectionDialogClick()
 
-      expect(triggerChangeDetectionSpy).toHaveBeenCalledTimes(1)
+      expect(markForCheckSpy).toHaveBeenCalledTimes(1)
       expect(pickList.selectedItemsSource).toEqual([])
       expect(pickList.selectedItemsTarget).toEqual([])
 

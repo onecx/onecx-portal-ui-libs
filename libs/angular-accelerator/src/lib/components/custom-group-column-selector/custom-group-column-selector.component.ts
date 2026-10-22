@@ -191,7 +191,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     }
     pickList.selectedItemsSource = []
     pickList.selectedItemsTarget = []
-    pickList.triggerChangeDetection()
+    pickList.cd.markForCheck()
   }
 
   onSaveClick() {
