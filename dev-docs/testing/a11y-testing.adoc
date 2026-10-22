@@ -1,0 +1,61 @@
+= Accessibility testing
+
+This page describes how accessibility is checked automatically in `onecx-portal-ui-libs`.
+
+== Unit tests: `expectNoAxeViolations`
+
+`@onecx/angular-testing` exports `expectNoAxeViolations`, a helper on top of https://github.com/dequelabs/axe-core[axe-core] (`axe-core` is a peer dependency of `@onecx/angular-testing`).
+
+[source,typescript]
+----
+import { expectNoAxeViolations } from '@onecx/angular-testing'
+
+it('should have no axe violations', async () => {
+  await expectNoAxeViolations(fixture.nativeElement)
+})
+----
+
+The helper only runs these rules (`ENFORCED_AXE_RULES`): `button-name`, `aria-allowed-attr`, `aria-prohibited-attr`, `label`, `duplicate-id-aria`, `aria-input-field-name`, `aria-dialog-name`, `heading-order`, `label-content-name-mismatch`. If a covered component violates one of them, the test fails and lists the rule and the offending nodes.
+
+=== Allow-list for known violations
+
+A violation that is tracked by a separate fix story is allowed per test:
+
+[source,typescript]
+----
+// Known violation, tracked in onecx/internal-tasks#NNNN. Remove the entry when the fix lands.
+await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
+----
+
+Every fix story removes its entry from the allow-list.
+
+=== Test environment
+
+Spike result (happy-dom): `axe-core` runs on the `@happy-dom/jest-environment` used by `angular-accelerator`, no per-spec jsdom environment is needed. `jest-axe` is not used, the helper calls `axe-core` directly. One workaround is required: zone.js wraps `MutationObserver` and drops the methods of happy-dom's implementation, which makes axe-core fail on load (`observer.observe is not a function`). `libs/angular-accelerator/src/test-env-flags.ts` (jest `setupFiles`) sets `__Zone_disable_MutationObserver` before zone.js is loaded. Other libraries that use the helper on happy-dom need the same `setupFiles` entry.
+
+=== jsdom / happy-dom limits
+
+The following axe rules need real layout and are therefore not reliable in the unit tests and are not enforced by the helper: `color-contrast`, `target-size`, `scrollable-region-focusable`. Check them in Storybook (see below) or manually in a browser.
+
+== Keyboard events: `@testing-library/user-event`
+
+`dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))` does not trigger the native activation behavior of a button. Use `@testing-library/user-event` instead, which performs the click on Enter/Space:
+
+[source,typescript]
+----
+import userEvent from '@testing-library/user-event'
+
+const user = userEvent.setup()
+button.focus()
+await user.keyboard('{Enter}')
+----
+
+== Storybook a11y
+
+`@storybook/addon-a11y` is enabled in `libs/angular-accelerator/.storybook/main.ts`. Chosen stories set `parameters.a11y.test` to `'error'` (currently page-header and dialog-inline).
+
+NOTE: Storybook evaluates `a11y.test` only in the Vitest addon, which does not support Angular. As long as no Storybook test runner is wired up, the parameter only marks the stories; a failing CI check for stories still needs a test runner with axe (for example `@storybook/test-runner` and `axe-playwright`), which is tracked as a follow-up. The same jsdom limits as above do not apply there, because stories run in a real browser.
+
+== Lint
+
+The angular-eslint template rules `interactive-supports-focus`, `elements-content`, `click-events-have-key-events` and `alt-text` run as warnings in `angular-accelerator`. Fix warnings when you touch a template; they are not yet errors.

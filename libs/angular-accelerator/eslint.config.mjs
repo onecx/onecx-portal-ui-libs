@@ -59,15 +59,18 @@ export default [
     // disable the preset-default rules that conflict with this issue's criteria and the
     // pre-existing templates: prefer-on-push flags the ChangeDetectionStrategy.Eager
     // annotations the Angular 22 change-detection-eager schematic added (criterion #2
-    // requires them); the 5 accessibility template rules flag pre-existing templates.
+    // requires them); no-autofocus stays off.
+    // The remaining 4 accessibility template rules (interactive-supports-focus, elements-content,
+    // click-events-have-key-events, alt-text) run as warnings so they surface in CI without failing
+    // on pre-existing templates (issue onecx/internal-tasks#1092).
     files: ['**/*.ts', '**/*.html'],
     rules: {
       '@angular-eslint/prefer-on-push-component-change-detection': 'off',
       '@angular-eslint/template/no-autofocus': 'off',
-      '@angular-eslint/template/interactive-supports-focus': 'off',
-      '@angular-eslint/template/elements-content': 'off',
-      '@angular-eslint/template/click-events-have-key-events': 'off',
-      '@angular-eslint/template/alt-text': 'off',
+      '@angular-eslint/template/interactive-supports-focus': 'warn',
+      '@angular-eslint/template/elements-content': 'warn',
+      '@angular-eslint/template/click-events-have-key-events': 'warn',
+      '@angular-eslint/template/alt-text': 'warn',
     },
   },
 ]

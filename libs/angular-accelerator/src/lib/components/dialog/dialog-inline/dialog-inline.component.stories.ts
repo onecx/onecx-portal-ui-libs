@@ -16,6 +16,10 @@ import { OcxTooltipDirective } from '../../../directives/tooltip.directive'
 export default {
   title: 'Components/DialogInlineComponent',
   component: DialogInlineComponent,
+  parameters: {
+    // Fail the Storybook a11y check (axe) for this story. See dev-docs/testing/a11y-testing.adoc
+    a11y: { test: 'error' },
+  },
   decorators: [
     applicationConfig({
       providers: [
