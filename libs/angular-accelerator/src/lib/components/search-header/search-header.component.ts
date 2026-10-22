@@ -1,6 +1,5 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Output,
   Signal,
@@ -14,7 +13,6 @@ import {
   output,
   signal,
   untracked,
-  viewChild,
   ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -52,10 +50,10 @@ export interface SearchConfigData {
 }
 
 /**
- * To trigger the search when Enter key is pressed inside a search parameter field,
- * an EventListener for keyup enter event is added for HTML elements which have an input.
- * Please add the EventListener yourself manually, if you want to have that functionality for some other elements
- * which do not have an input element.
+ * The search is triggered when the Enter key is pressed inside an input of the projected search parameter fields
+ * (one delegated keydown listener on the criteria container, no per-input listeners).
+ * Please trigger the search yourself, if you want to have that functionality for other elements
+ * which are not an input element.
  */
 @Component({
   standalone: false,
@@ -107,8 +105,6 @@ export class SearchHeaderComponent {
   formGroup = contentChild<FormGroup | undefined>(FormGroup)
   visibleFormControls = contentChildren<FormControlName>(FormControlName, { descendants: true })
 
-  searchParameterFields = viewChild<ElementRef | undefined>('searchParameterFields')
-
   hasAdvanced = signal<boolean>(false)
 
   simpleAdvancedAction: Action = {
@@ -158,7 +154,6 @@ export class SearchHeaderComponent {
       this.actions()
       untracked(() => {
         this.updateHeaderActions()
-        setTimeout(() => this.addKeyUpEventListener())
       })
     })
 
@@ -209,20 +204,24 @@ export class SearchHeaderComponent {
     this.headerActions.set(headerActions.concat(this.actions()))
   }
 
-  addKeyUpEventListener() {
-    const inputElements = this.searchParameterFields()?.nativeElement.querySelectorAll('input')
-    inputElements.forEach((inputElement: any) => {
-      if (!inputElement.listenerAdded) {
-        inputElement.addEventListener('keyup', (event: any) => this.onSearchKeyup(event))
-        inputElement.listenerAdded = true
-      }
-    })
-  }
-
-  onSearchKeyup(event: any) {
-    if (event.code === 'Enter') {
-      this.onSearchClicked()
+  /**
+   * Handles Enter (including NumpadEnter) pressed inside the search criteria and triggers a single search.
+   * Ignored for non-input targets (e.g. textarea, buttons), for Enter events already handled by a widget
+   * (defaultPrevented) and for Enter that picks an option of an open combobox/overlay.
+   */
+  onSearchKeydown(event: Event) {
+    const keyEvent = event as KeyboardEvent
+    const target = keyEvent.target as HTMLElement | null
+    if (
+      keyEvent.defaultPrevented ||
+      keyEvent.isComposing ||
+      target?.tagName !== 'INPUT' ||
+      target.getAttribute('aria-expanded') === 'true' ||
+      target.closest('[role="listbox"], [role="dialog"]')
+    ) {
+      return
     }
+    this.onSearchClicked()
   }
 
   private isVisible(control: string) {

@@ -1,3 +1,5 @@
+import userEvent from '@testing-library/user-event'
+import { Component } from '@angular/core'
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
@@ -24,6 +26,22 @@ import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
+
+@Component({
+  standalone: false,
+  template: `
+    <ocx-search-header (searched)="searched()" (resetted)="resetted()">
+      <input id="text" type="text" />
+      <textarea id="area"></textarea>
+      <input id="combo" type="text" role="combobox" aria-expanded="true" />
+      <input id="closedCombo" type="text" role="combobox" aria-expanded="false" />
+    </ocx-search-header>
+  `,
+})
+class SearchHeaderHostComponent {
+  searched = jest.fn()
+  resetted = jest.fn()
+}
 
 describe('SearchHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -228,6 +246,104 @@ describe('SearchHeaderComponent', () => {
       expect(resettedSpy).toHaveBeenCalled()
 
       sub.unsubscribe()
+    })
+  })
+
+  describe('keyboard activation', () => {
+    let hostFixture: ComponentFixture<SearchHeaderHostComponent>
+    let host: SearchHeaderHostComponent
+    let user: ReturnType<typeof userEvent.setup>
+
+    const el = (selector: string) => hostFixture.nativeElement.querySelector(selector) as HTMLElement
+
+    beforeEach(async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [SearchHeaderComponent, SearchHeaderHostComponent, PageHeaderComponent, IfPermissionDirective],
+        imports: [RouterTestingModule, ButtonModule, BreadcrumbModule, AngularAcceleratorModule],
+        providers: [
+          AppStateService,
+          provideHttpClient(withInterceptorsFromDi()),
+          provideHttpClientTesting(),
+          provideAppStateServiceMock(),
+          provideUserServiceMock(),
+          provideTranslateTestingService({ en: require('../../../../assets/i18n/en.json') }),
+          provideConfigurationServiceMock(),
+        ],
+      }).compileComponents()
+      const config = TestBed.inject(ConfigurationService) as any as ConfigurationServiceMock
+      await config.setProperty(CONFIG_KEY.ONECX_PORTAL_SEARCH_BUTTONS_REVERSED, 'false')
+      hostFixture = TestBed.createComponent(SearchHeaderHostComponent)
+      host = hostFixture.componentInstance
+      hostFixture.detectChanges()
+      await hostFixture.whenStable()
+      hostFixture.detectChanges()
+      user = userEvent.setup()
+    })
+
+    it.each([
+      ['Enter', '{Enter}'],
+      ['Space', ' '],
+    ])('should search exactly once on %s on the search button', async (_name, keys) => {
+      el('#searchButton button').focus()
+      await user.keyboard(keys)
+      expect(host.searched).toHaveBeenCalledTimes(1)
+    })
+
+    it.each([
+      ['Enter', '{Enter}'],
+      ['Space', ' '],
+    ])('should reset exactly once on %s on the reset button', async (_name, keys) => {
+      el('#resetButton button').focus()
+      await user.keyboard(keys)
+      expect(host.resetted).toHaveBeenCalledTimes(1)
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should search exactly once on Enter in a text input', async () => {
+      el('#text').focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).toHaveBeenCalledTimes(1)
+    })
+
+    it('should search exactly once on NumpadEnter in a text input', () => {
+      // the NumpadEnter key reports key "Enter" with code "NumpadEnter"
+      el('#text').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'NumpadEnter', bubbles: true }))
+      expect(host.searched).toHaveBeenCalledTimes(1)
+    })
+
+    it('should search for an input that is added after initialization', async () => {
+      const added = document.createElement('input')
+      el('section[aria-label="Search Criteria"]').appendChild(added)
+      added.focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not search on Enter in a textarea', async () => {
+      el('#area').focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should not search on Enter in a combobox with an open popup', async () => {
+      el('#combo').focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should not search on Enter already handled (default prevented) by a widget', async () => {
+      const closed = el('#closedCombo')
+      closed.addEventListener('keydown', (e) => e.preventDefault())
+      closed.focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should search on Enter in a closed combobox', async () => {
+      el('#closedCombo').focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).toHaveBeenCalledTimes(1)
     })
   })
 })
