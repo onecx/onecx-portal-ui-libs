@@ -35,6 +35,23 @@ export const WithMockData = {
   },
 }
 
+export const TableLayoutWithRestoredColumnOrder = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+    componentStateChanged: { action: 'componentStateChanged' },
+    selectionChanged: { action: 'selectionChanged' },
+  },
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    layout: 'table',
+    displayedColumnKeys: ['date', 'product', 'amount'],
+    resizableColumnGroupSelectorDialog: true,
+    restoreColumnGroupSelectorOrder: true,
+  },
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {

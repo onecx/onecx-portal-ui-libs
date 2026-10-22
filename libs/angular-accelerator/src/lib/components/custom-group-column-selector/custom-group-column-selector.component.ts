@@ -91,7 +91,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   get columnsChanged(): boolean {
     return (
       this.displayedColumnsModel.length !== this.displayedColumns.length ||
-      this.displayedColumnsModel.some((column, index) => column.id !== this.displayedColumns[index]?.id)
+      this.displayedColumnsModel.some((column, index) => column.id !== this.displayedColumns[index].id)
     )
   }
 

@@ -76,6 +76,63 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(actionChanged).not.toHaveBeenCalled()
     })
 
+    it('should not allow saving when no columns are active, even if action settings changed', () => {
+      component.displayedColumnsModel = []
+      component.frozenActionColumnModel = true
+
+      expect(component.hasActiveColumns).toBe(false)
+      expect(component.actionSettingsChanged).toBe(true)
+      expect(component.canSave).toBe(false)
+    })
+
+    it('should detect a changed action-column position independently', () => {
+      component.frozenActionColumn = false
+      component.frozenActionColumnModel = false
+      component.actionColumnPosition = 'left'
+      component.actionColumnPositionModel = 'right'
+
+      expect(component.actionSettingsChanged).toBe(true)
+    })
+
+    it('should detect a same-length active-column reorder', () => {
+      const first = makeColumn('first')
+      const second = makeColumn('second')
+      component.displayedColumns = [first, second]
+      component.displayedColumnsModel = [second, first]
+
+      expect(component.columnsChanged).toBe(true)
+    })
+
+    it('should emit only changed columns when action settings are unchanged', () => {
+      const first = makeColumn('first')
+      const second = makeColumn('second')
+      component.displayedColumns = [first]
+      component.displayedColumnsModel = [first, second]
+      component.visible = true
+      const columnsChanged = jest.spyOn(component.columnSelectionChanged, 'emit')
+      const actionChanged = jest.spyOn(component.actionColumnConfigChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(columnsChanged).toHaveBeenCalledWith({ activeColumns: [first, second] })
+      expect(actionChanged).not.toHaveBeenCalled()
+    })
+
+    it('should emit only changed action settings when columns are unchanged', () => {
+      const first = makeColumn('first')
+      component.displayedColumns = [first]
+      component.displayedColumnsModel = [first]
+      component.frozenActionColumnModel = true
+      component.visible = true
+      const columnsChanged = jest.spyOn(component.columnSelectionChanged, 'emit')
+      const actionChanged = jest.spyOn(component.actionColumnConfigChanged, 'emit')
+
+      component.onSaveClick()
+
+      expect(columnsChanged).not.toHaveBeenCalled()
+      expect(actionChanged).toHaveBeenCalledWith({ frozenActionColumn: true, actionColumnPosition: 'right' })
+    })
+
     it('should emit both changes even if the first listener synchronously commits the columns', () => {
       const first = makeColumn('first')
       const second = makeColumn('second')
@@ -124,9 +181,29 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(component.displayedColumnsModel.map((column) => column.id)).toEqual(['first', 'unknown'])
       expect(component.hiddenColumnsModel.map((column) => column.id)).toEqual(['second'])
     })
+
+    it('should retain unknown columns in the hidden list in their existing order', () => {
+      const first = makeColumn('first')
+      const second = makeColumn('second')
+      const unknownA = makeColumn('unknown-a')
+      const unknownB = makeColumn('unknown-b')
+      component.columns = [first, second]
+      component.displayedColumnsModel = [first]
+      component.hiddenColumnsModel = [unknownB, second, unknownA]
+
+      component.syncColumnModels(true)
+
+      expect(component.hiddenColumnsModel.map((column) => column.id)).toEqual(['second', 'unknown-b', 'unknown-a'])
+    })
   })
 
   describe('PickList selection reset', () => {
+    it('should safely return when the PickList is not available', () => {
+      component.pickList = undefined
+
+      expect(() => component.resetColumnSelection()).not.toThrow()
+    })
+
     it('should clear stale selections on the same PickList instance when reopening', () => {
       const first = makeColumn('first')
       const second = makeColumn('second')
