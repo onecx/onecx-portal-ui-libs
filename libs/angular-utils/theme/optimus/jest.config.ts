@@ -1,19 +1,11 @@
-/** @jest-config-loader ts-node */
-// Without jest-config-loader, jest cannot load other ts files
-
 /* eslint-disable */
 import { createReportsConfig } from '../../../../jest-config-factory'
 
 export default {
   ...createReportsConfig('angular-utils/theme'),
   displayName: 'angular-utils/theme',
-  preset: '../../../../jest.preset.js',
-  testMatch: ['<rootDir>/src/**/*.spec.ts'],
-  moduleNameMapper: {
-    '^@openng/optimus-ui-themes/aura$':
-      '<rootDir>/../../../../node_modules/@openng/optimus-ui-themes/dist/aura/index.mjs',
-    '^@openng/optimus-ui-themes$': '<rootDir>/../../../../node_modules/@openng/optimus-ui-themes/dist/index.mjs',
-  },
+  preset: '../../jest.preset.js',
+  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   transform: {
     '^.+\\.(mjs|js|html)$': [
