@@ -13,7 +13,12 @@
 
 This guide explains how to migrate a OneCX application to **Angular 23** and the accompanying changes to the OneCX UI libraries.
 
-Angular 23 support builds on Angular 22 support. The OneCX libraries have already moved from PrimeNG to **Optimus UI** with Angular 22 (see the xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide]). With Angular 23, the OneCX UI libraries take the next step: the `@onecx/*` accelerator components are rebuilt on **Angular Material**, styled with **Tailwind CSS** — a library maintained by the Angular team itself and closely aligned with the framework's direction.
+This work has two distinct parts, and it is worth keeping them separate:
+
+* **Utility CSS — PrimeFlex → Tailwind CSS.** This is a utility-CSS change in the OneCX UI libraries v9 line (Angular 22). It replaces the PrimeFlex utility classes with **Tailwind CSS v4** (Optimus UI styled mode) and ships a compiled, scoped CSS contract. It is independent of any component rebuild and is documented in the xref:migrations/angular-22/migrate-to-optimus-ui.adoc#utility-css-contract[Angular 22 migration guide].
+* **Components — rebuild on Angular Material.** This is the larger, still **deferred** step. The `@onecx/*` accelerator components are rebuilt on **Angular Material**, styled with **Tailwind CSS** — a library maintained by the Angular team itself and closely aligned with the framework's direction. The step-by-step guides for this part are published here as each area is finalized.
+
+Angular 23 support builds on Angular 22 support. The OneCX libraries have already moved from PrimeNG to **Optimus UI** with Angular 22 (see the xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide]); the PrimeFlex → Tailwind utility migration described above ships in the same v9 line.
 
 For the high-level plan and rough timing, see the xref:onecx-docs-overview:release-overview.adoc[Release Overview].
 
@@ -41,7 +46,9 @@ Applications that rely on the PrimeNG-style API are not forced to change. OneCX 
 [#what-you-need-to-do]
 == What you need to do
 
-The one change that applies to every application is the same: pick up the Angular 23 support for the OneCX UI libraries when it ships.
+The PrimeFlex → Tailwind utility-CSS migration ships with the library and is transparent: your application keeps consuming the library's compiled, scoped CSS exactly as before, and its internal utility class names are the library's concern. No change to your application is required for that part.
+
+The Angular Material component rebuild is the part tied to Angular 23. For it, the one change that applies to every application is: pick up the Angular 23 support for the OneCX UI libraries when it ships.
 
 * If you keep your application's UI on Optimus UI (PrimeNG-style components), that is all you need to do.
 * If you want to adopt Angular Material + Tailwind CSS alongside OneCX, you additionally migrate your own components — see xref:migration-steps[Migration steps].
@@ -49,10 +56,11 @@ The one change that applies to every application is the same: pick up the Angula
 [#migration-steps]
 == Migration steps
 
-The detailed, step-by-step guides for adopting Angular Material + Tailwind CSS are being published as each area is finalized. The migration is planned across the following areas; each will link to its own guide once it is available:
+**Layout utilities (PrimeFlex → Tailwind)** is already complete for the v9 libraries — the PrimeFlex utility classes are replaced by Tailwind CSS utilities behind the compiled, scoped CSS contract, with no separate migration step required. See the xref:migrations/angular-22/migrate-to-optimus-ui.adoc#utility-css-contract[utility CSS contract].
+
+The remaining areas are part of the Angular Material component rebuild. The detailed, step-by-step guides for adopting Angular Material + Tailwind CSS are being published as each area is finalized; each will link to its own guide once it is available:
 
 * **Theming** — moving from PrimeNG/Optimus design tokens to Material Design 3 tokens with Tailwind CSS.
-* **Layout utilities** — replacing PrimeFlex utility classes with Tailwind CSS utilities.
 * **Components** — migrating the PrimeNG-backed components to their Angular Material equivalents (or OneCX first-party components where Material has no equivalent).
 * **Optimus UI** — configuring your application to keep using Optimus UI (the PrimeNG-compatible fork) for the PrimeNG/Optimus utilities, if you choose that path.
 

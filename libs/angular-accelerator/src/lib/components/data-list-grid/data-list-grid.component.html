@@ -13,7 +13,7 @@
   paginatorDropdownAppendTo="body"
 >
   <ng-template #grid let-rows>
-    <div class="grid grid-cols-12 grid-nogutter gap-4 w-full" role="list">
+    <div class="grid grid-cols-12 gap-4 w-full" role="list">
       @for (item of rows; track item) {
       <ng-container
         [ngTemplateOutlet]="gridItem ?? defaultGridItem"
@@ -23,7 +23,7 @@
     </div>
   </ng-template>
   <ng-template #list let-rows>
-    <div class="p-grid p-nogutter grid grid-nogutter" role="list">
+    <div class="grid grid-cols-1" role="list">
       @for (item of rows; track item; let first = $first) { @defer (on viewport; on idle){
       <ng-container
         [ngTemplateOutlet]="listItem ?? defaultListItem"
@@ -48,9 +48,9 @@
 }
 
 <ng-template #defaultGridItem let-item>
-  <div class="col-12 lg:col-6 xl:col-4 p-1 flex justify-content-center grid-border-divider" role="listitem">
-    <div class="data-grid-item card flex flex-column justify-content-between w-12 lg:w-11 mb-4 mt-4 align-self-stretch">
-      <div class="flex justify-content-center mb-3">
+  <div class="col-span-12 lg:col-span-6 xl:col-span-4 p-1 flex justify-center grid-border-divider" role="listitem">
+    <div class="data-grid-item card flex flex-col justify-between w-full lg:w-11/12 mb-4 mt-4 self-stretch">
+      <div class="flex justify-center mb-3">
         <img
           class="image"
           src="{{ item.imagePath || (fallbackImagePath$ | async) }}"
@@ -58,7 +58,7 @@
           alt="{{ resolveFieldData(item, titleLineId()) || '' }}"
         />
       </div>
-      <div class="flex flex-row justify-content-between align-items-center">
+      <div class="flex flex-row justify-between items-center">
         <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
             @if (hasViewPermission$ | async; as hasViewPermission) {
@@ -98,10 +98,10 @@
 </ng-template>
 <ng-template #defaultListItem let-item="item" let-first="first" let-columnTemplates="columnTemplates">
   @if (columnTemplates) {
-  <div class="col-12" role="listitem">
+  <div class="col-span-full" role="listitem">
     <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
-      <div class="item-name-row flex flex-row justify-content-between">
-        <div class="item-name mr-3 text-2xl font-medium align-content-center">
+      <div class="item-name-row flex flex-row justify-between">
+        <div class="item-name mr-3 text-2xl font-medium content-center">
           @if (titleLineId()) {
           <span>{{ resolveFieldData(item, titleLineId()) || '' }}</span>
           }
@@ -219,7 +219,7 @@
       </div>
       <div class="flex flex-wrap">
         @for (col of filteredColumns(); track col) {
-        <div class="w-12rem my-2 mr-2">
+        <div class="w-[12rem] my-2 mr-2">
           <div class="font-bold" [ocxTooltipOnOverflow]="col.nameKey | translate" tooltipPosition="top">
             {{ col.nameKey | translate }}
           </div>
