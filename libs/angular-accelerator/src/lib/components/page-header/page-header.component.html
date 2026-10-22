@@ -1,13 +1,34 @@
 <div class="onecx-page-header mb-4" name="ocx-page-header-wrapper">
-  @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) {
+  @if (showBreadcrumbs()) { @if (breadcrumbs$ | async ; as items) { @let homeItem = home$ | async; @let homeAriaLabel =
+  homeItem?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: homeItem?.page }) :
+  ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate);
   <p-breadcrumb
-    #breadcrumbRef
     id="pageHeaderBreadcrumb"
     [model]="items"
-    [home]="(home$ | async)?.menuItem ?? {}"
-    [homeAriaLabel]="(home$ | async)?.page ? ('OCX_PAGE_HEADER.HOME_ARIA_LABEL' | translate: { page: (home$ | async)?.page}) : ('OCX_PAGE_HEADER.HOME_DEFAULT_ARIA_LABEL' | translate)"
+    [home]="homeItem?.menuItem ?? {}"
+    [homeAriaLabel]="homeAriaLabel"
     [attr.manual]="manualBreadcrumbs()"
-  ></p-breadcrumb>
+  >
+    <ng-template #item let-item>
+      @if (!items.includes(item)) {
+      <a class="p-breadcrumb-item-link" [routerLink]="item.routerLink ?? '/'" [attr.aria-label]="homeAriaLabel">
+        <span class="p-breadcrumb-item-icon" [ngClass]="item.icon" aria-hidden="true"></span>
+      </a>
+      } @else if (item === items[items.length - 1]) {
+      <span class="p-breadcrumb-item-link" aria-current="page"
+        ><span class="p-breadcrumb-item-label">{{ item.label }}</span></span
+      >
+      } @else if (item.routerLink) {
+      <a class="p-breadcrumb-item-link" [routerLink]="item.routerLink" [queryParams]="item.queryParams"
+        ><span class="p-breadcrumb-item-label">{{ item.label }}</span></a
+      >
+      } @else {
+      <a class="p-breadcrumb-item-link" [attr.href]="item.url ?? null"
+        ><span class="p-breadcrumb-item-label">{{ item.label }}</span></a
+      >
+      }
+    </ng-template>
+  </p-breadcrumb>
   } }
   <div class="title-bar flex flex-row md:justify-between items-center p-3">
     <div class="title-wrap">
@@ -16,12 +37,7 @@
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           @if (figureImage() && !figureImageLoadError()) {
-          <img
-            [ocxSrc]="figureImage()"
-            alt=""
-            class="w-full rounded-sm"
-            (error)="handleImageError()"
-          />
+          <img [ocxSrc]="figureImage()" alt="" class="w-full rounded-sm" (error)="handleImageError()" />
           }
         </div>
         @if (previewImage.children.length === 0 || figureImageLoadError()) {
@@ -33,9 +49,7 @@
         @if (!!header()) {
         <h1 id="page-header">{{ header() }}</h1>
         } @if (!!subheader()) {
-        <div id="page-subheader">
-          {{ subheader() }}
-        </div>
+        <div id="page-subheader">{{ subheader() }}</div>
         }
       </div>
       } @else {
@@ -149,7 +163,8 @@
           >
             @if (item.icon) {
             <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true"></i>
-            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value && item.valueTooltipKey) {
+            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value &&
+            item.valueTooltipKey) {
             <span class="sr-only">{{ getIconOnlyDetailText(item) }}</span>
             }
           </span>

@@ -20,7 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
-import { of } from 'rxjs'
+import { BehaviorSubject, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
@@ -142,7 +142,7 @@ describe('PageHeaderComponent', () => {
     expect(pageHeaderWrapper).toBeTruthy()
   })
 
-  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is true', async () => {
+  it('should not override the visible name of breadcrumb links when manualBreadcrumbs is true', async () => {
     fixture = TestBed.createComponent(PageHeaderComponent)
     component = fixture.componentInstance
     fixture.componentRef.setInput('manualBreadcrumbs', true)
@@ -150,25 +150,22 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges()
     await fixture.whenStable()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from itemsHandler')
     expect(breadcrumbItem).toBeTruthy()
     expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
-    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from itemsHandler page')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBeNull()
   })
 
-  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
+  it('should not override the visible name of breadcrumb links when manualBreadcrumbs is false', async () => {
     fixture.componentRef.setInput('manualBreadcrumbs', false)
 
     fixture.detectChanges()
     await fixture.whenStable()
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from generated source')
     expect(breadcrumbItem).toBeTruthy()
-    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
-    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from generated source page')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBeNull()
   })
 
   it('should test if breadcrumb is not rendered when there are no breadcrumbs', async () => {
@@ -176,46 +173,34 @@ describe('PageHeaderComponent', () => {
 
     fixture.detectChanges()
     await fixture.whenStable()
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
     expect(breadcrumbItem).toBeNull()
-    expect(await breadcrumbItem?.getText()).toBeUndefined()
   })
 
-  it('should not add aria-current for non-last breadcrumb with empty label', async () => {
-    component.breadcrumbs$ = of([
-      {
-        label: 'Second breadcrumb',
-        show: 'always',
-        routerLink: '/second',
-        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      },
-      {
-        label: '',
-        show: 'always',
-        routerLink: '/empty',
-        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      },
+  it('should set aria-current=page only on the last breadcrumb and follow changes in the same change detection cycle', async () => {
+    const items$ = new BehaviorSubject<MenuItem[]>([
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
     ])
+    component.breadcrumbs$ = items$
 
     fixture.detectChanges()
-    await fixture.whenStable()
-    component.ngAfterViewInit()
+    let links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.attributes['aria-current'])).toEqual([undefined, 'page'])
+    expect(links.every((l) => !l.attributes['aria-label'])).toBe(true)
+    expect(links.map((l) => l.nativeElement.tagName)).toEqual(['A', 'SPAN'])
+    const home = fixture.debugElement.query(By.css('.p-breadcrumb-home-item a'))
+    expect(home.attributes['aria-label']).toBeTruthy()
 
-    const breadcrumbLinks = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item-link'))
-    expect(breadcrumbLinks[0].attributes['aria-current']).toBeUndefined()
-  })
-
-  it('should handle null ViewChild', async () => {
-    component.breadcrumbElementRef = undefined
-
+    items$.next([
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
+      { label: 'Third', routerLink: '/third' },
+    ])
     fixture.detectChanges()
-    await fixture.whenStable()
-    component.ngAfterViewInit()
-
-    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
-    expect(breadcrumbItem).toBeNull()
+    links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.attributes['aria-current'])).toEqual([undefined, undefined, 'page'])
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {

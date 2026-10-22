@@ -52,9 +52,15 @@ export class BreadcrumbService implements OnDestroy {
       )
       .subscribe(() => {
         const root = this.router.routerState.snapshot.root
+        this.lastRoot = root
         this.generateBreadcrumbs(root)
       })
+    this.translateService.onLangChange.pipe(untilDestroyed(this)).subscribe(() => {
+      this.generateBreadcrumbs(this.lastRoot ?? this.activeRoute.snapshot)
+    })
   }
+
+  private lastRoot: ActivatedRouteSnapshot | undefined
 
   ngOnDestroy(): void {
     this._itemSource$?.destroy()
@@ -62,12 +68,11 @@ export class BreadcrumbService implements OnDestroy {
 
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
     if (route?.data['mfeInfo']) {
-      const breadcrumbs: MenuItem[] = [
-        {
-          label: route.data['mfeInfo'].productName,
-          routerLink: route.data['mfeInfo'].baseHref,
-        },
-      ]
+      const breadcrumbs: MenuItem[] = []
+      const productLabel = this.translate(route.data['mfeInfo'].productName)
+      if (productLabel) {
+        breadcrumbs.push({ label: productLabel, routerLink: route.data['mfeInfo'].baseHref })
+      }
       const baseUrl: string[] = (route.data['mfeInfo'].baseHref as string).split('/').filter((value) => value)
       const parentUrl: string[] = route.url.map((url) => url.path)
       const isUsingMatcher = !parentUrl.every((item) => baseUrl.includes(item))
@@ -97,19 +102,20 @@ export class BreadcrumbService implements OnDestroy {
   }
 
   private createBreadcrumb(route: ActivatedRouteSnapshot, routeUrl: string[], breadcrumbs: MenuItem[]) {
+    // Routes without breadcrumb data have no meaningful name, so they are left out instead of showing a placeholder
     if (route.data['breadcrumb']) {
       const breadcrumb: MenuItem = {
-        label: this.getLabel(route.data, route.paramMap),
-        routerLink: '/' + routeUrl.join('/'),
-      }
-      breadcrumbs.push(breadcrumb)
-    } else {
-      const breadcrumb: MenuItem = {
-        label: 'NA',
+        label: this.translate(this.getLabel(route.data, route.paramMap)),
         routerLink: '/' + routeUrl.join('/'),
       }
       breadcrumbs.push(breadcrumb)
     }
+  }
+
+  private translate(label: unknown): string | undefined {
+    if (typeof label !== 'string' || !label) return undefined
+    const translated = this.translateService.instant(label)
+    return typeof translated === 'string' ? translated : label
   }
 
   private getLabel(data: Data, params: ParamMap) {
