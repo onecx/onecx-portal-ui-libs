@@ -40,20 +40,21 @@ export class BreadcrumbServiceMock {
     },
   ])
 
-  generatedItemsSource = of<MenuItem[]>([{
+  generatedItemsSource = of<MenuItem[]>([
+    {
       label: 'Test breadcrumb from generated source',
       show: 'always',
       routerLink: '/test-breadcrumb',
       permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-    }])
+    },
+  ])
 
   generateBreadcrumbs() {
     return this.generatedItemsSource
   }
 }
 
-@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
- template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class TestRouteComponent {}
 
 const mockActions: Action[] = [
@@ -145,7 +146,7 @@ describe('PageHeaderComponent', () => {
     fixture = TestBed.createComponent(PageHeaderComponent)
     component = fixture.componentInstance
     fixture.componentRef.setInput('manualBreadcrumbs', true)
-      
+
     fixture.detectChanges()
     await fixture.whenStable()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
@@ -158,7 +159,7 @@ describe('PageHeaderComponent', () => {
   })
 
   it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
-    fixture.componentRef.setInput('manualBreadcrumbs', false)   
+    fixture.componentRef.setInput('manualBreadcrumbs', false)
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -195,8 +196,8 @@ describe('PageHeaderComponent', () => {
         show: 'always',
         routerLink: '/empty',
         permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      }      
-    ]);
+      },
+    ])
 
     fixture.detectChanges()
     await fixture.whenStable()
@@ -226,7 +227,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -238,7 +239,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeTruthy()
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
@@ -246,7 +247,7 @@ describe('PageHeaderComponent', () => {
     userServiceMock.permissionsTopic$.publish([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -761,5 +762,99 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getLabelTooltipContent()).toBeNull()
     expect(await objectInfo.getValueTooltipContent()).toBeNull()
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
+  })
+
+  describe('accessible names', () => {
+    const cb = () => undefined
+    let warnSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    })
+    afterEach(() => warnSpy.mockRestore())
+
+    async function actionButtonName(details: Partial<ObjectDetailItem>): Promise<string | null | undefined> {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Venue', value: 'AIE', actionItemIcon: 'pi pi-copy', actionItemCallback: cb, ...details },
+      ])
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      return btn.getAttribute('aria-label')
+    }
+
+    it('should resolve the object detail action name by key, label, tooltip key, then detail label', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { ARIA: 'Aria key', TIP: 'Tip key' })
+      translate.use('en')
+      expect(
+        await actionButtonName({
+          actionItemAriaLabelKey: 'ARIA',
+          actionItemAriaLabel: 'Aria',
+          actionItemTooltipKey: 'TIP',
+        })
+      ).toBe('Aria key')
+      expect(await actionButtonName({ actionItemAriaLabel: 'Aria', actionItemTooltipKey: 'TIP' })).toBe('Aria')
+      expect(await actionButtonName({ actionItemTooltipKey: 'TIP' })).toBe('Tip key')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(0)
+    })
+
+    it('should fall back to the detail label with a dev warning and never expose the icon class', async () => {
+      const name = await actionButtonName({})
+      expect(name).toBe('Venue')
+      expect(name).not.toContain('pi pi-')
+      expect(name).not.toContain('button for')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
+    })
+
+    it('should render the object detail action button at least 24x24 px via the min-size class', async () => {
+      await actionButtonName({})
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      expect(btn.classList.contains('object-info-action-button')).toBe(true)
+    })
+
+    it('should let a visible label win over title and ariaLabel on inline actions', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', label: 'Save', title: 'Persist', ariaLabel: 'Store it', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('#a1 button, button#a1')
+      expect(btn.getAttribute('aria-label')).toBeNull()
+      expect(btn.textContent).toContain('Save')
+    })
+
+    it('should name icon-only inline actions by ariaLabel, then title', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', icon: 'pi pi-lock', title: 'Title', ariaLabel: 'Aria', show: 'always', actionCallback: cb },
+        { id: 'a2', icon: 'pi pi-lock', title: 'Title only', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('#a1 button, button#a1').getAttribute('aria-label')).toBe('Aria')
+      expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
+    })
+
+    it('should render the figure image as decorative and the subheader as plain content', async () => {
+      fixture.componentRef.setInput('figureImage', 'assets/x.png')
+      fixture.componentRef.setInput('subheader', 'Sub')
+      fixture.detectChanges()
+      const img = fixture.nativeElement.querySelector('.figure img')
+      expect(img?.getAttribute('alt')).toBe('')
+      const sub = fixture.nativeElement.querySelector('#page-subheader')
+      expect(sub.getAttribute('role')).toBeNull()
+      expect(sub.getAttribute('aria-label')).toBeNull()
+    })
+
+    it('should give icon-only object details a text alternative', async () => {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Status', icon: 'pi pi-check', valueTooltipKey: 'STATUS_OK' },
+      ])
+      TestBed.inject(TranslateService).setTranslation('en', { STATUS_OK: 'Confirmed' })
+      TestBed.inject(TranslateService).use('en')
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
+    })
   })
 })

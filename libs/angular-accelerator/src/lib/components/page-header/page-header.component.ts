@@ -15,7 +15,8 @@ import {
   model,
   output,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -243,6 +244,57 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.figureImageLoadError.set(true)
   }
 
+  private readonly warnedItems = new WeakSet<ObjectDetailItem>()
+
+  private translateKey(key: TranslationKey | undefined): string | undefined {
+    if (!key) return undefined
+    const translated =
+      typeof key === 'string'
+        ? this.translateService.instant(key)
+        : this.translateService.instant(key.key, key.parameters)
+    return translated || undefined
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): string | undefined {
+    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    if (visibleLabel) return undefined
+    return (
+      this.translateKey(action.ariaLabelKey) ||
+      action.ariaLabel ||
+      this.translateKey(action.titleKey) ||
+      action.title ||
+      undefined
+    )
+  }
+
+  /**
+   * Accessible name of the object detail action button:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  getActionItemAriaLabel(item: ObjectDetailItem): string {
+    const name =
+      this.translateKey(item.actionItemAriaLabelKey) ||
+      item.actionItemAriaLabel ||
+      this.translateKey(item.actionItemTooltipKey)
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item)) {
+      this.warnedItems.add(item)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
+  /** Text alternative for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
+    return this.translateKey(item.valueTooltipKey)
+  }
+
   public generateItemStyle(item: ObjectDetailItem): string {
     let style = ''
     if (item.icon) style = style.concat(style, ' ', 'gap-1 items-center')
@@ -326,11 +378,13 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     breadcrumbItems.forEach((item: Element, index: number) => {
       const text = (item as HTMLElement)?.innerText?.trim()
       if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
+
+      this.translateService
+        .get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text })
+        .subscribe((ariaLabel) => {
+          this.renderer.setAttribute(item, 'aria-label', ariaLabel)
+        })
+
       if (index === breadcrumbItems.length - 1) {
         this.renderer.setAttribute(item, 'aria-current', 'page')
       }
