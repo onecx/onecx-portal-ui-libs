@@ -207,7 +207,8 @@ export class SearchHeaderComponent {
   /**
    * Handles Enter (including NumpadEnter) pressed inside the search criteria and triggers a single search.
    * Ignored for non-input targets (e.g. textarea, buttons), for Enter events already handled by a widget
-   * (defaultPrevented) and for Enter that picks an option of an open combobox/overlay.
+   * (defaultPrevented), for Enter that picks an option of an open combobox/overlay and for inputs inside a
+   * listbox (e.g. a multiple autocomplete, where Enter edits the selection).
    */
   onSearchKeydown(event: Event) {
     const keyEvent = event as KeyboardEvent

@@ -34,6 +34,7 @@ import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerat
       <input id="text" type="text" />
       <textarea id="area"></textarea>
       <input id="combo" type="text" role="combobox" aria-expanded="true" />
+      <ul role="listbox"><li role="option"><input id="multi" type="text" /></li></ul>
       <input id="closedCombo" type="text" role="combobox" aria-expanded="false" />
     </ocx-search-header>
   `,
@@ -337,6 +338,17 @@ describe('SearchHeaderComponent', () => {
       closed.addEventListener('keydown', (e) => e.preventDefault())
       closed.focus()
       await user.keyboard('{Enter}')
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should not search on Enter in an input inside a listbox', async () => {
+      el('#multi').focus()
+      await user.keyboard('{Enter}')
+      expect(host.searched).not.toHaveBeenCalled()
+    })
+
+    it('should not search on Enter during IME composition', () => {
+      el('#text').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', isComposing: true, bubbles: true }))
       expect(host.searched).not.toHaveBeenCalled()
     })
 
