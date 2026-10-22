@@ -244,7 +244,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     this.figureImageLoadError.set(true)
   }
 
-  private readonly warnedItems = new WeakSet<ObjectDetailItem>()
+  private readonly warnedItems = new Set<string>()
 
   private translateKey(key: TranslationKey | undefined): string | undefined {
     if (!key) return undefined
@@ -281,8 +281,8 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
       item.actionItemAriaLabel ||
       this.translateKey(item.actionItemTooltipKey)
     if (name) return name
-    if (isDevMode() && !this.warnedItems.has(item)) {
-      this.warnedItems.add(item)
+    if (isDevMode() && !this.warnedItems.has(item.label)) {
+      this.warnedItems.add(item.label)
       console.warn(
         `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
       )

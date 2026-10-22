@@ -149,7 +149,7 @@
           >
             @if (item.icon) {
             <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true"></i>
-            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value) {
+            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value && item.valueTooltipKey) {
             <span class="sr-only">{{ getIconOnlyDetailText(item) }}</span>
             }
           </span>
