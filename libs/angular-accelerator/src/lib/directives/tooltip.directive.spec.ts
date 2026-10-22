@@ -65,6 +65,26 @@ class TestHostComponentNull {
 	tooltipText = 'Tooltip with null options'
 }
 
+const pressTab = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
+
+@Component({
+	// eslint-disable-next-line @angular-eslint/prefer-standalone
+	standalone: false,
+	changeDetection: ChangeDetectionStrategy.Eager,
+	template: `
+    <button id="t-button" class="t-host" type="button" aria-describedby="existing-desc" [ocxTooltip]="text">B</button>
+    <span id="existing-desc">existing</span>
+    <input id="t-input" class="t-host" [ocxTooltip]="text" />
+    <span id="t-span" class="t-host" tabindex="0" [ocxTooltip]="text">S</span>
+    <button id="t-icon-btn" type="button"><i id="t-icon" class="pi pi-check t-host" [ocxTooltip]="text"></i></button>
+    <table><tr><td id="t-cell" class="t-host" [ocxTooltip]="text"><a id="t-cell-link" href="#x">link</a></td></tr></table>
+    <span id="t-wrapper" class="t-host" [ocxTooltip]="text"><button id="t-wrapped" type="button">W</button></span>
+  `
+})
+class TemplatesHostComponent {
+	text = 'Tooltip works!'
+}
+
 describe('OcxTooltip', () => {
 	const HOST_SELECTOR_1 = '.ocx-tooltip-host1'
 	const HOST_SELECTOR_2 = '.ocx-tooltip-host2'
@@ -78,7 +98,7 @@ describe('OcxTooltip', () => {
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull],
+			declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull, TemplatesHostComponent],
 			imports: [NoopAnimationsModule, OcxTooltipDirective]
 		}).compileComponents()
 
@@ -138,8 +158,9 @@ describe('OcxTooltip', () => {
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 
 			for (const key of ['Escape', 'Esc']) {
+				pressTab()
 				await host.focus()
-				await host.dispatchEvent('focus')
+				await host.dispatchEvent('focusin')
 				tick(200)
 				fixture.detectChanges()
 
@@ -164,8 +185,9 @@ describe('OcxTooltip', () => {
 			const directive = debugElement.injector.get(OcxTooltipDirective) as any
 
 			for (const key of ['Enter']) {
+				pressTab()
 				await host.focus()
-				await host.dispatchEvent('focus')
+				await host.dispatchEvent('focusin')
 				tick(200)
 				fixture.detectChanges()
 
@@ -269,6 +291,105 @@ describe('OcxTooltip', () => {
 
 			expect(await tooltip.getTooltipText()).toBe(TOOLTIP_TEXT_NULL)
 			expect(ariaDescribedBy).toEqual(tooltipId)
+		}))
+	})
+
+	describe('Keyboard accessibility', () => {
+		let tFixture: ComponentFixture<TemplatesHostComponent>
+
+		const focusTarget = (id: string) => tFixture.nativeElement.querySelector('#' + id) as HTMLElement
+		const tooltipInDom = () => document.querySelector('.p-tooltip') as HTMLElement | null
+
+		beforeEach(() => {
+			// reset the shared keyboard-modality state left over from earlier tests
+			document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+			tFixture = TestBed.createComponent(TemplatesHostComponent)
+			tFixture.detectChanges()
+		})
+
+		afterEach(() => {
+			tFixture.destroy()
+			document.querySelectorAll('.p-tooltip').forEach((e) => e.remove())
+		})
+
+		const keyboardFocus = (el: HTMLElement) => {
+			pressTab()
+			el.focus()
+			el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+		}
+
+		it.each([
+			['button', 't-button', 't-button'],
+			['input', 't-input', 't-input'],
+			['span', 't-span', 't-span'],
+			['icon', 't-icon-btn', 't-icon-btn'],
+			['table cell', 't-cell-link', 't-cell-link'],
+			['wrapper of a button', 't-wrapped', 't-wrapped']
+		])('should show on keyboard focus and describe the focus target (%s)', fakeAsync((_name: string, focusId: string, describedId: string) => {
+			const el = focusTarget(focusId)
+			keyboardFocus(el)
+			tick(500)
+
+			const tooltip = tooltipInDom()
+			expect(tooltip).toBeTruthy()
+			expect(tooltip?.textContent).toContain('Tooltip works!')
+			const describedBy = focusTarget(describedId).getAttribute('aria-describedby') ?? ''
+			expect(describedBy.split(' ')).toContain(tooltip?.id)
+
+			document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+			tick(500)
+			expect(tooltipInDom()).toBeNull()
+			expect(focusTarget(describedId).getAttribute('aria-describedby') ?? '').not.toContain('ocx-tooltip')
+		}))
+
+		it.each(['t-button', 't-input', 't-span', 't-icon-btn', 't-cell-link', 't-wrapped'])(
+			'should not show on programmatic focus (e.g. dialog focus restore) (%s)',
+			fakeAsync((id: string) => {
+				const el = focusTarget(id)
+				// no navigation key pressed: focus restored by script
+				el.focus()
+				el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+				tick(500)
+
+				expect(tooltipInDom()).toBeNull()
+			})
+		)
+
+		it('should not show on focus following a pointer press', fakeAsync(() => {
+			pressTab()
+			document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+			const el = focusTarget('t-button')
+			el.focus()
+			el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+			tick(500)
+
+			expect(tooltipInDom()).toBeNull()
+		}))
+
+		it('should merge with existing aria-describedby ids and restore them on hide', fakeAsync(() => {
+			const button = focusTarget('t-button')
+			keyboardFocus(button)
+			tick()
+
+			const ids = button.getAttribute('aria-describedby')?.split(' ') ?? []
+			expect(ids[0]).toBe('existing-desc')
+			expect(ids).toHaveLength(2)
+			expect(document.getElementById(ids[1])).toBeTruthy()
+
+			button.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
+			tick()
+			expect(button.getAttribute('aria-describedby')).toBe('existing-desc')
+		}))
+
+		it('should not leave a dangling aria-describedby while the tooltip is hidden', () => {
+			expect(focusTarget('t-input').hasAttribute('aria-describedby')).toBe(false)
+		})
+
+		it('should keep the tooltip hoverable (pointer may move onto it)', fakeAsync(() => {
+			keyboardFocus(focusTarget('t-button'))
+			tick()
+
+			expect(tooltipInDom()?.style.pointerEvents).toBe('unset')
 		}))
 	})
 

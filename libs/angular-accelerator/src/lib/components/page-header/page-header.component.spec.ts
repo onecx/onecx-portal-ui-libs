@@ -857,4 +857,30 @@ describe('PageHeaderComponent', () => {
       expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
     })
   })
+
+  describe('disabled action reason', () => {
+    it('should make the wrapper of a disabled action with a reason keyboard-focusable', async () => {
+      fixture.componentRef.setInput('actions', [
+        {
+          id: 'd1',
+          icon: 'pi pi-lock',
+          title: 'Edit',
+          disabledTooltip: 'No permission',
+          disabled: true,
+          show: 'always',
+          actionCallback: () => undefined,
+        },
+        { id: 'e1', icon: 'pi pi-lock', title: 'Enabled', show: 'always', actionCallback: () => undefined },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      const wrappers: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.toolbar > span'))
+      expect(wrappers[0].getAttribute('tabindex')).toBe('0')
+      expect(wrappers[0].getAttribute('aria-disabled')).toBe('true')
+      expect(wrappers[0].getAttribute('aria-label')).toBe('Edit')
+      expect(wrappers[1].hasAttribute('tabindex')).toBe(false)
+      expect(wrappers[1].hasAttribute('aria-disabled')).toBe(false)
+    })
+  })
 })
