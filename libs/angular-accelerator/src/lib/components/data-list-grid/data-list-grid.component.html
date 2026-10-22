@@ -60,7 +60,11 @@
       </div>
       <div class="flex flex-row justify-between items-center">
         <div class="data-grid-items flex-row">
-          <div class="item-name font-medium mr-3 text-2xl" role="heading" [attr.aria-level]="itemTitleLevel()">
+          <div
+            class="item-name font-medium mr-3 text-2xl"
+            [attr.role]="titleLineId() ? 'heading' : null"
+            [attr.aria-level]="titleLineId() ? itemTitleLevel() : null"
+          >
             @if (hasViewPermission$ | async; as hasViewPermission) {
             <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId()) || '' }}</a>
             } @else {

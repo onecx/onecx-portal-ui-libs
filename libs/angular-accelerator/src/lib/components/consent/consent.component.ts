@@ -85,7 +85,6 @@ export class ConsentComponent {
    */
   purpose = input<string | undefined>(undefined)
 
-  /** Translation key for the consent dialog title. */
   /**
    * Heading level (1-6) of the consent title. Defaults to 2 as the page header renders the level 1 heading.
    */
@@ -93,6 +92,7 @@ export class ConsentComponent {
 
   protected readonly headingLevel = computed(() => normalizeHeadingLevel(this.titleHeadingLevel()))
 
+  /** Translation key for the consent dialog title. */
   titleKey = input<string>('OCX_CONSENT.TITLE')
   /** Translation key for the consent dialog message (receives `{ url }`). */
   messageKey = input<string>('OCX_CONSENT.MESSAGE')

@@ -99,6 +99,8 @@ export class InteractiveDataViewComponent implements OnInit {
   tableAllowSelectAll = input<boolean>(true)
   name = input<string>('Data')
   titleLineId = input<string | undefined>(undefined)
+  /** Heading level (1-6) of the item titles. Defaults to 2. */
+  itemTitleHeadingLevel = input<number>(2)
   subtitleLineIds = input<string[] | undefined>(undefined)
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
   draggableColumnGroupSelectorDialog = input<boolean>(true)

@@ -60,6 +60,7 @@ The component supports two projection areas:
 | `url` | `string` | - | *Required.* Target URL that the gated content will contact (used for display and consent matching).
 | `purpose` | `string \| undefined` | - | Optional scope for consent (e.g. `maps`, `analytics`). When set, consent is stored/matched as `<url>::<purpose>`.
 | `titleKey` | `string` | `OCX_CONSENT.TITLE` | Translation key for the consent title.
+| `titleHeadingLevel` | `number` | `2` | Heading level (1-6, `aria-level`) of the consent title. The page header renders the level 1 heading, so the default is 2.
 | `messageKey` | `string` | `OCX_CONSENT.MESSAGE` | Translation key for the consent message (receives `{ url }`).
 | `agreeKey` | `string` | `OCX_CONSENT.AGREE` | Translation key for the agree button.
 | `withdrawKey` | `string` | `OCX_CONSENT.WITHDRAW` | Translation key for the withdraw button.

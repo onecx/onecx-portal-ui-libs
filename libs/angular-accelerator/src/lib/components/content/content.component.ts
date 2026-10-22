@@ -13,12 +13,12 @@ export class OcxContentComponent {
   title = input<string>('')
 
   /**
-   * Optionally allows specifying styles for the content card
-   */
-  /**
    * Heading level (1-6) of the title. Defaults to 2 as the page header renders the level 1 heading.
    */
   titleHeadingLevel = input<number>(2)
 
+  /**
+   * Optionally allows specifying styles for the content card
+   */
   styleClass = input<string | undefined>(undefined)
 }

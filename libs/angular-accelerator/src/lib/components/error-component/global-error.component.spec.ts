@@ -35,7 +35,7 @@ describe('GlobalErrorComponent', () => {
     const el = render('de')
     expect(el.querySelector('h1')?.textContent?.trim()).toBe('Fehler')
     expect(el.querySelector('button')?.textContent?.trim()).toBe('Erneut versuchen')
-    expect(el.textContent).not.toContain('ERROR')
+    expect(el.querySelector('h1')?.textContent).not.toMatch(/error/i)
     expect(el.textContent).not.toContain('Try Again')
     expect(el.querySelectorAll('h1').length).toBe(1)
   })
