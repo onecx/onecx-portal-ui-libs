@@ -198,7 +198,12 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
-export type DialogInitiator = 'initiator' | 'default'
+/**
+ * Controls where focus goes when a dialog closes.
+ * - `'initiator'` and `'default'` (also when unset): focus returns to `initiatorRef` or, if not provided, to the element that was focused when the dialog was opened.
+ * - `'none'`: focus is not moved, the caller takes care of it.
+ */
+export type DialogInitiator = 'initiator' | 'default' | 'none'
 
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
@@ -474,6 +479,16 @@ export class PortalDialogService implements OnDestroy {
       : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
+    const focusOnShow = dialogOptions.focusOnShow ?? true
+    // Message-only dialogs have nothing to focus in the content: focus Cancel (or the only button) unless a button is requested explicitly
+    const autoFocusButton =
+      dialogOptions.autoFocusButton ??
+      (focusOnShow && componentToRender.type === DialogMessageContentComponent
+        ? secondaryButtonTranslationKeyOrDetails !== undefined
+          ? 'secondary'
+          : 'primary'
+        : undefined)
+    const openerElement = this.getOpenerElement(dialogOptions)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
       config: {
@@ -483,7 +498,7 @@ export class PortalDialogService implements OnDestroy {
         customButtons: dialogOptions.customButtons?.map(
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
-        autoFocusButton: dialogOptions.autoFocusButton,
+        autoFocusButton,
         autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
@@ -506,7 +521,9 @@ export class PortalDialogService implements OnDestroy {
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
-          focusOnShow: false,
+          // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
+          // Must stay after the spread, but derive from the caller's value so that an explicit `false` is respected.
+          focusOnShow: focusOnShow && !autoFocusButton,
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
@@ -524,13 +541,7 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose.pipe(
-          tap(() => {
-            if (isObject) {
-              this.setFocusOnInitiator(extrasOrShowXButton)
-            }
-          })
-        )
+        return dialogRef.onClose.pipe(tap(() => this.restoreFocus(dialogOptions, openerElement)))
       })
     )
   }
@@ -593,10 +604,7 @@ export class PortalDialogService implements OnDestroy {
 
   private buttonDetailsOrTranslationKey(
     buttonTranslationKeyOrDetails:
-      | TranslationKey
-      | ButtonDialogButtonDetails
-      | ButtonDialogCustomButtonDetails
-      | undefined
+      TranslationKey | ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined
   ): ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined {
     if (buttonTranslationKeyOrDetails === undefined) {
       return undefined
@@ -661,15 +669,25 @@ export class PortalDialogService implements OnDestroy {
     return obj instanceof Type
   }
 
-  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
-    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
-    if (hasOnCloseFocus) return
+  private getOpenerElement(dialogOptions: PortalDialogConfig): HTMLElement | undefined {
+    if (dialogOptions.initiatorRef) return dialogOptions.initiatorRef
+    if (typeof document === 'undefined') return undefined
+    const active = document.activeElement
+    return active instanceof HTMLElement && active !== document.body ? active : undefined
+  }
 
-    const initiator = dialogOptions.initiatorRef
-    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+  private restoreFocus(dialogOptions: PortalDialogConfig, opener: HTMLElement | undefined) {
+    if (dialogOptions.onCloseFocus === 'none' || typeof document === 'undefined') return
+
+    if (opener && document.contains(opener)) {
+      opener.focus()
       return
-    else {
-      initiator.focus()
+    }
+    // Opener is gone (e.g. removed from the DOM): fall back to the main landmark so focus does not get lost
+    const main = document.querySelector<HTMLElement>('main, [role="main"]')
+    if (main) {
+      if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1')
+      main.focus()
     }
   }
 
