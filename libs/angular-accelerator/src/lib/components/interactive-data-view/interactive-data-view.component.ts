@@ -92,6 +92,19 @@ export class InteractiveDataViewComponent implements OnInit {
   tableSelectionEnabledField = input<string | undefined>(undefined)
   tableAllowSelectAll = input<boolean>(true)
   draggableColumnGroupSelectorDialog = input<boolean>(true)
+
+  /**
+   * Controls whether the hosted column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  resizableColumnGroupSelectorDialog = input<boolean>(false)
+
+  /**
+   * When enabled, the hosted column selector keeps the active columns in the main column order
+   * after a transfer instead of appending to the target.
+   */
+  restoreColumnGroupSelectorOrder = input<boolean>(false)
+
   name = input<string>('Data')
   titleLineId = input<string | undefined>(undefined)
   subtitleLineIds = input<string[] | undefined>(undefined)
