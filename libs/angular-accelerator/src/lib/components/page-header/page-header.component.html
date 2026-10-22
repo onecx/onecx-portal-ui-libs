@@ -14,7 +14,7 @@
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           @if (figureImage && !figureImageLoadError) {
-          <img [ocxSrc]="figureImage" alt="Figure" class="w-full border-round-sm" (error)="handleImageError()" />
+          <img [ocxSrc]="figureImage" alt="" class="w-full border-round-sm" (error)="handleImageError()" />
           }
         </div>
         @if (previewImage.children.length === 0 || figureImageLoadError) {
@@ -26,7 +26,7 @@
         @if (!!header) {
         <h1 id="page-header">{{ header }}</h1>
         } @if (!!subheader) {
-        <div id="page-subheader" role="note" [attr.aria-label]="'OCX_PAGE_HEADER.SUBHEADER' | translate">
+        <div id="page-subheader">
           {{ subheader }}
         </div>
         }
@@ -60,7 +60,7 @@
             class="action-button p-button no-underline"
             [ngClass]="action.btnClass"
             [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
-            [attr.aria-label]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+            [attr.aria-label]="getInlineActionAriaLabel(action)"
           >
             @if (action.icon) {
             <i class="p-button-icon" [ngClass]="action.icon"></i>
@@ -80,7 +80,7 @@
             [disabled]="action.disabled ? action.disabled : false"
             [attr.data-testid]="action.icon ? 'ocx-page-header-inline-action-icon-button' : 'ocx-page-header-inline-action-button'"
             [label]="action.labelKey ? (action.labelKey | translate) : action.label"
-            [ariaLabel]=" (action.ariaLabelKey ? (action.ariaLabelKey | translate) : action.ariaLabel) || (action.titleKey ? (action.titleKey | translate) : action.title) || (action.labelKey ? (action.labelKey | translate) : action.label)"
+            [ariaLabel]="getInlineActionAriaLabel(action)"
           ></p-button>
           }
         </span>
@@ -159,13 +159,15 @@
           >
             @if (item.icon) {
             <i [class]="item.icon + ' ' + (item.iconStyleClass ?? '')" name="object-detail-icon" aria-hidden="true"></i>
-            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}}
+            } {{ item.value | dynamicPipe:item.valuePipe:item.valuePipeArgs}} @if (item.icon && !item.value) {
+            <span class="sr-only">{{ getIconOnlyDetailText(item) }}</span>
+            }
           </span>
           @if (item.actionItemIcon && item.actionItemCallback) {
           <p-button
             [icon]="item.actionItemIcon"
-            styleClass="p-button-text p-0 w-full"
-            [ariaLabel]="item.actionItemAriaLabelKey ? ((typeof item.actionItemAriaLabelKey === 'string' ? item.actionItemAriaLabelKey : item.actionItemAriaLabelKey.key) | translate : (typeof item.actionItemAriaLabelKey === 'object' ? item.actionItemAriaLabelKey.parameters : undefined)) : 'button for ' + item.actionItemIcon"
+            styleClass="p-button-text p-0 w-full object-info-action-button"
+            [ariaLabel]="getActionItemAriaLabel(item)"
             [ocxTooltip]="item.actionItemTooltipKey ? ((typeof item.actionItemTooltipKey === 'string' ? item.actionItemTooltipKey : item.actionItemTooltipKey.key) | translate : (typeof item.actionItemTooltipKey === 'object' ? item.actionItemTooltipKey.parameters : undefined)) : ''"
             tooltipPosition="top"
             tooltipEvent="hover"
