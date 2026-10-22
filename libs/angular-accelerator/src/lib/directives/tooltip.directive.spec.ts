@@ -77,7 +77,8 @@ const pressTab = () => document.dispatchEvent(new KeyboardEvent('keydown', { key
     <input id="t-input" class="t-host" [ocxTooltip]="text" />
     <span id="t-span" class="t-host" tabindex="0" [ocxTooltip]="text">S</span>
     <button id="t-icon-btn" type="button"><i id="t-icon" class="pi pi-check t-host" [ocxTooltip]="text"></i></button>
-    <table><tr><td id="t-cell" class="t-host" [ocxTooltip]="text"><a id="t-cell-link" href="#x">link</a></td></tr></table>
+    <table><tr><td id="t-cell" class="t-host" [ocxTooltip]="text"><a id="t-cell-first" href="#a">first</a> <a id="t-cell-link" href="#x">link</a></td></tr></table>
+    <div id="t-anc" tabindex="0"><i id="t-ic1" [ocxTooltip]="'One'"></i><i id="t-ic2" [ocxTooltip]="'Two'"></i></div>
     <span id="t-wrapper" class="t-host" [ocxTooltip]="text"><button id="t-wrapped" type="button">W</button></span>
   `
 })
@@ -384,6 +385,54 @@ describe('OcxTooltip', () => {
 		it('should not leave a dangling aria-describedby while the tooltip is hidden', () => {
 			expect(focusTarget('t-input').hasAttribute('aria-describedby')).toBe(false)
 		})
+
+		it('should only show the tooltip of an icon when its focusable ancestor itself is focused', fakeAsync(() => {
+			const anc = focusTarget('t-anc')
+			keyboardFocus(anc)
+			tick()
+			const texts = Array.from(document.querySelectorAll('.p-tooltip-text')).map((e) => e.textContent)
+			expect(texts.sort()).toEqual(['One', 'Two'])
+			expect(anc.getAttribute('aria-describedby')?.split(' ')).toHaveLength(2)
+		}))
+
+		it('should not show a host tooltip for focus on an unrelated element nested in a decorative ancestor', fakeAsync(() => {
+			const anc = focusTarget('t-anc')
+			const inner = document.createElement('button')
+			anc.appendChild(inner)
+			keyboardFocus(inner)
+			tick()
+			expect(tooltipInDom()).toBeNull()
+		}))
+
+		it('should describe the focused element, not the first focusable descendant', fakeAsync(() => {
+			const second = focusTarget('t-cell-link')
+			keyboardFocus(second)
+			tick()
+			expect(second.getAttribute('aria-describedby')).toContain('tooltip')
+			expect(focusTarget('t-cell-first').hasAttribute('aria-describedby')).toBe(false)
+		}))
+
+		it('should remove focus listeners and the description on destroy', fakeAsync(() => {
+			const button = focusTarget('t-button')
+			keyboardFocus(button)
+			tick()
+			tFixture.destroy()
+			expect(button.getAttribute('aria-describedby')).toBe('existing-desc')
+			keyboardFocus(button)
+			tick()
+			expect(tooltipInDom()).toBeNull()
+		}))
+
+		it('should stay open when the pointer moves from the host onto the tooltip', fakeAsync(() => {
+			const button = focusTarget('t-button')
+			button.dispatchEvent(new MouseEvent('mouseenter'))
+			tick()
+			const tooltip = tooltipInDom() as HTMLElement
+			expect(tooltip).toBeTruthy()
+			button.dispatchEvent(new MouseEvent('mouseleave', { relatedTarget: tooltip }))
+			tick(500)
+			expect(tooltipInDom()).toBeTruthy()
+		}))
 
 		it('should keep the tooltip hoverable (pointer may move onto it)', fakeAsync(() => {
 			keyboardFocus(focusTarget('t-button'))

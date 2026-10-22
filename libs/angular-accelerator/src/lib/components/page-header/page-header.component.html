@@ -57,10 +57,10 @@
           [ocxTooltip]="action.disabled ? (action.disabledTooltipKey ? (action.disabledTooltipKey | translate) : action.disabledTooltip) : (action.titleKey ? (action.titleKey | translate) : action.title)"
           tooltipPosition="top"
           tooltipEvent="hover"
-          [attr.tabindex]="action.disabled && (action.disabledTooltipKey || action.disabledTooltip) ? 0 : null"
-          [attr.role]="action.disabled && (action.disabledTooltipKey || action.disabledTooltip) ? 'button' : null"
-          [attr.aria-disabled]="action.disabled && (action.disabledTooltipKey || action.disabledTooltip) ? 'true' : null"
-          [attr.aria-label]="action.disabled && (action.disabledTooltipKey || action.disabledTooltip) ? getInlineActionAriaLabel(action) : null"
+          [attr.tabindex]="hasDisabledReason(action) ? 0 : null"
+          [attr.role]="hasDisabledReason(action) ? 'button' : null"
+          [attr.aria-disabled]="hasDisabledReason(action) ? 'true' : null"
+          [attr.aria-label]="hasDisabledReason(action) ? getInlineActionAriaLabel(action) : null"
         >
           @if (typeof action.routerLink === 'string' && !action.disabled) {
           <a

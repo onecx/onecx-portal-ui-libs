@@ -255,6 +255,11 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     return translated || undefined
   }
 
+  /** A disabled action that explains why; its wrapper is made keyboard-focusable to expose the reason. */
+  hasDisabledReason(action: Action): boolean {
+    return !!action.disabled && !!(action.disabledTooltipKey || action.disabledTooltip)
+  }
+
   /**
    * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
    * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.

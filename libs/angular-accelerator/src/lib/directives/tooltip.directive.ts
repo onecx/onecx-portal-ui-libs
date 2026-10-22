@@ -31,7 +31,13 @@ function registerKeyboardTracking(): void {
   document.addEventListener('mousedown', () => (lastKeyboardNavigation = 0), true)
 }
 
-function isKeyboardFocus(): boolean {
+function isKeyboardFocus(focused: HTMLElement): boolean {
+  // :focus-visible rules out pointer focus; a recent navigation key rules out programmatic focus (e.g. dialog restore)
+  try {
+    if (!focused.matches(':focus-visible')) return false
+  } catch {
+    // :focus-visible unsupported (e.g. older DOM implementations), rely on the key heuristic
+  }
   return lastKeyboardNavigation > 0 && Date.now() - lastKeyboardNavigation <= KEYBOARD_FOCUS_WINDOW_MS
 }
 
@@ -42,9 +48,10 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
 
   private generatedId: string | undefined
   private resolvedId: string | undefined
-  private removeEscapeKeyListener: (() => void) | undefined
   private focusCleanups: (() => void)[] = []
   private describedTarget: HTMLElement | undefined
+  private focusedElement: HTMLElement | undefined
+  private autoHideExplicit = false
   
   constructor() {
     const zone = inject(NgZone)
@@ -78,15 +85,18 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     if (typeof document === 'undefined') return
     registerKeyboardTracking()
     const host = this.el.nativeElement as HTMLElement
-    const targets = new Set<HTMLElement>([host])
-    const ancestor = this.getFocusTarget()
-    if (ancestor && !host.contains(ancestor)) targets.add(ancestor)
-    for (const target of targets) {
-      const onFocusIn = () => {
-        if (isKeyboardFocus()) this.activate()
+    const hostIsFocusable = this.hasFocusableInside(host)
+    const ancestor = hostIsFocusable ? null : this.getFocusableAncestor()
+    const listen = (target: HTMLElement, accepts: (focused: HTMLElement) => boolean) => {
+      const onFocusIn = (event: FocusEvent) => {
+        const focused = event.target as HTMLElement
+        if (!accepts(focused) || !isKeyboardFocus(focused)) return
+        this.focusedElement = focused
+        this.activate()
       }
       const onFocusOut = (event: FocusEvent) => {
-        if (event.relatedTarget instanceof Node && target.contains(event.relatedTarget)) return
+        if (event.target !== this.focusedElement) return
+        this.focusedElement = undefined
         this.deactivate()
       }
       target.addEventListener('focusin', onFocusIn)
@@ -96,20 +106,30 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
         target.removeEventListener('focusout', onFocusOut)
       })
     }
+    if (hostIsFocusable) listen(host, (focused) => focused.matches?.(FOCUSABLE_SELECTOR) ?? false)
+    // a decorative host (e.g. an icon) is described through the focusable ancestor it sits in; only that element itself counts
+    if (ancestor) listen(ancestor, (focused) => focused === ancestor)
   }
 
-  /**
-   * The element keyboard users actually focus: the host itself, a focusable descendant
-   * (e.g. the button inside p-button) or, for decorative hosts such as an icon, the closest focusable ancestor.
-   */
-  private getFocusTarget(): HTMLElement | null {
+  private hasFocusableInside(host: HTMLElement): boolean {
+    return !!host.matches?.(FOCUSABLE_SELECTOR) || !!host.querySelector(FOCUSABLE_SELECTOR)
+  }
+
+  private getFocusableAncestor(): HTMLElement | null {
+    return (this.el.nativeElement as HTMLElement).parentElement?.closest<HTMLElement>(FOCUSABLE_SELECTOR) ?? null
+  }
+
+  /** The element that carries the description: the focused element, else the host, a focusable descendant or ancestor. */
+  private getDescriptionTarget(): HTMLElement | null {
+    if (this.focusedElement) return this.focusedElement
     const host = this.el.nativeElement as HTMLElement
     if (host.matches?.(FOCUSABLE_SELECTOR)) return host
-    return host.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? host.parentElement?.closest<HTMLElement>(FOCUSABLE_SELECTOR) ?? null
+    return host.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? this.getFocusableAncestor()
   }
 
   private addDescription(): void {
-    const target = this.getFocusTarget()
+    this.removeDescription()
+    const target = this.getDescriptionTarget()
     if (!target || !this.resolvedId) return
     const ids = (target.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean)
     if (!ids.includes(this.resolvedId)) ids.push(this.resolvedId)
@@ -127,6 +147,9 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   }
 
   override ngOnChanges(simpleChange: SimpleChanges): void {
+    if (simpleChange['autoHide'] || simpleChange['tooltipOptions']?.currentValue?.autoHide !== undefined) {
+      this.autoHideExplicit = true
+    }
     super.ngOnChanges(simpleChange)
     this.ensureIdAndAriaDescribedBy()
   }
@@ -134,7 +157,6 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   override create(): void {
     super.create()
     this.applyIdToContainer()
-    this.setEscapeKeyListener()
   }
 
   override show(): void {
@@ -148,10 +170,6 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
 
   override hide(): void {
     this.removeDescription()
-    if (this.removeEscapeKeyListener) {
-      this.removeEscapeKeyListener()
-      this.removeEscapeKeyListener = undefined
-    }
     super.hide()
   }
 
@@ -167,7 +185,10 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
       }
     }
 
-    this.setOption({ id: resolvedId, tooltipEvent: 'both', autoHide: false })
+    // keep the tooltip hoverable (WCAG 1.4.13) unless the consumer explicitly chose autoHide
+    this.setOption(
+      this.autoHideExplicit ? { id: resolvedId, tooltipEvent: 'both' } : { id: resolvedId, tooltipEvent: 'both', autoHide: false }
+    )
   }
 
   private normalizeId(id: string | undefined | null): string | null {
@@ -199,22 +220,10 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     return Array.from(buffer, (value) => value.toString(36)).join('')
   }
 
-  private setEscapeKeyListener(): void {
-    if (!this.container || this.removeEscapeKeyListener) return
-    this.removeEscapeKeyListener = this.renderer.listen(this.container, 'keydown', (event: KeyboardEvent) => {
-      if (!(event.key === 'Escape' || event.key === 'Esc')) return
-      this.hide()
-    })
-  }
-
   override ngOnDestroy(): void {
     this.removeDescription()
     this.focusCleanups.forEach((cleanup) => cleanup())
     this.focusCleanups = []
-    if (this.removeEscapeKeyListener) {
-      this.removeEscapeKeyListener()
-      this.removeEscapeKeyListener = undefined
-    }
     super.ngOnDestroy()
   }
 }
