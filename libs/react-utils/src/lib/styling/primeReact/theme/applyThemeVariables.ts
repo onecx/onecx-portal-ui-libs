@@ -1,4 +1,5 @@
 import { createLogger } from '../../../utils/logger.utils'
+import { resolveFocusRingColor } from './focus-ring'
 
 const logger = createLogger('applyThemeVariables')
 
@@ -51,6 +52,15 @@ function mapThemeToCSSVariables(themeProperties: Record<string, Record<string, u
     const normalizedKey = toKebabCase(key).replace(/^app-?/, '')
     const cssVarName = `--app-${normalizedKey}`
     cssVariables[cssVarName] = value
+  }
+
+  // Opaque focus ring colour with at least 3:1 contrast (WCAG 1.4.11); a theme may set --app-focus-ring-color itself
+  if (!cssVariables['--app-focus-ring-color']) {
+    cssVariables['--app-focus-ring-color'] = resolveFocusRingColor({
+      primaryColor: cssVariables['--app-primary-color'],
+      surfaceColor: cssVariables['--app-content-bg-color'],
+      bodyBgColor: cssVariables['--app-body-bg-color'],
+    })
   }
 
   return cssVariables

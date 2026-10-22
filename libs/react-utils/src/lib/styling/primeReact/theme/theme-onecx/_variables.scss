@@ -1,16 +1,16 @@
 $colors: (
-  "blue": #3b82f6,
-  "green": #22c55e,
-  "yellow": #eab308,
-  "cyan": #06b6d4,
-  "pink": #ec4899,
-  "indigo": #6366f1,
-  "teal": #14b8a6,
-  "orange": #f97316,
-  "bluegray": #64748b,
-  "purple": #a855f7,
-  "red": #ff3d32,
-  "primary": $primaryColor,
+  'blue': #3b82f6,
+  'green': #22c55e,
+  'yellow': #eab308,
+  'cyan': #06b6d4,
+  'pink': #ec4899,
+  'indigo': #6366f1,
+  'teal': #14b8a6,
+  'orange': #f97316,
+  'bluegray': #64748b,
+  'purple': #a855f7,
+  'red': #ff3d32,
+  'primary': $primaryColor,
 );
 
 //reused color variables
@@ -26,7 +26,7 @@ $shade800: #374151 !default; //unused
 $shade900: #1f2937 !default; //unused
 
 //global
-$fontFamily: "Inter var", sans-serif !default;
+$fontFamily: 'Inter var', sans-serif !default;
 $fontSize: 1rem !default;
 $fontWeight: normal !default;
 $textColor: var(--app-text-color) !default;
@@ -56,10 +56,16 @@ $scaleSM: 0.875 !default;
 $scaleLG: 1.25 !default;
 
 //focus
-$focusOutlineColor: $primaryLightColor !default;
-$focusOutline: 0 none !default;
-$focusOutlineOffset: 0 !default;
-$focusShadow: 0 0 0 0.2rem $focusOutlineColor !default;
+// INFO: Opaque ring colour with at least 3:1 contrast (WCAG 1.4.11). --app-focus-ring-color is derived from the theme
+// primary colour at runtime (see focus-ring.ts / applyThemeVariables), the fallback is #274b5f (9:1 on white).
+// The ring is an outline, so it survives forced-colors mode. Do not add a box-shadow based ring only.
+$focusOutlineColor: var(--app-focus-ring-color, #274b5f) !default;
+$focusOutlineWidth: 2px !default;
+$focusOutline: $focusOutlineWidth solid $focusOutlineColor !default;
+$focusOutlineOffset: 2px !default;
+// ring drawn inside the element (list items, table rows and cells, tabs)
+$focusOutlineInsetOffset: -2px !default;
+$focusShadow: none !default;
 
 //action icons
 $actionIconWidth: 2rem !default;
@@ -79,7 +85,8 @@ $inputTextFontSize: 1rem !default;
 $inputBg: $shade000 !default;
 $inputTextColor: $shade700 !default;
 $inputIconColor: $shade600 !default;
-$inputBorder: 1px solid $shade400 !default;
+// INFO: $shade600 has 4.8:1 against white (WCAG 1.4.11 requires 3:1 for input borders)
+$inputBorder: 1px solid $shade600 !default;
 $inputHoverBorderColor: $primaryColor !default;
 $inputFocusBorderColor: $primaryColor !default;
 $inputErrorBorderColor: $errorColor !default;
@@ -108,7 +115,7 @@ $inputListItemTextHoverColor: $shade700 !default;
 $inputListItemBorder: 0 none !default;
 $inputListItemBorderRadius: 0 !default;
 $inputListItemMargin: 0 !default;
-$inputListItemFocusShadow: inset 0 0 0 0.15rem $focusOutlineColor !default;
+$inputListItemFocusShadow: none !default;
 $inputListHeaderPadding: 0.75rem 1.25rem !default;
 $inputListHeaderMargin: 0 !default;
 $inputListHeaderBg: $shade100 !default;
@@ -162,7 +169,7 @@ $secondaryButtonHoverBorderColor: #475569 !default;
 $secondaryButtonActiveBg: #334155 !default;
 $secondaryButtonTextActiveColor: $secondaryButtonTextColor !default;
 $secondaryButtonActiveBorderColor: #334155 !default;
-$secondaryButtonFocusShadow: 0 0 0 0.2rem #e2e8f0 !default;
+$secondaryButtonFocusShadow: none !default;
 
 $infoButtonBg: #0ea5e9 !default;
 $infoButtonTextColor: #ffffff !default;
@@ -173,7 +180,7 @@ $infoButtonHoverBorderColor: #0284c7 !default;
 $infoButtonActiveBg: #0369a1 !default;
 $infoButtonTextActiveColor: $infoButtonTextColor !default;
 $infoButtonActiveBorderColor: #0369a1 !default;
-$infoButtonFocusShadow: 0 0 0 0.2rem #bfdbfe !default;
+$infoButtonFocusShadow: none !default;
 
 $successButtonBg: #22c55e !default;
 $successButtonTextColor: #ffffff !default;
@@ -184,7 +191,7 @@ $successButtonHoverBorderColor: #16a34a !default;
 $successButtonActiveBg: #15803d !default;
 $successButtonTextActiveColor: $successButtonTextColor !default;
 $successButtonActiveBorderColor: #15803d !default;
-$successButtonFocusShadow: 0 0 0 0.2rem #bbf7d0 !default;
+$successButtonFocusShadow: none !default;
 
 $warningButtonBg: #f97316 !default;
 $warningButtonTextColor: #ffffff !default;
@@ -195,7 +202,7 @@ $warningButtonHoverBorderColor: #ea580c !default;
 $warningButtonActiveBg: #c2410c !default;
 $warningButtonTextActiveColor: $warningButtonTextColor !default;
 $warningButtonActiveBorderColor: #c2410c !default;
-$warningButtonFocusShadow: 0 0 0 0.2rem #fde68a !default;
+$warningButtonFocusShadow: none !default;
 
 $helpButtonBg: #a855f7 !default;
 $helpButtonTextColor: #ffffff !default;
@@ -206,7 +213,7 @@ $helpButtonHoverBorderColor: #9333ea !default;
 $helpButtonActiveBg: #7e22ce !default;
 $helpButtonTextActiveColor: $helpButtonTextColor !default;
 $helpButtonActiveBorderColor: #7e22ce !default;
-$helpButtonFocusShadow: 0 0 0 0.2rem #e9d5ff !default;
+$helpButtonFocusShadow: none !default;
 
 $dangerButtonBg: var(--app-danger-button-bg) !default;
 $dangerButtonTextColor: #ffffff !default;
@@ -217,7 +224,7 @@ $dangerButtonHoverBorderColor: #dc2626 !default;
 $dangerButtonActiveBg: #b91c1c !default;
 $dangerButtonTextActiveColor: $dangerButtonTextColor !default;
 $dangerButtonActiveBorderColor: #b91c1c !default;
-$dangerButtonFocusShadow: 0 0 0 0.2rem #fecaca !default;
+$dangerButtonFocusShadow: none !default;
 
 $contrastButtonBg: $shade900 !default;
 $contrastButtonTextColor: #ffffff !default;
@@ -233,12 +240,12 @@ $contrastButtonFocusShadow: none !default;
 $linkButtonColor: $primaryDarkerColor !default;
 $linkButtonHoverColor: $primaryDarkerColor !default;
 $linkButtonTextHoverDecoration: underline !default;
-$linkButtonFocusShadow: 0 0 0 0.2rem $focusOutlineColor !default;
+$linkButtonFocusShadow: none !default;
 
 //checkbox
 $checkboxWidth: 22px !default;
 $checkboxHeight: 22px !default;
-$checkboxBorder: 2px solid $shade400 !default;
+$checkboxBorder: 2px solid $shade600 !default;
 $checkboxIconFontSize: 14px !default;
 $checkboxActiveBorderColor: $primaryColor !default;
 $checkboxActiveBg: $primaryColor !default;
@@ -250,7 +257,7 @@ $checkboxActiveHoverBorderColor: $primaryDarkerColor !default;
 //radiobutton
 $radiobuttonWidth: 22px !default;
 $radiobuttonHeight: 22px !default;
-$radiobuttonBorder: 2px solid $shade400 !default;
+$radiobuttonBorder: 2px solid $shade600 !default;
 $radiobuttonIconSize: 12px !default;
 $radiobuttonActiveBorderColor: $primaryColor !default;
 $radiobuttonActiveBg: $primaryColor !default;
@@ -268,11 +275,11 @@ $colorPickerHandleColor: $shade000 !default;
 
 //togglebutton
 $toggleButtonBg: $inputBg !default;
-$toggleButtonBorder: 1px solid $shade400 !default;
+$toggleButtonBorder: 1px solid $shade600 !default;
 $toggleButtonTextColor: $shade700 !default;
 $toggleButtonIconColor: $shade600 !default;
 $toggleButtonHoverBg: $shade200 !default;
-$toggleButtonHoverBorderColor: $shade400 !default;
+$toggleButtonHoverBorderColor: $shade600 !default;
 $toggleButtonTextHoverColor: $shade700 !default;
 $toggleButtonIconHoverColor: $shade800 !default;
 $toggleButtonActiveBg: $primaryColor !default;
@@ -355,7 +362,7 @@ $inputSwitchHandleWidth: 1.25rem !default;
 $inputSwitchHandleHeight: 1.25rem !default;
 $inputSwitchHandleBorderRadius: 50% !default;
 $inputSwitchSliderPadding: 0.25rem !default;
-$inputSwitchSliderOffBg: $shade400 !default;
+$inputSwitchSliderOffBg: $shade600 !default;
 $inputSwitchHandleOffBg: $shade000 !default;
 $inputSwitchSliderOffHoverBg: #b7bcc5 !default;
 $inputSwitchSliderOnBg: $primaryColor !default;
@@ -864,11 +871,11 @@ $imagePreviewActionIconFontSize: 1.5rem !default;
 $imagePreviewActionIconBorderRadius: 50% !default;
 
 :root {
-  font-family: "Inter var", sans-serif;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: 'Inter var', sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   font-variation-settings: normal;
-  --font-family: "Inter var", sans-serif;
-  --font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  --font-family: 'Inter var', sans-serif;
+  --font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   --surface-a: #{$shade000};
   --surface-b: #{$shade100};
   --surface-c: #{$shade200};

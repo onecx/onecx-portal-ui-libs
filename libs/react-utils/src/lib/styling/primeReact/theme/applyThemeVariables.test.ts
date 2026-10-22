@@ -195,4 +195,30 @@ describe('applyThemeVariables', () => {
     expect(mockLogger.warn).toHaveBeenCalledTimes(1)
     expect(mockLogger.warn.mock.calls[0]?.[0]).toContain('Style element with data-app-styles')
   })
+
+  it('derives an opaque --app-focus-ring-color with at least 3:1 contrast from the primary colour', () => {
+    const root = document.createElement('div')
+    root.setAttribute('data-style-id', 'ring')
+    document.body.appendChild(root)
+
+    applyThemeVariables({ properties: { colors: { appPrimaryColor: '#ffeb3b' } } }, 'ring')
+
+    const ring = root.style.getPropertyValue('--app-focus-ring-color')
+    expect(ring).toMatch(/^#[0-9a-f]{6}$/)
+    expect(ring).not.toBe('#ffeb3b')
+    expect(root.style.getPropertyValue('--focus-ring-color')).toBe(ring)
+  })
+
+  it('does not override a focus ring colour provided by the theme', () => {
+    const root = document.createElement('div')
+    root.setAttribute('data-style-id', 'ring2')
+    document.body.appendChild(root)
+
+    applyThemeVariables(
+      { properties: { colors: { appPrimaryColor: '#ffeb3b', appFocusRingColor: '#000000' } } },
+      'ring2'
+    )
+
+    expect(root.style.getPropertyValue('--app-focus-ring-color')).toBe('#000000')
+  })
 })

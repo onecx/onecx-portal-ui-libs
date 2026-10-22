@@ -1,4 +1,4 @@
-@use "sass:math";
+@use 'sass:math';
 
 // core
 .p-chips {
@@ -73,6 +73,7 @@
       border-radius: $chipBorderRadius;
 
       &.p-focus {
+        @include focused-listitem();
         background: $chipFocusBg;
         color: $chipFocusTextColor;
       }

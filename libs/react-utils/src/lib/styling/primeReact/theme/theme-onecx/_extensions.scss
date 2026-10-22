@@ -1,8 +1,9 @@
-@mixin focused-ring($ring-color) {
-  box-shadow:
-    0 0 0 2px #ffffff,
-    0 0 0 4px $ring-color,
-    0 1px 2px 0 rgba(0, 0, 0, 1);
+// INFO: The ring is an outline (survives forced-colors mode, opaque colour with 3:1 contrast). The colour of the
+// button is not used for the ring anymore, the parameter is kept for compatibility.
+@mixin focused-ring($ring-color: null) {
+  outline: $focusOutline;
+  outline-offset: $focusOutlineOffset;
+  box-shadow: none;
 }
 
 @layer primereact {
@@ -73,9 +74,7 @@
     }
 
     &.p-button-secondary:enabled:focus {
-      @include focused-ring(
-        color-mix(in srgb, #fff 50%, #{$secondaryButtonBg})
-      );
+      @include focused-ring(color-mix(in srgb, #fff 50%, #{$secondaryButtonBg}));
     }
 
     &.p-button-success:enabled:focus {
