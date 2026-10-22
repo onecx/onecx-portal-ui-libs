@@ -184,12 +184,15 @@ describe('PageHeaderComponent', () => {
       { label: 'Second', routerLink: '/second' },
     ])
     component.breadcrumbs$ = items$
+    await router.navigateByUrl('/second')
 
     fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
     let links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
-    expect(links.map((l) => l.attributes['aria-current'])).toEqual([undefined, 'page'])
-    expect(links.every((l) => !l.attributes['aria-label'])).toBe(true)
-    expect(links.map((l) => l.nativeElement.tagName)).toEqual(['A', 'SPAN'])
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, 'page'])
+    expect(links.every((l) => !l.nativeElement.hasAttribute('aria-label'))).toBe(true)
+    expect(links.map((l) => l.nativeElement.tagName)).toEqual(['A', 'A'])
     const home = fixture.debugElement.query(By.css('.p-breadcrumb-home-item a'))
     expect(home.attributes['aria-label']).toBeTruthy()
 
@@ -198,9 +201,12 @@ describe('PageHeaderComponent', () => {
       { label: 'Second', routerLink: '/second' },
       { label: 'Third', routerLink: '/third' },
     ])
+    await router.navigateByUrl('/third')
+    fixture.detectChanges()
+    await fixture.whenStable()
     fixture.detectChanges()
     links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
-    expect(links.map((l) => l.attributes['aria-current'])).toEqual([undefined, undefined, 'page'])
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, null, 'page'])
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {

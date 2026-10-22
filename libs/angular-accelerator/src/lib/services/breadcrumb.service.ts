@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy'
 import { TranslateService } from '@ngx-translate/core'
 import { Topic } from '@onecx/accelerator'
 import { MenuItem } from '@openng/optimus-ui/api'
-import { BehaviorSubject, filter, map, Observable } from 'rxjs'
+import { BehaviorSubject, filter, map, merge, Observable } from 'rxjs'
 import { BreadCrumbMenuItem } from '../model/breadcrumb-menu-item.model'
 
 interface ManualBreadcrumbs {
@@ -51,16 +51,15 @@ export class BreadcrumbService implements OnDestroy {
         filter((e) => e instanceof NavigationEnd)
       )
       .subscribe(() => {
-        const root = this.router.routerState.snapshot.root
-        this.lastRoot = root
-        this.generateBreadcrumbs(root)
+        this.generateBreadcrumbs(this.router.routerState.snapshot.root)
       })
-    this.translateService.onLangChange.pipe(untilDestroyed(this)).subscribe(() => {
-      this.generateBreadcrumbs(this.lastRoot ?? this.activeRoute.snapshot)
-    })
+    // translations may be loaded or merged after the route was resolved
+    merge(this.translateService.onLangChange, this.translateService.onTranslationChange)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.generateBreadcrumbs(this.router.routerState.snapshot.root)
+      })
   }
-
-  private lastRoot: ActivatedRouteSnapshot | undefined
 
   ngOnDestroy(): void {
     this._itemSource$?.destroy()

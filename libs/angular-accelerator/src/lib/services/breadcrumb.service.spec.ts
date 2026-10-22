@@ -16,13 +16,14 @@ function snapshot(data: any, url: string[], child?: any) {
 }
 
 describe('BreadcrumbService', () => {
-  const events = new Subject<any>()
+  let events: Subject<any>
   let currentRoot: any
   let service: BreadcrumbService
   let translate: TranslateService
 
   function setup(root: any) {
     currentRoot = root
+    events = new Subject<any>()
     TestBed.configureTestingModule({
       providers: [
         provideTranslateTestingService({
@@ -76,5 +77,26 @@ describe('BreadcrumbService', () => {
     events.next(new NavigationEnd(1, '/other', '/other'))
 
     expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Product'])
+  })
+
+  it('uses breadcrumbFn and translates its result', () => {
+    setup(snapshot({ breadcrumb: 'x', breadcrumbFn: () => 'PAGE' }, ['page']))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Page'])
+  })
+
+  it('keeps the label when no translation exists', () => {
+    setup(snapshot({ breadcrumb: 'Plain label' }, ['page']))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Plain label'])
+  })
+
+  it('re-translates when translations are merged after creation', () => {
+    setup(snapshot({ breadcrumb: 'LATE' }, ['page']))
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['LATE'])
+
+    translate.setTranslation('en', { LATE: 'Loaded late' }, true)
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Loaded late'])
   })
 })
