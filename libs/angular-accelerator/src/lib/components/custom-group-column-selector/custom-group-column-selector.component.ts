@@ -144,46 +144,26 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     })
   }
 
-  syncColumnModels(restore = false) {
+  syncColumnModels(restoreMainOrder = false) {
+    if (restoreMainOrder) {
+      const activeIds = new Set(this.displayedColumnsModel().map((column) => column.id))
+      const inactiveIds = new Set(this.hiddenColumnsModel().map((column) => column.id))
+      const originalColumns = this.columns()
+      const originalIds = new Set(originalColumns.map((column) => column.id))
+
+      this.displayedColumnsModel.set([
+        ...originalColumns.filter((column) => activeIds.has(column.id)),
+        ...this.displayedColumnsModel().filter((column) => !originalIds.has(column.id)),
+      ])
+      this.hiddenColumnsModel.set([
+        ...originalColumns.filter((column) => inactiveIds.has(column.id)),
+        ...this.hiddenColumnsModel().filter((column) => !originalIds.has(column.id)),
+      ])
+      return
+    }
+
     this.displayedColumnsModel.set([...this.displayedColumnsModel()])
     this.hiddenColumnsModel.set([...this.hiddenColumnsModel()])
-
-    if (restore) {
-      this.reorderColumnsByMainOrder()
-    }
-  }
-
-  /**
-   * Rebuilds both the active and inactive column lists in the order of `columns()`, preserving
-   * each list's membership. Items whose ID is absent from `columns()` are appended in their
-   * existing list order so nothing is dropped or duplicated and the main column list is never
-   * mutated.
-   */
-  private reorderColumnsByMainOrder() {
-    const availableColumns = this.columns()
-    const order = new Map(availableColumns.map((column, index) => [column.id, index]))
-
-    const rebuild = (columns: DataTableColumn[]) => {
-      const ordered = [...columns].sort((a, b) => {
-        const aIndex = order.get(a.id)
-        const bIndex = order.get(b.id)
-        // Unknown ids (absent from columns()) keep their existing list order at the end.
-        if (aIndex === undefined && bIndex === undefined) {
-          return 0
-        }
-        if (aIndex === undefined) {
-          return 1
-        }
-        if (bIndex === undefined) {
-          return -1
-        }
-        return aIndex - bIndex
-      })
-      return ordered
-    }
-
-    this.displayedColumnsModel.set(rebuild(this.displayedColumnsModel()))
-    this.hiddenColumnsModel.set(rebuild(this.hiddenColumnsModel()))
   }
 
   onOpenCustomGroupColumnSelectionDialogClick() {
