@@ -1161,6 +1161,28 @@ describe('PortalDialogService', () => {
         )
       })
 
+      it('should still hand focus to the footer button when focusOnShow true is passed with a message dialog', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { focusOnShow: true })
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
+      it('should disable the delayed dialog focus for a component dialog with explicit autoFocusButton', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2', {
+          autoFocusButton: 'secondary',
+        })
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
       it('should focus Cancel for a message-only confirmation', async () => {
         fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
         const footer = await rootLoader.getHarness(DialogFooterHarness)

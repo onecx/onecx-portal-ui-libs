@@ -201,6 +201,7 @@ export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
 /**
  * Controls where focus goes when a dialog closes.
  * - `'initiator'` and `'default'` (also when unset): focus returns to `initiatorRef` or, if not provided, to the element that was focused when the dialog was opened.
+ * For chained dialogs opened from a closing dialog, pass `initiatorRef` explicitly.
  * - `'none'`: focus is not moved, the caller takes care of it.
  */
 export type DialogInitiator = 'initiator' | 'default' | 'none'
