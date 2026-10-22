@@ -99,16 +99,19 @@ describe('CustomGroupColumnSelectorComponent', () => {
       fixture.componentRef.setInput('frozenActionColumn', false)
       fixture.componentRef.setInput('actionColumnPosition', 'right')
 
+      component.displayedColumns.set([c1])
       component.displayedColumnsModel.set([c1])
       component.frozenActionColumnModel.set(true)
       component.actionColumnPositionModel.set('left')
 
+      const columnChangedSpy = jest.spyOn(component.columnSelectionChanged, 'emit')
       const actionCfgSpy = jest.spyOn(component.actionColumnConfigChanged, 'emit')
       const stateSpy = jest.spyOn(component.componentStateChanged, 'emit')
 
       component.onSaveClick()
 
       expect(component.visible()).toBe(false)
+      expect(columnChangedSpy).not.toHaveBeenCalled()
       expect(actionCfgSpy).toHaveBeenCalledWith({
         frozenActionColumn: true,
         actionColumnPosition: 'left',
@@ -567,6 +570,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
   describe('resetColumnSelection', () => {
     it('should not throw when the PickList is not available yet', () => {
+      Object.defineProperty(component, 'pickList', { value: signal(undefined), configurable: true })
       expect(() => component.resetColumnSelection()).not.toThrow()
     })
 
