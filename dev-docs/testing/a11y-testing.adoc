@@ -15,7 +15,7 @@ it('should have no axe violations', async () => {
 })
 ----
 
-The helper only runs these rules (`ENFORCED_AXE_RULES`): `button-name`, `aria-allowed-attr`, `aria-prohibited-attr`, `label`, `duplicate-id-aria`, `aria-input-field-name`, `aria-dialog-name`, `heading-order`, `label-content-name-mismatch`. If a covered component violates one of them, the test fails and lists the rule and the offending nodes.
+The helper only runs these rules (`ENFORCED_AXE_RULES`): `button-name`, `aria-allowed-attr`, `aria-prohibited-attr`, `label`, `duplicate-id-aria`, `aria-input-field-name`, `aria-dialog-name`, `heading-order`, `label-content-name-mismatch` (an experimental rule in axe, tagged `experimental`). If a covered component violates one of them, the test fails and lists the rule and the offending nodes.
 
 === Allow-list for known violations
 
@@ -27,11 +27,11 @@ A violation that is tracked by a separate fix story is allowed per test:
 await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
 ----
 
-Every fix story removes its entry from the allow-list.
+Every fix story removes its entry from the allow-list. The helper fails when an allowed rule no longer produces a violation, so stale entries cannot remain.
 
 === Test environment
 
-Spike result (happy-dom): `axe-core` runs on the `@happy-dom/jest-environment` used by `angular-accelerator`, no per-spec jsdom environment is needed. `jest-axe` is not used, the helper calls `axe-core` directly. One workaround is required: zone.js wraps `MutationObserver` and drops the methods of happy-dom's implementation, which makes axe-core fail on load (`observer.observe is not a function`). `libs/angular-accelerator/src/test-env-flags.ts` (jest `setupFiles`) sets `__Zone_disable_MutationObserver` before zone.js is loaded. Other libraries that use the helper on happy-dom need the same `setupFiles` entry.
+Spike result (happy-dom): `axe-core` runs on the `@happy-dom/jest-environment` used by `angular-accelerator`, no per-spec jsdom environment is needed. `jest-axe` is not used, the helper calls `axe-core` directly. One workaround is required: zone.js wraps `MutationObserver` and drops the methods of happy-dom's implementation, which makes axe-core fail on load (`observer.observe is not a function`). `libs/angular-accelerator/src/test-env-flags.ts` (jest `setupFiles`) sets `__Zone_disable_MutationObserver` before zone.js is loaded. As a consequence, MutationObserver callbacks run outside NgZone in these tests. Other libraries that use the helper on happy-dom need the same `setupFiles` entry.
 
 === jsdom / happy-dom limits
 

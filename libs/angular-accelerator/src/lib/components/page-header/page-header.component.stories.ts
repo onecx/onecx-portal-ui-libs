@@ -23,7 +23,7 @@ export default {
   title: 'Components/PageHeaderComponent',
   component: PageHeaderComponent,
   parameters: {
-    // Fail the Storybook a11y check (axe) for this story. See dev-docs/testing/a11y-testing.adoc
+    // Marks the story for the a11y gate. Not evaluated in CI yet, see dev-docs/testing/a11y-testing.adoc
     a11y: { test: 'error' },
   },
   decorators: [

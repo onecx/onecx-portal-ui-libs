@@ -20,7 +20,7 @@ export const ENFORCED_AXE_RULES: readonly string[] = [
 export interface ExpectNoAxeViolationsOptions {
   /**
    * Rule ids that are known to be violated and tracked by a follow-up story. Violations of these rules are
-   * ignored. Keep this list per test and remove an entry as soon as the corresponding fix has landed.
+   * ignored; the check fails if an allowed rule no longer produces a violation (stale entry). Keep this list per test and remove an entry as soon as the corresponding fix has landed.
    */
   allow?: string[]
   /** Overrides the set of enforced rules. Defaults to {@link ENFORCED_AXE_RULES}. */
@@ -63,16 +63,25 @@ export async function expectNoAxeViolations(
   options: ExpectNoAxeViolationsOptions = {}
 ): Promise<void> {
   const allow = new Set(options.allow ?? [])
-  const rules = (options.rules ?? [...ENFORCED_AXE_RULES]).filter((rule) => !allow.has(rule))
-  if (rules.length === 0) {
-    return
-  }
-  const runOnly = { type: 'rule' as const, values: rules }
+  const rules = options.rules ?? [...ENFORCED_AXE_RULES]
+  const runOnly = { type: 'rule' as const, values: Array.from(new Set([...rules, ...allow])) }
   const results = await axe.run(element as axe.ElementContext, { runOnly, resultTypes: ['violations'] })
-  if (results.violations.length > 0) {
+
+  const violations = results.violations.filter((violation) => !allow.has(violation.id))
+  if (violations.length > 0) {
     throw new AxeViolationsError(
-      `Expected no axe violations, but found ${results.violations.length}:\n\n${formatViolations(results.violations)}`,
-      results.violations
+      `Expected no axe violations, but found ${violations.length}:\n\n${formatViolations(violations)}`,
+      violations
+    )
+  }
+
+  // Fail on stale allow-list entries so that a fixed violation removes its entry.
+  const violatedIds = new Set(results.violations.map((violation) => violation.id))
+  const stale = [...allow].filter((id) => !violatedIds.has(id))
+  if (stale.length > 0) {
+    throw new AxeViolationsError(
+      `The axe allow-list contains rules that no longer produce a violation: ${stale.join(', ')}. Remove them from the allow-list.`,
+      []
     )
   }
 }

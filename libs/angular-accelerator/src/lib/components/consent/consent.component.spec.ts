@@ -97,7 +97,8 @@ describe('OcxConsentComponent', () => {
 
   it('should have no axe violations', async () => {
     fixture.detectChanges()
-    // Known violation: icon-only button without an accessible name. Remove the entry when the fix story lands.
+    // Known violation: the consent component renders an icon-only button without an accessible name.
+    // The check fails once this is fixed, so remove the entry together with the fix.
     await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
   })
 
