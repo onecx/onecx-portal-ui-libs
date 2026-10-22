@@ -475,11 +475,9 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     it('should call the reset before the dialog becomes visible', () => {
       let visibleAtReset: boolean | undefined
-      jest
-        .spyOn(component, 'resetColumnSelection')
-        .mockImplementation(() => {
-          visibleAtReset = component.visible()
-        })
+      jest.spyOn(component, 'resetColumnSelection').mockImplementation(() => {
+        visibleAtReset = component.visible()
+      })
 
       component.onOpenCustomGroupColumnSelectionDialogClick()
 
@@ -558,21 +556,39 @@ describe('CustomGroupColumnSelectorComponent', () => {
       fixture.componentRef.setInput('columns', [a, b, c])
       fixture.componentRef.setInput('displayedColumns', [a, c])
 
-      // First opening: drive a selection on the real PickList to simulate a stale user highlight.
       component.onOpenCustomGroupColumnSelectionDialogClick()
       fixture.detectChanges()
       const pickList = component.pickList()
+      if (!pickList) {
+        throw new Error('Expected the real PickList to exist after opening the dialog')
+      }
       pickList.selectedItemsSource = [a]
-      expect(pickList.selectedItemsSource.map((column: DataTableColumn) => column.id)).toEqual(['A'])
+      pickList.selectedItemsTarget = [b]
+      expect(pickList.selectedItemsSource).toEqual([a])
+      expect(pickList.selectedItemsTarget).toEqual([b])
 
-      // Close and reopen: the reset must clear the selection state and leave no visible highlight.
       component.onCancelClick()
       fixture.detectChanges()
+
+      expect(component.visible()).toBe(false)
+      expect(component.pickList()).toBe(pickList)
+      expect(pickList.selectedItemsSource).toEqual([a])
+      expect(pickList.selectedItemsTarget).toEqual([b])
+
+      const triggerChangeDetectionSpy = jest.spyOn(pickList, 'triggerChangeDetection')
+
       component.onOpenCustomGroupColumnSelectionDialogClick()
+
+      expect(triggerChangeDetectionSpy).toHaveBeenCalledTimes(1)
+      expect(pickList.selectedItemsSource).toEqual([])
+      expect(pickList.selectedItemsTarget).toEqual([])
+
       fixture.detectChanges()
 
-      expect(component.pickList().selectedItemsSource).toEqual([])
-      expect(component.pickList().selectedItemsTarget).toEqual([])
+      expect(component.visible()).toBe(true)
+      expect(component.pickList()).toBe(pickList)
+      expect(pickList.selectedItemsSource).toEqual([])
+      expect(pickList.selectedItemsTarget).toEqual([])
       expect(document.querySelectorAll('.p-listbox-option[aria-selected="true"]').length).toBe(0)
     })
   })
