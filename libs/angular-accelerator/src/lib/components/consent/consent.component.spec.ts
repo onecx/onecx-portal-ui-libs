@@ -36,6 +36,7 @@ class FakeTranslateLoader implements TranslateLoader {
       [url]="url()"
       [purpose]="purpose()"
       [titleKey]="titleKey()"
+      [titleHeadingLevel]="titleHeadingLevel()"
       [messageKey]="messageKey()"
       [agreeKey]="agreeKey()"
       [withdrawKey]="withdrawKey()"
@@ -58,6 +59,7 @@ class HostComponent {
   showInfo = signal<boolean>(false)
 
   titleKey = signal<string | undefined>(undefined)
+  titleHeadingLevel = signal<number>(2)
   messageKey = signal<string | undefined>(undefined)
   agreeKey = signal<string | undefined>(undefined)
   withdrawKey = signal<string | undefined>(undefined)
@@ -232,7 +234,11 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual([])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: false, purpose: undefined })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: false,
+      purpose: undefined,
+    })
   })
 
   it('should scope consent to purpose when purpose is provided', async () => {
@@ -243,14 +249,15 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual(['https://example.com::maps'])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: true, purpose: 'maps' })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: true,
+      purpose: 'maps',
+    })
   })
 
   it('should keep unrelated consent entries when withdrawing without purpose', async () => {
-    localStorage.setItem(
-      'onecx-consent',
-      JSON.stringify(['https://example.com/legal', 'https://example.com/other'])
-    )
+    localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com/legal', 'https://example.com/other']))
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
@@ -327,5 +334,15 @@ describe('OcxConsentComponent', () => {
     fixture.detectChanges()
 
     expect(await harness.isConsentMessageVisible()).toBe(true)
+  })
+
+  it('should expose the title as a level 2 heading by default and allow configuring the level', () => {
+    fixture.detectChanges()
+    const heading = fixture.nativeElement.querySelector('[role="heading"]') as HTMLElement
+    expect(heading.getAttribute('aria-level')).toBe('2')
+
+    fixture.componentInstance.titleHeadingLevel.set(4)
+    fixture.detectChanges()
+    expect(heading.getAttribute('aria-level')).toBe('4')
   })
 })

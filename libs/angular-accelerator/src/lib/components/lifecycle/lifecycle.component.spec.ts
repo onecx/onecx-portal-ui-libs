@@ -71,4 +71,16 @@ describe('LifecycleComponent', () => {
     expect(steps.length).toBe(3)
     expect(highlightedSteps.length).toBe(1)
   })
+
+  it('should expose step titles as level 2 headings by default and allow configuring the level', () => {
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.detectChanges()
+    const headings = Array.from(fixture.nativeElement.querySelectorAll('[role="heading"]')) as HTMLElement[]
+    expect(headings.map((h) => h.textContent?.trim())).toEqual(['Test 1', 'Test 2', 'Test 3'])
+    expect(headings.every((h) => h.getAttribute('aria-level') === '2')).toBe(true)
+
+    fixture.componentRef.setInput('stepTitleHeadingLevel', 3)
+    fixture.detectChanges()
+    expect(headings.every((h) => h.getAttribute('aria-level') === '3')).toBe(true)
+  })
 })

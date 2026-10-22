@@ -18,7 +18,9 @@
   [attr.aria-describedby]="messageId"
 >
   <div class="flex flex-col gap-4 items-center justify-center text-center ocx-consent__content">
-    <p class="m-0 text-xl font-semibold" [id]="titleId">{{ titleKey() | translate }}</p>
+    <p class="m-0 text-xl font-semibold" role="heading" [attr.aria-level]="headingLevel()" [id]="titleId">
+      {{ titleKey() | translate }}
+    </p>
     <p class="m-0" [id]="messageId" aria-live="polite">{{ messageKey() | translate : { url: normalizedUrl() } }}</p>
 
     <ng-content select="[ocx-consent-info]" />

@@ -60,7 +60,7 @@
       </div>
       <div class="flex flex-row justify-between items-center">
         <div class="data-grid-items flex-row">
-          <div class="item-name font-medium mr-3 text-2xl">
+          <div class="item-name font-medium mr-3 text-2xl" role="heading" [attr.aria-level]="itemTitleLevel()">
             @if (hasViewPermission$ | async; as hasViewPermission) {
             <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId()) || '' }}</a>
             } @else {
@@ -103,7 +103,9 @@
       <div class="item-name-row flex flex-row justify-between">
         <div class="item-name mr-3 text-2xl font-medium content-center">
           @if (titleLineId()) {
-          <span>{{ resolveFieldData(item, titleLineId()) || '' }}</span>
+          <span role="heading" [attr.aria-level]="itemTitleLevel()"
+            >{{ resolveFieldData(item, titleLineId()) || '' }}</span
+          >
           }
         </div>
         <div class="flex flex-row">

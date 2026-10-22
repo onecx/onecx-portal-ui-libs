@@ -200,7 +200,7 @@
     "ANNOUNCEMENTS": {
       "SEARCHING": "Searching...",
       "NO_RESULTS": "No results found",
-      "RESULTS_FOUND": "{{count}} results found" 
+      "RESULTS_FOUND": "{{count}} results found"
     }
   },
   "OCX_PAGE_HEADER": {
@@ -242,6 +242,10 @@
     "MINUTES_AGO": "{{minutes}} minutes ago",
     "MONTHS_AGO": "{{months}} months ago",
     "YEARS_AGO": "{{years}} years ago"
+  },
+  "OCX_GLOBAL_ERROR": {
+    "TITLE": "Error",
+    "TRY_AGAIN": "Try again"
   },
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "The data could not be loaded.",

@@ -49,8 +49,8 @@ describe('PortalPageComponent', () => {
     tick(10000)
     fixture.detectChanges()
 
-    const h3 = fixture.nativeElement.querySelector('h3') as HTMLElement | null
-    expect(h3).not.toBeNull()
+    const h1 = fixture.nativeElement.querySelector('h1') as HTMLElement | null
+    expect(h1).not.toBeNull()
 
     const span = fixture.nativeElement.querySelector('span') as HTMLElement | null
     expect(span).not.toBeNull()
@@ -59,7 +59,7 @@ describe('PortalPageComponent', () => {
   it('should not show unauthorized message when access is granted (immediate)', () => {
     fixture.componentRef.setInput('permission', '')
     fixture.detectChanges()
-    const unauthorizedHeader = fixture.nativeElement.querySelector('h3') as HTMLElement | null
+    const unauthorizedHeader = fixture.nativeElement.querySelector('h1') as HTMLElement | null
     expect(unauthorizedHeader).toBeNull()
   })
 })
@@ -111,7 +111,7 @@ describe('PortalPageComponent host projection', () => {
     const portalEl = hostFixture.nativeElement.querySelector('ocx-portal-page') as HTMLElement
     const wrappers = portalEl.querySelectorAll('.content-wrapper')
     const delayedWrapper = wrappers.item(1) as HTMLElement | null
-    const unauthorizedHeaderBefore = delayedWrapper?.querySelector('h3') || null
+    const unauthorizedHeaderBefore = delayedWrapper?.querySelector('h1') || null
     expect(unauthorizedHeaderBefore).toBeNull()
 
     tick(10000)
@@ -131,7 +131,7 @@ describe('PortalPageComponent host projection', () => {
     const inner = portalEl.querySelector('.inner-content') as HTMLElement | null
     expect(inner).not.toBeNull()
     expect(inner?.textContent).toContain('Hello Content')
-    const unauthorizedHeader = portalEl.querySelector('h3') as HTMLElement | null
+    const unauthorizedHeader = portalEl.querySelector('h1') as HTMLElement | null
     expect(unauthorizedHeader).toBeNull()
   }))
 
@@ -143,7 +143,7 @@ describe('PortalPageComponent host projection', () => {
     hostFixture.detectChanges()
 
     const portalEl = hostFixture.nativeElement.querySelector('ocx-portal-page') as HTMLElement
-    const unauthorizedHeader = portalEl.querySelector('h3') as HTMLElement | null
+    const unauthorizedHeader = portalEl.querySelector('h1') as HTMLElement | null
     expect(unauthorizedHeader).not.toBeNull()
     const inner = portalEl.querySelector('.inner-content') as HTMLElement | null
     expect(inner).toBeNull()

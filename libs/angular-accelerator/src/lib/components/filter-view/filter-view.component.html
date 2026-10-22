@@ -36,8 +36,9 @@
       "
       [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
     >
-      <span class="p-chip-text flex flex-nowrap items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
-      translate }} <i class="pi pi-plus" aria-hidden="true"></i> </span>
+      <span class="p-chip-text flex flex-nowrap items-center gap-1"
+        >{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' | translate }} <i class="pi pi-plus" aria-hidden="true"></i>
+      </span>
     </p-chip>
     @if (filters.length <= 0) { @if (filterViewNoSelection()) {
     <ng-container [ngTemplateOutlet]="filterViewNoSelection()"> </ng-container>
@@ -130,7 +131,9 @@
         <div pFocusTrap>
           <div class="flex justify-between items-center mb-2">
             <div class="flex items-center gap-3">
-              <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
+              <span class="text-2xl font-medium" role="heading" [attr.aria-level]="panelTitleLevel()"
+                >{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span
+              >
               <p-button
                 id="ocxFilterViewAddFilter"
                 pAutoFocus
@@ -229,8 +232,6 @@
   </ng-template>
 </div>
 } }
-
-
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   @if (templates[column.id]; as template) {

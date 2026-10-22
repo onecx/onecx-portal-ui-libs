@@ -21,14 +21,16 @@
   [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)"
 >
   <ng-template pTemplate="header">
-    <span [id]="dialog.ariaLabelledBy" class="text-xl font-bold"
+    <span [id]="dialog.ariaLabelledBy" class="text-xl font-bold" role="heading" [attr.aria-level]="dialogTitleLevel()"
       >{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' |
       translate) }}</span
     >
   </ng-template>
 
-  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
-  @let resolvedInactiveColumnsLabel = inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
+  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) ||
+  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate); @let resolvedInactiveColumnsLabel =
+  inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) ||
+  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
   <p-pickList
     [source]="displayedColumnsModel()"
     [target]="hiddenColumnsModel()"
@@ -60,7 +62,9 @@
   </p-pickList>
 
   <div class="pt-4">
-    <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
+    <p class="text-xl font-bold" role="heading" [attr.aria-level]="subTitleLevel()">
+      {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}
+    </p>
     <div class="flex gap-6 px-3">
       <div>
         <p id="frozenActionColumnLabel" class="mb-1">

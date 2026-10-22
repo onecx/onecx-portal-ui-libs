@@ -1,4 +1,17 @@
-import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core'
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  Input,
+  input,
+  model,
+  OnInit,
+  output,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core'
+import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
 
@@ -35,6 +48,12 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly displayedColumns = model<DataTableColumn[]>([])
   readonly customGroupKey = input<string>('')
   readonly dialogTitle = input<string>('')
+  /**
+   * Heading level (1-6) of the dialog title. Defaults to 2. The sub heading inside the dialog is one level deeper.
+   */
+  readonly dialogTitleHeadingLevel = input<number>(2)
+  protected readonly dialogTitleLevel = computed(() => normalizeHeadingLevel(this.dialogTitleHeadingLevel()))
+  protected readonly subTitleLevel = computed(() => Math.min(6, this.dialogTitleLevel() + 1))
   readonly dialogTitleKey = input<string>('')
   readonly openButtonTitle = input<string>('')
   readonly openButtonTitleKey = input<string>('')

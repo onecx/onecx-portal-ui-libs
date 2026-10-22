@@ -137,7 +137,6 @@
       "ARIA_LABEL": "Aktive Filter verwalten",
       "DETAIL": "Aktive Filter verwalten",
       "DISABLED_DETAIL": "Keine aktiven Filter zum Verwalten"
-
     },
     "TABLE": {
       "COLUMN_NAME": "Spaltenname",
@@ -210,7 +209,7 @@
     "MORE_ACTIONS": "Weitere Aktionen",
     "HOME_DEFAULT_ARIA_LABEL": "Zur Startseite navigieren",
     "HOME_ARIA_LABEL": "Zu {{page}} navigieren",
-    "BREADCRUMB_ARIA_LABEL": "Zu {{breadcrumb}} navigieren" 
+    "BREADCRUMB_ARIA_LABEL": "Zu {{breadcrumb}} navigieren"
   },
   "OCX_DIAGRAM": {
     "ARIA_LABEL": "Diagramm Zusammenfassung: Gesamtanzahl: {{total}}. {{valueString}}.",
@@ -243,6 +242,10 @@
     "MINUTES_AGO": "vor {{minutes}} Minuten",
     "MONTHS_AGO": "vor {{months}} Monaten",
     "YEARS_AGO": "vor {{years}} Jahren"
+  },
+  "OCX_GLOBAL_ERROR": {
+    "TITLE": "Fehler",
+    "TRY_AGAIN": "Erneut versuchen"
   },
   "OCX_DATA_LOADING_ERROR": {
     "TITLE": "Die Daten konnten nicht geladen werden.",

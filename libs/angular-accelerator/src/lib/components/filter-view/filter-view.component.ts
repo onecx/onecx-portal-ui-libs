@@ -11,8 +11,9 @@ import {
   TemplateRef,
   viewChild,
   viewChildren,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core'
+import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import type { Observable } from 'rxjs'
@@ -58,7 +59,7 @@ export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
   private readonly destroyRef = inject(DestroyRef)
-  
+
   ColumnType = ColumnType
   FilterType = FilterType
 
@@ -85,6 +86,11 @@ export class FilterViewComponent {
   )
   readonly chipStyleClass = input('')
   readonly tableStyle = input<{ [klass: string]: any }>({ 'max-height': '50vh' })
+  /**
+   * Heading level (1-6) of the filter panel title. Defaults to 2 as the page header renders the level 1 heading.
+   */
+  readonly panelTitleHeadingLevel = input<number>(2)
+  protected readonly panelTitleLevel = computed(() => normalizeHeadingLevel(this.panelTitleHeadingLevel()))
   readonly panelStyle = input<{ [klass: string]: any }>({ 'max-width': '90%' })
 
   readonly filtered = output<Filter[]>()
@@ -192,7 +198,7 @@ export class FilterViewComponent {
   }
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor() {    
+  constructor() {
     effect(() => {
       const t = this.templates()
 
@@ -277,7 +283,9 @@ export class FilterViewComponent {
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
+    const filters = this.stateService
+      .filters()
+      .filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
   }
 
@@ -336,10 +344,7 @@ export class FilterViewComponent {
     const currentFilters = this.stateService.filters()
     const editedColumns = new Set(newFilters.map((f) => f.columnId))
 
-    this.stateService.filters.set([
-      ...currentFilters.filter((f) => !editedColumns.has(f.columnId)),
-      ...newFilters,
-    ])
+    this.stateService.filters.set([...currentFilters.filter((f) => !editedColumns.has(f.columnId)), ...newFilters])
   }
 
   focusTrigger() {

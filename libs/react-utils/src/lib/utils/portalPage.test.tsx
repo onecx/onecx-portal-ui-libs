@@ -53,6 +53,7 @@ describe('PortalPage', () => {
     const { container, findByText } = render(<PortalPage permission="admin">Secret Content</PortalPage>)
     const unauthorized = await findByText('OCX_PORTAL_PAGE.UNAUTHORIZED_TITLE')
     expect(unauthorized).toBeDefined()
+    expect(unauthorized.tagName).toBe('H1')
     expect(container.textContent).not.toContain('Secret Content')
   })
 

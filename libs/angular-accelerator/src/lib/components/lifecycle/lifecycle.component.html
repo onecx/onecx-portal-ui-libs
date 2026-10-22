@@ -8,7 +8,14 @@
   <ng-template pTemplate="content" let-step>
     <div class="pb-4 h-full">
       <div class="card h-full" [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''">
-        <p class="font-bold text-xl" [ngClass]="step.details ? 'mb-2' : ''">{{ step.title }}</p>
+        <p
+          class="font-bold text-xl"
+          role="heading"
+          [attr.aria-level]="headingLevel()"
+          [ngClass]="step.details ? 'mb-2' : ''"
+        >
+          {{ step.title }}
+        </p>
         @if (step.details) {
         <p [ngClass]="activeStepId() && activeStepId() === step.id ? '' : 'text-color-secondary'">{{ step.details }}</p>
         }
