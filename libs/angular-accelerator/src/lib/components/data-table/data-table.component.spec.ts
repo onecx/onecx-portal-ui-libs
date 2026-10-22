@@ -22,6 +22,7 @@ import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import userEvent from '@testing-library/user-event'
+import { within } from '@testing-library/dom'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -304,18 +305,30 @@ describe('DataTableComponent', () => {
       expect(th.getAttribute('aria-sort')).toBe('descending')
     })
 
-    it('should reach the sort button of the first sortable header with a single Tab from the previous stop', async () => {
+    it('should have one tab stop per sortable header plus one for its filter', async () => {
+      document.body.appendChild(fixture.nativeElement)
+      const user = userEvent.setup()
+      const sortable = headers().filter((h) => h.querySelector('.sortButton'))
+      const first = sortable[0]
+      const second = sortable[1]
+      ;(first.querySelector('.sortButton') as HTMLElement).focus()
+
+      await user.tab()
+      expect(document.activeElement).not.toBe(first)
+      expect(first.contains(document.activeElement)).toBe(true)
+
+      await user.tab()
+      expect(document.activeElement).toBe(second.querySelector('.sortButton'))
+    })
+
+    it('should find the sorted column header by role and name', async () => {
       const user = userEvent.setup()
       const th = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
-      const button = th.querySelector('.sortButton') as HTMLElement
-      const stopsInHeader = Array.from(th.querySelectorAll<HTMLElement>('button, a[href], input, [tabindex]')).filter(
-        (e) => e.getAttribute('tabindex') !== '-1'
-      )
-      expect(stopsInHeader[0]).toBe(button)
-      await user.tab()
-      let guard = 0
-      while (document.activeElement !== button && guard++ < 50) await user.tab()
-      expect(document.activeElement).toBe(button)
+      await user.click(th.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      const columnHeaders = within(fixture.nativeElement as HTMLElement).getAllByRole('columnheader', { hidden: true })
+      expect(columnHeaders).toContain(th)
+      expect(columnHeaders.filter((h) => h.getAttribute('aria-sort') === 'ascending')).toEqual([th])
     })
   })
 

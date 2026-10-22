@@ -176,7 +176,7 @@
       <ng-container *ngTemplateOutlet="actionColumnHeader"></ng-container>
       } @for (column of stateService.columns(); track column) {
         @if (columnHeaderTemplates[column.id]; as columnHeaderTemplate){
-          <th scope="col" [attr.aria-sort]="columnAriaSort(column)">
+          <th scope="col" [attr.aria-sort]="columnAriaSort(column)" [class.p-datatable-column-sorted]="columnAriaSort(column) !== null">
             <ng-container
               [ngTemplateOutlet]="columnHeaderTemplate"
               [ngTemplateOutletContext]="{ column: column, labelTemplate: columnHeaderLabel, sortTemplate: columnHeaderSortButton, filterTemplate: columnHeaderFilter }"
@@ -184,7 +184,7 @@
           </th>
         } @else { 
             @if (column.sortable || column.filterable) {
-              <th scope="col" [attr.aria-sort]="columnAriaSort(column)">
+              <th scope="col" [attr.aria-sort]="columnAriaSort(column)" [class.p-datatable-column-sorted]="columnAriaSort(column) !== null">
                 <div
                   class="table-header-wrapper flex flex-col justify-between items-start"
                   style="height: 100%"
