@@ -264,4 +264,27 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(positionSpy).toHaveBeenCalledWith('left')
     })
   })
+
+  describe('[a11y] open button popup semantics', () => {
+    const innerButton = () => fixture.nativeElement.querySelector('#customGroupColumnSelectorButton button') as HTMLButtonElement
+
+    it('announces haspopup/expanded on the inner button and sets aria-controls only while open', () => {
+      fixture.detectChanges()
+      const pButton = fixture.nativeElement.querySelector('#customGroupColumnSelectorButton') as HTMLElement
+      expect(pButton.getAttributeNames().filter((n) => n.startsWith('aria-') && n !== 'aria-describedby')).toEqual([])
+      expect(innerButton().getAttribute('aria-haspopup')).toBe('dialog')
+      expect(innerButton().getAttribute('aria-expanded')).toBe('false')
+      expect(innerButton().hasAttribute('aria-controls')).toBe(false)
+
+      component.visible.set(true)
+      fixture.detectChanges()
+      expect(innerButton().getAttribute('aria-expanded')).toBe('true')
+      expect(innerButton().getAttribute('aria-controls')).toBe('customGroupColumnSelectorDialog')
+
+      component.visible.set(false)
+      fixture.detectChanges()
+      expect(innerButton().getAttribute('aria-expanded')).toBe('false')
+      expect(innerButton().hasAttribute('aria-controls')).toBe(false)
+    })
+  })
 })

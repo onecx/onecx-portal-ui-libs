@@ -7,8 +7,7 @@
   icon="pi pi-cog"
   styleClass="p-button"
   [ariaLabel]="(openButtonAriaLabelKey() ? (openButtonAriaLabelKey() | translate) : openButtonAriaLabel()) || openButtonTitle() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
-  [attr.aria-controls]="visible() ? 'customGroupColumnSelectorDialog' : null"
-  [attr.aria-expanded]="visible() ? true : false"
+  [pt]="openButtonPt()"
 ></p-button>
 
 <p-dialog

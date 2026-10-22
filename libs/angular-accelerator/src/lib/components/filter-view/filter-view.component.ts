@@ -111,6 +111,20 @@ export class FilterViewComponent {
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
+  readonly panelId = 'ocxFilterViewPanel'
+  readonly panelPt = { root: { id: this.panelId } }
+  readonly panelOpen = signal(false)
+  /**
+   * ARIA state of the manage button. Set on the inner native button (pass-through of the root element),
+   * never on the p-button host, which has no role.
+   */
+  readonly manageButtonPt = computed(() => ({
+    root: {
+      'aria-haspopup': 'dialog',
+      'aria-expanded': String(this.panelOpen()),
+      'aria-controls': this.panelOpen() ? this.panelId : null,
+    },
+  }))
 
   private readonly portalDialogService = inject(PortalDialogService)
 

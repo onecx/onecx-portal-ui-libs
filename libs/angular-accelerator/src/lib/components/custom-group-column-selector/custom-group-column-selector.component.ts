@@ -75,6 +75,14 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   readonly frozenActionColumnModel = signal<boolean>(false)
   readonly actionColumnPositionModel = signal<'left' | 'right'>('right')
   readonly visible = signal<boolean>(false)
+  /** ARIA state of the open button, set on the inner native button (pass-through of the root element), not on the p-button host. */
+  readonly openButtonPt = computed(() => ({
+    root: {
+      'aria-haspopup': 'dialog',
+      'aria-expanded': String(this.visible()),
+      'aria-controls': this.visible() ? 'customGroupColumnSelectorDialog' : null,
+    },
+  }))
 
   readonly alignmentOptions = signal<{ label: string; value: 'left' | 'right' }[]>([
     {

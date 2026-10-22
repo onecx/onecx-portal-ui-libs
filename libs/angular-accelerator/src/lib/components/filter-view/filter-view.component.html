@@ -84,6 +84,9 @@
       id="ocxFilterViewShowMore"
       tabindex="0"
       role="button"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="panelOpen()"
+      [attr.aria-controls]="panelOpen() ? panelId : null"
       (click)="showPanel($event)"
       class="cursor-pointer filter-view-focusable"
       (keydown.enter)="showPanel($event)"
@@ -109,7 +112,6 @@
   }
   <ng-template #noChipsContent>
     <p-button
-      tabindex="0"
       #manageButton
       id="ocxFilterViewManage"
       (onClick)="showPanel($event)"
@@ -120,12 +122,20 @@
       tooltipEvent="hover"
       [badge]="filters.length.toString()"
       [ariaLabel]="'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.ARIA_LABEL' | translate"
+      [pt]="manageButtonPt()"
     ></p-button>
     <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
   </ng-template>
   <ng-template #filterTablePanel>
     @if (tableTemplates$ | async; as templates) {
-    <p-popover #op [style]="panelStyle()" (onHide)="focusTrigger()">
+    <p-popover
+      #op
+      [style]="panelStyle()"
+      [ariaLabel]="'OCX_FILTER_VIEW.PANEL_TITLE' | translate"
+      [pt]="panelPt"
+      (onShow)="panelOpen.set(true)"
+      (onHide)="panelOpen.set(false); focusTrigger()"
+    >
       <ng-template pTemplate="content">
         <div pFocusTrap>
           <div class="flex justify-between items-center mb-2">

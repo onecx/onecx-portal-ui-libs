@@ -91,6 +91,9 @@
         [icon]="'pi pi-ellipsis-v'"
         (click)="toggleOverflowMenu($event, menu, rowObject)"
         [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="!!menu.visible"
+        [attr.aria-controls]="menu.visible ? menu.id : null"
         [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
         [name]="'data-table-overflow-action-button'"
       ></button>
