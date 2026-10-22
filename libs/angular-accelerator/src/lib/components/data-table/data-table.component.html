@@ -9,6 +9,8 @@
     [ngClass]="(stateService.actionColumnConfigFrozen() && stateService.actionColumnConfigPosition() === 'left') ? 'border-right-1' : (stateService.actionColumnConfigFrozen() && stateService.actionColumnConfigPosition() === 'right') ? 'border-left-1' : ''"
   >
     <div class="icon-button-row-wrapper">
+      @let rowLabelText = rowLabel(rowObject);
+      @let rowActionKey = rowLabelText ? 'OCX_DATA_TABLE.ROW_ACTION_ARIA_LABEL' : 'OCX_DATA_TABLE.ROW_ACTION_NAME_ONLY';
       @if (viewTableRowObserved && (!viewActionVisibleField() || fieldIsTruthy(rowObject, viewActionVisibleField()))) {
       <button
         id="{{ resolveFieldData(rowObject, 'id') }}-viewButton"
@@ -17,7 +19,7 @@
         pButton
         class="p-button-rounded p-button-text viewTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.VIEW' | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_TABLE.ACTIONS.VIEW' | translate), row: rowLabelText }"
         icon="pi pi-eye"
         (click)="onViewRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -31,7 +33,7 @@
         pButton
         class="p-button-rounded p-button-text editTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.EDIT' | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_TABLE.ACTIONS.EDIT' | translate), row: rowLabelText }"
         icon="pi pi-pencil"
         (click)="onEditRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -45,7 +47,7 @@
         pButton
         class="p-button-rounded p-button-text p-button-danger deleteTableRowButton"
         [title]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
-        [attr.aria-label]="'OCX_DATA_TABLE.ACTIONS.DELETE' | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_TABLE.ACTIONS.DELETE' | translate), row: rowLabelText }"
         icon="pi pi-trash"
         (click)="onDeleteRow(rowObject)"
         [attr.name]="'data-table-action-button'"
@@ -61,8 +63,8 @@
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
         [routerLink]="action.routerLink"
-        [title]="action.labelKey ? (action.labelKey | translate) : ''"
-        [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+        [title]="(action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate), row: rowLabelText }"
         [attr.data-testid]="'data-table-action-button'"
       ></a>
       } @else {
@@ -74,8 +76,8 @@
         [ngClass]="action.classes"
         [icon]="action.icon || ''"
         (click)="onActionClick(action, rowObject)"
-        [title]="action.labelKey ? (action.labelKey | translate) : ''"
-        [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+        [title]="(action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ((action.labelKey || 'OCX_DATA_TABLE.ACTIONS.DEFAULT') | translate), row: rowLabelText }"
         [disabled]="
             action.disabled ||
             (!!action.actionEnabledField && !fieldIsTruthy(rowObject, action.actionEnabledField))
@@ -90,7 +92,7 @@
         class="p-button-rounded p-button-text"
         [icon]="'pi pi-ellipsis-v'"
         (click)="toggleOverflowMenu($event, menu, rowObject)"
-        [attr.aria-label]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
+        [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_TABLE.MORE_ACTIONS' | translate), row: rowLabelText }"
         [title]="'OCX_DATA_TABLE.MORE_ACTIONS' | translate"
         [name]="'data-table-overflow-action-button'"
       ></button>
@@ -303,7 +305,13 @@
       (click)="toggleRowExpansion(rowObject)"
       [attr.aria-expanded]="isRowExpanded(rowObject)"
       [attr.aria-controls]="'ocx-expanded-row-' + rowObject.id"
-      [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
+      [attr.aria-label]="
+        rowLabel(rowObject)
+          ? ('OCX_DATA_TABLE.EXPAND_ROW_ARIA_LABEL' | translate: { row: rowLabel(rowObject) })
+          : isRowExpanded(rowObject)
+            ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate)
+            : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)
+      "
       [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
     ></button>
   </td>

@@ -44,6 +44,7 @@ import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { getRowLabel, warnOnActionsWithoutLabelKey } from '../../utils/row-action-label.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { RowListGridData } from '../../model/row-list-grid-data.model'
 
@@ -61,6 +62,8 @@ export interface DataListGridComponentState {
   activePage?: number
   pageSize?: number
 }
+
+const DEFAULT_ACTION_LABEL_KEY = 'OCX_DATA_LIST_GRID.MENU.DEFAULT'
 
 @Component({
   standalone: false,
@@ -88,6 +91,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   titleLineId = input<string>()
   subtitleLineIds = input<string[]>()
+  /**
+   * Field of an item whose value is used to name the item in accessible names of item-level buttons (e.g. "Edit: Product A").
+   * If not set, the title line, then the subtitle lines and finally the item id are used.
+   */
+  rowLabelField = input<string | undefined>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
   sortStates = input<DataSortDirection[]>([])
@@ -275,10 +283,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       if (actions.length === 0) {
         return of([])
       }
-      return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+      return this.translateService.get([...actions.map((a) => a.labelKey || DEFAULT_ACTION_LABEL_KEY)]).pipe(
         map((translations) => {
           return actions.map((a) => ({
-            label: translations[a.labelKey || ''],
+            label: translations[a.labelKey || DEFAULT_ACTION_LABEL_KEY],
             icon: a.icon,
             styleClass: (a.classes || []).join(' '),
             disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
@@ -495,6 +503,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     super(locale, translateService)
 
     effect(() => {
+      warnOnActionsWithoutLabelKey(this.stateService.additionalActions(), 'DataListGridComponent')
+    })
+
+    effect(() => {
       const data = this.stateService.data()
       // Not track previousData change to avoid the trigger
       untracked(() => {
@@ -601,6 +613,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     const page = event.first / event.rows
     this.page = page
     this.pageSize = event.rows
+  }
+
+  rowLabel(item: any): string {
+    return getRowLabel(item, [this.rowLabelField(), this.titleLineId(), ...(this.subtitleLineIds() ?? [])])
   }
 
   fieldIsTruthy(object: any, key: any) {
@@ -768,7 +784,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       additionalActions.map((a) => {
         const isVisible = !a.actionVisibleField || this.fieldIsTruthy(selectedItem, a.actionVisibleField)
         return {
-          label: translations[a.labelKey || ''],
+          label: translations[a.labelKey || DEFAULT_ACTION_LABEL_KEY],
           icon: a.icon,
           styleClass: (a.classes || []).join(' '),
           disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(selectedItem, a.actionEnabledField)),
@@ -794,7 +810,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       keys.viewMenuItem,
       keys.editMenuItem,
       keys.deleteMenuItem,
-      ...additionalActions.map((a) => a.labelKey || ''),
+      ...additionalActions.map((a) => a.labelKey || DEFAULT_ACTION_LABEL_KEY),
     ])
   }
 

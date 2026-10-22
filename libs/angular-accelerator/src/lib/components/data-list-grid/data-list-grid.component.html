@@ -74,12 +74,14 @@
         </div>
         @if ((gridMenuItems$ | async); as gridMenuItems) {
         <div>
+          @let rowLabelText = rowLabel(item);
+          @let rowActionKey = rowLabelText ? 'OCX_DATA_LIST_GRID.ROW_ACTION_ARIA_LABEL' : 'OCX_DATA_LIST_GRID.ROW_ACTION_NAME_ONLY';
           <p-menu #menu [model]="gridMenuItems" [popup]="true" appendTo="body"></p-menu>
           <button
             pButton
             (click)="setSelectedItem(item); menu.toggle($event)"
             icon="pi pi-ellipsis-v"
-            [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
+            [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate), row: rowLabelText }"
             class="more-actions-menu-button menu-btn"
             [attr.name]="'data-grid-item-menu-button'"
             [ocxTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
@@ -107,6 +109,8 @@
           }
         </div>
         <div class="flex flex-row">
+          @let rowLabelText = rowLabel(item);
+          @let rowActionKey = rowLabelText ? 'OCX_DATA_LIST_GRID.ROW_ACTION_ARIA_LABEL' : 'OCX_DATA_LIST_GRID.ROW_ACTION_NAME_ONLY';
           @if (viewItemObserved && (!viewActionVisibleField() || fieldIsTruthy(item, viewActionVisibleField()))) {
           <button
             id="{{resolveFieldData(item, 'id')}}-viewButton"
@@ -119,7 +123,7 @@
             [tooltipOptions]="{
               disabled: !!viewActionEnabledField() && !fieldIsTruthy(item, viewActionEnabledField())
             }"
-            [attr.aria-label]="(viewMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate"
+            [attr.aria-label]="rowActionKey | translate: { action: ((viewMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.VIEW') | translate), row: rowLabelText }"
             (click)="onViewRow(item)"
             *ocxIfPermission="viewPermission()"
             [disabled]="!!viewActionEnabledField() && !fieldIsTruthy(item, viewActionEnabledField())"
@@ -137,7 +141,7 @@
             [tooltipOptions]="{
               disabled: !!editActionEnabledField() && !fieldIsTruthy(item, editActionEnabledField())
             }"
-            [attr.aria-label]="(editMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate"
+            [attr.aria-label]="rowActionKey | translate: { action: ((editMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.EDIT') | translate), row: rowLabelText }"
             (click)="onEditRow(item)"
             *ocxIfPermission="editPermission()"
             [disabled]="!!editActionEnabledField() && !fieldIsTruthy(item, editActionEnabledField())"
@@ -156,7 +160,7 @@
             [tooltipOptions]="{
               disabled: !!deleteActionEnabledField() && !fieldIsTruthy(item, deleteActionEnabledField())
             }"
-            [attr.aria-label]="(deleteMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate"
+            [attr.aria-label]="rowActionKey | translate: { action: ((deleteMenuItemKey() || 'OCX_DATA_LIST_GRID.MENU.DELETE') | translate), row: rowLabelText }"
             (click)="onDeleteRow(item)"
             *ocxIfPermission="deletePermission()"
             [disabled]="!!deleteActionEnabledField() && !fieldIsTruthy(item, deleteActionEnabledField())"
@@ -173,9 +177,9 @@
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
             [routerLink]="action.routerLink"
-            [ocxTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
+            [ocxTooltip]="(action.labelKey || 'OCX_DATA_LIST_GRID.MENU.DEFAULT') | translate"
             tooltipPosition="top"
-            [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+            [attr.aria-label]="rowActionKey | translate: { action: (((action.labelKey || 'OCX_DATA_LIST_GRID.MENU.DEFAULT') | translate)), row: rowLabelText }"
             [attr.data-testid]="'data-list-action-button'"
           ></a>
           } @else {
@@ -187,12 +191,12 @@
             [ngClass]="action.classes"
             [icon]="action.icon || ''"
             (click)="onActionClick(action, item)"
-            [ocxTooltip]="action.labelKey ? (action.labelKey | translate) : ''"
+            [ocxTooltip]="(action.labelKey || 'OCX_DATA_LIST_GRID.MENU.DEFAULT') | translate"
             tooltipPosition="top"
             [tooltipOptions]="{
               disabled: action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))
             }"
-            [attr.aria-label]="action.labelKey ? (action.labelKey | translate) : ''"
+            [attr.aria-label]="rowActionKey | translate: { action: (((action.labelKey || 'OCX_DATA_LIST_GRID.MENU.DEFAULT') | translate)), row: rowLabelText }"
             [disabled]="action.disabled || (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField))"
             [attr.name]="'data-list-action-button'"
           ></button>
@@ -203,7 +207,7 @@
             class="p-button-rounded p-button-text"
             [icon]="'pi pi-ellipsis-v'"
             (click)="toggleOverflowMenu($event, menu, item)"
-            [attr.aria-label]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate"
+            [attr.aria-label]="rowActionKey | translate: { action: ('OCX_DATA_LIST_GRID.MORE_ACTIONS_ARIA_LABEL' | translate), row: rowLabelText }"
             [ocxTooltip]="'OCX_DATA_LIST_GRID.MORE_ACTIONS_TOOLTIP' | translate"
             tooltipPosition="top"
             [attr.name]="'data-list-overflow-item-menu-button'"
