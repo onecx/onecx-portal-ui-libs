@@ -1,4 +1,15 @@
-import { Component, ComponentRef, OnDestroy, OnInit, ViewContainerRef, inject, viewChild, ChangeDetectionStrategy } from '@angular/core'
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ComponentRef,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewContainerRef,
+  inject,
+  viewChild,
+} from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { ButtonDialogData } from '../../../model/button-dialog'
@@ -19,9 +30,10 @@ import {
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./dialog-content.component.scss'],
 })
-export class DialogContentComponent implements OnInit, OnDestroy {
+export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy {
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef)
 
   defaultDialogData: ButtonDialogData = {
     component: DialogMessageContentComponent,
@@ -41,6 +53,36 @@ export class DialogContentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadComponent()
+  }
+
+  ngAfterViewInit(): void {
+    this.setDialogAccessibility()
+  }
+
+  /**
+   * Neither the dialog nor the dynamic dialog support aria-describedby, and a dialog without title has no name,
+   * so both are set on the dialog container (role="dialog") that hosts this component.
+   */
+  private setDialogAccessibility() {
+    const container = this.elementRef.nativeElement.closest<HTMLElement>('[role="dialog"]')
+    if (!container) return
+
+    const header = this.dynamicDialogConfig.header
+    const hasTitle = typeof header === 'string' ? header.trim().length > 0 : !!header
+    const showHeader = this.dynamicDialogConfig.showHeader !== false
+    if ((!hasTitle || !showHeader) && !this.dynamicDialogConfig.ariaLabelledBy) {
+      const label = (this.dynamicDialogConfig.data as ButtonDialogData | undefined)?.dialogAriaLabel
+      if (label) {
+        // An empty title would be an empty name
+        container.removeAttribute('aria-labelledby')
+        container.setAttribute('aria-label', label)
+      }
+    }
+
+    const message = this.elementRef.nativeElement.querySelector<HTMLElement>('.dialogMessageText')
+    if (message?.id) {
+      container.setAttribute('aria-describedby', message.id)
+    }
   }
 
   ngOnDestroy(): void {

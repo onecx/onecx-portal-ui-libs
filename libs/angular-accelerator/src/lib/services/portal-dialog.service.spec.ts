@@ -1047,6 +1047,107 @@ describe('PortalDialogService', () => {
     })
   })
 
+  describe('[a11y] - dialog name, description and close button', () => {
+    const dialogContainer = () => document.querySelector<HTMLElement>('[role="dialog"]')!
+    const labelOf = (el: HTMLElement) =>
+      el.getAttribute('aria-label') ??
+      el
+        .getAttribute('aria-labelledby')!
+        .split(' ')
+        .map((id) => document.getElementById(id)?.textContent)
+        .join(' ')
+        .trim()
+
+    it('should name the dialog by its title', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(labelOf(dialogContainer())).toBe(translations['TITLE_TRANSLATE'])
+    })
+
+    it('should give a dialog without title a translated generic name', async () => {
+      fixture.componentInstance.show(null, 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(dialogContainer().getAttribute('aria-labelledby')).toBeNull()
+      expect(dialogContainer().getAttribute('aria-label')).toBe('OCX_BUTTON_DIALOG.DEFAULT_NAME')
+    })
+
+    it('should point aria-describedby to the message text', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      const describedBy = dialogContainer().getAttribute('aria-describedby')
+      expect(describedBy).toBeTruthy()
+      expect(document.getElementById(describedBy!)?.textContent).toBe(translations['MESSAGE'])
+    })
+
+    it('should not set aria-describedby for custom components', async () => {
+      fixture.componentInstance.showWithType()
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(dialogContainer().hasAttribute('aria-describedby')).toBe(false)
+    })
+
+    it('should give every stacked dialog its own description', async () => {
+      const service = TestBed.inject(PortalDialogService)
+      const sub1 = service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2').subscribe()
+      const sub2 = service.openDialog('TITLE_TRANSLATE', 'MESSAGE_PARAM', 'button1', 'button2').subscribe()
+      await fixture.whenStable()
+
+      const dialogs = Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"]'))
+      expect(dialogs).toHaveLength(2)
+      const ids = dialogs.map((d) => d.getAttribute('aria-describedby'))
+      expect(new Set(ids).size).toBe(2)
+      ids.forEach((id) => expect(document.querySelectorAll(`[id="${id}"]`)).toHaveLength(1))
+      sub1.unsubscribe()
+      sub2.unsubscribe()
+    })
+
+    it('should pass a translated closeAriaLabel by default and keep a custom one', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const service = TestBed.inject(PortalDialogService)
+
+      service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1').subscribe()
+      service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1', undefined, { closeAriaLabel: 'Custom' }).subscribe()
+
+      expect(pDialogService.open).toHaveBeenNthCalledWith(
+        1,
+        DialogContentComponent,
+        expect.objectContaining({ closeAriaLabel: 'OCX_BUTTON_DIALOG.CLOSE' })
+      )
+      expect(pDialogService.open).toHaveBeenNthCalledWith(
+        2,
+        DialogContentComponent,
+        expect.objectContaining({ closeAriaLabel: 'Custom' })
+      )
+    })
+
+    it('should render the close button with a name', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2', true)
+      await rootLoader.getHarness(DialogContentHarness)
+
+      const closeButton = document.querySelector<HTMLElement>('.p-dialog-close-button')
+      expect(closeButton?.getAttribute('aria-label')).toBe('OCX_BUTTON_DIALOG.CLOSE')
+    })
+
+    it('should expose the severity of the icon as text', async () => {
+      fixture.componentInstance.show(
+        'TITLE_TRANSLATE',
+        { message: 'MESSAGE', icon: OpenngIcons.EXCLAMATION_TRIANGLE },
+        'button1',
+        'button2'
+      )
+      const content = await rootLoader.getHarness(DialogContentHarness)
+      expect(content).toBeTruthy()
+
+      expect(document.querySelector('.dialogMessageIconLabel')?.textContent).toContain(
+        'OCX_BUTTON_DIALOG.SEVERITY.WARNING'
+      )
+      expect(document.querySelector('.dialogMessageContent i')?.getAttribute('aria-hidden')).toBe('true')
+    })
+  })
+
   describe('[a11y] - focus management', () => {
     it('should return focus to the initiator button when dialog is closed', async () => {
       jest.spyOn(pDialogService, 'open')

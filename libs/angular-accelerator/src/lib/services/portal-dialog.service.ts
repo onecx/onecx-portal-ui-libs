@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from '@openng/optimus-ui/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
+import { Observable, Subject, filter, forkJoin, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -47,7 +47,15 @@ import { createLogger } from '../utils/logger.utils'
  * }
  * ```
  */
-type DialogMessage = { message: TranslationKey; icon: OptimusIcon }
+type DialogMessage = {
+  message: TranslationKey
+  icon: OptimusIcon
+  /**
+   * Optional text alternative of the icon (e.g. its severity), as translation key. It is rendered as visually hidden text.
+   * If omitted, a text is derived from well-known info, success, warning, error and question icons.
+   */
+  iconLabel?: TranslationKey
+}
 
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -505,12 +513,22 @@ export class PortalDialogService implements OnDestroy {
       componentData: componentToRender.inputs,
     }
 
-    return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
-      mergeMap((dialogTitle) => {
+    const title$ = translateParams.key
+      ? this.translateService.get(translateParams.key, translateParams.parameters)
+      : of('')
+    const names$ = forkJoin([
+      title$,
+      this.translateService.get('OCX_BUTTON_DIALOG.CLOSE'),
+      this.translateService.get('OCX_BUTTON_DIALOG.DEFAULT_NAME'),
+    ])
+    return names$.pipe(
+      mergeMap(([dialogTitle, defaultCloseAriaLabel, defaultDialogName]) => {
         const dialogRef = this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
+            // Used as accessible name of the dialog when it has no title
+            dialogAriaLabel: defaultDialogName,
             portalDialogServiceData: {
               primaryButtonEnabled$: new Subject<boolean>(),
               secondaryButtonEnabled$: new Subject<boolean>(),
@@ -525,6 +543,8 @@ export class PortalDialogService implements OnDestroy {
           // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
           // Must stay after the spread, but derive from the caller's value so that an explicit `false` is respected.
           focusOnShow: focusOnShow && !autoFocusButton,
+          // The close button always has a (translated) name. A caller-provided closeAriaLabel is used as is.
+          closeAriaLabel: dialogOptions.closeAriaLabel || defaultCloseAriaLabel,
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
