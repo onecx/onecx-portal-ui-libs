@@ -9,6 +9,7 @@ import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-prime
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
+import { By } from '@angular/platform-browser'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -496,6 +497,80 @@ describe('CustomGroupColumnSelectorComponent', () => {
     it('should default draggableColumnGroupSelectorDialog to true and keep it independent of resizing', () => {
       expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
       expect(component.resizableColumnGroupSelectorDialog()).toBe(false)
+    })
+  })
+
+  describe('dialog draggable/resizable DOM binding', () => {
+    function openDialog(resizable: boolean, draggable: boolean) {
+      const a = makeColumn('A')
+      const b = makeColumn('B')
+      fixture.componentRef.setInput('columns', [a, b])
+      fixture.componentRef.setInput('displayedColumns', [a])
+      fixture.componentRef.setInput('resizableColumnGroupSelectorDialog', resizable)
+      fixture.componentRef.setInput('draggableColumnGroupSelectorDialog', draggable)
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+      const dialogElement = fixture.debugElement.query(By.css('p-dialog'))
+      return dialogElement ? dialogElement.componentInstance : null
+    }
+
+    it('should enable resizing independently of dragging', () => {
+      const dialog = openDialog(true, false)
+
+      expect(dialog.resizable).toBe(true)
+      expect(dialog.draggable).toBe(false)
+      expect(document.querySelector('.p-resizable-handle')).not.toBeNull()
+    })
+
+    it('should enable dragging independently of resizing', () => {
+      const dialog = openDialog(false, true)
+
+      expect(dialog.draggable).toBe(true)
+      expect(dialog.resizable).toBe(false)
+      expect(document.querySelector('.p-resizable-handle')).toBeNull()
+    })
+
+    it('should disable both dragging and resizing', () => {
+      const dialog = openDialog(false, false)
+
+      expect(dialog.draggable).toBe(false)
+      expect(dialog.resizable).toBe(false)
+      expect(document.querySelector('.p-resizable-handle')).toBeNull()
+    })
+
+    it('should enable both dragging and resizing', () => {
+      const dialog = openDialog(true, true)
+
+      expect(dialog.draggable).toBe(true)
+      expect(dialog.resizable).toBe(true)
+      expect(document.querySelector('.p-resizable-handle')).not.toBeNull()
+    })
+  })
+
+  describe('pick list selection cleared on reopen', () => {
+    it('should clear the stale item selection so no option stays highlighted after close and reopen', () => {
+      const a = makeColumn('A')
+      const b = makeColumn('B')
+      const c = makeColumn('C')
+      fixture.componentRef.setInput('columns', [a, b, c])
+      fixture.componentRef.setInput('displayedColumns', [a, c])
+
+      // First opening: drive a selection on the real PickList to simulate a stale user highlight.
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+      const pickList = component.pickList()
+      pickList.selectedItemsSource = [a]
+      expect(pickList.selectedItemsSource.map((column: DataTableColumn) => column.id)).toEqual(['A'])
+
+      // Close and reopen: the reset must clear the selection state and leave no visible highlight.
+      component.onCancelClick()
+      fixture.detectChanges()
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+
+      expect(component.pickList().selectedItemsSource).toEqual([])
+      expect(component.pickList().selectedItemsTarget).toEqual([])
+      expect(document.querySelectorAll('.p-listbox-option[aria-selected="true"]').length).toBe(0)
     })
   })
 })
