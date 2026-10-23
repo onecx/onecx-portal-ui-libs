@@ -46,6 +46,7 @@ import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
+import { getLabelColumnIds, getRowLabel } from '../../utils/row-action-label.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 
@@ -77,6 +78,8 @@ export interface DataTableComponentState {
   activePage?: number
   pageSize?: number
 }
+
+const DEFAULT_ACTION_LABEL_KEY = 'OCX_DATA_TABLE.ACTIONS.DEFAULT'
 
 @Component({
   standalone: false,
@@ -167,6 +170,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   editActionVisibleField = input<string | undefined>(undefined)
   editActionEnabledField = input<string | undefined>(undefined)
   selectionEnabledField = input<string | undefined>(undefined)
+  /**
+   * Field of a row whose value is used to name the row in accessible names of row-level buttons (e.g. "Edit: Product A").
+   * If not set, the value of the first displayed column that has a value is used, falling back to the row id.
+   */
+  rowLabelField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
   paginator = input<boolean>(true)
 
@@ -504,10 +512,11 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         return of([])
       }
 
-      return this.translateService.get([...actions.map((a) => a.labelKey || '')]).pipe(
+      const labelKeyOf = (a: DataAction) => a.labelKey || DEFAULT_ACTION_LABEL_KEY
+      return this.translateService.get([...actions.map(labelKeyOf)]).pipe(
         map((translations) => {
           return actions.map((a) => ({
-            label: translations[a.labelKey || ''],
+            label: translations[labelKeyOf(a)],
             icon: a.icon,
             styleClass: (a.classes || []).join(' '),
             disabled: a.disabled || (!!a.actionEnabledField && !this.fieldIsTruthy(row, a.actionEnabledField)),
@@ -1039,6 +1048,15 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return () => handleActionSync(this.router, action, row)
   }
   
+  private readonly rowLabelFields = computed(() => [
+    this.rowLabelField(),
+    ...getLabelColumnIds(this.stateService.columns()),
+  ])
+
+  rowLabel(rowObject: any): string {
+    return getRowLabel(rowObject, this.rowLabelFields())
+  }
+
   getRowSummary(rowObject: any): string {
     let summary = ''
     const columns = Object.entries(rowObject)

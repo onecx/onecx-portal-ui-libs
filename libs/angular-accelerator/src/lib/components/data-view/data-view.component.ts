@@ -76,6 +76,8 @@ export class DataViewComponent implements OnInit {
   }
   
   name = input<string>('')
+  /** Field used to name a row/item in accessible names of its buttons (e.g. "Edit: Product A"). */
+  rowLabelField = input<string | undefined>()
   titleLineId = input<string | undefined>()
   subtitleLineIds = input<string[]>()
   

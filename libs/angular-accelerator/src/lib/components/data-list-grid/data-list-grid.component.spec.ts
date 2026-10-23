@@ -1297,6 +1297,116 @@ describe('DataListGridComponent', () => {
     })
   })
 
+  describe('accessible names of item-level buttons', () => {
+    let warnSpy: jest.SpyInstance
+    const buttons = (selector: string): HTMLElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll(selector)) as HTMLElement[]
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      translateService.setTranslation(
+        'en',
+        {
+          OCX_DATA_LIST_GRID: {
+            ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+            MORE_ACTIONS_ARIA_LABEL: 'More actions',
+            MENU: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
+          },
+        },
+        true
+      )
+      translateService.setTranslation(
+        'de',
+        {
+          OCX_DATA_LIST_GRID: {
+            ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+            MORE_ACTIONS_ARIA_LABEL: 'Weitere Aktionen',
+            MENU: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
+          },
+        },
+        true
+      )
+      translateService.use('en')
+      TestBed.inject(UserServiceMock).permissionsTopic$.publish(['EDIT', 'OVERFLOW#VIEW', 'INLINE#VIEW'])
+      fixture.componentRef.setInput('layout', 'list')
+      fixture.componentRef.setInput('data', [
+        { id: 'r1', name: 'First item' },
+        { id: 'r2', name: 'Second item' },
+      ])
+      fixture.componentRef.setInput('titleLineId', 'name')
+    })
+
+    afterEach(() => warnSpy.mockRestore())
+
+    async function render() {
+      fixture.autoDetectChanges()
+      await fixture.whenStable()
+    }
+
+    it('should name built-in action buttons with the item label and keep them unique', async () => {
+      component.editItem.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      await render()
+
+      const labels = buttons('[name="data-list-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Edit: First item', 'Edit: Second item'])
+    })
+
+    it('should use German action names without English text', async () => {
+      component.editItem.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      translateService.use('de')
+      await render()
+
+      const labels = buttons('[name="data-list-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Bearbeiten: First item', 'Bearbeiten: Second item'])
+    })
+
+    it('should prefer rowLabelField over the title line and fall back to the id', () => {
+      expect(component.rowLabel({ id: 'x', name: 'N', other: 'O' })).toBe('N')
+      fixture.componentRef.setInput('rowLabelField', 'other')
+      expect(component.rowLabel({ id: 'x', name: 'N', other: 'O' })).toBe('O')
+      expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
+    })
+
+    it('should not use a title line pointing at a translation key column as label', () => {
+      fixture.componentRef.setInput('columns', [{ id: 'name', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'N' }])
+      fixture.detectChanges()
+      expect(component.rowLabel({ id: 'x', name: 'STATUS.ACTIVE' })).toBe('x')
+    })
+
+    it('should never render an empty aria-label for actions without labelKey and warn', async () => {
+      fixture.componentRef.setInput('additionalActions', [
+        { id: 'inline', permission: 'INLINE#VIEW', callback: () => undefined },
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ])
+      await render()
+
+      const inline = buttons('[name="data-list-action-button"]')
+      expect(inline.map((b) => b.getAttribute('aria-label'))).toEqual(['Action: First item', 'Action: Second item'])
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('has no labelKey'))
+    })
+
+    it('should name the overflow trigger with the item label', async () => {
+      fixture.componentRef.setInput('additionalActions', [
+        { id: 'o', labelKey: 'L', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ])
+      await render()
+
+      const labels = buttons('[name="data-list-overflow-item-menu-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['More actions: First item', 'More actions: Second item'])
+    })
+
+    it('should not render an empty overflow menu item for actions without labelKey', async () => {
+      fixture.componentRef.setInput('additionalActions', [
+        { id: 'o', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ])
+      await render()
+      const items = await firstValueFrom(component.overflowListMenuItems$)
+      expect(items.map((i) => i.label)).toEqual(['Action'])
+    })
+  })
+
   describe('LiveAnnouncer announcements', () => {
     let liveAnnouncer: LiveAnnouncer
     let announceSpy: jest.SpyInstance

@@ -391,6 +391,19 @@ export class FilterViewComponent {
     return ObjectUtils.resolveFieldData(object, key)
   }
 
+  /**
+   * Returns a printable filter value for accessible names, or undefined if the value
+   * cannot be represented as plain text (objects, dates, ...), in which case a generic name is used.
+   */
+  removeFilterValue(row: Row): string | undefined {
+    const value = row['value']
+    if (typeof value === 'string' || typeof value === 'number') {
+      const text = String(value).trim()
+      return text || undefined
+    }
+    return undefined
+  }
+
   getRowObjectFromFiterData(filter: Filter): Record<string, unknown> {
     return {
       [filter.columnId]: filter.value,
