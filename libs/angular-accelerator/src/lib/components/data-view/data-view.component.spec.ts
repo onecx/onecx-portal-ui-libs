@@ -624,6 +624,16 @@ describe('DataViewComponent', () => {
     expect(dataTableRaport).toEqual('11 - 11 of 11')
   })
 
+  it('should forward tableAriaLabel to the rendered table', async () => {
+    fixture.componentRef.setInput('layout', 'table')
+    fixture.componentRef.setInput('tableAriaLabel', 'Orders overview')
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const table = (fixture.nativeElement as HTMLElement).querySelector('table')
+    expect(table?.getAttribute('aria-label')).toBe('Orders overview')
+  })
+
   describe('Dynamically disable/hide based on field path in data view', () => {
     const setUpMockData = async (viewType: 'grid' | 'list' | 'table') => {
       component.viewItem.subscribe(() => console.log())

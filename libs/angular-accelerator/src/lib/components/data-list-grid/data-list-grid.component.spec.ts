@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, DeferBlockState, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
 import { Component, ChangeDetectionStrategy } from '@angular/core'
@@ -1671,6 +1671,82 @@ describe('DataListGridComponent', () => {
 
       await expect(firstValueFrom((component as any).getPermissions())).resolves.toEqual(['FALLBACK#PERM'])
       expect(getPermissionsSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('accessibility semantics', () => {
+    it('should render the grid title as a button that opens the view on click and Enter', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+
+      const el: HTMLElement = fixture.nativeElement
+      expect(el.querySelector('.item-name a')).toBeNull()
+      const title = el.querySelector('.item-name button') as HTMLButtonElement
+      expect(title).not.toBeNull()
+      expect(title.getAttribute('type')).toBe('button')
+      expect(title.textContent?.trim()).toBe('Card 1')
+
+      const viewSpy = jest.fn()
+      component.viewItem.subscribe(viewSpy)
+      title.click()
+      expect(viewSpy).toHaveBeenCalledTimes(1)
+      expect(viewSpy.mock.calls[0][0].id).toBe('Test')
+    })
+
+    it('should render an empty grid title as plain text instead of an unnamed button', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+      fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: '' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const name = (fixture.nativeElement as HTMLElement).querySelector('.item-name') as HTMLElement
+      expect(name.querySelector('button')).toBeNull()
+      expect(name.querySelector('span')).not.toBeNull()
+      expect(name.textContent?.trim()).toBe('')
+    })
+
+    it('should render the grid title as plain text when the view is not observed', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: 'Card 1' }])
+      fixture.componentRef.setInput('titleLineId', 'property1')
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const name = (fixture.nativeElement as HTMLElement).querySelector('.item-name') as HTMLElement
+      expect(name.querySelector('a, button')).toBeNull()
+      expect(name.textContent?.trim()).toBe('Card 1')
+    })
+
+    it('should expose grid cards as list items of a list', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+
+      const list = (fixture.nativeElement as HTMLElement).querySelector('[role="list"]') as HTMLElement
+      expect(list).not.toBeNull()
+      expect(list.querySelectorAll(':scope > [role="listitem"]').length).toBe(1)
+    })
+
+    it('should render list values as definition list name/value pairs', async () => {
+      fixture.componentRef.setInput('layout', 'list')
+      await setUpListActionButtonMockData()
+      const deferBlocks = await fixture.getDeferBlocks()
+      for (const block of deferBlocks) {
+        await block.render(DeferBlockState.Complete)
+      }
+
+      const el: HTMLElement = fixture.nativeElement
+      const dl = el.querySelector('[role="listitem"] dl') as HTMLElement
+      expect(dl).not.toBeNull()
+      const dts = dl.querySelectorAll('dt')
+      const dds = dl.querySelectorAll('dd')
+      expect(dts.length).toBeGreaterThan(0)
+      expect(dts.length).toBe(dds.length)
+      const groups = Array.from(dl.querySelectorAll(':scope > *'))
+      expect(groups.map((group) => [group.tagName, ...Array.from(group.children).map((c) => c.tagName)])).toEqual(
+        groups.map(() => ['DIV', 'DT', 'DD'])
+      )
+      expect(el.querySelector('[role="list"] > :not([role="listitem"]):not([aria-hidden="true"])')).toBeNull()
     })
   })
 })

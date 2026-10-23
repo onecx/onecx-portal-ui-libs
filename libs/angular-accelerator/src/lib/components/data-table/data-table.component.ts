@@ -308,6 +308,10 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     Object.fromEntries(this.expandedRowIds().map((id) => [id, true]))
   )
 
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
