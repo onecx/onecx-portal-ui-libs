@@ -251,5 +251,20 @@
   "OCX_DATA_EXPORT": {
     "EXCEL_TABLE_NAME": "{{fileName}}_table",
     "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
+  },
+  "OCX_FORM_FIELD": {
+    "ERROR": {
+      "REQUIRED": "Dieses Feld ist erforderlich.",
+      "EMAIL": "Geben Sie eine gültige E-Mail-Adresse ein.",
+      "MINLENGTH": "Geben Sie mindestens {{requiredLength}} Zeichen ein.",
+      "MAXLENGTH": "Geben Sie höchstens {{requiredLength}} Zeichen ein.",
+      "MIN": "Der Wert muss mindestens {{min}} betragen.",
+      "MAX": "Der Wert darf höchstens {{max}} betragen.",
+      "PATTERN": "Der Wert hat ein ungültiges Format.",
+      "INVALID": "Dieser Wert ist ungültig."
+    },
+    "SUMMARY": {
+      "TITLE": "Bitte korrigieren Sie die folgenden Fehler"
+    }
   }
 }
