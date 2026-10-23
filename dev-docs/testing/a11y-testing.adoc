@@ -37,6 +37,8 @@ Spike result (happy-dom): `axe-core` runs on the `@happy-dom/jest-environment` u
 
 The following axe rules need real layout and are therefore not reliable in the unit tests and are not enforced by the helper: `color-contrast`, `target-size`, `scrollable-region-focusable`. Check them in Storybook (see below) or manually in a browser.
 
+The unit-test axe run also does not report `button-name` for a custom element host with `role="button"` and no accessible name (for example `p-togglebutton` inside `p-selectbutton`). For such buttons, assert the name in the DOM (for example the text of the visually hidden `.sr-only` element) and rely on the Storybook axe run for the rule itself.
+
 == Keyboard events: `@testing-library/user-event`
 
 `dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }))` does not trigger the native activation behavior of a button. Use `@testing-library/user-event` instead, which performs the click on Enter/Space:

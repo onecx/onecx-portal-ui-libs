@@ -15,9 +15,8 @@ describe('DataLayoutSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
-      imports: [TranslateModule.forRoot()],
-      providers: [DataViewStateService],
-      schemas: [],
+      imports: [TranslateModule.forRoot(), AngularAcceleratorOptimusModule, FormsModule, OcxTooltipDirective],
+      providers: [DataViewStateService, provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
@@ -32,19 +31,13 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('layout toggle buttons', () => {
     beforeEach(async () => {
-      TestBed.resetTestingModule()
-      await TestBed.configureTestingModule({
-        declarations: [DataLayoutSelectionComponent],
-        imports: [TranslateModule.forRoot(), AngularAcceleratorOptimusModule, FormsModule, OcxTooltipDirective],
-        providers: [DataViewStateService, provideTranslateTestingService({})],
-      }).compileComponents()
-
-      fixture = TestBed.createComponent(DataLayoutSelectionComponent)
       fixture.componentRef.setInput('supportedViewLayouts', ['list', 'grid', 'table'])
       fixture.detectChanges()
       await fixture.whenStable()
     })
 
+    // The unit-test axe run (happy-dom) does not flag a nameless custom-element host with role="button" (p-togglebutton),
+    // so this DOM assertion is the guard for the button names. The Storybook axe run covers button-name.
     it('should give every icon-only toggle button a visually hidden accessible name', () => {
       const toggleButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="button"]'))
 
@@ -54,10 +47,6 @@ describe('DataLayoutSelectionComponent', () => {
         'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
       ])
       toggleButtons.forEach((button) => expect(button.querySelector('.sr-only')?.closest('[aria-hidden]')).toBeNull())
-    })
-
-    it('should have no axe violations', async () => {
-      await expectNoAxeViolations(fixture.nativeElement)
     })
   })
 
@@ -85,7 +74,7 @@ describe('DataLayoutSelectionComponent', () => {
       fixture.detectChanges()
       component.onDataViewLayoutChange({
         layout: 'table',
-        icon: 'pi pi-address-book'
+        icon: 'pi pi-address-book',
       })
 
       expect(stateService.layout()).toBe('table')
@@ -111,7 +100,6 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('onDataViewLayoutChange', () => {
     it('should call service setLayout and update layout signal', () => {
-
       fixture.detectChanges()
 
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })

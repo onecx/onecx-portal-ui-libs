@@ -11,7 +11,7 @@ app:: The application's own markup or configuration. Fixed in the app repository
 
 == Storybook (main)
 
-Measured on the static Storybook build of `angular-accelerator` (all 140 stories, the only library with stories) with axe-core and only the four rules above. Each story is opened in Chromium (`iframe.html?id=<story>`), axe runs on `#storybook-root` after the story has rendered.
+Measured on the static Storybook build of `angular-accelerator` (the only library with stories): all 140 entries of type `story` in `index.json`. One of them, `mockData2` in `diagram.component.stories.ts`, is a data export that Storybook indexes as a story, so 139 real stories were checked with axe-core and only the four rules above. Each story is opened in Chromium (`iframe.html?id=<story>`), axe runs on `#storybook-root` after the story has rendered.
 
 [cols="2,1,3", options="header"]
 |===
@@ -27,7 +27,7 @@ Measured on the static Storybook build of `angular-accelerator` (all 140 stories
 
 |`button-name`
 |0
-|The icon-only toggle buttons of `ocx-data-layout-selection` (list/grid/table) and `ocx-diagram` (diagram type) have their name as visually hidden text (`.sr-only`) inside the button, which is not hidden from assistive technology. Unit tests assert the name of every toggle button and run axe on the rendered toggles.
+|The icon-only toggle buttons of `ocx-data-layout-selection` (list/grid/table) and `ocx-diagram` (diagram type) have their name as visually hidden text (`.sr-only`) inside the button, which is not hidden from assistive technology. `main` needed no code change for these names: the `.sr-only` text predates this sweep. Unit tests assert the visually hidden name of every toggle button. The unit-test axe run (happy-dom) does not report a nameless custom element host with `role="button"`, so it does not cover these toggles; the Storybook axe run does.
 
 |`aria-input-field-name`
 |0
@@ -65,7 +65,7 @@ The following sources are known from the audit (T-23, T-38) on the dev system, w
 |`button-name`
 |Icon-only `p-selectbutton` options (layout selection, diagram type) on libs v6 (PrimeNG 19 `p-togglebutton` with the icon only)
 |libs (v7 line)
-|Backport of onecx/internal-tasks#1107 to v7; fixed on v8 and `main`.
+|Backport of onecx/internal-tasks#1107 to v7; fixed on v8 and `main` (on `main` already before the sweep, no code change needed).
 
 |`aria-prohibited-attr`, `aria-allowed-attr`
 |`aria-label` and other ARIA attributes on custom host elements and role-less elements in app templates

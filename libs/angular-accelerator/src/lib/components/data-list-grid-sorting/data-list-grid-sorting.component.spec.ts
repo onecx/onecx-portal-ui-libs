@@ -40,7 +40,7 @@ describe('DataListGridSortingComponent', () => {
 
   describe('accessibility', () => {
     beforeEach(async () => {
-      fixture.componentRef.setInput('columns', [makeColumn({ id: 'a', nameKey: 'A', sortable: true })])
+      fixture.componentRef.setInput('columns', [makeColumn({ id: 'a', nameKey: 'Column A', sortable: true })])
       stateService.sortColumn.set('a')
       fixture.detectChanges()
       await fixture.whenStable()
@@ -52,10 +52,11 @@ describe('DataListGridSortingComponent', () => {
     })
 
     it('should render the selected sorting option as text without aria-label on the role-less span', () => {
-      const select: HTMLElement = fixture.nativeElement.querySelector('#dataListGridSortingDropdown')
-      const spans = Array.from(select.querySelectorAll('span')).filter((span) => span.textContent?.trim() === 'A')
+      const combobox: HTMLElement = fixture.nativeElement.querySelector(
+        '#dataListGridSortingDropdown span[role="combobox"]'
+      )
 
-      expect(spans.length).toBeGreaterThan(0)
+      expect(combobox.textContent).toContain('Column A')
       expect(fixture.nativeElement.querySelectorAll('span[aria-label]:not([role])').length).toBe(0)
     })
   })
