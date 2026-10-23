@@ -1,4 +1,5 @@
 /**
+ * axe-core needs a full DOM implementation (jsdom) to run its accessibility checks.
  * @jest-environment jsdom
  */
 import { Component, DebugElement, ChangeDetectionStrategy } from '@angular/core'
@@ -10,6 +11,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { TranslateService } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import axe from 'axe-core'
+import { Subject, throwError } from 'rxjs'
 
 @Component({
   selector: 'ocx-test-full-page',
@@ -174,7 +176,7 @@ describe('LoadingIndicatorDirective', () => {
       const nativeElement: HTMLElement = directiveElement.nativeElement
 
       expect(nativeElement.classList.contains('element-overlay')).toBe(true)
-
+      
       const loaderElement = nativeElement.querySelector('.loader')
       expect(loaderElement).toBeTruthy()
     })
@@ -316,10 +318,13 @@ describe('LoadingIndicatorDirective', () => {
     let announceSpy: jest.SpyInstance
     let host: HTMLElement
 
+    const flushAnnouncements = () => new Promise((resolve) => setTimeout(resolve))
+
     const setLoading = async (isLoading: boolean) => {
       a11yFixture.componentInstance.isLoading = isLoading
       a11yFixture.detectChanges()
       await a11yFixture.whenStable()
+      await flushAnnouncements()
     }
 
     const button = (id: string) => a11yFixture.nativeElement.querySelector(`#${id}`) as HTMLButtonElement
@@ -357,6 +362,50 @@ describe('LoadingIndicatorDirective', () => {
 
       await setLoading(false)
       expect(announceSpy).toHaveBeenCalledTimes(2)
+    })
+
+    it('should announce start before end even if the start translation resolves later', async () => {
+      const translate = TestBed.inject(TranslateService)
+      const started = new Subject<string>()
+      const originalGet = translate.get.bind(translate)
+      jest
+        .spyOn(translate, 'get')
+        .mockImplementation((key: string | string[]) =>
+          key === 'OCX_LOADING_INDICATOR.LOADING_STARTED' ? started : originalGet(key)
+        )
+
+      await setLoading(true)
+      await setLoading(false)
+      expect(announceSpy).not.toHaveBeenCalled()
+
+      started.next('Loading')
+      await flushAnnouncements()
+      expect(announceSpy.mock.calls).toEqual([
+        ['Loading', 'polite'],
+        ['Loading finished', 'polite'],
+      ])
+    })
+
+    it('should not announce after the directive was destroyed', async () => {
+      a11yFixture.componentInstance.isLoading = true
+      a11yFixture.detectChanges()
+      a11yFixture.destroy()
+      await flushAnnouncements()
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should handle translation errors and keep announcing afterwards', async () => {
+      const translate = TestBed.inject(TranslateService)
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      jest.spyOn(translate, 'get').mockReturnValueOnce(throwError(() => new Error('translation failed')))
+
+      await setLoading(true)
+      expect(announceSpy).not.toHaveBeenCalled()
+      expect(warnSpy).toHaveBeenCalledWith('Failed to announce loading state', expect.any(Error))
+
+      await setLoading(false)
+      expect(announceSpy).toHaveBeenCalledWith('Loading finished', 'polite')
+      warnSpy.mockRestore()
     })
 
     it.each([false, true])('should mark the host busy and inert while loading (fullPage: %s)', async (fullPage) => {

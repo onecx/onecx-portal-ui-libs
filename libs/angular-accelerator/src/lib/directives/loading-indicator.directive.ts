@@ -1,5 +1,15 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { Directive, ElementRef, Renderer2, ViewContainerRef, effect, inject, input, untracked } from '@angular/core'
+import {
+  DestroyRef,
+  Directive,
+  ElementRef,
+  Renderer2,
+  ViewContainerRef,
+  effect,
+  inject,
+  input,
+  untracked,
+} from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { firstValueFrom } from 'rxjs'
 import { LoadingIndicatorComponent } from '../components/loading-indicator/loading-indicator.component'
@@ -22,8 +32,14 @@ export class LoadingIndicatorDirective {
   private loaderElement: HTMLDivElement | undefined
   private loading = false
   private previousFocus: HTMLElement | undefined
+  private destroyed = false
+  // announcements are chained so that "finished" is never announced before "started"
+  private announcements: Promise<void> = Promise.resolve()
 
   constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.destroyed = true
+    })
     effect(() => {
       const loading = this.ocxLoadingIndicator()
       const fullPage = this.overlayFullPage()
@@ -109,6 +125,13 @@ export class LoadingIndicatorDirective {
   }
 
   private announce(key: string) {
-    firstValueFrom(this.translate.get(key)).then((text: string) => this.liveAnnouncer.announce(text, 'polite'))
+    this.announcements = this.announcements
+      .then(() => firstValueFrom(this.translate.get(key)))
+      .then((text: string) => {
+        if (!this.destroyed) {
+          this.liveAnnouncer.announce(text, 'polite')
+        }
+      })
+      .catch((error: unknown) => console.warn('Failed to announce loading state', error))
   }
 }
