@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -24,6 +24,11 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
     component = fixture.componentInstance
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   describe('ngOnInit', () => {
