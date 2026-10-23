@@ -1054,8 +1054,12 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     ...getLabelColumnIds(this.stateService.columns()),
   ])
 
+  /**
+   * Label of a row used in the accessible names of its row-level buttons ("Edit: Product A"),
+   * shortened to at most 100 characters.
+   */
   rowLabel(rowObject: any): string {
-    return getRowLabel(rowObject, this.rowLabelFields())
+    return truncateLabel(getRowLabel(rowObject, this.rowLabelFields()))
   }
 
   /**

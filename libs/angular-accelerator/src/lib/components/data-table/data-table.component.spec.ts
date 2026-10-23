@@ -1228,6 +1228,20 @@ describe('DataTableComponent', () => {
       expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
     })
 
+    it('should shorten long row labels in action button names to at most 100 characters', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const label = buttons('[name="data-table-action-button"]')[0]?.getAttribute('aria-label') ?? ''
+      const rowLabel = label.slice(label.indexOf(': ') + 2)
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+      expect(component.rowLabel({ id: 'r1', name: 'x'.repeat(250) })).toBe(rowLabel)
+    })
+
     it('should never render an empty aria-label or title for actions without labelKey and warn', () => {
       userServiceMockPublish(['ADDITIONAL#VIEW', 'OVERFLOW#VIEW'])
       component.additionalActions = [
@@ -1339,6 +1353,14 @@ describe('DataTableComponent', () => {
       expect(checkboxLabels()).toEqual(['Select row'])
     })
 
+    it('should skip object values of visible columns when the name is empty', () => {
+      component.rows.set([{ id: 'r1', name: '', details: { a: 1 } }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+      expect(checkboxLabels()[0]).not.toContain('[object Object]')
+    })
+
     it('should shorten long row labels to at most 100 characters', () => {
       component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
       fixture.detectChanges()
@@ -1366,20 +1388,8 @@ describe('DataTableComponent', () => {
 
     it('should have no axe label or aria-input-field-name violations', async () => {
       fixture.detectChanges()
-      // zone.js breaks the MutationObserver used by axe-core; use the unpatched one while axe runs
-      // (can be replaced by expectNoAxeViolations from @onecx/angular-testing once available)
-      const zoneMutationObserver = globalThis.MutationObserver
-      globalThis.MutationObserver = (globalThis as any).__zone_symbol__MutationObserver ?? zoneMutationObserver
-      try {
-        const axe = await import('axe-core')
-        const results = await axe.default.run(fixture.nativeElement, {
-          runOnly: { type: 'rule', values: ['label', 'aria-input-field-name'] },
-        })
-        expect(results.violations).toEqual([])
-        expect(results.passes.length).toBeGreaterThan(0)
-      } finally {
-        globalThis.MutationObserver = zoneMutationObserver
-      }
+
+      await expectNoAxeViolations(fixture.nativeElement, { rules: ['label', 'aria-input-field-name'] })
     })
 
     it('should provide the selection keys in English and German', () => {
