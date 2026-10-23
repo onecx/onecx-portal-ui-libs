@@ -1,3 +1,26 @@
+## [6.29.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.29.0...v6.29.1) (2026-10-08)
+
+### Bug Fixes
+
+* resolve gatherer id issues when using multiple gatherers ([#1811](https://github.com/onecx/onecx-portal-ui-libs/issues/1811)) ([53c628f](https://github.com/onecx/onecx-portal-ui-libs/commit/53c628f2737c783b92b4bee650c7dff9737040ab))
+
+## [6.29.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.28.0...v6.29.0) (2026-10-06)
+
+### Features
+
+* add ai-completion.service ([#1797](https://github.com/onecx/onecx-portal-ui-libs/issues/1797)) ([27f7e6f](https://github.com/onecx/onecx-portal-ui-libs/commit/27f7e6ff44faf6e0c0a8add9a3da6a4acf6b9a75))
+* add configurable search header buttons (v6) ([#1801](https://github.com/onecx/onecx-portal-ui-libs/issues/1801)) ([7a0e271](https://github.com/onecx/onecx-portal-ui-libs/commit/7a0e271556e29751a8f05b8f712e7f50819b8ad1))
+
+## [6.28.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.3...v6.28.0) (2026-09-30)
+
+### Features
+
+* add AiCompletionGatherer as transport between consumers and AI provider connector ([#1751](https://github.com/onecx/onecx-portal-ui-libs/issues/1751)) ([#1757](https://github.com/onecx/onecx-portal-ui-libs/issues/1757)) ([1843380](https://github.com/onecx/onecx-portal-ui-libs/commit/1843380b2f71c84427cd2fb79effbee7c898beb5))
+
+### Bug Fixes
+
+* tooltip fpr disabled menu items ([#1732](https://github.com/onecx/onecx-portal-ui-libs/issues/1732)) ([4146e8e](https://github.com/onecx/onecx-portal-ui-libs/commit/4146e8ea7977aef1de89a511ae5fa79430f30bf3))
+
 ## [6.27.3](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.27.2...v6.27.3) (2026-09-11)
 
 ### Bug Fixes
