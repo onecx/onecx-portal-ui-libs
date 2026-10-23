@@ -27,7 +27,7 @@ import { AppStateService, UserService } from '@onecx/angular-integration-interfa
 import { MfeInfo } from '@onecx/integration-interface'
 import { MenuItem, OpenngIcons, PrimeTemplate } from '@openng/optimus-ui/api'
 import { Menu } from '@openng/optimus-ui/menu'
-import { Observable, combineLatest, debounceTime, firstValueFrom, map, mergeMap, of, switchMap } from 'rxjs'
+import { Observable, combineLatest, debounceTime, map, mergeMap, of, switchMap, tap } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -38,13 +38,13 @@ import { DataSortBase } from '../data-sort-base/data-sort-base'
 import { Row } from '../data-table/data-table.component'
 import { PermissionInput } from '../../model/permission.model'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput, ObservableOutputEmitterRef } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { DisplayedResultsAnnouncer } from '../../services/results-announcement.service'
 import { RowListGridData } from '../../model/row-list-grid-data.model'
 
 export type ListGridData = {
@@ -84,12 +84,21 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
   private readonly injector = inject(Injector)
   private readonly appStateService = inject(AppStateService)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
-  private readonly liveAnnouncer = inject(LiveAnnouncer)
 
   titleLineId = input<string>()
   subtitleLineIds = input<string[]>()
   clientSideSorting = input<boolean>(true)
   clientSideFiltering = input<boolean>(true)
+  /**
+   * Whether new data is announced to screen readers. By default it is announced
+   * unless a search header on the page announces the search results.
+   * Filter and sort changes are always announced with the displayed item count.
+   */
+  announceResults = input<boolean>()
+  private readonly resultsAnnouncer = new DisplayedResultsAnnouncer(this.announceResults, {
+    results: 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND',
+    noResults: 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND',
+  })
   sortStates = input<DataSortDirection[]>([])
 
   @Input()
@@ -443,19 +452,25 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     map(([data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
       return { data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting }
     }),
-    mergeMap((params) =>
+    switchMap((params) =>
       this.translateItems(params.data, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
         map((translatedItems) => ({ ...params, translatedItems }))
       )
     ),
     map((params) => ({
       ...params,
-      data: this.filterItems([params.data, params.filters], params.clientSideFiltering),
+      filteredData: this.filterItems([params.data, params.filters], params.clientSideFiltering),
     })),
+    tap((params) =>
+      this.resultsAnnouncer.update(
+        { ...params, items: params.data, sortColumn: params.sortField },
+        params.filteredData.length
+      )
+    ),
     map((params) => ({
       ...params,
       data: this.sortItems(
-        [params.data, params.sortField, params.sortDirection, params.translatedItems],
+        [params.filteredData, params.sortField, params.sortDirection, params.translatedItems],
         params.columns,
         params.clientSideSorting
       ),
@@ -503,16 +518,6 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
           this.stateService.activePage.set(0)
         }
       })
-
-      const currentResults = data.length
-      const newStatus =
-        currentResults === 0 ? 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND' : 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND'
-
-      firstValueFrom(this.translateService.get(newStatus, { results: currentResults })).then(
-        (translatedText: string) => {
-          this.liveAnnouncer.announce(translatedText)
-        }
-      )
     })
 
     effect(() => {

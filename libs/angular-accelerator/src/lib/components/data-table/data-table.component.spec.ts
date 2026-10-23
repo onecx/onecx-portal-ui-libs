@@ -17,10 +17,11 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, DestroyRef } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -1260,6 +1261,136 @@ describe('DataTableComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('results announcement ownership', () => {
+    let announceSpy: jest.SpyInstance
+    let resultsAnnouncement: ResultsAnnouncementService
+    const noopDestroyRef = { onDestroy: () => () => undefined } as unknown as DestroyRef
+
+    beforeEach(() => {
+      announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
+      resultsAnnouncement = TestBed.inject(ResultsAnnouncementService)
+    })
+
+    async function render() {
+      fixture.detectChanges()
+      await fixture.whenStable()
+    }
+
+    it('should not announce the initial rows at page load', async () => {
+      const newFixture = TestBed.createComponent(DataTableComponent)
+      newFixture.componentInstance.rows.set(mockData as any)
+      newFixture.detectChanges()
+      await newFixture.whenStable()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce the filtered row count once after a client-side filter change', async () => {
+      component.stateService.filters.set([
+        { columnId: 'name', value: 'example', filterType: FilterType.EQUALS },
+        { columnId: 'name', value: 'name 1', filterType: FilterType.EQUALS },
+      ])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce the displayed row count once after a client-side sort change', async () => {
+      component.stateService.sortColumn.set('name')
+      component.stateService.sortDirection.set(DataSortDirection.DESCENDING)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should announce once when rows and filters change together', async () => {
+      component.rows.set([...mockData, { id: 'additionalRow', name: 'example' }] as any)
+      component.stateService.filters.set([{ columnId: 'name', value: 'example', filterType: FilterType.EQUALS }])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce a server-side filter change when the new rows arrive', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      fixture.componentRef.setInput('clientSideFiltering', false)
+      await render()
+
+      component.stateService.filters.set([{ columnId: 'name', value: 'example', filterType: FilterType.EQUALS }])
+      await render()
+      expect(announceSpy).not.toHaveBeenCalled()
+
+      component.rows.set(mockData.slice(1, 2) as any)
+      await render()
+      component.rows.set(mockData.slice(0, 3) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('1 Results Found')
+    })
+
+    it('should announce a server-side sort change when the new rows arrive', async () => {
+      fixture.componentRef.setInput('clientSideSorting', false)
+      fixture.componentRef.setInput('announceResults', false)
+      await render()
+
+      component.stateService.sortColumn.set('name')
+      await render()
+      expect(announceSpy).not.toHaveBeenCalled()
+
+      component.rows.set([...mockData].reverse() as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should not announce new rows while a search header owns the search results', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce new rows once when the search header requests it', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      resultsAnnouncement.requestSearchResultsAnnouncement()
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+      component.rows.set(mockData.slice(0, 3) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce new rows next to a search header when announceResults is true', async () => {
+      resultsAnnouncement.registerSearchHeader(noopDestroyRef)
+      fixture.componentRef.setInput('announceResults', true)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should not announce new rows of a standalone table when announceResults is false', async () => {
+      fixture.componentRef.setInput('announceResults', false)
+
+      component.rows.set(mockData.slice(0, 2) as any)
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
     })
   })
 
