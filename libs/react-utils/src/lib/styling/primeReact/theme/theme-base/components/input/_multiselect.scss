@@ -243,12 +243,14 @@
         background: $highlightBg;
 
         &.p-focus {
+          @include focused-listitem();
           background: $highlightFocusBg;
         }
       }
 
       &:not(.p-highlight):not(.p-disabled) {
         &.p-focus {
+          @include focused-listitem();
           color: $inputListItemTextHoverColor;
           background: $inputListItemHoverBg;
         }

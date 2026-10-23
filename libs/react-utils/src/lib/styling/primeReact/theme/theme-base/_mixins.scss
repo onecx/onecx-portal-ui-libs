@@ -7,13 +7,11 @@
 @mixin focused() {
   outline: $focusOutline;
   outline-offset: $focusOutlineOffset;
-  box-shadow: $focusShadow;
 }
 
 @mixin focused-inset() {
   outline: $focusOutline;
-  outline-offset: $focusOutlineOffset;
-  box-shadow: inset $focusShadow;
+  outline-offset: $focusOutlineInsetOffset;
 }
 
 @mixin focused-input() {
@@ -22,9 +20,7 @@
 }
 
 @mixin focused-listitem() {
-  outline: $focusOutline;
-  outline-offset: $focusOutlineOffset;
-  box-shadow: $inputListItemFocusShadow;
+  @include focused-inset();
 }
 
 @mixin invalid-input() {
@@ -76,6 +72,7 @@
 
     &.p-focus {
       > .p-menuitem-content {
+        @include focused-listitem();
         background: $menuitemActiveFocusBg;
       }
     }
@@ -84,6 +81,7 @@
   &:not(.p-highlight):not(.p-disabled) {
     &.p-focus {
       > .p-menuitem-content {
+        @include focused-listitem();
         color: $menuitemTextFocusColor;
         background: $menuitemFocusBg;
 
