@@ -23,7 +23,6 @@ import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import userEvent from '@testing-library/user-event'
 import { within } from '@testing-library/dom'
-import * as axe from 'axe-core'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -469,10 +468,7 @@ describe('DataTableComponent', () => {
       const header = fixture.nativeElement.querySelector('thead') as HTMLElement
       expect(header.querySelectorAll('button.sortButton').length).toBe(mockColumns.length)
 
-      const results = await axe.run(header, { runOnly: { type: 'rule', values: ['button-name', 'label'] } })
-
-      expect(results.violations).toEqual([])
-      expect(results.passes.map((rule) => rule.id)).toEqual(expect.arrayContaining(['button-name', 'label']))
+      await expectNoAxeViolations(header, { rules: ['button-name', 'label'] })
     }, 15000)
   })
 

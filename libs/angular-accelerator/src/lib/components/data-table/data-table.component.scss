@@ -1,6 +1,3 @@
-$clr-neutral-100: #f7f7f7;
-$clr-neutral-700: #262626;
-
 // INFO: Sort and filter triggers in the column headers (WCAG 2.5.8, 2.4.7, 1.4.11):
 // at least 24x24 CSS px and a focus ring of at least 2px from the theme focus ring tokens.
 $header-trigger-min-size: 24px;
@@ -19,7 +16,7 @@ $header-trigger-min-focus-width: 2px;
   min-width: $header-trigger-min-size;
   min-height: $header-trigger-min-size;
   padding: 0;
-  background: $clr-neutral-100;
+  background: var(--content-alt-bg-color);
   border: none;
 
   .p-multiselect-container {
@@ -36,7 +33,7 @@ $header-trigger-min-focus-width: 2px;
   }
 
   .p-multiselect-label.p-placeholder {
-    color: $clr-neutral-700;
+    color: var(--text-color);
     font-size: 0.9rem;
     font-family: Bold, sans-serif;
     font-weight: 700;
