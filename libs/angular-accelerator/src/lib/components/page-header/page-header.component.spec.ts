@@ -20,11 +20,12 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
-import { of } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
 import { expectNoAxeViolations } from '@onecx/angular-testing'
+import { expectInstanceScopedIds } from '../../../../testing/instance-scoped-id'
 
 export function provideBreadcrumbServiceMock() {
   return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
@@ -921,5 +922,29 @@ describe('PageHeaderComponent', () => {
 
       expect([withAction, withoutName, withoutAction].map((item) => item.label)).toEqual(['Venue', 'Venue', 'Status'])
     })
+  })
+
+  it('should scope action ids per instance', async () => {
+    const actionsWithIds: Action[] = [
+      { id: 'inlineAction', label: 'Inline', show: 'always', actionCallback: () => undefined },
+      { id: 'overflowAction', label: 'Overflow', show: 'asOverflow', actionCallback: () => undefined },
+      { label: 'Overflow without id', show: 'asOverflow', actionCallback: () => undefined },
+    ]
+    const second = TestBed.createComponent(PageHeaderComponent)
+    for (const f of [fixture, second]) {
+      f.componentRef.setInput('actions', actionsWithIds)
+      f.detectChanges()
+      await f.whenStable()
+      f.detectChanges()
+    }
+
+    expect(component.scopedActionId(undefined)).toBeUndefined()
+    expect(fixture.nativeElement.querySelector('#inlineAction')).not.toBeNull()
+    expect(second.nativeElement.querySelector('#inlineAction-1')).not.toBeNull()
+    expect(second.nativeElement.querySelector('#inlineAction')).toBeNull()
+    const secondOverflowItems = await firstValueFrom(second.componentInstance.overflowActions$)
+    expect(secondOverflowItems.map((item) => item.id)).toEqual(['overflowAction-1', undefined])
+    expect((await firstValueFrom(component.overflowActions$))[0].id).toBe('overflowAction')
+    expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
   })
 })

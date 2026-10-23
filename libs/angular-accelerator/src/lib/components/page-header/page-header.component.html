@@ -65,7 +65,7 @@
           @if (typeof action.routerLink === 'string' && !action.disabled) {
           <a
             pButton
-            [id]="action.id"
+            [id]="scopedActionId(action.id)"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             class="action-button no-underline"
@@ -77,7 +77,7 @@
           >
           } @else {
           <p-button
-            [id]="action.id"
+            [id]="scopedActionId(action.id)"
             [icon]="action.icon ?? ''"
             [iconPos]="action.iconPos ?? 'left'"
             type="button"

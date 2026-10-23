@@ -370,6 +370,7 @@ describe('SearchHeaderComponent', () => {
       const subscriptions = [component.resetted.subscribe(), second.componentInstance.resetted.subscribe()]
       for (const f of [fixture, second]) {
         f.componentRef.setInput('subheader', 'Subheader')
+        f.componentInstance.hasAdvanced.set(true)
         f.detectChanges()
         await f.whenStable()
         f.detectChanges()
@@ -380,12 +381,16 @@ describe('SearchHeaderComponent', () => {
       expect(second.nativeElement.querySelector('#searchButton-1')).not.toBeNull()
       expect(second.nativeElement.querySelector('#resetButton-1')).not.toBeNull()
       expect(second.nativeElement.querySelector('#page-header-1')).not.toBeNull()
+      expect(fixture.nativeElement.querySelector('#simpleAdvancedButton')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#simpleAdvancedButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#simpleAdvancedButton')).toBeNull()
       expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
       await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
 
       const secondHarness = await TestbedHarnessEnvironment.harnessForFixture(second, SearchHeaderHarness)
       expect(await (await secondHarness.getSearchButton()).getId()).toBe('searchButton-1')
       expect(await (await secondHarness.getResetButton()).getId()).toBe('resetButton-1')
+      expect(await secondHarness.getSimpleAdvancedButton()).toBeTruthy()
       expect(await (await secondHarness.getPageHeader()).getHeaderText()).toBeTruthy()
       expect(await (await secondHarness.getPageHeader()).getSubheaderText()).toBe('Subheader')
       subscriptions.forEach((subscription) => subscription.unsubscribe())

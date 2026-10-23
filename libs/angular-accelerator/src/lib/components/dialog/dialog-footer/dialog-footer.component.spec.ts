@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { expectNoAxeViolations } from '@onecx/angular-testing'
 import { OpenngIcons } from '@openng/optimus-ui/api'
+import { of, Subject } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import {
   DialogFooterHarness,
@@ -544,6 +545,40 @@ describe('DialogFooterComponent', () => {
       expect(await secondHarness.getPrimaryButtonLabel()).toBe('Confirm')
       expect(await secondHarness.getSecondaryButtonLabel()).toBe('Cancel')
       expect(await secondHarness.getCustomButton('customTest')).toBeTruthy()
+    })
+
+    it('should auto focus the custom button of its own instance', async () => {
+      const dialogData = {
+        ...defaultDialogData,
+        config: {
+          ...defaultDialogData.config,
+          autoFocusButton: 'custom' as const,
+          autoFocusButtonCustomId: 'customTest',
+          customButtons: [{ id: 'customTest', key: 'CUSTOM_PRI', alignment: 'right' as const }],
+        },
+      }
+      fixture.componentInstance.dynamicDialogConfig.data = {
+        ...dialogData,
+        portalDialogServiceData: {
+          primaryButtonEnabled$: of(true),
+          secondaryButtonEnabled$: of(true),
+          customButtonEnabled$: of({ id: 'customTest', enabled: true }),
+          buttonClicked$: new Subject(),
+        },
+      }
+      const focused: string[] = []
+      const focusSpy = jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement) {
+        focused.push(this.id)
+      })
+      const second = TestBed.createComponent(DialogFooterComponent)
+      second.detectChanges()
+      await second.whenStable()
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(focused).toEqual(['customTest-1'])
+      focusSpy.mockRestore()
+      second.destroy()
+      fixture.componentInstance.dynamicDialogConfig.data = undefined
     })
   })
 })

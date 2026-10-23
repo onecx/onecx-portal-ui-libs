@@ -23,10 +23,14 @@ export class InteractiveDataViewHarness extends ContentContainerComponentHarness
   }
 
   getDataLayoutSelection = this.locatorFor(DataLayoutSelectionHarness)
-  getColumnGroupSelectionSelect = this.locatorForOptional(PSelectHarness.with({ id: 'columnGroupSelectionSelect' }))
+  getColumnGroupSelectionSelect = this.locatorForOptional(
+    PSelectHarness.with({ id: instanceScopedId('columnGroupSelectionDropdownElement') })
+  )
   getCustomGroupColumnSelector = this.locatorForOptional(CustomGroupColumnSelectorHarness)
   getCustomGroupColumnSelectorSlot = this.locatorForOptional(SlotHarness)
-  getDataListGridSortingSelect = this.locatorForOptional(PSelectHarness.with({ id: 'dataListGridSortingSelect' }))
+  getDataListGridSortingSelect = this.locatorForOptional(
+    PSelectHarness.with({ id: instanceScopedId('dataListGridSortingDropdown') })
+  )
   getDataListGridSortingButton = this.locatorForOptional(
     PButtonHarness.with({ id: instanceScopedId('dataListGridSortingButton') })
   )

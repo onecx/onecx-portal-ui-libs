@@ -1,7 +1,7 @@
 import { instanceScopedId, instanceScopedIdSelector } from './instance-scoped-id'
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { DataTableHarness } from './data-table.harness'
-import { ButtonHarness, PButtonHarness, PChipHarness, SpanHarness } from '@onecx/angular-testing'
+import { ButtonHarness, PButtonHarness, PChipHarness } from '@onecx/angular-testing'
 
 export class FilterViewHarness extends ContentContainerComponentHarness {
   static hostSelector = 'ocx-filter-view'
@@ -17,7 +17,6 @@ export class FilterViewHarness extends ContentContainerComponentHarness {
   getChips = this.locatorForAll(PChipHarness)
   getAddFilterChip = this.locatorForOptional(ButtonHarness.with({ id: instanceScopedId('ocxFilterViewAddFilterChip') }))
   getShowMoreChip = this.locatorForOptional(ButtonHarness.with({ id: instanceScopedId('ocxFilterViewShowMore') }))
-  getNoFiltersMessage = this.locatorForOptional(SpanHarness.with({ id: 'ocxFilterViewNoFilters' }))
 
   /** The add filter chip stays focusable when no column is filterable and is marked with aria-disabled. */
   async isAddFilterChipDisabled(): Promise<boolean> {
