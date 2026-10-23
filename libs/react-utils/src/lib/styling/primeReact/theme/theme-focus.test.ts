@@ -37,12 +37,11 @@ describe('React theme focus styles', () => {
     rules = parseRules(css)
   })
 
-  it('uses an opaque, theme driven ring colour with a dark fallback of at least 3:1', () => {
-    const m = /outline:\s*2px solid var\(--app-focus-ring-color,\s*(#[0-9a-f]{6})\)/.exec(css)
-    expect(m).not.toBeNull()
-    const fallback = parseColor(m![1])!
-    expect(contrastRatio(fallback, parseColor('#ffffff')!)).toBeGreaterThanOrEqual(3)
-    expect(contrastRatio(fallback, parseColor('#f7f7f7')!)).toBeGreaterThanOrEqual(3)
+  it('uses the theme driven ring colour without a hardcoded fallback colour', () => {
+    expect(css).toMatch(/outline:\s*2px solid var\(--app-focus-ring-color\)/)
+    expect(css).toMatch(
+      /--app-focus-ring-color:\s*var\(--ocx-theme-definitions-focus-ring-color,\s*var\(--focus-ring-color,\s*var\(--app-text-color\)\)\)/
+    )
   })
 
   it('draws the focus ring as outline, which survives forced-colors mode', () => {

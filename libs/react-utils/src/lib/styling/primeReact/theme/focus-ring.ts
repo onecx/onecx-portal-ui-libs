@@ -9,10 +9,6 @@ export const MIN_RING_CONTRAST = 3
 
 type Rgb = [number, number, number]
 
-const DEFAULT_PRIMARY: Rgb = [39, 75, 95]
-const DEFAULT_SURFACE: Rgb = [255, 255, 255]
-const DEFAULT_BODY: Rgb = [247, 247, 247]
-
 // INFO: the alpha channel is ignored, colours are treated as opaque. Colours that are not hex/rgb (e.g. var()) are not resolvable.
 export function parseColor(color: string | null | undefined): Rgb | undefined {
   if (!color) return undefined
@@ -53,6 +49,10 @@ export function contrastRatio(a: Rgb, b: Rgb): number {
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
 }
 
+// Mixing targets for darkening / lightening (not theme colours)
+const MIX_TARGET_BLACK: Rgb = [0, 0, 0]
+const MIX_TARGET_WHITE: Rgb = [255, 255, 255]
+
 function mix(from: Rgb, to: Rgb, amount: number): Rgb {
   return from.map((v, i) => v + (to[i] - v) * amount) as Rgb
 }
@@ -67,25 +67,20 @@ function minContrast(color: Rgb, backgrounds: Rgb[]): number {
 }
 
 /**
- * Returns the colour closest to `start` (mixing towards black or white) that reaches the minimum contrast
- * against all backgrounds as opaque hex colour.
+ * Returns the colour closest to `start` (mixing towards black or white in 5 % steps) with the highest contrast
+ * against all backgrounds that reaches the minimum ratio, as opaque hex colour. If no step reaches it (only possible
+ * for backgrounds of very different luminance), the candidate with the highest contrast is returned.
  */
 export function findAccessibleColor(start: Rgb, backgrounds: Rgb[], minRatio = MIN_RING_CONTRAST): string {
-  if (minContrast(start, backgrounds) >= minRatio) return toHex(start)
-  const black: Rgb = [0, 0, 0]
-  const white: Rgb = [255, 255, 255]
-  let best: { color: Rgb; steps: number } | undefined
-  for (const target of [black, white]) {
-    for (let steps = 1; steps <= 20; steps++) {
+  let best = { color: start, ratio: minContrast(start, backgrounds) }
+  for (let steps = 1; steps <= 20 && best.ratio < minRatio; steps++) {
+    for (const target of [MIX_TARGET_BLACK, MIX_TARGET_WHITE]) {
       const candidate = mix(start, target, steps / 20)
-      if (minContrast(candidate, backgrounds) >= minRatio) {
-        if (!best || steps < best.steps) best = { color: candidate, steps }
-        break
-      }
+      const ratio = minContrast(candidate, backgrounds)
+      if (ratio > best.ratio) best = { color: candidate, ratio }
     }
   }
-  if (best) return toHex(best.color)
-  return minContrast(black, backgrounds) >= minContrast(white, backgrounds) ? toHex(black) : toHex(white)
+  return toHex(best.color)
 }
 
 export interface FocusRingInput {
@@ -94,10 +89,13 @@ export interface FocusRingInput {
   bodyBgColor?: string | null
 }
 
-/** Resolves the opaque focus ring colour (hex) from the theme colours. */
-export function resolveFocusRingColor(input: FocusRingInput): string {
-  const primary = parseColor(input.primaryColor) ?? DEFAULT_PRIMARY
-  const surface = parseColor(input.surfaceColor) ?? DEFAULT_SURFACE
-  const body = parseColor(input.bodyBgColor) ?? DEFAULT_BODY
-  return findAccessibleColor(primary, [surface, body])
+/**
+ * Resolves the opaque focus ring colour (hex) from the theme colours. Returns `undefined` if the primary colour or
+ * all backgrounds are not resolvable; the theme CSS fallback applies then (no hardcoded default colour).
+ */
+export function resolveFocusRingColor(input: FocusRingInput): string | undefined {
+  const primary = parseColor(input.primaryColor)
+  const backgrounds = [input.surfaceColor, input.bodyBgColor].map(parseColor).filter((c): c is Rgb => !!c)
+  if (!primary || backgrounds.length === 0) return undefined
+  return findAccessibleColor(primary, backgrounds)
 }

@@ -55,12 +55,13 @@ function mapThemeToCSSVariables(themeProperties: Record<string, Record<string, u
   }
 
   // Opaque focus ring colour with at least 3:1 contrast (WCAG 1.4.11); a theme may set --app-focus-ring-color itself
-  if (cssVariables['--app-primary-color'] && !cssVariables['--app-focus-ring-color']) {
-    cssVariables['--app-focus-ring-color'] = resolveFocusRingColor({
-      primaryColor: cssVariables['--app-primary-color'],
-      surfaceColor: cssVariables['--app-content-bg-color'],
-      bodyBgColor: cssVariables['--app-body-bg-color'],
-    })
+  const focusRingColor = resolveFocusRingColor({
+    primaryColor: cssVariables['--app-primary-color'],
+    surfaceColor: cssVariables['--app-content-bg-color'],
+    bodyBgColor: cssVariables['--app-body-bg-color'],
+  })
+  if (focusRingColor && !cssVariables['--app-focus-ring-color']) {
+    cssVariables['--app-focus-ring-color'] = focusRingColor
   }
 
   return cssVariables

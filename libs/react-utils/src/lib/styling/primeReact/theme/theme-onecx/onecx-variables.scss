@@ -5,8 +5,9 @@
   --app-danger-button-bg: var(--ocx-theme-definitions-danger-button-bg, var(--danger-button-bg, #d32f2f));
   --app-divider-color: var(--ocx-theme-definitions-divider-color, var(--divider-color, #e4e4e4));
   // INFO: React theme focus ring colour (opaque, >= 3:1). Not the same token as the Angular --p-onecx-focus-ring-color
-  // (#1070); applyThemeVariables derives it from the primary colour when a theme does not provide it.
-  --app-focus-ring-color: var(--ocx-theme-definitions-focus-ring-color, var(--focus-ring-color, #274b5f));
+  // (#1070); applyThemeVariables derives it from the primary colour when a theme does not provide it. Without a theme
+  // the text colour is used, which contrasts with the content background by design (no hardcoded colour).
+  --app-focus-ring-color: var(--ocx-theme-definitions-focus-ring-color, var(--focus-ring-color, var(--app-text-color)));
   --app-error-message-bg: var(--ocx-theme-definitions-error-message-bg, var(--error-message-bg, #ffcdd2));
   --app-hover-bg-color: var(--ocx-theme-definitions-hover-bg-color, var(--hover-bg-color, #ad1457));
   --app-info-message-bg: var(--ocx-theme-definitions-info-message-bg, var(--info-message-bg, #b3e5fc));

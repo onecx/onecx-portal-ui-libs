@@ -202,7 +202,10 @@ describe('applyThemeVariables', () => {
     root.setAttribute('data-style-id', 'ring')
     document.body.appendChild(root)
 
-    applyThemeVariables({ properties: { colors: { appPrimaryColor: '#ffeb3b' } } }, 'ring')
+    applyThemeVariables(
+      { properties: { colors: { appPrimaryColor: '#ffeb3b', appContentBgColor: '#ffffff' } } },
+      'ring'
+    )
 
     const ring = root.style.getPropertyValue('--app-focus-ring-color')
     expect(ring).toMatch(/^#[0-9a-f]{6}$/)
@@ -217,10 +220,24 @@ describe('applyThemeVariables', () => {
     document.body.appendChild(root)
 
     applyThemeVariables(
-      { properties: { colors: { appPrimaryColor: '#ffeb3b', appFocusRingColor: '#000000' } } },
+      {
+        properties: {
+          colors: { appPrimaryColor: '#ffeb3b', appContentBgColor: '#ffffff', appFocusRingColor: '#000000' },
+        },
+      },
       'ring2'
     )
 
     expect(root.style.getPropertyValue('--app-focus-ring-color')).toBe('#000000')
+  })
+
+  it('does not derive a focus ring colour without a resolvable background (CSS fallback applies)', () => {
+    const root = document.createElement('div')
+    root.setAttribute('data-style-id', 'ring3')
+    document.body.appendChild(root)
+
+    applyThemeVariables({ properties: { colors: { appPrimaryColor: '#ffeb3b' } } }, 'ring3')
+
+    expect(root.style.getPropertyValue('--app-focus-ring-color')).toBe('')
   })
 })

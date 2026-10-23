@@ -57,9 +57,9 @@ $scaleLG: 1.25 !default;
 
 //focus
 // INFO: Opaque ring colour with at least 3:1 contrast (WCAG 1.4.11). --app-focus-ring-color is derived from the theme
-// primary colour at runtime (see focus-ring.ts / applyThemeVariables), the fallback is #274b5f (9:1 on white).
+// primary colour at runtime (see focus-ring.ts / applyThemeVariables) and defined in onecx-variables.scss.
 // The ring is an outline, so it survives forced-colors mode. Do not add a box-shadow based ring only.
-$focusOutlineColor: var(--app-focus-ring-color, #274b5f) !default;
+$focusOutlineColor: var(--app-focus-ring-color) !default;
 $focusOutlineWidth: 2px !default;
 $focusOutline: $focusOutlineWidth solid $focusOutlineColor !default;
 $focusOutlineOffset: 2px !default;
