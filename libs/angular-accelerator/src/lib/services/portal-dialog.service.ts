@@ -1,7 +1,8 @@
+import { DOCUMENT } from '@angular/common'
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from '@openng/optimus-ui/dynamicdialog'
-import { Observable, Subject, filter, mergeMap, of, tap } from 'rxjs'
+import { Observable, Subject, filter, forkJoin, mergeMap, of, tap } from 'rxjs'
 
 import { ButtonDialogButtonDetails, ButtonDialogCustomButtonDetails, ButtonDialogData } from '../model/button-dialog'
 import { NavigationStart, Router } from '@angular/router'
@@ -47,7 +48,15 @@ import { createLogger } from '../utils/logger.utils'
  * }
  * ```
  */
-type DialogMessage = { message: TranslationKey; icon: OptimusIcon }
+type DialogMessage = {
+  message: TranslationKey
+  icon: OptimusIcon
+  /**
+   * Optional text alternative of the icon (e.g. its severity), as translation key. It is rendered as visually hidden text.
+   * If omitted, a text is derived from well-known info, success, warning, error and question icons.
+   */
+  iconLabel?: TranslationKey
+}
 
 /**
  * Implement via component class to be displayed by {@link PortalDialogService.openDialog}
@@ -198,7 +207,13 @@ type Component<T extends unknown> = unknown extends T
 
 export type DialogButton = 'primary' | 'secondary' | 'custom'
 export type DialogStateButtonClicked = 'primary' | 'secondary' | 'custom'
-export type DialogInitiator = 'initiator' | 'default'
+/**
+ * Controls where focus goes when a dialog closes.
+ * - `'initiator'` and `'default'` (also when unset): focus returns to `initiatorRef` or, if not provided, to the element that was focused when the dialog was opened.
+ * For chained dialogs opened from a closing dialog, pass `initiatorRef` explicitly.
+ * - `'none'`: focus is not moved, the caller takes care of it.
+ */
+export type DialogInitiator = 'initiator' | 'default' | 'none'
 
 /**
  * Object containing information about clicked button ('primary' or 'secondary') and displayed component state captured on button click (only if component implements {@link DialogResult} interface)
@@ -252,6 +267,7 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
+  private document = inject(DOCUMENT)
   private readonly logger = createLogger('PortalDialogService')
   private _eventsTopic$: EventsTopic | undefined
   get eventsTopic() {
@@ -474,6 +490,13 @@ export class PortalDialogService implements OnDestroy {
       : { showXButton: extrasOrShowXButton || false }
     const translateParams = this.prepareTitleForTranslation(title)
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
+    const focusOnShow = dialogOptions.focusOnShow ?? true
+    // Message-only dialogs have nothing to focus in the content: focus Cancel (or the only button) unless a button is requested explicitly
+    const messageOnlyButton = secondaryButtonTranslationKeyOrDetails !== undefined ? 'secondary' : 'primary'
+    const defaultAutoFocusButton =
+      focusOnShow && componentToRender.type === DialogMessageContentComponent ? messageOnlyButton : undefined
+    const autoFocusButton = dialogOptions.autoFocusButton ?? defaultAutoFocusButton
+    const openerElement = this.getOpenerElement(dialogOptions)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
       config: {
@@ -483,18 +506,28 @@ export class PortalDialogService implements OnDestroy {
         customButtons: dialogOptions.customButtons?.map(
           (button) => this.buttonDetailsOrTranslationKey(button) as ButtonDialogCustomButtonDetails
         ),
-        autoFocusButton: dialogOptions.autoFocusButton,
+        autoFocusButton,
         autoFocusButtonCustomId: dialogOptions.autoFocusButtonCustomId,
       },
       componentData: componentToRender.inputs,
     }
 
-    return this.translateService.get(translateParams.key, translateParams.parameters).pipe(
-      mergeMap((dialogTitle) => {
+    const title$ = translateParams.key
+      ? this.translateService.get(translateParams.key, translateParams.parameters)
+      : of('')
+    const names$ = forkJoin([
+      title$,
+      this.translateService.get('OCX_BUTTON_DIALOG.CLOSE'),
+      this.translateService.get('OCX_BUTTON_DIALOG.DEFAULT_NAME'),
+    ])
+    return names$.pipe(
+      mergeMap(([dialogTitle, defaultCloseAriaLabel, defaultDialogName]) => {
         const dialogRef = this.dialogService.open(DialogContentComponent, {
           header: dialogTitle,
           data: {
             ...dynamicDialogDataConfig,
+            // Used as accessible name of the dialog when it has no title
+            dialogAriaLabel: defaultDialogName,
             portalDialogServiceData: {
               primaryButtonEnabled$: new Subject<boolean>(),
               secondaryButtonEnabled$: new Subject<boolean>(),
@@ -506,7 +539,11 @@ export class PortalDialogService implements OnDestroy {
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
-          focusOnShow: false,
+          // Initial focus is moved by the dialog (first field) unless a footer button takes it (see DialogFooterComponent).
+          // Must stay after the spread, but derive from the caller's value so that an explicit `false` is respected.
+          focusOnShow: focusOnShow && !autoFocusButton,
+          // The close button always has a (translated) name. A caller-provided closeAriaLabel is used as is.
+          closeAriaLabel: dialogOptions.closeAriaLabel || defaultCloseAriaLabel,
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
             footer: DialogFooterComponent,
@@ -524,13 +561,7 @@ export class PortalDialogService implements OnDestroy {
             'Dialog component instance could not be found after creation. The displayed dialog may not function as expected.'
           )
         }
-        return dialogRef.onClose.pipe(
-          tap(() => {
-            if (isObject) {
-              this.setFocusOnInitiator(extrasOrShowXButton)
-            }
-          })
-        )
+        return dialogRef.onClose.pipe(tap(() => this.restoreFocus(dialogOptions, openerElement)))
       })
     )
   }
@@ -593,10 +624,7 @@ export class PortalDialogService implements OnDestroy {
 
   private buttonDetailsOrTranslationKey(
     buttonTranslationKeyOrDetails:
-      | TranslationKey
-      | ButtonDialogButtonDetails
-      | ButtonDialogCustomButtonDetails
-      | undefined
+      TranslationKey | ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined
   ): ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined {
     if (buttonTranslationKeyOrDetails === undefined) {
       return undefined
@@ -661,15 +689,24 @@ export class PortalDialogService implements OnDestroy {
     return obj instanceof Type
   }
 
-  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
-    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
-    if (hasOnCloseFocus) return
+  private getOpenerElement(dialogOptions: PortalDialogConfig): HTMLElement | undefined {
+    if (dialogOptions.initiatorRef) return dialogOptions.initiatorRef
+    const active = this.document.activeElement
+    return active instanceof HTMLElement && active !== this.document.body ? active : undefined
+  }
 
-    const initiator = dialogOptions.initiatorRef
-    if (!initiator || typeof document === 'undefined' || !document.contains(initiator) || dialogOptions.onCloseFocus !== 'initiator')
+  private restoreFocus(dialogOptions: PortalDialogConfig, opener: HTMLElement | undefined) {
+    if (dialogOptions.onCloseFocus === 'none') return
+
+    if (opener && this.document.contains(opener)) {
+      opener.focus()
       return
-    else {
-      initiator.focus()
+    }
+    // Opener is gone (e.g. removed from the DOM): fall back to the main landmark so focus does not get lost
+    const main = this.document.querySelector<HTMLElement>('main, [role="main"]')
+    if (main) {
+      if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1')
+      main.focus()
     }
   }
 

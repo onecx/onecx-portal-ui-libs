@@ -20,7 +20,7 @@
   [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)"
 >
   <ng-template pTemplate="header">
-    <span [id]="dialog.ariaLabelledBy" class="text-xl font-bold"
+    <span [id]="dialog.computedAriaLabelledBy()" class="text-xl font-bold"
       >{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' |
       translate) }}</span
     >

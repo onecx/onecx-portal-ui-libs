@@ -39,6 +39,7 @@ class ButtonDialogWithPortalDialogServiceComponent {
   @Input() primaryKey = 'Primary'
   @Input() secondaryKey?: string
   @Input() extras = {}
+  @Input() stacked = false
 
   openDialog() {
     const nativeElement = this.elementRef.nativeElement as HTMLElement
@@ -49,6 +50,13 @@ class ButtonDialogWithPortalDialogServiceComponent {
       .subscribe(() => {
         console.log('dialog closed')
       })
+    if (this.stacked) {
+      this.portalDialogService
+        .openDialog('Second dialog', 'Message of the second dialog', 'Primary', 'Secondary')
+        .subscribe(() => {
+          console.log('second dialog closed')
+        })
+    }
   }
 }
 
@@ -214,6 +222,45 @@ export const CustomDataWithButtonSeverity = {
     },
   },
 }
+
+const dialogStory = (args: Record<string, unknown>) => ({
+  render: (a: any) => ({
+    props: { ...a },
+    template: `
+      <ocx-button-dialog-with-portal-dialog-service ${argsToTemplate(a)}>
+      </ocx-button-dialog-with-portal-dialog-service>
+        `,
+  }),
+  args,
+})
+
+/** Dialog without title: gets a generic accessible name */
+export const WithoutTitle = dialogStory({
+  title: null,
+  messageOrComponent: 'Custom message',
+  primaryKey: 'Primary Button',
+  secondaryKey: 'Secondary Button',
+  extras: {},
+})
+
+/** Message with severity icon: the severity is exposed as visually hidden text */
+export const WithSeverityIcon = dialogStory({
+  title: 'Warning',
+  messageOrComponent: { message: 'Custom message', icon: OpenngIcons.EXCLAMATION_TRIANGLE },
+  primaryKey: 'Primary Button',
+  secondaryKey: 'Secondary Button',
+  extras: {},
+})
+
+/** Two dialogs open at the same time */
+export const StackedDialogs = dialogStory({
+  title: 'First dialog',
+  messageOrComponent: 'Message of the first dialog',
+  primaryKey: 'Primary Button',
+  secondaryKey: 'Secondary Button',
+  extras: {},
+  stacked: true,
+})
 
 @Component({
   standalone: false,

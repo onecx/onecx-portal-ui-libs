@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { CustomGroupColumnSelectorHarness } from '../../../../testing/custom-group-column-selector.harness'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -285,6 +287,22 @@ describe('CustomGroupColumnSelectorComponent', () => {
       fixture.detectChanges()
       expect(innerButton().getAttribute('aria-expanded')).toBe('false')
       expect(innerButton().hasAttribute('aria-controls')).toBe(false)
+    })
+  })
+
+  describe('[a11y] dialog name', () => {
+    it('should name the dialog by its visible title', async () => {
+      fixture.componentRef.setInput('columns', [makeColumn('c1')])
+      fixture.componentRef.setInput('displayedColumns', [makeColumn('c1')])
+      fixture.componentRef.setInput('dialogTitle', 'My visible title')
+      fixture.detectChanges()
+
+      const selector = await TestbedHarnessEnvironment.harnessForFixture(fixture, CustomGroupColumnSelectorHarness)
+      await selector.openCustomGroupColumnSelectorDialog()
+      const dialog = await selector.getDialog()
+
+      expect(await dialog.getDialogTitle()).toContain('My visible title')
+      expect(await dialog.getAccessibleName()).toBe('My visible title')
     })
   })
 })

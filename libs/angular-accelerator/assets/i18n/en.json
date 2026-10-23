@@ -1,7 +1,16 @@
 {
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "DEFAULT_NAME": "Dialog",
+    "CLOSE": "Close dialog",
+    "SEVERITY": {
+      "SUCCESS": "Success",
+      "INFO": "Information",
+      "WARNING": "Warning",
+      "ERROR": "Error",
+      "QUESTION": "Question"
+    }
   },
   "OCX_CONSENT": {
     "TITLE": "Consent required",

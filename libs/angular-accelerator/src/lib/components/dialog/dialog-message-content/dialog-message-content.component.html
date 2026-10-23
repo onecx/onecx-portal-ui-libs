@@ -2,7 +2,13 @@
   <div>
     @if (icon !== '') {
       <i [class]="icon" aria-hidden="true"></i>
+      @if (iconLabelKey; as labelKey) {
+        <span
+          class="dialogMessageIconLabel sr-only"
+          >{{ labelKey | translate:iconLabelParameters }}. </span
+        >
+      }
     }
-    <span id="dialogMessage">{{message | translate:messageParameters}}</span>
+    <span [id]="messageId" class="dialogMessageText">{{message | translate:messageParameters}}</span>
   </div>
 </div>

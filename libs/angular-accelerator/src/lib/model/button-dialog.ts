@@ -70,4 +70,6 @@ export interface ButtonDialogData {
   config: ButtonDialogConfig
   component?: Type<any>
   componentData: any
+  /** Accessible name of the dialog, used when it has no title */
+  dialogAriaLabel?: string
 }

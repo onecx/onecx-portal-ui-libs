@@ -1,7 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, inject, ChangeDetectionStrategy } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DialogService, DynamicDialogModule, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { Observable, of, Subscription } from 'rxjs'
@@ -35,7 +44,8 @@ import { withDocumentUndefined } from '../../test-setup'
 @Component({
   standalone: false,
   changeDetection: ChangeDetectionStrategy.Eager,
-  template: `<h1>BaseTestComponent</h1><button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
+  template: `<h1>BaseTestComponent</h1>
+    <button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
 })
 class BaseTestComponent implements OnDestroy {
   portalDialogService = inject(PortalDialogService)
@@ -989,7 +999,7 @@ describe('PortalDialogService', () => {
       expect(pDialogService.open).toHaveBeenCalledWith(
         DialogContentComponent,
         expect.objectContaining({
-          closable: true
+          closable: true,
         })
       )
     })
@@ -1010,7 +1020,7 @@ describe('PortalDialogService', () => {
       expect(pDialogService.open).toHaveBeenCalledWith(
         DialogContentComponent,
         expect.objectContaining({
-          closable: true
+          closable: true,
         })
       )
     })
@@ -1031,9 +1041,110 @@ describe('PortalDialogService', () => {
       expect(pDialogService.open).toHaveBeenCalledWith(
         DialogContentComponent,
         expect.objectContaining({
-          closable: false
+          closable: false,
         })
       )
+    })
+  })
+
+  describe('[a11y] - dialog name, description and close button', () => {
+    const dialogContainer = () => document.querySelector<HTMLElement>('[role="dialog"]')!
+    const labelOf = (el: HTMLElement) =>
+      el.getAttribute('aria-label') ??
+      el
+        .getAttribute('aria-labelledby')!
+        .split(' ')
+        .map((id) => document.getElementById(id)?.textContent)
+        .join(' ')
+        .trim()
+
+    it('should name the dialog by its title', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(labelOf(dialogContainer())).toBe(translations['TITLE_TRANSLATE'])
+    })
+
+    it('should give a dialog without title a translated generic name', async () => {
+      fixture.componentInstance.show(null, 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(dialogContainer().getAttribute('aria-labelledby')).toBeNull()
+      expect(dialogContainer().getAttribute('aria-label')).toBe('OCX_BUTTON_DIALOG.DEFAULT_NAME')
+    })
+
+    it('should point aria-describedby to the message text', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2')
+      await rootLoader.getHarness(DialogContentHarness)
+
+      const describedBy = dialogContainer().getAttribute('aria-describedby')
+      expect(describedBy).toBeTruthy()
+      expect(document.getElementById(describedBy!)?.textContent).toBe(translations['MESSAGE'])
+    })
+
+    it('should not set aria-describedby for custom components', async () => {
+      fixture.componentInstance.showWithType()
+      await rootLoader.getHarness(DialogContentHarness)
+
+      expect(dialogContainer().hasAttribute('aria-describedby')).toBe(false)
+    })
+
+    it('should give every stacked dialog its own description', async () => {
+      const service = TestBed.inject(PortalDialogService)
+      const sub1 = service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2').subscribe()
+      const sub2 = service.openDialog('TITLE_TRANSLATE', 'MESSAGE_PARAM', 'button1', 'button2').subscribe()
+      await fixture.whenStable()
+
+      const dialogs = Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"]'))
+      expect(dialogs).toHaveLength(2)
+      const ids = dialogs.map((d) => d.getAttribute('aria-describedby'))
+      expect(new Set(ids).size).toBe(2)
+      ids.forEach((id) => expect(document.querySelectorAll(`[id="${id}"]`)).toHaveLength(1))
+      sub1.unsubscribe()
+      sub2.unsubscribe()
+    })
+
+    it('should pass a translated closeAriaLabel by default and keep a custom one', async () => {
+      jest.spyOn(pDialogService, 'open')
+      const service = TestBed.inject(PortalDialogService)
+
+      service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1').subscribe()
+      service.openDialog('TITLE_TRANSLATE', 'MESSAGE', 'button1', undefined, { closeAriaLabel: 'Custom' }).subscribe()
+
+      expect(pDialogService.open).toHaveBeenNthCalledWith(
+        1,
+        DialogContentComponent,
+        expect.objectContaining({ closeAriaLabel: 'OCX_BUTTON_DIALOG.CLOSE' })
+      )
+      expect(pDialogService.open).toHaveBeenNthCalledWith(
+        2,
+        DialogContentComponent,
+        expect.objectContaining({ closeAriaLabel: 'Custom' })
+      )
+    })
+
+    it('should render the close button with a name', async () => {
+      fixture.componentInstance.show('TITLE_TRANSLATE', 'MESSAGE', 'button1', 'button2', true)
+      await rootLoader.getHarness(DialogContentHarness)
+
+      const closeButton = document.querySelector<HTMLElement>('.p-dialog-close-button')
+      expect(closeButton?.getAttribute('aria-label')).toBe('OCX_BUTTON_DIALOG.CLOSE')
+    })
+
+    it('should expose the severity of the icon as text', async () => {
+      fixture.componentInstance.show(
+        'TITLE_TRANSLATE',
+        { message: 'MESSAGE', icon: OpenngIcons.EXCLAMATION_TRIANGLE },
+        'button1',
+        'button2'
+      )
+      const content = await rootLoader.getHarness(DialogContentHarness)
+      expect(content).toBeTruthy()
+
+      expect(document.querySelector('.dialogMessageIconLabel')?.textContent).toContain(
+        'OCX_BUTTON_DIALOG.SEVERITY.WARNING'
+      )
+      expect(document.querySelector('.dialogMessageContent i')?.getAttribute('aria-hidden')).toBe('true')
     })
   })
 
@@ -1057,7 +1168,7 @@ describe('PortalDialogService', () => {
       expect(isInitiatorButtonFocused).toBe(true)
     })
 
-    it('should not return focus to the initiator button when dialog is closed and onCloseFocus is set to default', async () => {
+    it('should not move focus when dialog is closed and onCloseFocus is set to none', async () => {
       jest.spyOn(pDialogService, 'open')
       const initiatorButton = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLElement
 
@@ -1066,7 +1177,7 @@ describe('PortalDialogService', () => {
         { key: 'MESSAGE_PARAM', parameters: { val: 'myMsgParam' } },
         'button1',
         'button2',
-        { initiatorRef: initiatorButton, onCloseFocus: 'default' }
+        { initiatorRef: initiatorButton, onCloseFocus: 'none' }
       )
 
       const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
@@ -1107,6 +1218,138 @@ describe('PortalDialogService', () => {
 
       await withDocumentUndefined(async () => {
         expect(document?.activeElement).toBeUndefined()
+      })
+    })
+    describe('opening and closing', () => {
+      const flush = () => new Promise((resolve) => setTimeout(resolve, 20))
+      let opener: HTMLButtonElement
+
+      beforeEach(() => {
+        opener = fixture.debugElement.nativeElement.querySelector('#showDialogButton') as HTMLButtonElement
+        document.body.appendChild(fixture.debugElement.nativeElement)
+        opener.focus()
+      })
+
+      const openRef = () => [...pDialogService.dialogComponentRefMap.keys()].pop()
+
+      it('should hand initial focus to a footer button for message-only dialogs', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
+      it('should leave initial focus to the dialog for component dialogs (focusOnShow true)', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: true })
+        )
+      })
+
+      it('should respect an explicit focusOnShow false (spread order)', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2', { focusOnShow: false })
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
+      it('should still hand focus to the footer button when focusOnShow true is passed with a message dialog', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { focusOnShow: true })
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
+      it('should disable the delayed dialog focus for a component dialog with explicit autoFocusButton', async () => {
+        jest.spyOn(pDialogService, 'open')
+        fixture.componentInstance.show('title', CompleteDialogComponent, 'button1', 'button2', {
+          autoFocusButton: 'secondary',
+        })
+        await rootLoader.getHarness(DialogFooterHarness)
+        expect(pDialogService.open).toHaveBeenCalledWith(
+          DialogContentComponent,
+          expect.objectContaining({ focusOnShow: false })
+        )
+      })
+
+      it('should focus Cancel for a message-only confirmation', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        const footer = await rootLoader.getHarness(DialogFooterHarness)
+        await flush()
+        expect(footer).toBeTruthy()
+        expect(document.activeElement).not.toBe(opener)
+        expect(document.activeElement?.textContent).toContain('button2')
+      })
+
+      it('should let an explicit autoFocusButton win', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { autoFocusButton: 'primary' })
+        await rootLoader.getHarness(DialogFooterHarness)
+        await flush()
+        expect(document.activeElement?.textContent).toContain('button1')
+      })
+
+      it('should return focus to the opener when closed with the primary button', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await closeBasicDialog('primary')
+        expect(document.activeElement).toBe(opener)
+      })
+
+      it('should return focus to the opener when closed with the secondary button', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await closeBasicDialog('secondary')
+        expect(document.activeElement).toBe(opener)
+      })
+
+      it('should return focus to the opener when closed with Escape (close path)', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        await flush()
+        expect(document.activeElement).not.toBe(opener)
+        openRef()?.close()
+        await flush()
+        expect(document.activeElement).toBe(opener)
+      })
+
+      it('should not throw and focus the main landmark when the opener was removed', async () => {
+        const main = document.createElement('main')
+        document.body.appendChild(main)
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        opener.remove()
+        await expect(closeBasicDialog('secondary')).resolves.not.toThrow()
+        expect(document.activeElement).toBe(main)
+        main.remove()
+      })
+
+      it('should keep an existing tabindex on the main landmark when the opener was removed', async () => {
+        const main = document.createElement('main')
+        main.setAttribute('tabindex', '0')
+        document.body.appendChild(main)
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        opener.remove()
+        await closeBasicDialog('secondary')
+        expect(main.getAttribute('tabindex')).toBe('0')
+        expect(document.activeElement).toBe(main)
+        main.remove()
+      })
+
+      it('should not move focus on close when onCloseFocus is none', async () => {
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { onCloseFocus: 'none' })
+        await closeBasicDialog('secondary')
+        expect(document.activeElement).not.toBe(opener)
       })
     })
   })

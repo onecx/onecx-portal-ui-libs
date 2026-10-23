@@ -3,7 +3,7 @@ import { ComponentHarness } from '@angular/cdk/testing'
 export class DialogMessageContentHarness extends ComponentHarness {
   static hostSelector = '.dialogMessageContent'
 
-  private getMessageSpan = this.locatorFor('#dialogMessage')
+  private getMessageSpan = this.locatorFor('.dialogMessageText')
   private getIcon = this.locatorForOptional('i')
 
   async getMessageContent(): Promise<string> {
