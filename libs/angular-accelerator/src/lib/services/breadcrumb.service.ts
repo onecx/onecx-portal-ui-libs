@@ -68,7 +68,8 @@ export class BreadcrumbService implements OnDestroy {
   private generateBreadcrumbs(route: ActivatedRouteSnapshot | null) {
     if (route?.data['mfeInfo']) {
       const breadcrumbs: MenuItem[] = []
-      const productLabel = this.translate(route.data['mfeInfo'].productName)
+      const mfeInfo = route.data['mfeInfo']
+      const productLabel = this.translate(mfeInfo.displayName || mfeInfo.productName)
       if (productLabel) {
         breadcrumbs.push({ label: productLabel, routerLink: route.data['mfeInfo'].baseHref })
       }

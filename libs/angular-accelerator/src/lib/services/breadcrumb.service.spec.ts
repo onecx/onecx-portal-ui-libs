@@ -122,4 +122,38 @@ describe('BreadcrumbService', () => {
 
     expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['GROUP'])
   })
+
+  it('labels the first crumb with the application display name', () => {
+    setup(
+      snapshot(
+        { mfeInfo: { productName: 'onecx-technical-name', displayName: 'My Application', baseHref: '/prod' } },
+        ['prod'],
+        snapshot({ breadcrumb: 'PAGE' }, ['page'])
+      )
+    )
+
+    expect(service.generatedItemsSource.value).toEqual([
+      { label: 'My Application', routerLink: '/prod' },
+      expect.objectContaining({ label: 'Page' }),
+    ])
+  })
+
+  it('translates the display name', () => {
+    setup(
+      snapshot({ mfeInfo: { productName: 'onecx-technical-name', displayName: 'PRODUCT', baseHref: '/prod' } }, [
+        'prod',
+      ])
+    )
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Product'])
+  })
+
+  it.each([
+    ['empty', ''],
+    ['undefined', undefined],
+  ])('falls back to the product name when the display name is %s', (_, displayName) => {
+    setup(snapshot({ mfeInfo: { productName: 'PRODUCT', displayName, baseHref: '/prod' } }, ['prod']))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Product'])
+  })
 })
