@@ -34,4 +34,10 @@ describe('expectNoAxeViolations', () => {
     container.innerHTML = '<button type="button">Save</button>'
     await expect(expectNoAxeViolations(container, { allow: ['button-name'] })).rejects.toThrow(/no longer produce/)
   })
+
+  it('only runs the rules passed via the rules option', async () => {
+    container.innerHTML = '<button type="button"></button><input type="text" />'
+    await expect(expectNoAxeViolations(container, { rules: ['label'] })).rejects.toThrow(/\[label\]/)
+    await expectNoAxeViolations(container, { rules: ['heading-order'] })
+  })
 })

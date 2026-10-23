@@ -43,7 +43,7 @@ function formatViolations(violations: axe.Result[]): string {
       const nodes = violation.nodes
         .map((node) => `    - ${node.target.join(' ')}\n      ${node.html.replace(/\s+/g, ' ').slice(0, 200)}`)
         .join('\n')
-      return `[${violation.id}] ${violation.help} (${violation.impact ?? 'n/a'})\n${nodes}`
+      return `[${violation.id}] ${violation.help} (${violation.impact})\n${nodes}`
     })
     .join('\n\n')
 }
