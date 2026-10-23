@@ -297,6 +297,28 @@ describe('DataTableComponent', () => {
       expect(second.getAttribute('aria-sort')).toBe('ascending')
     })
 
+    it('should remove aria-sort when the sorted column cycles to the unsorted state', async () => {
+      const user = userEvent.setup()
+      fixture.componentRef.setInput('sortStates', [
+        DataSortDirection.ASCENDING,
+        DataSortDirection.DESCENDING,
+        DataSortDirection.NONE,
+      ])
+      fixture.detectChanges()
+      const first = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      const button = first.querySelector('.sortButton') as HTMLElement
+
+      await user.click(button)
+      await user.click(button)
+      fixture.detectChanges()
+      expect(first.getAttribute('aria-sort')).toBe('descending')
+
+      await user.click(button)
+      fixture.detectChanges()
+      expect(first.hasAttribute('aria-sort')).toBe(false)
+      expect(first.classList.contains('p-datatable-column-sorted')).toBe(false)
+    })
+
     it('should not make the header cell a tab stop and should have one sort button per sortable header', () => {
       const sortable = headers().filter((h) => h.querySelector('.sortButton'))
       expect(sortable.length).toBeGreaterThan(0)
