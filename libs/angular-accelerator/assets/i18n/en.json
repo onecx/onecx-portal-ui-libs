@@ -151,6 +151,9 @@
       "REMOVE_FILTER_ARIA_LABEL": "Remove filter",
       "REMOVE_FILTER_ROW_ARIA_LABEL": "Remove filter: {{column}}: {{value}}"
     },
+    "SHOW_MORE": {
+      "SR_TEXT": "more filters"
+    },
     "PANEL_TITLE": "Filters",
     "ADD_FILTER": {
       "BUTTON": "Add filter",
@@ -206,7 +209,7 @@
     "ANNOUNCEMENTS": {
       "SEARCHING": "Searching...",
       "NO_RESULTS": "No results found",
-      "RESULTS_FOUND": "{{count}} results found" 
+      "RESULTS_FOUND": "{{count}} results found"
     }
   },
   "OCX_PAGE_HEADER": {

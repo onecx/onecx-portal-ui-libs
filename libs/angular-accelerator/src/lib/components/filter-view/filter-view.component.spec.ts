@@ -147,6 +147,16 @@ describe('FilterViewComponent (class logic)', () => {
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
+  it('should remove a chip without an add filter chip to focus (button display mode)', () => {
+    fixture.componentRef.setInput('filters', [{ columnId: 'c1', value: 'remove' } as Filter])
+    fixture.detectChanges()
+
+    expect(component.addFilterChip()).toBeUndefined()
+    component.onChipRemoveClick({ columnId: 'c1', value: 'remove' } as Filter)
+
+    expect(component.stateService.filters()).toEqual([])
+  })
+
   it('should delete filter by row valueColumnId/value by calling service setFilters when onFilterDelete is called', () => {
     const setFiltersSpy = jest.spyOn(stateService.filters, 'set')
 

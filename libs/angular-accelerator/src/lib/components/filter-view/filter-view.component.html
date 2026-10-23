@@ -18,79 +18,88 @@
       tooltipEvent="hover"
       [ariaLabel]="'OCX_FILTER_VIEW.RESET_FILTERS_BUTTON.ARIA_LABEL' | translate"
     ></p-button>
-    <p-chip
+    <button
+      #addFilterChip
+      type="button"
       id="ocxFilterViewAddFilterChip"
-      tabindex="0"
-      role="button"
-      [disabled]="filterableColumns().length === 0"
-      (click)="onAddFilter(undefined, $event)"
-      (keydown.enter)="onAddFilter(undefined, $event)"
-      (keydown.space)="$event.preventDefault(); onAddFilter(undefined, $event)"
-      [class.cursor-pointer]="filterableColumns().length > 0"
-      class="filter-view-focusable ocx-filter-view-add-filter-chip"
+      class="ocx-filter-view-chip-button filter-view-focusable ocx-filter-view-add-filter-chip"
       [class.ocx-filter-view-add-filter-chip-disabled]="filterableColumns().length === 0"
+      [attr.aria-disabled]="filterableColumns().length === 0 ? 'true' : null"
+      (click)="onAddFilter(undefined, $event)"
       [ocxTooltip]="
         filterableColumns().length > 0
           ? undefined
           : 'OCX_FILTER_VIEW.ADD_FILTER.NO_FILTERABLE_COLUMNS' | translate
       "
-      [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
     >
-      <span class="p-chip-text flex flex-nowrap items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
-      translate }} <i class="pi pi-plus" aria-hidden="true"></i> </span>
-    </p-chip>
+      <span class="flex flex-nowrap items-center gap-1"
+        >{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' | translate }} <i class="pi pi-plus" aria-hidden="true"></i
+      ></span>
+      @if (filterableColumns().length === 0) {
+      <span class="sr-only"> {{ 'OCX_FILTER_VIEW.ADD_FILTER.NO_FILTERABLE_COLUMNS' | translate }}</span>
+      }
+    </button>
     @if (filters.length <= 0) { @if (filterViewNoSelection()) {
     <ng-container [ngTemplateOutlet]="filterViewNoSelection()"> </ng-container>
-    } } @if ((chipTemplates$ | async) ?? {}; as templates) { @for (filter of selectedFilters; track filter) { @if
+    } }
+    <span [id]="chipRemoveLabelId" hidden>{{ 'OCX_FILTER_VIEW.TABLE.REMOVE_FILTER_ARIA_LABEL' | translate }}</span>
+    @if ((chipTemplates$ | async) ?? {}; as templates) { @for (filter of selectedFilters; track filter) { @if
     (getColumnForFilter(filter, columns); as column) {
-    <p-chip [removable]="true" (onRemove)="onChipRemove(filter)" [styleClass]="chipStyleClass()">
-      @if (filterViewChipContent()) {
-      <ng-container
-        [ngTemplateOutlet]="filterViewChipContent()"
-        [ngTemplateOutletContext]="{
+    <p-chip [styleClass]="chipStyleClass()">
+      <span [id]="chipTextId($index)" class="flex flex-nowrap items-center">
+        @if (filterViewChipContent()) {
+        <ng-container
+          [ngTemplateOutlet]="filterViewChipContent()"
+          [ngTemplateOutletContext]="{
                 filter: filter,
                 column: column,
                 filterValueTemplates: templates,
                 truthyTemplate: truthyTemplate,
                 filterValueTemplate: chipTemplate
               }"
-      >
-      </ng-container>
-      } @else {
-      <span style="white-space: nowrap" class="p-chip-text flex flex-nowrap"
-        >{{column?.nameKey ?? '' | translate }}:@if (filter.filterType === FilterType.EQUALS || !filter.filterType) {
-        <ng-container
-          [ngTemplateOutlet]="chipTemplate"
-          [ngTemplateOutletContext]="{
+        >
+        </ng-container>
+        } @else {
+        <span style="white-space: nowrap" class="p-chip-text flex flex-nowrap"
+          >{{column?.nameKey ?? '' | translate }}:@if (filter.filterType === FilterType.EQUALS || !filter.filterType) {
+          <ng-container
+            [ngTemplateOutlet]="chipTemplate"
+            [ngTemplateOutletContext]="{
                         templates: templates,
                         filter: filter,
                         column: column
                       }"
-        ></ng-container>
-        } @if (filter.filterType === FilterType.IS_NOT_EMPTY) {
-        <ng-container
-          [ngTemplateOutlet]="truthyTemplate"
-          [ngTemplateOutletContext]="{
+          ></ng-container>
+          } @if (filter.filterType === FilterType.IS_NOT_EMPTY) {
+          <ng-container
+            [ngTemplateOutlet]="truthyTemplate"
+            [ngTemplateOutletContext]="{
                       value: filter.value
                     }"
-        ></ng-container>
+          ></ng-container>
+          }
+        </span>
         }
       </span>
-      }
+      <button
+        type="button"
+        class="p-chip-remove-icon ocx-filter-view-chip-remove"
+        [attr.aria-labelledby]="chipRemoveLabelId + ' ' + chipTextId($index)"
+        (click)="onChipRemoveClick(filter)"
+      >
+        <i class="pi pi-times-circle" aria-hidden="true"></i>
+      </button>
     </p-chip>
     } } @if (selectedFilters.length < filters.length) {
-    <p-chip
+    <button
       #showMoreChip
+      type="button"
       id="ocxFilterViewShowMore"
-      tabindex="0"
-      role="button"
       aria-haspopup="dialog"
       [attr.aria-expanded]="panelOpen()"
       [attr.aria-controls]="panelOpen() ? panelId : null"
       (click)="showPanel($event)"
-      class="cursor-pointer filter-view-focusable"
-      (keydown.enter)="showPanel($event)"
-      (keydown.space)="showPanel($event)"
+      class="ocx-filter-view-chip-button filter-view-focusable"
     >
       @if (filterViewShowMoreChip()) {
       <ng-container
@@ -101,10 +110,11 @@
       >
       </ng-container>
       } @else {
-      <span class="p-chip-text flex flex-nowrap"> +{{filters.length - selectedFilters.length}} </span>
+      <span class="flex flex-nowrap">+{{filters.length - selectedFilters.length}}</span>
+      <span class="sr-only"> {{ 'OCX_FILTER_VIEW.SHOW_MORE.SR_TEXT' | translate }}</span>
       }
-      <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
-    </p-chip>
+    </button>
+    <ng-container [ngTemplateOutlet]="filterTablePanel"></ng-container>
     } } }
   </ng-container>
   } @else {
@@ -244,8 +254,6 @@
   </ng-template>
 </div>
 } }
-
-
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   @if (templates[column.id]; as template) {

@@ -1,24 +1,46 @@
 .filter-view-focusable:focus {
-    outline: 1px solid var(--primary-color);
-    outline-offset: 2px;
-    box-shadow: none;
-    border-radius: var(--chip-border-radius);
+  outline: 1px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: none;
+  border-radius: var(--p-chip-border-radius);
+}
+/* Native buttons that look like chips; sizes and colours come from the theme's chip tokens */
+.ocx-filter-view-chip-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--p-chip-gap);
+  padding-block: var(--p-chip-padding-y);
+  padding-inline: var(--p-chip-padding-x);
+  border: 0;
+  border-radius: var(--p-chip-border-radius);
+  background: var(--p-chip-background);
+  color: var(--p-chip-color);
+  font: inherit;
+  cursor: pointer;
 }
 .ocx-filter-view-add-filter-chip {
-    border: 1px dashed var(--primary-color, #3b82f6);
-    border-radius: var(--chip-border-radius, 2rem);
+  border: 1px dashed var(--primary-color);
 }
 .ocx-filter-view-add-filter-chip-disabled {
-    border-color: var(--surface-border, #d1d5db);
-    color: var(--text-color-secondary, #9ca3af);
+  border-color: var(--divider-color);
+  color: var(--text-secondary-color);
+  cursor: not-allowed;
+}
+.ocx-filter-view-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
