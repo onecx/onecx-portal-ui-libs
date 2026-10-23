@@ -6,7 +6,9 @@ $luminance: '(0.2126 * r + 0.7152 * g + 0.0722 * b)';
 $channel: 'clamp(0, calc((0.1791 - #{$luminance}) * 100000), 1)';
 
 .ocx-lifecycle-step-active {
+  // Deliberately duplicates the template's `bg-primary`: the computed text colour below relies on this exact background.
   background-color: var(--p-primary-color);
+  // Fallback for browsers without relative colour syntax: white in the OneCX preset, so older browsers degrade gracefully.
   color: var(--p-primary-contrast-color);
   color: color(from var(--p-primary-color) srgb-linear #{$channel} #{$channel} #{$channel});
 }

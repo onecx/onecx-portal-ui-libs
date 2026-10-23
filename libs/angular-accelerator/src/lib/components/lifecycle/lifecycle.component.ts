@@ -34,6 +34,7 @@ export class LifecycleComponent {
   }
 
   protected isActive(step: LifecycleStep): boolean {
-    return !!this.activeStepId() && this.activeStepId() === step.id
+    const activeStepId = this.activeStepId()
+    return !!activeStepId && activeStepId === step.id
   }
 }
