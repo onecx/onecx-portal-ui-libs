@@ -67,6 +67,12 @@ export default [
     rules: {
       '@angular-eslint/prefer-on-push-component-change-detection': 'off',
       '@angular-eslint/template/no-autofocus': 'off',
+    },
+  },
+  {
+    // The template plugin is only registered for html files, so rules from it must be configured here.
+    files: ['**/*.html'],
+    rules: {
       '@angular-eslint/template/interactive-supports-focus': 'warn',
       '@angular-eslint/template/elements-content': 'warn',
       '@angular-eslint/template/click-events-have-key-events': 'warn',
