@@ -1664,6 +1664,8 @@ describe('InteractiveDataViewComponent [a11y] two instances on one page', () => 
     const harness = await TestbedHarnessEnvironment.harnessForFixture(second, InteractiveDataViewHarness)
     expect(await harness.getHeaderStyleClasses()).toBeTruthy()
     expect(await (await harness.getCustomGroupColumnSelector())?.getCancelButton()).toBeTruthy()
+    const columnGroupSelect = await harness.getColumnGroupSelectionSelect()
+    expect(await columnGroupSelect?.getId()).toBe('columnGroupSelectionDropdownElement-1')
     const filterView = await TestbedHarnessEnvironment.harnessForFixture(second, FilterViewHarness)
     expect(await filterView.getChipsResetFiltersButton()).toBeTruthy()
     expect(await filterView.isAddFilterChipDisabled()).toBe(false)
@@ -1689,5 +1691,6 @@ describe('InteractiveDataViewComponent [a11y] two instances on one page', () => 
 
     const harness = await TestbedHarnessEnvironment.harnessForFixture(second, InteractiveDataViewHarness)
     expect(await harness.getDataListGridSortingButton()).toBeTruthy()
+    expect(await (await harness.getDataListGridSortingSelect())?.getId()).toBe('dataListGridSortingDropdown-1')
   })
 })

@@ -11,6 +11,7 @@ These ids are now unique per component instance.
 * The *first* live instance of a component keeps the existing (legacy) ids, for example `searchButton`.
 * Every *further* live instance that exists at the same time gets a numeric suffix: `searchButton-1`, `searchButton-2`, ...
 * When an instance is destroyed, its number is released and reused by the next instance.
+* The numbering is kept per copy of `@onecx/angular-accelerator` in the browser. Two microfrontends that bundle their own copy number their instances independently, so their ids can still collide. The numbering is not meant for server-side rendering.
 * All `for`/`aria-*` references inside a component use the same suffix, so they always point into their own instance.
 
 Pages with one instance of a component are therefore unchanged.
@@ -26,10 +27,10 @@ Pages with one instance of a component are therefore unchanged.
 |`searchButton`, `resetButton`
 
 |`ocx-page-header` (also inside `ocx-search-header`)
-|`pageHeaderBreadcrumb`, `page-header`, `page-subheader`, `pageHeaderMenuButton`
+|`pageHeaderBreadcrumb`, `page-header`, `page-subheader`, `pageHeaderMenuButton`, and the `id` of each `Action` (inline action button and overflow menu item), for example `simpleAdvancedButton` of the simple/advanced toggle of `ocx-search-header`
 
 |`ocx-filter-view`
-|`ocxFilterViewReset`, `ocxFilterViewAddFilterChip`, `ocxFilterViewShowMore`, `ocxFilterViewManage`, `ocxFilterViewAddFilter`, `ocxFilterViewOverlayReset`, `ocxFilterViewDataTable`, `ocxFilterViewPanel`, `ocxFilterViewChipRemoveLabel`, `ocxFilterViewChipText-<index>` (the panel, chip remove label and chip text ids were `-<n>` based before and now follow the same rule)
+|`ocxFilterViewReset`, `ocxFilterViewAddFilterChip`, `ocxFilterViewShowMore`, `ocxFilterViewManage`, `ocxFilterViewAddFilter`, `ocxFilterViewOverlayReset`, `ocxFilterViewDataTable`, `ocxFilterViewPanel`, `ocxFilterViewChipRemoveLabel`, `ocxFilterViewChipText-<index>` (the panel, chip remove label and chip text ids are new; the first instance uses them without suffix)
 
 |Add filter dialog of `ocx-filter-view`
 |`ocxAddFilterColumnSelect`, `ocxAddFilterColumnInput`, `ocxAddFilterValueSelect`, `ocxAddFilterValueInput`
@@ -77,10 +78,12 @@ page.locator('#searchButton')
 page.locator('[id="searchButton"], [id^="searchButton-"]')
 ----
 
+WARNING: The suffix depends on the order in which instances are created and destroyed, not on their position on the page. When the first instance is destroyed while a second one is still alive (for example a dialog that closes while the dialog below stays open, or a page section that is re-rendered), the second instance keeps its suffixed id, and the next instance that is created takes over the legacy id. An e2e test that addresses `#searchButton` can then hit a different instance than before. In e2e tests for pages with several instances, address an instance through a stable container (a `data-testid` or a parent element) and the prefix match above, not through a specific suffix.
+
 The component harnesses of `@onecx/angular-accelerator/testing` match the legacy id and its suffixed variants, so harness-based tests work for every instance. For own harnesses, `@onecx/angular-accelerator/testing` exports:
 
 * `instanceScopedId(id)`: a `RegExp` for the `id` option of harness predicates (the `id` option of `ButtonHarness`, `DivHarness`, `PButtonHarness`, `PButtonDirectiveHarness`, `PSelectHarness`, `PMultiSelectHarness` and `DataTableHarness` accepts `string | RegExp`).
-* `instanceScopedIdSelector(id)`: a CSS selector for `locatorFor`.
+* `instanceScopedIdSelector(id)`: a CSS selector for `locatorFor`. It matches by prefix (`[id="<id>"], [id^="<id>-"]`), so `instanceScopedIdSelector('page-header')` also matches other ids that start with `page-header-`. Use `instanceScopedId(id)`, which only accepts a numeric suffix, where that matters.
 * `expectInstanceScopedIds(roots)` and `INSTANCE_ID_AXE_RULES`: test helpers that check that several instances on one page do not share ids and that no `for`/`aria-*` reference points into another instance.
 
 [source,typescript]

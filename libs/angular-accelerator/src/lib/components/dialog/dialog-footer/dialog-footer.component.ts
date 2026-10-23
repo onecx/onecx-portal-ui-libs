@@ -82,7 +82,7 @@ export class DialogFooterComponent implements OnInit {
         secondaryButton?.nativeElement.focus()
       } else if (config.autoFocusButton === 'custom') {
         const button = this.customButtons().find((customButton) => {
-          return customButton.nativeElement.id === config.autoFocusButtonCustomId
+          return customButton.nativeElement.id === config.autoFocusButtonCustomId + this.idSuffix
         })
         setTimeout(() => {
           button?.nativeElement.focus()

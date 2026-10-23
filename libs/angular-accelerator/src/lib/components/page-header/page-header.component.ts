@@ -35,6 +35,10 @@ import { handleAction, handleActionSync } from '../../utils/action-router.utils'
  * Action definition.
  */
 export interface Action {
+  /**
+   * Element id of the action button or overflow menu item. The first `ocx-page-header` on a page uses it as is,
+   * further instances add the instance suffix (`<id>-1`, `<id>-2`, ...) so that ids stay unique per page.
+   */
   id?: string
   label?: string
   labelKey?: string
@@ -301,7 +305,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   private mapOverflowActionsToMenuItems(actions: Action[], translations: { [key: string]: string }): MenuItem[] {
     return actions.map<MenuItem>((a) => ({
-      id: a.id,
+      id: this.scopedActionId(a.id),
       label: a.labelKey ? translations[a.labelKey] : a.label,
       icon: a.icon,
       tooltipOptions: {
@@ -313,6 +317,17 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
       command: typeof a.routerLink === 'string' ? undefined : () => handleActionSync(this.router, a),
       disabled: a.disabled,
     }))
+  }
+
+  /**
+   * Element id of an action button or overflow menu item: the `id` of the action plus the instance suffix,
+   * so the first page header keeps the given id and further instances get `<id>-1`, `<id>-2`, ...
+   *
+   * @param id the `id` of the action
+   * @returns the instance-scoped id, or `undefined` when the action has no id
+   */
+  scopedActionId(id: string | undefined): string | undefined {
+    return id ? id + this.idSuffix : undefined
   }
 
   async onActionClick(action: Action): Promise<void> {

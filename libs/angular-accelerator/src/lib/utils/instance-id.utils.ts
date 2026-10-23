@@ -13,6 +13,10 @@ const occupiedSlots = new Map<string, Set<number>>()
  *
  * Must be called in an injection context (e.g. a field initializer).
  *
+ * The slot registry is module-level state: it is shared by everything that loads this copy of the library, but
+ * not across separately bundled copies (e.g. two microfrontends that each bundle the library), and it is not
+ * SSR-safe (on a server it would be shared across requests). Ids of different bundle copies can therefore collide.
+ *
  * @param scope name that groups the instances, usually the component selector
  * @returns `''` for the first live instance, `-<n>` otherwise
  */
