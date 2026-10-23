@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { SelectModule } from '@openng/optimus-ui/select'
 import { FloatLabelModule } from '@openng/optimus-ui/floatlabel'
 import { TranslateModule } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import { ColumnGroupSelectionComponent } from './column-group-selection.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -29,6 +29,11 @@ describe('ColumnGroupSelectionComponent', () => {
 
     fixture = TestBed.createComponent(ColumnGroupSelectionComponent)
     component = fixture.componentInstance
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   describe('selectedGroupKey setter', () => {

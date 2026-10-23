@@ -22,6 +22,10 @@ import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 export default {
   title: 'Components/PageHeaderComponent',
   component: PageHeaderComponent,
+  parameters: {
+    // Marks the story for the a11y gate. Not evaluated in CI yet, see dev-docs/testing/a11y-testing.adoc
+    a11y: { test: 'error' },
+  },
   decorators: [
     applicationConfig({
       providers: [

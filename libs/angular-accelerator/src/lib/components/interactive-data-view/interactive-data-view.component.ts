@@ -98,6 +98,8 @@ export class InteractiveDataViewComponent implements OnInit {
   tableSelectionEnabledField = input<string | undefined>(undefined)
   tableAllowSelectAll = input<boolean>(true)
   name = input<string>('Data')
+  /** Field used to name a row/item in accessible names of its buttons (e.g. "Edit: Product A"). */
+  rowLabelField = input<string | undefined>(undefined)
   titleLineId = input<string | undefined>(undefined)
   subtitleLineIds = input<string[] | undefined>(undefined)
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
