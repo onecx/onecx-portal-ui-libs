@@ -333,7 +333,19 @@
   <ng-container> {{ resolveFieldData(rowObject, column.id) | translate }} </ng-container>
 </ng-template>
 
-<ng-template #columnHeaderLabel let-column="column">{{ column.nameKey | translate }}</ng-template>
+<ng-template #columnHeaderLabel let-column="column">
+  @if (column.tooltipLabel || column.tooltipKey) {
+    <span
+      class="column-header-label"
+      [ocxTooltip]="column.tooltipLabel || (column.tooltipKey | translate)"
+      tooltipPosition="top"
+    >
+      {{ column.nameKey | translate }}
+    </span>
+  } @else {
+    {{ column.nameKey | translate }}
+  }
+</ng-template>
 
 <ng-template #columnHeaderSortButton let-column="column">
   @if (column.sortable) {
