@@ -1,12 +1,8 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   OnInit,
-  Renderer2,
   TemplateRef,
   Type,
-  ViewChild,
   ViewEncapsulation,
   computed,
   contentChild,
@@ -15,12 +11,13 @@ import {
   model,
   output,
   signal,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  isDevMode,
 } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { MenuItem, OpenngIcons } from '@openng/optimus-ui/api'
-import { Observable, concat, map, of, switchMap, tap } from 'rxjs'
+import { Observable, concat, map, of, switchMap } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
@@ -94,20 +91,13 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
-export class PageHeaderComponent implements OnInit, AfterViewInit {
+export class PageHeaderComponent implements OnInit {
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)
   private readonly router = inject(Router)
-  private readonly renderer = inject(Renderer2)
   private readonly hasPermissionChecker = inject(HAS_PERMISSION_CHECKER, { optional: true })
   protected readonly breadcrumbs = inject(BreadcrumbService)
-  private breadcrumbRef?: ElementRef<HTMLElement>
-  @ViewChild('breadcrumbRef', { read: ElementRef })
-  set breadcrumbElementRef(ref: ElementRef<HTMLElement> | undefined) {
-    this.breadcrumbRef = ref
-    this.applyBreadcrumbAriaLabels()
-  }
 
   header = input<string | undefined>(undefined)
 
@@ -210,23 +200,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (this.manualBreadcrumbs()) {
-      this.breadcrumbs$ = this.breadcrumbs.itemsHandler.pipe(
-        tap(() => {
-          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
-        })
-      )
-    } else {
-      this.breadcrumbs$ = this.breadcrumbs.generatedItemsSource.pipe(
-        tap(() => {
-          setTimeout(() => this.applyBreadcrumbAriaLabels(), 0)
-        })
-      )
-    }
-  }
-
-  ngAfterViewInit() {
-    this.applyBreadcrumbAriaLabels()
+    this.breadcrumbs$ = this.manualBreadcrumbs() ? this.breadcrumbs.itemsHandler : this.breadcrumbs.generatedItemsSource
   }
 
   onAction(action: string) {
@@ -241,6 +215,57 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   handleImageError() {
     this.figureImageLoadError.set(true)
+  }
+
+  private readonly warnedItems = new Set<string>()
+
+  private translateKey(key: TranslationKey | undefined): string | undefined {
+    if (!key) return undefined
+    const translated =
+      typeof key === 'string'
+        ? this.translateService.instant(key)
+        : this.translateService.instant(key.key, key.parameters)
+    return translated || undefined
+  }
+
+  /**
+   * Accessible name of the inline action. A visible label always wins (WCAG 2.5.3), so no override is set then.
+   * Icon-only actions are named by ariaLabelKey, ariaLabel, titleKey, title.
+   */
+  getInlineActionAriaLabel(action: Action): string | undefined {
+    const visibleLabel = action.labelKey ? this.translateService.instant(action.labelKey) : action.label
+    if (visibleLabel) return undefined
+    return (
+      this.translateKey(action.ariaLabelKey) ||
+      action.ariaLabel ||
+      this.translateKey(action.titleKey) ||
+      action.title ||
+      undefined
+    )
+  }
+
+  /**
+   * Accessible name of the object detail action button:
+   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
+   */
+  getActionItemAriaLabel(item: ObjectDetailItem): string {
+    const name =
+      this.translateKey(item.actionItemAriaLabelKey) ||
+      item.actionItemAriaLabel ||
+      this.translateKey(item.actionItemTooltipKey)
+    if (name) return name
+    if (isDevMode() && !this.warnedItems.has(item.label)) {
+      this.warnedItems.add(item.label)
+      console.warn(
+        `ocx-page-header: object detail "${item.label}" has an action button without actionItemAriaLabelKey, actionItemAriaLabel or actionItemTooltipKey. Falling back to the detail label.`
+      )
+    }
+    return item.label
+  }
+
+  /** Text alternative for an icon-only object detail value. */
+  getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
+    return this.translateKey(item.valueTooltipKey)
   }
 
   public generateItemStyle(item: ObjectDetailItem): string {
@@ -314,26 +339,5 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
 
   async onActionClick(action: Action): Promise<void> {
     await handleAction(this.router, action)
-  }
-
-  private applyBreadcrumbAriaLabels(): void {
-    const breadcrumbHost = this.breadcrumbRef?.nativeElement
-    if (!breadcrumbHost) {
-      return
-    }
-
-    const breadcrumbItems = breadcrumbHost.querySelectorAll(`.p-breadcrumb-item .p-breadcrumb-item-link`)
-    breadcrumbItems.forEach((item: Element, index: number) => {
-      const text = (item as HTMLElement)?.innerText?.trim()
-      if (!text) return
-      
-      this.translateService.get('OCX_PAGE_HEADER.BREADCRUMB_ARIA_LABEL', { breadcrumb: text }).subscribe((ariaLabel) => {
-        this.renderer.setAttribute(item, 'aria-label', ariaLabel)
-      })
-      
-      if (index === breadcrumbItems.length - 1) {
-        this.renderer.setAttribute(item, 'aria-current', 'page')
-      }
-    })
   }
 }
