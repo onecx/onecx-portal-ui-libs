@@ -48,6 +48,12 @@ describe('row-action-label utils', () => {
       expect(warnSpy.mock.calls[0][0]).toContain('"a"')
     })
 
+    it('should warn without an action name if the action has no id', () => {
+      warnOnActionsWithoutLabelKey([{ permission: 'P' }])
+      expect(warnSpy).toHaveBeenCalledTimes(1)
+      expect(warnSpy.mock.calls[0][0]).toContain('Row action has no labelKey')
+    })
+
     it('should not warn if all actions have a labelKey', () => {
       warnOnActionsWithoutLabelKey([{ labelKey: 'KEY', permission: 'P' }])
       expect(warnSpy).not.toHaveBeenCalled()
