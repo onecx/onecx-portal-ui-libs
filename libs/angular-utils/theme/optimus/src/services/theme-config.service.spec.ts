@@ -8,11 +8,12 @@ import { SKIP_STYLE_SCOPING } from '@onecx/angular-utils'
 import { OverrideType, ThemeOverride } from '@onecx/integration-interface'
 
 describe('ThemeConfigService', () => {
+
   const theme = {
     id: 'my-test-theme',
     properties: {
       general: {
-        'primary-color': '#274B5F',
+        'primary-color': '#274b5f',
       },
       font: {},
       topbar: {},
@@ -68,99 +69,104 @@ describe('ThemeConfigService', () => {
     {
       type: OverrideType.OPTIMUS,
       value: '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
-    },
+    }
   ]
 
   it('should merge OPTIMUS override when IS_ADVANCED_THEMING is true', fakeAsync(() => {
     TestBed.inject(ThemeConfigService)
-    const themeService = TestBed.inject(ThemeService)
-    const optimus = TestBed.inject(Optimus)
-    const spy = jest.spyOn(optimus, 'setThemeConfig')
+    const themeService = TestBed.inject(ThemeService);
+    const optimus = TestBed.inject(Optimus);
+    const spy = jest.spyOn(optimus, 'setThemeConfig');
 
-    themeService.currentTheme$.publish({
-      ...theme,
-      overrides: override,
-    })
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: override,
+      }
+    );
 
-    tick(100)
+    tick(100);
 
-    expect(spy).toHaveBeenCalled()
-    const callArg = spy.mock.calls.at(-1)?.[0] as any
-    expect(callArg).toBeTruthy()
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
 
-    const preset = callArg.theme.preset
+    const preset = callArg.theme.preset;
 
-    expect(preset.semantic.primary['500']).toEqual('#3b82f6')
+    expect(preset.semantic.primary['500']).toEqual('#3b82f6');
 
-    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6')
+    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#3b82f6');
   }))
 
   it('should not merge override when IS_ADVANCED_THEMING is false', fakeAsync(() => {
-    TestBed.overrideProvider(IS_ADVANCED_THEMING, { useValue: false })
+    TestBed.overrideProvider(IS_ADVANCED_THEMING, { useValue: false });
     TestBed.inject(ThemeConfigService)
 
-    const themeService = TestBed.inject(ThemeService)
-    const optimus = TestBed.inject(Optimus)
-    const spy = jest.spyOn(optimus, 'setThemeConfig')
+    const themeService = TestBed.inject(ThemeService);
+    const optimus = TestBed.inject(Optimus);
+    const spy = jest.spyOn(optimus, 'setThemeConfig');
 
-    themeService.currentTheme$.publish({
-      ...theme,
-      overrides: override,
-    })
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: override,
+      }
+    );
 
-    tick(100)
+    tick(100);
 
-    expect(spy).toHaveBeenCalled()
-    const callArg = spy.mock.calls.at(-1)?.[0] as any
-    expect(callArg).toBeTruthy()
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
 
-    const preset = callArg.theme.preset
+    const preset = callArg.theme.preset;
 
-    expect(preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color'])
+    expect(preset.semantic.primary['500']).toEqual(theme.properties.general['primary-color']);
 
-    expect(preset.semantic.extend.onecx.topbar.bg.color).not.toEqual('#3b82f6')
+    expect(preset.semantic.extend.onecx.topbar.bg.color).not.toEqual('#3b82f6');
   }))
 
   it('next override value should override previous', fakeAsync(() => {
+
     const overrides: Array<ThemeOverride> = [
       {
         type: OverrideType.OPTIMUS,
-        value:
-          '{"semantic": { "primary": {"500": "#ff1e00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ff1e00" }},"menu": {"text": {"color": "#ff1e00" }}}}}}', //first override round sets colors red
+        value: '{"semantic": { "primary": {"500": "#ff1e00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ff1e00" }},"menu": {"text": {"color": "#ff1e00" }}}}}}', //first override round sets colors red
       },
       {
         type: OverrideType.OPTIMUS,
-        value:
-          '{"semantic": { "primary": {"500": "#ffea00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ffea00" }}}}}}', //second round sets colors yellow, should override 1st and 2nd variable
+        value: '{"semantic": { "primary": {"500": "#ffea00" },"extend": {"onecx": {"topbar": {"bg": {"color": "#ffea00" }}}}}}',  //second round sets colors yellow, should override 1st and 2nd variable
       },
       {
         type: OverrideType.OPTIMUS,
         value: '{"semantic":{ "primary": {"500": "#04ff00" }}}', //sets colors green, should overwrite 1st variable
-      },
+      }
     ]
 
     TestBed.inject(ThemeConfigService)
-    const themeService = TestBed.inject(ThemeService)
-    const optimus = TestBed.inject(Optimus)
-    const spy = jest.spyOn(optimus, 'setThemeConfig')
+    const themeService = TestBed.inject(ThemeService);
+    const optimus = TestBed.inject(Optimus);
+    const spy = jest.spyOn(optimus, 'setThemeConfig');
 
-    themeService.currentTheme$.publish({
-      ...theme,
-      overrides: overrides,
-    })
+    themeService.currentTheme$.publish(
+      {
+        ...theme,
+        overrides: overrides,
+      }
+    );
 
-    tick(100)
+    tick(100);
 
-    expect(spy).toHaveBeenCalled()
-    const callArg = spy.mock.calls.at(-1)?.[0] as any
-    expect(callArg).toBeTruthy()
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls.at(-1)?.[0] as any;
+    expect(callArg).toBeTruthy();
 
-    const preset = callArg.theme.preset
+    const preset = callArg.theme.preset;
 
-    expect(preset.semantic.extend.onecx.menu.text.color).toEqual('#ff1e00')
+    expect(preset.semantic.extend.onecx.menu.text.color).toEqual('#ff1e00');
 
-    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#ffea00')
+    expect(preset.semantic.extend.onecx.topbar.bg.color).toEqual('#ffea00');
 
-    expect(preset.semantic.primary['500']).toEqual('#04ff00')
+    expect(preset.semantic.primary['500']).toEqual('#04ff00');
   }))
 })

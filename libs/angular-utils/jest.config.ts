@@ -13,7 +13,8 @@ export default {
     '<rootDir>/guards/**/*.spec.ts',
     '<rootDir>/cdk/**/*.spec.ts',
     '<rootDir>/theme/optimus/src/preset/**/*.spec.ts',
-    '<rootDir>/theme/optimus/src/utils/theme-contrast.spec.ts',
+    '<rootDir>/theme/optimus/src/utils/**/*.spec.ts',
+    '<rootDir>/theme/optimus/src/services/theme-config.service.spec.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
