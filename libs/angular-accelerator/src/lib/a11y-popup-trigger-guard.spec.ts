@@ -44,7 +44,7 @@ function openingTags(html: string, tag: string): string[] {
 
 function attributeNames(tag: string): string[] {
   const names: string[] = []
-  const attr = /(?:^|\s)([\[(]?[A-Za-z_@*][\w.\-:]*(?:\.[\w\-]+)*[\])]?(?:\.[\w-]+)*)(?=\s*=|\s|\/?>)/g
+  const attr = /(?:^|\s)([[(]?[A-Za-z_@*][\w.:-]*(?:\.[\w-]+)*[\])]?(?:\.[\w-]+)*)(?=\s*=|\s|\/?>)/g
   // strip quoted values first so their content is not parsed as attributes
   const stripped = tag.replace(/"[^"]*"|'[^']*'/g, '""')
   let m: RegExpExecArray | null
