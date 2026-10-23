@@ -234,6 +234,9 @@
     "EMPTY_ARIA_LABEL": "Chart with no data",
     "SUM": "Total",
     "NO_DATA": "There is no data available",
+    "LEGEND": {
+      "ARIA_LABEL": "Chart legend"
+    },
     "SELECT_BUTTON": {
       "ARIA_LABEL": "Select chart type"
     },
