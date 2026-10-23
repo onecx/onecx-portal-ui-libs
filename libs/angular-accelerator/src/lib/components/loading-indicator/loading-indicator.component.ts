@@ -6,5 +6,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core'
   templateUrl: './loading-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./loading-indicator.component.scss'],
+  host: { 'aria-hidden': 'true' },
 })
 export class LoadingIndicatorComponent {}
