@@ -21,10 +21,31 @@ import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import userEvent from '@testing-library/user-event'
+import { within } from '@testing-library/dom'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
 class TestRouteComponent {}
+
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
+    <ocx-data-table [rows]="rows" [columns]="columns">
+      <ng-template pTemplate="nameIdTableHeader" let-column="column" let-sortTemplate="sortTemplate">
+        <div class="custom-header">
+          <span>{{ column.id }}</span>
+          <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        </div>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+class CustomHeaderHostComponent {
+  rows = [{ id: '1', name: 'a' }]
+  columns = [{ columnType: ColumnType.STRING, id: 'name', nameKey: 'COLUMN_HEADER_NAME.NAME', sortable: true }]
+}
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -250,6 +271,132 @@ describe('DataTableComponent', () => {
 
   it('should create the data table component', () => {
     expect(component).toBeTruthy()
+  })
+
+  describe('sortable header accessibility', () => {
+    const headers = () => Array.from(fixture.nativeElement.querySelectorAll('th[scope="col"]')) as HTMLElement[]
+
+    it('should expose aria-sort only on the sorted column and update it after sorting', async () => {
+      const user = userEvent.setup()
+      expect(headers().filter((h) => h.hasAttribute('aria-sort'))).toHaveLength(0)
+
+      const first = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      await user.click(first.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(headers().filter((h) => h.hasAttribute('aria-sort'))).toEqual([first])
+      expect(first.getAttribute('aria-sort')).toBe('ascending')
+
+      await user.click(first.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(first.getAttribute('aria-sort')).toBe('descending')
+
+      const second = headers().filter((h) => h.querySelector('.sortButton'))[1]
+      await user.click(second.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      expect(first.hasAttribute('aria-sort')).toBe(false)
+      expect(second.getAttribute('aria-sort')).toBe('ascending')
+    })
+
+    it('should remove aria-sort when the sorted column cycles to the unsorted state', async () => {
+      const user = userEvent.setup()
+      fixture.componentRef.setInput('sortStates', [
+        DataSortDirection.ASCENDING,
+        DataSortDirection.DESCENDING,
+        DataSortDirection.NONE,
+      ])
+      fixture.detectChanges()
+      const first = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      const button = first.querySelector('.sortButton') as HTMLElement
+
+      await user.click(button)
+      await user.click(button)
+      fixture.detectChanges()
+      expect(first.getAttribute('aria-sort')).toBe('descending')
+
+      await user.click(button)
+      fixture.detectChanges()
+      expect(first.hasAttribute('aria-sort')).toBe(false)
+      expect(first.classList.contains('p-datatable-column-sorted')).toBe(false)
+    })
+
+    it('should not make the header cell a tab stop and should have one sort button per sortable header', () => {
+      const sortable = headers().filter((h) => h.querySelector('.sortButton'))
+      expect(sortable.length).toBeGreaterThan(0)
+      for (const th of sortable) {
+        expect(th.hasAttribute('tabindex')).toBe(false)
+        expect(th.querySelectorAll('button.sortButton')).toHaveLength(1)
+      }
+    })
+
+    it('should sort exactly once on Enter and on Space of the focused sort button', async () => {
+      const user = userEvent.setup()
+      const sortedSpy = jest.spyOn(component.stateService.sortDirection, 'set')
+      const th = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      const button = th.querySelector('.sortButton') as HTMLElement
+
+      button.focus()
+      await user.keyboard('{Enter}')
+      fixture.detectChanges()
+      expect(sortedSpy).toHaveBeenCalledTimes(1)
+      expect(th.getAttribute('aria-sort')).toBe('ascending')
+
+      await user.keyboard(' ')
+      fixture.detectChanges()
+      expect(sortedSpy).toHaveBeenCalledTimes(2)
+      expect(th.getAttribute('aria-sort')).toBe('descending')
+    })
+
+    it('should have one tab stop per sortable header plus one for its filter', async () => {
+      const user = userEvent.setup()
+      const sortable = headers().filter((h) => h.querySelector('.sortButton'))
+      const first = sortable[0]
+      const second = sortable[1]
+      ;(first.querySelector('.sortButton') as HTMLElement).focus()
+
+      await user.tab()
+      expect(document.activeElement).not.toBe(first)
+      expect((first.querySelector('.filterMultiSelect') as HTMLElement).contains(document.activeElement)).toBe(true)
+
+      await user.tab()
+      expect(document.activeElement).toBe(second.querySelector('.sortButton'))
+    })
+
+    it('should set aria-sort on a header rendered from a custom columnHeader template', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataTableComponent, TestRouteComponent, CustomHeaderHostComponent],
+        imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          provideRouter([{ path: '**', component: TestRouteComponent }]),
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        ],
+      }).compileComponents()
+      TestBed.inject(TranslateService).use('en')
+      const hostFixture = TestBed.createComponent(CustomHeaderHostComponent)
+      hostFixture.detectChanges()
+      await hostFixture.whenStable()
+      hostFixture.detectChanges()
+
+      const user = userEvent.setup()
+      const th = (hostFixture.nativeElement as HTMLElement).querySelector('.custom-header')?.closest('th') as HTMLElement
+      expect(th).toBeTruthy()
+      expect(th.hasAttribute('aria-sort')).toBe(false)
+      await user.click(th.querySelector('.sortButton') as HTMLElement)
+      hostFixture.detectChanges()
+      expect(th.getAttribute('aria-sort')).toBe('ascending')
+    })
+
+    it('should find the sorted column header by role and name', async () => {
+      const user = userEvent.setup()
+      const th = headers().find((h) => h.querySelector('.sortButton')) as HTMLElement
+      await user.click(th.querySelector('.sortButton') as HTMLElement)
+      fixture.detectChanges()
+      const columnHeaders = within(fixture.nativeElement as HTMLElement).getAllByRole('columnheader', { hidden: true })
+      expect(columnHeaders).toContain(th)
+      expect(columnHeaders.filter((h) => h.getAttribute('aria-sort') === 'ascending')).toEqual([th])
+    })
   })
 
   describe('DataViewStateService provider factory', () => {

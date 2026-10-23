@@ -728,6 +728,18 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     this.stateService.sortDirection.set(newSortDirection)
   }
 
+  columnAriaSort(column: DataTableColumn): 'ascending' | 'descending' | null {
+    if (!column.sortable || column.id !== this.stateService.sortColumn()) return null
+    switch (this.stateService.sortDirection()) {
+      case DataSortDirection.ASCENDING:
+        return 'ascending'
+      case DataSortDirection.DESCENDING:
+        return 'descending'
+      default:
+        return null
+    }
+  }
+
   columnNextSortDirection(sortColumn: string) {
     const sortStates = this.sortStates()
     return sortColumn === this.stateService.sortColumn()
