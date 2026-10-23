@@ -26,6 +26,19 @@ describe('CustomGroupColumnSelectorComponent', () => {
     component = fixture.componentInstance
   })
 
+  describe('heading levels', () => {
+    it('should default the dialog title to level 2 and the sub title to level 3', () => {
+      expect((component as any).dialogTitleLevel()).toBe(2)
+      expect((component as any).subTitleLevel()).toBe(3)
+    })
+
+    it('should keep the sub title within level 6', () => {
+      fixture.componentRef.setInput('dialogTitleHeadingLevel', 6)
+      expect((component as any).dialogTitleLevel()).toBe(6)
+      expect((component as any).subTitleLevel()).toBe(6)
+    })
+  })
+
   describe('ngOnInit', () => {
     it('should emit initial componentStateChanged with actionColumnConfig and displayedColumns', () => {
       fixture.componentRef.setInput('frozenActionColumn', true)

@@ -36,9 +36,8 @@
       "
       [attr.aria-label]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
     >
-      <span class="p-chip-text flex flex-nowrap items-center gap-1"
-        >{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' | translate }} <i class="pi pi-plus" aria-hidden="true"></i>
-      </span>
+      <span class="p-chip-text flex flex-nowrap items-center gap-1">{{ 'OCX_FILTER_VIEW.ADD_FILTER.BUTTON' |
+      translate }} <i class="pi pi-plus" aria-hidden="true"></i> </span>
     </p-chip>
     @if (filters.length <= 0) { @if (filterViewNoSelection()) {
     <ng-container [ngTemplateOutlet]="filterViewNoSelection()"> </ng-container>
@@ -131,9 +130,27 @@
         <div pFocusTrap>
           <div class="flex justify-between items-center mb-2">
             <div class="flex items-center gap-3">
-              <span class="text-2xl font-medium" role="heading" [attr.aria-level]="panelTitleLevel()"
-                >{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span
-              >
+              <ng-template #panelTitle>{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</ng-template>
+              @switch (panelTitleLevel()) {
+                @case (1) {
+                  <h1 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h1>
+                }
+                @case (2) {
+                  <h2 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h2>
+                }
+                @case (3) {
+                  <h3 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h3>
+                }
+                @case (4) {
+                  <h4 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h4>
+                }
+                @case (5) {
+                  <h5 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h5>
+                }
+                @case (6) {
+                  <h6 class="text-2xl font-medium m-0"><ng-container [ngTemplateOutlet]="panelTitle"></ng-container></h6>
+                }
+              }
               <p-button
                 id="ocxFilterViewAddFilter"
                 pAutoFocus
@@ -232,6 +249,8 @@
   </ng-template>
 </div>
 } }
+
+
 
 <ng-template #chipTemplate let-templates="templates" let-filter="filter" let-column="column">
   @if (templates[column.id]; as template) {

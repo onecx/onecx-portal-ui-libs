@@ -1,16 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  Input,
-  input,
-  model,
-  OnInit,
-  output,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core'
+import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core'
 import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'

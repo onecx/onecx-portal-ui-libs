@@ -8,14 +8,27 @@
   <ng-template pTemplate="content" let-step>
     <div class="pb-4 h-full">
       <div class="card h-full" [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''">
-        <p
-          class="font-bold text-xl"
-          role="heading"
-          [attr.aria-level]="headingLevel()"
-          [ngClass]="step.details ? 'mb-2' : ''"
-        >
-          {{ step.title }}
-        </p>
+        <ng-template #stepTitle>{{ step.title }}</ng-template>
+        @switch (headingLevel()) {
+          @case (1) {
+            <h1 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h1>
+          }
+          @case (2) {
+            <h2 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h2>
+          }
+          @case (3) {
+            <h3 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h3>
+          }
+          @case (4) {
+            <h4 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h4>
+          }
+          @case (5) {
+            <h5 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h5>
+          }
+          @case (6) {
+            <h6 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h6>
+          }
+        }
         @if (step.details) {
         <p [ngClass]="activeStepId() && activeStepId() === step.id ? '' : 'text-color-secondary'">{{ step.details }}</p>
         }

@@ -1563,4 +1563,56 @@ describe('DataListGridComponent', () => {
       expect(getPermissionsSpy).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('item title headings', () => {
+    const headingTexts = (selector: string) =>
+      Array.from(fixture.nativeElement.querySelectorAll(selector)).map((h) => (h as HTMLElement).textContent?.trim())
+
+    it.each(['grid', 'list'])('should render item titles as level 2 headings in %s layout', async (layout) => {
+      fixture.componentRef.setInput('layout', layout)
+      fixture.componentRef.setInput('titleLineId', 'name')
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(headingTexts('h2').length).toBeGreaterThan(0)
+      expect(headingTexts('h2')).toContain(mockData[0].name)
+    })
+
+    it.each(['grid', 'list'])('should use the configured level in %s layout', async (layout) => {
+      fixture.componentRef.setInput('layout', layout)
+      fixture.componentRef.setInput('titleLineId', 'name')
+      fixture.componentRef.setInput('itemTitleHeadingLevel', 4)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(headingTexts('h2')).toEqual([])
+      expect(headingTexts('h4')).toContain(mockData[0].name)
+    })
+
+    it.each([1, 3, 5, 6])('should render a h%i heading for level %i', async (level) => {
+      fixture.componentRef.setInput('titleLineId', 'name')
+      fixture.componentRef.setInput('itemTitleHeadingLevel', level)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(headingTexts(`h${level}`)).toContain(mockData[0].name)
+    })
+
+    it.each(['grid', 'list'])('should not render a heading without a title in %s layout', async (layout) => {
+      fixture.componentRef.setInput('layout', layout)
+      fixture.componentRef.setInput('titleLineId', 'missingProperty')
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(headingTexts('h1, h2, h3, h4, h5, h6')).toEqual([])
+    })
+
+    it.each(['grid', 'list'])('should not render a heading without titleLineId in %s layout', async (layout) => {
+      fixture.componentRef.setInput('layout', layout)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(headingTexts('h1, h2, h3, h4, h5, h6')).toEqual([])
+    })
+  })
 })

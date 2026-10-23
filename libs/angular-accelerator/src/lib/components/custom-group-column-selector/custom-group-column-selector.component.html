@@ -21,16 +21,31 @@
   [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)"
 >
   <ng-template pTemplate="header">
-    <span [id]="dialog.ariaLabelledBy" class="text-xl font-bold" role="heading" [attr.aria-level]="dialogTitleLevel()"
-      >{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' |
-      translate) }}</span
-    >
+    <ng-template #dialogTitleContent>{{ dialogTitle() || (dialogTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DIALOG_TITLE' | translate) }}</ng-template>
+    @switch (dialogTitleLevel()) {
+      @case (1) {
+        <h1 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h1>
+      }
+      @case (2) {
+        <h2 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h2>
+      }
+      @case (3) {
+        <h3 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h3>
+      }
+      @case (4) {
+        <h4 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h4>
+      }
+      @case (5) {
+        <h5 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h5>
+      }
+      @case (6) {
+        <h6 [id]="dialog.ariaLabelledBy" class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="dialogTitleContent"></ng-container></h6>
+      }
+    }
   </ng-template>
 
-  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) ||
-  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate); @let resolvedInactiveColumnsLabel =
-  inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) ||
-  ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
+  @let resolvedActiveColumnsLabel = activeColumnsLabel() || (activeColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ACTIVE_COLUMNS_LABEL' | translate);
+  @let resolvedInactiveColumnsLabel = inactiveColumnsLabel() || (inactiveColumnsLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.INACTIVE_COLUMNS_LABEL' | translate);
   <p-pickList
     [source]="displayedColumnsModel()"
     [target]="hiddenColumnsModel()"
@@ -62,9 +77,27 @@
   </p-pickList>
 
   <div class="pt-4">
-    <p class="text-xl font-bold" role="heading" [attr.aria-level]="subTitleLevel()">
-      {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}
-    </p>
+    <ng-template #configureActionTitle>{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</ng-template>
+    @switch (subTitleLevel()) {
+      @case (1) {
+        <h1 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h1>
+      }
+      @case (2) {
+        <h2 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h2>
+      }
+      @case (3) {
+        <h3 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h3>
+      }
+      @case (4) {
+        <h4 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h4>
+      }
+      @case (5) {
+        <h5 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h5>
+      }
+      @case (6) {
+        <h6 class="text-xl font-bold m-0"><ng-container [ngTemplateOutlet]="configureActionTitle"></ng-container></h6>
+      }
+    }
     <div class="flex gap-6 px-3">
       <div>
         <p id="frozenActionColumnLabel" class="mb-1">

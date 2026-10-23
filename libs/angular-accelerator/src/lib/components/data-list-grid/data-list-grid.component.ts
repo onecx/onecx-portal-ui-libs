@@ -19,7 +19,7 @@ import {
   signal,
   untracked,
   viewChildren,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { normalizeHeadingLevel } from '../../utils/heading-level.utils'
 import { Router } from '@angular/router'
@@ -118,12 +118,12 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   emptyResultsMessage = input<string | undefined>(undefined)
   fallbackImage = input<string>('placeholder.png')
-
+  
   @Input()
   set layout(value: 'grid' | 'list') {
     this.stateService.layout.set(value)
   }
-
+  
   viewPermission = input<PermissionInput>(undefined)
   editPermission = input<PermissionInput>(undefined)
   deletePermission = input<PermissionInput>(undefined)
@@ -330,10 +330,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
 
   selectedItem = signal<ListGridData | undefined>(undefined)
 
-  permittedAdditionalActions$ = combineLatest([
-    this.permissions$,
-    toObservable(this.stateService.additionalActions),
-  ]).pipe(
+  permittedAdditionalActions$ = combineLatest([this.permissions$, toObservable(this.stateService.additionalActions)]).pipe(
     map(([permissions, additionalActions]) => {
       return this.filterActionsBasedOnPermissions(additionalActions, permissions)
     })
@@ -734,10 +731,8 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
       deleteDisabled =
         !!actionFields.enabled.deleteAction && !this.fieldIsTruthy(selectedItem, actionFields.enabled.deleteAction)
 
-      viewVisible =
-        !actionFields.visible.viewAction || this.fieldIsTruthy(selectedItem, actionFields.visible.viewAction)
-      editVisible =
-        !actionFields.visible.editAction || this.fieldIsTruthy(selectedItem, actionFields.visible.editAction)
+      viewVisible = !actionFields.visible.viewAction || this.fieldIsTruthy(selectedItem, actionFields.visible.viewAction)
+      editVisible = !actionFields.visible.editAction || this.fieldIsTruthy(selectedItem, actionFields.visible.editAction)
       deleteVisible =
         !actionFields.visible.deleteAction || this.fieldIsTruthy(selectedItem, actionFields.visible.deleteAction)
     }

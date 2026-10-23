@@ -338,11 +338,11 @@ describe('OcxConsentComponent', () => {
 
   it('should expose the title as a level 2 heading by default and allow configuring the level', () => {
     fixture.detectChanges()
-    const heading = fixture.nativeElement.querySelector('[role="heading"]') as HTMLElement
-    expect(heading.getAttribute('aria-level')).toBe('2')
+    expect(fixture.nativeElement.querySelector('h2')).not.toBeNull()
 
     fixture.componentInstance.titleHeadingLevel.set(4)
     fixture.detectChanges()
-    expect(heading.getAttribute('aria-level')).toBe('4')
+    expect(fixture.nativeElement.querySelector('h2')).toBeNull()
+    expect(fixture.nativeElement.querySelector('h4')).not.toBeNull()
   })
 })

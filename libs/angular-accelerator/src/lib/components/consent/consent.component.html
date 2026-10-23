@@ -18,9 +18,27 @@
   [attr.aria-describedby]="messageId"
 >
   <div class="flex flex-col gap-4 items-center justify-center text-center ocx-consent__content">
-    <p class="m-0 text-xl font-semibold" role="heading" [attr.aria-level]="headingLevel()" [id]="titleId">
-      {{ titleKey() | translate }}
-    </p>
+    <ng-template #consentTitle>{{ titleKey() | translate }}</ng-template>
+    @switch (headingLevel()) {
+      @case (1) {
+        <h1 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h1>
+      }
+      @case (2) {
+        <h2 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h2>
+      }
+      @case (3) {
+        <h3 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h3>
+      }
+      @case (4) {
+        <h4 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h4>
+      }
+      @case (5) {
+        <h5 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h5>
+      }
+      @case (6) {
+        <h6 class="m-0 text-xl font-semibold" [id]="titleId"><ng-container [ngTemplateOutlet]="consentTitle"></ng-container></h6>
+      }
+    }
     <p class="m-0" [id]="messageId" aria-live="polite">{{ messageKey() | translate : { url: normalizedUrl() } }}</p>
 
     <ng-content select="[ocx-consent-info]" />
