@@ -39,9 +39,15 @@ export const WithTooltipData = {
   render: InteractiveDataViewTemplate,
   args: {
     ...defaultComponentArgs,
-    columns: defaultComponentArgs.columns.map((column) =>
-      column.id === 'product' ? { ...column, tooltipKey: 'Product name and details' } : column,
-    ),
+    columns: defaultComponentArgs.columns.map((column) => ({
+      ...column,
+      tooltipLabel: {
+        product: 'Product',
+        amount: 'Amount',
+        available: 'Available',
+        date: 'Date',
+      }[column.id],
+    })),
   },
 }
 
