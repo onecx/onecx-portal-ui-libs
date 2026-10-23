@@ -40,11 +40,12 @@ export function warnOnActionsWithoutLabelKey(actions: DataAction[]): void {
   if (!isDevMode()) return
   actions
     .filter((action) => !action.labelKey)
-    .forEach((action) =>
+    .forEach((action) => {
+      const actionName = action.id ? ` "${action.id}"` : ''
       console.warn(
-        `Row action${action.id ? ` "${action.id}"` : ''} has no labelKey. A generic fallback label is used for its accessible name; please provide a labelKey.`
+        `Row action${actionName} has no labelKey. A generic fallback label is used for its accessible name; please provide a labelKey.`
       )
-    )
+    })
 }
 
 /**

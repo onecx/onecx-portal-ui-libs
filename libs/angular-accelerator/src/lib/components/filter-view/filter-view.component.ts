@@ -378,7 +378,7 @@ export class FilterViewComponent {
     const value = row['value']
     if (typeof value === 'string' || typeof value === 'number') {
       const text = String(value).trim()
-      return text ? text : undefined
+      return text || undefined
     }
     return undefined
   }
