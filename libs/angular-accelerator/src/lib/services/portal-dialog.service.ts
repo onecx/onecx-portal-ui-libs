@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common'
 import { Injectable, OnDestroy, Type, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DialogService, DynamicDialog } from '@openng/optimus-ui/dynamicdialog'
@@ -258,6 +259,7 @@ export class PortalDialogService implements OnDestroy {
   private dialogService = inject(DialogService)
   private translateService = inject(TranslateService)
   private router = inject(Router)
+  private document = inject(DOCUMENT)
   private readonly logger = createLogger('PortalDialogService')
   private _eventsTopic$: EventsTopic | undefined
   get eventsTopic() {
@@ -482,13 +484,10 @@ export class PortalDialogService implements OnDestroy {
     const componentToRender: Component<any> = this.getComponentToRender(componentOrMessage)
     const focusOnShow = dialogOptions.focusOnShow ?? true
     // Message-only dialogs have nothing to focus in the content: focus Cancel (or the only button) unless a button is requested explicitly
-    const autoFocusButton =
-      dialogOptions.autoFocusButton ??
-      (focusOnShow && componentToRender.type === DialogMessageContentComponent
-        ? secondaryButtonTranslationKeyOrDetails !== undefined
-          ? 'secondary'
-          : 'primary'
-        : undefined)
+    const messageOnlyButton = secondaryButtonTranslationKeyOrDetails !== undefined ? 'secondary' : 'primary'
+    const defaultAutoFocusButton =
+      focusOnShow && componentToRender.type === DialogMessageContentComponent ? messageOnlyButton : undefined
+    const autoFocusButton = dialogOptions.autoFocusButton ?? defaultAutoFocusButton
     const openerElement = this.getOpenerElement(dialogOptions)
     const dynamicDialogDataConfig: ButtonDialogData = {
       component: componentToRender.type as Type<any>,
@@ -672,20 +671,19 @@ export class PortalDialogService implements OnDestroy {
 
   private getOpenerElement(dialogOptions: PortalDialogConfig): HTMLElement | undefined {
     if (dialogOptions.initiatorRef) return dialogOptions.initiatorRef
-    if (typeof document === 'undefined') return undefined
-    const active = document.activeElement
-    return active instanceof HTMLElement && active !== document.body ? active : undefined
+    const active = this.document.activeElement
+    return active instanceof HTMLElement && active !== this.document.body ? active : undefined
   }
 
   private restoreFocus(dialogOptions: PortalDialogConfig, opener: HTMLElement | undefined) {
-    if (dialogOptions.onCloseFocus === 'none' || typeof document === 'undefined') return
+    if (dialogOptions.onCloseFocus === 'none') return
 
-    if (opener && document.contains(opener)) {
+    if (opener && this.document.contains(opener)) {
       opener.focus()
       return
     }
     // Opener is gone (e.g. removed from the DOM): fall back to the main landmark so focus does not get lost
-    const main = document.querySelector<HTMLElement>('main, [role="main"]')
+    const main = this.document.querySelector<HTMLElement>('main, [role="main"]')
     if (main) {
       if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1')
       main.focus()
