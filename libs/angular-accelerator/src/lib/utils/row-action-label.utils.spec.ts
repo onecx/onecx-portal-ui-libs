@@ -54,6 +54,18 @@ describe('row-action-label utils', () => {
       expect(warnSpy.mock.calls[0][0]).toContain('Row action has no labelKey')
     })
 
+    it('should not warn outside of dev mode', () => {
+      const globalWithDevMode = globalThis as { ngDevMode?: unknown }
+      const original = globalWithDevMode.ngDevMode
+      globalWithDevMode.ngDevMode = false
+      try {
+        warnOnActionsWithoutLabelKey([{ id: 'a', permission: 'P' }])
+      } finally {
+        globalWithDevMode.ngDevMode = original
+      }
+      expect(warnSpy).not.toHaveBeenCalled()
+    })
+
     it('should not warn if all actions have a labelKey', () => {
       warnOnActionsWithoutLabelKey([{ labelKey: 'KEY', permission: 'P' }])
       expect(warnSpy).not.toHaveBeenCalled()
