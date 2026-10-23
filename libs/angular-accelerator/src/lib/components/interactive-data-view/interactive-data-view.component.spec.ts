@@ -1,11 +1,9 @@
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { CommonModule, DatePipe } from '@angular/common'
-import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { DatePipe } from '@angular/common'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { By } from '@angular/platform-browser'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { FormsModule } from '@angular/forms'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -33,7 +31,6 @@ import { DialogModule } from 'primeng/dialog'
 import { DomHandler } from 'primeng/dom'
 import { PickListModule } from 'primeng/picklist'
 import { TooltipStyle } from 'primeng/tooltip'
-import { of } from 'rxjs'
 import {
   ColumnGroupSelectionHarness,
   CustomGroupColumnSelectorHarness,
@@ -50,7 +47,6 @@ import {
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { DateUtils } from '../../utils/dateutils'
