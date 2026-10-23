@@ -59,7 +59,7 @@
         />
       </div>
       <div class="flex flex-row justify-between items-center">
-        <div class="data-grid-items flex-row">
+        <div class="data-grid-items flex-row min-w-0 wrap-anywhere">
           <div class="item-name font-medium mr-3 text-2xl">
             @if (hasViewPermission$ | async; as hasViewPermission) {
             <a [routerLink]="" (click)="onViewRow(item)">{{ resolveFieldData(item, titleLineId()) || '' }}</a>
@@ -100,13 +100,13 @@
   @if (columnTemplates) {
   <div class="col-span-full" role="listitem">
     <div class="data-list-items p-1" [ngClass]="{ 'list-border-divider': !first }">
-      <div class="item-name-row flex flex-row justify-between">
-        <div class="item-name mr-3 text-2xl font-medium content-center">
+      <div class="item-name-row flex flex-row flex-wrap justify-between">
+        <div class="item-name mr-3 text-2xl font-medium content-center min-w-0 wrap-anywhere">
           @if (titleLineId()) {
           <span>{{ resolveFieldData(item, titleLineId()) || '' }}</span>
           }
         </div>
-        <div class="flex flex-row">
+        <div class="flex flex-row flex-wrap">
           @if (viewItemObserved && (!viewActionVisibleField() || fieldIsTruthy(item, viewActionVisibleField()))) {
           <button
             id="{{resolveFieldData(item, 'id')}}-viewButton"
@@ -219,14 +219,9 @@
       </div>
       <div class="flex flex-wrap">
         @for (col of filteredColumns(); track col) {
-        <div class="w-[12rem] my-2 mr-2">
-          <div class="font-bold" [ocxTooltipOnOverflow]="col.nameKey | translate" tooltipPosition="top">
-            {{ col.nameKey | translate }}
-          </div>
-          <div
-            [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
-            tooltipPosition="top"
-          >
+        <div class="ocx-data-list-grid-cell w-[12rem] max-w-full min-w-0 my-2 mr-2 wrap-anywhere">
+          <div class="ocx-data-list-grid-cell-label font-bold">{{ col.nameKey | translate }}</div>
+          <div class="ocx-data-list-grid-cell-value">
             @defer(on viewport;){
             <ng-container
               [ngTemplateOutlet]="listValue ?? defaultListValue"
