@@ -19,12 +19,12 @@ export interface DataListGridSortingComponentState {
 })
 export class DataListGridSortingComponent {
   readonly stateService = inject(DataViewStateService)
-  
+
   @Input()
   set columns(value: DataTableColumn[]) {
     this.stateService.columns.set(value)
   }
-  
+
   readonly sortStates = input<DataSortDirection[]>([DataSortDirection.ASCENDING, DataSortDirection.DESCENDING])
 
   @Input()
@@ -43,7 +43,8 @@ export class DataListGridSortingComponent {
   readonly columnsChange = output<string[]>()
 
   readonly dropdownOptions = computed<DataColumnNameId[]>(() => {
-    return this.stateService.columns()
+    return this.stateService
+      .columns()
       .filter((c) => !!c.sortable)
       .map((c) => ({ columnId: c.id, columnName: c.nameKey }))
   })
@@ -65,7 +66,7 @@ export class DataListGridSortingComponent {
   }
 
   selectSorting(event: SelectChangeEvent): void {
-    this.stateService.sortColumn.set(event.value.columnId) 
+    this.stateService.sortColumn.set(event.value.columnId)
     this.sortChange.emit(event.value.columnId)
   }
 
@@ -95,14 +96,31 @@ export class DataListGridSortingComponent {
     return this.sortDirectionToTitle(this.nextSortDirection())
   }
 
+  sortDirectionToLabel(sortDirection: DataSortDirection): string {
+    return this.sortDirectionKeys(sortDirection).label
+  }
+
   sortDirectionToTitle(sortDirection: DataSortDirection): string {
+    return this.sortDirectionKeys(sortDirection).title
+  }
+
+  private sortDirectionKeys(sortDirection: DataSortDirection): { label: string; title: string } {
     switch (sortDirection) {
       case DataSortDirection.ASCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP'
+        return {
+          label: 'OCX_LIST_GRID_SORT.DIRECTION.ASCENDING',
+          title: 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.ASCENDING_TOOLTIP',
+        }
       case DataSortDirection.DESCENDING:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP'
+        return {
+          label: 'OCX_LIST_GRID_SORT.DIRECTION.DESCENDING',
+          title: 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP',
+        }
       default:
-        return 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TOOLTIP'
+        return {
+          label: 'OCX_LIST_GRID_SORT.DIRECTION.NONE',
+          title: 'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DEFAULT_TOOLTIP',
+        }
     }
   }
 }
