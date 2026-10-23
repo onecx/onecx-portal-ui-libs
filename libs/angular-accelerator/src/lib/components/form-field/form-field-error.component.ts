@@ -33,18 +33,7 @@ const FALLBACK_ERROR_KEY = 'OCX_FORM_FIELD.ERROR.INVALID'
       <span>{{ m.key | translate: m.params }}</span>
     }
   </div>`,
-  styles: [
-    `
-      .ocx-form-field-error {
-        color: var(--p-onecx-error-color, var(--text-color));
-      }
-      /* Not by colour alone: a warning sign marks the error text (hidden from assistive technology) */
-      .ocx-form-field-error > span::before {
-        content: '\\26A0\\FE0E\\00A0';
-        content: '\\26A0\\FE0E\\00A0' / '';
-      }
-    `,
-  ],
+  styleUrls: ['./form-field-error.component.scss'],
 })
 export class FormFieldErrorComponent {
   /** The field this error text belongs to, e.g. `#name="ocxFormField"` */
