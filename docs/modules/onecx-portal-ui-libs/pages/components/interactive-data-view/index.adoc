@@ -21,7 +21,7 @@ inputs configure that dialog and are forwarded to the hosted `CustomGroupColumnS
 | Input name | Type | Default | Description
 
 | `draggableColumnGroupSelectorDialog` | `boolean` | `true` | Whether the column selection dialog can be dragged by the user.
-| `resizableColumnGroupSelectorDialog` | `boolean` | `false` | Whether the column selection dialog can be resized by the user. Independent of `draggableColumnGroupSelectorDialog`.
+| `resizableColumnGroupSelectorDialog` | `boolean` | `true` | Whether the column selection dialog can be resized by the user. Independent of `draggableColumnGroupSelectorDialog`.
 | `restoreColumnGroupSelectorOrder` | `boolean` | `false` | When enabled, transferring columns rebuilds the active and inactive lists in the order of the configured columns, so the active columns keep the main column order after a save. When disabled, the normal pick-list transfer order is preserved.
 |===
 
