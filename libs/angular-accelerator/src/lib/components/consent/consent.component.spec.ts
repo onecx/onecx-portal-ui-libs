@@ -9,23 +9,7 @@ import type { Observable } from 'rxjs'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { RippleModule } from '@openng/optimus-ui/ripple'
 import userEvent from '@testing-library/user-event'
-
-/**
- * Runs the given axe-core rules on an element. zone.js wraps MutationObserver in a way that breaks
- * axe-core under happy-dom (`observer.observe is not a function`), so axe-core is loaded lazily
- * with the native MutationObserver that zone.js keeps under its symbol.
- */
-async function runAxeRules(element: Element, rules: string[]) {
-  const globals = globalThis as unknown as Record<string, unknown>
-  const zonePatchedObserver = globals['MutationObserver']
-  globals['MutationObserver'] = globals['__zone_symbol__MutationObserver'] ?? zonePatchedObserver
-  try {
-    const { default: axe } = await import('axe-core')
-    return await axe.run(element, { runOnly: { type: 'rule', values: rules } })
-  } finally {
-    globals['MutationObserver'] = zonePatchedObserver
-  }
-}
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 class FakeTranslateLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<TranslationObject> {
@@ -110,6 +94,13 @@ describe('OcxConsentComponent', () => {
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    // Known violation: the consent component renders an icon-only button without an accessible name.
+    // The check fails once this is fixed, so remove the entry together with the fix.
+    await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
   })
 
   it('should show message when consent is missing', async () => {
@@ -250,7 +241,11 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual([])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: false, purpose: undefined })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: false,
+      purpose: undefined,
+    })
   })
 
   it('should scope consent to purpose when purpose is provided', async () => {
@@ -261,14 +256,15 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual(['https://example.com::maps'])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: true, purpose: 'maps' })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: true,
+      purpose: 'maps',
+    })
   })
 
   it('should keep unrelated consent entries when withdrawing without purpose', async () => {
-    localStorage.setItem(
-      'onecx-consent',
-      JSON.stringify(['https://example.com/legal', 'https://example.com/other'])
-    )
+    localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com/legal', 'https://example.com/other']))
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
@@ -392,13 +388,9 @@ describe('OcxConsentComponent', () => {
     })
 
     it('should have no axe button-name, aria-allowed-attr or aria-prohibited-attr violations', async () => {
-      const results = await runAxeRules(fixture.nativeElement as HTMLElement, [
-        'button-name',
-        'aria-allowed-attr',
-        'aria-prohibited-attr',
-      ])
-
-      expect(results.violations).toEqual([])
+      await expectNoAxeViolations(fixture.nativeElement, {
+        rules: ['button-name', 'aria-allowed-attr', 'aria-prohibited-attr'],
+      })
     })
   })
 })
