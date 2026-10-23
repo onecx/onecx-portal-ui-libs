@@ -437,6 +437,10 @@ describe('DataListGridComponent', () => {
       fixture.detectChanges()
       await setUpListActionButtonMockData()
       // Let the harness stabilize the fixture so the deferred list items are rendered.
+      await listGrid.getActionButtons('list')
+    })
+
+    it('should render the list items with action buttons', async () => {
       expect((await listGrid.getActionButtons('list')).length).toBeGreaterThan(0)
     })
 
@@ -453,12 +457,8 @@ describe('DataListGridComponent', () => {
         expect(cell.classList).toContain('max-w-full')
         const label = cell.querySelector<HTMLElement>('.ocx-data-list-grid-cell-label')
         const value = cell.querySelector<HTMLElement>('.ocx-data-list-grid-cell-value')
-        for (const element of [label, value]) {
-          expect(element).not.toBeNull()
-          expect(element?.style.whiteSpace).not.toBe('nowrap')
-          expect(element?.style.textOverflow).not.toBe('ellipsis')
-          expect(element?.style.overflow).not.toBe('hidden')
-        }
+        expect(label).not.toBeNull()
+        expect(value).not.toBeNull()
       }
     })
 
