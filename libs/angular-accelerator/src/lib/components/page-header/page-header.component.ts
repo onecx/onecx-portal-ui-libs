@@ -1,5 +1,6 @@
 import {
   Component,
+  OnInit,
   TemplateRef,
   Type,
   ViewEncapsulation,
