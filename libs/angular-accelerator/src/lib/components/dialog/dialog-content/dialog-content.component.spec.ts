@@ -435,16 +435,21 @@ describe('DialogContentComponent', () => {
       return fixture.nativeElement.querySelector('.buttonDialogScrollableContent') as HTMLElement
     }
 
+    const globalWithResizeObserver = globalThis as unknown as { ResizeObserver?: typeof ResizeObserver }
+    const originalResizeObserver = globalWithResizeObserver.ResizeObserver
+
     beforeEach(() => {
       resizeCallback = undefined
-      ;(globalThis as any).ResizeObserver = jest.fn((callback: () => void) => {
+      observe.mockClear()
+      disconnect.mockClear()
+      globalWithResizeObserver.ResizeObserver = jest.fn((callback: () => void) => {
         resizeCallback = callback
         return { observe, disconnect, unobserve: jest.fn() }
-      })
+      }) as unknown as typeof ResizeObserver
     })
 
     afterEach(() => {
-      delete (globalThis as any).ResizeObserver
+      globalWithResizeObserver.ResizeObserver = originalResizeObserver
     })
 
     it('should not be focusable or a named region while the content fits', () => {
@@ -494,7 +499,7 @@ describe('DialogContentComponent', () => {
     })
 
     it('should evaluate the overflow once when ResizeObserver is not available', () => {
-      delete (globalThis as any).ResizeObserver
+      delete globalWithResizeObserver.ResizeObserver
       const region = createWithLongMessage()
 
       expect(resizeCallback).toBeUndefined()

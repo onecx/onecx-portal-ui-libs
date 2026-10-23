@@ -65,10 +65,14 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
+    // Safe here: scrollable is a signal read by the template, so setting it during the first
+    // change detection pass just schedules a refresh instead of raising ExpressionChanged errors.
     this.updateScrollable()
     if (typeof ResizeObserver === 'undefined') {
       return
     }
+    // The ResizeObserver callback runs outside NgZone; updating the signal still notifies Angular
+    // to re-render the view, so no NgZone.run() is needed.
     this.resizeObserver = new ResizeObserver(() => this.updateScrollable())
     this.resizeObserver.observe(this.scrollRegion().nativeElement)
     this.resizeObserver.observe(this.scrollContent().nativeElement)
