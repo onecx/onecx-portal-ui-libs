@@ -1,8 +1,11 @@
 import { HarnessLoader, parallel, TestElement } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { DatePipe } from '@angular/common'
+import { CommonModule, DatePipe } from '@angular/common'
+import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { By } from '@angular/platform-browser'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { FormsModule } from '@angular/forms'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -30,6 +33,7 @@ import { DialogModule } from 'primeng/dialog'
 import { DomHandler } from 'primeng/dom'
 import { PickListModule } from 'primeng/picklist'
 import { TooltipStyle } from 'primeng/tooltip'
+import { of } from 'rxjs'
 import {
   ColumnGroupSelectionHarness,
   CustomGroupColumnSelectorHarness,
@@ -46,6 +50,7 @@ import {
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { ColumnType } from '../../model/column-type.model'
 import { FilterType } from '../../model/filter.model'
 import { DateUtils } from '../../utils/dateutils'
@@ -2127,5 +2132,36 @@ xdescribe('InteractiveDataViewComponent', () => {
 
     const expectedStyleClasses = ['p-3', 'mt-4']
     expect(await interactiveDataViewHarness.getContentStyleClasses()).toEqual(expectedStyleClasses)
+  })
+
+  describe('column group selector dialog configuration', () => {
+    it('should preserve the PrimeNG resize default and default order restoration to false', () => {
+      expect(component.draggableColumnGroupSelectorDialog).toBe(true)
+      expect(component.resizableColumnGroupSelectorDialog).toBe(true)
+      expect(component.restoreColumnGroupSelectorOrder).toBe(false)
+    })
+
+    it('should forward default dialog settings to the hosted selector', () => {
+      fixture.detectChanges()
+      const selector = fixture.debugElement.query(By.directive(CustomGroupColumnSelectorComponent))
+        .componentInstance as CustomGroupColumnSelectorComponent
+
+      expect(selector.draggableColumnGroupSelectorDialog).toBe(true)
+      expect(selector.resizableColumnGroupSelectorDialog).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder).toBe(false)
+    })
+
+    it('should forward explicit dialog settings to the hosted selector', () => {
+      fixture.componentRef.setInput('draggableColumnGroupSelectorDialog', false)
+      fixture.componentRef.setInput('resizableColumnGroupSelectorDialog', false)
+      fixture.componentRef.setInput('restoreColumnGroupSelectorOrder', true)
+      fixture.detectChanges()
+      const selector = fixture.debugElement.query(By.directive(CustomGroupColumnSelectorComponent))
+        .componentInstance as CustomGroupColumnSelectorComponent
+
+      expect(selector.draggableColumnGroupSelectorDialog).toBe(false)
+      expect(selector.resizableColumnGroupSelectorDialog).toBe(false)
+      expect(selector.restoreColumnGroupSelectorOrder).toBe(true)
+    })
   })
 })
