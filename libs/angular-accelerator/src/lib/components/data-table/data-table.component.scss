@@ -1,8 +1,23 @@
 $clr-neutral-100: #f7f7f7;
-$clr-neutral-500: #979797;
 $clr-neutral-700: #262626;
 
+// INFO: Sort and filter triggers in the column headers (WCAG 2.5.8, 2.4.7, 1.4.11):
+// at least 24x24 CSS px and a focus ring of at least 2px from the theme focus ring tokens.
+$header-trigger-min-size: 24px;
+$header-trigger-min-focus-width: 2px;
+
+@mixin header-trigger-focus-ring {
+  outline: max(#{$header-trigger-min-focus-width}, var(--p-focus-ring-width)) var(--p-focus-ring-style)
+    var(--p-focus-ring-color);
+  outline-offset: var(--p-focus-ring-offset);
+}
+
 :host ::ng-deep .p-multiselect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $header-trigger-min-size;
+  min-height: $header-trigger-min-size;
   padding: 0;
   background: $clr-neutral-100;
   border: none;
@@ -28,9 +43,22 @@ $clr-neutral-700: #262626;
     padding: 0;
   }
 
+  &.p-focus,
   &:focus-within {
     box-shadow: none;
-    background: $clr-neutral-500;
+    @include header-trigger-focus-ring;
+  }
+}
+
+.pi.sortButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $header-trigger-min-size;
+  min-height: $header-trigger-min-size;
+
+  &:focus-visible {
+    @include header-trigger-focus-ring;
   }
 }
 

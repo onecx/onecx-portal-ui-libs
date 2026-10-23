@@ -374,7 +374,10 @@
           filterBy="toFilterBy"
           (onFocus)="onFilterChosen(column)"
           [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-          [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+          [ariaLabel]="
+                    'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL'
+                      | translate : { column: (column.nameKey | translate), count: filterAmounts()[column.id] ?? 0 }
+                  "
           [filterPlaceHolder]="'OCX_DATA_TABLE.COLUMN_FILTER_PLACEHOLDER' | translate"
           [ariaFilterLabel]="
                     'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
@@ -420,7 +423,10 @@
       appendTo="body"
       (onFocus)="onFilterChosen(column)"
       [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
-      [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
+      [ariaLabel]="
+            'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL'
+              | translate : { column: (column.nameKey | translate), count: filterAmounts()[column.id] ?? 0 }
+          "
       [ariaFilterLabel]="
             'OCX_DATA_TABLE.FILTER_ARIA_LABEL' | translate : { column: column.nameKey | translate }
           "

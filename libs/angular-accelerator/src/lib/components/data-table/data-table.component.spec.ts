@@ -23,6 +23,7 @@ import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import userEvent from '@testing-library/user-event'
 import { within } from '@testing-library/dom'
+import * as axe from 'axe-core'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -397,6 +398,78 @@ describe('DataTableComponent', () => {
       expect(columnHeaders).toContain(th)
       expect(columnHeaders.filter((h) => h.getAttribute('aria-sort') === 'ascending')).toEqual([th])
     })
+  })
+
+  describe('header trigger accessibility', () => {
+    const filterTriggers = () =>
+      Array.from(
+        fixture.nativeElement.querySelectorAll('th .filterMultiSelect input[role="combobox"]')
+      ) as HTMLInputElement[]
+
+    beforeEach(() => {
+      translateService.setTranslation(
+        ENGLISH_LANGUAGE,
+        {
+          OCX_DATA_TABLE: { COLUMN_FILTER_ARIA_LABEL: 'Filter {{column}}, {{count}} active' },
+          COLUMN_HEADER_NAME: { NAME: 'Name', DESCRIPTION: 'Description', STATUS: 'Status' },
+        },
+        true
+      )
+      fixture.detectChanges()
+    })
+
+    it('should give every filter trigger a distinct aria-label with its column name and active filter count', () => {
+      const labels = filterTriggers().map((trigger) => trigger.getAttribute('aria-label'))
+
+      expect(labels.length).toBe(mockColumns.length)
+      expect(new Set(labels).size).toBe(labels.length)
+      expect(labels).toContain('Filter Name, 0 active')
+      expect(labels).toContain('Filter Description, 0 active')
+    })
+
+    it('should update the filter trigger aria-label with the number of active filters of its column', () => {
+      component.filters = [
+        { columnId: 'name', value: 'some name' },
+        { columnId: 'name', value: 'example' },
+        { columnId: 'status', value: 'some status', filterType: FilterType.IS_NOT_EMPTY },
+      ]
+      fixture.detectChanges()
+
+      const labels = filterTriggers().map((trigger) => trigger.getAttribute('aria-label'))
+      expect(labels).toContain('Filter Name, 2 active')
+      expect(labels).toContain('Filter Status, 1 active')
+      expect(labels).toContain('Filter Description, 0 active')
+    })
+
+    it('should name the filter trigger of an IS_NOT_EMPTY column after its column', () => {
+      component.columns = [
+        {
+          columnType: ColumnType.STRING,
+          id: 'status',
+          nameKey: 'COLUMN_HEADER_NAME.STATUS',
+          filterable: true,
+          filterType: FilterType.IS_NOT_EMPTY,
+        },
+        { columnType: ColumnType.STRING, id: 'name', nameKey: 'COLUMN_HEADER_NAME.NAME', filterable: true },
+      ]
+      component.filters = [{ columnId: 'status', value: true, filterType: FilterType.IS_NOT_EMPTY }]
+      fixture.detectChanges()
+
+      expect(filterTriggers().map((trigger) => trigger.getAttribute('aria-label'))).toEqual([
+        'Filter Status, 1 active',
+        'Filter Name, 0 active',
+      ])
+    })
+
+    it('should have no axe button-name or label violations in the table header', async () => {
+      const header = fixture.nativeElement.querySelector('thead') as HTMLElement
+      expect(header.querySelectorAll('button.sortButton').length).toBe(mockColumns.length)
+
+      const results = await axe.run(header, { runOnly: { type: 'rule', values: ['button-name', 'label'] } })
+
+      expect(results.violations).toEqual([])
+      expect(results.passes.map((rule) => rule.id)).toEqual(expect.arrayContaining(['button-name', 'label']))
+    }, 15000)
   })
 
   describe('DataViewStateService provider factory', () => {
