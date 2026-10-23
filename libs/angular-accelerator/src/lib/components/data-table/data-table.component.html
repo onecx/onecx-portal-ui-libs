@@ -158,6 +158,7 @@
   [expandedRowKeys]="expandedRowKeys()"
   (onRowExpand)="onRowExpand($event)"
   (onRowCollapse)="onRowCollapse($event)"
+  [pt]="{ table: { 'aria-label': tableAriaLabel() || ('OCX_DATA_TABLE.TABLE_ARIA_LABEL' | translate) } }"
 >
   <ng-template #header>
     <tr style="vertical-align: top">
@@ -221,7 +222,7 @@
 
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
-    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
+    <tr>
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
@@ -263,7 +264,7 @@
 
   <ng-template #expandedrow let-rowObject>
     @if (expansionTemplate(); as expansionTemplate) {
-    <tr>
+    <tr [attr.id]="'ocx-expanded-row-' + rowObject.id">
       <td [attr.colspan]="getRowColspan(!!expansionTemplate)">
         <ng-container
           [ngTemplateOutlet]="expansionTemplate.template"
@@ -302,7 +303,7 @@
       class="p-button-rounded p-button-text"
       (click)="toggleRowExpansion(rowObject)"
       [attr.aria-expanded]="isRowExpanded(rowObject)"
-      [attr.aria-controls]="'ocx-expanded-row-' + rowObject.id"
+      [attr.aria-controls]="isRowExpanded(rowObject) ? 'ocx-expanded-row-' + rowObject.id : null"
       [attr.aria-label]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
       [title]="isRowExpanded(rowObject) ? ('OCX_DATA_TABLE.EXPANDED_ROW' | translate) : ('OCX_DATA_TABLE.COLLAPSED_ROW' | translate)"
     ></button>

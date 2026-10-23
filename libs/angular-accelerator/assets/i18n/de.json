@@ -66,6 +66,7 @@
     "EMPTY_RESULT": "Keine Daten gefunden.",
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
+    "TABLE_ARIA_LABEL": "Datentabelle",
     "EXPAND_COLLAPSE_COLUMN": "Spalte erweitern/zusammenklappen",
     "COLUMN_FILTER_ARIA_LABEL": "Spaltenfilter",
     "COLUMN_FILTER_PLACEHOLDER": "Zum Filtern eingeben",

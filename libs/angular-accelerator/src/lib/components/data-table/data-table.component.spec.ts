@@ -17,7 +17,7 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, TemplateRef, ViewChild } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -38,6 +38,7 @@ describe('DataTableComponent', () => {
   const ENGLISH_LANGUAGE = 'en'
   const ENGLISH_TRANSLATIONS = {
     OCX_DATA_TABLE: {
+      TABLE_ARIA_LABEL: 'Data table',
       SHOWING: '{{first}} - {{last}} of {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'All',
@@ -49,6 +50,7 @@ describe('DataTableComponent', () => {
   const GERMAN_LANGUAGE = 'de'
   const GERMAN_TRANSLATIONS = {
     OCX_DATA_TABLE: {
+      TABLE_ARIA_LABEL: 'Datentabelle',
       SHOWING: '{{first}} - {{last}} von {{totalRecords}}',
       SHOWING_WITH_TOTAL_ON_SERVER: '{{first}} - {{last}} von {{totalRecords}} ({{totalRecordsOnServer}})',
       ALL: 'Alle',
@@ -2339,5 +2341,61 @@ describe('DataTableComponent', () => {
       const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
 
       expect(summary).toBe('id: 1,name: Alice,active: true')
+  })
+
+  describe('accessibility semantics', () => {
+    const getTable = () => fixture.nativeElement.querySelector('table') as HTMLTableElement
+
+    @Component({ template: '<ng-template #tpl><span>details</span></ng-template>', standalone: true })
+    class TemplateHostComponent {
+      @ViewChild('tpl', { static: true }) tpl!: TemplateRef<any>
+    }
+
+    const enableExpansion = () => {
+      const host = TestBed.createComponent(TemplateHostComponent)
+      component.parentTemplates.set([{ getType: () => 'expansion', template: host.componentInstance.tpl } as any])
+      fixture.componentRef.setInput('expandable', true)
+      fixture.detectChanges()
+    }
+
+    it('should give the table a non-empty translated accessible name by default', () => {
+      translateService.use('en')
+      fixture.detectChanges()
+
+      const label = getTable().getAttribute('aria-label')
+      expect(label).toBeTruthy()
+      expect(label).toBe('Data table')
+    })
+
+    it('should allow overriding the table accessible name through tableAriaLabel', () => {
+      fixture.componentRef.setInput('tableAriaLabel', 'Orders overview')
+      fixture.detectChanges()
+
+      expect(getTable().getAttribute('aria-label')).toBe('Orders overview')
+    })
+
+    it('should only set aria-controls on the expand toggle when the controlled row exists', () => {
+      enableExpansion()
+      const toggles = (): HTMLButtonElement[] =>
+        Array.from(fixture.nativeElement.querySelectorAll('td[name="expansion-column"] button'))
+      expect(toggles().length).toBeGreaterThan(0)
+      toggles().forEach((b) => {
+        expect(b.getAttribute('aria-expanded')).toBe('false')
+        expect(b.hasAttribute('aria-controls')).toBe(false)
+      })
+
+      toggles()[0].click()
+      fixture.detectChanges()
+
+      const first = toggles()[0]
+      expect(first.getAttribute('aria-expanded')).toBe('true')
+      const controls = first.getAttribute('aria-controls')
+      expect(controls).toBeTruthy()
+      expect(fixture.nativeElement.querySelector(`[id="${controls}"]`)).not.toBeNull()
+      // every aria-controls reference in the document resolves
+      fixture.nativeElement.querySelectorAll('[aria-controls]').forEach((el: Element) => {
+        expect(fixture.nativeElement.querySelector(`[id="${el.getAttribute('aria-controls')}"]`)).not.toBeNull()
+      })
+    })
   })
 })
