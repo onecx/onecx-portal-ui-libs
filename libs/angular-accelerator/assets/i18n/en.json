@@ -250,5 +250,9 @@
   "OCX_DATA_EXPORT": {
     "EXCEL_TABLE_NAME": "{{fileName}}_table",
     "EXCEL_SHEET_NAME": "{{fileName}}_sheet"
+  },
+  "OCX_LOADING_INDICATOR": {
+    "LOADING_STARTED": "Loading",
+    "LOADING_FINISHED": "Loading finished"
   }
 }
