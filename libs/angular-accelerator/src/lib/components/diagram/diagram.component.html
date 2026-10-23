@@ -79,6 +79,7 @@
 
 <!-- Legend: every entry is a button, so segments can be selected with the keyboard -->
 <ng-template #legend>
+  @if (legendItems.length) {
   <div class="diagram-legend" [class.custom-legends-container]="customLegends()">
     <ul class="diagram-legend-list" [attr.aria-label]="'OCX_DIAGRAM.LEGEND.ARIA_LABEL' | translate">
       @for (item of legendItems; track $index; let i = $index) {
@@ -91,4 +92,5 @@
       }
     </ul>
   </div>
+  }
 </ng-template>

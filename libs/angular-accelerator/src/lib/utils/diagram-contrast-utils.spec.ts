@@ -4,6 +4,7 @@ import {
   getThemeColor,
   MIN_GRAPHICS_CONTRAST,
   parseColor,
+  Rgb,
 } from './diagram-contrast-utils'
 
 describe('diagram-contrast-utils', () => {
@@ -11,6 +12,11 @@ describe('diagram-contrast-utils', () => {
     it('should parse short and long hex colors', () => {
       expect(parseColor('#fff')).toEqual([255, 255, 255])
       expect(parseColor('#1E1e1e')).toEqual([30, 30, 30])
+    })
+
+    it('should parse hex colors with alpha and ignore the alpha channel', () => {
+      expect(parseColor('#f008')).toEqual([255, 0, 0])
+      expect(parseColor('#1e1e1e80')).toEqual([30, 30, 30])
     })
 
     it('should parse rgb and rgba colors', () => {
@@ -21,6 +27,7 @@ describe('diagram-contrast-utils', () => {
     it('should return undefined for other formats', () => {
       expect(parseColor('red')).toBeUndefined()
       expect(parseColor('')).toBeUndefined()
+      expect(parseColor('#12345')).toBeUndefined()
     })
   })
 
@@ -41,9 +48,7 @@ describe('diagram-contrast-utils', () => {
       const result = ensureGraphicsContrast('#6efa96', '#ffffff', '#212529')
 
       expect(result).toMatch(/^rgb\(/)
-      expect(contrastRatio(parseColor(result) as [number, number, number], [255, 255, 255])).toBeGreaterThanOrEqual(
-        MIN_GRAPHICS_CONTRAST
-      )
+      expect(contrastRatio(parseColor(result) as Rgb, [255, 255, 255])).toBeGreaterThanOrEqual(MIN_GRAPHICS_CONTRAST)
     })
 
     it('should stop after fully mixing when the contrast color cannot reach 3:1', () => {

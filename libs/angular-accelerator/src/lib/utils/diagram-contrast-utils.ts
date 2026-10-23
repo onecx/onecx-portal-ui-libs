@@ -35,16 +35,17 @@ export function getThemeColor(variable: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(variable).trim()
 }
 
-type Rgb = [number, number, number]
+/* Red, green and blue channels (0-255) of a color. */
+export type Rgb = [number, number, number]
 
 /* WCAG 1.4.11: graphical objects need a contrast ratio of at least 3:1 against adjacent colors. */
 export const MIN_GRAPHICS_CONTRAST = 3
 
-/* Parses #rgb, #rrggbb, rgb() and rgba() colors. Returns undefined for any other format. */
+/* Parses #rgb, #rgba, #rrggbb, #rrggbbaa, rgb() and rgba() colors (alpha is ignored). Returns undefined for any other format. */
 export function parseColor(color: string): Rgb | undefined {
-  const hex = /^#([\da-f]{3}|[\da-f]{6})$/i.exec(color)
+  const hex = /^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i.exec(color)
   if (hex) {
-    const digits = hex[1].length === 3 ? hex[1].replace(/./g, '$&$&') : hex[1]
+    const digits = hex[1].length <= 4 ? hex[1].replace(/./g, '$&$&') : hex[1]
     return [0, 2, 4].map((i) => Number.parseInt(digits.slice(i, i + 2), 16)) as Rgb
   }
   const rgb = /^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/i.exec(color)

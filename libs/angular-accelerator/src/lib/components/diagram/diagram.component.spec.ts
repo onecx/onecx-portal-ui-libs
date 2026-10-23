@@ -11,7 +11,7 @@ import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optim
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
-import { contrastRatio, MIN_GRAPHICS_CONTRAST, parseColor } from '../../utils/diagram-contrast-utils'
+import { contrastRatio, MIN_GRAPHICS_CONTRAST, parseColor, Rgb } from '../../utils/diagram-contrast-utils'
 import { DiagramComponent, DiagramDataSelectedEvent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
 
@@ -331,7 +331,7 @@ describe('DiagramComponent', () => {
     component.diagramType.set(DiagramType.PIE)
     expect(component.useFullHeight()).toBe(false)
   })
-  
+
   it('should emit the selected entry when a chart segment is clicked', async () => {
     const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
     const chartHarness = await diagram.getChart()
@@ -411,6 +411,14 @@ describe('DiagramComponent', () => {
       expect(dataSelectedEvent).toEqual({ index: 3, data: diagramData[3] })
     })
 
+    it('should not render an empty legend list when there is no data', () => {
+      fixture.componentRef.setInput('data', [])
+      fixture.detectChanges()
+
+      expect(fixture.nativeElement.querySelector('.diagram-legend')).toBeNull()
+      expect(fixture.nativeElement.querySelector('ul[aria-label]')).toBeNull()
+    })
+
     it('should render the two column legend in a scroll container with custom legends', async () => {
       fixture.componentRef.setInput('customLegends', true)
       fixture.detectChanges()
@@ -478,12 +486,10 @@ describe('DiagramComponent', () => {
           fixture.detectChanges()
 
           const dataset = component.chartData()?.datasets[0] as { backgroundColor: string[]; borderColor?: string }
-          const bg = parseColor(background) as [number, number, number]
+          const bg = parseColor(background) as Rgb
           expect(dataset.backgroundColor.length).toBe(12)
           dataset.backgroundColor.forEach((color) => {
-            expect(contrastRatio(parseColor(color) as [number, number, number], bg)).toBeGreaterThanOrEqual(
-              MIN_GRAPHICS_CONTRAST
-            )
+            expect(contrastRatio(parseColor(color) as Rgb, bg)).toBeGreaterThanOrEqual(MIN_GRAPHICS_CONTRAST)
           })
           expect(dataset.borderColor).toBe(background)
         }
