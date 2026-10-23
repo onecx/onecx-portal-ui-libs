@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   AfterViewInit,
   Component,
@@ -95,6 +96,8 @@ export type GridColumnOptions = 1 | 2 | 3 | 4 | 6 | 12
   encapsulation: ViewEncapsulation.None,
 })
 export class PageHeaderComponent implements OnInit, AfterViewInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-page-header')
   private readonly translateService = inject(TranslateService)
   private readonly appStateService = inject(AppStateService)
   private readonly userService = inject(UserService)

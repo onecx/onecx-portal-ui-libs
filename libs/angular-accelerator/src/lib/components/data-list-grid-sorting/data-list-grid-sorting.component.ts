@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import { Component, computed, effect, inject, Input, input, output, ChangeDetectionStrategy } from '@angular/core'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataColumnNameId } from '../../model/data-column-name-id.model'
@@ -18,6 +19,8 @@ export interface DataListGridSortingComponentState {
   styleUrls: ['./data-list-grid-sorting.component.scss'],
 })
 export class DataListGridSortingComponent {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-data-list-grid-sorting')
   readonly stateService = inject(DataViewStateService)
   
   @Input()

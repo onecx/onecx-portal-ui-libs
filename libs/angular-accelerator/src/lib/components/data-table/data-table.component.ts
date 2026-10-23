@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import { formatDate } from '@angular/common'
 import {
   Component,
@@ -96,6 +97,8 @@ const DEFAULT_ACTION_LABEL_KEY = 'OCX_DATA_TABLE.ACTIONS.DEFAULT'
   ]
 })
 export class DataTableComponent extends DataSortBase implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-data-table')
   private readonly router = inject(Router)
   private readonly injector = inject(Injector)
   private readonly userService = inject(UserService)

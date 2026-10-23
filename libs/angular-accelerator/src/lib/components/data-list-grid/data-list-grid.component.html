@@ -9,7 +9,7 @@
   [showCurrentPageReport]="true"
   [currentPageReportTemplate]="(totalRecordsOnServer() !== undefined ? currentPageShowingWithTotalOnServerKey() : currentPageShowingKey()) | translate:params()"
   [rowsPerPageOptions]="pageSizes() ?? []"
-  [id]="'dataListGrid_' + name()"
+  [id]="'dataListGrid_' + name() + idSuffix"
   paginatorDropdownAppendTo="body"
 >
   <ng-template #grid let-rows>
@@ -122,7 +122,7 @@
           @let rowLabelText = rowLabel(item);
           @if (viewItemObserved && (!viewActionVisibleField() || fieldIsTruthy(item, viewActionVisibleField()))) {
           <button
-            id="{{resolveFieldData(item, 'id')}}-viewButton"
+            [id]="resolveFieldData(item, 'id') + '-viewButton' + idSuffix"
             type="button"
             icon="pi pi-eye"
             pButton
@@ -140,7 +140,7 @@
           ></button>
           } @if (editItemObserved && (!editActionVisibleField() || fieldIsTruthy(item, editActionVisibleField()))) {
           <button
-            id="{{resolveFieldData(item, 'id')}}-editButton"
+            [id]="resolveFieldData(item, 'id') + '-editButton' + idSuffix"
             type="button"
             class="p-button-rounded p-button-text mb-1 mr-2 editListItemButton"
             icon="pi pi-pencil"
@@ -159,7 +159,7 @@
           } @if (deleteItemObserved && (!deleteActionVisibleField() || fieldIsTruthy(item, deleteActionVisibleField())))
           {
           <button
-            id="{{resolveFieldData(item, 'id')}}-deleteButton"
+            [id]="resolveFieldData(item, 'id') + '-deleteButton' + idSuffix"
             type="button"
             icon="pi pi-trash"
             class="p-button-rounded p-button-text p-button-danger mb-1 mr-2 deleteListItemButton"
@@ -179,7 +179,7 @@
           action.actionVisibleField))) { @if (typeof action.routerLink === 'string' && !(action.disabled ||
           (!!action.actionEnabledField && !fieldIsTruthy(item, action.actionEnabledField)))) {
           <a
-            [id]="resolveFieldData(item, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
+            [id]="resolveFieldData(item, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton') + idSuffix"
             *ocxIfPermission="action.permission"
             pButton
             class="p-button-rounded p-button-text no-underline"
@@ -193,7 +193,7 @@
           ></a>
           } @else {
           <button
-            [id]="resolveFieldData(item, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton')"
+            [id]="resolveFieldData(item, 'id') + '-' + (action.id ? action.id.concat('ActionButton') : 'inlineActionButton') + idSuffix"
             *ocxIfPermission="action.permission"
             pButton
             class="p-button-rounded p-button-text"

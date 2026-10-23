@@ -1,0 +1,95 @@
+[#instance-scoped-ids]
+= Instance-scoped element ids
+
+Several components render elements with fixed ids that are referenced by `for`, `aria-labelledby`, `aria-describedby` or `aria-controls`. When a component was used twice on one page, both instances rendered the same ids, so a label, description or controlled element could resolve to the other instance (WCAG 4.1.2, 1.3.1).
+
+These ids are now unique per component instance.
+
+[#instance-scoped-ids-rule]
+== Rule
+
+* The *first* live instance of a component keeps the existing (legacy) ids, for example `searchButton`.
+* Every *further* live instance that exists at the same time gets a numeric suffix: `searchButton-1`, `searchButton-2`, ...
+* When an instance is destroyed, its number is released and reused by the next instance.
+* All `for`/`aria-*` references inside a component use the same suffix, so they always point into their own instance.
+
+Pages with one instance of a component are therefore unchanged.
+
+[#instance-scoped-ids-components]
+== Affected components and ids
+
+[cols="1,3"]
+|===
+|Component |Ids (legacy id of the first instance)
+
+|`ocx-search-header`
+|`searchButton`, `resetButton`
+
+|`ocx-page-header` (also inside `ocx-search-header`)
+|`pageHeaderBreadcrumb`, `page-header`, `page-subheader`, `pageHeaderMenuButton`
+
+|`ocx-filter-view`
+|`ocxFilterViewReset`, `ocxFilterViewAddFilterChip`, `ocxFilterViewShowMore`, `ocxFilterViewManage`, `ocxFilterViewAddFilter`, `ocxFilterViewOverlayReset`, `ocxFilterViewDataTable`, `ocxFilterViewPanel`, `ocxFilterViewChipRemoveLabel`, `ocxFilterViewChipText-<index>` (the panel, chip remove label and chip text ids were `-<n>` based before and now follow the same rule)
+
+|Add filter dialog of `ocx-filter-view`
+|`ocxAddFilterColumnSelect`, `ocxAddFilterColumnInput`, `ocxAddFilterValueSelect`, `ocxAddFilterValueInput`
+
+|`ocx-data-list-grid-sorting`
+|`dataListGridSortingDropdown`, `dataListGridSortingDropdownInput`, `dataListGridSortingButton`
+
+|`ocx-column-group-selection`
+|`columnGroupSelectionDropdown`, `columnGroupSelectionDropdownElement`
+
+|`ocx-custom-group-column-selector`
+|`customGroupColumnSelectorButton`, `customGroupColumnSelectorDialog`, `frozenActionColumn`, `frozenActionColumnLabel`, `actionColumnPosition`, `actionColumnPositionLabel`, `cancelButton`, `saveButton`
+
+|`ocx-interactive-data-view`
+|`interactiveDataViewHeader`, `interactiveDataViewContent`
+
+|`ocx-data-layout-selection`
+|`ocx-data-layout-selection-list`, `ocx-data-layout-selection-grid`, `ocx-data-layout-selection-table`
+
+|`ocx-data-table`
+|`dataTable_<name>`, `<rowId>-viewButton`, `<rowId>-editButton`, `<rowId>-deleteButton`, `<rowId>-<actionId>ActionButton`, `<rowId>-inlineActionButton`, `<columnId>-header-name`, `ocx-expanded-row-<rowId>`
+
+|`ocx-data-list-grid`
+|`dataListGrid_<name>`, `<rowId>-viewButton`, `<rowId>-editButton`, `<rowId>-deleteButton`, `<rowId>-<actionId>ActionButton`, `<rowId>-inlineActionButton`
+
+|`ocx-dialog-footer` (`PortalDialogService`, stacked dialogs)
+|`buttonDialogPrimaryButton`, `buttonDialogSecondaryButton` or the `id` of `primaryButtonDetails`/`secondaryButtonDetails`, and the `id` of each custom button
+
+|`ocx-dialog-message-content`
+|The message text already uses a generated id per instance (`ocx-dialog-message-<n>`); unchanged.
+|===
+
+[#instance-scoped-ids-migration]
+== Migration
+
+Nothing changes for pages that render each component once.
+
+If a page renders a component more than once at the same time (for example two search headers, two interactive data views, or a dialog opened on top of another dialog), e2e tests and page objects that address the second instance by id must use the suffixed id, or match the id with a prefix:
+
+[source,typescript]
+----
+// before: matched only the first instance
+page.locator('#searchButton')
+// after: any instance
+page.locator('[id="searchButton"], [id^="searchButton-"]')
+----
+
+The component harnesses of `@onecx/angular-accelerator/testing` match the legacy id and its suffixed variants, so harness-based tests work for every instance. For own harnesses, `@onecx/angular-accelerator/testing` exports:
+
+* `instanceScopedId(id)`: a `RegExp` for the `id` option of harness predicates (the `id` option of `ButtonHarness`, `DivHarness`, `PButtonHarness`, `PButtonDirectiveHarness`, `PSelectHarness`, `PMultiSelectHarness` and `DataTableHarness` accepts `string | RegExp`).
+* `instanceScopedIdSelector(id)`: a CSS selector for `locatorFor`.
+* `expectInstanceScopedIds(roots)` and `INSTANCE_ID_AXE_RULES`: test helpers that check that several instances on one page do not share ids and that no `for`/`aria-*` reference points into another instance.
+
+[source,typescript]
+----
+import { expectInstanceScopedIds, INSTANCE_ID_AXE_RULES } from '@onecx/angular-accelerator/testing'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
+
+expectInstanceScopedIds([first.nativeElement, second.nativeElement])
+await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+----
+
+NOTE: Ids that the application passes in (custom dialog button ids, `primaryButtonDetails.id`, row ids, table names) are suffixed in the same way for further instances. Removing the legacy ids entirely is a separate, breaking decision for v9 GA.

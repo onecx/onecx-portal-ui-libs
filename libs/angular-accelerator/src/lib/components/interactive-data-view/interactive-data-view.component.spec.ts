@@ -11,9 +11,20 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideRouter } from '@angular/router'
 import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
-import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import {
+  provideAppStateServiceMock,
+  provideUserServiceMock,
+  UserServiceMock,
+} from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
+import { By } from '@angular/platform-browser'
+import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { FilterViewComponent } from '../filter-view/filter-view.component'
+import { expectInstanceScopedIds, INSTANCE_ID_AXE_RULES } from '../../../../testing/instance-scoped-id'
+import { InteractiveDataViewHarness } from '../../../../testing/interactive-data-view.harness'
+import { FilterViewHarness } from '../../../../testing/filter-view.harness'
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -1557,5 +1568,126 @@ describe('InteractiveDataViewComponent (rendering)', () => {
 
     const table = (fixture.nativeElement as HTMLElement).querySelector('table')
     expect(table?.getAttribute('aria-label')).toBe('Orders overview')
+  })
+})
+
+describe('InteractiveDataViewComponent [a11y] two instances on one page', () => {
+  const columns = [
+    {
+      id: 'name',
+      nameKey: 'NAME',
+      columnType: ColumnType.STRING,
+      sortable: true,
+      filterable: true,
+      predefinedGroupKeys: ['PREDEFINED_GROUP'],
+    },
+    { id: 'city', nameKey: 'CITY', columnType: ColumnType.STRING, sortable: true, predefinedGroupKeys: ['PREDEFINED_GROUP'] },
+  ]
+  const data = [
+    { id: '1', name: 'Alice', city: 'Berlin' },
+    { id: '2', name: 'Bob', city: 'Paris' },
+  ]
+
+  const createInstances = async (layout: 'table' | 'list') => {
+    const slotService: Pick<SlotService, 'isSomeComponentDefinedForSlot'> = {
+      isSomeComponentDefinedForSlot: () => new BehaviorSubject<boolean>(false).asObservable(),
+    }
+    await TestBed.configureTestingModule({
+      imports: [AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService({ en: {} }),
+        provideUserServiceMock(),
+        provideAppStateServiceMock(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: SlotService, useValue: slotService },
+      ],
+    }).compileComponents()
+    TestBed.inject(UserServiceMock).permissionsTopic$.publish(['VIEW'])
+
+    const fixtures = [TestBed.createComponent(InteractiveDataViewComponent), TestBed.createComponent(InteractiveDataViewComponent)]
+    for (const fixture of fixtures) {
+      fixture.componentRef.setInput('columns', columns)
+      fixture.componentRef.setInput('data', data)
+      fixture.componentRef.setInput('disableFilterView', false)
+      fixture.componentRef.setInput('viewPermission', 'VIEW')
+      fixture.componentRef.setInput('filterViewDisplayMode', 'chips')
+      fixture.componentInstance.filters = [{ columnId: 'name', value: 'Alice' }]
+      fixture.componentInstance.layout = layout
+      fixture.componentInstance.viewItem.subscribe(() => undefined)
+      fixture.componentInstance.editItem.subscribe(() => undefined)
+      fixture.componentInstance.deleteItem.subscribe(() => undefined)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+    }
+    return fixtures
+  }
+
+  const roots = (fixtures: { nativeElement: Element }[]) => fixtures.map((fixture) => fixture.nativeElement)
+
+  it('should keep ids unique and id associations within each instance in table layout', async () => {
+    const [first, second] = await createInstances('table')
+    for (const fixture of [first, second]) {
+      fixture.debugElement.query(By.directive(CustomGroupColumnSelectorComponent)).componentInstance.visible.set(true)
+      fixture.detectChanges()
+    }
+
+    const secondEl: HTMLElement = second.nativeElement
+    expect(first.nativeElement.querySelector('#interactiveDataViewHeader')).not.toBeNull()
+    expect(secondEl.querySelector('#interactiveDataViewHeader-1')).not.toBeNull()
+    expect(secondEl.querySelector('#interactiveDataViewContent-1')).not.toBeNull()
+    expect(secondEl.querySelector('label[for="columnGroupSelectionDropdown-1"]')).not.toBeNull()
+    expect(secondEl.querySelector('#columnGroupSelectionDropdown-1')).not.toBeNull()
+    expect(secondEl.querySelector('#frozenActionColumn-1')?.getAttribute('aria-labelledby')).toBe(
+      'frozenActionColumnLabel-1'
+    )
+    expect(secondEl.querySelector('#frozenActionColumnLabel-1')).not.toBeNull()
+    expect(secondEl.querySelector('#actionColumnPositionLabel-1')).not.toBeNull()
+    expect(secondEl.querySelector('#customGroupColumnSelectorButton-1 button')?.getAttribute('aria-controls')).toBe(
+      'customGroupColumnSelectorDialog-1'
+    )
+    expect(secondEl.querySelector('#customGroupColumnSelectorDialog-1')).not.toBeNull()
+    expect(secondEl.querySelector('#ocxFilterViewReset-1')).not.toBeNull()
+    expect(secondEl.querySelector('[id="1-viewButton-1"]')).not.toBeNull()
+    expect(secondEl.querySelector('#dataTable_Data-1')).not.toBeNull()
+    const chipRemove = secondEl.querySelector('[aria-labelledby^="ocxFilterViewChipRemoveLabel-1"]')
+    expect(chipRemove?.getAttribute('aria-labelledby')).toBe('ocxFilterViewChipRemoveLabel-1 ocxFilterViewChipText-1-0')
+    expect(secondEl.querySelector('.sr-only[id^="ocx-data-layout-selection-"][id$="-1"]')).not.toBeNull()
+
+    expectInstanceScopedIds(roots([first, second]))
+    await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+
+    const harness = await TestbedHarnessEnvironment.harnessForFixture(second, InteractiveDataViewHarness)
+    expect(await harness.getHeaderStyleClasses()).toBeTruthy()
+    expect(await (await harness.getCustomGroupColumnSelector())?.getCancelButton()).toBeTruthy()
+    const filterView = await TestbedHarnessEnvironment.harnessForFixture(second, FilterViewHarness)
+    expect(await filterView.getChipsResetFiltersButton()).toBeTruthy()
+    expect(await filterView.isAddFilterChipDisabled()).toBe(false)
+  })
+
+  it('should keep ids unique and id associations within each instance in list layout', async () => {
+    const [first, second] = await createInstances('list')
+    for (const fixture of [first, second]) {
+      const filterView: FilterViewComponent = fixture.debugElement.query(By.directive(FilterViewComponent)).componentInstance
+      filterView.panelOpen.set(true)
+      fixture.detectChanges()
+    }
+
+    const secondEl: HTMLElement = second.nativeElement
+    expect(first.nativeElement.querySelector('#dataListGridSortingDropdownInput')).not.toBeNull()
+    expect(secondEl.querySelector('label[for="dataListGridSortingDropdownInput-1"]')).not.toBeNull()
+    expect(secondEl.querySelector('#dataListGridSortingDropdownInput-1')).not.toBeNull()
+    expect(secondEl.querySelector('#dataListGridSortingButton-1')).not.toBeNull()
+    expect(secondEl.querySelector('[id="1-viewButton-1"]')).not.toBeNull()
+
+    expectInstanceScopedIds(roots([first, second]))
+    await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+
+    const harness = await TestbedHarnessEnvironment.harnessForFixture(second, InteractiveDataViewHarness)
+    expect(await harness.getDataListGridSortingButton()).toBeTruthy()
   })
 })

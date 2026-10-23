@@ -12,7 +12,7 @@
     @if (dialogData().config.secondaryButtonIncluded) {
     <button
       #secondaryButton
-      id="{{dialogData().config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton'}}"
+      [id]="(dialogData().config.secondaryButtonDetails?.id ?? 'buttonDialogSecondaryButton') + idSuffix"
       pButton
       [icon]="dialogData().config.secondaryButtonDetails!.icon ?? ''"
       (click)="secondaryButtonAction()"
@@ -28,7 +28,7 @@
   <div>
     <button
       #primaryButton
-      id="{{dialogData().config.primaryButtonDetails?.id ?? 'buttonDialogPrimaryButton'}}"
+      [id]="(dialogData().config.primaryButtonDetails?.id ?? 'buttonDialogPrimaryButton') + idSuffix"
       pButton
       autofocus
       [icon]="dialogData().config.primaryButtonDetails!.icon ?? ''"
@@ -46,7 +46,7 @@
 <ng-template #customButtonTemplate let-button="button">
   <button
     #customButton
-    id="{{button.id}}"
+    [id]="button.id + idSuffix"
     pButton
     [icon]="button.icon !== undefined ? button.icon : ''"
     (click)="customButtonAction(button)"

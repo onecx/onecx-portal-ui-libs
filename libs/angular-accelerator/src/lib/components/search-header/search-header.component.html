@@ -1,6 +1,6 @@
 <ng-template #searchBtn>
   <p-button
-    id="searchButton"
+    [id]="'searchButton' + idSuffix"
     icon="pi pi-search"
     (onClick)="onSearchClicked()"
     [disabled]="searchButtonDisabled() || formGroup()?.invalid"
@@ -13,7 +13,7 @@
 </ng-template>
 <ng-template #resetBtn>
   <p-button
-    id="resetButton"
+    [id]="'resetButton' + idSuffix"
     icon="pi pi-eraser"
     (onClick)="onResetClicked()"
     [disabled]="resetButtonDisabled()"

@@ -2,7 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { expectNoAxeViolations } from '@onecx/angular-testing'
 import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
-import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
+import {
+  DialogFooterHarness,
+  expectInstanceScopedIds,
+  INSTANCE_ID_AXE_RULES,
+  provideTranslateTestingService,
+  TestbedHarnessEnvironment,
+} from '../../../../../testing'
 import { AngularAcceleratorModule } from '../../../angular-accelerator.module'
 import {
   defaultDialogData,
@@ -507,6 +513,37 @@ describe('DialogFooterComponent', () => {
 
         expect(await dialogFooterHarness.getCustomButtonSeverity('customTest')).toBe(severity)
       }
+    })
+  })
+
+  describe('[a11y] two instances on one page (stacked dialogs)', () => {
+    it('should keep the button ids unique per instance', async () => {
+      const second = TestBed.createComponent(DialogFooterComponent)
+      const dialogData = {
+        ...defaultDialogData,
+        config: {
+          ...defaultDialogData.config,
+          customButtons: [{ id: 'customTest', key: 'CUSTOM_PRI', alignment: 'right' as const }],
+        },
+      }
+      for (const f of [fixture, second]) {
+        f.componentInstance.dialogData.set(dialogData)
+        f.componentInstance['setupCustomButtons'](dialogData)
+        f.detectChanges()
+      }
+
+      expect(fixture.nativeElement.querySelector('#buttonDialogPrimaryButton')).not.toBeNull()
+      expect(fixture.nativeElement.querySelector('#customTest')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#buttonDialogPrimaryButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#buttonDialogSecondaryButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#customTest-1')).not.toBeNull()
+      expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+      await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+
+      const secondHarness = await TestbedHarnessEnvironment.harnessForFixture(second, DialogFooterHarness)
+      expect(await secondHarness.getPrimaryButtonLabel()).toBe('Confirm')
+      expect(await secondHarness.getSecondaryButtonLabel()).toBe('Cancel')
+      expect(await secondHarness.getCustomButton('customTest')).toBeTruthy()
     })
   })
 })

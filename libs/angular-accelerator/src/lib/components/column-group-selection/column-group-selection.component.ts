@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import { Component, computed, effect, inject, Input, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -16,6 +17,8 @@ export interface ColumnGroupSelectionComponentState {
   styleUrls: ['./column-group-selection.component.scss'],
 })
 export class ColumnGroupSelectionComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-column-group-selection')
   readonly stateService = inject(DataViewStateService)
 
   @Input()

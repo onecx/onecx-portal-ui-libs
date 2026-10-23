@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import { Component, computed, effect, inject, Input, input, model, OnInit, output, signal, ChangeDetectionStrategy } from '@angular/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -25,6 +26,8 @@ export interface CustomGroupColumnSelectorComponentState {
   styleUrls: ['./custom-group-column-selector.component.scss'],
 })
 export class CustomGroupColumnSelectorComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-custom-group-column-selector')
   readonly stateService = inject(DataViewStateService)
 
   @Input()
@@ -80,7 +83,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     root: {
       'aria-haspopup': 'dialog',
       'aria-expanded': String(this.visible()),
-      'aria-controls': this.visible() ? 'customGroupColumnSelectorDialog' : null,
+      'aria-controls': this.visible() ? `customGroupColumnSelectorDialog${this.idSuffix}` : null,
     },
   }))
 

@@ -1,5 +1,5 @@
 <p-button
-  id="customGroupColumnSelectorButton"
+  [id]="'customGroupColumnSelectorButton' + idSuffix"
   type="button"
   (onClick)="onOpenCustomGroupColumnSelectionDialogClick()"
   [ocxTooltip]="openButtonTitle() || (openButtonTitleKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.OPEN_BUTTON_DETAIL' | translate)"
@@ -12,7 +12,7 @@
 
 <p-dialog
   #dialog
-  id="customGroupColumnSelectorDialog"
+  [id]="'customGroupColumnSelectorDialog' + idSuffix"
   [(visible)]="visible"
   [style]="{ width: '70%' }"
   [modal]="true"
@@ -62,7 +62,7 @@
     <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
     <div class="flex gap-6 px-3">
       <div>
-        <p id="frozenActionColumnLabel" class="mb-1">
+        <p [id]="'frozenActionColumnLabel' + idSuffix" class="mb-1">
           {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}
         </p>
         <p-selectbutton
@@ -70,16 +70,16 @@
           [(ngModel)]="frozenActionColumnModel"
           optionLabel="label"
           optionValue="value"
-          id="frozenActionColumn"
+          [id]="'frozenActionColumn' + idSuffix"
           name="frozen-action-column-select-button"
           [allowEmpty]="false"
-          ariaLabelledBy="frozenActionColumnLabel"
+          [ariaLabelledBy]="'frozenActionColumnLabel' + idSuffix"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
       </div>
       <div>
-        <p id="actionColumnPositionLabel" class="mb-1">
+        <p [id]="'actionColumnPositionLabel' + idSuffix" class="mb-1">
           {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.POSITION' | translate}}
         </p>
         <p-selectbutton
@@ -87,10 +87,10 @@
           [(ngModel)]="actionColumnPositionModel"
           optionLabel="label"
           optionValue="value"
-          id="actionColumnPosition"
+          [id]="'actionColumnPosition' + idSuffix"
           name="action-column-position-select-button"
           [allowEmpty]="false"
-          ariaLabelledBy="actionColumnPositionLabel"
+          [ariaLabelledBy]="'actionColumnPositionLabel' + idSuffix"
         >
           <ng-template #item let-option> {{option.label | translate}} </ng-template>
         </p-selectbutton>
@@ -100,14 +100,14 @@
 
   <ng-template pTemplate="footer">
     <p-button
-      id="cancelButton"
+      [id]="'cancelButton' + idSuffix"
       (onClick)="onCancelClick()"
       [label]="cancelButtonLabel() || (cancelButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
       styleClass="p-button"
       [ariaLabel]="cancelButtonLabel() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
     ></p-button>
     <p-button
-      id="saveButton"
+      [id]="'saveButton' + idSuffix"
       (onClick)="onSaveClick()"
       [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
       [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"

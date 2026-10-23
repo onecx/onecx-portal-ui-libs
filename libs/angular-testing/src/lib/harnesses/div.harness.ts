@@ -2,7 +2,7 @@ import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular
 
 export interface DivHarnessFilters extends BaseHarnessFilters {
   class?: string
-  id?: string
+  id?: string | RegExp
 }
 
 export class DivHarness extends ComponentHarness {

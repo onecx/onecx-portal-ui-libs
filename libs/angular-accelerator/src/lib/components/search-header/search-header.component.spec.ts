@@ -6,7 +6,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { RouterTestingModule } from '@angular/router/testing'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
 import { SlotHarness } from '../../../../testing/slot.harness'
 import { AppStateService, CONFIG_KEY, ConfigurationService } from '@onecx/angular-integration-interface'
 import {
@@ -25,7 +25,12 @@ import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
-import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
+import {
+  expectInstanceScopedIds,
+  INSTANCE_ID_AXE_RULES,
+  PageHeaderHarness,
+  SearchHeaderHarness,
+} from '@onecx/angular-accelerator/testing'
 
 @Component({
   standalone: false,
@@ -356,6 +361,34 @@ describe('SearchHeaderComponent', () => {
       el('#closedCombo').focus()
       await user.keyboard('{Enter}')
       expect(host.searched).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('[a11y] two instances on one page', () => {
+    it('should keep ids unique and id associations within each instance', async () => {
+      const second = TestBed.createComponent(SearchHeaderComponent)
+      const subscriptions = [component.resetted.subscribe(), second.componentInstance.resetted.subscribe()]
+      for (const f of [fixture, second]) {
+        f.componentRef.setInput('subheader', 'Subheader')
+        f.detectChanges()
+        await f.whenStable()
+        f.detectChanges()
+      }
+
+      expect(fixture.nativeElement.querySelector('#searchButton')).not.toBeNull()
+      expect(fixture.nativeElement.querySelector('#page-header')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#searchButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#resetButton-1')).not.toBeNull()
+      expect(second.nativeElement.querySelector('#page-header-1')).not.toBeNull()
+      expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+      await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+
+      const secondHarness = await TestbedHarnessEnvironment.harnessForFixture(second, SearchHeaderHarness)
+      expect(await (await secondHarness.getSearchButton()).getId()).toBe('searchButton-1')
+      expect(await (await secondHarness.getResetButton()).getId()).toBe('resetButton-1')
+      expect(await (await secondHarness.getPageHeader()).getHeaderText()).toBeTruthy()
+      expect(await (await secondHarness.getPageHeader()).getSubheaderText()).toBe('Subheader')
+      subscriptions.forEach((subscription) => subscription.unsubscribe())
     })
   })
 })

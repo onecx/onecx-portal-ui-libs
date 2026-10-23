@@ -4,7 +4,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { PTableCheckboxHarness, expectNoAxeViolations } from '@onecx/angular-testing'
-import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
+import {
+  DataTableHarness,
+  expectInstanceScopedIds,
+  INSTANCE_ID_AXE_RULES,
+  provideTranslateTestingService,
+} from '../../../../testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -2543,6 +2548,41 @@ describe('DataTableComponent', () => {
         .map((el) => el.getAttribute('aria-controls'))
         .filter((id) => !fixture.nativeElement.querySelector(`[id="${id}"]`))
       expect(unresolved).toEqual([])
+    })
+
+    it('should scope row button, header and expanded row ids per instance', async () => {
+      const second = TestBed.createComponent(DataTableComponent)
+      second.componentInstance.rows.set(mockData as any)
+      second.componentInstance.columns = mockColumns as any
+      const subscriptions = [fixture, second].map((f) => f.componentInstance.viewTableRow.subscribe(() => undefined))
+      const host = TestBed.createComponent(TemplateHostComponent)
+      for (const f of [fixture, second]) {
+        f.componentRef.setInput('viewPermission', 'VIEW')
+        const expansionTemplate = new PrimeTemplate(host.componentInstance.tpl)
+        expansionTemplate.name = 'expansion'
+        f.componentInstance.parentTemplates.set([expansionTemplate])
+        f.componentRef.setInput('expandable', true)
+        f.detectChanges()
+        const expandToggle = f.nativeElement.querySelector('td[name="expansion-column"] button') as HTMLButtonElement
+        // the expanded rows may be shared through the DataViewStateService provided by the test module
+        if (expandToggle.getAttribute('aria-expanded') !== 'true') {
+          expandToggle.click()
+        }
+        f.detectChanges()
+      }
+      fixture.detectChanges()
+
+      const rowId = mockData[0].id
+      expect(fixture.nativeElement.querySelector(`[id="${rowId}-viewButton"]`)).not.toBeNull()
+      expect(second.nativeElement.querySelector(`[id="${rowId}-viewButton-1"]`)).not.toBeNull()
+      expect(second.nativeElement.querySelector(`[id="${mockColumns[0].id}-header-name-1"]`)).not.toBeNull()
+      const toggle = second.nativeElement.querySelector('td[name="expansion-column"] button') as HTMLButtonElement
+      expect(toggle.getAttribute('aria-controls')).toBe(`ocx-expanded-row-${rowId}-1`)
+      expect(second.nativeElement.querySelector(`[id="ocx-expanded-row-${rowId}-1"]`)).not.toBeNull()
+
+      expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+      await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
+      subscriptions.forEach((subscription) => subscription.unsubscribe())
     })
   })
 })

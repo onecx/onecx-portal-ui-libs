@@ -1,3 +1,4 @@
+import { instanceScopedId } from './instance-scoped-id'
 import { ComponentHarness } from '@angular/cdk/testing'
 import { PButtonHarness } from '@onecx/angular-testing'
 import { PageHeaderHarness } from './page-header.harness'
@@ -9,19 +10,19 @@ export class SearchHeaderHarness extends ComponentHarness {
   getPageHeader = this.locatorFor(PageHeaderHarness)
   getSearchButton = this.locatorFor(
     PButtonHarness.with({
-      id: 'searchButton',
+      id: instanceScopedId('searchButton'),
     })
   )
 
   getResetButton = this.locatorFor(
     PButtonHarness.with({
-      id: 'resetButton',
+      id: instanceScopedId('resetButton'),
     })
   )
 
   getSimpleAdvancedButton = this.locatorForOptional(
     PButtonHarness.with({
-      id: 'simpleAdvancedButton',
+      id: instanceScopedId('simpleAdvancedButton'),
     })
   )
 

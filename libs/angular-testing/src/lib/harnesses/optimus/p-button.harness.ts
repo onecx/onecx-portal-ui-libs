@@ -10,7 +10,7 @@ import { SpanHarness } from '../span.harness'
 const ICON_CLASS_PATTERN = /\bpi\s+pi-[a-z0-9-]+\b/i
 
 export interface PButtonHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
   name?: string
   label?: string
   icon?: string

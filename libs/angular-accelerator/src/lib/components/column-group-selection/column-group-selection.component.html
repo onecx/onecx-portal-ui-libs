@@ -2,8 +2,8 @@
   @if (allGroupKeys().length) {
   <p-select
     class="p-inputwrapper-filled"
-    inputId="columnGroupSelectionDropdown"
-    id="columnGroupSelectionDropdownElement"
+    [inputId]="'columnGroupSelectionDropdown' + idSuffix"
+    [id]="'columnGroupSelectionDropdownElement' + idSuffix"
     (onChange)="changeGroupSelection($event)"
     [options]="allGroupKeys()"
     [placeholder]="placeholderKey() | translate"
@@ -14,7 +14,7 @@
     <ng-template let-item #selectedItem> {{ item ? (item | translate) : ''}} </ng-template>
   </p-select>
   } @if (allGroupKeys().length) {
-  <label for="columnGroupSelectionDropdown"
+  <label [for]="'columnGroupSelectionDropdown' + idSuffix"
     >{{ ("OCX_CUSTOM_GROUP_COLUMN_SELECTOR.DROPDOWN_LABEL" | translate) }}</label
   >
   }

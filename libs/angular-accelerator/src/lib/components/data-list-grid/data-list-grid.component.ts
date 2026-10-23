@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
   Injector,
@@ -80,6 +81,8 @@ const DEFAULT_ACTION_LABEL_KEY = 'OCX_DATA_LIST_GRID.MENU.DEFAULT'
   ],
 })
 export class DataListGridComponent extends DataSortBase implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-data-list-grid')
   readonly stateService = inject(DataViewStateService)
 
   private readonly userService = inject(UserService)

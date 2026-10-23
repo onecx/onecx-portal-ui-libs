@@ -1,3 +1,4 @@
+import { instanceScopedId } from './instance-scoped-id'
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import {
   PButtonDirectiveHarness,
@@ -20,13 +21,13 @@ export class AddFilterDialogHarness extends ContentContainerComponentHarness {
   // `<input id>`, so the label's `for` resolves to the actual focusable input (not the
   // p-select host); the inputId association itself is verified in the integration spec
   // via a direct DOM query.
-  getColumnSelect = this.locatorForOptional(PSelectHarness.with({ id: 'ocxAddFilterColumnSelect' }))
+  getColumnSelect = this.locatorForOptional(PSelectHarness.with({ id: instanceScopedId('ocxAddFilterColumnSelect') }))
 
-  getValueSelect = this.locatorForOptional(PMultiSelectHarness.with({ id: 'ocxAddFilterValueSelect' }))
+  getValueSelect = this.locatorForOptional(PMultiSelectHarness.with({ id: instanceScopedId('ocxAddFilterValueSelect') }))
 
   // The dialog footer (and thus the confirm button) is appended to <body>.
   private getConfirmButton = this.documentRootLocatorFactory().locatorForOptional(
-    PButtonDirectiveHarness.with({ id: 'buttonDialogPrimaryButton' })
+    PButtonDirectiveHarness.with({ id: instanceScopedId('buttonDialogPrimaryButton') })
   )
 
   /** Opens the column select and selects the option with the given label. */

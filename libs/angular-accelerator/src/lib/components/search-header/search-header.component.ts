@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
   EventEmitter,
@@ -63,6 +64,8 @@ export interface SearchConfigData {
   providers: [],
 })
 export class SearchHeaderComponent {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-search-header')
   private readonly translate = inject(TranslateService)
   private readonly liveAnnouncer = inject(LiveAnnouncer)
   header = input<string>('')

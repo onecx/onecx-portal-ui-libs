@@ -5,7 +5,7 @@
     @if (selectDisplayedChips()(filters, columns); as selectedFilters) {
     <p-button
       #chipFilterResetButton
-      id="ocxFilterViewReset"
+      [id]="'ocxFilterViewReset' + idSuffix"
       [disabled]="filters.length === 0"
       (onClick)="onResetFilersClick()"
       icon="pi pi-eraser"
@@ -21,7 +21,7 @@
     <button
       #addFilterChip
       type="button"
-      id="ocxFilterViewAddFilterChip"
+      [id]="'ocxFilterViewAddFilterChip' + idSuffix"
       class="ocx-filter-view-chip-button filter-view-focusable ocx-filter-view-add-filter-chip"
       [class.ocx-filter-view-add-filter-chip-disabled]="filterableColumns().length === 0"
       [attr.aria-disabled]="filterableColumns().length === 0 ? 'true' : null"
@@ -95,7 +95,7 @@
     <button
       #showMoreChip
       type="button"
-      id="ocxFilterViewShowMore"
+      [id]="'ocxFilterViewShowMore' + idSuffix"
       aria-haspopup="dialog"
       [attr.aria-expanded]="panelOpen()"
       [attr.aria-controls]="panelOpen() ? panelId : null"
@@ -124,7 +124,7 @@
   <ng-template #noChipsContent>
     <p-button
       #manageButton
-      id="ocxFilterViewManage"
+      [id]="'ocxFilterViewManage' + idSuffix"
       (onClick)="showPanel($event)"
       icon="pi pi-sliders-h"
       label="{{ 'OCX_FILTER_VIEW.MANAGE_FILTERS_BUTTON.LABEL' | translate }}"
@@ -153,7 +153,7 @@
             <div class="flex items-center gap-3">
               <span class="text-2xl font-medium">{{'OCX_FILTER_VIEW.PANEL_TITLE' | translate}}</span>
               <p-button
-                id="ocxFilterViewAddFilter"
+                [id]="'ocxFilterViewAddFilter' + idSuffix"
                 pAutoFocus
                 [autofocus]="filters.length === 0"
                 [disabled]="filterableColumns().length === 0"
@@ -176,7 +176,7 @@
                 pAutoFocus
                 [autofocus]="filters.length > 0"
                 [disabled]="filters.length === 0"
-                id="ocxFilterViewOverlayReset"
+                [id]="'ocxFilterViewOverlayReset' + idSuffix"
                 (onClick)="onResetFilersClick()"
                 icon="pi pi-eraser"
                 [ocxTooltip]="
@@ -191,7 +191,7 @@
             </div>
           </div>
           <ocx-data-table
-            id="ocxFilterViewDataTable"
+            [id]="'ocxFilterViewDataTable' + idSuffix"
             [rows]="columnFilterDataRows()"
             [columns]="columnFilterTableColumns()"
             [emptyResultsMessage]="'OCX_FILTER_VIEW.NO_FILTERS' | translate"

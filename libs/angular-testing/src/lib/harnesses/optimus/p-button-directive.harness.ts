@@ -1,7 +1,7 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing'
 
 export interface PButtonDirectiveHarnessFilters extends BaseHarnessFilters {
-  id?: string
+  id?: string | RegExp
 }
 
 export type PButtonSeverity =

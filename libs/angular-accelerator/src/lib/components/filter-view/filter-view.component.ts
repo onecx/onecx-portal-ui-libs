@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../utils/instance-id.utils'
 import {
   Component,
   computed,
@@ -49,8 +50,6 @@ export interface FilterViewComponentState {
   filters?: Filter[]
 }
 
-let nextInstanceId = 0
-
 @Component({
   standalone: false,
   selector: 'ocx-filter-view',
@@ -60,6 +59,8 @@ let nextInstanceId = 0
   providers: [DataViewStateService],
 })
 export class FilterViewComponent {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-filter-view')
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
   private readonly destroyRef = inject(DestroyRef)
@@ -120,10 +121,9 @@ export class FilterViewComponent {
 
   readonly trigger = signal<HTMLElement | undefined>(undefined)
   /** Unique per instance so aria-controls never points at another filter view's panel. */
-  private readonly instanceId = nextInstanceId++
-  readonly panelId = `ocxFilterViewPanel-${this.instanceId}`
+  readonly panelId = `ocxFilterViewPanel${this.idSuffix}`
   /** Id of the hidden "Remove filter" text that prefixes the accessible name of every chip remove button. */
-  readonly chipRemoveLabelId = `ocxFilterViewChipRemoveLabel-${this.instanceId}`
+  readonly chipRemoveLabelId = `ocxFilterViewChipRemoveLabel${this.idSuffix}`
   readonly panelPt = { root: { id: this.panelId } }
   readonly panelOpen = signal(false)
   /**
@@ -328,7 +328,7 @@ export class FilterViewComponent {
 
   /** Id of the visible text of the chip at the given position; used to name its remove button. */
   chipTextId(index: number): string {
-    return `ocxFilterViewChipText-${this.instanceId}-${index}`
+    return `ocxFilterViewChipText${this.idSuffix}-${index}`
   }
 
   onFilterDelete(row: Row) {

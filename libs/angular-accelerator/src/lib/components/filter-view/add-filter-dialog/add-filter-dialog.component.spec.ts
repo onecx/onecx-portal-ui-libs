@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { firstValueFrom } from 'rxjs'
 import { TranslateModule } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
+import { expectInstanceScopedIds, INSTANCE_ID_AXE_RULES } from '../../../../../testing/instance-scoped-id'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { DialogModule } from '@openng/optimus-ui/dialog'
 import { MultiSelectModule } from '@openng/optimus-ui/multiselect'
@@ -450,5 +451,25 @@ describe('AddFilterDialogComponent (class logic)', () => {
     const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual(['KEY_A', 'KEY_B'])
     expect(options.map((o) => o.label)).toHaveLength(2)
+  })
+
+  it('[a11y] should keep the label associations of two instances on one page', async () => {
+    const second = TestBed.createComponent(AddFilterDialogComponent)
+    for (const f of [fixture, second]) {
+      f.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
+      f.componentRef.setInput('data', [{ c1: 'a' }])
+      f.detectChanges()
+      await f.whenStable()
+      f.detectChanges()
+    }
+
+    const secondEl: HTMLElement = second.nativeElement
+    expect(fixture.nativeElement.querySelector('label[for="ocxAddFilterColumnInput"]')).not.toBeNull()
+    expect(secondEl.querySelector('label[for="ocxAddFilterColumnInput-1"]')).not.toBeNull()
+    expect(secondEl.querySelector('input#ocxAddFilterColumnInput-1, #ocxAddFilterColumnInput-1')).not.toBeNull()
+    expect(secondEl.querySelector('label[for="ocxAddFilterValueInput-1"]')).not.toBeNull()
+    expect(secondEl.querySelector('#ocxAddFilterValueSelect-1')).not.toBeNull()
+    expectInstanceScopedIds([fixture.nativeElement, second.nativeElement])
+    await expectNoAxeViolations(document.body, { rules: [...INSTANCE_ID_AXE_RULES] })
   })
 })

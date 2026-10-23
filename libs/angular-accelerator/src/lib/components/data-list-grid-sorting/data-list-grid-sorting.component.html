@@ -1,8 +1,8 @@
 <div class="flex items-center gap-2">
   <p-floatLabel variant="on">
     <p-select
-      id="dataListGridSortingDropdown"
-      inputId="dataListGridSortingDropdownInput"
+      [id]="'dataListGridSortingDropdown' + idSuffix"
+      [inputId]="'dataListGridSortingDropdownInput' + idSuffix"
       [ngModel]="selectedSortingOption()"
       [options]="dropdownOptions()"
       (onChange)="selectSorting($event)"
@@ -16,10 +16,10 @@
         <span [attr.aria-label]="item?.columnName ? (item.columnName | translate) : ''">{{ item?.columnName ? (item.columnName | translate) : ''}}</span>
       </ng-template></p-select
     >
-    <label for="dataListGridSortingDropdownInput">{{ ("OCX_LIST_GRID_SORT.DROPDOWN.LABEL" | translate) }}</label>
+    <label [for]="'dataListGridSortingDropdownInput' + idSuffix">{{ ("OCX_LIST_GRID_SORT.DROPDOWN.LABEL" | translate) }}</label>
   </p-floatLabel>
   <p-button
-    id="dataListGridSortingButton"
+    [id]="'dataListGridSortingButton' + idSuffix"
     type="button"
     icon="pi {{sortIcon()}}"
     styleClass="p-button-outlined"

@@ -1,3 +1,4 @@
+import { injectInstanceIdSuffix } from '../../../utils/instance-id.utils'
 import {
   Component,
   ElementRef,
@@ -46,6 +47,8 @@ export const defaultDialogData: ButtonDialogData = {
   styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit {
+  /** Keeps the element ids unique per instance; empty for the first instance, see {@link injectInstanceIdSuffix}. */
+  readonly idSuffix = injectInstanceIdSuffix('ocx-dialog-footer')
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
 
