@@ -66,7 +66,6 @@
     "EMPTY_RESULT": "No data found.",
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
-    "TABLE_ARIA_LABEL": "Data table",
     "EXPAND_COLLAPSE_COLUMN": "Expand/Collapse column",
     "COLUMN_FILTER_ARIA_LABEL": "Column filter",
     "COLUMN_FILTER_PLACEHOLDER": "Type to filter",

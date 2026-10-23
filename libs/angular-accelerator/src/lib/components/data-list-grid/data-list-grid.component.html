@@ -61,17 +61,18 @@
       <div class="flex flex-row justify-between items-center">
         <div class="data-grid-items flex-row">
           <div class="item-name font-medium mr-3 text-2xl">
-            @if (viewItemObserved && (hasViewPermission$ | async)) {
+            @let itemTitle = resolveFieldData(item, titleLineId()) || ''; @if (itemTitle && viewItemObserved &&
+            (hasViewPermission$ | async)) {
             <button
               type="button"
               class="item-name-link p-0 border-0 bg-transparent text-left cursor-pointer underline text-primary"
               [attr.name]="'data-grid-item-title-button'"
               (click)="onViewRow(item)"
             >
-              {{ resolveFieldData(item, titleLineId()) || '' }}
+              {{ itemTitle }}
             </button>
             } @else {
-            <span>{{ resolveFieldData(item, titleLineId()) || '' }}</span>
+            <span>{{ itemTitle }}</span>
             }
           </div>
           <ng-container

@@ -1583,6 +1583,19 @@ describe('DataListGridComponent', () => {
       expect(viewSpy.mock.calls[0][0].id).toBe('Test')
     })
 
+    it('should render an empty grid title as plain text instead of an unnamed button', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      await setUpGridActionButtonMockData()
+      fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: '' }])
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const name = (fixture.nativeElement as HTMLElement).querySelector('.item-name') as HTMLElement
+      expect(name.querySelector('button')).toBeNull()
+      expect(name.querySelector('span')).not.toBeNull()
+      expect(name.textContent?.trim()).toBe('')
+    })
+
     it('should render the grid title as plain text when the view is not observed', async () => {
       fixture.componentRef.setInput('layout', 'grid')
       fixture.componentRef.setInput('data', [{ id: 'Test', imagePath: '', property1: 'Card 1' }])
@@ -1619,10 +1632,10 @@ describe('DataListGridComponent', () => {
       const dds = dl.querySelectorAll('dd')
       expect(dts.length).toBeGreaterThan(0)
       expect(dts.length).toBe(dds.length)
-      dl.querySelectorAll(':scope > *').forEach((group) => {
-        expect(group.tagName).toBe('DIV')
-        expect(Array.from(group.children).map((c) => c.tagName)).toEqual(['DT', 'DD'])
-      })
+      const groups = Array.from(dl.querySelectorAll(':scope > *'))
+      expect(groups.map((group) => [group.tagName, ...Array.from(group.children).map((c) => c.tagName)])).toEqual(
+        groups.map(() => ['DIV', 'DT', 'DD'])
+      )
       expect(el.querySelector('[role="list"] > :not([role="listitem"]):not([aria-hidden="true"])')).toBeNull()
     })
   })

@@ -159,6 +159,10 @@ export class DataViewComponent implements OnInit {
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 

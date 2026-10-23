@@ -2348,12 +2348,14 @@ describe('DataTableComponent', () => {
 
     @Component({ template: '<ng-template #tpl><span>details</span></ng-template>', standalone: true })
     class TemplateHostComponent {
-      @ViewChild('tpl', { static: true }) tpl!: TemplateRef<any>
+      @ViewChild('tpl', { static: true }) tpl!: TemplateRef<unknown>
     }
 
     const enableExpansion = () => {
       const host = TestBed.createComponent(TemplateHostComponent)
-      component.parentTemplates.set([{ getType: () => 'expansion', template: host.componentInstance.tpl } as any])
+      const expansionTemplate = new PrimeTemplate(host.componentInstance.tpl)
+      expansionTemplate.name = 'expansion'
+      component.parentTemplates.set([expansionTemplate])
       fixture.componentRef.setInput('expandable', true)
       fixture.detectChanges()
     }
@@ -2379,10 +2381,9 @@ describe('DataTableComponent', () => {
       const toggles = (): HTMLButtonElement[] =>
         Array.from(fixture.nativeElement.querySelectorAll('td[name="expansion-column"] button'))
       expect(toggles().length).toBeGreaterThan(0)
-      toggles().forEach((b) => {
-        expect(b.getAttribute('aria-expanded')).toBe('false')
-        expect(b.hasAttribute('aria-controls')).toBe(false)
-      })
+      expect(toggles().map((b) => [b.getAttribute('aria-expanded'), b.hasAttribute('aria-controls')])).toEqual(
+        toggles().map(() => ['false', false])
+      )
 
       toggles()[0].click()
       fixture.detectChanges()
@@ -2393,9 +2394,11 @@ describe('DataTableComponent', () => {
       expect(controls).toBeTruthy()
       expect(fixture.nativeElement.querySelector(`[id="${controls}"]`)).not.toBeNull()
       // every aria-controls reference in the document resolves
-      fixture.nativeElement.querySelectorAll('[aria-controls]').forEach((el: Element) => {
-        expect(fixture.nativeElement.querySelector(`[id="${el.getAttribute('aria-controls')}"]`)).not.toBeNull()
-      })
+      const controllers: Element[] = Array.from(fixture.nativeElement.querySelectorAll('[aria-controls]'))
+      const unresolved = controllers
+        .map((el) => el.getAttribute('aria-controls'))
+        .filter((id) => !fixture.nativeElement.querySelector(`[id="${id}"]`))
+      expect(unresolved).toEqual([])
     })
   })
 })
