@@ -4,8 +4,7 @@
       <i [class]="icon" aria-hidden="true"></i>
       @if (iconLabelKey; as labelKey) {
         <span
-          class="dialogMessageIconLabel"
-          style="position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"
+          class="dialogMessageIconLabel sr-only"
           >{{ labelKey | translate:iconLabelParameters }}. </span
         >
       }

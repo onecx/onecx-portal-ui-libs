@@ -71,7 +71,7 @@ export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy 
     const hasTitle = typeof header === 'string' ? header.trim().length > 0 : !!header
     const showHeader = this.dynamicDialogConfig.showHeader !== false
     if ((!hasTitle || !showHeader) && !this.dynamicDialogConfig.ariaLabelledBy) {
-      const label = (this.dynamicDialogConfig.data as ButtonDialogData | undefined)?.dialogAriaLabel
+      const label = this.dynamicDialogConfig.data?.dialogAriaLabel
       if (label) {
         // An empty title would be an empty name
         container.removeAttribute('aria-labelledby')
