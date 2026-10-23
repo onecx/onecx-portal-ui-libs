@@ -82,10 +82,11 @@
         }
       </span>
       <button
+        #chipRemoveButton
         type="button"
         class="p-chip-remove-icon ocx-filter-view-chip-remove"
         [attr.aria-labelledby]="chipRemoveLabelId + ' ' + chipTextId($index)"
-        (click)="onChipRemoveClick(filter)"
+        (click)="onChipRemoveClick(filter, $index)"
       >
         <i class="pi pi-times-circle" aria-hidden="true"></i>
       </button>
@@ -168,7 +169,6 @@
                 "
                 tooltipPosition="top"
                 tooltipEvent="hover"
-                [ariaLabel]="'OCX_FILTER_VIEW.ADD_FILTER.ARIA_LABEL' | translate"
               ></p-button>
             </div>
             <div>

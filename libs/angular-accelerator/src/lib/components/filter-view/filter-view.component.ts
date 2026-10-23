@@ -12,7 +12,9 @@ import {
   viewChild,
   viewChildren,
   ElementRef,
-  ChangeDetectionStrategy,
+  Injector,
+  afterNextRender,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import { Filter, FilterType } from '../../model/filter.model'
 import { DataTableColumn } from '../../model/data-table-column.model'
@@ -61,7 +63,8 @@ export class FilterViewComponent {
   readonly translateService = inject(TranslateService)
   readonly liveAnnouncer = inject(LiveAnnouncer)
   private readonly destroyRef = inject(DestroyRef)
-
+  private readonly injector = inject(Injector)
+  
   ColumnType = ColumnType
   FilterType = FilterType
 
@@ -110,6 +113,7 @@ export class FilterViewComponent {
   readonly panel = viewChild(Popover)
   readonly manageButton = viewChild<Button>('manageButton')
   readonly addFilterChip = viewChild<ElementRef<HTMLButtonElement>>('addFilterChip')
+  readonly chipRemoveButtons = viewChildren<ElementRef<HTMLButtonElement>>('chipRemoveButton')
 
   readonly defaultTemplates = viewChildren(PrimeTemplate)
   readonly defaultTemplates$ = toObservable(this.defaultTemplates)
@@ -214,7 +218,7 @@ export class FilterViewComponent {
   }
   private readonly tableTemplates: Record<string, Observable<TemplateRef<any> | null>> = {}
 
-  constructor() {
+  constructor() {    
     // the popover is destroyed while open (template switch): onHide never fires, so reset the trigger state
     effect(() => {
       if (!this.panel()) this.panelOpen.set(false)
@@ -302,10 +306,24 @@ export class FilterViewComponent {
     this.stateService.filters.set(filters)
   }
 
-  /** Removes the filter of a chip and keeps keyboard focus in the chip bar, as the removed chip's button is gone. */
-  onChipRemoveClick(filter: Filter) {
+  /**
+   * Removes the filter of the chip at the given position and keeps keyboard focus in the filter view,
+   * as the removed chip's button is gone: focus goes to the next remove button, else the previous one,
+   * else the add filter chip, else the manage button (shown instead of the chips below desktop size).
+   */
+  onChipRemoveClick(filter: Filter, index: number) {
     this.onChipRemove(filter)
-    this.addFilterChip()?.nativeElement.focus()
+    afterNextRender({ read: () => this.focusAfterChipRemoval(index) }, { injector: this.injector })
+  }
+
+  private focusAfterChipRemoval(index: number) {
+    const removeButtons = this.chipRemoveButtons()
+    const target: HTMLElement | undefined =
+      removeButtons[index]?.nativeElement ??
+      removeButtons[index - 1]?.nativeElement ??
+      this.addFilterChip()?.nativeElement ??
+      this.manageButton()?.el.nativeElement.firstChild
+    target?.focus()
   }
 
   /** Id of the visible text of the chip at the given position; used to name its remove button. */
@@ -314,9 +332,7 @@ export class FilterViewComponent {
   }
 
   onFilterDelete(row: Row) {
-    const filters = this.stateService
-      .filters()
-      .filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
+    const filters = this.stateService.filters().filter((f) => !(f.columnId === row['valueColumnId'] && f.value === row['value']))
     this.stateService.filters.set(filters)
   }
 
@@ -375,7 +391,10 @@ export class FilterViewComponent {
     const currentFilters = this.stateService.filters()
     const editedColumns = new Set(newFilters.map((f) => f.columnId))
 
-    this.stateService.filters.set([...currentFilters.filter((f) => !editedColumns.has(f.columnId)), ...newFilters])
+    this.stateService.filters.set([
+      ...currentFilters.filter((f) => !editedColumns.has(f.columnId)),
+      ...newFilters,
+    ])
   }
 
   focusTrigger() {

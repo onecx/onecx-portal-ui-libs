@@ -130,15 +130,67 @@ describe('FilterViewComponent chip controls', () => {
     }
   })
 
-  it('removes the filter of a chip and moves focus to the add chip', () => {
-    const button = removeButtons()[0]
+  function removeChipAt(index: number): string {
+    const button = removeButtons()[index]
     const removedValue = accessibleName(button).slice(-1)
     button.focus()
     button.click()
     fixture.detectChanges()
-
     expect(fixture.componentInstance.stateService.filters().map((f) => f.value)).not.toContain(removedValue)
+    return removedValue
+  }
+
+  it('removes the filter of a chip and moves focus to the next remove button', () => {
+    const removedValue = removeChipAt(0)
+
+    expect(removeButtons()).toHaveLength(3)
+    expect(document.activeElement).toBe(removeButtons()[0])
+    expect(accessibleName(document.activeElement as Element)).not.toMatch(new RegExp(`${removedValue}$`))
+  })
+
+  it('moves focus to the previous remove button when the last chip is removed', async () => {
+    await render(columns, filters.slice(0, 3))
+
+    removeChipAt(2)
+
+    expect(removeButtons()).toHaveLength(2)
+    expect(document.activeElement).toBe(removeButtons()[1])
+  })
+
+  it('moves focus to the add chip when the only chip is removed', async () => {
+    await render(columns, filters.slice(0, 1))
+
+    removeChipAt(0)
+
+    expect(removeButtons()).toHaveLength(0)
     expect(document.activeElement).toBe(addChip())
+  })
+
+  it('moves focus to the manage button when no chip control is shown (button display mode)', async () => {
+    fixture.componentRef.setInput('displayMode', 'button')
+    await render(columns, filters.slice(0, 1))
+    expect(addChip()).toBeNull()
+
+    fixture.componentInstance.onChipRemoveClick(filters[0], 0)
+    fixture.detectChanges()
+
+    expect(fixture.componentInstance.stateService.filters()).toEqual([])
+    expect(document.activeElement).toBe(host.querySelector('#ocxFilterViewManage button'))
+  })
+
+  it('activates the chip buttons only by their native click, not by an extra keydown handler', async () => {
+    for (const key of ['Enter', ' ']) {
+      for (const button of [addChip(), removeButtons()[0], showMore()]) {
+        button.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+      }
+    }
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    // a keydown handler next to the native activation would open or remove twice
+    expect(openDialog).not.toHaveBeenCalled()
+    expect(fixture.componentInstance.stateService.filters()).toHaveLength(5)
+    expect(fixture.componentInstance.trigger()).toBeUndefined()
   })
 
   it('opens the add filter dialog with the chip as initiator, so focus returns to it on close', async () => {
@@ -181,7 +233,10 @@ describe('FilterViewComponent chip controls', () => {
     expect(showMore().getAttribute('aria-expanded')).toBe('true')
     expect(showMore().getAttribute('aria-controls')).toBe(fixture.componentInstance.panelId)
 
-    // Esc hides the popover, which emits onHide
+    // Esc on the document hides the popover; its leave animation then emits onHide
+    const hide = jest.spyOn(popover, 'hide')
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    expect(hide).toHaveBeenCalledTimes(1)
     popover.onHide.emit({})
     fixture.detectChanges()
     expect(showMore().getAttribute('aria-expanded')).toBe('false')
