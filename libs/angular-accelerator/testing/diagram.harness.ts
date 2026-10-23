@@ -26,6 +26,14 @@ export class DiagramHarness extends ComponentHarness {
     return await (await this.locatorFor(PSelectButtonHarness)()).getAllButtons()
   }
 
+  async getLegendItems() {
+    return await this.locatorForAll('.diagram-legend button.diagram-legend-item')()
+  }
+
+  async getTitle() {
+    return await this.locatorForOptional('.diagram-title[role="heading"]')()
+  }
+
   async getCanvasAriaLabel(): Promise<string | null> {
     const canvas = await this.getCanvasElement()
     return canvas ? canvas.getAttribute('aria-label') : null

@@ -24,31 +24,57 @@
   text-align: center;
 }
 
-.custom-legends-container {
+.diagram-legend {
   display: flex;
   justify-content: center;
-  .custom-legends-content-container {
-    max-height: 250px;
-    overflow-y: auto; //add scrollbar when entries are greater than 10 
-  }  
 
-  .legends-table {
-    margin: 10px auto 0;
-    border-collapse: collapse;
-    text-align: left;
+  .diagram-legend-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 0.5rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .legends-table td {
-    padding: 0.25rem 1rem;
-    vertical-align: middle;
+  .diagram-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: var(--p-border-radius-sm);
+    background: transparent;
+    color: var(--text-color);
     font-family: var(--font-family);
     font-size: var(--font-size);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--hover-bg-color);
+    }
+
+    &:focus-visible {
+      outline: var(--p-focus-ring-width) var(--p-focus-ring-style) var(--p-focus-ring-color);
+      outline-offset: var(--p-focus-ring-offset);
+    }
   }
 
   .box {
+    flex-shrink: 0;
     width: 36px;
     height: 12px;
-    display: inline-block;
-    vertical-align: middle;
+    // outline in the text color keeps light swatches visible on the background
+    border: 1px solid var(--text-color);
   }
+}
+
+// custom legends: two columns, scrollable when there are many entries (contains focusable buttons)
+.custom-legends-container .diagram-legend-list {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  max-height: 250px;
+  overflow-y: auto;
 }
