@@ -84,21 +84,20 @@
  * visible transition. A short duration is used instead of `none` so that
  * `animationend` / `transitionend` still fire and `forwards` animations keep
  * their end state.
+ *
+ * `:not(#\#)` matches every element (no element has the id "#") but lifts
+ * the selector to ID-level specificity, so these rules win over every
+ * class-based PrimeReact animation rule without resorting to `!important`.
  */
 @media (prefers-reduced-motion: reduce) {
-  .p-component,
-  .p-component *,
-  .p-component::before,
-  .p-component::after,
-  .p-component *::before,
-  .p-component *::after,
-  .p-progress-spinner,
-  .p-progress-spinner *,
-  .p-component-overlay {
-    animation-duration: 1ms !important;
-    animation-delay: 0s !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    transition-delay: 0s !important;
+  :is(.p-component, .p-progress-spinner, .p-component-overlay):not(#\#),
+  :is(.p-component, .p-progress-spinner) :not(#\#),
+  :is(.p-component, .p-component *):not(#\#)::before,
+  :is(.p-component, .p-component *):not(#\#)::after {
+    animation-duration: 1ms;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    transition-duration: 1ms;
+    transition-delay: 0s;
   }
 }
