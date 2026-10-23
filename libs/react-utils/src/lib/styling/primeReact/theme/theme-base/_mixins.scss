@@ -7,13 +7,11 @@
 @mixin focused() {
   outline: $focusOutline;
   outline-offset: $focusOutlineOffset;
-  box-shadow: $focusShadow;
 }
 
 @mixin focused-inset() {
   outline: $focusOutline;
   outline-offset: $focusOutlineInsetOffset;
-  box-shadow: none;
 }
 
 @mixin focused-input() {
@@ -24,7 +22,6 @@
 @mixin focused-listitem() {
   outline: $focusOutline;
   outline-offset: $focusOutlineInsetOffset;
-  box-shadow: $inputListItemFocusShadow;
 }
 
 @mixin invalid-input() {

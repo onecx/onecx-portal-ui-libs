@@ -61,7 +61,7 @@ describe('React theme focus styles', () => {
 
   it('only removes the outline where focus is shown elsewhere (hidden native inputs, composite widgets with focused items)', () => {
     const allowed = [
-      /-input$/, // visually hidden native input, the box shows the ring via :has(:focus-visible)
+      /p-(checkbox|radiobutton|togglebutton|inputswitch)-input$/, // visually hidden native input, the box shows the ring via :has(:focus-visible)
       /p-(chips-input-token) input$/, // inner input of the chips field, the field shows the ring
       /p-(dropdown|cascadeselect)-label/, // inner label, the field shows the ring via .p-focus
       /-(list|root-list|list-container)$/, // composite widget list, focused item shows the ring

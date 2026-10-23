@@ -1,4 +1,5 @@
 import applyThemeVariables from './applyThemeVariables'
+import { contrastRatio, parseColor } from './focus-ring'
 
 jest.mock('../../../utils/logger.utils', () => {
   const mockLogger = {
@@ -206,6 +207,7 @@ describe('applyThemeVariables', () => {
     const ring = root.style.getPropertyValue('--app-focus-ring-color')
     expect(ring).toMatch(/^#[0-9a-f]{6}$/)
     expect(ring).not.toBe('#ffeb3b')
+    expect(contrastRatio(parseColor(ring) as [number, number, number], [255, 255, 255])).toBeGreaterThanOrEqual(3)
     expect(root.style.getPropertyValue('--focus-ring-color')).toBe(ring)
   })
 

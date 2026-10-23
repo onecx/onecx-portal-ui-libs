@@ -1,11 +1,3 @@
-// INFO: The ring is an outline (survives forced-colors mode, opaque colour with 3:1 contrast). The colour of the
-// button is not used for the ring anymore, the parameter is kept for compatibility.
-@mixin focused-ring($ring-color: null) {
-  outline: $focusOutline;
-  outline-offset: $focusOutlineOffset;
-  box-shadow: none;
-}
-
 @layer primereact {
   .p-button-label {
     font-weight: 700;
@@ -68,36 +60,6 @@
     }
   }
 
-  .p-button {
-    &:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$buttonBg}));
-    }
-
-    &.p-button-secondary:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$secondaryButtonBg}));
-    }
-
-    &.p-button-success:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$successButtonBg}));
-    }
-
-    &.p-button-info:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$infoButtonBg}));
-    }
-
-    &.p-button-warning:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$warningButtonBg}));
-    }
-
-    &.p-button-help:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$helpButtonBg}));
-    }
-
-    &.p-button-danger:enabled:focus {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$dangerButtonBg}));
-    }
-  }
-
   .p-datatable {
     .p-datatable-tbody {
       > tr {
@@ -114,7 +76,7 @@
 
   .p-speeddial-item {
     &.p-focus > .p-speeddial-action {
-      @include focused-ring(color-mix(in srgb, #fff 50%, #{$buttonBg}));
+      @include focused();
     }
   }
 
