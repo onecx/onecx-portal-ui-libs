@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { PTableCheckboxHarness } from '@onecx/angular-testing'
+import { PTableCheckboxHarness, expectNoAxeViolations } from '@onecx/angular-testing'
 import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -248,6 +248,10 @@ describe('DataTableComponent', () => {
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     router = TestBed.inject(Router)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create the data table component', () => {
