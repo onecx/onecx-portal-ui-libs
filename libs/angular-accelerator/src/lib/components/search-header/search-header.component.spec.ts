@@ -232,6 +232,38 @@ describe('SearchHeaderComponent', () => {
       expect(spy).toHaveBeenNthCalledWith(2, '4 results found', 'polite')
     })
 
+    it('should announce a repeated search with an unchanged count without loading', async () => {
+      fixture.componentRef.setInput('searchResultsCount', 3)
+      await render()
+
+      component.onSearchClicked()
+      await render()
+      component.onSearchClicked()
+      await render()
+
+      expect(spy).toHaveBeenCalledTimes(2)
+      expect(spy).toHaveBeenNthCalledWith(1, '3 results found', 'polite')
+      expect(spy).toHaveBeenNthCalledWith(2, '3 results found', 'polite')
+    })
+
+    it('should drop a pending data component request on a search with a result count', async () => {
+      component.onSearchClicked()
+      fixture.componentRef.setInput('searchResultsCount', 2)
+      await render()
+
+      component.onSearchClicked()
+
+      expect(resultsAnnouncement.consumeSearchResultsAnnouncementRequest()).toBe(false)
+    })
+
+    it('should drop a pending data component request when it is destroyed', () => {
+      component.onSearchClicked()
+
+      fixture.destroy()
+
+      expect(resultsAnnouncement.consumeSearchResultsAnnouncementRequest()).toBe(false)
+    })
+
     it('should ask the data component to announce when it has no result count', async () => {
       component.onSearchClicked()
       fixture.componentRef.setInput('searchResultsCount', 4)

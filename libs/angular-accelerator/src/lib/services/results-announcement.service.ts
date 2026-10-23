@@ -23,10 +23,17 @@ export class ResultsAnnouncementService {
   /** True while at least one search header is on the page. */
   readonly searchHeaderPresent = computed(() => this.searchHeaders() > 0)
 
-  /** Registers a search header until the given DestroyRef is destroyed. */
+  /**
+   * Registers a search header until the given DestroyRef is destroyed.
+   * A pending search results announcement request is dropped with the search header,
+   * so that it cannot be consumed by data on another page.
+   */
   registerSearchHeader(destroyRef: DestroyRef): void {
     this.searchHeaders.update((count) => count + 1)
-    destroyRef.onDestroy(() => this.searchHeaders.update((count) => count - 1))
+    destroyRef.onDestroy(() => {
+      this.searchHeaders.update((count) => count - 1)
+      this.clearSearchResultsAnnouncementRequest()
+    })
   }
 
   /** Asks the next data component that receives new data to announce its result count. */
@@ -40,9 +47,17 @@ export class ResultsAnnouncementService {
     this.searchResultsAnnouncementRequested = false
     return requested
   }
+
+  /** Drops a pending search results announcement request. */
+  clearSearchResultsAnnouncementRequest(): void {
+    this.searchResultsAnnouncementRequested = false
+  }
 }
 
-/** Unfiltered input and view settings of a data component, compared between two renderings. */
+/**
+ * Unfiltered input and view settings of a data component, compared between two renderings.
+ * @internal
+ */
 export interface DisplayedResultsState {
   items: unknown[]
   filters: Filter[]
@@ -52,6 +67,7 @@ export interface DisplayedResultsState {
   clientSideSorting: boolean
 }
 
+/** @internal */
 export interface DisplayedResultsTranslationKeys {
   results: string
   noResults: string
@@ -60,6 +76,7 @@ export interface DisplayedResultsTranslationKeys {
 /**
  * Announces the displayed result count of a data component once per user action.
  * Must be created in an injection context.
+ * @internal
  */
 export class DisplayedResultsAnnouncer {
   private readonly ownership = inject(ResultsAnnouncementService)
@@ -104,10 +121,12 @@ export class DisplayedResultsAnnouncer {
       this.awaitingNewData = false
     }
     if (!equal(current.filters, previous.filters)) {
-      due = this.isViewChangeDue(current.clientSideFiltering) || due
+      const filterDue = this.isViewChangeDue(current.clientSideFiltering)
+      due = due || filterDue
     }
     if (current.sortColumn !== previous.sortColumn || current.sortDirection !== previous.sortDirection) {
-      due = this.isViewChangeDue(current.clientSideSorting) || due
+      const sortDue = this.isViewChangeDue(current.clientSideSorting)
+      due = due || sortDue
     }
     return due
   }

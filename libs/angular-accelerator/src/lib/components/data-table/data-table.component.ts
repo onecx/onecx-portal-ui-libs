@@ -144,7 +144,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
    * unless a search header on the page announces the search results.
    * Filter and sort changes are always announced with the displayed row count.
    */
-  announceResults = input<boolean | undefined>(undefined)
+  announceResults = input<boolean>()
   private readonly resultsAnnouncer = new DisplayedResultsAnnouncer(this.announceResults, {
     results: 'OCX_DATA_TABLE.SEARCH_RESULTS_FOUND',
     noResults: 'OCX_DATA_TABLE.NO_SEARCH_RESULTS_FOUND',
@@ -336,7 +336,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     map(([rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
       return { rows, filters, sortColumn, sortDirection, columns, clientSideFiltering, clientSideSorting }
     }),
-    mergeMap((params) =>
+    switchMap((params) =>
       this.translateItems(params.rows, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
         map((translations) => ({ ...params, translations }))
       )

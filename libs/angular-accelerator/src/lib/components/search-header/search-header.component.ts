@@ -56,6 +56,12 @@ export interface SearchConfigData {
  * (one delegated keydown listener on the criteria container, no per-input listeners).
  * Please trigger the search yourself, if you want to have that functionality for other elements
  * which are not an input element.
+ *
+ * After each search, the result count (`searchResultsCount`) is announced to screen readers once.
+ * For asynchronous searches, bind `loading` and set it to true while the search runs: the count is
+ * announced when loading has finished. Without `loading`, the count present at the next change
+ * detection after the search is announced. Without a result count, the data table or list grid
+ * announces its next new data instead.
  */
 @Component({
   standalone: false,
@@ -69,6 +75,8 @@ export class SearchHeaderComponent {
   private readonly liveAnnouncer = inject(LiveAnnouncer)
   private readonly resultsAnnouncement = inject(ResultsAnnouncementService)
   private searchResultsAnnouncementPending = false
+  /** Incremented per search with a result count, so that every search is announced, even with an unchanged count. */
+  private readonly searchRequests = signal(0)
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
@@ -244,16 +252,19 @@ export class SearchHeaderComponent {
     if (this.searchResultsCount() === null) {
       this.resultsAnnouncement.requestSearchResultsAnnouncement()
     } else {
+      this.resultsAnnouncement.clearSearchResultsAnnouncementRequest()
       this.searchResultsAnnouncementPending = true
+      this.searchRequests.update((requests) => requests + 1)
     }
   }
 
   /**
    * Announces the result count once after each search, when loading has finished
-   * or the count has changed. Nothing is announced at page load.
+   * (or right away, if loading is not used). Nothing is announced at page load.
    */
   private announceSearchResults() {
     effect(() => {
+      this.searchRequests()
       const loading = this.loading()
       const count = this.searchResultsCount()
       if (loading || !this.searchResultsAnnouncementPending) {

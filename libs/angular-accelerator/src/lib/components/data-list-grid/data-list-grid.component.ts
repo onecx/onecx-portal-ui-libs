@@ -94,7 +94,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
    * unless a search header on the page announces the search results.
    * Filter and sort changes are always announced with the displayed item count.
    */
-  announceResults = input<boolean | undefined>(undefined)
+  announceResults = input<boolean>()
   private readonly resultsAnnouncer = new DisplayedResultsAnnouncer(this.announceResults, {
     results: 'OCX_DATA_LIST_GRID.SEARCH_RESULTS_FOUND',
     noResults: 'OCX_DATA_LIST_GRID.NO_SEARCH_RESULTS_FOUND',
@@ -452,7 +452,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit {
     map(([data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting]) => {
       return { data, filters, sortField, sortDirection, columns, clientSideFiltering, clientSideSorting }
     }),
-    mergeMap((params) =>
+    switchMap((params) =>
       this.translateItems(params.data, params.columns, params.clientSideFiltering, params.clientSideSorting).pipe(
         map((translatedItems) => ({ ...params, translatedItems }))
       )
