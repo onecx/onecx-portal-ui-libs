@@ -919,8 +919,15 @@ describe('PageHeaderComponent', () => {
         actionItemCallback: () => undefined,
       }
       const withoutAction: ObjectDetailItem = { label: 'Status', value: 'Confirmed' }
+      // @ts-expect-error actionItemAriaLabelKey is only allowed together with actionItemCallback
+      const nameWithoutAction: ObjectDetailItem = { label: 'Status', actionItemAriaLabelKey: 'UNUSED' }
 
-      expect([withAction, withoutName, withoutAction].map((item) => item.label)).toEqual(['Venue', 'Venue', 'Status'])
+      expect([withAction, withoutName, withoutAction, nameWithoutAction].map((item) => item.label)).toEqual([
+        'Venue',
+        'Venue',
+        'Status',
+        'Status',
+      ])
     })
   })
 

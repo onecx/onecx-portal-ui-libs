@@ -88,7 +88,8 @@ interface ObjectDetailItemBase {
  */
 export interface ObjectDetailItemWithoutAction extends ObjectDetailItemBase {
   actionItemCallback?: undefined
-  actionItemAriaLabelKey?: TranslationKey
+  /** Only allowed together with `actionItemCallback`, see {@link ObjectDetailItemWithAction}. */
+  actionItemAriaLabelKey?: never
 }
 
 /**

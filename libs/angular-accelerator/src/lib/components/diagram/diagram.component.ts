@@ -51,6 +51,7 @@ export interface DiagramLegendItem {
  * Palette of the colors the diagram generates for data without a `backgroundColor`.
  *
  * - `categorical` (default since v9): distinct hues (d3 Tableau10), so neighbouring segments are told apart by hue rather than by lightness.
+ *   Light hues of this palette (e.g. yellow, pink, grey) may be darkened on light themes to reach the contrast below, so they can look different from the reference palette.
  * - `sequential`: the cool gradient used before v9 (opt-out), for data with a natural order.
  *
  * With both palettes every generated color is adjusted to the theme so it reaches at least 3:1 against `--content-bg-color` (WCAG 1.4.11).

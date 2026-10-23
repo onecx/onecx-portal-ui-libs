@@ -36,6 +36,10 @@ export default {
       options: [DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR, DiagramType.PIE],
       control: { type: 'select' },
     },
+    colorPalette: {
+      options: ['categorical', 'sequential'],
+      control: { type: 'select' },
+    },
   },
   decorators: [
     applicationConfig({
@@ -242,5 +246,14 @@ export const WithChartFillingContainerHeight = {
     ],
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
     fillMissingColors: true,
+  },
+}
+
+export const SequentialPalette = {
+  render: Template,
+  args: {
+    diagramType: DiagramType.PIE,
+    data: generateMockData(8),
+    colorPalette: 'sequential',
   },
 }
