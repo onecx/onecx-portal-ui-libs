@@ -212,11 +212,11 @@ export class SearchHeaderComponent {
    */
   onSearchKeydown(event: Event) {
     const keyEvent = event as KeyboardEvent
-    const target = keyEvent.target as HTMLElement | null
+    const target = keyEvent.target as HTMLElement
     if (
       keyEvent.defaultPrevented ||
       keyEvent.isComposing ||
-      target?.tagName !== 'INPUT' ||
+      target.tagName !== 'INPUT' ||
       target.getAttribute('aria-expanded') === 'true' ||
       target.closest('[role="listbox"], [role="dialog"]')
     ) {
