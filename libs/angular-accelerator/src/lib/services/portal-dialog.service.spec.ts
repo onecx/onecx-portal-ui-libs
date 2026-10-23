@@ -1333,6 +1333,19 @@ describe('PortalDialogService', () => {
         main.remove()
       })
 
+      it('should keep an existing tabindex on the main landmark when the opener was removed', async () => {
+        const main = document.createElement('main')
+        main.setAttribute('tabindex', '0')
+        document.body.appendChild(main)
+        fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2')
+        await rootLoader.getHarness(DialogFooterHarness)
+        opener.remove()
+        await closeBasicDialog('secondary')
+        expect(main.getAttribute('tabindex')).toBe('0')
+        expect(document.activeElement).toBe(main)
+        main.remove()
+      })
+
       it('should not move focus on close when onCloseFocus is none', async () => {
         fixture.componentInstance.show('title', 'MESSAGE', 'button1', 'button2', { onCloseFocus: 'none' })
         await closeBasicDialog('secondary')
