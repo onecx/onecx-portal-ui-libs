@@ -1,0 +1,103 @@
+= ARIA validity: attribution table
+
+This page records who owns each remaining violation of the axe rules `aria-allowed-attr`, `aria-prohibited-attr`, `button-name` and `aria-input-field-name` (WCAG 4.1.2). It is the result of the ARIA validity sweep (audit T-23, T-38; onecx/internal-tasks#1107).
+
+Owners:
+
+libs:: `onecx-portal-ui-libs` (this repository). Fixed here.
+fork:: `@openng/optimus-ui`, the PrimeNG fork that `main` uses. Needs a PR in the fork, or a runtime patch in libs.
+PrimeNG 19:: Upstream PrimeNG, used by apps on libs v6. Fixed by upgrading the app to libs ≥ v7, or by a runtime patch.
+app:: The application's own markup or configuration. Fixed in the app repository.
+
+== Storybook (main)
+
+Measured on the static Storybook build of `angular-accelerator` (all 140 stories, the only library with stories) with axe-core and only the four rules above. Each story is opened in Chromium (`iframe.html?id=<story>`), axe runs on `#storybook-root` after the story has rendered.
+
+[cols="2,1,3", options="header"]
+|===
+|Rule |Violations |Notes
+
+|`aria-allowed-attr`
+|0
+|
+
+|`aria-prohibited-attr`
+|0
+|axe reports `aria-label` on an element without a role only as "needs review" if the element has text content. The two `span` elements in the sorting dropdown of `ocx-data-list-grid-sorting` had such an `aria-label`; it was removed, the visible text is the content that assistive technology reads. A unit test asserts that the component renders no role-less `span[aria-label]`.
+
+|`button-name`
+|0
+|The icon-only toggle buttons of `ocx-data-layout-selection` (list/grid/table) and `ocx-diagram` (diagram type) have their name as visually hidden text (`.sr-only`) inside the button, which is not hidden from assistive technology. Unit tests assert the name of every toggle button and run axe on the rendered toggles.
+
+|`aria-input-field-name`
+|0
+|
+|===
+
+NOTE: Wait until the story has rendered and its translations are loaded before running axe. Until the translations are loaded, the `translate` pipe returns an empty string, so a run directly after the first render can report `button-name` for buttons whose name is translated (for example the sort buttons of the data table, seen once with a 100 ms wait). This state is transient and not counted above.
+
+To re-run the measurement:
+
+. `npx nx run angular-accelerator:build-storybook --outputDir=<dir>`
+. Serve `<dir>` and, for every story in `<dir>/index.json` (entries of type `story`), open `iframe.html?id=<id>&viewMode=story` in a browser (for example with Playwright).
+. Inject `node_modules/axe-core/axe.min.js` and run `axe.run(document.querySelector('#storybook-root'), { runOnly: { type: 'rule', values: [<the four rules>] } })`. The Storybook a11y addon also runs axe on the page; retry when axe reports that it is already running.
+
+The unit tests use the same rules through `expectNoAxeViolations` (see link:./a11y-testing.adoc[Accessibility testing]).
+
+== Remaining violations outside libs
+
+The following sources are known from the audit (T-23, T-38) on the dev system, where the apps run libs v6 with PrimeNG 19. They are not produced by libs code on `main`.
+
+[cols="2,2,1,3", options="header"]
+|===
+|Rule |Source |Owner |Ticket / action
+
+|`button-name`
+|`p-dialog` header close button: no default `closeAriaLabel`, the button has an icon only. Also true in the fork (`closeAriaLabel` has no default).
+|PrimeNG 19 / fork
+|Libs dialogs always pass a translated `closeAriaLabel`: onecx/internal-tasks#1100. Fork PR for a default `closeAriaLabel` (falling back to `translation.aria.close`): to be opened in the fork (see decision below).
+
+|`button-name`
+|`p-paginator` page, first, previous, next and last buttons: their `aria-label` comes from the PrimeNG config `translation.aria`. Without these keys the buttons have no name. On `main` the fork config has English defaults (`firstPageLabel` and others), and `TranslationConnectionService` (`angular-utils`) replaces them with the app's `optimus` translations.
+|PrimeNG 19 / app
+|Upgrade apps to libs ≥ v7 (preferred) or provide the `translation.aria` keys in the app. See decision below.
+
+|`button-name`
+|Icon-only `p-selectbutton` options (layout selection, diagram type) on libs v6 (PrimeNG 19 `p-togglebutton` with the icon only)
+|libs (v7 line)
+|Backport of onecx/internal-tasks#1107 to v7; fixed on v8 and `main`.
+
+|`aria-prohibited-attr`, `aria-allowed-attr`
+|`aria-label` and other ARIA attributes on custom host elements and role-less elements in app templates
+|app
+|onecx-ai-provider-ui: onecx/internal-tasks#1136. Other apps: one ticket per app repository after an axe run per page.
+
+|`aria-allowed-attr`
+|`aria-haspopup`, `aria-expanded`, `aria-controls` on host elements of popup triggers
+|libs
+|onecx/internal-tasks#1095
+
+|`button-name`
+|Row action buttons with an empty `aria-label`
+|libs
+|onecx/internal-tasks#1096
+
+|`button-name`
+|Page-header action buttons without a name and the "button for <icon>" fallback
+|libs
+|onecx/internal-tasks#1103
+
+|`button-name`
+|Consent withdraw action
+|libs
+|onecx/internal-tasks#1118
+|===
+
+== Decision: p-dialog close label and paginator labels
+
+Two options exist for apps that still run libs v6 (PrimeNG 19):
+
+. Upgrade the apps to libs ≥ v7 (preferred). The libs dialogs then pass a translated close label (onecx/internal-tasks#1100), and the paginator labels have defaults in the PrimeNG config.
+. Ship a runtime patch in libs that sets a default close label and the paginator `translation.aria` keys.
+
+The decision is open and is recorded with the PO in onecx/internal-tasks#1107; update this section when it is made. The fork PR for a default `closeAriaLabel` is tracked there as well.

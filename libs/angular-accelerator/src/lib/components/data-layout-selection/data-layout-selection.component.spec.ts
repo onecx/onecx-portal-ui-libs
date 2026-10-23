@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { DataViewStateService } from '../../services/data-view-state.service'
-import { expectNoAxeViolations } from '@onecx/angular-testing'
+import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
+import { FormsModule } from '@angular/forms'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -25,6 +28,37 @@ describe('DataLayoutSelectionComponent', () => {
   it('should have no axe violations', async () => {
     fixture.detectChanges()
     await expectNoAxeViolations(fixture.nativeElement)
+  })
+
+  describe('layout toggle buttons', () => {
+    beforeEach(async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataLayoutSelectionComponent],
+        imports: [TranslateModule.forRoot(), AngularAcceleratorOptimusModule, FormsModule, OcxTooltipDirective],
+        providers: [DataViewStateService, provideTranslateTestingService({})],
+      }).compileComponents()
+
+      fixture = TestBed.createComponent(DataLayoutSelectionComponent)
+      fixture.componentRef.setInput('supportedViewLayouts', ['list', 'grid', 'table'])
+      fixture.detectChanges()
+      await fixture.whenStable()
+    })
+
+    it('should give every icon-only toggle button a visually hidden accessible name', () => {
+      const toggleButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="button"]'))
+
+      expect(toggleButtons.map((button) => button.querySelector('.sr-only')?.textContent?.trim())).toEqual([
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+      ])
+      toggleButtons.forEach((button) => expect(button.querySelector('.sr-only')?.closest('[aria-hidden]')).toBeNull())
+    })
+
+    it('should have no axe violations', async () => {
+      await expectNoAxeViolations(fixture.nativeElement)
+    })
   })
 
   it('should create', () => {

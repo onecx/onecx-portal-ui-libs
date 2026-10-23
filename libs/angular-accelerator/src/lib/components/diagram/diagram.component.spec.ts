@@ -13,6 +13,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 declare global {
   interface Window {
@@ -149,6 +150,19 @@ describe('DiagramComponent', () => {
     expect(component.shownDiagramTypes()).toEqual(expectedDiagramLayouts)
     expect(diagramTypeSelectButton).toBeTruthy()
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
+  })
+
+  it('should have no axe violations with the diagram type toggle', async () => {
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    const toggleButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('p-togglebutton'))
+    expect(toggleButtons.map((button) => button.querySelector('.sr-only')?.textContent?.trim())).toEqual([
+      'Switch to pie chart',
+      'Switch to horizontal bar chart',
+    ])
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should change the rendered diagram whenever the select button is used to change the diagramType', async () => {

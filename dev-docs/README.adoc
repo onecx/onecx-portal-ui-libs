@@ -249,3 +249,4 @@ These pages are not part of any Area and are kept as they are.
 == Contributing
 
 * link:./testing/a11y-testing.adoc[Accessibility testing (axe helper, user-event, Storybook a11y, lint)]
+* link:./testing/a11y-aria-attribution.adoc[ARIA validity: attribution table (owner per axe violation)]
