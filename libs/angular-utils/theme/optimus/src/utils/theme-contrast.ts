@@ -172,15 +172,26 @@ function lookup(variables: ThemeVariablesInput, path: string, defaults?: ThemeVa
   return find(variables) ?? find(defaults)
 }
 
+function alphaOf(color: string): number {
+  const c = color.trim()
+  const parseAlpha = (v: string) => (v.endsWith('%') ? parseFloat(v) / 100 : Number(v))
+  const hex = /^#[0-9a-f]{6}([0-9a-f]{2})$/i.exec(c)
+  if (hex) return parseInt(hex[1], 16) / 255
+  const fn = /^rgba?\((.*)\)$/i.exec(c)
+  if (!fn) return 1
+  const parts = fn[1]
+    .trim()
+    .split(/[\s,/]+/)
+    .filter(Boolean)
+  const alpha = parts.length === 4 ? parseAlpha(parts[3]) : 1
+  return Number.isNaN(alpha) ? 1 : Math.min(1, Math.max(0, alpha))
+}
+
 /** Blends a possibly translucent colour over an opaque backdrop, returns an opaque hex colour. */
 function flatten(color: string, backdrop: string): string | undefined {
   const rgb = parseColor(color)
   if (!rgb) return undefined
-  const alphaMatch = /^rgba?\(.*?[\s,/]+([\d.]+%?)\s*\)$/i.exec(color.trim())
-  const hasAlpha = /^rgba\(/i.test(color.trim()) || (/^rgb\(/i.test(color.trim()) && /\//.test(color))
-  let alpha = 1
-  if (hasAlpha && alphaMatch)
-    alpha = alphaMatch[1].endsWith('%') ? parseFloat(alphaMatch[1]) / 100 : Number(alphaMatch[1])
+  const alpha = alphaOf(color)
   const back = parseColor(backdrop)
   if (alpha >= 1 || !back) return toHex(rgb)
   return toHex(rgb.map((v, i) => v * alpha + back[i] * (1 - alpha)) as [number, number, number])

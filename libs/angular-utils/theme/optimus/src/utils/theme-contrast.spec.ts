@@ -77,6 +77,19 @@ describe('theme contrast guard', () => {
     ).toHaveLength(1)
   })
 
+  it('should treat rgb colours without alpha as opaque and blend #rrggbbaa', () => {
+    const pair = THEME_COLOR_PAIRS.find((p) => p.name === 'active menu item text') as ThemeColorPair
+    const check = (bg: string) =>
+      checkThemeContrast(
+        { sidebar: { menuActiveItemTextColor: '#515c66', menuActiveItemBgColor: bg } },
+        { pairs: [pair], defaults }
+      )
+    expect(check('rgba(255, 255, 255)')).toEqual([])
+    expect(check('rgb(255 255 255 / 50%)')).toEqual([])
+    expect(check('#0000000a')).toEqual([])
+    expect(check('#00000099')).toHaveLength(1)
+  })
+
   it('should skip pairs with unparsable colours', () => {
     expect(checkThemeContrast({ general: { textColor: 'var(--foo)' } }, { defaults })).toEqual([])
   })
