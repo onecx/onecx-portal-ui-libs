@@ -381,11 +381,14 @@ describe('DiagramComponent', () => {
     let reducedMotionListeners: Set<() => void>
     let reducedMotionMediaQuery: MediaQueryList
 
+    // The outer fixture was created before matchMedia was mocked, so replace it
+    // (destroying the old one) instead of keeping a second live component.
     function createDiagram() {
-      const diagramFixture = TestBed.createComponent(DiagramComponent)
-      diagramFixture.componentRef.setInput('data', diagramData)
-      diagramFixture.detectChanges()
-      return diagramFixture
+      fixture.destroy()
+      fixture = TestBed.createComponent(DiagramComponent)
+      fixture.componentRef.setInput('data', diagramData)
+      fixture.detectChanges()
+      return fixture
     }
 
     beforeEach(() => {
@@ -423,7 +426,10 @@ describe('DiagramComponent', () => {
 
     it('should update the chart animation when the reduced motion preference changes', () => {
       const diagramFixture = createDiagram()
-      expect(reducedMotionMediaQuery.addEventListener).toHaveBeenCalledWith('change', diagramFixture.componentInstance.refreshTheme)
+      expect(reducedMotionMediaQuery.addEventListener).toHaveBeenCalledWith(
+        'change',
+        diagramFixture.componentInstance.refreshTheme
+      )
 
       reducedMotionActive = true
       reducedMotionListeners.forEach((listener) => listener())

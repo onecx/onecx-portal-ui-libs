@@ -75,6 +75,7 @@ Expose styles.css of used libraries::
 Impact: Styles of components from libraries might be incorrect
 +
 * Expose library styles in project.json or angular.json.
+* `@onecx/angular-accelerator/assets/styles.scss` also includes `assets/reduced-motion.scss`, which honours `prefers-reduced-motion` for Optimus components. Apps that do not import `styles.scss` can add `node_modules/@onecx/angular-accelerator/assets/reduced-motion.scss` on its own.
 
 .Example styles configuration
 [source,json]

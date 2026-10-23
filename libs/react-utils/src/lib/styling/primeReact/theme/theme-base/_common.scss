@@ -92,6 +92,8 @@
   .p-component::after,
   .p-component *::before,
   .p-component *::after,
+  .p-progress-spinner,
+  .p-progress-spinner *,
   .p-component-overlay {
     animation-duration: 1ms !important;
     animation-delay: 0s !important;

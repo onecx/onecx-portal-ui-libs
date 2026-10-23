@@ -9,7 +9,10 @@
  * A short duration is used instead of `animation: none` / `transition: none`
  * so that `animationend` / `transitionend` still fire for code that waits for
  * them. `!important` is needed to win over the inline durations set by the
- * Optimus motion directive and over the RTL animation-name override.
+ * Optimus motion directive.
+ *
+ * The progress spinner root does not carry `.p-component`, so it is listed
+ * explicitly.
  */
 @media (prefers-reduced-motion: reduce) {
   .p-component,
@@ -18,6 +21,10 @@
   .p-component::after,
   .p-component *::before,
   .p-component *::after,
+  .p-progressspinner,
+  .p-progressspinner *,
+  .p-progress-spinner,
+  .p-progress-spinner *,
   .p-overlay-mask {
     animation-duration: 1ms !important;
     animation-delay: 0s !important;
