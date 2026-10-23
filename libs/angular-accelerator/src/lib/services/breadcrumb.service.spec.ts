@@ -27,7 +27,7 @@ describe('BreadcrumbService', () => {
     TestBed.configureTestingModule({
       providers: [
         provideTranslateTestingService({
-          en: { PRODUCT: 'Product', PAGE: 'Page' },
+          en: { PRODUCT: 'Product', PAGE: 'Page', GROUP: { CHILD: 'Child' } },
           de: { PRODUCT: 'Produkt', PAGE: 'Seite' },
         }),
         { provide: ActivatedRoute, useValue: { snapshot: root } },
@@ -98,5 +98,28 @@ describe('BreadcrumbService', () => {
     translate.setTranslation('en', { LATE: 'Loaded late' }, true)
 
     expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Loaded late'])
+  })
+  it('leaves out the product crumb when the product has no name', () => {
+    setup(snapshot({ mfeInfo: { baseHref: '/prod' } }, ['prod'], snapshot({ breadcrumb: 'PAGE' }, ['page'])))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['Page'])
+  })
+
+  it('has no label when breadcrumbFn returns an empty or non-string value', () => {
+    setup(
+      snapshot(
+        { breadcrumb: 'x', breadcrumbFn: () => '' },
+        ['page'],
+        snapshot({ breadcrumb: 'x', breadcrumbFn: () => 42 }, ['sub'])
+      )
+    )
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual([undefined, undefined])
+  })
+
+  it('keeps the key when it resolves to a translation group instead of a string', () => {
+    setup(snapshot({ breadcrumb: 'GROUP' }, ['page']))
+
+    expect(service.generatedItemsSource.value.map((i) => i.label)).toEqual(['GROUP'])
   })
 })
