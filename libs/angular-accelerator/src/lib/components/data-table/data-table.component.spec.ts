@@ -28,6 +28,25 @@ import { within } from '@testing-library/dom'
  template: '' })
 class TestRouteComponent {}
 
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
+    <ocx-data-table [rows]="rows" [columns]="columns">
+      <ng-template pTemplate="nameIdTableHeader" let-column="column" let-sortTemplate="sortTemplate">
+        <div class="custom-header">
+          <span>{{ column.id }}</span>
+          <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: column }"></ng-container>
+        </div>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+class CustomHeaderHostComponent {
+  rows = [{ id: '1', name: 'a' }]
+  columns = [{ columnType: ColumnType.STRING, id: 'name', nameKey: 'COLUMN_HEADER_NAME.NAME', sortable: true }]
+}
+
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
   let component: DataTableComponent
@@ -306,7 +325,6 @@ describe('DataTableComponent', () => {
     })
 
     it('should have one tab stop per sortable header plus one for its filter', async () => {
-      document.body.appendChild(fixture.nativeElement)
       const user = userEvent.setup()
       const sortable = headers().filter((h) => h.querySelector('.sortButton'))
       const first = sortable[0]
@@ -315,10 +333,37 @@ describe('DataTableComponent', () => {
 
       await user.tab()
       expect(document.activeElement).not.toBe(first)
-      expect(first.contains(document.activeElement)).toBe(true)
+      expect((first.querySelector('.filterMultiSelect') as HTMLElement).contains(document.activeElement)).toBe(true)
 
       await user.tab()
       expect(document.activeElement).toBe(second.querySelector('.sortButton'))
+    })
+
+    it('should set aria-sort on a header rendered from a custom columnHeader template', async () => {
+      TestBed.resetTestingModule()
+      await TestBed.configureTestingModule({
+        declarations: [DataTableComponent, TestRouteComponent, CustomHeaderHostComponent],
+        imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
+        providers: [
+          provideTranslateTestingService(TRANSLATIONS),
+          provideUserServiceMock(),
+          provideRouter([{ path: '**', component: TestRouteComponent }]),
+          { provide: HAS_PERMISSION_CHECKER, useExisting: UserService },
+        ],
+      }).compileComponents()
+      TestBed.inject(TranslateService).use('en')
+      const hostFixture = TestBed.createComponent(CustomHeaderHostComponent)
+      hostFixture.detectChanges()
+      await hostFixture.whenStable()
+      hostFixture.detectChanges()
+
+      const user = userEvent.setup()
+      const th = (hostFixture.nativeElement as HTMLElement).querySelector('.custom-header')?.closest('th') as HTMLElement
+      expect(th).toBeTruthy()
+      expect(th.hasAttribute('aria-sort')).toBe(false)
+      await user.click(th.querySelector('.sortButton') as HTMLElement)
+      hostFixture.detectChanges()
+      expect(th.getAttribute('aria-sort')).toBe('ascending')
     })
 
     it('should find the sorted column header by role and name', async () => {
