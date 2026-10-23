@@ -115,7 +115,6 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   }
 
   private bindFocusListeners(): void {
-    if (typeof document === 'undefined') return
     registerKeyboardTracking()
     const host = this.el.nativeElement as HTMLElement
     const hostIsFocusable = this.hasFocusableInside(host)
@@ -139,13 +138,13 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
         target.removeEventListener('focusout', onFocusOut)
       })
     }
-    if (hostIsFocusable) listen(host, (focused) => focused.matches?.(FOCUSABLE_SELECTOR) ?? false)
+    if (hostIsFocusable) listen(host, (focused) => focused.matches(FOCUSABLE_SELECTOR))
     // a decorative host (e.g. an icon) is described through the focusable ancestor it sits in; only that element itself counts
     if (ancestor) listen(ancestor, (focused) => focused === ancestor)
   }
 
   private hasFocusableInside(host: HTMLElement): boolean {
-    return !!host.matches?.(FOCUSABLE_SELECTOR) || !!host.querySelector(FOCUSABLE_SELECTOR)
+    return host.matches(FOCUSABLE_SELECTOR) || !!host.querySelector(FOCUSABLE_SELECTOR)
   }
 
   private getFocusableAncestor(): HTMLElement | null {
@@ -160,7 +159,7 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   private getDescriptionTarget(): HTMLElement | null {
     if (this.focusedElement) return this.focusedElement
     const host = this.el.nativeElement as HTMLElement
-    if (host.matches?.(FOCUSABLE_SELECTOR)) return host
+    if (host.matches(FOCUSABLE_SELECTOR)) return host
     return host.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? this.getFocusableAncestor()
   }
 

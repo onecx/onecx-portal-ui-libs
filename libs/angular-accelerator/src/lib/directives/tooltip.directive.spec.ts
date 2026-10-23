@@ -1,7 +1,7 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, SimpleChange } from '@angular/core'
 import { By } from '@angular/platform-browser'
 import { HarnessLoader } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from './tooltip.directive'
@@ -517,6 +517,119 @@ describe('OcxTooltip', () => {
       tick(500)
       expect(tooltipInDom()).toBeTruthy()
     }))
+
+    const directiveOf = (id: string) =>
+      tFixture.debugElement.query(By.css('#' + id)).injector.get(OcxTooltipDirective) as any
+
+    describe('without :focus-visible support', () => {
+      let matchesSpy: jest.SpyInstance
+      beforeEach(() => {
+        const original = Element.prototype.matches
+        matchesSpy = jest.spyOn(Element.prototype, 'matches').mockImplementation(function (
+          this: Element,
+          selector: string
+        ) {
+          if (selector === ':focus-visible') throw new SyntaxError('unsupported selector')
+          return original.call(this, selector)
+        })
+      })
+      afterEach(() => matchesSpy.mockRestore())
+
+      it('should show on focus right after a navigation key', fakeAsync(() => {
+        keyboardFocus(focusTarget('t-button'))
+        tick(500)
+
+        expect(tooltipInDom()).toBeTruthy()
+      }))
+
+      it('should not show on focus without a recent navigation key', fakeAsync(() => {
+        pressTab()
+        tick(1000)
+        const el = focusTarget('t-button')
+        el.focus()
+        el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+        tick(500)
+
+        expect(tooltipInDom()).toBeNull()
+      }))
+    })
+
+    it('should ignore focusout of an element other than the focused one', fakeAsync(() => {
+      keyboardFocus(focusTarget('t-cell-link'))
+      tick()
+      focusTarget('t-cell-first').dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
+      tick(500)
+
+      expect(tooltipInDom()).toBeTruthy()
+    }))
+
+    it('should not duplicate an id the focus target already references', fakeAsync(() => {
+      const input = focusTarget('t-input')
+      const id = directiveOf('t-input').resolvedId
+      input.setAttribute('aria-describedby', id)
+      keyboardFocus(input)
+      tick()
+
+      expect(input.getAttribute('aria-describedby')).toBe(id)
+    }))
+
+    it('should cope with aria-describedby removed while the tooltip is shown', fakeAsync(() => {
+      const input = focusTarget('t-input')
+      keyboardFocus(input)
+      tick()
+      input.removeAttribute('aria-describedby')
+      input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }))
+      tick(500)
+
+      expect(input.hasAttribute('aria-describedby')).toBe(false)
+    }))
+
+    it('should hide when the pointer leaves the tooltip and no keyboard focus is retained', fakeAsync(() => {
+      focusTarget('t-input').dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      const tooltip = tooltipInDom() as HTMLElement
+      expect(tooltip).toBeTruthy()
+
+      tooltip.dispatchEvent(new MouseEvent('mouseleave'))
+      tick(500)
+
+      expect(tooltipInDom()).toBeNull()
+    }))
+
+    it('should stay open when the pointer leaves the tooltip while keyboard focus is retained', fakeAsync(() => {
+      const button = focusTarget('t-button')
+      keyboardFocus(button)
+      tick()
+      button.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      const tooltip = tooltipInDom() as HTMLElement
+      expect(tooltip).toBeTruthy()
+
+      tooltip.dispatchEvent(new MouseEvent('mouseleave'))
+      tick(500)
+
+      expect(tooltipInDom()).toBeTruthy()
+    }))
+
+    it.each([
+      ['autoHide input', { autoHide: new SimpleChange(undefined, true, false) }],
+      ['tooltipOptions.autoHide', { tooltipOptions: new SimpleChange(undefined, { autoHide: true }, false) }],
+    ])('should respect an explicit autoHide (%s)', (_name, changes) => {
+      const directive = directiveOf('t-input')
+      const setOption = jest.spyOn(directive, 'setOption')
+
+      directive.ngOnChanges(changes)
+
+      expect(directive.autoHideExplicit).toBe(true)
+      expect(setOption).toHaveBeenLastCalledWith({ id: directive.resolvedId, tooltipEvent: 'both' })
+    })
+
+    it('should find no focusable ancestor for a detached host', () => {
+      const directive = directiveOf('t-input')
+      directive.el = { nativeElement: document.createElement('i') }
+
+      expect(directive.getFocusableAncestor()).toBeNull()
+    })
 
     it('should keep the tooltip hoverable (pointer may move onto it)', fakeAsync(() => {
       keyboardFocus(focusTarget('t-button'))
