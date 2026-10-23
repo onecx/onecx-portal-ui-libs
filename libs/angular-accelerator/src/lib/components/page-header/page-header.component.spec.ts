@@ -627,6 +627,18 @@ describe('PageHeaderComponent', () => {
     expect(firstDetailStyles?.includes('text-white')).toBeTruthy()
   })
 
+  it('should render a long unbroken objectDetail value in a wrappable container instead of forcing max-content width', async () => {
+    const longValue = 'A'.repeat(40)
+    fixture.componentRef.setInput('objectDetails', [{ label: 'Identifier', value: longValue }])
+
+    const detail = await pageHeaderHarness.getObjectInfoByLabel('Identifier')
+    expect(await detail?.getValue()).toEqual(longValue)
+
+    const valueElement: HTMLElement = fixture.debugElement.query(By.css('[name="object-detail-value"]')).nativeElement
+    expect(valueElement.classList).toContain('object-detail-value')
+    expect(valueElement.classList).not.toContain('w-max')
+  })
+
   it('should show overflow actions when menu overflow button clicked', async () => {
     fixture.componentRef.setInput('actions', mockActions)
 
