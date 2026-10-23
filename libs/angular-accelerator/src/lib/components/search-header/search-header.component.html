@@ -7,7 +7,7 @@
     (keydown.space)="onSearchClicked()"
     [disabled]="searchButtonDisabled() || formGroup()?.invalid"
     [label]="searchButtonLabel() || ('OCX_SEARCH_HEADER.SEARCH_BUTTON.TEXT' | translate)"
-    [ariaLabel]="searchButtonAriaLabel() || ('OCX_SEARCH_HEADER.SEARCH_BUTTON.ARIA_LABEL' | translate)"
+    [ariaLabel]="searchButtonAriaLabel() || undefined"
     [ocxTooltip]="searchButtonTooltip() || ('OCX_SEARCH_HEADER.SEARCH_BUTTON.DETAIL' | translate)"
     tooltipPosition="top"
     tooltipEvent="hover"
@@ -22,7 +22,7 @@
     (keydown.space)="onResetClicked()"
     [disabled]="resetButtonDisabled()"
     [label]="resetButtonLabel() || ('OCX_SEARCH_HEADER.RESET_BUTTON.TEXT' | translate)"
-    [ariaLabel]="resetButtonAriaLabel() || ('OCX_SEARCH_HEADER.RESET_BUTTON.ARIA_LABEL' | translate)"
+    [ariaLabel]="resetButtonAriaLabel() || undefined"
     [ocxTooltip]="resetButtonTooltip() || ('OCX_SEARCH_HEADER.RESET_BUTTON.DETAIL' | translate)"
     tooltipPosition="top"
     tooltipEvent="hover"
@@ -59,7 +59,7 @@
     }
   </ng-template>
   <div class="flex gap-y-3 gap-x-6 flex-wrap items-center">
-    <section #searchParameterFields [attr.aria-label]="'Search Criteria'">
+    <section #searchParameterFields [attr.aria-label]="'OCX_SEARCH_HEADER.CRITERIA.ARIA_LABEL' | translate">
       <ng-content></ng-content>
     </section>
     <section

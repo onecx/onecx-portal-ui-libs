@@ -95,6 +95,17 @@ export class DataListGridSortingComponent {
     return this.sortDirectionToTitle(this.nextSortDirection())
   }
 
+  sortDirectionToLabel(sortDirection: DataSortDirection): string {
+    switch (sortDirection) {
+      case DataSortDirection.ASCENDING:
+        return 'OCX_LIST_GRID_SORT.DIRECTION.ASCENDING'
+      case DataSortDirection.DESCENDING:
+        return 'OCX_LIST_GRID_SORT.DIRECTION.DESCENDING'
+      default:
+        return 'OCX_LIST_GRID_SORT.DIRECTION.NONE'
+    }
+  }
+
   sortDirectionToTitle(sortDirection: DataSortDirection): string {
     switch (sortDirection) {
       case DataSortDirection.ASCENDING:

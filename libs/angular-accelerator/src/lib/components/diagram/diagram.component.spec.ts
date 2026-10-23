@@ -13,6 +13,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
+import { firstValueFrom } from 'rxjs'
 
 declare global {
   interface Window {
@@ -372,6 +373,23 @@ describe('DiagramComponent', () => {
 
       const expectedColor = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim()
       expect(component.chartOptions().plugins?.legend?.labels?.color).toEqual(expectedColor)
+    })
+  })
+
+  describe('custom legends', () => {
+    it.each(['en', 'de'])('should not render untranslated English header text in the legends table (%s)', async (lang) => {
+      await firstValueFrom(translateService.use(lang))
+      fixture.componentRef.setInput('customLegends', true)
+      fixture.componentRef.setInput('diagramType', DiagramType.PIE)
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+
+      const legendsTable = fixture.nativeElement.querySelector('.legends-table') as HTMLTableElement
+      expect(legendsTable).toBeTruthy()
+      expect(legendsTable.querySelectorAll('th').length).toBe(0)
+      expect(legendsTable.textContent).not.toContain('LEGEND COLUMN')
+      expect(legendsTable.textContent).toContain('test0')
     })
   })
 })

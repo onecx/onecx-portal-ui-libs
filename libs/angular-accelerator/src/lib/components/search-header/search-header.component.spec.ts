@@ -21,8 +21,9 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
-import { of } from 'rxjs'
+import { firstValueFrom, of } from 'rxjs'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { TranslateService } from '@ngx-translate/core'
 import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
 
 describe('SearchHeaderComponent', () => {
@@ -43,7 +44,10 @@ describe('SearchHeaderComponent', () => {
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
         provideUserServiceMock(),
-        provideTranslateTestingService({ en: require('../../../../assets/i18n/en.json') }),
+        provideTranslateTestingService({
+          en: require('../../../../assets/i18n/en.json'),
+          de: require('../../../../assets/i18n/de.json'),
+        }),
         provideConfigurationServiceMock(),
       ],
     }).compileComponents()
@@ -228,6 +232,78 @@ describe('SearchHeaderComponent', () => {
       expect(resettedSpy).toHaveBeenCalled()
 
       sub.unsubscribe()
+    })
+  })
+  describe('accessible names', () => {
+    const getButton = (id: string): HTMLButtonElement =>
+      fixture.nativeElement.querySelector(`#${id} button`) as HTMLButtonElement
+
+    const accessibleName = (button: HTMLButtonElement): string =>
+      (button.getAttribute('aria-label') ?? button.textContent ?? '').trim()
+
+    const visibleText = (button: HTMLButtonElement): string => (button.textContent ?? '').trim()
+
+    let resetSub: { unsubscribe: () => void }
+
+    beforeEach(() => {
+      resetSub = component.resetted.subscribe()
+    })
+
+    afterEach(() => {
+      resetSub.unsubscribe()
+    })
+
+    async function renderIn(lang: string) {
+      await firstValueFrom(TestBed.inject(TranslateService).use(lang))
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+    }
+
+    it.each([
+      ['en', 'Search', 'Reset', 'Search criteria'],
+      ['de', 'Suchen', 'Zurücksetzen', 'Suchkriterien'],
+    ])(
+      'should name search and reset buttons by their visible text and translate the criteria region (%s)',
+      async (lang, searchText, resetText, criteriaLabel) => {
+        await renderIn(lang)
+
+        const searchButton = getButton('searchButton')
+        const resetButton = getButton('resetButton')
+
+        expect(visibleText(searchButton)).toBe(searchText)
+        expect(visibleText(resetButton)).toBe(resetText)
+        expect(searchButton.hasAttribute('aria-label')).toBe(false)
+        expect(resetButton.hasAttribute('aria-label')).toBe(false)
+        expect(accessibleName(searchButton)).toContain(searchText)
+        expect(accessibleName(resetButton)).toContain(resetText)
+
+        const criteria = fixture.nativeElement.querySelector('section[aria-label]') as HTMLElement
+        expect(criteria.getAttribute('aria-label')).toBe(criteriaLabel)
+      }
+    )
+
+    it('should not expose English literals or raw translation keys as aria-label in German', async () => {
+      await renderIn('de')
+
+      const labels = Array.from(fixture.nativeElement.querySelectorAll('[aria-label]')).map((el) =>
+        (el as HTMLElement).getAttribute('aria-label')
+      )
+
+      expect(labels.length).toBeGreaterThan(0)
+      labels.forEach((label) => {
+        expect(label).not.toMatch(/[A-Z_]+\.[A-Z_.]+/)
+        expect(label).not.toMatch(/Search|Reset/)
+      })
+    })
+
+    it('should use an explicitly provided aria-label for the search and reset buttons', async () => {
+      fixture.componentRef.setInput('searchButtonAriaLabel', 'Search orders')
+      fixture.componentRef.setInput('resetButtonAriaLabel', 'Reset order filters')
+      await renderIn('en')
+
+      expect(getButton('searchButton').getAttribute('aria-label')).toBe('Search orders')
+      expect(getButton('resetButton').getAttribute('aria-label')).toBe('Reset order filters')
     })
   })
 })
