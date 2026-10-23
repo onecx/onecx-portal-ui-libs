@@ -836,6 +836,20 @@ describe('PageHeaderComponent', () => {
       expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
     })
 
+    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
+      translate.use('en')
+      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
+      expect(
+        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
+      ).toBe('Hello World')
+      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
+        'Title key'
+      )
+      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+    })
+
     it('should render the figure image as decorative and the subheader as plain content', async () => {
       fixture.componentRef.setInput('figureImage', 'assets/x.png')
       fixture.componentRef.setInput('subheader', 'Sub')
