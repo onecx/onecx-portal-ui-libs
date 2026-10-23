@@ -33,9 +33,9 @@ import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerat
     <ocx-search-header (searched)="searched()" (resetted)="resetted()">
       <input id="text" type="text" />
       <textarea id="area"></textarea>
-      <input id="combo" type="text" role="combobox" aria-expanded="true" />
-      <ul role="listbox"><li role="option"><input id="multi" type="text" /></li></ul>
-      <input id="closedCombo" type="text" role="combobox" aria-expanded="false" />
+      <input id="combo" type="text" role="combobox" aria-expanded="true" aria-controls="comboList" />
+      <ul role="listbox"><li role="option" aria-selected="false"><input id="multi" type="text" /></li></ul>
+      <input id="closedCombo" type="text" role="combobox" aria-expanded="false" aria-controls="comboList" />
     </ocx-search-header>
   `,
 })
