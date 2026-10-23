@@ -22,12 +22,43 @@ function toLabel(value: unknown): string {
  */
 export function getRowLabel(row: any, candidateFields: (string | undefined | null)[]): string {
   if (!row) return ''
+  return getRowLabelFromFields(row, candidateFields) || toLabel(row['id'])
+}
+
+/**
+ * Determines a human readable label for a row from the given candidate fields only (no fallback to the row id).
+ * The first candidate field that yields a non-empty primitive value wins.
+ *
+ * @param row the row object
+ * @param candidateFields field ids in order of preference (undefined/empty entries are skipped)
+ * @returns the row label or an empty string if none could be determined
+ */
+export function getRowLabelFromFields(row: any, candidateFields: (string | undefined | null)[]): string {
+  if (!row) return ''
   for (const field of candidateFields) {
     if (!field) continue
     const label = toLabel(ObjectUtils.resolveFieldData(row, field))
     if (label) return label
   }
-  return toLabel(row['id'])
+  return ''
+}
+
+/**
+ * Default maximum length of a row label used in accessible names.
+ */
+export const MAX_ROW_LABEL_LENGTH = 100
+
+/**
+ * Collapses whitespace and shortens a label to at most `maxLength` characters (ending with an ellipsis if shortened).
+ *
+ * @param label the label to shorten
+ * @param maxLength the maximum length of the returned label
+ * @returns the shortened label
+ */
+export function truncateLabel(label: string, maxLength = MAX_ROW_LABEL_LENGTH): string {
+  const normalized = label.replaceAll(/\s+/g, ' ').trim()
+  if (normalized.length <= maxLength) return normalized
+  return `${normalized.slice(0, maxLength - 1).trimEnd()}\u2026`
 }
 
 /**

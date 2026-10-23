@@ -21,6 +21,8 @@ import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -1283,6 +1285,109 @@ describe('DataTableComponent', () => {
     }
   })
 
+  describe('accessible names of row selection checkboxes', () => {
+    const readTranslations = (lang: string) =>
+      JSON.parse(readFileSync(join(__dirname, `../../../../assets/i18n/${lang}.json`), 'utf-8'))
+    const checkboxInputs = (): HTMLInputElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll('tbody input[type="checkbox"]')) as HTMLInputElement[]
+    const checkboxLabels = () => checkboxInputs().map((input) => input.getAttribute('aria-label'))
+
+    beforeEach(() => {
+      translateService.setTranslation('en', readTranslations('en'), true)
+      translateService.setTranslation('de', readTranslations('de'), true)
+      translateService.use('en')
+      component.columns = [
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+        { id: 'details', columnType: ColumnType.STRING, nameKey: 'D' },
+      ] as any
+      component.rows.set([
+        { id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', name: 'First row', secret: 'hidden value', details: { a: 1 } },
+        { id: '5f8bb05b-d089-485e-a234-0bb6ff25234e', name: 'Second row', secret: 'hidden value' },
+      ] as any)
+      component.selectionChanged.subscribe(() => undefined)
+    })
+
+    it('should name the checkbox "Select row: <row label>" using visible columns only', () => {
+      fixture.detectChanges()
+
+      const labels = checkboxLabels()
+      expect(labels).toEqual(['Select row: First row', 'Select row: Second row'])
+      labels.forEach((label) => {
+        expect(label).not.toContain('195ee34e')
+        expect(label).not.toContain('5f8bb05b')
+        expect(label).not.toContain('hidden value')
+        expect(label).not.toContain('[object Object]')
+        expect(label?.length).toBeLessThanOrEqual(100 + 'Select row: '.length)
+      })
+    })
+
+    it('should use the German translation', () => {
+      translateService.use('de')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Zeile auswählen: First row', 'Zeile auswählen: Second row'])
+    })
+
+    it('should use a generic name instead of the row id if no visible column has a value', () => {
+      component.rows.set([{ id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', secret: 'hidden value' }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+    })
+
+    it('should shorten long row labels to at most 100 characters', () => {
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const rowLabel = checkboxLabels()[0]?.replace('Select row: ', '') ?? ''
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+    })
+
+    it('should name the disabled checkbox of a selected row that cannot be deselected', () => {
+      fixture.componentRef.setInput('selectionEnabledField', 'selectable')
+      component.rows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      component.stateService.selectedRows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: Locked row'])
+    })
+
+    it('should prefer the rowLabelField', () => {
+      fixture.componentRef.setInput('rowLabelField', 'secret')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: hidden value', 'Select row: hidden value'])
+    })
+
+    it('should have no axe label or aria-input-field-name violations', async () => {
+      fixture.detectChanges()
+      // zone.js breaks the MutationObserver used by axe-core; use the unpatched one while axe runs
+      // (can be replaced by expectNoAxeViolations from @onecx/angular-testing once available)
+      const zoneMutationObserver = globalThis.MutationObserver
+      globalThis.MutationObserver = (globalThis as any).__zone_symbol__MutationObserver ?? zoneMutationObserver
+      try {
+        const axe = await import('axe-core')
+        const results = await axe.default.run(fixture.nativeElement, {
+          runOnly: { type: 'rule', values: ['label', 'aria-input-field-name'] },
+        })
+        expect(results.violations).toEqual([])
+        expect(results.passes.length).toBeGreaterThan(0)
+      } finally {
+        globalThis.MutationObserver = zoneMutationObserver
+      }
+    })
+
+    it('should provide the selection keys in English and German', () => {
+      ;['en', 'de'].forEach((lang) => {
+        const keys = readTranslations(lang).OCX_DATA_TABLE
+        expect(keys.SELECT_ROW_ARIA_LABEL).toContain('{{row}}')
+        expect(keys.SELECT_ROW_FALLBACK_ARIA_LABEL).toBeTruthy()
+        expect(keys.SELECT_ARIA_LABEL).toBeUndefined()
+      })
+    })
+  })
+
   describe('LiveAnnouncer announcements', () => {
     let liveAnnouncer: LiveAnnouncer
     let announceSpy: jest.SpyInstance
@@ -2475,9 +2580,4 @@ describe('DataTableComponent', () => {
     })
   })
 
-  it('should return row summary for object entries when getRowSummary is called', () => {
-      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
-
-      expect(summary).toBe('id: 1,name: Alice,active: true')
-  })
 })

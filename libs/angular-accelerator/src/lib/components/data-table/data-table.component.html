@@ -226,18 +226,20 @@
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
+        @let selectionLabelText = rowSelectionLabel(rowObject);
+        @let selectionAriaLabel = selectionLabelText ? ('OCX_DATA_TABLE.SELECT_ROW_ARIA_LABEL' | translate: { row: selectionLabelText }) : ('OCX_DATA_TABLE.SELECT_ROW_FALLBACK_ARIA_LABEL' | translate);
         @if (isRowSelectionDisabled(rowObject) && isSelected(rowObject)) {
         <p-checkbox
           [value]="true"
           [binary]="true"
           [disabled]="true"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+          [ariaLabel]="selectionAriaLabel"
         ></p-checkbox>
         } @else {
         <p-tableCheckbox
           [value]="rowObject"
           [disabled]="isRowSelectionDisabled(rowObject)"
-          [ariaLabel]="'OCX_DATA_TABLE.SELECT_ARIA_LABEL' | translate : { key: rowObject.id , rowSummary: getRowSummary(rowObject) }"
+          [ariaLabel]="selectionAriaLabel"
         ></p-tableCheckbox>
         }
       </td>

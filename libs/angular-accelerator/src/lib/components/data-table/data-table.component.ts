@@ -46,7 +46,7 @@ import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
 import equal from 'fast-deep-equal'
 import { handleAction, handleActionSync } from '../../utils/action-router.utils'
-import { getLabelColumnIds, getRowLabel } from '../../utils/row-action-label.utils'
+import { getLabelColumnIds, getRowLabel, getRowLabelFromFields, truncateLabel } from '../../utils/row-action-label.utils'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { InteractiveExpandedRows } from '../../model/view-layout.model'
 
@@ -173,6 +173,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   /**
    * Field of a row whose value is used to name the row in accessible names of row-level buttons (e.g. "Edit: Product A").
    * If not set, the value of the first displayed column that has a value is used, falling back to the row id.
+   * The row selection checkbox ("Select row: Product A") uses the same label but never falls back to the row id.
    */
   rowLabelField = input<string | undefined>(undefined)
   allowSelectAll = input<boolean>(true)
@@ -1057,14 +1058,13 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     return getRowLabel(rowObject, this.rowLabelFields())
   }
 
-  getRowSummary(rowObject: any): string {
-    let summary = ''
-    const columns = Object.entries(rowObject)
-    columns.forEach(([key, value], index) => {
-      summary += `${key}: ${value}${index < columns.length - 1 ? ',' : ''}`
-    })
-    
-    return summary.trim()
+  /**
+   * Label of a row used in the accessible name of its selection checkbox ("Select row: Product A").
+   * Only the `rowLabelField` and the displayed text/number columns are used (never the row id or other fields),
+   * shortened to at most 100 characters.
+   */
+  rowSelectionLabel(rowObject: any): string {
+    return truncateLabel(getRowLabelFromFields(rowObject, this.rowLabelFields()))
   }
 }
 

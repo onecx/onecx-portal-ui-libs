@@ -1,5 +1,11 @@
 import { DataAction } from '../model/data-action'
-import { getRowLabel, warnOnActionsWithoutLabelKey } from './row-action-label.utils'
+import {
+  getRowLabel,
+  getRowLabelFromFields,
+  MAX_ROW_LABEL_LENGTH,
+  truncateLabel,
+  warnOnActionsWithoutLabelKey,
+} from './row-action-label.utils'
 
 describe('row-action-label utils', () => {
   describe('getRowLabel', () => {
@@ -24,6 +30,30 @@ describe('row-action-label utils', () => {
     it('should return an empty string if nothing can be determined', () => {
       expect(getRowLabel({}, ['name'])).toBe('')
       expect(getRowLabel(undefined, ['name'])).toBe('')
+    })
+  })
+
+  describe('getRowLabelFromFields', () => {
+    it('should use the first candidate field with a primitive value', () => {
+      expect(getRowLabelFromFields({ id: '1', obj: { a: 1 }, name: 'N' }, ['obj', 'name'])).toBe('N')
+    })
+
+    it('should not fall back to the id', () => {
+      expect(getRowLabelFromFields({ id: 'row-7' }, ['name'])).toBe('')
+      expect(getRowLabelFromFields(undefined, ['name'])).toBe('')
+    })
+  })
+
+  describe('truncateLabel', () => {
+    it('should keep short labels and collapse whitespace', () => {
+      expect(truncateLabel('  a \n  b  ')).toBe('a b')
+    })
+
+    it('should shorten long labels to the maximum length with an ellipsis', () => {
+      const label = truncateLabel('x'.repeat(MAX_ROW_LABEL_LENGTH + 20))
+      expect(label.length).toBe(MAX_ROW_LABEL_LENGTH)
+      expect(label.endsWith('\u2026')).toBe(true)
+      expect(truncateLabel('abcdef', 4)).toBe('abc\u2026')
     })
   })
 
