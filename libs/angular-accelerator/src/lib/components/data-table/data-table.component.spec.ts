@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
@@ -245,6 +245,87 @@ describe('DataTableComponent', () => {
   it('loads dataTableHarness', async () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     expect(dataTable).toBeTruthy()
+  })
+
+  describe('column header tooltips', () => {
+    beforeEach(() => {
+      translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
+      translateService.setTranslation('de', { COLUMN_HEADER_NAME: { NAME: 'Bezeichnung' } }, true)
+    })
+
+    it('should translate tooltipKey and update it when the language changes', fakeAsync(() => {
+      translateService.setTranslation('en', { CUSTOM_TOOLTIP: 'Custom tooltip' }, true)
+      translateService.setTranslation('de', { CUSTOM_TOOLTIP: 'Eigener Tooltip' }, true)
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Custom tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+      translateService.use('de')
+      fixture.detectChanges()
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Bezeichnung')
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Eigener Tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it.each([
+      { tooltipLabel: 'Product details', tooltipKey: undefined, expected: 'Product details' },
+      { tooltipLabel: 'Product details', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Product details' },
+      { tooltipLabel: '', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Translated tooltip' },
+    ])('should resolve tooltip content for %o', fakeAsync(({ tooltipLabel, tooltipKey, expected }: {
+      tooltipLabel: string
+      tooltipKey: string | undefined
+      expected: string
+    }) => {
+      translateService.setTranslation('en', {
+        'Product details': 'This translation must not replace the plain label',
+        CUSTOM_TOOLTIP: 'Translated tooltip',
+      }, true)
+      component.columns = [{ ...mockColumns[0], tooltipLabel, tooltipKey }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+
+      expect(label.textContent?.trim()).toBe('Name')
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe(expected)
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it.each([
+      { tooltipKey: undefined, tooltipLabel: undefined },
+      { tooltipKey: '', tooltipLabel: undefined },
+      { tooltipKey: undefined, tooltipLabel: '' },
+      { tooltipKey: '', tooltipLabel: '' },
+    ])('should render only the label when tooltip options are %o', (options: {
+      tooltipKey: string | undefined
+      tooltipLabel: string | undefined
+    }) => {
+      component.columns = [{ ...mockColumns[0], ...options }]
+      fixture.detectChanges()
+
+      const header: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"]')
+      expect(header.querySelector('span[tooltipposition="top"]')).toBeNull()
+      expect(header.textContent?.trim()).toBe('Name')
+      expect(document.querySelector('.p-tooltip')).toBeNull()
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {
