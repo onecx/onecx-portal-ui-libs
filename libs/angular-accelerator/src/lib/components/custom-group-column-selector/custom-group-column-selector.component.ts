@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild, inject } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { PickList } from 'primeng/picklist'
 
 export type ColumnSelectionChangedEvent = { activeColumns: DataTableColumn[] }
 export type ActionColumnChangedEvent = {
@@ -70,6 +71,54 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
   @Input() actionColumnPosition: 'left' | 'right' = 'right'
   @Input() draggableColumnGroupSelectorDialog = true
 
+  /**
+   * Controls whether the column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  @Input() resizableColumnGroupSelectorDialog = false
+
+  /**
+   * When enabled, transfers rebuild both the active and inactive column lists in the order of
+   * {@link columns} instead of appending to the target, so the active columns keep the
+   * main column order. When disabled, the normal PickList transfer order is preserved.
+   */
+  @Input() restoreColumnGroupSelectorOrder = false
+
+  @ViewChild(PickList) pickList?: PickList
+
+  get hasActiveColumns(): boolean {
+    return this.displayedColumnsModel.length > 0
+  }
+
+  /**
+   * Whether the active-column membership or order differs from the committed
+   * {@link displayedColumns}. Membership and order both count.
+   */
+  get columnsChanged(): boolean {
+    const model = this.displayedColumnsModel
+    const committed = this.displayedColumns
+    return model.length !== committed.length || model.some((column, index) => column.id !== committed[index].id)
+  }
+
+  /**
+   * Whether the frozen/position action-column settings differ from the committed
+   * {@link frozenActionColumn} / {@link actionColumnPosition} input values.
+   */
+  get actionSettingsChanged(): boolean {
+    return (
+      this.frozenActionColumnModel !== this.frozenActionColumn ||
+      this.actionColumnPositionModel !== this.actionColumnPosition
+    )
+  }
+
+  /**
+   * Whether the Save button is enabled: at least one active column and either the columns or the
+   * action settings have changed. Item highlighting alone is not a change.
+   */
+  get canSave(): boolean {
+    return this.hasActiveColumns && (this.columnsChanged || this.actionSettingsChanged)
+  }
+
   @Output() columnSelectionChanged: EventEmitter<ColumnSelectionChangedEvent> = new EventEmitter()
   @Output() actionColumnConfigChanged: EventEmitter<ActionColumnChangedEvent> = new EventEmitter()
   @Output() componentStateChanged: EventEmitter<CustomGroupColumnSelectorComponentState> = new EventEmitter()
@@ -113,7 +162,31 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     })
   }
 
+  syncColumnModels(restoreMainOrder = false) {
+    if (restoreMainOrder) {
+      const activeIds = new Set(this.displayedColumnsModel.map((column) => column.id))
+      const inactiveIds = new Set(this.hiddenColumnsModel.map((column) => column.id))
+      const originalColumns = this.columns
+      const originalIds = new Set(originalColumns.map((column) => column.id))
+
+      this.displayedColumnsModel = [
+        ...originalColumns.filter((column) => activeIds.has(column.id)),
+        ...this.displayedColumnsModel.filter((column) => !originalIds.has(column.id)),
+      ]
+      this.hiddenColumnsModel = [
+        ...originalColumns.filter((column) => inactiveIds.has(column.id)),
+        ...this.hiddenColumnsModel.filter((column) => !originalIds.has(column.id)),
+      ]
+      return
+    }
+
+    this.displayedColumnsModel = [...this.displayedColumnsModel]
+    this.hiddenColumnsModel = [...this.hiddenColumnsModel]
+  }
+
   onOpenCustomGroupColumnSelectionDialogClick() {
+    this.resetColumnSelection()
+
     this.displayedColumnsModel = [...this.displayedColumns]
     this.hiddenColumnsModel = this.columns.filter(
       (column) => !this.displayedColumnsModel.map((c) => c.id).includes(column.id)
@@ -123,22 +196,41 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
     this.visible = true
   }
 
-  onSaveClick() {
-    this.visible = false
-    const colIdsBefore = this.displayedColumns.map((column) => column.id)
-    const colIdsAfter = this.displayedColumnsModel.map((column) => column.id)
+  /**
+   * Clears the current PickList item selection (source and target) so a stale highlight from a
+   * previous opening does not persist into a reopened dialog. It does not change column membership,
+   * order, action settings, or the dialog visibility.
+   */
+  resetColumnSelection() {
+    const pickList = this.pickList
+    if (!pickList) {
+      return
+    }
+    pickList.setSelectionList(pickList.SOURCE_LIST, [])
+    pickList.setSelectionList(pickList.TARGET_LIST, [])
+    pickList.cd.markForCheck()
+  }
 
-    if (!colIdsAfter.every((colId, i) => colId === colIdsBefore[i]) || colIdsAfter.length != colIdsBefore.length) {
+  onSaveClick() {
+    if (!this.canSave) {
+      return
+    }
+
+    this.visible = false
+
+    // Capture both change checks up front so a synchronous parent update triggered by the first
+    // emitted event cannot suppress the second event in a combined save.
+    const columnChanged = this.columnsChanged
+    const actionSettingsChanged = this.actionSettingsChanged
+
+    if (columnChanged) {
       this.columnSelectionChanged.emit({ activeColumns: [...this.displayedColumnsModel] })
       this.componentStateChanged.emit({
         displayedColumns: [...this.displayedColumnsModel],
       })
     }
 
-    if (
-      this.frozenActionColumn != this.frozenActionColumnModel ||
-      this.actionColumnPosition != this.actionColumnPositionModel
-    ) {
+    if (actionSettingsChanged) {
       this.actionColumnConfigChanged.emit({
         frozenActionColumn: this.frozenActionColumnModel,
         actionColumnPosition: this.actionColumnPositionModel,

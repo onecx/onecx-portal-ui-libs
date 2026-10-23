@@ -149,6 +149,19 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() expandable = false
   @Input() frozenExpandColumn = false
   @Input() draggableColumnGroupSelectorDialog = true
+
+  /**
+   * Controls whether the hosted column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  @Input() resizableColumnGroupSelectorDialog = false
+
+  /**
+   * When enabled, the hosted column selector keeps the active columns in the main column order
+   * after a transfer instead of appending to the target.
+   */
+  @Input() restoreColumnGroupSelectorOrder = false
+
   @Input() expandedRows: Row[] | string[] | number[] = []
   @ContentChild('tableCell') tableCell: TemplateRef<any> | undefined
   primeNgTableCell: TemplateRef<any> | undefined

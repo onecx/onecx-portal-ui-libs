@@ -35,6 +35,26 @@ export const WithMockData = {
   },
 }
 
+// Table layout exposes the hosted column selector. The displayed columns start in a scrambled
+// order so that enabling order restoration is observable: after a transfer + Save the visible
+// table columns return to the main (columns) order.
+export const TableLayoutWithRestoredColumnOrder = {
+  argTypes: {
+    ...defaultComponentArgTypes,
+    componentStateChanged: { action: 'componentStateChanged' },
+    selectionChanged: { action: 'selectionChanged' },
+  },
+  render: InteractiveDataViewTemplate,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    layout: 'table',
+    displayedColumnKeys: ['date', 'product', 'amount'],
+    resizableColumnGroupSelectorDialog: true,
+    restoreColumnGroupSelectorOrder: true,
+  },
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {
@@ -281,7 +301,6 @@ export const WithCustomHeaderTemplate = {
   args: defaultComponentArgs,
 }
 
-
 const CustomHeaderFullControl: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
   template: `
@@ -347,7 +366,6 @@ export const WithCustomHeaderPerColumnLayouts = {
   render: CustomHeaderPerColumnLayouts,
   args: defaultComponentArgs,
 }
-
 
 const CustomHeaderStyledTheme: StoryFn<InteractiveDataViewComponent> = (args) => ({
   props: args,
