@@ -181,7 +181,8 @@
   }
 
   &.p-datatable-hoverable-rows {
-    .p-datatable-tbody > tr:not(.p-highlight):not(.p-datatable-emptymessage):hover {
+    .p-datatable-tbody
+      > tr:not(.p-highlight):not(.p-datatable-emptymessage):hover {
       background: $tableBodyRowHoverBg;
       color: $tableBodyRowTextHoverColor;
     }
@@ -197,7 +198,10 @@
   }
 
   &.p-datatable-scrollable > .p-datatable-wrapper > .p-datatable-table,
-  &.p-datatable-scrollable > .p-datatable-wrapper > .p-virtualscroller > .p-datatable-table {
+  &.p-datatable-scrollable
+    > .p-datatable-wrapper
+    > .p-virtualscroller
+    > .p-datatable-table {
     > .p-datatable-thead,
     > .p-datatable-tfoot {
       background-color: $tableHeaderCellBg;

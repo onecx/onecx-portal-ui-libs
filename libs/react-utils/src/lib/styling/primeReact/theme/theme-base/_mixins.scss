@@ -20,8 +20,7 @@
 }
 
 @mixin focused-listitem() {
-  outline: $focusOutline;
-  outline-offset: $focusOutlineInsetOffset;
+  @include focused-inset();
 }
 
 @mixin invalid-input() {

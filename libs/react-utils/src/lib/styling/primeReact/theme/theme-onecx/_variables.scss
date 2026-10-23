@@ -1,16 +1,16 @@
 $colors: (
-  'blue': #3b82f6,
-  'green': #22c55e,
-  'yellow': #eab308,
-  'cyan': #06b6d4,
-  'pink': #ec4899,
-  'indigo': #6366f1,
-  'teal': #14b8a6,
-  'orange': #f97316,
-  'bluegray': #64748b,
-  'purple': #a855f7,
-  'red': #ff3d32,
-  'primary': $primaryColor,
+  "blue": #3b82f6,
+  "green": #22c55e,
+  "yellow": #eab308,
+  "cyan": #06b6d4,
+  "pink": #ec4899,
+  "indigo": #6366f1,
+  "teal": #14b8a6,
+  "orange": #f97316,
+  "bluegray": #64748b,
+  "purple": #a855f7,
+  "red": #ff3d32,
+  "primary": $primaryColor,
 );
 
 //reused color variables
@@ -26,7 +26,7 @@ $shade800: #374151 !default; //unused
 $shade900: #1f2937 !default; //unused
 
 //global
-$fontFamily: 'Inter var', sans-serif !default;
+$fontFamily: "Inter var", sans-serif !default;
 $fontSize: 1rem !default;
 $fontWeight: normal !default;
 $textColor: var(--app-text-color) !default;
@@ -871,11 +871,11 @@ $imagePreviewActionIconFontSize: 1.5rem !default;
 $imagePreviewActionIconBorderRadius: 50% !default;
 
 :root {
-  font-family: 'Inter var', sans-serif;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-family: "Inter var", sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   font-variation-settings: normal;
-  --font-family: 'Inter var', sans-serif;
-  --font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  --font-family: "Inter var", sans-serif;
+  --font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   --surface-a: #{$shade000};
   --surface-b: #{$shade100};
   --surface-c: #{$shade200};

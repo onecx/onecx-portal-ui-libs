@@ -24,6 +24,10 @@ function parseRules(css: string): Rule[] {
   return rules
 }
 
+// Sanity floor, not an exact count: guards against the compiled theme silently losing most focus rules
+// (e.g. a broken import). The theme currently emits well above this; adjust only if components are removed.
+const MIN_FOCUS_RING_RULES = 40
+
 describe('React theme focus styles', () => {
   let css: string
   let rules: Rule[]
@@ -43,9 +47,9 @@ describe('React theme focus styles', () => {
 
   it('draws the focus ring as outline, which survives forced-colors mode', () => {
     const focusRules = rules.filter((r) => /:focus(-visible)?|\.p-focus/.test(r.selector) && r.declarations['outline'])
-    expect(focusRules.length).toBeGreaterThan(40)
+    expect(focusRules.length).toBeGreaterThanOrEqual(MIN_FOCUS_RING_RULES)
     const rings = focusRules.filter((r) => r.declarations['outline'] !== '0 none')
-    expect(rings.length).toBeGreaterThan(40)
+    expect(rings.length).toBeGreaterThanOrEqual(MIN_FOCUS_RING_RULES)
     for (const r of rings) {
       expect(r.declarations['outline']).toMatch(/^2px solid var\(--app-focus-ring-color/)
     }
