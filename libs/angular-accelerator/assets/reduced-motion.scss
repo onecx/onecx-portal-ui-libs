@@ -1,0 +1,28 @@
+/*
+ * WCAG 2.3.3 (Animation from Interactions) and 2.2.2 (Pause, Stop, Hide):
+ * when the operating system asks for reduced motion, Optimus components run
+ * their animations and transitions in a single, near-instant step. Infinite
+ * effects (skeleton shimmer, spinning loading icons, progress spinners) stop
+ * and overlays (dialogs, popovers, dropdown panels, masks) open and close
+ * without a visible transition.
+ *
+ * A short duration is used instead of `animation: none` / `transition: none`
+ * so that `animationend` / `transitionend` still fire for code that waits for
+ * them. `!important` is needed to win over the inline durations set by the
+ * Optimus motion directive and over the RTL animation-name override.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .p-component,
+  .p-component *,
+  .p-component::before,
+  .p-component::after,
+  .p-component *::before,
+  .p-component *::after,
+  .p-overlay-mask {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+}
