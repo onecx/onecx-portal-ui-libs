@@ -67,7 +67,7 @@
     "EMPTY_FILTER_MESSAGE": "No filters found.",
     "ACTIONS_COLUMN_NAME": "Actions",
     "EXPAND_COLLAPSE_COLUMN": "Expand/Collapse column",
-    "COLUMN_FILTER_ARIA_LABEL": "Column filter",
+    "COLUMN_FILTER_ARIA_LABEL": "Filter {{column}}, {{count}} active",
     "COLUMN_FILTER_PLACEHOLDER": "Type to filter",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
