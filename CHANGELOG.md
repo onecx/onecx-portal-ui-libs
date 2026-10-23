@@ -1,3 +1,19 @@
+## [8.13.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.12.0...v8.13.0) (2026-10-06)
+
+### Features
+
+* add ai-completion.service ([#1798](https://github.com/onecx/onecx-portal-ui-libs/issues/1798)) ([14b9f7f](https://github.com/onecx/onecx-portal-ui-libs/commit/14b9f7f418a40608be71973a8b91d903ead99643))
+
+## [8.12.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.11.0...v8.12.0) (2026-09-30)
+
+### Features
+
+* add AiCompletionGatherer as transport between consumers and AI provider connector ([#1751](https://github.com/onecx/onecx-portal-ui-libs/issues/1751)) ([#1759](https://github.com/onecx/onecx-portal-ui-libs/issues/1759)) ([ea5851d](https://github.com/onecx/onecx-portal-ui-libs/commit/ea5851dfc621e97749f62c80ac92bd557296ca31))
+
+### Bug Fixes
+
+* tooltip fpr disabled menu items ([#1734](https://github.com/onecx/onecx-portal-ui-libs/issues/1734)) ([e5b245d](https://github.com/onecx/onecx-portal-ui-libs/commit/e5b245dc5e510df1d3f84b41cae11628df79f0ae))
+
 ## [8.11.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.10.0...v8.11.0) (2026-09-11)
 
 ### Features
