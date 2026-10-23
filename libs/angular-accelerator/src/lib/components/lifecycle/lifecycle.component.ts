@@ -12,6 +12,7 @@ export interface LifecycleStep {
   selector: 'ocx-lifecycle',
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './lifecycle.component.html',
+  styleUrls: ['./lifecycle.component.scss'],
 })
 export class LifecycleComponent {
   steps = input<LifecycleStep[]>([])
@@ -23,4 +24,16 @@ export class LifecycleComponent {
   stepTitleHeadingLevel = input<number>(2)
 
   protected readonly headingLevel = computed(() => normalizeHeadingLevel(this.stepTitleHeadingLevel()))
+
+  /**
+   * Exposes the timeline as a list of steps (WCAG 1.3.1).
+   */
+  protected readonly timelinePt = {
+    root: { role: 'list' },
+    event: { role: 'listitem' },
+  }
+
+  protected isActive(step: LifecycleStep): boolean {
+    return !!this.activeStepId() && this.activeStepId() === step.id
+  }
 }

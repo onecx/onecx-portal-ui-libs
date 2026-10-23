@@ -72,6 +72,50 @@ describe('LifecycleComponent', () => {
     expect(highlightedSteps.length).toBe(1)
   })
 
+  it('should expose the steps as a list with one list item per step', () => {
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.detectChanges()
+    const list = fixture.nativeElement.querySelector('[role="list"]') as HTMLElement
+    expect(list).toBeTruthy()
+    expect(list.tagName.toLowerCase()).toBe('p-timeline')
+    const items = Array.from(list.children).filter((child) => child.getAttribute('role') === 'listitem')
+    expect(items.length).toBe(3)
+    expect(list.children.length).toBe(3)
+    expect(fixture.nativeElement.querySelectorAll('[role="listitem"]').length).toBe(3)
+  })
+
+  it('should mark only the active step as current step with a visible non-colour cue', () => {
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.componentRef.setInput('activeStepId', 'test2')
+    fixture.detectChanges()
+    const items = Array.from(fixture.nativeElement.querySelectorAll('[role="listitem"]')) as HTMLElement[]
+    const current = items.map((item) => item.querySelector('[aria-current]')?.getAttribute('aria-current') ?? null)
+    expect(current).toEqual([null, 'step', null])
+
+    const activeCard = items[1].querySelector('.card') as HTMLElement
+    expect(activeCard.classList).toContain('ocx-lifecycle-step-active')
+    const icons = fixture.nativeElement.querySelectorAll('.ocx-lifecycle-current-icon')
+    expect(icons.length).toBe(1)
+    expect(activeCard.querySelector('h2 .ocx-lifecycle-current-icon')?.getAttribute('aria-hidden')).toBe('true')
+    expect(activeCard.querySelector('h2')?.textContent?.trim()).toBe('Test 2')
+  })
+
+  it('should not mark any step as current without an active step', () => {
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelectorAll('[aria-current]').length).toBe(0)
+    expect(fixture.nativeElement.querySelectorAll('.ocx-lifecycle-current-icon').length).toBe(0)
+    expect(fixture.nativeElement.querySelectorAll('.ocx-lifecycle-step-active').length).toBe(0)
+  })
+
+  it('should hide the decorative timeline markers from assistive technology', () => {
+    fixture.componentRef.setInput('steps', mockSteps)
+    fixture.detectChanges()
+    const markers = Array.from(fixture.nativeElement.querySelectorAll('.p-timeline-event-marker')) as HTMLElement[]
+    expect(markers.length).toBe(3)
+    markers.forEach((marker) => expect(marker.getAttribute('aria-hidden')).toBe('true'))
+  })
+
   it('should expose step titles as level 2 headings by default and allow configuring the level', () => {
     fixture.componentRef.setInput('steps', mockSteps)
     fixture.detectChanges()

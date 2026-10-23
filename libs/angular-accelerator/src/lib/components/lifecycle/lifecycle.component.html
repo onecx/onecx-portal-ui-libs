@@ -1,14 +1,15 @@
-<p-timeline [value]="steps()">
+<p-timeline [value]="steps()" [pt]="timelinePt">
   <ng-template pTemplate="marker" let-step>
-    <span
-      class="p-timeline-event-marker"
-      [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''"
-    ></span>
+    <span class="p-timeline-event-marker" aria-hidden="true" [ngClass]="isActive(step) ? 'bg-primary' : ''"></span>
   </ng-template>
   <ng-template pTemplate="content" let-step>
     <div class="pb-4 h-full">
-      <div class="card h-full" [ngClass]="activeStepId() && activeStepId() === step.id ? 'bg-primary' : ''">
-        <ng-template #stepTitle>{{ step.title }}</ng-template>
+      <div
+        class="card h-full"
+        [ngClass]="isActive(step) ? 'bg-primary ocx-lifecycle-step-active' : ''"
+        [attr.aria-current]="isActive(step) ? 'step' : null"
+      >
+        <ng-template #stepTitle>@if (isActive(step)) {<span class="pi pi-map-marker ocx-lifecycle-current-icon" aria-hidden="true"></span>}{{ step.title }}</ng-template>
         @switch (headingLevel()) {
           @case (1) {
             <h1 class="font-bold text-xl m-0" [ngClass]="step.details ? 'mb-2' : ''"><ng-container [ngTemplateOutlet]="stepTitle"></ng-container></h1>
@@ -30,7 +31,7 @@
           }
         }
         @if (step.details) {
-        <p [ngClass]="activeStepId() && activeStepId() === step.id ? '' : 'text-color-secondary'">{{ step.details }}</p>
+        <p [ngClass]="isActive(step) ? '' : 'text-color-secondary'">{{ step.details }}</p>
         }
       </div>
     </div>

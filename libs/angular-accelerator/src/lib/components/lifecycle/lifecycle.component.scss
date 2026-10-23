@@ -1,0 +1,16 @@
+// WCAG 1.4.3: the text colour of the active step is derived from the primary colour of the active theme.
+// The relative luminance Y of the primary colour is computed from its linear sRGB channels. Below the crossover
+// luminance (0.1791) white has the higher contrast, above it black, so the text reaches at least 4.58:1 on any
+// primary colour. The theme contrast colour is the fallback for browsers without relative colour syntax.
+$luminance: '(0.2126 * r + 0.7152 * g + 0.0722 * b)';
+$channel: 'clamp(0, calc((0.1791 - #{$luminance}) * 100000), 1)';
+
+.ocx-lifecycle-step-active {
+  background-color: var(--p-primary-color);
+  color: var(--p-primary-contrast-color);
+  color: color(from var(--p-primary-color) srgb-linear #{$channel} #{$channel} #{$channel});
+}
+
+.ocx-lifecycle-current-icon {
+  margin-right: 0.5rem;
+}
