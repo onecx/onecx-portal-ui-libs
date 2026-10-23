@@ -1,3 +1,4 @@
+import { inject, provideEnvironmentInitializer } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -25,6 +26,20 @@ describe('provideStandaloneHtmlLang', () => {
   it('should set the fallback language when none is configured', () => {
     TestBed.inject(UserService)
     expect(TestBed.inject(TranslateService).getFallbackLang()).toBe(STANDALONE_FALLBACK_LANGUAGE)
+  })
+
+  it('should not override a fallback language configured by the app', () => {
+    TestBed.resetTestingModule()
+    TestBed.configureTestingModule({
+      providers: [
+        provideUserServiceMock(),
+        provideTranslateTestingService({}),
+        // runs before the standalone initializer, like an app-level configuration would
+        provideEnvironmentInitializer(() => inject(TranslateService).setFallbackLang('de')),
+        provideStandaloneHtmlLang(),
+      ],
+    })
+    expect(TestBed.inject(TranslateService).getFallbackLang()).toBe('de')
   })
 
   it('should not write html lang when the provider is not used (shell mode)', () => {

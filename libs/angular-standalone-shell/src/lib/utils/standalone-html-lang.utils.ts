@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common'
-import { DestroyRef, ENVIRONMENT_INITIALIZER, inject } from '@angular/core'
+import { DestroyRef, inject, provideEnvironmentInitializer } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
@@ -7,7 +7,7 @@ import { UserService } from '@onecx/angular-integration-interface'
 /**
  * Language used when a translation is missing in the user language (WCAG 3.1.1).
  * Used as ngx-translate fallback language unless the app already configured one.
- * Proposed default: English (to be confirmed by the PO).
+ * `en` is the proposed default, pending product-owner confirmation.
  */
 export const STANDALONE_FALLBACK_LANGUAGE = 'en'
 
@@ -18,25 +18,21 @@ export const STANDALONE_FALLBACK_LANGUAGE = 'en'
  */
 export function provideStandaloneHtmlLang() {
   return [
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => {
-        const document = inject(DOCUMENT)
-        const userService = inject(UserService)
-        const translateService = inject(TranslateService)
-        const destroyRef = inject(DestroyRef)
+    provideEnvironmentInitializer(() => {
+      const document = inject(DOCUMENT)
+      const userService = inject(UserService)
+      const translateService = inject(TranslateService)
+      const destroyRef = inject(DestroyRef)
 
-        if (!translateService.getFallbackLang()) {
-          translateService.setFallbackLang(STANDALONE_FALLBACK_LANGUAGE)
+      if (!translateService.getFallbackLang()) {
+        translateService.setFallbackLang(STANDALONE_FALLBACK_LANGUAGE)
+      }
+
+      userService.lang$.pipe(takeUntilDestroyed(destroyRef)).subscribe((lang) => {
+        if (lang) {
+          document.documentElement.setAttribute('lang', lang)
         }
-
-        userService.lang$.pipe(takeUntilDestroyed(destroyRef)).subscribe((lang) => {
-          if (lang) {
-            document.documentElement.setAttribute('lang', lang)
-          }
-        })
-      },
-    },
+      })
+    }),
   ]
 }
