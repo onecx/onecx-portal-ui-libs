@@ -163,6 +163,21 @@ describe('FilterViewComponent (class logic)', () => {
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
   })
 
+  describe('removeFilterValue (accessible name of the remove button)', () => {
+    it('should return printable strings and numbers', () => {
+      expect(component.removeFilterValue({ id: 'r', value: 'abc' } as any)).toBe('abc')
+      expect(component.removeFilterValue({ id: 'r', value: 42 } as any)).toBe('42')
+    })
+
+    it('should return undefined for values that are not plain text so the generic name is used', () => {
+      expect(component.removeFilterValue({ id: 'r', value: true } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: { a: 1 } } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: new Date() } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: '  ' } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r' } as any)).toBeUndefined()
+    })
+  })
+
   it('should open the add filter dialog via PortalDialogService in onAddFilter', async () => {
     stateService.availableColumns.set([makeColumn({ id: 'c2', nameKey: 'C2' })])
     stateService.data.set([{ c2: 'v' }] as any)
