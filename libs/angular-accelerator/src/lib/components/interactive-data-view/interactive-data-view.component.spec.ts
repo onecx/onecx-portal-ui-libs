@@ -10,7 +10,7 @@ import * as loggerUtils from '../../utils/logger.utils'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideRouter } from '@angular/router'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
@@ -68,6 +68,11 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     fixture.detectChanges()
     return { fixture, component: fixture.componentInstance, slotService }
   }
+
+  it('should have no axe violations', async () => {
+    const { fixture } = createComponentWithFixture()
+    await expectNoAxeViolations(fixture.nativeElement)
+  })
 
   describe('DataViewStateService provider factory', () => {
     const createSlotServiceMock = () => ({

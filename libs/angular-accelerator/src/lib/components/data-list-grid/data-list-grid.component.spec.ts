@@ -11,7 +11,7 @@ import {
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
+import { ensureIntersectionObserverMockExists, ensureOriginMockExists, expectNoAxeViolations } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { TooltipStyle } from '@openng/optimus-ui/tooltip'
 import { firstValueFrom, of } from 'rxjs'
@@ -279,6 +279,10 @@ describe('DataListGridComponent', () => {
     listGrid = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataListGridHarness)
     router = TestBed.inject(Router)
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create the data list grid component', () => {
