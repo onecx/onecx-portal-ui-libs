@@ -33,7 +33,7 @@ import {
 export class DialogContentComponent implements OnInit, AfterViewInit, OnDestroy {
   dynamicDialogConfig = inject(DynamicDialogConfig)
   dynamicDialogRef = inject(DynamicDialogRef)
-  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef)
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef)
 
   defaultDialogData: ButtonDialogData = {
     component: DialogMessageContentComponent,
