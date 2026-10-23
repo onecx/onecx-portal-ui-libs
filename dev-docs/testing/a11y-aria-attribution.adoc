@@ -34,7 +34,7 @@ Measured on the static Storybook build of `angular-accelerator` (all 140 stories
 |
 |===
 
-NOTE: Wait until the story has rendered and its translations are loaded before running axe. Until the translations are loaded, the `translate` pipe returns an empty string, so a run directly after the first render can report `button-name` for buttons whose name is translated (for example the sort buttons of the data table, seen once with a 100 ms wait). This state is transient and not counted above.
+NOTE: Wait until the story has rendered and its translations are loaded before running axe. Until the translations are loaded, the `translate` pipe returns an empty string, so a run directly after the first render can report `button-name` or `aria-input-field-name` for elements whose name is translated. This was seen on a busy machine for the sort buttons of the data table, the default buttons of the inline dialog and the page-size select of the interactive data view; a second axe run on the same page a few seconds later was clean. This state is transient and not counted above. In the final run every story was clean on the first axe run.
 
 To re-run the measurement:
 
