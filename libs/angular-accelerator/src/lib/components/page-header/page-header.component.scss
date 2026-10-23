@@ -87,12 +87,25 @@
   transform: scale(2);
 }
 
+// Long unbroken object detail labels/values wrap instead of overflowing the header (WCAG 1.4.10)
+.object-info {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .object-info-grid-label {
   flex: 1;
 }
 
 .object-info-grid-value {
   flex: 3;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.object-detail-value {
+  width: fit-content;
+  max-width: 100%;
 }
 
 // Optimus UI Bug: Tooltip not being shown for disabled menu items

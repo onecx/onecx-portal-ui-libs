@@ -505,6 +505,8 @@ export class PortalDialogService implements OnDestroy {
           closable: this.getShowXStatus(secondaryButtonTranslationKeyOrDetails !== undefined, dialogOptions),
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
+          // Lets ocx-dialog-content shrink with the dialog so its named, focusable region scrolls (WCAG 1.4.10)
+          contentStyle: { display: 'flex', flexDirection: 'column' },
           ...dialogOptions,
           focusOnShow: false,
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed

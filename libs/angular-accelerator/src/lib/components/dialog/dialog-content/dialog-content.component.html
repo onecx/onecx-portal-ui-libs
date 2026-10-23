@@ -1,4 +1,12 @@
-<div class="buttonDialogScrollableContent">
-  <ng-container #container></ng-container>
-  <ng-content></ng-content>
+<div
+  #scrollRegion
+  class="buttonDialogScrollableContent"
+  [attr.tabindex]="scrollable() ? 0 : null"
+  [attr.role]="scrollable() ? 'region' : null"
+  [attr.aria-label]="scrollable() ? ('OCX_BUTTON_DIALOG.CONTENT_REGION' | translate) : null"
+>
+  <div #scrollContent>
+    <ng-container #container></ng-container>
+    <ng-content></ng-content>
+  </div>
 </div>
