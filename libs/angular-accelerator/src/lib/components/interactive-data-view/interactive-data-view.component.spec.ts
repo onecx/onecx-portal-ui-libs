@@ -12,8 +12,6 @@ import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
 import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
-import { DataSortDirection } from '../../model/data-sort-direction'
-import * as loggerUtils from '../../utils/logger.utils'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
