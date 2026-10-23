@@ -631,6 +631,21 @@ describe('OcxTooltip', () => {
       expect(directive.getFocusableAncestor()).toBeNull()
     })
 
+    it('should default to a hoverable and persistent tooltip that Escape dismisses', fakeAsync(() => {
+      const directive = directiveOf('t-button')
+      expect(directive.getOption('autoHide')).toBe(false)
+      expect(directive.getOption('life')).toBeFalsy()
+      expect(directive.getOption('hideOnEscape')).toBe(true)
+
+      keyboardFocus(focusTarget('t-button'))
+      tick(60000)
+      expect(tooltipInDom()).toBeTruthy()
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+      tick(500)
+      expect(tooltipInDom()).toBeNull()
+    }))
+
     it('should keep the tooltip hoverable (pointer may move onto it)', fakeAsync(() => {
       keyboardFocus(focusTarget('t-button'))
       tick()

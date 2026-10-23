@@ -63,7 +63,7 @@ export interface Action {
   showCondition?: boolean
 }
 
-export interface ObjectDetailItem {
+interface ObjectDetailItemBase {
   label: string
   value?: string
   icon?: OptimusIcon
@@ -73,13 +73,33 @@ export interface ObjectDetailItem {
   valuePipeArgs?: string
   valueCssClass?: string
   actionItemIcon?: OptimusIcon
-  actionItemCallback?: () => void
   actionItemAriaLabel?: string
-  actionItemAriaLabelKey?: TranslationKey
   actionItemTooltipKey?: TranslationKey
   labelTooltipKey?: TranslationKey
   valueTooltipKey?: TranslationKey
 }
+
+/**
+ * Object detail without an action button.
+ */
+export interface ObjectDetailItemWithoutAction extends ObjectDetailItemBase {
+  actionItemCallback?: undefined
+  actionItemAriaLabelKey?: TranslationKey
+}
+
+/**
+ * Object detail with an icon-only action button (rendered when `actionItemIcon` is set as well).
+ * The button has no visible text, so `actionItemAriaLabelKey` is required: it is the accessible name of the button.
+ */
+export interface ObjectDetailItemWithAction extends ObjectDetailItemBase {
+  actionItemCallback: () => void
+  actionItemAriaLabelKey: TranslationKey
+}
+
+/**
+ * Object detail shown in the page header. Setting `actionItemCallback` requires `actionItemAriaLabelKey`.
+ */
+export type ObjectDetailItem = ObjectDetailItemWithoutAction | ObjectDetailItemWithAction
 
 export interface HomeItem {
   menuItem: MenuItem

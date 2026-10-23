@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { TranslateService } from '@ngx-translate/core'
 import 'jest-canvas-mock'
 import { firstValueFrom, of } from 'rxjs'
@@ -285,6 +286,16 @@ describe('GroupByCountDiagramComponent', () => {
 
     expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe('H4')
     expect(fixture.nativeElement.querySelector('.diagram-legend.custom-legends-container')).toBeTruthy()
+  })
+
+  it('should use the categorical palette by default and pass the sequential opt-out to the diagram', () => {
+    fixture.detectChanges()
+    const diagram = fixture.debugElement.query(By.directive(DiagramComponent)).componentInstance as DiagramComponent
+    expect(diagram.colorPalette()).toBe('categorical')
+
+    fixture.componentRef.setInput('colorPalette', 'sequential')
+    fixture.detectChanges()
+    expect(diagram.colorPalette()).toBe('sequential')
   })
 
   it('should emit diagramTypeChanged event when diagram type is changed', async () => {

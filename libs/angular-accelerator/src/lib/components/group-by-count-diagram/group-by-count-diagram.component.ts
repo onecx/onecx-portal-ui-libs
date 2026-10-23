@@ -15,7 +15,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ObjectUtils } from '../../utils/objectutils'
 import { toObservable } from '@angular/core/rxjs-interop'
-import { DiagramDataSelectedEvent } from '../diagram/diagram.component'
+import { DiagramColorPalette, DiagramDataSelectedEvent } from '../diagram/diagram.component'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -45,6 +45,10 @@ export class GroupByCountDiagramComponent {
    *  In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   fillMissingColors = input<boolean>(true)
+  /**
+   * Palette of the generated colors, see {@link DiagramColorPalette}. Defaults to `categorical`; set `sequential` to keep the pre-v9 gradient.
+   */
+  colorPalette = input<DiagramColorPalette>('categorical')
   supportedDiagramTypes = input<DiagramType[]>([])
 
   data = model<unknown[]>([])

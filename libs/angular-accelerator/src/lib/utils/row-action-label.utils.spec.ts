@@ -36,9 +36,9 @@ describe('row-action-label utils', () => {
 
     afterEach(() => warnSpy.mockRestore())
 
-    it('should warn for each action without labelKey', () => {
+    it('should warn for each action with an empty labelKey (JavaScript consumers or empty strings)', () => {
       const actions: DataAction[] = [
-        { id: 'a', permission: 'P' },
+        { labelKey: '', id: 'a', permission: 'P' },
         { id: 'b', labelKey: 'KEY', permission: 'P' },
         { labelKey: '', permission: 'P' },
       ]
@@ -49,7 +49,7 @@ describe('row-action-label utils', () => {
     })
 
     it('should warn without an action name if the action has no id', () => {
-      warnOnActionsWithoutLabelKey([{ permission: 'P' }])
+      warnOnActionsWithoutLabelKey([{ labelKey: '', permission: 'P' }])
       expect(warnSpy).toHaveBeenCalledTimes(1)
       expect(warnSpy.mock.calls[0][0]).toContain('Row action has no labelKey')
     })
@@ -59,7 +59,7 @@ describe('row-action-label utils', () => {
       const original = globalWithDevMode.ngDevMode
       globalWithDevMode.ngDevMode = false
       try {
-        warnOnActionsWithoutLabelKey([{ id: 'a', permission: 'P' }])
+        warnOnActionsWithoutLabelKey([{ labelKey: '', id: 'a', permission: 'P' }])
       } finally {
         globalWithDevMode.ngDevMode = original
       }
@@ -69,6 +69,16 @@ describe('row-action-label utils', () => {
     it('should not warn if all actions have a labelKey', () => {
       warnOnActionsWithoutLabelKey([{ labelKey: 'KEY', permission: 'P' }])
       expect(warnSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('DataAction type (v9: required labelKey)', () => {
+    it('should require a labelKey', () => {
+      const named: DataAction = { labelKey: 'EDIT', permission: 'P' }
+      // @ts-expect-error labelKey is required, it is the accessible name of the action button
+      const unnamed: DataAction = { permission: 'P' }
+
+      expect([named.labelKey, unnamed.labelKey]).toEqual(['EDIT', undefined])
     })
   })
 })

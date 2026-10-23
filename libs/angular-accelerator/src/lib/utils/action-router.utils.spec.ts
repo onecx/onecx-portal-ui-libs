@@ -42,6 +42,7 @@ describe('ActionRouterUtils', () => {
   describe('handleAction', () => {
     it('should navigate when DataAction has routerLink', async () => {
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST',
         routerLink: '/test-route'
@@ -55,6 +56,7 @@ describe('ActionRouterUtils', () => {
     it('should call callback when DataAction has no routerLink', async () => {
       const callbackFn = jest.fn()
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST',
         callback: callbackFn
@@ -68,6 +70,7 @@ describe('ActionRouterUtils', () => {
 
     it('should not call callback when DataAction has callback that is not a function', async () => {
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST',
         callback: 'not-a-function' as any
@@ -80,6 +83,7 @@ describe('ActionRouterUtils', () => {
 
     it('should do nothing when DataAction has no routerLink and no valid callback', async () => {
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST',
         callback: undefined as any
@@ -141,6 +145,7 @@ describe('ActionRouterUtils', () => {
     it('should call callback when DataAction has no routerLink', () => {
       const callbackFn = jest.fn()
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST_PERMISSION',
         callback: callbackFn
@@ -155,6 +160,7 @@ describe('ActionRouterUtils', () => {
 
     it('should not call callback when DataAction has callback that is not a function', () => {
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST_PERMISSION',
         callback: 'not-a-function' as any
@@ -167,6 +173,7 @@ describe('ActionRouterUtils', () => {
 
     it('should do nothing when DataAction has no routerLink and no valid callback', () => {
       const action: DataAction = {
+        labelKey: 'ACTION',
         id: 'test',
         permission: 'TEST_PERMISSION',
         callback: undefined as any

@@ -1,0 +1,125 @@
+= Accessibility breaking changes in UI libraries v9
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+UI libraries v9.0.0 turns several accessibility improvements that are optional or opt-in on v8 and v7 into requirements and defaults. They fix missing accessible names (WCAG 4.1.2), tooltip behaviour (WCAG 1.4.13) and chart color contrast (WCAG 1.4.11).
+
+[cols="1,2,1"]
+|===
+| Change | What you have to do | Type
+
+| <<data-action-label-key,Data action `labelKey` is required>> | Add a `labelKey` to every `DataAction` | Compile error
+| <<object-detail-action-name,Page-header `actionItemAriaLabelKey` is required with an action>> | Add an `actionItemAriaLabelKey` to every object detail with `actionItemCallback` | Compile error
+| <<diagram-palette,Diagram default palette is categorical>> | Nothing, or opt out with `colorPalette="sequential"` | Visual change
+| <<tooltip-defaults,Tooltips are hoverable and persistent>> | Nothing, or opt out per tooltip | Behaviour change
+| <<legacy-static-ids,Legacy static element ids>> | Nothing yet, decision pending | None in v9.0.0
+|===
+
+[#data-action-label-key]
+== Data action `labelKey` is required
+
+`DataAction.labelKey` (used by `additionalActions` of `ocx-data-table`, `ocx-data-list-grid`, `ocx-data-view` and `ocx-interactive-data-view`) changed from optional to required. Icon-only row actions are named by this key (e.g. "Edit: Product A"); without it they were announced only as a generic "Action".
+
+Before:
+
+[source,typescript]
+----
+additionalActions: DataAction[] = [{ id: 'edit', icon: 'pi pi-pencil', permission: 'PRODUCT#EDIT', callback: (row) => this.edit(row) }]
+----
+
+After:
+
+[source,typescript]
+----
+additionalActions: DataAction[] = [
+  { id: 'edit', labelKey: 'PRODUCT.ACTIONS.EDIT', icon: 'pi pi-pencil', permission: 'PRODUCT#EDIT', callback: (row) => this.edit(row) },
+]
+----
+
+Use a non-empty key with a translation. An empty key still renders the generic fallback name and logs a warning in dev mode.
+
+[#object-detail-action-name]
+== Page-header `actionItemAriaLabelKey` is required with an action
+
+`ObjectDetailItem` is now a union of `ObjectDetailItemWithoutAction` and `ObjectDetailItemWithAction`. As soon as an object detail sets `actionItemCallback`, it must set `actionItemAriaLabelKey`, the accessible name of the icon-only action button. Object details without an action are unchanged.
+
+Before:
+
+[source,typescript]
+----
+{ label: 'Venue', value: 'AIE Munich', actionItemIcon: OpenngIcons.COPY, actionItemCallback: () => this.copy() }
+----
+
+After:
+
+[source,typescript]
+----
+{
+  label: 'Venue',
+  value: 'AIE Munich',
+  actionItemIcon: OpenngIcons.COPY,
+  actionItemCallback: () => this.copy(),
+  actionItemAriaLabelKey: 'EVENT.DETAILS.COPY_VENUE',
+}
+----
+
+`actionItemAriaLabelKey` accepts a `TranslationKey`, so `{ key, parameters }` works as well. `actionItemAriaLabel` and `actionItemTooltipKey` are still used as fallbacks when the key translates to an empty string. If you implemented the old `ObjectDetailItem` interface in a class, implement `ObjectDetailItemWithAction` or `ObjectDetailItemWithoutAction` instead.
+
+[#diagram-palette]
+== Diagram default palette is categorical
+
+`ocx-diagram` and `ocx-group-by-count-diagram` have a new input `colorPalette` (`'categorical' | 'sequential'`). The default is `categorical`: generated colors use distinct hues (d3 Tableau10, repeated after ten entries) instead of the previous cool gradient, so neighbouring segments differ by hue and not only by lightness. With both palettes every generated color is adjusted at runtime so it reaches at least 3:1 against the theme background `--content-bg-color` (mixed towards `--text-color`), and segments are separated by a border in the background color.
+
+Colors you pass in `backgroundColor` (or `colors` of `ocx-group-by-count-diagram`) are not changed.
+
+*Opt-out:* keep the pre-v9 gradient, e.g. for data with a natural order:
+
+[source,html]
+----
+<ocx-group-by-count-diagram colorPalette="sequential" ...></ocx-group-by-count-diagram>
+----
+
+[#tooltip-defaults]
+== Tooltips are hoverable and persistent
+
+`ocxTooltip` tooltips now default to:
+
+* *hoverable*: the pointer can move onto the tooltip without it disappearing (`autoHide: false`);
+* *persistent*: the tooltip stays until the pointer leaves the element and the tooltip, keyboard focus leaves the element, or the user presses Escape. There is no timeout (`life` is not set);
+* *keyboard accessible*: it is shown on keyboard focus and referenced through `aria-describedby` while visible.
+
+*Opt-outs* (use only where the tooltip would cover content that the user needs, and keep Escape dismissal):
+
+* restore the auto-hide behaviour with `[autoHide]="true"` or `[tooltipOptions]="{ autoHide: true }"`; an explicit value always wins over the default;
+* a timed hide with `[life]="<ms>"` is possible but makes the tooltip non-persistent and fails WCAG 1.4.13; avoid it for informative tooltips.
+
+[#legacy-static-ids]
+== Legacy static element ids
+
+[CAUTION]
+====
+*Decision pending.* Whether v9 GA keeps the legacy static element ids has not been decided yet (owner: UI libraries maintainers together with UX). This section is updated once the decision is recorded.
+====
+
+*Current behaviour (unchanged in this release):* components with fixed element ids (for example `ocx-search-header`, `ocx-page-header`, `ocx-data-table`, `ocx-dialog-footer`) give the *first* live instance on a page its legacy id (e.g. `searchButton`, `page-header`) and every further instance a suffix (`searchButton-1`, `searchButton-2`, ...). Ids are therefore unique on the page, and existing e2e tests and harnesses that select the legacy id of a single instance keep working.
+
+*Options:*
+
+. *Keep legacy ids for the first instance* (current behaviour). No migration; ids still depend on render order when several instances exist.
+. *Remove legacy ids* and suffix every instance. Fully predictable, instance-scoped ids, but breaks every consumer selector and e2e test that uses a legacy id.
+
+*Recommendation:* keep the legacy ids for v9 GA (option 1), mark them as deprecated for selectors, and point consumers to the component harnesses (`@onecx/angular-accelerator/testing`), which already resolve the instance-scoped ids. Revisit removal with the Angular Material migration (v10), where the component templates change anyway.
+
+[#release-note]
+== Release note
+
+BREAKING CHANGES (UI libraries v9.0.0, accessibility):
+
+* `DataAction.labelKey` is required.
+* `ObjectDetailItem` with `actionItemCallback` requires `actionItemAriaLabelKey`; `ObjectDetailItem` is now a union type (`ObjectDetailItemWithAction | ObjectDetailItemWithoutAction`).
+* Diagrams use a categorical, contrast-checked palette by default (`colorPalette="sequential"` restores the gradient).
+* `ocxTooltip` is hoverable and persistent by default (`autoHide` opt-out).

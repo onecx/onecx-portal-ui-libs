@@ -774,6 +774,7 @@ describe('DataTableComponent', () => {
     it('should assign id to additional action button', async () => {
       component.additionalActions = ([
         {
+          labelKey: 'ACTION',
           permission: 'VIEW',
           callback: () => {
             console.log('custom action clicked')
@@ -849,6 +850,7 @@ describe('DataTableComponent', () => {
 
       component.additionalActions = ([
         {
+          labelKey: 'ACTION',
           permission: 'ADDITIONAL#VIEW',
           callback: () => {
             console.log('custom action clicked')
@@ -904,6 +906,7 @@ describe('DataTableComponent', () => {
 
       component.additionalActions = ([
         {
+          labelKey: 'ACTION',
           permission: ['ADDITIONAL#VIEW1', 'ADDITIONAL#VIEW2'],
           callback: () => {
             console.log('custom action clicked')
@@ -964,6 +967,7 @@ describe('DataTableComponent', () => {
         jest.spyOn(console, 'log')
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'routerLinkAction',
             routerLink: '/inline',
             permission: 'VIEW',
@@ -986,6 +990,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'routerLinkAction',
             routerLink: '/overflow',
             permission: 'VIEW',
@@ -1012,6 +1017,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'functionRouterLink',
             routerLink: routerLinkFunction,
             permission: 'VIEW',
@@ -1031,6 +1037,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'promiseFunctionRouterLink',
             routerLink: routerLinkPromiseFunction,
             permission: 'VIEW',
@@ -1049,6 +1056,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'promiseRouterLink',
             routerLink: Promise.resolve('/promise-link'),
             permission: 'VIEW',
@@ -1067,6 +1075,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'overflowFunctionRouterLink',
             routerLink: routerLinkFunction,
             permission: 'VIEW',
@@ -1090,6 +1099,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'routerLinkWithCallback',
             callback: callbackSpy,
             routerLink: '/prioritized-link',
@@ -1110,6 +1120,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'overflowRouterLinkWithCallback',
             callback: callbackSpy,
             routerLink: '/overflow-prioritized',
@@ -1139,6 +1150,7 @@ describe('DataTableComponent', () => {
 
         component.additionalActions = ([
           {
+            labelKey: 'ACTION',
             id: 'callbackOnlyAction',
             callback: callbackSpy,
             permission: 'VIEW',
@@ -1233,11 +1245,11 @@ describe('DataTableComponent', () => {
       expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
     })
 
-    it('should never render an empty aria-label or title for actions without labelKey and warn', () => {
+    it('should never render an empty aria-label or title for actions with an empty labelKey and warn', () => {
       userServiceMockPublish(['ADDITIONAL#VIEW', 'OVERFLOW#VIEW'])
       component.additionalActions = [
-        { id: 'inline', permission: 'ADDITIONAL#VIEW', callback: () => undefined },
-        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+        { labelKey: '', id: 'inline', permission: 'ADDITIONAL#VIEW', callback: () => undefined },
+        { labelKey: '', id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
       ]
       fixture.detectChanges()
 
@@ -1247,10 +1259,10 @@ describe('DataTableComponent', () => {
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('has no labelKey'))
     })
 
-    it('should not render an empty overflow menu item for actions without labelKey', async () => {
+    it('should not render an empty overflow menu item for actions with an empty labelKey', async () => {
       userServiceMockPublish(['OVERFLOW#VIEW'])
       component.additionalActions = [
-        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+        { labelKey: '', id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
       ]
       fixture.detectChanges()
 
@@ -2421,6 +2433,7 @@ describe('DataTableComponent', () => {
     it('should return true when additionalActions is non-empty', () => {
       component.additionalActions = ([
         {
+          labelKey: 'ACTION',
           permission: 'VIEW',
           callback: () => {
             // empty callback for testing
@@ -2433,6 +2446,7 @@ describe('DataTableComponent', () => {
     it('should return false when additionalActions becomes empty', () => {
       component.additionalActions = ([
         {
+          labelKey: 'ACTION',
           permission: 'VIEW',
           callback: () => {
             // empty callback for testing

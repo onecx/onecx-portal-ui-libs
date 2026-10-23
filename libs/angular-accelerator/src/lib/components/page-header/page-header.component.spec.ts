@@ -902,4 +902,24 @@ describe('PageHeaderComponent', () => {
       expect(wrappers[1].hasAttribute('aria-disabled')).toBe(false)
     })
   })
+
+  describe('ObjectDetailItem type (v9: required actionItemAriaLabelKey)', () => {
+    it('should require actionItemAriaLabelKey for an object detail with an action button', () => {
+      const withAction: ObjectDetailItem = {
+        label: 'Venue',
+        actionItemIcon: OpenngIcons.COPY,
+        actionItemCallback: () => undefined,
+        actionItemAriaLabelKey: 'COPY_VENUE',
+      }
+      // @ts-expect-error actionItemAriaLabelKey is required as soon as actionItemCallback is set
+      const withoutName: ObjectDetailItem = {
+        label: 'Venue',
+        actionItemIcon: OpenngIcons.COPY,
+        actionItemCallback: () => undefined,
+      }
+      const withoutAction: ObjectDetailItem = { label: 'Status', value: 'Confirmed' }
+
+      expect([withAction, withoutName, withoutAction].map((item) => item.label)).toEqual(['Venue', 'Venue', 'Status'])
+    })
+  })
 })

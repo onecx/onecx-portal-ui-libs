@@ -32,6 +32,7 @@ The changes fall into a few groups:
 * **Library and toolchain versions.** Update the OneCX UI libraries to **v9.0.0** and the toolchain Angular 22 requires (Nx, TypeScript, and Node). The step-by-step guide lists the exact versions to check.
 * **A few public names change.** To reflect the new dependency honestly, a small number of public entry points are renamed. The most visible are the theme entry point (the PrimeNG entry point is renamed to its Optimus counterpart) and the PrimeNG wrapper module, which is renamed in place. These are listed as breaking changes in the v9.0.0 release notes.
 * **A component API change.** One confirmed API change affects the dialog component: its `header` input is now a signal. The step-by-step guide covers how to adjust this.
+* **Accessibility defaults and required names.** Data action `labelKey` and the page-header `actionItemAriaLabelKey` are required, the diagram uses a categorical palette and tooltips are hoverable and persistent by default. See xref:migrations/angular-22/accessibility-breaking-changes.adoc[Accessibility breaking changes].
 * **Change detection is now explicit.** The official Angular migration makes components opt into `ChangeDetectionStrategy.OnPush` explicitly where they previously had none. Behavior is unchanged; the intent is simply to make it explicit.
 
 [#compatibility]

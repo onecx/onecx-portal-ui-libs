@@ -148,6 +148,7 @@ const demoFields: ObjectDetailItem[] = [
     labelTooltipKey: 'Label Tooltip',
     actionItemIcon: OpenngIcons.COPY,
     actionItemTooltipKey: 'Copy to clipboard',
+    actionItemAriaLabelKey: 'Copy venue to clipboard',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -165,7 +166,7 @@ const demoFields: ObjectDetailItem[] = [
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
-    actionItemAriaLabel: 'Copy to clipboard',
+    actionItemAriaLabelKey: 'Copy start date to clipboard',
   },
   {
     label: 'End Date',
@@ -516,7 +517,7 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
     icon: OpenngIcons.CALENDAR,
     actionItemIcon: OpenngIcons.COPY,
     actionItemTooltipKey: 'Simple string tooltip for action',
-    actionItemAriaLabel: 'Simple string aria label for action',
+    actionItemAriaLabelKey: 'Simple string aria label key for action',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },
@@ -529,10 +530,11 @@ const demoFieldsWithTranslationKeys: ObjectDetailItem[] = [
     valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'Confirmed' } },
   },
   {
-    label: 'Fallback Test',
+    label: 'No Tooltip Test',
     value: 'No tooltips provided',
     icon: OpenngIcons.INFO_CIRCLE,
     actionItemIcon: OpenngIcons.COPY,
+    actionItemAriaLabelKey: 'Copy without tooltip',
     actionItemCallback: () => {
       console.log('Copy to clipboard')
     },

@@ -47,6 +47,16 @@ export interface DiagramLegendItem {
   color: string | undefined
 }
 
+/**
+ * Palette of the colors the diagram generates for data without a `backgroundColor`.
+ *
+ * - `categorical` (default since v9): distinct hues (d3 Tableau10), so neighbouring segments are told apart by hue rather than by lightness.
+ * - `sequential`: the cool gradient used before v9 (opt-out), for data with a natural order.
+ *
+ * With both palettes every generated color is adjusted to the theme so it reaches at least 3:1 against `--content-bg-color` (WCAG 1.4.11).
+ */
+export type DiagramColorPalette = 'categorical' | 'sequential'
+
 export type ChartType = 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'
 
 const allDiagramTypes: DiagramLayouts[] = [
@@ -97,6 +107,10 @@ export class DiagramComponent implements OnDestroy {
    * Setting this property to false will result in using the provided colors only if every data item has one. In the scenario where at least one item does not have a color set, diagram will generate all colors.
    */
   fillMissingColors = input<boolean>(true)
+  /**
+   * Palette of the generated colors, see {@link DiagramColorPalette}. Defaults to `categorical`; set `sequential` to keep the pre-v9 gradient.
+   */
+  colorPalette = input<DiagramColorPalette>('categorical')
 
   diagramType = model<DiagramType>(DiagramType.PIE)
 
@@ -204,12 +218,24 @@ export class DiagramComponent implements OnDestroy {
       return dataColors
     } else if (this.fillMissingColors()) {
       // it is intended to generate more colors than needed, so interval for generated colors is same as amount of items on the diagram
-      const interpolatedColors = interpolateColors(dataColors.length, colorScale, colorRangeInfo)
+      const interpolatedColors = this.paletteColors(dataColors.length, colorScale, colorRangeInfo)
       let interpolatedIndex = 0
       return dataColors.map((color) => (color === undefined ? interpolatedColors[interpolatedIndex++] : color))
     } else {
-      return interpolateColors(data.length, colorScale, colorRangeInfo)
+      return this.paletteColors(data.length, colorScale, colorRangeInfo)
     }
+  }
+
+  private paletteColors(
+    amountOfData: number,
+    colorScale: (point: number) => string,
+    colorRangeInfo: { colorStart: number; colorEnd: number; useEndAsStart: boolean }
+  ): string[] {
+    const colors =
+      this.colorPalette() === 'sequential'
+        ? ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo)
+        : categoricalColors(amountOfData)
+    return withThemeContrast(colors)
   }
 
   generateTotal(data: DiagramData[]): number {
@@ -245,11 +271,15 @@ export class DiagramComponent implements OnDestroy {
     })
   }
 }
+// Distinct hues, repeated when there are more entries than hues (segments stay separated by a background border)
+function categoricalColors(amountOfData: number): string[] {
+  const scheme = d3.schemeTableau10
+  return Array.from({ length: amountOfData }, (_, index) => scheme[index % scheme.length])
+}
+
 // Generated colors are adjusted to the theme so every segment reaches 3:1 against the background (WCAG 1.4.11)
-function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any): string[] {
+function withThemeContrast(colors: string[]): string[] {
   const background = getThemeColor('--content-bg-color')
   const towards = getThemeColor('--text-color')
-  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo).map((color: string) =>
-    ensureGraphicsContrast(color, background, towards)
-  )
+  return colors.map((color) => ensureGraphicsContrast(color, background, towards))
 }

@@ -11,6 +11,7 @@ import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optim
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
+import * as d3 from 'd3-scale-chromatic'
 import { contrastRatio, MIN_GRAPHICS_CONTRAST, parseColor, Rgb } from '../../utils/diagram-contrast-utils'
 import { DiagramComponent, DiagramDataSelectedEvent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
@@ -248,9 +249,37 @@ describe('DiagramComponent', () => {
     expect(await diagramTypeSelectButtonOptions[1].hasClass('p-togglebutton-checked')).toEqual(true)
   })
 
-  it('should interpolate colors by default', () => {
+  it('should use the categorical palette by default', () => {
+    const interpolateSpy = jest.spyOn(ColorUtils, 'interpolateColors')
+
+    fixture.detectChanges()
+
+    expect(component.colorPalette()).toBe('categorical')
+    expect(interpolateSpy).not.toHaveBeenCalled()
+    expect(component.chartData()?.datasets).toEqual([
+      {
+        data: diagramData.map((d) => d.value),
+        backgroundColor: d3.schemeTableau10.slice(0, diagramData.length),
+      },
+    ])
+  })
+
+  it('should repeat the categorical hues when there are more entries than hues', () => {
+    const amount = d3.schemeTableau10.length + 2
+    fixture.componentRef.setInput(
+      'data',
+      Array.from({ length: amount }, (_, i) => ({ label: `segment${i}`, value: i + 1 }))
+    )
+    fixture.detectChanges()
+
+    const colors = (component.chartData()?.datasets[0] as unknown as { backgroundColor: string[] }).backgroundColor
+    expect(colors.slice(-2)).toEqual(d3.schemeTableau10.slice(0, 2))
+  })
+
+  it('should interpolate colors with the sequential palette (opt-out)', () => {
     const mockResult = diagramData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
 
     fixture.detectChanges()
 
@@ -283,6 +312,7 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
     fixture.componentRef.setInput('fillMissingColors', false)
 
     fixture.componentRef.setInput('data', mockData)
@@ -302,6 +332,7 @@ describe('DiagramComponent', () => {
     ]
     const mockResult = mockData.map((v, i) => i.toString())
     jest.spyOn(ColorUtils, 'interpolateColors').mockReturnValue(mockResult)
+    fixture.componentRef.setInput('colorPalette', 'sequential')
 
     fixture.componentRef.setInput('data', mockData)
     fixture.detectChanges()
@@ -310,6 +341,21 @@ describe('DiagramComponent', () => {
       {
         data: [1, 2],
         backgroundColor: ['blue', '0'],
+      },
+    ])
+  })
+
+  it('should fill missing colors from the categorical palette', () => {
+    fixture.componentRef.setInput('data', [
+      { label: 'test0', value: 1, backgroundColor: 'blue' },
+      { label: 'test1', value: 2 },
+    ])
+    fixture.detectChanges()
+
+    expect(component.chartData()?.datasets).toEqual([
+      {
+        data: [1, 2],
+        backgroundColor: ['blue', d3.schemeTableau10[0]],
       },
     ])
   })
@@ -482,9 +528,11 @@ describe('DiagramComponent', () => {
         document.documentElement.style.removeProperty('--text-color')
       })
 
-      it.each(themes)(
-        'should give 12 generated segments at least 3:1 against the $name background and separate them by a background border',
-        ({ background, text }) => {
+      const palettes = ['categorical', 'sequential'] as const
+      it.each(themes.flatMap((theme) => palettes.map((palette) => ({ ...theme, palette }))))(
+        'should give 12 generated $palette segments at least 3:1 against the $name background and separate them by a background border',
+        ({ background, text, palette }) => {
+          fixture.componentRef.setInput('colorPalette', palette)
           document.documentElement.style.setProperty('--content-bg-color', background)
           document.documentElement.style.setProperty('--text-color', text)
           fixture.componentRef.setInput(

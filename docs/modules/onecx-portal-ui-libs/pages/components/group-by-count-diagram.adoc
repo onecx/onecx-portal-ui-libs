@@ -39,6 +39,7 @@ To find out how to work with the GroupByCountDiagram component, please visit the
 | `columnField` | `string` | `''` | Defines which column data field to be displayed.
 | `column` | `<<diagram-column, DiagramColumn>>` | - | Defines which columns and its type to be displayed.
 | `fillMissingColors` | `boolean` | `true` | Determines if diagram should generate the colors for the data that does not have any set. Set to false will result in using the provided colors only if every data item has one. When at least one item does not have a color set, diagram will generate all colors.
+| `colorPalette` | `'categorical' \| 'sequential'` | `'categorical'` | Palette of the generated colors. `categorical` (default since v9) uses distinct hues; `sequential` keeps the pre-v9 gradient. Generated colors are adjusted to reach at least 3:1 against `--content-bg-color`.
 | `colors` | `Record<string, string>` | `{}` | Defines custom color for data items.
 | `chartTitleKey` | `string` | `''` | Translation key for the title rendered above the chart as a heading.
 | `titleHeadingLevel` | `number` | `2` | Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the heading outline of the page.
