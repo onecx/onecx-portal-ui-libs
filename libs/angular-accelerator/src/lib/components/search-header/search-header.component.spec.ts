@@ -23,6 +23,7 @@ import { PageHeaderComponent } from '../page-header/page-header.component'
 import { SearchHeaderComponent } from './search-header.component'
 import { of } from 'rxjs'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 import { PageHeaderHarness, SearchHeaderHarness } from '@onecx/angular-accelerator/testing'
 
 describe('SearchHeaderComponent', () => {
@@ -134,36 +135,108 @@ describe('SearchHeaderComponent', () => {
   })
 
   describe('live announcements', () => {
-    it('should announce loading when loading is true', async () => {
-      const spy = jest.spyOn(liveAnnouncer, 'announce')
-      fixture.componentRef.setInput('loading', true)
+    let spy: jest.SpyInstance
+    let resultsAnnouncement: ResultsAnnouncementService
 
-      fixture.detectChanges()
-      await fixture.whenStable()
-
-      expect(spy).toHaveBeenCalledWith('Searching...', 'polite')
+    beforeEach(() => {
+      spy = jest.spyOn(liveAnnouncer, 'announce').mockResolvedValue()
+      resultsAnnouncement = TestBed.inject(ResultsAnnouncementService)
     })
 
-    it('should announce no results when loading is false and searchResultsCount is 0', async () => {
-      const spy = jest.spyOn(liveAnnouncer, 'announce')
-      fixture.componentRef.setInput('loading', false)
-      fixture.componentRef.setInput('searchResultsCount', 0)
-
+    async function render() {
       fixture.detectChanges()
       await fixture.whenStable()
+    }
 
+    it('should announce nothing at page load', async () => {
+      const newFixture = TestBed.createComponent(SearchHeaderComponent)
+      newFixture.componentRef.setInput('loading', false)
+      newFixture.componentRef.setInput('searchResultsCount', 5)
+      newFixture.detectChanges()
+      await newFixture.whenStable()
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should not announce loading or result changes without a search', async () => {
+      fixture.componentRef.setInput('loading', true)
+      await render()
+      fixture.componentRef.setInput('loading', false)
+      fixture.componentRef.setInput('searchResultsCount', 3)
+      await render()
+
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('should announce exactly one message with the count after a search with loading', async () => {
+      fixture.componentRef.setInput('searchResultsCount', 0)
+      await render()
+
+      component.onSearchClicked()
+      fixture.componentRef.setInput('loading', true)
+      await render()
+      fixture.componentRef.setInput('searchResultsCount', 5)
+      fixture.componentRef.setInput('loading', false)
+      await render()
+      fixture.componentRef.setInput('searchResultsCount', 7)
+      await render()
+
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(spy).toHaveBeenCalledWith('5 results found', 'polite')
+    })
+
+    it('should announce no results once when a search returns no results', async () => {
+      fixture.componentRef.setInput('searchResultsCount', 5)
+      await render()
+
+      component.onSearchClicked()
+      fixture.componentRef.setInput('searchResultsCount', 0)
+      await render()
+
+      expect(spy).toHaveBeenCalledTimes(1)
       expect(spy).toHaveBeenCalledWith('No results found', 'polite')
     })
 
-    it('should announce results found when loading is false and searchResultsCount is 5', async () => {
-      const spy = jest.spyOn(liveAnnouncer, 'announce')
-      fixture.componentRef.setInput('loading', false)
-      fixture.componentRef.setInput('searchResultsCount', 5)
+    it('should announce once per search', async () => {
+      fixture.componentRef.setInput('searchResultsCount', 0)
+      await render()
 
-      fixture.detectChanges()
-      await fixture.whenStable()
+      component.onSearchClicked()
+      fixture.componentRef.setInput('searchResultsCount', 2)
+      await render()
+      component.onSearchClicked()
+      fixture.componentRef.setInput('searchResultsCount', 4)
+      await render()
 
-      expect(spy).toHaveBeenCalledWith('5 results found', 'polite')
+      expect(spy).toHaveBeenCalledTimes(2)
+      expect(spy).toHaveBeenNthCalledWith(1, '2 results found', 'polite')
+      expect(spy).toHaveBeenNthCalledWith(2, '4 results found', 'polite')
+    })
+
+    it('should ask the data component to announce when it has no result count', async () => {
+      component.onSearchClicked()
+      fixture.componentRef.setInput('searchResultsCount', 4)
+      await render()
+
+      expect(spy).not.toHaveBeenCalled()
+      expect(resultsAnnouncement.consumeSearchResultsAnnouncementRequest()).toBe(true)
+    })
+
+    it('should not ask the data component to announce when it has a result count', async () => {
+      fixture.componentRef.setInput('searchResultsCount', 0)
+      await render()
+
+      component.onSearchClicked()
+
+      expect(resultsAnnouncement.consumeSearchResultsAnnouncementRequest()).toBe(false)
+    })
+
+    it('should register as search header while it exists', () => {
+      expect(resultsAnnouncement.searchHeaderPresent()).toBe(true)
+
+      fixture.destroy()
+
+      expect(resultsAnnouncement.searchHeaderPresent()).toBe(false)
     })
   })
 

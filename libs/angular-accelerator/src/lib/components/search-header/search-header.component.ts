@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Output,
@@ -37,6 +38,7 @@ import { Action } from '../page-header/page-header.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 import { TranslateService } from '@ngx-translate/core'
 
 export interface SearchHeaderComponentState {
@@ -67,6 +69,8 @@ export interface SearchConfigData {
 export class SearchHeaderComponent {
   private readonly translate = inject(TranslateService)
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly resultsAnnouncement = inject(ResultsAnnouncementService)
+  private searchResultsAnnouncementPending = false
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
@@ -162,6 +166,7 @@ export class SearchHeaderComponent {
       })
     })
 
+    this.resultsAnnouncement.registerSearchHeader(inject(DestroyRef))
     this.announceSearchResults()
 
     const configurationService = inject(ConfigurationService)
@@ -186,6 +191,7 @@ export class SearchHeaderComponent {
   }
 
   onSearchClicked() {
+    this.prepareSearchResultsAnnouncement()
     this.searched.emit()
   }
 
@@ -231,22 +237,34 @@ export class SearchHeaderComponent {
     )
   }
 
+  /**
+   * Without a result count, the data component announces the next new data instead.
+   */
+  private prepareSearchResultsAnnouncement() {
+    if (this.searchResultsCount() === null) {
+      this.resultsAnnouncement.requestSearchResultsAnnouncement()
+    } else {
+      this.searchResultsAnnouncementPending = true
+    }
+  }
+
+  /**
+   * Announces the result count once after each search, when loading has finished
+   * or the count has changed. Nothing is announced at page load.
+   */
   private announceSearchResults() {
     effect(() => {
-      let announmentKey = ''
-      if (this.loading()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.SEARCHING'
-      } else if (!this.loading() && !this.searchResultsCount()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
-      } else {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+      const loading = this.loading()
+      const count = this.searchResultsCount()
+      if (loading || !this.searchResultsAnnouncementPending) {
+        return
       }
+      this.searchResultsAnnouncementPending = false
+      const announcementKey = count
+        ? 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+        : 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
 
-      firstValueFrom(
-        this.translate.get(announmentKey, {
-          count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null,
-        })
-      ).then((translatedText: string) => {
+      firstValueFrom(this.translate.get(announcementKey, { count: count || null })).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText, 'polite')
       })
     })

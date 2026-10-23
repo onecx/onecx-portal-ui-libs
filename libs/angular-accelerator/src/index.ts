@@ -43,6 +43,7 @@ export * from './lib/services/breadcrumb.service'
 export * from './lib/services/portal-dialog.service'
 export * from './lib/services/export-data.service'
 export * from './lib/services/data-view-state.service'
+export * from './lib/services/results-announcement.service'
 
 // pipes
 export * from './lib/pipes/dynamic.pipe'
