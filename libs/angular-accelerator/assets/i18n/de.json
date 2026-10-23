@@ -217,6 +217,9 @@
     "EMPTY_ARIA_LABEL": "Diagramm ohne Daten",
     "SUM": "Gesamtanzahl",
     "NO_DATA": "Es sind keine Daten vorhanden",
+    "LEGEND": {
+      "ARIA_LABEL": "Diagrammlegende"
+    },
     "SELECT_BUTTON": {
       "ARIA_LABEL": "Diagrammtyp auswählen"
     },
