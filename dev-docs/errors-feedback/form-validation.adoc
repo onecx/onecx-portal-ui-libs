@@ -42,6 +42,19 @@ The label association stays in the template: every field needs a visible `<label
 
 Submitting an empty form shows the error next to every invalid field and focuses the first one.
 
+`ngSubmit` is emitted for invalid forms as well, so `save()` must check the validity itself before sending anything:
+
+[source,typescript]
+----
+save() {
+  this.errors = []
+  if (!this.form.valid) return // ocxForm shows the field errors and focuses the first invalid field
+  this.api.save(this.form.value).subscribe({
+    error: () => (this.errors = [{ message: 'MY_APP.SAVE_FAILED' }]),
+  })
+}
+----
+
 == Forms in dialogs
 
 The dialog buttons are rendered by the dialog footer and do not submit the form. Implement `DialogButtonClicked`, call `validate()` and return `false` to keep the dialog open. A failed request (HTTP 400) must be caught and mapped to `false` as well, with the failure written to the summary inside the dialog. The component instance stays alive while the dialog is open, so the user's input is preserved.

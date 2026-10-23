@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, input } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, inject, input, viewChild } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 
 export interface FormErrorSummaryItem {
@@ -23,7 +23,7 @@ export interface FormErrorSummaryItem {
   standalone: true,
   imports: [TranslateModule],
   changeDetection: ChangeDetectionStrategy.Eager,
-  template: `<div class="ocx-form-error-summary" role="alert" tabindex="-1">
+  template: `<div #region class="ocx-form-error-summary" role="alert" tabindex="-1">
     @if (errors().length > 0) {
       <p class="ocx-form-error-summary-title">{{ heading() | translate }}</p>
       <ul>
@@ -44,16 +44,20 @@ export interface FormErrorSummaryItem {
   styles: [
     `
       .ocx-form-error-summary {
-        color: var(--ocx-form-error-color, #b3261e);
+        color: var(--p-onecx-error-color, var(--text-color));
       }
-      .ocx-form-error-summary:focus {
-        outline: none;
+      .ocx-form-error-summary:focus-visible {
+        /* Theme focus ring; never remove the focus indicator */
+        outline: var(--p-focus-ring-width, 2px) var(--p-focus-ring-style, solid)
+          var(--p-focus-ring-color, var(--primary-color, currentColor));
+        outline-offset: var(--p-focus-ring-offset, 2px);
       }
     `,
   ],
 })
 export class FormErrorSummaryComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
+  private readonly region = viewChild.required<ElementRef<HTMLElement>>('region')
 
   /** The errors to report. An empty list renders an empty alert region. */
   errors = input<FormErrorSummaryItem[]>([])
@@ -62,7 +66,7 @@ export class FormErrorSummaryComponent {
 
   /** Moves focus to the alert region, e.g. after a failed save. */
   focus(): void {
-    this.host.nativeElement.querySelector<HTMLElement>('[role="alert"]')?.focus()
+    this.region().nativeElement.focus()
   }
 
   focusField(event: Event, fieldId: string): void {

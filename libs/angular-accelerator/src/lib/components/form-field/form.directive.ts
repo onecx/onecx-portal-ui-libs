@@ -26,15 +26,17 @@ import type { OcxFormFieldDirective } from './form-field.directive'
 })
 export class OcxFormDirective {
   private readonly injector = inject(Injector)
-  private readonly form =
-    inject(FormGroupDirective, { optional: true, self: true }) ?? inject(NgForm, { optional: true, self: true })
+  private readonly form: FormGroupDirective | NgForm
 
   private readonly fields = new Set<OcxFormFieldDirective>()
 
   constructor() {
-    if (!this.form) {
+    const form =
+      inject(FormGroupDirective, { optional: true, self: true }) ?? inject(NgForm, { optional: true, self: true })
+    if (!form) {
       throw new Error('ocxForm can only be used on a form with [formGroup] or ngForm')
     }
+    this.form = form
     this.form.ngSubmit.pipe(takeUntilDestroyed()).subscribe(() => {
       this.validate()
     })
@@ -55,8 +57,8 @@ export class OcxFormDirective {
    * @returns true if the form is valid
    */
   validate(): boolean {
-    const control = this.form?.control
-    if (!control || control.valid || control.disabled) {
+    const control = this.form.control
+    if (control.valid || control.disabled) {
       return true
     }
     control.markAllAsTouched()

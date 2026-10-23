@@ -36,7 +36,12 @@ const FALLBACK_ERROR_KEY = 'OCX_FORM_FIELD.ERROR.INVALID'
   styles: [
     `
       .ocx-form-field-error {
-        color: var(--ocx-form-error-color, #b3261e);
+        color: var(--p-onecx-error-color, var(--text-color));
+      }
+      /* Not by colour alone: a warning sign marks the error text (hidden from assistive technology) */
+      .ocx-form-field-error > span::before {
+        content: '\\26A0\\FE0E\\00A0';
+        content: '\\26A0\\FE0E\\00A0' / '';
       }
     `,
   ],

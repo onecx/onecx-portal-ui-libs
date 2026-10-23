@@ -4,6 +4,8 @@ import { AbstractControl, FormControl, FormGroupDirective, NgControl, NgForm } f
 import { OcxFormDirective } from './form.directive'
 
 let nextFieldId = 0
+/** Control with an empty value, used to probe whether the validators of a control include `required` */
+const EMPTY_CONTROL = new FormControl(null)
 
 /**
  * Exposes the validation state of an Angular form control programmatically on the input element:
@@ -41,12 +43,16 @@ export class OcxFormFieldDirective implements AfterViewInit, OnDestroy {
   private readonly staticDescribedBy = this.host.nativeElement.getAttribute('aria-describedby')
 
   /** Id of the input element, generated if the element has none. */
-  readonly fieldId: string =
-    this.host.nativeElement.id || (this.host.nativeElement.id = `ocx-form-field-${nextFieldId++}`)
+  readonly fieldId: string
   /** Id of the element holding the error text, to be rendered by `<ocx-form-field-error>`. */
-  readonly errorId = `${this.fieldId}-error`
+  readonly errorId: string
 
   constructor() {
+    if (!this.host.nativeElement.id) {
+      this.host.nativeElement.id = `ocx-form-field-${nextFieldId++}`
+    }
+    this.fieldId = this.host.nativeElement.id
+    this.errorId = `${this.fieldId}-error`
     this.parentForm?.registerField(this)
   }
 
@@ -73,7 +79,7 @@ export class OcxFormFieldDirective implements AfterViewInit, OnDestroy {
       return true
     }
     // Probe the validators with an empty value: works for Validators.required as well as the `required` directive
-    return !!this.ngControl.control?.validator?.(new FormControl(null))?.['required']
+    return !!this.ngControl.control?.validator?.(EMPTY_CONTROL)?.['required']
   }
 
   /** The control is invalid. Independent of whether the error is already shown. */

@@ -45,6 +45,9 @@ class FormFieldStoryComponent {
   errors: FormErrorSummaryItem[] = []
 
   onSubmit() {
+    this.errors = []
+    // ngSubmit also fires for an invalid form: ocxForm then shows the field errors and focuses the first invalid field
+    if (!this.form.valid) return
     // Replace with the real save. A failed save (e.g. HTTP 400) is reported inside the form, the input is kept.
     this.errors = [{ message: 'Saving failed: the server rejected the input.' }]
   }
