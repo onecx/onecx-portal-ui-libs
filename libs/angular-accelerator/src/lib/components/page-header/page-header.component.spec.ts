@@ -178,7 +178,7 @@ describe('PageHeaderComponent', () => {
     expect(breadcrumbItem).toBeNull()
   })
 
-  it('should set aria-current=page only on the last breadcrumb and follow changes in the same change detection cycle', async () => {
+  it('should set aria-current=page only on the last breadcrumb and follow changes after navigation', async () => {
     const items$ = new BehaviorSubject<MenuItem[]>([
       { label: 'First', routerLink: '/first' },
       { label: 'Second', routerLink: '/second' },
@@ -207,6 +207,20 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges()
     links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
     expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, null, 'page'])
+  })
+
+  it('should not set aria-current on a manual last breadcrumb whose routerLink does not match the current URL', async () => {
+    component.breadcrumbs$ = of([
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
+    ])
+    await router.navigateByUrl('/elsewhere')
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    const links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, null])
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {

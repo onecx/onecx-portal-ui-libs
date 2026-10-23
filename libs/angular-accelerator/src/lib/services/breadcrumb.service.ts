@@ -124,6 +124,10 @@ export class BreadcrumbService implements OnDestroy {
     return data['breadcrumb']
   }
 
+  /**
+   * Sets manual breadcrumb items. The last item should target the current route:
+   * aria-current="page" is only set on a routerLink crumb whose routerLink matches the current URL.
+   */
   setItems(items: BreadCrumbMenuItem[]) {
     const translationKeys = [
       ...items.map((i) => i.labelKey ?? '').filter((l) => !!l),
