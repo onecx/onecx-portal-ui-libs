@@ -84,7 +84,7 @@
 <ng-template #customLegendsTable>
   <div aria-hidden="true" class="custom-legends-container">
     <div class="custom-legends-content-container">
-      <table class="legends-table">
+      <table class="legends-table" role="presentation">
         @for (item of legendItems; track $index; let i = $index) {
         <tr>
           @if(i % 2 === 0) {
