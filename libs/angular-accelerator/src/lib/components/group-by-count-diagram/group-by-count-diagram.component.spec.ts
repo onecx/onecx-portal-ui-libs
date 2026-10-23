@@ -283,7 +283,7 @@ describe('GroupByCountDiagramComponent', () => {
     fixture.componentRef.setInput('customLegends', true)
     const diagram = await getHarness()
 
-    expect(await (await diagram.getTitle())?.getAttribute('aria-level')).toBe('4')
+    expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe('H4')
     expect(fixture.nativeElement.querySelector('.diagram-legend.custom-legends-container')).toBeTruthy()
   })
 

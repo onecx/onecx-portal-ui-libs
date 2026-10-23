@@ -44,7 +44,13 @@ describe('DiagramComponent', () => {
     window.__setForcedColorsActive?.(false)
     await TestBed.configureTestingModule({
       declarations: [DiagramComponent],
-      imports: [NoopAnimationsModule, FormsModule, AngularAcceleratorOptimusModule, TranslateModule.forRoot(), OcxTooltipDirective],
+      imports: [
+        NoopAnimationsModule,
+        FormsModule,
+        AngularAcceleratorOptimusModule,
+        TranslateModule.forRoot(),
+        OcxTooltipDirective,
+      ],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -440,9 +446,11 @@ describe('DiagramComponent', () => {
       fixture.componentRef.setInput('chartTitleKey', 'OCX_DIAGRAM.SUM')
       const diagram = await TestbedHarnessEnvironment.harnessForFixture(fixture, DiagramHarness)
 
-      expect(await (await diagram.getTitle())?.getAttribute('aria-level')).toBe('2')
-      fixture.componentRef.setInput('titleHeadingLevel', 3)
-      expect(await (await diagram.getTitle())?.getAttribute('aria-level')).toBe('3')
+      expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe('H2')
+      for (const level of [1, 3, 4, 5, 6]) {
+        fixture.componentRef.setInput('titleHeadingLevel', level)
+        expect(await (await diagram.getTitle())?.getProperty('tagName')).toBe(`H${level}`)
+      }
       expect(fixture.nativeElement.querySelector('caption').textContent).toContain('Total')
     })
 

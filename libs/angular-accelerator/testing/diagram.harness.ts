@@ -31,7 +31,7 @@ export class DiagramHarness extends ComponentHarness {
   }
 
   async getTitle() {
-    return await this.locatorForOptional('.diagram-title[role="heading"]')()
+    return await this.locatorForOptional('.diagram-title')()
   }
 
   async getCanvasAriaLabel(): Promise<string | null> {

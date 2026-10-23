@@ -1,9 +1,13 @@
 @if (chartTitleKey() || chartDescriptionKey()) {
   @if (chartTitleKey()) {
-    <div class="diagram-title w-full flex justify-center" role="heading" [attr.aria-level]="titleHeadingLevel()"
-      [attr.id]="'ocx-' + uniqueInstanceId + '-title'">
-      {{ chartTitleKey() | translate }}
-    </div>
+    @switch (titleHeadingLevel()) {
+      @case (1) { <h1 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h1> }
+      @case (3) { <h3 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h3> }
+      @case (4) { <h4 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h4> }
+      @case (5) { <h5 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h5> }
+      @case (6) { <h6 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h6> }
+      @default { <h2 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h2> }
+    }
   }
   @if (chartDescriptionKey()) {
     <p class="diagram-description  w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-description'">
