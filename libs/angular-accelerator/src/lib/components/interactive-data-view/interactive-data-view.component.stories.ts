@@ -52,7 +52,7 @@ export const TableLayoutWithRestoredColumnOrder = {
     displayedColumnKeys: ['date', 'product', 'amount'],
     draggableColumnGroupSelectorDialog: true,
     resizableColumnGroupSelectorDialog: true,
-    restoreColumnGroupSelectorOrder: false,
+    restoreColumnGroupSelectorOrder: true,
   },
 }
 
