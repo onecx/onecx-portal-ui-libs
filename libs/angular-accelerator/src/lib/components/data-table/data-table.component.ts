@@ -20,7 +20,7 @@ import {
   signal,
   untracked,
   viewChildren,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core'
 import { computedPrevious } from 'ngxtension/computed-previous'
 import { Router } from '@angular/router'
@@ -356,7 +356,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
         params.clientSideSorting
       ),
     })),
-    map(({ rows }) => this.flattenItems(rows))
+    map(({ rows }) => this.flattenItems(rows) as Row[])
   )
 
   rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
@@ -375,11 +375,38 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   rowGroupPlan = computed<RowGroupPlan | null>(() => {
     const config = this.rowGrouping()
-    if (!config) {
+    if (!config || !this.groupingColumn()) {
       return null
     }
     const keyPath = config.groupKeyPath ?? config.columnId
-    return planRowGroups(this.displayedRowsSignal() as Row[], keyPath)
+    return planRowGroups(this.displayedRowsSignal(), keyPath)
+  })
+
+  readonly groupedRows = computed(() => this.rowGroupPlan()?.orderedRows ?? this.displayedRowsSignal())
+
+  private readonly pageGroupHeaders = computed(() => {
+    const headers = new Map<string | number, RowGroup>()
+    const plan = this.rowGroupPlan()
+    if (!plan || !this.paginator()) {
+      return headers
+    }
+
+    const config = this.rowGrouping()!
+    const keyPath = config.groupKeyPath ?? config.columnId
+    const pageSize = this.displayedPageSize()
+    const first = this.stateService.activePage() * pageSize
+    const pageRows = this.groupedRows().slice(first, first + pageSize)
+    const remainingGroups = new Map<unknown, RowGroup>(plan.groups.map((group) => [group.key, group]))
+
+    for (const row of pageRows) {
+      const key = row[keyPath]
+      const group = remainingGroups.get(key)
+      if (group) {
+        headers.set(row.id, group)
+        remainingGroups.delete(key)
+      }
+    }
+    return headers
   })
 
   selectedFilteredRows = computed(() => {
@@ -607,7 +634,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
 
   isRowGroupStart(row: Row): boolean {
     const plan = this.rowGroupPlan()
-    return !!plan && plan.groupStartIds.has(row.id)
+    return !!plan && (plan.groupStartIds.has(row.id) || this.pageGroupHeaders().has(row.id))
   }
 
   getGroupForRow(row: Row): RowGroup | undefined {
@@ -615,7 +642,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     if (!plan) {
       return undefined
     }
-    return plan.groups.find((g) => g.firstRowId === row.id)
+    return plan.groupsByFirstRowId.get(row.id) ?? this.pageGroupHeaders().get(row.id)
   }
 
   getGroupContext(row: Row): DataTableGroupCellContext | undefined {
@@ -769,9 +796,8 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   onRowCollapse(event: any) {
     this.stateService.expandedRows.update(
       (rows) =>
-        (rows ?? []).filter((r) =>
-          typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id
-        ) as Row[] | string[] | number[]
+        (rows ?? []).filter((r) => (typeof r === 'object' ? (r as Row).id !== event.data.id : r !== event.data.id)) as
+          Row[] | string[] | number[]
     )
     this.rowCollapsed.emit(event.data)
   }

@@ -11,23 +11,29 @@ export interface RowGroup {
 export interface RowGroupPlan {
   groups: RowGroup[]
   groupStartIds: Set<string | number>
+  groupsByFirstRowId: Map<string | number, RowGroup>
+  orderedRows: Row[]
 }
 
 export function planRowGroups(rows: Row[], groupKeyPath: string): RowGroupPlan {
   const groups: RowGroup[] = []
-  const byKey = new Map<string | number, RowGroup>()
+  const byKey = new Map<string | number, { group: RowGroup; rows: Row[] }>()
   const groupStartIds = new Set<string | number>()
+  const groupsByFirstRowId = new Map<string | number, RowGroup>()
+  const ungroupedRows: Row[] = []
 
   for (const row of rows) {
     const raw = row[groupKeyPath]
     const key: unknown = raw
     const valid = (typeof key === 'string' || typeof key === 'number') && key === key
     if (!valid) {
+      ungroupedRows.push(row)
       continue
     }
     const existing = byKey.get(key)
     if (existing) {
-      existing.memberCount += 1
+      existing.group.memberCount += 1
+      existing.rows.push(row)
       continue
     }
     const group: RowGroup = {
@@ -37,10 +43,12 @@ export function planRowGroups(rows: Row[], groupKeyPath: string): RowGroupPlan {
       firstRowId: row.id,
       memberCount: 1,
     }
-    byKey.set(key, group)
+    byKey.set(key, { group, rows: [row] })
     groups.push(group)
     groupStartIds.add(row.id)
+    groupsByFirstRowId.set(row.id, group)
   }
 
-  return { groups, groupStartIds }
+  const orderedRows = ungroupedRows.concat(Array.from(byKey.values()).flatMap((entry) => entry.rows))
+  return { groups, groupStartIds, groupsByFirstRowId, orderedRows }
 }
