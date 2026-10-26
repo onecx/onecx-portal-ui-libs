@@ -96,7 +96,7 @@ const defaultComponentArgs: CustomGroupColumnSelectorInputs = {
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
   draggableColumnGroupSelectorDialog: true,
-  resizableColumnGroupSelectorDialog: false,
+  resizableColumnGroupSelectorDialog: true,
   restoreColumnGroupSelectorOrder: false,
 }
 

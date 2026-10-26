@@ -70,7 +70,7 @@ export class CustomGroupColumnSelectorComponent implements OnInit {
    * Controls whether the column selection dialog can be resized by the user.
    * Independent of {@link draggableColumnGroupSelectorDialog}.
    */
-  @Input() resizableColumnGroupSelectorDialog = false
+  @Input() resizableColumnGroupSelectorDialog = true
 
   /**
    * When enabled, transfers rebuild both the active and inactive column lists in the order of

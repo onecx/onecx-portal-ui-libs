@@ -189,7 +189,7 @@ export const defaultInteractiveDataViewArgs = {
   viewPermission: 'TEST_MGMT#TEST_VIEW',
   defaultGroupKey: 'test',
   draggableColumnGroupSelectorDialog: true,
-  resizableColumnGroupSelectorDialog: false,
+  resizableColumnGroupSelectorDialog: true,
   restoreColumnGroupSelectorOrder: false,
 }
 

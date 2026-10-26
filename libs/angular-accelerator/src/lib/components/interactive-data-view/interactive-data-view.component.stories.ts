@@ -50,8 +50,9 @@ export const TableLayoutWithRestoredColumnOrder = {
     selectedRows: [],
     layout: 'table',
     displayedColumnKeys: ['date', 'product', 'amount'],
+    draggableColumnGroupSelectorDialog: true,
     resizableColumnGroupSelectorDialog: true,
-    restoreColumnGroupSelectorOrder: true,
+    restoreColumnGroupSelectorOrder: false,
   },
 }
 
