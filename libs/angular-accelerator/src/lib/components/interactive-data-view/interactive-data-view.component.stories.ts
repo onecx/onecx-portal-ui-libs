@@ -68,6 +68,23 @@ export const TableLayoutWithRestoredColumnOrder = {
   }),
 }
 
+export const WithTooltipData = {
+  ...WithMockData,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    columns: defaultComponentArgs.columns.map((column) => ({
+      ...column,
+      tooltipLabel: {
+        product: 'Product',
+        amount: 'Amount',
+        available: 'Availability',
+        date: 'Date',
+      }[column.id],
+    })),
+  },
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {

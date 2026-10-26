@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -250,6 +250,80 @@ describe('DataTableComponent', () => {
 
   it('should create the data table component', () => {
     expect(component).toBeTruthy()
+  })
+  describe('column header tooltips', () => {
+    beforeEach(() => {
+      translateService.setTranslation('en', {
+        COLUMN_HEADER_NAME: { NAME: 'Name' },
+        CUSTOM_TOOLTIP: 'Custom tooltip',
+        'Product details': 'Translated product details',
+      }, true)
+      translateService.setTranslation('de', {
+        COLUMN_HEADER_NAME: { NAME: 'German name' },
+        CUSTOM_TOOLTIP: 'Benutzerdefinierter Tooltip',
+      }, true)
+      translateService.use('en')
+    })
+
+    it('translates tooltipKey and updates it when the language changes', fakeAsync(() => {
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }] as any
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Custom tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+      translateService.use('de')
+      fixture.detectChanges()
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe('Benutzerdefinierter Tooltip')
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it.each([
+      { tooltipLabel: 'Product details', tooltipKey: undefined, expected: 'Product details' },
+      { tooltipLabel: 'Product details', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Product details' },
+      { tooltipLabel: '', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Custom tooltip' },
+    ])('uses tooltipLabel before tooltipKey and falls back to tooltipKey when empty: %o', fakeAsync((options: {
+      tooltipLabel: string
+      tooltipKey: string | undefined
+      expected: string
+    }) => {
+      component.columns = [{ ...mockColumns[0], ...options }] as any
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+      label.dispatchEvent(new MouseEvent('mouseenter'))
+      tick()
+      fixture.detectChanges()
+      expect(document.querySelector('.p-tooltip-text')?.textContent).toBe(options.expected)
+
+      label.dispatchEvent(new MouseEvent('mouseleave'))
+      tick()
+    }))
+
+    it.each([
+      { tooltipKey: undefined, tooltipLabel: undefined },
+      { tooltipKey: '', tooltipLabel: '' },
+    ])('renders the header without a tooltip when options are absent or empty: %o', (options: {
+      tooltipKey: string | undefined
+      tooltipLabel: string | undefined
+    }) => {
+      component.columns = [{ ...mockColumns[0], ...options }] as any
+      fixture.detectChanges()
+
+      const header: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"]')
+      expect(header.querySelector('span[tooltipposition="top"]')).toBeNull()
+      expect(header.textContent?.trim()).toBe('Name')
+    })
   })
 
   describe('DataViewStateService provider factory', () => {
