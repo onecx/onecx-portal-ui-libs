@@ -154,7 +154,7 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
    * Controls whether the hosted column selection dialog can be resized by the user.
    * Independent of {@link draggableColumnGroupSelectorDialog}.
    */
-  @Input() resizableColumnGroupSelectorDialog = false
+  @Input() resizableColumnGroupSelectorDialog = true
 
   /**
    * When enabled, the hosted column selector keeps the active columns in the main column order

@@ -1245,8 +1245,8 @@ xdescribe('InteractiveDataViewComponent', () => {
   })
 
   describe('Table view custom group column selector dialog configuration', () => {
-    it('should default resizableColumnGroupSelectorDialog and restoreColumnGroupSelectorOrder to false', () => {
-      expect(component.resizableColumnGroupSelectorDialog).toBe(false)
+    it('should default resizableColumnGroupSelectorDialog to be true and restoreColumnGroupSelectorOrder to false', () => {
+      expect(component.resizableColumnGroupSelectorDialog).toBe(true)
       expect(component.restoreColumnGroupSelectorOrder).toBe(false)
     })
 
