@@ -1,0 +1,134 @@
+= PrimeNG/PrimeReact style scoping
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u2: ./stylesheet-loading.adoc
+:u3: ./scope-model.adoc
+:u6: ./dynamic-content-via-patching.adoc
+:u7: ./dynamic-content-via-container.adoc
+:u8: ./scope-polyfill.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+== Question answered
+
+How are the component-library stylesheets that PrimeNG (Angular) and PrimeReact (React) inject into a page kept inside the link:{u3}[@scope] of the application that renders them?
+
+== Why it exists
+
+Since PrimeNG 19 and current PrimeReact, the component library injects its own stylesheets into `document.head`: a stylesheet of component rules and one (or more) stylesheet of design-token CSS variables. The library assumes a single component-library instance per page and has no notion of the many applications that share a OneCX page. Left global, a `--p-primary` token or a `.p-button` rule injected by App A would restyle the Shell's and App B's components.
+
+The mechanism reuses the same `{scope_at_rule}` boundary every other stylesheet uses (link:{u3}[Unit 3]) and adds two PrimeNG/PrimeReact-specific moves:
+
+* Every stylesheet the library injects is wrapped in the owning application's `@scope(...)` block, so its rules apply only inside that application's content.
+* The library's design-token variables are renamed per scope, so each application resolves its own copy of the tokens instead of sharing one global set.
+
+== How it works
+
+The framework-agnostic core is the same in both implementations:
+
+[source,mermaid]
+----
+flowchart LR
+  lib["PrimeNG / PrimeReact<br/>injects component CSS +<br/>token vars into document.head"]
+  wrap["wrap the CSS in the<br/>app's @scope block"]
+  rename["rename the token<br/>vars per scope"]
+  out["<style> owned by the app's scope"]
+  lib --> wrap
+  lib --> rename
+  wrap --> out
+  rename --> out
+----
+
+. *Wrap in the app's scope.* The injected CSS is wrapped in the `@scope([data-style-id="<scopeId>"][data-no-portal-layout-styles]) to ([data-style-isolation])` block defined in link:{u3}[Unit 3]. `:root` is rewritten to `:scope` so the block's variables are read at the scope's top element. Where the browser does not support `{scope_at_rule}`, Angular emits the `@supports (@scope(…))` fallback that the Shell polyfill (link:{u8}[Unit 8]) later deconstructs.
+. *Rename the tokens per scope.* PrimeNG names its design tokens with the `--p-` prefix. Each scope needs its own copy, so the prefix is rewritten to a scope-specific one (e.g. `--p-primary` → `--onecx-workspace-onecx-workspace-ui-primary`), using `scopeIdentifierToVariablePrefix` in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`].
+. *(PrimeReact only) Namespace the style ids.* PrimeReact is frequently a shared Module-Federation singleton, so several applications would otherwise write the same `data-primereact-style-id` values into the same `<head>`. The React path therefore keys every style id to the owning application (see Angular / React below).
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries own the rewrite, split across two subpackages:
+
+* `@onecx/angular-utils/theme/primeng`: the Angular path: `provideThemeConfig` and the `CustomUseStyle` that replaces PrimeNG's `UseStyle`.
+* `@onecx/react-utils` (link:{libs}/react-utils/src/lib/styling/primeReact[`styling/primeReact`]): the React path: the per-app scoped style container and the `attachPrimeReactScoper` MutationObserver.
+
+Both read the same scope id and the same `data-style-id` / `data-style-isolation` / `data-no-portal-layout-styles` attribute model from link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`], so PrimeNG/PrimeReact content and the application's own `styles.css` (link:{u2}[Unit 2]) land in the same scope.
+
+=== Shell side
+
+The Shell is itself a PrimeNG-consuming Angular app, so it runs the same `provideThemeConfig` path (link:{shell}/src/app/app.module.ts[`app.module.ts`]) with scoping skipped: its scope id resolves to `''`, which makes `scopePrimengCss` target the `shell-ui` scope and leave the base `--p-` variables un-renamed. The Shell does not provide the rewrite, that lives in the libs, but it is the only place the polyfill runs (link:{u8}[Unit 8]), which rewrites the `@supports (@scope(…))` fallback the Angular path emits on browsers without `{scope_at_rule}`.
+
+== Angular / React
+
+=== Angular
+
+An application that uses PrimeNG 19+ adds link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`provideThemeConfig`] to its providers (the Microfrontend's or the Remote Component's). It returns `providePrimeNG`, `provideThemeConfigService`, `provideAppStylesInitializer`, and, when `overrides` are supplied, a `THEME_OVERRIDES` token.
+
+link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`provideThemeConfigService`] is what makes the scoping happen:
+
+* It calls `Theme.clearLoadedStyleNames()` and `Base.clearLoadedStyleNames()`, which removes PrimeNG's style-name-based recompute. This replaces the old build-time replacement of `Theme.setLoadedStyleName` with a no-op.
+* It registers `{ provide: UseStyle, useClass: CustomUseStyle }`, swapping PrimeNG's default link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`CustomUseStyle`] in place of `primeng`'s `UseStyle`.
+
+`CustomUseStyle.use(css, options)` (link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`custom-use-style.service.ts`]) is the per-stylesheet actor. For every stylesheet PrimeNG injects it:
+
+. Resolves the scope id with `getScopeIdentifier` (the `product|appId` of the running MFE/RC, or `''` when `SKIP_STYLE_SCOPING` is set).
+. Rewrites the CSS as `scopePrimengCss(replaceRootWithScope(replacePrimengPrefix(css, scopeId)), scopeId)`:
+.. `replacePrimengPrefix` renames `--p-` → `--<scopeId>-`.
+.. `replaceRootWithScope` (link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]) turns `:root` into `:scope`.
+.. `scopePrimengCss` (link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]) wraps the result in the app's `@scope(…)` block, or the `@supports (@scope(…))` fallback when `isCssScopeRuleSupported()` is false.
+. Appends `-${scopeId}` to the style `name` so each application's PrimeNG sheets become distinct `<style>` elements.
+. Calls `super.use(css, options)` to inject the scoped sheet, then `applyOverrides`, when `THEME_OVERRIDES` is provided, converts the overrides to variables with `toVariables`, re-applies the same scoping, and writes a `data-variable-override-id="<scopeId>"` `<style>` element as the last child of `<head>`.
+
+A second initializer, link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`provideAppStylesInitializer`], runs at environment initialisation: it finds the application's own `styles.css` element by scope (`getAppStyleByScope`, matched on `data-app-styles="<scopeId>"`) and rewrites its PrimeNG variable prefix via `replaceStyleContent`, so the app stylesheet reads the same scoped `--<scopeId>-` tokens as the PrimeNG sheets.
+
+=== React
+
+React has no programmatic preset. PrimeReact compiles its theme to CSS and PrimeReact injects it into `document.head` under `data-primereact-style-id="<component>"` style tags. Two cooperating mechanisms from link:{libs}/react-utils/src/lib/styling/primeReact[`styling/primeReact`] keep that CSS per-app:
+
+. *A scoped style container.* link:{libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx[`StyleRegistry`] (added by the `withAppStyles` HOC) passes link:{libs}/react-utils/src/lib/styling/primeReact/theme/scopedStyleContainer.ts[`getOrCreateScopedStyleContainer(productId)`] as PrimeReact's `styleContainer`. That is a `Proxy` over `document.head` which rewrites `data-primereact-style-id` values to `<name>-<productId>` on `appendChild` and `setAttribute`, and rewrites the same values inside `querySelector` / `querySelectorAll`. `extractComponentName` strips any app suffix a build-time plugin or a previous rename already baked in. `getRealStyleContainer` returns the real `document.head` for callers that need an actual `Node` (for example a `MutationObserver`). This is what keeps the app's copy scoped even when PrimeReact is a shared Module-Federation singleton loaded by another app.
+. *The scoper.* `PrimeReactStyleProvider` (link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`contexts/app`] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`contexts/remotes`], added by `withAppPrimereactStylesIsolation` / `withRemotesPrimereactStylesIsolation`) starts link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`attachPrimeReactScoper`]. A per-app `MutationObserver` on `document.head` watches the PrimeReact style blocks and writes scoped copies into a dedicated `<style data-app-primereact-style="<id>">`. `scopeCss` (link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`functions/index.ts`]) wraps the CSS in `@scope([data-style-id="<id>"]) to ([data-style-isolation])` and rewrites `:root` to `:scope`; the observer hash-dedups by content, and `adjustScopeIdToRemote` re-anchors `@scope` blocks for remotes. The provider also renders a `data-style-id` / `data-style-isolation` / `data-no-portal-layout-styles` container (`display: contents`) so the scoped block has a boundary to bind to.
+
+.Dynamic content
+
+PrimeReact opens overlays (dialogs, tooltips, pickers) into `document.body` outside the app's scope. link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts[`dynamicScoping/index.ts`] patches `ReactDOM.createPortal` so that, when a PrimeReact overlay element (its class contains `p-`) is created from a trigger element, the intermediate style data is copied from that trigger (`getOnecxTriggerElement` → `appendIntermediateStyleData`) and the element is stamped with it. It is the React analogue of the Shell's `bodyChildListener` patching documented in link:{u6}[Unit 6]; the dynamic-container alternative is link:{u7}[Unit 7].
+
+== Edge cases & pitfalls
+
+* *The Shell does not rename its tokens.* With `SKIP_STYLE_SCOPING` the scope id is `''`, so `replacePrimengPrefix` returns the CSS unchanged (the Shell uses the base `--p-` set) and `scopePrimengCss` targets the `shell-ui` scope. Do not expect a `--shell-ui-` token prefix.
+* *The `use` return value is a trap.* `CustomUseStyle.use` returns a fake response; reading `.name` or `.el` on it logs an error. It exists only so that a future caller that starts relying on the return value is loudly detected.
+* *Unsupported browsers fall back to the polyfill.* On a browser without `{scope_at_rule}`, `scopePrimengCss` emits an `@supports (@scope(…))` wrapper that only the Shell polyfill (link:{u8}[Unit 8]) understands.
+* *PrimeReact's shared singleton.* The Proxy style container exists precisely because PrimeReact is often loaded once for the whole page; without it, one application's style ids would collide with the application that loaded PrimeReact.
+
+== Known issues
+
+* *The old build-time `document.createElement` replacement is gone.* The older `dev-docs/styles/primeng-scoping.adoc` told applications to add a webpack plugin replacing `document.createElement` with `document.createElementFromPrimeNg` and `Theme.setLoadedStyleName` with a no-op. Current code needs neither from the application: `provideThemeConfigService` clears the loaded style names itself, and `document.createElementFromPrimeNg` is now only a deprecated compatibility hook on the Shell side (link:{u6}[Unit 6]). The mechanism documented above is what the current `main` code does.
+* *React emits a bare `@scope` block.* `scopeCss` writes a bare `@scope(…)` rather than the `@supports (@scope(…))` wrapper, so on an unsupported browser the React path is not covered by the Shell polyfill. This gap is owned and documented in link:{u8}[Unit 8].
+
+== Related Units
+
+* link:{u3}[The `@scope` scoping model]: the `@scope` block and the `data-style-id` / `data-style-isolation` / `data-no-portal-layout-styles` attribute model these styles render into.
+* link:{u2}[App/Remote Component stylesheet load & removal]: the application `styles.css` the Angular initializer re-scopes.
+* link:{u6}[Dynamic content via patching] and link:{u7}[Dynamic content via container]: how PrimeNG/PrimeReact overlays opened into `document.body` keep their scope.
+* link:{u8}[Scope polyfill]: rewrites the `@scope` fallback on browsers without native support.
+* link:../theming/theme-to-primeng-tokens.adoc[Theme → PrimeNG/PrimeReact tokens]: where the design-token values written into the scope come from.
+* link:../theming/theme-override-precedence.adoc[Theme Overrides]: how the `data-variable-override-id` sheet an application writes is produced.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `scopePrimengCss`, `replacePrimengPrefix`, `scopeIdentifierToVariablePrefix`, `getScopeIdentifier`, `isCssScopeRuleSupported`, `dataVariableOverrideIdAttribute`.
+* link:{libs}/angular-utils/theme/primeng/src/utils/application-config.ts[`application-config.ts`]: `provideThemeConfig`, `THEME_OVERRIDES`.
+* link:{libs}/angular-utils/theme/primeng/src/services/theme-config.service.ts[`theme-config.service.ts`]: `provideThemeConfigService`, `CustomUseStyle` registration, `clearLoadedStyleNames`.
+* link:{libs}/angular-utils/theme/primeng/src/services/custom-use-style.service.ts[`custom-use-style.service.ts`]: `CustomUseStyle.use` / `applyOverrides`.
+* link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]: `provideAppStylesInitializer`.
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `getAppStyleByScope`, `replaceRootWithScope`.
+* link:{libs}/react-utils/src/lib/styling/primeReact[styling/primeReact]: the React scoping package (the per-app scoped style container and the `attachPrimeReactScoper` observer).
+* link:{libs}/react-utils/src/lib/styling/primeReact/theme/scopedStyleContainer.ts[`scopedStyleContainer.ts`]: `getOrCreateScopedStyleContainer`, `extractComponentName`, `getRealStyleContainer`.
+* link:{libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx[`StyleRegistry.tsx`]: scoped `styleContainer` on `PrimeReactProvider`.
+* link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`scopingFunctionality/index.ts`]: `attachPrimeReactScoper`.
+* link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts`]: `scopeCss`, `hash`, `shouldInclude`.
+* link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`contexts/app/index.tsx`] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`contexts/remotes/index.tsx`]: `PrimeReactStyleProvider`.
+* link:{libs}/react-utils/src/lib/styling/primeReact/dynamicScoping/index.ts[`dynamicScoping/index.ts`]: `createPortal` patch for PrimeReact overlays.
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)]: the Shell's own PrimeNG/`provideThemeConfig` wiring.

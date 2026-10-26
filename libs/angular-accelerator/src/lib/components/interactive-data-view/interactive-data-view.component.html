@@ -1,6 +1,6 @@
-<div class="p-3 border-bottom-1 surface-border" [ngClass]="headerStyleClass()" id="interactiveDataViewHeader">
-  <div class="flex flex-wrap justify-content-between align-items-center py-1 gap-2">
-    <div class="flex flex-wrap justify-content-start align-items-center gap-2">
+<div class="p-3 border-b border-surface" [ngClass]="headerStyleClass()" id="interactiveDataViewHeader">
+  <div class="flex flex-wrap justify-between items-center py-1 gap-2">
+    <div class="flex flex-wrap justify-start items-center gap-2">
       <ocx-data-layout-selection
         [supportedViewLayouts]="supportedViewLayouts()"
         [layout]="stateService.layout()"
@@ -10,6 +10,7 @@
       <ocx-filter-view
         [filters]="stateService.filters()"
         [columns]="stateService.availableColumns()"
+        [activeOrAllColumns]="activeOrAllColumns()"
         [templates]="templates()"
         [displayMode]="filterViewDisplayMode()"
         [selectDisplayedChips]="selectDisplayedChips()"
@@ -25,7 +26,7 @@
       <ng-container [ngTemplateOutlet]="topCenterTemplate"> </ng-container>
     </div>
     } @if (stateService.layout() !== 'table') {
-    <div class="flex align-items-center gap-2">
+    <div class="flex items-center gap-2">
       <ocx-data-list-grid-sorting
         [sortDirection]="stateService.sortDirection()"
         [sortField]="stateService.sortColumn()"
@@ -41,7 +42,7 @@
       [ngStyle]="stateService.layout() !== 'table' ? {
       'position': 'absolute'
     } : {}"
-      class="flex flex-wrap justify-content-between align-items-center gap-2"
+      class="flex flex-wrap justify-between items-center gap-2"
     >
       @if (isColumnGroupSelectionComponentDefined() ?? true) {
       <ocx-slot
@@ -69,6 +70,8 @@
         [actionColumnPosition]="stateService.actionColumnConfigPosition()"
         (actionColumnConfigChanged)="onActionColumnConfigChange($event)"
         [draggableColumnGroupSelectorDialog]="draggableColumnGroupSelectorDialog()"
+        [resizableColumnGroupSelectorDialog]="resizableColumnGroupSelectorDialog()"
+        [restoreColumnGroupSelectorOrder]="restoreColumnGroupSelectorOrder()"
       ></ocx-custom-group-column-selector>
       }
     </div>

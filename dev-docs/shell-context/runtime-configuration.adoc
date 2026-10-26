@@ -1,0 +1,185 @@
+= Runtime configuration
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does the Shell resolve and serve its *runtime configuration*, the env keys an App reads from the `configuration` Topic, and which of those keys cross the Shell/App boundary?
+
+== Why it exists
+
+An App needs a few environment facts, such as the Keycloak realm, whether the current page is the Shell, and which portal it runs in. These differ per deployment, so they are not compiled into the App. The Shell owns them and publishes them as a flat `Record<string, string>` on the `configuration` Topic.
+
+This Unit covers the three sources of that value (inlined `APP_CONFIG`, injected defaults, a remote `env.json`), the Shell's `env.json` with its `${PLACEHOLDER}` values, and the keys that matter to Apps in the libs or to Apps that talk to the Shell's back-end. Most of the long `CONFIG_KEY` enum (theme, search, portal-UI toggles) is consumed by the Shell itself and documented there.
+
+== How it works
+
+One shared helper resolves runtime configuration, and one Topic delivers it.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Boot as Shell bootstrap
+  participant CfgInit as configurationServiceInitializer
+  participant Resolver as resolveConfigPayload
+  participant Env as env.json / APP_CONFIG
+  participant Topic as configuration
+  Boot->>CfgInit: run
+  CfgInit->>Resolver: init() (APP_CONFIG, skipRemoteConfigLoad, remoteConfigURL)
+  Resolver->>Env: read inlined / default / fetch
+  Env-->>Resolver: Config
+  CfgInit->>Topic: publish(merged Config)
+----
+
+link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`resolveConfigPayload`] uses a fixed resolution order:
+
+1. **Inlined**: if `globalThis.APP_CONFIG` is present, it wins and nothing else is read. A host, such as the Shell's build or a test environment, uses this to pin the whole configuration.
+2. **Default**: if `skipRemoteConfigLoad` is set, the injected `defaultConfig` is used as-is. The libs log the `📢 TKA001` banner, which tells the reader to remove the key to re-enable the remote load.
+3. **Remote**: otherwise, the injected `loadRemoteConfig` fetches the value from `remoteConfigURL` (default `assets/env.json`).
+
+`resolveConfigPayload` returns the raw object. The caller merges it over its defaults and publishes the result to the `configuration` Topic. The caller is the Angular `ConfigurationService.init()` (link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`]) or the React `ConfigurationProvider.init()` (link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`]). In the Shell, `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`] runs `init()` at bootstrap, so the Shell is the *producer* of the `configuration` Topic.
+
+The Shell's link:{shell}/src/assets/env.json[`src/assets/env.json`] is the source of the cross-repo keys. Its values are `${PLACEHOLDER}` tokens, for example `KEYCLOAK_REALM: "${KEYCLOAK_REALM}"` and `APP_VERSION: "${APP_VERSION}"`. Who substitutes them depends on the deployment:
+
+* With the `ghcr.io/onecx/docker-spa-base:2.39.0` base image, the image entrypoint substitutes them at container startup (see link:https://github.com/onecx/docker-spa-base/blob/2.39.0/entrypoint.sh[onecx/docker-spa-base entrypoint.sh]).
+* Other setups may substitute earlier in the pipeline, for example during a Docker or Helm build.
+* The libs never substitute placeholders. An App reads the resolved value from the Topic as an opaque string.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]: topic name `configuration`, version 1. The payload is a flat `Config = Record<string, string>`.
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`]: `resolveConfigPayload`, `resolveConfig` and `getInlinedConfig`. This is the only place that decides between inlined, default and remote, so both frameworks resolve identically.
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`]: the `CONFIG_KEY` enum, the typed set of keys that `ConfigurationService.getProperty` accepts.
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`]: the `APP_CONFIG` `InjectionToken<LibConfig>`: `{ appId, portalId, skipRemoteConfigLoad, remoteConfigURL }`. `skipRemoteConfigLoad` and `remoteConfigURL` steer the resolution order.
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`] (Angular) and link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`] (React): the two `init()` implementations that call `resolveConfigPayload` and publish.
+
+=== Shell side
+
+* `configurationServiceInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]: runs `configurationService.init()` as an `APP_INITIALIZER`, so the `configuration` Topic is published before the App's own bootstrap reads it.
+* link:{shell}/src/assets/env.json[`src/assets/env.json`]: the env file with the keys below as `${...}` placeholders.
+* link:{shell}/src/environments/environment.ts[`src/environments/environment.ts`]: the build-time environment object that Angular injects. It is the origin of the `APP_CONFIG`/injected defaults that `ConfigurationService` reads.
+* link:{shell}/nginx/locations.conf[`nginx/locations.conf`]: the nginx location blocks for the `shell-bff` API proxy and the `.map` source-map rewrite. `env.json` is not proxied through a BFF route here. Placeholder substitution happens at the deploy layer (the docker-spa-base entrypoint), before the file reaches the browser.
+
+An App that fetches `env.json` directly for *App Config* (see link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]) hits the same static `assets/` location. Apps in the libs use the `configuration` Topic instead.
+
+== Cross-repo-relevant keys
+
+These are the keys that an App in `onecx-portal-ui-libs`, or an App talking to the Shell's back-end, reads. Each key is present in the Shell's `src/assets/env.json` and has a consumer on `main`. The *Read by* column names that consumer, which is what makes the key cross-repo-relevant.
+
+[cols="1,1,2,1", options="header"]
+|===
+|Key |Meaning |Used for |Read by
+
+|`IS_SHELL`
+|`true` when the current document is the Shell itself.
+|Lets the Shell's own UI code distinguish "I am the Shell" from "I am an App inside the Shell".
+|Shell UI; `CONFIG_KEY` enum in libs.
+
+|`APP_VERSION`
+|Build version of the running bundle.
+|Version display / sanity checks.
+|Shell; `SANITY_CHECK`-style consumers.
+
+|`APP_BASE_HREF`
+|The base path the App is served under.
+|Resolving relative URLs (`useAppHref` and friends).
+|link:{libs}/react-webcomponents/src/lib/hooks/useAppHref.ts[`useAppHref`] (React).
+
+|`KEYCLOAK_REALM`, `KEYCLOAK_URL`, `KEYCLOAK_CLIENT_ID`
+|Keycloak realm, issuer URL, and client id.
+|Token acquisition and validation.
+|link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`].
+
+|`KEYCLOAK_ENABLE_SILENT_SSO`
+|Whether silent SSO (iframe refresh) is on.
+|`=== 'true'` check before enabling the flow.
+|link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`].
+
+|`KEYCLOAK_TIME_SKEW`, `KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY`
+|Clock-skew tolerance and min-token-validity window, in seconds.
+|Numeric token-expiry decisions.
+|link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`] (parsed to number).
+
+|`KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED`, `KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED`
+|Toggle refresh-on-expiry and refresh-on-error.
+|`=== 'true'` gates.
+|link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`].
+
+|`AUTH_SERVICE`, `AUTH_SERVICE_CUSTOM_URL`, `AUTH_SERVICE_CUSTOM_MODULE_NAME`, `CUSTOM_AUTH_SHARE_SCOPE`
+|Which auth mechanism, and the remote entry / module name / share scope for a custom auth service.
+|`AuthServiceWrapper` picks `keycloak` (default) or a custom remote.
+|link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`].
+
+|`ONECX_PORTAL_SEARCH_BUTTONS_REVERSED`
+|Toggle the search button order.
+|UI layout.
+|link:{libs}/angular-accelerator/src/lib/components/search-header/search-header.component.ts[`SearchHeaderComponent`].
+
+|`POLYFILL_SCOPE_MODE`
+|`PERFORMANCE` or `PRECISION`.
+|Scope-polyfill behaviour.
+|Shell / style-isolation consumers (Area 4).
+
+|===
+
+Keys that the `CONFIG_KEY` enum declares but link:{shell}/src/assets/env.json[`src/assets/env.json`] does not contain are not claimed as Shell-published values. For this reason, the grouped `TKIT_*` entries are not listed.
+
+The rest of the enum, such as the `ONECX_PORTAL_*_DISABLED` toggles, `TKIT_TOKEN_ROLE_CLAIM_NAME` and `KEYBOARD_FOCUSABLE_SELECTOR`, is consumed by the Shell's own UI and documented by the Shell. The libs declare these keys so an App can read them by name, but their *meaning* is Shell-side.
+
+== Angular / React
+
+* Resolution is identical: both call `resolveConfigPayload` and publish the merged value to the same `configuration` Topic. Angular reads with `ConfigurationService.getProperty(CONFIG_KEY.KEYCLOAK_REALM)`; React reads with `useConfiguration().getProperty(CONFIG_KEY.KEYCLOAK_REALM)`.
+* The injected default differs. Angular reads `APP_CONFIG` as an optional `InjectionToken<LibConfig>`. React takes `defaultConfig` as a prop on `ConfigurationProvider`, with a `DEFAULT_LIB_CONFIG` fallback (`remoteConfigURL: 'assets/env.json'`, `skipRemoteConfigLoad: false`).
+* `angular-integration-interface` and link:{libs}/react-integration-interface/src/lib/model/config-key.model.ts[`react-integration-interface`] each define a `CONFIG_KEY` enum, and the React enum is a strict subset of the Angular one: the five auth keys `KEYCLOAK_TIME_SKEW`, `KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY`, `KEYCLOAK_ON_TOKEN_EXPIRED_ENABLED`, `KEYCLOAK_ON_AUTH_REFRESH_ERROR_ENABLED` and `CUSTOM_AUTH_SHARE_SCOPE` exist only in the Angular enum.
+
+== Edge cases & pitfalls
+
+* *The libs do not resolve placeholders.* If the Shell's deploy layer does not substitute `${KEYCLOAK_REALM}` and the other tokens, the App reads the literal string `${KEYCLOAK_REALM}`. This is a Shell deploy problem; the libs treat the value as an opaque string.
+* *`skipRemoteConfigLoad` silently disables the remote fetch.* The App then gets only the injected defaults, and a missing key reads as `undefined`. The `📢 TKA001` log line is the only signal; no error is raised.
+* *Inlined `APP_CONFIG` wins over everything.* If a host sets `window.APP_CONFIG`, the remote `env.json` is never fetched, even when `skipRemoteConfigLoad` is false. This is useful for tests and dangerous if set accidentally in production.
+* *Configuration holds only strings.* Consumers must parse numeric keys (`KEYCLOAK_TIME_SKEW`, `KEYCLOAK_UPDATE_TOKEN_MIN_VALIDITY`). `keycloak-auth.service.ts` does this with `getConfigValueNumberOrUndefined`.
+* *`getProperty` input is typed, but the runtime looks up any key.* The `CONFIG_KEY` enum only constrains the TypeScript signature of `ConfigurationService.getProperty`. At runtime, an unknown key logs an error, but the lookup still runs and returns the value or `undefined`. `setProperty` accepts any string key, so Apps can read and write custom keys outside the enum.
+
+== Debugging
+
+* Check the log to see which source won: `ENV resolved from injected config` (inlined), `📢 TKA001: Remote config load is disabled...` (default), or no log (remote).
+* Read the published value: `await configurationService.config$.isInitialized`, then `await configurationService.getConfig()`, or the React `getConfig()`.
+* Check that the Shell substituted the placeholders: at runtime, the raw `env.json` must contain no `${...}` tokens. If it does, the Shell deploy step that fills them did not run.
+* For raw cross-App Topic traffic, see Area 13 (Diagnostics): `tracing-communication.adoc`.
+
+== Known issues
+
+None found in the code reviewed for this Unit.
+
+== Related Units
+
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: where Configuration sits relative to the other two settings kinds.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the bootstrap order that runs `configurationServiceInitializer`.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
+* Area 8 (Authentication): the consumers of the `KEYCLOAK_*` and `AUTH_SERVICE*` keys.
+* Area 4 (Styling & Style Isolation): the consumer of `POLYFILL_SCOPE_MODE`.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`ConfigurationTopic`]
+* link:{libs}/integration-interface/src/lib/utils/configuration.utils.ts[`configuration.utils.ts`] (`resolveConfigPayload`, `resolveConfig`, `getInlinedConfig`)
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`] (`CONFIG_KEY`)
+* link:{libs}/react-integration-interface/src/lib/model/config-key.model.ts[`config-key.model.ts`] (React `CONFIG_KEY`)
+* link:{libs}/angular-integration-interface/src/lib/api/injection-tokens.ts[`injection-tokens.ts`] (`APP_CONFIG`, `LibConfig`)
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`ConfigurationService`]
+* link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`ConfigurationProvider`]
+* link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`KeycloakAuthService`]
+* link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`AuthServiceWrapper`]
+* link:{libs}/angular-accelerator/src/lib/components/search-header/search-header.component.ts[`SearchHeaderComponent`]
+* link:{libs}/react-webcomponents/src/lib/hooks/useAppHref.ts[`useAppHref`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`configurationServiceInitializer`) (Shell)
+* link:{shell}/src/assets/env.json[`env.json`] (Shell)
+* link:{shell}/src/environments/environment.ts[`environment.ts`] (Shell)
+* link:{shell}/nginx/locations.conf[`nginx/locations.conf`] (Shell)
+* link:https://github.com/onecx/docker-spa-base/blob/2.39.0/entrypoint.sh[`entrypoint.sh`] (docker-spa-base, placeholder substitution) (Shell)

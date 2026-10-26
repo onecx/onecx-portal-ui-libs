@@ -106,7 +106,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -120,7 +120,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -134,7 +134,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -168,7 +168,7 @@ export const WithViewMode = {
                     id="basic"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'basic'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -182,7 +182,7 @@ export const WithViewMode = {
                     id="advanced"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'advanced'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -284,7 +284,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
                   id="searchInput"
                   pInputText
                   type="text"
-                  class="w-18rem"
+                  class="w-[18rem]"
                   placeholder="Enter search term"
                 />
                 <label for="searchInput">Search Term</label>
@@ -292,7 +292,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
             </div>
           </form>
         </ocx-search-header>
-        <div class="mb-4 p-4 surface-card border-round shadow-1">
+        <div class="mb-4 p-4 bg-surface-0 rounded-border shadow-sm">
           <div class="mb-3 flex gap-2">
             <p-button label="Loading" (onClick)="applyLoading()"></p-button>
             <p-button label="Results Found" (onClick)="applyLoadedWithResults()"></p-button>
@@ -303,7 +303,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
             <p-tag [value]="loading() ? 'Loading' : (searchResultsCount() && searchResultsCount() > 0 ? 'Results Found' : 'No Results')" [severity]="loading() ? 'warning' : (searchResultsCount() && searchResultsCount() > 0 ? 'success' : 'danger')" class="ml-2"></p-tag>
             <span class="ml-3">Count: {{ searchResultsCount() ?? '-' }}</span>
           </div>
-          <p class="text-sm text-600">Use buttons to switch among Loading, Results Found, and No Results states.</p>
+          <p class="text-sm text-surface-600">Use buttons to switch among Loading, Results Found, and No Results states.</p>
         </div>
       </div>
     `,

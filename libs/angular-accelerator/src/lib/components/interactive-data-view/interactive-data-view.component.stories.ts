@@ -44,6 +44,29 @@ export const WithMockData = {
   }),
 }
 
+// Table layout exposes the hosted column selector. The displayed columns start in a scrambled
+// order so that enabling order restoration is observable: after a transfer + Save the visible
+// table columns return to the main (columns) order.
+export const TableLayoutWithRestoredColumnOrder = {
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    layout: 'table',
+    displayedColumnKeys: ['date', 'product', 'amount'],
+    resizableColumnGroupSelectorDialog: true,
+    restoreColumnGroupSelectorOrder: true,
+  },
+  render: (args: any) => ({
+    props: {
+      ...args,
+      ...defaultComponentActionsArgs,
+      componentStateChanged: componentStageChangedAction,
+      selectionChanged: selectionChangedAction,
+    },
+    template: `<ocx-interactive-data-view ${argsToTemplate(args)} (deleteItem)="deleteItem.emit($event)" (editItem)="editItem.emit($event)" (viewItem)="viewItem.emit($event)" (componentStateChanged)="componentStateChanged($event)" (selectionChanged)="selectionChanged.emit($event)"></ocx-interactive-data-view>`,
+  }),
+}
+
 function generateColumns(count: number) {
   const data = []
   for (let i = 0; i < count; i++) {
@@ -60,10 +83,16 @@ function generateColumns(count: number) {
   return data
 }
 
+const sharedUnsplashImage =
+  'https://images.unsplash.com/photo-1682686581427-7c80ab60e3f3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+
 function generateRows(rowCount: number, columnCount: number) {
   const data = []
   for (let i = 0; i < rowCount; i++) {
     const row = {} as any
+    row.product = `Product ${i + 1}`
+    row.imagePath = sharedUnsplashImage
+    row.amount = (i + 1) * 10
     for (let j = 0; j < columnCount; j++) {
       row[j + 1] = `Test value for ${j + 1}`
     }
@@ -156,13 +185,13 @@ const CustomContentInteractiveDataView: StoryFn<InteractiveDataViewComponent> = 
       </div>
     </ng-template>
     <ng-template #grid let-item>
-      <div class="w-3 px-4 py-2 card m-0 mr-4">
+      <div class="w-1/4 px-4 py-2 card m-0 mr-4">
         <p>{{item.product}}</p>
         <p-progressBar [value]="item.amount" showValue="false"/>
       </div>
   </ng-template>
   <ng-template #topCenter>
-    <input pInputText placeholder="Custom input injected via template" class="border-round w-18rem p-2" />
+    <input pInputText placeholder="Custom input injected via template" class="rounded-border w-[18rem] p-2" />
   </ng-template>
   </ocx-interactive-data-view>`,
 })
