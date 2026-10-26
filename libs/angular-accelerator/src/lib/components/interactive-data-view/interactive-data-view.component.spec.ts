@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { DatePipe } from '@angular/common'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
@@ -1231,6 +1232,33 @@ xdescribe('InteractiveDataViewComponent', () => {
       expect(rightActionColumn).toBeTruthy()
       expect(await dataTable?.columnIsFrozen(rightActionColumnHeader)).toBe(true)
       expect(await dataTable?.columnIsFrozen(rightActionColumn)).toBe(true)
+    })
+
+    it('should keep the dialog open and not persist changes when nothing changed (canSave guard)', async () => {
+      const saveSpy = jest.spyOn(CustomGroupColumnSelectorComponent.prototype, 'onSaveClick')
+
+      await dialogSaveButton.click()
+
+      expect(saveSpy).toHaveBeenCalled()
+      expect(await (await customGroupColumnSelector.getDialog()).isVisible()).toBe(true)
+    })
+  })
+
+  describe('Table view custom group column selector dialog configuration', () => {
+    it('should default resizableColumnGroupSelectorDialog and restoreColumnGroupSelectorOrder to false', () => {
+      expect(component.resizableColumnGroupSelectorDialog).toBe(false)
+      expect(component.restoreColumnGroupSelectorOrder).toBe(false)
+    })
+
+    it('should forward resizableColumnGroupSelectorDialog and restoreColumnGroupSelectorOrder to the hosted selector', () => {
+      component.resizableColumnGroupSelectorDialog = true
+      component.restoreColumnGroupSelectorOrder = true
+      fixture.detectChanges()
+
+      const selectorDebugElement = fixture.debugElement.query(By.css('ocx-custom-group-column-selector'))
+      const selector = selectorDebugElement.componentInstance as CustomGroupColumnSelectorComponent
+      expect(selector.resizableColumnGroupSelectorDialog).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder).toBe(true)
     })
   })
 
