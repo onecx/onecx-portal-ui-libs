@@ -30,7 +30,7 @@
         <label for="ocxAiAssistAction">{{ 'OCX_AI_ASSIST.ACTION' | translate }}</label>
         <p-select
           inputId="ocxAiAssistAction"
-          [options]="availableActions"
+          [options]="actions"
           [ngModel]="selectedActionId"
           (ngModelChange)="selectAction($event)"
           optionValue="id"

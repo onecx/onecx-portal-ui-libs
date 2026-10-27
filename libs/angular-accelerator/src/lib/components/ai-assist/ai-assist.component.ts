@@ -25,10 +25,10 @@ const UNKNOWN_ERROR_CODE = 'UNKNOWN'
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class AiAssistComponent implements OnInit, OnDestroy {
-  /** Additional actions appended to the default Translate, Summarize and Generate actions. */
-  @Input() customActions: AiAssistActionDefinition<unknown>[] = []
-  /** Ids of default or custom actions that must not be offered. */
-  @Input() disabledActionIds: string[] = []
+  /** Actions offered by default. Hosts can replace the built-in Translate, Summarize and Generate set. */
+  @Input() defaultActions: AiAssistActionDefinition<unknown>[] = DEFAULT_AI_ASSIST_ACTIONS
+  /** Optional actions offered in addition to the default ones. */
+  @Input() additionalActions: AiAssistActionDefinition<unknown>[] = []
   /** Application id used to load agents. Defaults to the appId of the current MFE. */
   @Input() appId?: string
 
@@ -56,13 +56,12 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.completionService.destroy()
   }
 
-  get availableActions(): AiAssistActionDefinition<unknown>[] {
-    const all: AiAssistActionDefinition<unknown>[] = [...DEFAULT_AI_ASSIST_ACTIONS, ...this.customActions]
-    return all.filter((action) => !this.disabledActionIds.includes(action.id))
+  get actions(): AiAssistActionDefinition<unknown>[] {
+    return [...this.defaultActions, ...this.additionalActions]
   }
 
   get selectedAction(): AiAssistActionDefinition<unknown> | undefined {
-    return this.availableActions.find((action) => action.id === this.selectedActionId)
+    return this.actions.find((action) => action.id === this.selectedActionId)
   }
 
   get selectedAgent(): AiAgentResponse | undefined {

@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { AiAssistComponent } from './ai-assist.component'
+import { DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
 
 export default {
   title: 'Components/AiAssistComponent',
@@ -35,11 +36,11 @@ export const Default = {
   args: {},
 }
 
-export const WithHostActions = {
+export const WithAdditionalActions = {
   render: Template,
   args: {
-    disabledActionIds: ['generate'],
-    customActions: [
+    defaultActions: DEFAULT_AI_ASSIST_ACTIONS.filter((action) => action.id !== 'generate'),
+    additionalActions: [
       {
         id: 'extractKeywords',
         labelKey: 'Extract keywords',

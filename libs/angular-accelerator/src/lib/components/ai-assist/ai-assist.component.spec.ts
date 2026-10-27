@@ -5,6 +5,8 @@ import { of } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { AiAssistComponent } from './ai-assist.component'
+import { DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
+import { z } from 'zod'
 
 const agent: AiAgentResponse = { id: 'agent-1', name: 'Content partner', appId: 'app-1' }
 
@@ -61,14 +63,23 @@ describe('AiAssistComponent', () => {
     expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.NO_PROVIDER')
   })
 
-  it('should offer default actions and hide actions disabled by the host', async () => {
+  it('should offer the default actions and append the optional additional actions', async () => {
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
-    component.disabledActionIds = ['summarize']
+    component.defaultActions = DEFAULT_AI_ASSIST_ACTIONS.filter((action) => action.id !== 'summarize')
+    component.additionalActions = [
+      {
+        id: 'extractKeywords',
+        labelKey: 'Extract keywords',
+        buildInstruction: () => 'Extract keywords.',
+        outputDescription: '{"keywords": string[]}',
+        outputSchema: z.object({ keywords: z.array(z.string()) }),
+      },
+    ]
     fixture.detectChanges()
     await fixture.whenStable()
 
-    expect(component.availableActions.map((action) => action.id)).toEqual(['translate', 'generate'])
+    expect(component.actions.map((action) => action.id)).toEqual(['translate', 'generate', 'extractKeywords'])
   })
 
   it('should run the selected action with an instruction that requires JSON and show the text result', async () => {
