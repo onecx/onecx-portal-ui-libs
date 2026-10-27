@@ -1,8 +1,8 @@
 import { AiAgentGatherer } from '../gatherers/ai-agent/v1/ai-agent.gatherer'
 import type { AiAgentRequest, AiAgentResponse } from '../gatherers/ai-agent/v1/ai-agent.model'
 
-export async function consumerAiAgentProvider(_request: AiAgentRequest): Promise<AiAgentResponse[] | null> {
-  return null
+export function consumerAiAgentProvider(_request: AiAgentRequest): Promise<AiAgentResponse[] | null> {
+  return Promise.resolve(null)
 }
 
 /**
