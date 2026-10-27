@@ -25,7 +25,7 @@ export function planRowGroups(rows: Row[], groupKeyPath: string): RowGroupPlan {
   for (const row of rows) {
     const raw = row[groupKeyPath]
     const key: unknown = raw
-    const valid = (typeof key === 'string' || typeof key === 'number') && key === key
+    const valid = typeof key === 'string' || (typeof key === 'number' && !Number.isNaN(key))
     if (!valid) {
       ungroupedRows.push(row)
       continue
