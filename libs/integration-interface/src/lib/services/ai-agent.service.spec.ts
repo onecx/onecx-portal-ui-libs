@@ -1,5 +1,6 @@
 import { OneCXAiAgentService, consumerAiAgentProvider } from './ai-agent.service'
 import type { AiAgentRequest, AiAgentResponse } from '../gatherers/ai-agent/v1/ai-agent.model'
+import { AiProviderError } from '../errors/ai-provider-error'
 
 const createGathererMock = () => {
   const gather = jest.fn()
@@ -77,6 +78,45 @@ describe('OneCXAiAgentService', () => {
     gathererMock.gather.mockResolvedValue([])
 
     expect(await service.getAgents(sampleRequest)).toEqual([])
+  })
+
+  it('should return the answered agents and log (not throw) when another provider fails', async () => {
+    const agent: AiAgentResponse = { id: 'a1', name: 'Agent 1' }
+    const failure = new AiProviderError('PROVIDER_ERROR', 'boom', { status: 500, retryable: true })
+    gathererMock.gather.mockResolvedValue([failure, [agent]])
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    const result = await service.getAgents(sampleRequest)
+
+    expect(result).toEqual([agent])
+    warnSpy.mockRestore()
+  })
+
+  it('should throw the first AiProviderError when every answering provider fails', async () => {
+    const first = new AiProviderError('TIMEOUT', 'timeout', { retryable: true })
+    const second = new AiProviderError('PROVIDER_ERROR', 'boom', { status: 500 })
+    gathererMock.gather.mockResolvedValue([first, second])
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(service.getAgents(sampleRequest)).rejects.toBe(first)
+    warnSpy.mockRestore()
+  })
+
+  it('should throw when the only failing provider is combined with providers that declined', async () => {
+    const failure = new AiProviderError('PROVIDER_ERROR', 'boom')
+    gathererMock.gather.mockResolvedValue([failure, null])
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(service.getAgents(sampleRequest)).rejects.toBe(failure)
+    warnSpy.mockRestore()
+  })
+
+  it('should pass appId through to the gatherer request without modifying it', async () => {
+    gathererMock.gather.mockResolvedValue([[{ id: 'a1', name: 'Agent 1', appId: 'app-1' }]])
+
+    await service.getAgents({ appId: 'app-1' })
+
+    expect(gathererMock.gather).toHaveBeenCalledWith({ appId: 'app-1' })
   })
 
   it('should destroy the gatherer on destroy', () => {
