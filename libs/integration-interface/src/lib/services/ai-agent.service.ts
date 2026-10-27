@@ -1,5 +1,6 @@
 import { AiAgentGatherer } from '../gatherers/ai-agent/v1/ai-agent.gatherer'
 import type { AiAgentRequest, AiAgentResponse } from '../gatherers/ai-agent/v1/ai-agent.model'
+import { createLogger } from '../utils/logger.utils'
 
 export async function consumerAiAgentProvider(_request: AiAgentRequest): Promise<AiAgentResponse[] | null> {
   return null
@@ -13,9 +14,12 @@ export async function consumerAiAgentProvider(_request: AiAgentRequest): Promise
  * an empty list is returned.
  */
 export class OneCXAiAgentService {
+  private readonly logger = createLogger('OneCXAiAgentService')
+
   private readonly aiAgentGatherer = new AiAgentGatherer(consumerAiAgentProvider)
 
   async getAgents(request: AiAgentRequest = {}): Promise<AiAgentResponse[]> {
+    this.logger.debug('getAgents', request)
     const responses = await this.aiAgentGatherer.gather(request)
     const agents = new Map<string, AiAgentResponse>()
     for (const providerAgents of responses) {
@@ -24,6 +28,11 @@ export class OneCXAiAgentService {
           agents.set(agent.id, agent)
         }
       }
+    }
+    if (agents.size === 0) {
+      this.logger.warn('No AI provider returned any agents for the request', request)
+    } else {
+      this.logger.debug('getAgents resolved', agents.size)
     }
     return [...agents.values()]
   }
