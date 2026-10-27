@@ -1,0 +1,39 @@
+.ocx-ai-assist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &__title {
+    margin: 0;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    textarea,
+    input[type='text'] {
+      width: 100%;
+    }
+  }
+
+  &__status {
+    margin: 0;
+  }
+
+  &__result {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    textarea {
+      width: 100%;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      margin: 0;
+    }
+  }
+}
