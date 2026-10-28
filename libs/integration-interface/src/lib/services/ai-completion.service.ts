@@ -24,7 +24,7 @@ const MAX_BACKOFF_MS = 2000
 const COMPLETION_TIMEOUT_MS = 60000
 
 export async function consumerAiCompletionProvider(_request: AiCompletionRequest): Promise<AiCompletionProviderResult> {
-  return Promise.resolve(null)
+  return null
 }
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
@@ -52,29 +52,36 @@ export class OneCXAiCompletionService {
       systemPrompt: input.systemPrompt,
     }
     this.logger.debug('getCompletion', { agentId: input.agentId })
-    for (let attempt = 0; ; attempt++) {
-      try {
-        const response = await this.requestCompletion(request)
-        const result = this.parseResponse(response, input.outputSchema)
-        this.logger.debug('getCompletion resolved', { agentId: input.agentId })
-        return result
-      } catch (error) {
-        if (!isAiProviderError(error) || !error.retryable) {
-          throw error
-        }
-        if (attempt >= MAX_RETRIES) {
-          this.logger.warn('AI completion retries exhausted', { code: error.code, attempts: attempt + 1 })
-          throw new AiProviderError('RETRIES_EXHAUSTED', 'AI completion failed after retrying', { retryable: false })
-        }
-        const backoffMs = Math.min(BASE_BACKOFF_MS * 2 ** attempt, MAX_BACKOFF_MS)
-        this.logger.warn('Retrying AI completion', { code: error.code, attempt: attempt + 1 })
-        await sleep(backoffMs)
-      }
-    }
+    return this.attemptCompletion(request, input.outputSchema, 0)
   }
 
   destroy(): void {
     this.aiCompletionGatherer.destroy()
+  }
+
+  private async attemptCompletion<T>(
+    request: AiCompletionRequest,
+    outputSchema: ZodType<T>,
+    attempt: number
+  ): Promise<T> {
+    try {
+      const response = await this.requestCompletion(request)
+      const result = this.parseResponse(response, outputSchema)
+      this.logger.debug('getCompletion resolved', { agentId: request.agent.id })
+      return result
+    } catch (error) {
+      if (!isAiProviderError(error) || !error.retryable) {
+        throw error
+      }
+      if (attempt >= MAX_RETRIES) {
+        this.logger.warn('AI completion retries exhausted', { code: error.code, attempts: attempt + 1 })
+        throw new AiProviderError('RETRIES_EXHAUSTED', 'AI completion failed after retrying', { retryable: false })
+      }
+      const backoffMs = Math.min(BASE_BACKOFF_MS * 2 ** attempt, MAX_BACKOFF_MS)
+      this.logger.warn('Retrying AI completion', { code: error.code, attempt: attempt + 1 })
+      await sleep(backoffMs)
+      return this.attemptCompletion(request, outputSchema, attempt + 1)
+    }
   }
 
   private async requestCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
