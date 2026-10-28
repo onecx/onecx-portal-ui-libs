@@ -1,3 +1,10 @@
+## [9.0.0-rc.16](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.15...v9.0.0-rc.16) (2026-10-28)
+
+### Bug Fixes
+
+* v9 implement issue [#970](https://github.com/onecx/onecx-portal-ui-libs/issues/970) - Column Group Selector Issues ([#1816](https://github.com/onecx/onecx-portal-ui-libs/issues/1816)) ([9165309](https://github.com/onecx/onecx-portal-ui-libs/commit/91653091d3cda6bf3e614da95fada27b6369f889))
+* v9 resizableColumnGroupSelectorDialog default value ([#1917](https://github.com/onecx/onecx-portal-ui-libs/issues/1917)) ([3c02e1f](https://github.com/onecx/onecx-portal-ui-libs/commit/3c02e1f639bb9a5d8fcdd66fbedcb81ed6ce53af))
+
 ## [9.0.0-rc.15](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.14...v9.0.0-rc.15) (2026-10-21)
 
 ### Features
