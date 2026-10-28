@@ -191,6 +191,18 @@ describe('ColumnGroupSelectionComponent', () => {
     })
   })
 
+  describe('template', () => {
+    it('should not set autofocus on the rendered select', () => {
+      fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', predefinedGroupKeys: ['g1'] })])
+
+      fixture.detectChanges()
+
+      const input = fixture.nativeElement.querySelector('#columnGroupSelectionDropdown')
+      expect(input).toBeTruthy()
+      expect(input.hasAttribute('autofocus')).toBe(false)
+    })
+  })
+
   describe('constructor effect', () => {
     it('should emit componentStateChanged when selectedGroupKey becomes customGroupKey', () => {
       const emitSpy = jest.spyOn(component.componentStateChanged, 'emit')
