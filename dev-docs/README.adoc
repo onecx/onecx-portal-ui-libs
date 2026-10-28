@@ -239,6 +239,7 @@ The following older folders still remain in this folder. Each one is removed by 
 These pages are not part of any Area and are kept as they are.
 
 * link:./general/overview.adoc[Library overview]: the list of libraries in this repository.
+* link:./git-hooks/commit-hooks.adoc[Commit Hooks - Pre-commit and Commit Message Checks]: the local Husky and commitlint setup.
 * Storybook:
 ** link:./storybook/concept.adoc[Target Picture - OneCX Storybooks]
 ** link:./storybook/setup.adoc[Storybook Setup in OneCX]

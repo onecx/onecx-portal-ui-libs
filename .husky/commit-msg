@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+# Keeps forbidden terms out of the commit, then lints the message with commitlint.
+
+msg_file="$1"
+
+# Forbidden terms (WORKFLOW_FORBIDDEN_TERMS, comma- or newline-separated,
+# case-insensitive) must appear in neither the message nor the author or
+# committer name or email. Unset: noted, not enforced. The term found is never
+# printed: the list may be a secret.
+if [ -z "$WORKFLOW_FORBIDDEN_TERMS" ]; then
+  echo "commit-msg: WORKFLOW_FORBIDDEN_TERMS is not set; forbidden terms are not checked." >&2
+else
+  checked=$(mktemp)
+  grep -v '^#' "$msg_file" > "$checked"
+  git var GIT_AUTHOR_IDENT >> "$checked" 2>/dev/null
+  git var GIT_COMMITTER_IDENT >> "$checked" 2>/dev/null
+  forbidden=$(printf '%s\n' "$WORKFLOW_FORBIDDEN_TERMS" | tr ',' '\n' | while IFS= read -r term; do
+    term=$(printf '%s' "$term" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    if [ -n "$term" ] && grep -qiF -- "$term" "$checked"; then echo found; fi
+  done)
+  rm -f "$checked"
+  if [ -n "$forbidden" ]; then
+    echo "commit-msg: the commit message, author, or committer contains a term WORKFLOW_FORBIDDEN_TERMS forbids." >&2
+    exit 1
+  fi
+fi
+
+npx --no-install commitlint --edit "$msg_file"

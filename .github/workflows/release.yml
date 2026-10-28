@@ -8,6 +8,9 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    env:
+      # The semantic-release git plugin commits without --no-verify; skip all Husky hooks for that commit.
+      HUSKY: 0
     steps:
       - uses: actions/checkout@v7
         with:
