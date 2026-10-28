@@ -26,7 +26,7 @@ export default {
   ],
 } as Meta<AiAssistComponent>
 
-const Template: StoryFn<AiAssistComponent> = (args: AiAssistComponent) => ({
+const Template: StoryFn<AiAssistComponent> = (args) => ({
   props: args,
 })
 
