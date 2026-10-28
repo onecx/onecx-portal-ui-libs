@@ -10,6 +10,7 @@ import type { DataTableColumn } from '../../model/data-table-column.model'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { By } from '@angular/platform-browser'
+import { SelectButton } from '@openng/optimus-ui/selectbutton'
 
 describe('CustomGroupColumnSelectorComponent', () => {
   let component: CustomGroupColumnSelectorComponent
@@ -712,6 +713,37 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(pickList.selectedItemsSource).toEqual([])
       expect(pickList.selectedItemsTarget).toEqual([])
       expect(document.querySelectorAll('.p-listbox-option[aria-selected="true"]').length).toBe(0)
+    })
+  })
+
+  describe('autofocus', () => {
+    function openDialog() {
+      const a = makeColumn('A')
+      const b = makeColumn('B')
+      fixture.componentRef.setInput('columns', [a, b])
+      fixture.componentRef.setInput('displayedColumns', [a])
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+    }
+
+    it('should not autofocus the frozen and position select buttons', () => {
+      openDialog()
+
+      const selectButtons = fixture.debugElement.queryAll(By.directive(SelectButton))
+      expect(selectButtons.map((s) => s.nativeElement.id)).toEqual(['frozenActionColumn', 'actionColumnPosition'])
+      selectButtons.forEach((selectButton) => {
+        expect(selectButton.componentInstance.autofocus).toBe(false)
+        expect(selectButton.nativeElement.querySelector('[autofocus]')).toBeNull()
+      })
+    })
+
+    it('should not autofocus any element inside the pick list', () => {
+      openDialog()
+
+      const pickList = fixture.debugElement.query(By.css('p-pickList'))
+      expect(pickList).toBeTruthy()
+      expect(pickList.nativeElement.getAttribute('autofocus')).toBe('false')
+      expect(pickList.nativeElement.querySelector('[autofocus]')).toBeNull()
     })
   })
 })
