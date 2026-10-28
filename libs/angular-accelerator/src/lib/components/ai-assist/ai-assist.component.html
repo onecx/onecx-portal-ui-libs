@@ -79,7 +79,7 @@
         <div class="ocx-ai-assist__result">
           <h4>{{ 'OCX_AI_ASSIST.RESULT' | translate }}</h4>
           @if (resultText !== undefined) {
-            <textarea rows="6" readonly [value]="resultText" aria-label="{{ 'OCX_AI_ASSIST.RESULT' | translate }}"></textarea>
+            <textarea rows="6" readonly [value]="resultText" [attr.aria-label]="'OCX_AI_ASSIST.RESULT' | translate"></textarea>
           } @else {
             <pre>{{ resultJson }}</pre>
           }
