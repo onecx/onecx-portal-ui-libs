@@ -1,37 +1,132 @@
+import type { ZodType } from 'zod'
+
 import { AiCompletionGatherer } from '../gatherers/ai-completion/v1/ai-completion.gatherer'
-import type { AiCompletionRequest, AiCompletionResponse } from '../gatherers/ai-completion/v1/ai-completion.model'
+import type {
+  AiCompletionProviderResult,
+  AiCompletionRequest,
+  AiCompletionResponse,
+} from '../gatherers/ai-completion/v1/ai-completion.model'
+import { AiProviderError, isAiProviderError } from '../errors/ai-provider-error'
 import { createLogger } from '../utils/logger.utils'
 
-export async function consumerAiCompletionProvider(
-  _request: AiCompletionRequest
-): Promise<AiCompletionResponse | null> {
+export interface GetCompletionInput<T> {
+  agentName: string
+  agentId: string
+  systemPrompt: string
+  aiContext: string[]
+  message: string
+  outputSchema: ZodType<T>
+}
+
+const MAX_RETRIES = 2
+const BASE_BACKOFF_MS = 250
+const MAX_BACKOFF_MS = 2000
+const COMPLETION_TIMEOUT_MS = 60000
+
+export async function consumerAiCompletionProvider(_request: AiCompletionRequest): Promise<AiCompletionProviderResult> {
   return null
 }
 
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
+
 /**
- * Thin service wrapper around AiCompletionGatherer that lets consumers inside request AI completions.
+ * Thin service wrapper around AiCompletionGatherer that lets consumers request AI completions.
  *
- * It forwards the given request unchanged through the gatherer and returns the first
- * non-null response collected from the registered AI provider instance (for example the
- * ocx-ai-connector-component). If no provider contributes a response, an error is thrown.
+ * It maps the input to an AiCompletionRequest, asks the registered provider instance (for example the
+ * ocx-ai-connector-component) and parses the returned message into the type described by `outputSchema`.
+ * The schema is never sent to the provider.
+ *
+ * Only provider errors marked as retryable are retried, at most twice, with bounded exponential backoff.
+ * Prompts, context and model output are never logged.
  */
 export class OneCXAiCompletionService {
   private readonly logger = createLogger('OneCXAiCompletionService')
 
   private readonly aiCompletionGatherer = new AiCompletionGatherer(consumerAiCompletionProvider)
 
-  async getCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
-    this.logger.debug('getCompletion', request)
-    const responses = await this.aiCompletionGatherer.gather(request)
-    const response = responses.find((r) => r !== null)
-    if (!response) {
-      throw new Error('No AI provider responded to the completion request')
+  async getCompletion<T>(input: GetCompletionInput<T>): Promise<T> {
+    const request: AiCompletionRequest = {
+      agent: { id: input.agentId, name: input.agentName },
+      aiContext: input.aiContext,
+      message: input.message,
+      systemPrompt: input.systemPrompt,
     }
-    this.logger.debug('getCompletion resolved', response)
-    return response
+    this.logger.debug('getCompletion', { agentId: input.agentId })
+    return this.attemptCompletion(request, input.outputSchema, 0)
   }
 
   destroy(): void {
     this.aiCompletionGatherer.destroy()
+  }
+
+  private async attemptCompletion<T>(
+    request: AiCompletionRequest,
+    outputSchema: ZodType<T>,
+    attempt: number
+  ): Promise<T> {
+    try {
+      const response = await this.requestCompletion(request)
+      const result = this.parseResponse(response, outputSchema)
+      this.logger.debug('getCompletion resolved', { agentId: request.agent.id })
+      return result
+    } catch (error) {
+      if (!isAiProviderError(error) || !error.retryable) {
+        throw error
+      }
+      if (attempt >= MAX_RETRIES) {
+        this.logger.warn('AI completion retries exhausted', { code: error.code, attempts: attempt + 1 })
+        throw new AiProviderError('RETRIES_EXHAUSTED', 'AI completion failed after retrying', { retryable: false })
+      }
+      const backoffMs = Math.min(BASE_BACKOFF_MS * 2 ** attempt, MAX_BACKOFF_MS)
+      this.logger.warn('Retrying AI completion', { code: error.code, attempt: attempt + 1 })
+      await sleep(backoffMs)
+      return this.attemptCompletion(request, outputSchema, attempt + 1)
+    }
+  }
+
+  private async requestCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {
+    let providerResults: AiCompletionProviderResult[]
+    try {
+      providerResults = await this.withTimeout(this.aiCompletionGatherer.gather(request))
+    } catch (error) {
+      if (isAiProviderError(error)) {
+        throw error
+      }
+      throw new AiProviderError('PROVIDER_ERROR', 'AI provider failed to handle the completion request')
+    }
+    let providerError: AiProviderError | undefined
+    for (const result of providerResults) {
+      if (isAiProviderError(result)) {
+        providerError ??= result
+      } else if (result) {
+        return result
+      }
+    }
+    throw providerError ?? new AiProviderError('NO_PROVIDER', 'No AI provider responded to the completion request')
+  }
+
+  private parseResponse<T>(response: AiCompletionResponse, outputSchema: ZodType<T>): T {
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(response.message)
+    } catch {
+      throw new AiProviderError('INVALID_JSON', 'AI completion response is not valid JSON')
+    }
+    const result = outputSchema.safeParse(parsed)
+    if (!result.success) {
+      throw new AiProviderError('SCHEMA_MISMATCH', 'AI completion response does not match the expected schema')
+    }
+    return result.data
+  }
+
+  private withTimeout<R>(promise: Promise<R>): Promise<R> {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(
+        () => reject(new AiProviderError('TIMEOUT', 'AI completion request timed out')),
+        COMPLETION_TIMEOUT_MS
+      )
+    })
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer))
   }
 }
