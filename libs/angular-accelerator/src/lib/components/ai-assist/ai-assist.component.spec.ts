@@ -30,7 +30,7 @@ describe('AiAssistComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AngularAcceleratorModule],
-      providers: [provideTranslateTestingService(), { provide: AppStateService, useValue: { currentMfe$: of({ appId: 'app-1' }) } }],
+      providers: [provideTranslateTestingService({}), { provide: AppStateService, useValue: { currentMfe$: of({ appId: 'app-1' }) } }],
     }).compileComponents()
   })
 
