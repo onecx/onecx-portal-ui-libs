@@ -4,7 +4,7 @@
   @switch (loadState) {
     @case ('loading') {
       <p-skeleton width="100%" height="3rem"></p-skeleton>
-      <p class="ocx-ai-assist__status" role="status">{{ 'OCX_AI_ASSIST.LOADING_AGENTS' | translate }}</p>
+      <output class="ocx-ai-assist__status">{{ 'OCX_AI_ASSIST.LOADING_AGENTS' | translate }}</output>
     }
     @case ('error') {
       <p-message severity="error" [text]="(errorMessageKey | translate)"></p-message>
@@ -67,7 +67,7 @@
       ></button>
 
       @if (runState === 'running') {
-        <p class="ocx-ai-assist__status" role="status">{{ 'OCX_AI_ASSIST.RUNNING' | translate }}</p>
+        <output class="ocx-ai-assist__status">{{ 'OCX_AI_ASSIST.RUNNING' | translate }}</output>
       }
 
       @if (runState === 'error') {
