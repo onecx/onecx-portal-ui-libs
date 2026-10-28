@@ -3,6 +3,7 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import { AiAgentResponse, AiProviderError, OneCXAiAgentService, OneCXAiCompletionService } from '@onecx/integration-interface'
 import { of } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { AiAssistComponent } from './ai-assist.component'
 import { DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
@@ -30,7 +31,11 @@ describe('AiAssistComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AngularAcceleratorModule],
-      providers: [provideTranslateTestingService({}), { provide: AppStateService, useValue: { currentMfe$: of({ appId: 'app-1' }) } }],
+      providers: [
+        provideTranslateTestingService({}),
+        provideNoopAnimations(),
+        { provide: AppStateService, useValue: { currentMfe$: of({ appId: 'app-1' }) } },
+      ],
     }).compileComponents()
   })
 
