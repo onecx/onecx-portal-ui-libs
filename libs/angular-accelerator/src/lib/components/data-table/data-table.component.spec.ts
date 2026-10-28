@@ -485,6 +485,20 @@ describe('DataTableComponent', () => {
       expect(unselectedCheckBoxes.length).toBe(5)
       expect(selectedCheckBoxes.length).toBe(0)
     })
+
+    it('should not autofocus the selection checkboxes', () => {
+      component.selectionChanged.subscribe(() => undefined)
+      fixture.detectChanges()
+
+      const element: HTMLElement = fixture.nativeElement
+      const checkboxes = element.querySelectorAll('p-tableheadercheckbox, p-tablecheckbox')
+      expect(element.querySelectorAll('p-tableheadercheckbox').length).toBe(1)
+      expect(element.querySelectorAll('p-tablecheckbox').length).toBe(5)
+      checkboxes.forEach((checkbox) => {
+        expect(checkbox.getAttribute('autofocus')).toBe('false')
+        checkbox.querySelectorAll('input').forEach((input) => expect(input.autofocus).toBe(false))
+      })
+    })
   })
 
   describe('Frozen action column', () => {
