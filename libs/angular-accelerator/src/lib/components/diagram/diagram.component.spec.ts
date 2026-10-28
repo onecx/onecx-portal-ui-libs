@@ -13,6 +13,7 @@ import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { DiagramComponent, DiagramLayouts } from './diagram.component'
 import { By } from '@angular/platform-browser'
+import { SelectButton } from '@openng/optimus-ui/selectbutton'
 
 declare global {
   interface Window {
@@ -149,6 +150,16 @@ describe('DiagramComponent', () => {
     expect(component.shownDiagramTypes()).toEqual(expectedDiagramLayouts)
     expect(diagramTypeSelectButton).toBeTruthy()
     expect(diagramTypeSelectButtonOptions.length).toBe(2)
+  })
+
+  it('should not autofocus the diagramType select button', () => {
+    fixture.componentRef.setInput('supportedDiagramTypes', [DiagramType.PIE, DiagramType.HORIZONTAL_BAR])
+    fixture.detectChanges()
+
+    const selectButton = fixture.debugElement.query(By.directive(SelectButton))
+    expect(selectButton).toBeTruthy()
+    expect(selectButton.componentInstance.autofocus).toBe(false)
+    expect(selectButton.nativeElement.querySelector('[autofocus]')).toBeNull()
   })
 
   it('should change the rendered diagram whenever the select button is used to change the diagramType', async () => {
