@@ -1,4 +1,29 @@
 {
+  "OCX_AI_ASSIST": {
+    "TITLE": "AI assist",
+    "AGENT": "Agent",
+    "ACTION": "Action",
+    "CHOOSE_ACTION": "Choose an action",
+    "INPUT": "Text",
+    "RUN": "Run",
+    "RUNNING": "Generating result...",
+    "RESULT": "Result",
+    "RETRY": "Retry",
+    "LOADING_AGENTS": "Loading agents...",
+    "NO_AGENTS": "No AI agents are available for this application.",
+    "ACTIONS": {
+      "TRANSLATE": "Translate",
+      "SUMMARIZE": "Summarize",
+      "GENERATE": "Generate"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Target language code"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "No AI provider is configured for this application.",
+      "GENERIC": "The AI request failed. Please try again."
+    }
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Column group selector",
     "DROPDOWN_LABEL": "Column group",

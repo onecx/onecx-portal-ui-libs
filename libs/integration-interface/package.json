@@ -13,7 +13,8 @@
     "@onecx/nx-migration-utils": "^6.29.1",
     "@nx/devkit": "^20.3.0",
     "@phenomnomnominal/tsquery": "^6",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "zod": "^3.23.8"
   },
   "peerDependenciesMeta": {
     "@nx/devkit": {

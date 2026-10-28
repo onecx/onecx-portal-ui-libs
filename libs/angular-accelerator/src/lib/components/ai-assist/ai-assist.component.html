@@ -1,0 +1,90 @@
+<section class="ocx-ai-assist" aria-labelledby="ocxAiAssistTitle">
+  <h3 id="ocxAiAssistTitle" class="ocx-ai-assist__title">{{ 'OCX_AI_ASSIST.TITLE' | translate }}</h3>
+
+  @switch (loadState) {
+    @case ('loading') {
+      <p-skeleton width="100%" height="3rem"></p-skeleton>
+      <p class="ocx-ai-assist__status" role="status">{{ 'OCX_AI_ASSIST.LOADING_AGENTS' | translate }}</p>
+    }
+    @case ('error') {
+      <p-message severity="error" [text]="(errorMessageKey | translate)"></p-message>
+      <button pButton type="button" class="ocx-ai-assist__retry" [label]="'OCX_AI_ASSIST.RETRY' | translate" (click)="loadAgents()"></button>
+    }
+    @case ('empty') {
+      <p-message severity="info" [text]="'OCX_AI_ASSIST.NO_AGENTS' | translate"></p-message>
+    }
+    @case ('ready') {
+      <div class="ocx-ai-assist__field">
+        <label for="ocxAiAssistAgent">{{ 'OCX_AI_ASSIST.AGENT' | translate }}</label>
+        <p-select
+          inputId="ocxAiAssistAgent"
+          [options]="agents"
+          [ngModel]="selectedAgentId"
+          (ngModelChange)="selectAgent($event)"
+          optionLabel="name"
+          optionValue="id"
+        ></p-select>
+      </div>
+
+      <div class="ocx-ai-assist__field">
+        <label for="ocxAiAssistAction">{{ 'OCX_AI_ASSIST.ACTION' | translate }}</label>
+        <p-select
+          inputId="ocxAiAssistAction"
+          [options]="actions"
+          [ngModel]="selectedActionId"
+          (ngModelChange)="selectAction($event)"
+          optionValue="id"
+          [placeholder]="'OCX_AI_ASSIST.CHOOSE_ACTION' | translate"
+        >
+          <ng-template let-item #item>{{ item.labelKey | translate }}</ng-template>
+          <ng-template let-item #selectedItem>{{ item.labelKey | translate }}</ng-template>
+        </p-select>
+      </div>
+
+      @for (parameter of selectedAction?.parameters ?? []; track parameter.key) {
+        <div class="ocx-ai-assist__field">
+          <label [for]="'ocxAiAssistParam-' + parameter.key">{{ parameter.labelKey | translate }}</label>
+          <input
+            type="text"
+            [id]="'ocxAiAssistParam-' + parameter.key"
+            [(ngModel)]="parameterValues[parameter.key]"
+          />
+        </div>
+      }
+
+      <div class="ocx-ai-assist__field">
+        <label for="ocxAiAssistInput">{{ 'OCX_AI_ASSIST.INPUT' | translate }}</label>
+        <textarea id="ocxAiAssistInput" rows="4" [(ngModel)]="inputText"></textarea>
+      </div>
+
+      <button
+        pButton
+        type="button"
+        class="ocx-ai-assist__run"
+        [label]="'OCX_AI_ASSIST.RUN' | translate"
+        [disabled]="!canRun"
+        (click)="run()"
+      ></button>
+
+      @if (runState === 'running') {
+        <p class="ocx-ai-assist__status" role="status">{{ 'OCX_AI_ASSIST.RUNNING' | translate }}</p>
+      }
+
+      @if (runState === 'error') {
+        <p-message severity="error" [text]="(errorMessageKey | translate)"></p-message>
+        <button pButton type="button" class="ocx-ai-assist__retry" [label]="'OCX_AI_ASSIST.RETRY' | translate" (click)="retry()"></button>
+      }
+
+      @if (runState === 'success') {
+        <div class="ocx-ai-assist__result">
+          <h4>{{ 'OCX_AI_ASSIST.RESULT' | translate }}</h4>
+          @if (resultText !== undefined) {
+            <textarea rows="6" readonly [value]="resultText" [attr.aria-label]="'OCX_AI_ASSIST.RESULT' | translate"></textarea>
+          } @else {
+            <pre>{{ resultJson }}</pre>
+          }
+        </div>
+      }
+    }
+  }
+</section>

@@ -19,6 +19,7 @@
     "@onecx/integration-interface": "^6.29.1",
     "@onecx/accelerator": "^6.29.1",
     "@onecx/angular-integration-interface": "^6.29.1",
+    "zod": "^3.23.8",
     "@onecx/angular-remote-components": "^6.29.1",
     "@onecx/angular-testing": "^6.29.1",
     "@onecx/angular-utils": "^6.29.1",
