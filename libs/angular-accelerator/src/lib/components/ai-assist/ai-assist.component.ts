@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
@@ -44,7 +44,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   private readonly agentService = new OneCXAiAgentService()
   private readonly completionService = new OneCXAiCompletionService()
 
-  constructor(private readonly appStateService: AppStateService) {}
+  private readonly appStateService = inject(AppStateService)
 
   ngOnInit(): void {
     this.loadAgents()
