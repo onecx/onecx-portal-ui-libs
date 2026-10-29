@@ -1,9 +1,17 @@
-import { SlotService } from '@onecx/angular-remote-components'
-import { TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
+import { TestBed, ComponentFixture } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { SlotService } from '@onecx/angular-remote-components'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from 'primeng/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -450,6 +458,74 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       expect(component.groupSelectionNoGroupSelectedKey()).toBe('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
+    })
+  })
+
+  describe('column group selector dialog configuration', () => {
+    it('should default resizableColumnGroupSelectorDialog to true', () => {
+      const { component } = createComponent(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    it('should default restoreColumnGroupSelectorOrder to false', () => {
+      const { component } = createComponent(true)
+      expect(component.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should default draggableColumnGroupSelectorDialog to true independently of resizing', () => {
+      const { component } = createComponent(true)
+      expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    // The hosted selector only renders in the 'table' layout, so the fixture must switch to it.
+    // The selector (standalone: false) plus its own template dependencies are declared/imported so
+    // the child instance can be inspected; the other ocx-* children in the IDV template only emit
+    // non-fatal "unknown element" warnings and do not affect the assertion.
+    const createTableLayoutFixture = (): ComponentFixture<InteractiveDataViewComponent> => {
+      const slotService = {
+        isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
+      } as unknown as SlotService
+
+      TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent, CustomGroupColumnSelectorComponent],
+        imports: [CommonModule, AngularAcceleratorPrimeNgModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
+        providers: [{ provide: SlotService, useValue: slotService }, provideTranslateTestingService({})],
+      })
+
+      const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+
+      fixture.componentRef.setInput('layout', 'table')
+      return fixture
+    }
+
+    const querySelectorChild = (fixture: ComponentFixture<InteractiveDataViewComponent>): CustomGroupColumnSelectorComponent => {
+      const selectorDebugElement = fixture.debugElement.query(By.css('ocx-custom-group-column-selector'))
+      expect(selectorDebugElement).toBeTruthy()
+      return selectorDebugElement.componentInstance as CustomGroupColumnSelectorComponent
+    }
+
+    it('should forward the default dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should forward custom dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.componentRef.setInput('draggableColumnGroupSelectorDialog', false)
+      fixture.componentRef.setInput('resizableColumnGroupSelectorDialog', true)
+      fixture.componentRef.setInput('restoreColumnGroupSelectorOrder', true)
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(false)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(true)
     })
   })
 
