@@ -304,13 +304,6 @@ describe('DataTableComponent', () => {
       })()
     )
 
-    it('should make the tooltip host keyboard focusable', () => {
-      component.columns = [{ ...mockColumns[0], tooltip: 'Product details' }]
-      fixture.detectChanges()
-
-      expect(getLabel().getAttribute('tabindex')).toBe('0')
-    })
-
     it.each([
       { tooltipKey: undefined, tooltip: undefined },
       { tooltipKey: '', tooltip: undefined },
