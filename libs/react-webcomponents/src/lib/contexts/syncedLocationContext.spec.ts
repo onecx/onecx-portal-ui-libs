@@ -2,7 +2,7 @@ import { createElement, Fragment } from 'react'
 import { TextDecoder, TextEncoder } from 'node:util'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-const appBase = '/ui/admin/onecx-proposal'
+const appBase = '/app/sample-app'
 const mockLocationListeners: ((location: { url?: string; isFirst: boolean }) => void)[] = []
 const mockPublishedLocations: { url?: string; isFirst: boolean }[] = []
 
@@ -46,7 +46,7 @@ const RouterContent = () => {
     createElement('output', { 'data-testid': 'location' }, location.pathname, location.search, location.hash),
     createElement(
       'button',
-      { onClick: () => navigate(`${appBase}/subpage/PROP-072459?tab=details#summary`) },
+      { onClick: () => navigate(`${appBase}/subpage/record-1?tab=details#summary`) },
       'Navigate in React'
     ),
     createElement(
@@ -73,7 +73,7 @@ describe('SyncedRouterProvider', () => {
     mockPublishedLocations.length = 0
     document.querySelector('base')?.remove()
     const base = document.createElement('base')
-    base.setAttribute('href', '/ui/')
+    base.setAttribute('href', '/app/')
     document.head.append(base)
     window.history.replaceState({}, '', appBase)
   })
@@ -82,10 +82,10 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation(`${appBase}/subpage/PROP-072459?tab=details#summary`)
+    publishLocation(`${appBase}/subpage/record-1?tab=details#summary`)
 
     expect(await screen.findByText('Subpage')).toBeTruthy()
-    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/PROP-072459?tab=details#summary`)
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     expect(mockPublishedLocations).toEqual([])
   })
 
@@ -93,11 +93,11 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation(`${appBase}/subpage/PROP-072459`)
+    publishLocation(`${appBase}/subpage/record-1`)
     expect(await screen.findByText('Subpage')).toBeTruthy()
 
-    publishLocation(`${appBase}/subpage/PROP-072460`)
-    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/PROP-072460`)
+    publishLocation(`${appBase}/subpage/record-2`)
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
 
     publishLocation(appBase)
     expect(await screen.findByText('Root page')).toBeTruthy()
@@ -108,7 +108,7 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    const targetUrl = `${appBase}/subpage/PROP-072459`
+    const targetUrl = `${appBase}/subpage/record-1`
     const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
 
     act(() => {
@@ -139,12 +139,12 @@ describe('SyncedRouterProvider', () => {
 
     await waitFor(() => {
       expect(mockPublishedLocations).toContainEqual({
-        url: `${appBase}/subpage/PROP-072459?tab=details#summary`,
+        url: `${appBase}/subpage/record-1?tab=details#summary`,
         isFirst: false,
       })
     })
 
-    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/PROP-072459?tab=details#summary`)
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
   })
 
   it('updates the React route on browser back and forward events', async () => {
@@ -153,7 +153,7 @@ describe('SyncedRouterProvider', () => {
     fireEvent.click(screen.getByText('Navigate in React'))
 
     await waitFor(() =>
-      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/PROP-072459?tab=details#summary`)
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     )
 
     act(() => window.history.back())
@@ -162,7 +162,7 @@ describe('SyncedRouterProvider', () => {
 
     act(() => window.history.forward())
     await waitFor(() =>
-      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/PROP-072459?tab=details#summary`)
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     )
     expect(await screen.findByText('Subpage')).toBeTruthy()
   })
