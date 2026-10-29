@@ -23,7 +23,7 @@ const BASE_BACKOFF_MS = 250
 const MAX_BACKOFF_MS = 2000
 const COMPLETION_TIMEOUT_MS = 60000
 
-export async function consumerAiCompletionProvider(_request: AiCompletionRequest): Promise<AiCompletionProviderResult> {
+export function consumerAiCompletionProvider(_request: AiCompletionRequest): Promise<AiCompletionProviderResult> {
   return Promise.resolve(null)
 }
 
