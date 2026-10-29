@@ -789,6 +789,23 @@ describe('DataListGridComponent', () => {
         expect(listActions.length).toBe(0)
       })
 
+      it('should render row-specific view and edit URLs as native list links', async () => {
+        userService.permissionsTopic$.publish(['LIST#VIEW', 'LIST#EDIT'])
+        component.viewActionUrl = (row) => `/details/${row.id}`
+        component.editActionUrl = (row) => `/edit/${row.id}`
+
+        fixture.detectChanges()
+        await fixture.whenStable()
+        await listGrid.getDefaultListItems()
+
+        const viewLink = fixture.nativeElement.querySelector('#id1-viewButton') as HTMLAnchorElement
+        const editLink = fixture.nativeElement.querySelector('#id1-editButton') as HTMLAnchorElement
+        expect(viewLink.tagName).toBe('A')
+        expect(viewLink.getAttribute('href')).toBe('/details/id1')
+        expect(editLink.tagName).toBe('A')
+        expect(editLink.getAttribute('href')).toBe('/edit/id1')
+      })
+
       it('should show custom inline actions if user has the required permission', async () => {
         userService.permissionsTopic$.publish(['CUSTOM#ACTION'])
 
@@ -1013,6 +1030,21 @@ describe('DataListGridComponent', () => {
         await gridMenuButton.click()
         gridActions = await listGrid.getActionButtons('grid')
         expect(gridActions.length).toBe(0)
+      })
+
+      it('should render row-specific view and edit URLs as native grid-menu links', async () => {
+        userService.permissionsTopic$.publish(['GRID#VIEW', 'GRID#EDIT'])
+        component.viewActionUrl = (row) => `/details/${row.id}`
+        component.editActionUrl = (row) => `/edit/${row.id}`
+        fixture.detectChanges()
+        await fixture.whenStable()
+
+        const gridMenuButton = await listGrid.getGridMenuButton()
+        await gridMenuButton.click()
+        await fixture.whenStable()
+
+        expect(document.body.querySelector('a[href="/details/id1"]')).not.toBeNull()
+        expect(document.body.querySelector('a[href="/edit/id1"]')).not.toBeNull()
       })
 
       it('should show custom additional action buttons when user has the required permission', async () => {
