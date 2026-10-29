@@ -1,3 +1,11 @@
+## [7.14.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.14.0...v7.14.1) (2026-10-27)
+
+### Bug Fixes
+
+* enable Sonar SCM detection and checkout v7 ([#1771](https://github.com/onecx/onecx-portal-ui-libs/issues/1771)) ([d3da24b](https://github.com/onecx/onecx-portal-ui-libs/commit/d3da24be4a27a33b863ccf8ee383838fd3e57237))
+* v7 default value for resizeable column grooup selector ([#1914](https://github.com/onecx/onecx-portal-ui-libs/issues/1914)) ([9ca3c4f](https://github.com/onecx/onecx-portal-ui-libs/commit/9ca3c4f58bd09a1af71222ab7df4303696815c97))
+* v7 implement issue [#970](https://github.com/onecx/onecx-portal-ui-libs/issues/970) - Column Group Selector Issues ([#1816](https://github.com/onecx/onecx-portal-ui-libs/issues/1816)) cherry-pick ([#1875](https://github.com/onecx/onecx-portal-ui-libs/issues/1875)) ([e6b9d47](https://github.com/onecx/onecx-portal-ui-libs/commit/e6b9d47bfb8576007c9b8bf2db0936f0860e559b))
+
 ## [7.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.13.1...v7.14.0) (2026-10-15)
 
 ### Features
