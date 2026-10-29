@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { BrowserRouter, useLocation } from 'react-router'
+import { BrowserRouter, useLocation, useNavigate } from 'react-router'
 import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
 import { useTopic } from '@onecx/react-integration-interface'
 import { createLogger } from '../utils/logger.utils'
@@ -25,69 +25,113 @@ export const SyncedLocationContext = createContext<CurrentLocationTopicPayload |
  */
 const logger = createLogger('RouterSync')
 
+const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; hash: string }) =>
+  `${pathname}${search}${hash}`
+
+const SHELL_SYNC_MARKER = '__onecxShellSync'
+const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
+
+/**
+ * The shell patches history.pushState/replaceState and publishes CurrentLocationTopic
+ * for every call that does NOT contain top-level `isRouterSync`.
+ * React Router stores user state under `data.usr`, so the marker would be invisible
+ * to the shell. This wrapper copies our marker to the top level before the shell
+ * patch runs, preventing an echo back to the shell when we navigate from a topic
+ * event. Internal React Router navigation keeps publishing normally.
+ */
+if (typeof window !== 'undefined' && !(window.history as unknown as Record<string, boolean>)[HISTORY_WRAPPER_MARKER]) {
+  const pushState = window.history.pushState.bind(window.history)
+  const replaceState = window.history.replaceState.bind(window.history)
+
+  const propagateShellSyncMarker = (data: unknown) => {
+    if (data && typeof data === 'object') {
+      const state = (data as Record<string, unknown>).usr
+      if (state && typeof state === 'object' && (state as Record<string, unknown>)[SHELL_SYNC_MARKER]) {
+        ;(data as Record<string, unknown>).isRouterSync = true
+        delete (state as Record<string, unknown>)[SHELL_SYNC_MARKER]
+      }
+    }
+    return data
+  }
+
+  window.history.pushState = function (data: unknown, unused: string, url?: string | URL | null) {
+    return pushState(propagateShellSyncMarker(data), unused, url as string)
+  }
+  window.history.replaceState = function (data: unknown, unused: string, url?: string | URL | null) {
+    return replaceState(propagateShellSyncMarker(data), unused, url as string)
+  }
+
+  ;(window.history as unknown as Record<string, boolean>)[HISTORY_WRAPPER_MARKER] = true
+}
+
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const locationHook = useLocation()
+  const navigate = useNavigate()
+  const routerUrl = toUrl(locationHook)
   const [currentLocation, setCurrentLocation] = useState<CurrentLocationTopicPayload>({
-    url: locationHook.pathname,
+    url: routerUrl,
     isFirst: false,
   })
-  const pathnameRef = useRef(locationHook.pathname)
+  const routerUrlRef = useRef(routerUrl)
   const skipPublishUntil = useRef<string | null>(null)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
-
-  useEffect(() => {
-    pathnameRef.current = locationHook.pathname
-  })
 
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
     const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
 
     const locationSubscription = currentLocation$.subscribe((location) => {
-      const topicUrl = location.url ?? ''
+      const topicUrl = location.url
+      if (topicUrl === undefined) {
+        return
+      }
       if (topicUrl !== '/' && topicUrl !== '' && !topicUrl.startsWith(normalizedBaseHref)) {
         return
       }
 
-      if (pathnameRef.current !== location.url) {
-        // Mark that this URL came from the topic — don't publish it back.
-        // BrowserRouter will see the URL change via window.location
-        // because the shell updates it, so we do NOT call navigate() here.
-        skipPublishUntil.current = location.url ?? null
+      const targetUrl = topicUrl || '/'
+      if (skipPublishUntil.current === targetUrl) {
+        return
+      }
+      if (routerUrlRef.current !== targetUrl) {
+        skipPublishUntil.current = targetUrl
         setCurrentLocation({
-          url: location.url ?? pathnameRef.current,
+          url: targetUrl,
           isFirst: location.isFirst,
         })
+        navigate(targetUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
       }
     })
 
     return () => {
       locationSubscription.unsubscribe()
     }
-  }, [currentLocation$])
+  }, [currentLocation$, navigate])
 
   // Publish internal navigation changes so the shell can update the browser URL.
   // skipPublishUntil prevents echoing topic-driven navigations.
   // useLayoutEffect runs synchronously after DOM mutations so there is no
   // extra render between the URL change and the publish.
   useLayoutEffect(() => {
+    routerUrlRef.current = routerUrl
     if (skipPublishUntil.current !== null) {
-      if (locationHook.pathname === skipPublishUntil.current) {
-        skipPublishUntil.current = null // reached the target, clear the guard
+      if (routerUrl === skipPublishUntil.current) {
+        skipPublishUntil.current = null
       }
       return
     }
-    if (locationHook.pathname !== currentLocation.url) {
+    if (routerUrl !== currentLocation.url) {
+      setCurrentLocation({ url: routerUrl, isFirst: false })
       currentLocation$
         .publish({
-          url: locationHook.pathname,
+          url: routerUrl,
           isFirst: false,
         })
         .catch((err) => {
           logger.error('publish failed:', err)
         })
     }
-  }, [locationHook.pathname, currentLocation.url, currentLocation$])
+  }, [routerUrl, currentLocation.url, currentLocation$])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
