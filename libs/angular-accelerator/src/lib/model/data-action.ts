@@ -1,4 +1,5 @@
-export type RouterLink = string | (() => string) | (() => Promise<string>) | Promise<string>
+export type RouterLink = string | ((data?: any) => string) | ((data?: any) => Promise<string>) | Promise<string>
+export type RowActionUrl = string | ((data?: any) => string | undefined)
 
 export interface DataAction {
   id?: string

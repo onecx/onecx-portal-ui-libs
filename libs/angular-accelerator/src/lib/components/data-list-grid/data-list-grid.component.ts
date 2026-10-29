@@ -37,7 +37,7 @@ import {
   switchMap,
 } from 'rxjs'
 import { ColumnType } from '../../model/column-type.model'
-import { DataAction, RouterLink as DataActionRouterLink } from '../../model/data-action'
+import { DataAction, RowActionUrl, RouterLink as DataActionRouterLink } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -122,8 +122,10 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() editActionUrl: RowActionUrl | undefined
   @Input() viewMenuItemKey: string | undefined
   @Input() editMenuItemKey: string | undefined
   @Input() deleteMenuItemKey: string | undefined
@@ -297,11 +299,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   get viewItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed
+    return dv?.viewItemObserved || dv?.viewItem.observed || this.viewItem.observed || this.viewActionUrl !== undefined
   }
   get editItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
-    return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed
+    return dv?.editItemObserved || dv?.editItem.observed || this.editItem.observed || this.editActionUrl !== undefined
   }
   get deleteItemObserved(): boolean {
     const dv = this.injector.get('DataViewComponent', null)
@@ -628,23 +630,27 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     const menuItems: MenuItem[] = []
     const automationId = 'data-grid-action-button'
     const automationIdHidden = 'data-grid-action-button-hidden'
-    if (this.shouldDisplayAction(this.viewPermission, this.viewItem, permissions)) {
+    const viewActionUrl = this.resolveRowActionUrl(this.viewActionUrl, selectedItem)
+    const editActionUrl = this.resolveRowActionUrl(this.editActionUrl, selectedItem)
+    if (this.shouldDisplayAction(this.viewPermission, this.viewItem, permissions, this.viewActionUrl !== undefined)) {
       menuItems.push({
         label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
         icon: PrimeIcons.EYE,
-        command: () => this.viewItem.emit(selectedItem),
+        url: viewActionUrl,
+        command: this.viewActionUrl === undefined ? () => this.viewItem.emit(selectedItem) : undefined,
         disabled: viewDisabled,
-        visible: viewVisible,
+        visible: viewVisible && (this.viewActionUrl === undefined || !!viewActionUrl),
         automationId: viewVisible ? automationId : automationIdHidden,
       })
     }
-    if (this.shouldDisplayAction(this.editPermission, this.editItem, permissions)) {
+    if (this.shouldDisplayAction(this.editPermission, this.editItem, permissions, this.editActionUrl !== undefined)) {
       menuItems.push({
         label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
         icon: PrimeIcons.PENCIL,
-        command: () => this.editItem.emit(selectedItem),
+        url: editActionUrl,
+        command: this.editActionUrl === undefined ? () => this.editItem.emit(selectedItem) : undefined,
         disabled: editDisabled,
-        visible: editVisible,
+        visible: editVisible && (this.editActionUrl === undefined || !!editActionUrl),
         automationId: editVisible ? automationId : automationIdHidden,
       })
     }
@@ -723,10 +729,18 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   private shouldDisplayAction(
     permission: string | string[] | undefined,
     emitter: EventEmitter<any>,
-    userPermissions: string[]
+    userPermissions: string[],
+    hasUrl = false
   ): boolean {
     const permissions = Array.isArray(permission) ? permission : permission ? [permission] : []
-    return emitter.observed && permissions.every((p) => userPermissions.includes(p))
+    return (emitter.observed || hasUrl) && permissions.every((p) => userPermissions.includes(p))
+  }
+
+  resolveRowActionUrl(actionUrl: RowActionUrl | undefined, row: Row | null | undefined): string | undefined {
+    if (typeof actionUrl === 'function') {
+      return row == null ? undefined : actionUrl(row)
+    }
+    return actionUrl
   }
 
   private filterActionsBasedOnPermissions(actions: DataAction[], permissions?: string[]): Observable<DataAction[]> {

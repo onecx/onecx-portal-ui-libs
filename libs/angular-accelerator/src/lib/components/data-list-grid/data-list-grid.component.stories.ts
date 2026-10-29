@@ -64,6 +64,29 @@ const Template: StoryFn = (args) => ({
   props: args,
 })
 
+const ActionLinksTemplate: StoryFn = (args) => ({
+  props: {
+    ...args,
+    viewActionUrl: (item: { id: string }) => `/data-list-grid/${item.id}`,
+    editActionUrl: (item: { id: string }) => `/data-list-grid/${item.id}/edit`,
+  },
+  template: `
+    <ocx-data-list-grid
+      [data]="data"
+      [emptyResultsMessage]="emptyResultsMessage"
+      [titleLineId]="titleLineId"
+      [layout]="layout"
+      [deletePermission]="deletePermission"
+      [editPermission]="editPermission"
+      [viewPermission]="viewPermission"
+      [totalRecordsOnServer]="totalRecordsOnServer"
+      [viewActionUrl]="viewActionUrl"
+      [editActionUrl]="editActionUrl"
+      (deleteItem)="deleteItem($event)"
+    ></ocx-data-list-grid>
+  `,
+})
+
 const defaultComponentArgs = {
   data: [
     {
@@ -199,6 +222,14 @@ export const ListWithConditionallyHiddenActionButtons = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
+  },
+}
+
+export const ListWithViewEditActionLinks = {
+  argTypes: defaultArgTypes,
+  render: ActionLinksTemplate,
+  args: {
+    ...defaultComponentArgs,
   },
 }
 
@@ -408,6 +439,15 @@ export const GridWithConditionallyHiddenActionButtons = {
     ...defaultComponentArgs,
     deleteActionVisibleField: 'available',
     editActionVisibleField: 'available',
+    layout: 'grid',
+  },
+}
+
+export const GridWithViewEditActionLinks = {
+  argTypes: defaultArgTypes,
+  render: ActionLinksTemplate,
+  args: {
+    ...defaultComponentArgs,
     layout: 'grid',
   },
 }
