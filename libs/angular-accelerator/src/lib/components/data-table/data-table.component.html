@@ -305,10 +305,11 @@
 </ng-template>
 
 <ng-template #columnHeaderLabel let-column="column">
-  @if (column.tooltipLabel || column.tooltipKey) {
+  @if (column.tooltip || column.tooltipKey) {
   <span
     class="column-header-label"
-    [ocxTooltip]="column.tooltipLabel || (column.tooltipKey | translate)"
+    tabindex="0"
+    [ocxTooltip]="column.tooltip || (column.tooltipKey | translate)"
     tooltipPosition="top"
   >
     {{ column.nameKey | translate }}

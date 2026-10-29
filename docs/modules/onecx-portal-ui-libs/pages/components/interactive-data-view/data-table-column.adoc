@@ -14,8 +14,8 @@
 | `columnType` | `ColumnType` | Defines the type of the column.
 | `id` | `string` | The id of the column.
 | `nameKey` | `string` | Translation key for the column header name.
-| `tooltipKey?` | `string` | Translation key for the table column header tooltip. Used when `tooltipLabel` is omitted or empty. If both properties are omitted or empty, no tooltip is shown.
-| `tooltipLabel?` | `string` | Plain text for the table column header tooltip, without translation. A non-empty value takes precedence over `tooltipKey`.
+| `tooltipKey?` | `string` | Translation key for the column header tooltip. Used when `tooltip` is omitted or empty. If both properties are omitted or empty, no tooltip is shown. Only applies to the table layout.
+| `tooltip?` | `string` | Plain text for the column header tooltip, without translation. A non-empty value takes precedence over `tooltipKey`. Only applies to the table layout.
 | `sortable?` | `boolean` | Indicates if the column is sortable.
 | `filterable?` | `boolean` | Indicates if the column is filterable.
 | `filterType?` | `FilterType` | Defines which type of filter is used.

@@ -41,12 +41,12 @@ export const WithTooltipData = {
     ...defaultComponentArgs,
     columns: defaultComponentArgs.columns.map((column) => ({
       ...column,
-      tooltipLabel: {
-        product: 'Product',
-        amount: 'Amount',
-        available: 'Available',
-        date: 'Date',
+      tooltip: {
+        product: 'Name of the product',
+        amount: 'Number of items in stock',
+        date: 'Date the product was added',
       }[column.id],
+      tooltipKey: column.id === 'available' ? 'datatable.availableTooltip' : undefined,
     })),
   },
 }

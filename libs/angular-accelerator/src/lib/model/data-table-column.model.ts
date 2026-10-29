@@ -5,7 +5,7 @@ export interface DataTableColumn {
   columnType: ColumnType
   nameKey: string
   tooltipKey?: string
-  tooltipLabel?: string
+  tooltip?: string
   id: string
   sortable?: boolean
   filterable?: boolean
