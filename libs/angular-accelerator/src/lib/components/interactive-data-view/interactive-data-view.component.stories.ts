@@ -44,6 +44,23 @@ export const WithMockData = {
   }),
 }
 
+export const WithTooltipData = {
+  render: WithMockData.render,
+  args: {
+    ...defaultComponentArgs,
+    selectedRows: [],
+    columns: defaultComponentArgs.columns.map((column) => ({
+      ...column,
+      tooltip: {
+        product: 'Name of the product',
+        amount: 'Number of items in stock',
+        date: 'Date the product was added',
+      }[column.id],
+      tooltipKey: column.id === 'available' ? 'datatable.availableTooltip' : undefined,
+    })),
+  },
+}
+
 // Table layout exposes the hosted column selector. The displayed columns start in a scrambled
 // order so that enabling order restoration is observable: after a transfer + Save the visible
 // table columns return to the main (columns) order.
