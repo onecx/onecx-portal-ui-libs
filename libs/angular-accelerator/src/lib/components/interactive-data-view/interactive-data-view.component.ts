@@ -25,7 +25,7 @@ import {
   timestamp,
   withLatestFrom,
 } from 'rxjs'
-import { DataAction } from '../../model/data-action'
+import { DataAction, RowActionUrl } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -91,8 +91,10 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() editActionUrl: RowActionUrl | undefined
   @Input() tableSelectionEnabledField: string | undefined
   @Input() tableAllowSelectAll = true
   @Input() name = 'Data'

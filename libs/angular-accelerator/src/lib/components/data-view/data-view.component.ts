@@ -16,7 +16,7 @@ import {
 } from '@angular/core'
 import { PrimeTemplate } from 'primeng/api'
 import { BehaviorSubject, Observable, ReplaySubject, combineLatest, map, startWith, timestamp } from 'rxjs'
-import { DataAction } from '../../model/data-action'
+import { DataAction, RowActionUrl } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
 import { Filter } from '../../model/filter.model'
@@ -70,8 +70,10 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  @Input() editActionUrl: RowActionUrl | undefined
   @Input() tableSelectionEnabledField: string | undefined
   @Input() tableAllowSelectAll = true
   @Input() data: RowListGridData[] = []
@@ -286,10 +288,18 @@ export class DataViewComponent implements DoCheck, OnInit, AfterContentInit {
   )
 
   get viewItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed || this.viewItem.observed
+    return (
+      this.injector.get('InteractiveDataViewComponent', null)?.viewItem.observed ||
+      this.viewItem.observed ||
+      this.viewActionUrl !== undefined
+    )
   }
   get editItemObserved(): boolean {
-    return this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed || this.editItem.observed
+    return (
+      this.injector.get('InteractiveDataViewComponent', null)?.editItem.observed ||
+      this.editItem.observed ||
+      this.editActionUrl !== undefined
+    )
   }
   get deleteItemObserved(): boolean {
     return this.injector.get('InteractiveDataViewComponent', null)?.deleteItem.observed || this.deleteItem.observed
