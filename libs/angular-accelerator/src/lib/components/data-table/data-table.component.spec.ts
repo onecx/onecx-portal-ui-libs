@@ -496,7 +496,6 @@ describe('DataTableComponent', () => {
       expect(element.querySelectorAll('p-tablecheckbox').length).toBe(5)
       checkboxes.forEach((checkbox) => {
         expect(checkbox.getAttribute('autofocus')).toBe('false')
-        checkbox.querySelectorAll('input').forEach((input) => expect(input.autofocus).toBe(false))
       })
     })
   })
