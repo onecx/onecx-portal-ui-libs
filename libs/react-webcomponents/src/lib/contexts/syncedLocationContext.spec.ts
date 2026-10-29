@@ -1,21 +1,32 @@
-import { createElement, Fragment } from 'react'
-import { TextDecoder, TextEncoder } from 'node:util'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { TextDecoder, TextEncoder } from 'node:util'
+import { createElement, Fragment } from 'react'
+import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
+
+const loggerError = jest.fn()
+
+Object.assign(globalThis, { TextDecoder, TextEncoder })
+
+const { Route, Routes, useLocation, useNavigate } = require('react-router') as typeof import('react-router')
+const { SyncedRouterProvider } = require('./syncedLocationContext') as {
+  SyncedRouterProvider: typeof import('./syncedLocationContext').SyncedRouterProvider
+}
 
 const appBase = '/app/sample-app'
-const mockLocationListeners: ((location: { url?: string; isFirst: boolean }) => void)[] = []
-const mockPublishedLocations: { url?: string; isFirst: boolean }[] = []
+const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
+const mockPublishedLocations: CurrentLocationTopicPayload[] = []
+let shouldPublishReject = false
 
 jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
-    subscribe(callback: (location: { url?: string; isFirst: boolean }) => void) {
+    subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
       mockLocationListeners.push(callback)
       return { unsubscribe: jest.fn() }
     }
 
-    publish(location: { url?: string; isFirst: boolean }) {
+    publish(location: CurrentLocationTopicPayload) {
       mockPublishedLocations.push(location)
-      return Promise.resolve()
+      return shouldPublishReject ? Promise.reject(new Error('publish failed')) : Promise.resolve()
     }
 
     destroy = jest.fn()
@@ -28,13 +39,11 @@ jest.mock('@onecx/react-integration-interface', () => ({
     const [topic] = React.useState(() => new TopicClass())
     return topic
   },
-  createLogger: () => ({ error: jest.fn() }),
 }))
 
-Object.assign(globalThis, { TextDecoder, TextEncoder })
-
-const { Route, Routes, useLocation, useNavigate } = require('react-router')
-const { SyncedRouterProvider } = require('./syncedLocationContext')
+jest.mock('../utils/logger.utils', () => ({
+  createLogger: () => ({ error: loggerError }),
+}))
 
 const RouterContent = () => {
   const location = useLocation()
@@ -60,10 +69,10 @@ const RouterContent = () => {
 
 const renderRouter = () => render(createElement(SyncedRouterProvider, null, createElement(RouterContent)))
 
-const publishLocation = (url: string) => {
+const publishLocation = (payload: CurrentLocationTopicPayload) => {
   act(() => {
-    window.history.pushState({}, '', url)
-    mockLocationListeners[0]({ url, isFirst: false })
+    if (payload.url) window.history.pushState({}, '', payload.url)
+    mockLocationListeners[0](payload)
   })
 }
 
@@ -71,6 +80,8 @@ describe('SyncedRouterProvider', () => {
   beforeEach(() => {
     mockLocationListeners.length = 0
     mockPublishedLocations.length = 0
+    shouldPublishReject = false
+    loggerError.mockClear()
     document.querySelector('base')?.remove()
     const base = document.createElement('base')
     base.setAttribute('href', '/app/')
@@ -82,7 +93,7 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation(`${appBase}/subpage/record-1?tab=details#summary`)
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
 
     expect(await screen.findByText('Subpage')).toBeTruthy()
     expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
@@ -93,13 +104,13 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation(`${appBase}/subpage/record-1`)
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
     expect(await screen.findByText('Subpage')).toBeTruthy()
 
-    publishLocation(`${appBase}/subpage/record-2`)
+    publishLocation({ url: `${appBase}/subpage/record-2`, isFirst: false })
     expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
 
-    publishLocation(appBase)
+    publishLocation({ url: appBase, isFirst: false })
     expect(await screen.findByText('Root page')).toBeTruthy()
     expect(screen.getByTestId('location').textContent).toBe(appBase)
   })
@@ -126,10 +137,46 @@ describe('SyncedRouterProvider', () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    publishLocation('/elsewhere/page')
+    publishLocation({ url: '/elsewhere/page', isFirst: false })
 
     expect(screen.getByTestId('location').textContent).toBe(appBase)
     expect(screen.getByText('Root page')).toBeTruthy()
+  })
+
+  it('ignores topic events with an undefined URL', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: undefined, isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+  })
+
+  it('ignores topic events that match the current React Router location', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    publishLocation({ url: appBase, isFirst: false })
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('marks topic-driven navigation as isRouterSync to suppress shell echo', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    const calls = replaceStateSpy.mock.calls
+    const lastCall = calls[calls.length - 1]
+    expect(lastCall[0]).toMatchObject({ isRouterSync: true })
+    replaceStateSpy.mockRestore()
   })
 
   it('publishes React navigation with the pathname, query, and hash', async () => {
@@ -145,6 +192,18 @@ describe('SyncedRouterProvider', () => {
     })
 
     expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+  })
+
+  it('logs an error when publishing an internal navigation fails', async () => {
+    renderRouter()
+    shouldPublishReject = true
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    await waitFor(() => expect(loggerError).toHaveBeenCalled())
   })
 
   it('updates the React route on browser back and forward events', async () => {
