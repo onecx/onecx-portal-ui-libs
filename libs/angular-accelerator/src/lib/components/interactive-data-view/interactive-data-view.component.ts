@@ -103,6 +103,18 @@ export class InteractiveDataViewComponent implements OnInit {
   supportedViewLayouts = input<ViewLayout[]>(['grid', 'list', 'table'])
   draggableColumnGroupSelectorDialog = input<boolean>(true)
 
+  /**
+   * Controls whether the hosted column selection dialog can be resized by the user.
+   * Independent of {@link draggableColumnGroupSelectorDialog}.
+   */
+  resizableColumnGroupSelectorDialog = input<boolean>(true)
+
+  /**
+   * When enabled, the hosted column selector keeps the active columns in the main column order
+   * after a transfer instead of appending to the target.
+   */
+  restoreColumnGroupSelectorOrder = input<boolean>(false)
+
   @Input()
   set columns(value: DataTableColumn[]) {
     this.stateService.availableColumns.set(value)
@@ -203,6 +215,13 @@ export class InteractiveDataViewComponent implements OnInit {
     return columnKeys
       .map((key) => this.stateService.availableColumns().find((col) => col.id === key))
       .filter(Boolean) as DataTableColumn[]
+  })
+
+  /** Displayed columns of the active column group; all available columns if no group is configured. */
+  readonly activeOrAllColumns = computed<DataTableColumn[]>(() => {
+    const activeGroupKey = this.stateService.activeColumnGroupKey() ?? this.defaultGroupKey()
+    const activeColumns = this.displayedColumns()
+    return activeGroupKey ? activeColumns : this.stateService.availableColumns()
   })
 
   // Track whether displayed columns have ever been non-empty (to suppress warning on initial empty state)

@@ -95,11 +95,6 @@
   flex: 3;
 }
 
-.min-w-120 {
-  min-width: 120px !important;
-}
-
-
 // Optimus UI Bug: Tooltip not being shown for disabled menu items
 // Keep the disabled item non-clickable while allowing the <li> to hover
 .p-menu .p-menu-item.p-disabled{

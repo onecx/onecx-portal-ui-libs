@@ -660,7 +660,7 @@ const RowExpansionTemplate: StoryFn<DataTableComponent> = (args) => ({
       (rowCollapsed)="rowCollapsed($event)"
     >
       <ng-template pTemplate="expansion" let-rowObject="rowObject">
-        <div class="p-3 surface-50 border-round">
+        <div class="p-3 bg-surface-50 rounded-border">
           <p class="m-0 mb-2"><strong>Product:</strong> {{ rowObject.product }}</p>
           <p class="m-0 mb-2"><strong>Amount:</strong> {{ rowObject.amount }}</p>
           <p class="m-0"><strong>Available:</strong> {{ rowObject.available }}</p>
@@ -710,10 +710,10 @@ const CaptionTemplateStory: StoryFn<DataTableComponent> = (args) => ({
   },
   template: `
     <ng-template #captionTpl>
-      <div class="flex justify-content-between align-items-center w-full">
+      <div class="flex justify-between items-center w-full">
         <div>
           <p class="text-xl font-bold">{{ 'OCX_DATA_TABLE_CAPTION.TITLE' | translate }}</p>
-          <p class="text-md">{{ 'OCX_DATA_TABLE_CAPTION.DESCRIPTION' | translate }}</p>
+          <p class="text-base">{{ 'OCX_DATA_TABLE_CAPTION.DESCRIPTION' | translate }}</p>
         </div>
       </div>
     </ng-template>

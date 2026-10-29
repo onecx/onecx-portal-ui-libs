@@ -211,7 +211,7 @@ export const WithAccessibilityImprovements = {
 }
 const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   template: `
-    <div class="flex justify-content-center">
+    <div class="flex justify-center">
     <div style="height: 360px; width:350px"> <!--Container should have fixed height-->
       <ocx-diagram
         [diagramType]="diagramType"

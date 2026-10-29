@@ -263,7 +263,7 @@ export const withAllLabelAndTranslationKeys = {
 
 const TemplateWithContainer: StoryFn<GroupByCountDiagramComponent> = (args) => ({
   template: `
-    <div class="flex justify-content-center">
+    <div class="flex justify-center">
     <div style="height: 450px; width:350px;"> <!--Container should have fixed height-->
       <ocx-group-by-count-diagram
         [diagramType]="diagramType"

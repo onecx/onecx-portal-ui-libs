@@ -1,3 +1,23 @@
+## [9.0.0-rc.16](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.15...v9.0.0-rc.16) (2026-10-28)
+
+### Bug Fixes
+
+* v9 implement issue [#970](https://github.com/onecx/onecx-portal-ui-libs/issues/970) - Column Group Selector Issues ([#1816](https://github.com/onecx/onecx-portal-ui-libs/issues/1816)) ([9165309](https://github.com/onecx/onecx-portal-ui-libs/commit/91653091d3cda6bf3e614da95fada27b6369f889))
+* v9 resizableColumnGroupSelectorDialog default value ([#1917](https://github.com/onecx/onecx-portal-ui-libs/issues/1917)) ([3c02e1f](https://github.com/onecx/onecx-portal-ui-libs/commit/3c02e1f639bb9a5d8fcdd66fbedcb81ed6ce53af))
+
+## [9.0.0-rc.15](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.14...v9.0.0-rc.15) (2026-10-21)
+
+### Features
+
+* **filter-view:** add Add Filter dialog ([#1808](https://github.com/onecx/onecx-portal-ui-libs/issues/1808)) ([7d65daf](https://github.com/onecx/onecx-portal-ui-libs/commit/7d65dafa556c74a0c545210cbc240c78ddfb1434))
+* implement issue [#1047](https://github.com/onecx/onecx-portal-ui-libs/issues/1047) - feat: migrate v9 UI libraries from PrimeFlex to Tailwind CSS ([#1836](https://github.com/onecx/onecx-portal-ui-libs/issues/1836)) ([192b4db](https://github.com/onecx/onecx-portal-ui-libs/commit/192b4db598daf0b06a586cfe47b16c7a42cd0a58))
+
+### Bug Fixes
+
+* enable Sonar SCM detection and checkout v7 ([#1769](https://github.com/onecx/onecx-portal-ui-libs/issues/1769)) ([6ca2af2](https://github.com/onecx/onecx-portal-ui-libs/commit/6ca2af2e9c36c9bfe54c4eed8f4d572f18cc8e1b))
+* implement issue [#1011](https://github.com/onecx/onecx-portal-ui-libs/issues/1011) - InteractiveDataView Storybook grid cards render a broken image and a blank title ([#1824](https://github.com/onecx/onecx-portal-ui-libs/issues/1824)) ([a15470f](https://github.com/onecx/onecx-portal-ui-libs/commit/a15470fee1b1e232bbe6d6e152bdf760dc86e3e1))
+* resolve gatherer id issues when using multiple gatherers ([#1812](https://github.com/onecx/onecx-portal-ui-libs/issues/1812)) ([e21d5a7](https://github.com/onecx/onecx-portal-ui-libs/commit/e21d5a777b8627136ebadd8d429d13e13feb0341))
+
 ## [9.0.0-rc.14](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0-rc.13...v9.0.0-rc.14) (2026-10-07)
 
 ### Features
