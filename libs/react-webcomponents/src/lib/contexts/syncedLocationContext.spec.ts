@@ -206,6 +206,62 @@ describe('SyncedRouterProvider', () => {
     await waitFor(() => expect(loggerError).toHaveBeenCalled())
   })
 
+  it('normalizes a base href without a trailing slash', async () => {
+    document.querySelector('base')?.remove()
+    const base = document.createElement('base')
+    base.setAttribute('href', '/app')
+    document.head.append(base)
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('falls back to root base when the base element is missing', async () => {
+    document.querySelector('base')?.remove()
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
+  it('navigates to root when the shell sends an empty URL', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: '', isFirst: false })
+
+    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'))
+    warnSpy.mockRestore()
+  })
+
+  it('does not throw when history state is not an object', () => {
+    expect(() => {
+      act(() => {
+        window.history.pushState(null, '', '/some-url')
+      })
+    }).not.toThrow()
+  })
+
+  it('does not re-wrap history when the wrapper marker is already present', () => {
+    const pushStateBefore = window.history.pushState
+
+    jest.isolateModules(() => {
+      require('./syncedLocationContext')
+    })
+
+    expect(window.history.pushState).toBe(pushStateBefore)
+  })
+
   it('updates the React route on browser back and forward events', async () => {
     renderRouter()
 
