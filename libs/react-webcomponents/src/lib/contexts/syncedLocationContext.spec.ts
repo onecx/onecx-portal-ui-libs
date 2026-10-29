@@ -132,19 +132,16 @@ describe('SyncedRouterProvider', () => {
     expect(screen.getByText('Root page')).toBeTruthy()
   })
 
-  it('publishes React navigation with the pathname, query, and hash', async () => {
+  it('does not publish internal React navigation', async () => {
     renderRouter()
 
     fireEvent.click(screen.getByText('Navigate in React'))
 
-    await waitFor(() => {
-      expect(mockPublishedLocations).toContainEqual({
-        url: `${appBase}/subpage/record-1?tab=details#summary`,
-        isFirst: false,
-      })
-    })
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
 
-    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    expect(mockPublishedLocations).toEqual([])
   })
 
   it('updates the React route on browser back and forward events', async () => {
