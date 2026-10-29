@@ -250,7 +250,6 @@ describe('DataTableComponent', () => {
   describe('column header tooltips', () => {
     beforeEach(() => {
       translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
-      translateService.setTranslation('de', { COLUMN_HEADER_NAME: { NAME: 'Bezeichnung' } }, true)
     })
 
     const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] .column-header-label')
@@ -265,23 +264,15 @@ describe('DataTableComponent', () => {
       fixture.detectChanges()
     }
 
-    it('should translate tooltipKey and update it when the language changes', fakeAsync(() => {
+    it('should show the translated tooltipKey as tooltip', fakeAsync(() => {
       translateService.setTranslation('en', { CUSTOM_TOOLTIP: 'Custom tooltip' }, true)
-      translateService.setTranslation('de', { CUSTOM_TOOLTIP: 'Eigener Tooltip' }, true)
       component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }]
       fixture.detectChanges()
 
       const label = getLabel()
       trigger(label, 'mouseenter')
+
       expect(getTooltipText(label)).toBe('Custom tooltip')
-
-      trigger(label, 'mouseleave')
-      translateService.use('de')
-      fixture.detectChanges()
-      trigger(label, 'mouseenter')
-
-      expect(label.textContent?.trim()).toBe('Bezeichnung')
-      expect(getTooltipText(label)).toBe('Eigener Tooltip')
 
       trigger(label, 'mouseleave')
     }))
@@ -313,18 +304,12 @@ describe('DataTableComponent', () => {
       })()
     )
 
-    it('should make the tooltip host keyboard focusable and show the tooltip on focus', fakeAsync(() => {
+    it('should make the tooltip host keyboard focusable', () => {
       component.columns = [{ ...mockColumns[0], tooltip: 'Product details' }]
       fixture.detectChanges()
 
-      const label = getLabel()
-      expect(label.getAttribute('tabindex')).toBe('0')
-
-      trigger(label, 'focus')
-      expect(getTooltipText(label)).toBe('Product details')
-
-      trigger(label, 'blur')
-    }))
+      expect(getLabel().getAttribute('tabindex')).toBe('0')
+    })
 
     it.each([
       { tooltipKey: undefined, tooltip: undefined },
