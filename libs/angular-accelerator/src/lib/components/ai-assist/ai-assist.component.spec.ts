@@ -158,4 +158,77 @@ describe('AiAssistComponent', () => {
     expect(getCompletion).toHaveBeenCalledTimes(2)
     expect(component.runState).toBe('success')
   })
+
+  it('should map an unexpected completion error to the UNKNOWN error code and use the generic message', async () => {
+    getCompletion.mockRejectedValueOnce(new Error('boom'))
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    await component.run()
+
+    expect(component.runState).toBe('error')
+    expect(component.errorCode).toBe('UNKNOWN')
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.GENERIC')
+  })
+
+  it('should not run again when retry is called without a previous error', async () => {
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    await component.retry()
+
+    expect(getCompletion).not.toHaveBeenCalled()
+  })
+
+  it('should map an unexpected agent loading error to the UNKNOWN error code', async () => {
+    getAgents.mockRejectedValue(new Error('network down'))
+
+    await createComponent()
+
+    expect(component.loadState).toBe('error')
+    expect(component.errorCode).toBe('UNKNOWN')
+    expect(component.agents).toEqual([])
+  })
+
+  it('should prefer the configured appId over the appId of the current MFE', async () => {
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    component.appId = 'app-3'
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledWith({ appId: 'app-3' })
+  })
+
+  it('should return no text when the result does not contain a text field', () => {
+    component.result = { summary: 'no text here' }
+
+    expect(component.resultText).toBeUndefined()
+  })
+
+  it('should return no text when there is no result yet', async () => {
+    await createComponent()
+
+    expect(component.resultText).toBeUndefined()
+  })
+
+  it('should load agents without an appId when the current MFE is empty', async () => {
+    const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
+    appStateService.currentMfe$ = of(undefined)
+    fixture = TestBed.createComponent(AiAssistComponent)
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledWith({ appId: undefined })
+  })
+
+  it('should clear parameter values when selecting an unknown action', async () => {
+    await createComponent()
+    component.selectAction('unknown-action')
+
+    expect(component.parameterValues).toEqual({})
+    expect(component.selectedAction).toBeUndefined()
+  })
 })
