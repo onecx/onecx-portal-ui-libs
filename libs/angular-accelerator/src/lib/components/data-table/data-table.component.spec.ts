@@ -262,7 +262,7 @@ describe('DataTableComponent', () => {
       translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
     })
 
-    const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] .column-header-label')
+    const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
 
     const getTooltipText = (label: HTMLElement) =>
       document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
@@ -324,7 +324,7 @@ describe('DataTableComponent', () => {
       fixture.detectChanges()
 
       const header: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"]')
-      expect(header.querySelector('.column-header-label')).toBeNull()
+      expect(header.querySelector('span[tooltipposition="top"]')).toBeNull()
       expect(header.textContent?.trim()).toBe('Name')
     })
   })
