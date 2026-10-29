@@ -1,3 +1,14 @@
+## [6.30.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.29.1...v6.30.0) (2026-10-29)
+
+### Features
+
+* **integration-interface:** add AiAgentService with ai-agent gatherer ([#1919](https://github.com/onecx/onecx-portal-ui-libs/issues/1919)) ([9d79b96](https://github.com/onecx/onecx-portal-ui-libs/commit/9d79b96251db65d35f852e678c9d3d18d52fa01e))
+
+### Bug Fixes
+
+* **data-table:** translate selected translation_key filter when its rows are absent ([#1820](https://github.com/onecx/onecx-portal-ui-libs/issues/1820)) ([bcfa832](https://github.com/onecx/onecx-portal-ui-libs/commit/bcfa832a467b2b169bd5501acf39196a7d9eef4e)), closes [#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819) [onecx/onecx-portal-ui-libs#1819](https://github.com/onecx/onecx-portal-ui-libs/issues/1819)
+* enable Sonar SCM detection and checkout v7 ([#1772](https://github.com/onecx/onecx-portal-ui-libs/issues/1772)) ([a647588](https://github.com/onecx/onecx-portal-ui-libs/commit/a6475884051047d7f75677e0729c275a6876fcca))
+
 ## [6.29.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v6.29.0...v6.29.1) (2026-10-08)
 
 ### Bug Fixes
