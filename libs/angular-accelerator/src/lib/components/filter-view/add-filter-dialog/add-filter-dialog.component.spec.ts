@@ -462,5 +462,8 @@ describe('AddFilterDialogComponent (class logic)', () => {
 
     const multiSelect = fixture.debugElement.query(By.directive(MultiSelect)).componentInstance as MultiSelect
     expect(multiSelect.autofocus).toBe(false)
+    const input = fixture.nativeElement.querySelector('#ocxAddFilterValueInput') as HTMLElement
+    expect(input).toBeTruthy()
+    expect(input.hasAttribute('autofocus')).toBe(false)
   })
 })
