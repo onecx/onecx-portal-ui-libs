@@ -73,8 +73,13 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     isFirst: false,
   })
   const routerUrlRef = useRef(routerUrl)
+  const navigateRef = useRef(navigate)
   const skipPublishUntil = useRef<string | null>(null)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
+
+  useLayoutEffect(() => {
+    navigateRef.current = navigate
+  })
 
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
@@ -82,14 +87,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
 
     const locationSubscription = currentLocation$.subscribe((location) => {
       const topicUrl = location.url
-      if (topicUrl === undefined) {
+      if (!topicUrl) {
         return
       }
-      if (topicUrl !== '/' && topicUrl !== '' && !topicUrl.startsWith(normalizedBaseHref)) {
+      if (topicUrl !== '/' && !topicUrl.startsWith(normalizedBaseHref)) {
         return
       }
 
-      const targetUrl = topicUrl || '/'
+      const targetUrl = topicUrl
       if (skipPublishUntil.current === targetUrl) {
         return
       }
@@ -99,14 +104,14 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
           url: targetUrl,
           isFirst: location.isFirst,
         })
-        navigate(targetUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+        navigateRef.current(targetUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
       }
     })
 
     return () => {
       locationSubscription.unsubscribe()
     }
-  }, [currentLocation$, navigate])
+  }, [currentLocation$])
 
   // Publish internal navigation changes so the shell can update the browser URL.
   // skipPublishUntil prevents echoing topic-driven navigations.

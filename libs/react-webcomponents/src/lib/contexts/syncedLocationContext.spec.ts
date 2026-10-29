@@ -16,16 +16,24 @@ const appBase = '/app/sample-app'
 const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
 const mockPublishedLocations: CurrentLocationTopicPayload[] = []
 let shouldPublishReject = false
+let topicLastValue: CurrentLocationTopicPayload = { url: appBase, isFirst: true }
 
 jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
     subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
-      mockLocationListeners.push(callback)
+      callback(topicLastValue)
+      const listener = (location: CurrentLocationTopicPayload) => {
+        topicLastValue = location
+        callback(location)
+      }
+      mockLocationListeners.push(listener)
       return { unsubscribe: jest.fn() }
     }
 
     publish(location: CurrentLocationTopicPayload) {
+      topicLastValue = location
       mockPublishedLocations.push(location)
+      mockLocationListeners.forEach((listener) => listener(location))
       return shouldPublishReject ? Promise.reject(new Error('publish failed')) : Promise.resolve()
     }
 
@@ -81,6 +89,7 @@ describe('SyncedRouterProvider', () => {
     mockLocationListeners.length = 0
     mockPublishedLocations.length = 0
     shouldPublishReject = false
+    topicLastValue = { url: appBase, isFirst: true }
     loggerError.mockClear()
     document.querySelector('base')?.remove()
     const base = document.createElement('base')
@@ -233,15 +242,14 @@ describe('SyncedRouterProvider', () => {
     expect(await screen.findByText('Subpage')).toBeTruthy()
   })
 
-  it('navigates to root when the shell sends an empty URL', async () => {
-    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+  it('ignores empty topic URLs', async () => {
     renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
     publishLocation({ url: '', isFirst: false })
 
-    await waitFor(() => expect(screen.getByTestId('location').textContent).toBe('/'))
-    warnSpy.mockRestore()
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
   })
 
   it('does not throw when history state is not an object', () => {
@@ -260,6 +268,23 @@ describe('SyncedRouterProvider', () => {
     })
 
     expect(window.history.pushState).toBe(pushStateBefore)
+  })
+
+  it('keeps an internal React route when the topic replays its last value on re-subscription', async () => {
+    const { unmount } = renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    fireEvent.click(screen.getByText('Navigate in React'))
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+
+    unmount()
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(2))
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    expect(screen.getByText('Subpage')).toBeTruthy()
   })
 
   it('updates the React route on browser back and forward events', async () => {
