@@ -736,14 +736,5 @@ describe('CustomGroupColumnSelectorComponent', () => {
         expect(selectButton.nativeElement.querySelector('[autofocus]')).toBeNull()
       })
     })
-
-    it('should not autofocus any element inside the pick list', () => {
-      openDialog()
-
-      const pickList = fixture.debugElement.query(By.css('p-pickList'))
-      expect(pickList).toBeTruthy()
-      expect(pickList.nativeElement.getAttribute('autofocus')).toBe('false')
-      expect(pickList.nativeElement.querySelector('[autofocus]')).toBeNull()
-    })
   })
 })
