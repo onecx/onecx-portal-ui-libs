@@ -336,7 +336,6 @@
 <ng-template #columnHeaderLabel let-column="column">
   @if (column.tooltipLabel || column.tooltipKey) {
     <span
-      class="column-header-label"
       [ocxTooltip]="column.tooltipLabel || (column.tooltipKey | translate)"
       tooltipPosition="top"
     >
