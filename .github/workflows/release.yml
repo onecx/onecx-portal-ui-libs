@@ -9,7 +9,9 @@ jobs:
   main:
     runs-on: ubuntu-latest
     env:
-      # The semantic-release git plugin commits without --no-verify; skip all Husky hooks for that commit.
+      # Skip all Husky hooks for the semantic-release commit (the git plugin commits without --no-verify):
+      # release.config.js commits `chore(release): ...` with the changelog as body, which commitlint's
+      # body-max-line-length (100) rejects, and pre-commit would run the CI-gated build because CI is set.
       HUSKY: 0
     steps:
       - uses: actions/checkout@v7
