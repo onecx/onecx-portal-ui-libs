@@ -354,6 +354,62 @@ describe('DataTableComponent', () => {
 
       expect(component.stateService.filters().length).toBeGreaterThan(0)
     })
+
+    describe('keyboard access to the column header filter', () => {
+      const getStatusFilterFocusInput = (): HTMLInputElement => {
+        const headers = Array.from(fixture.nativeElement.querySelectorAll('th')) as HTMLElement[]
+        const statusHeader = headers.find((th) => th.textContent?.includes('STATUS'))
+        expect(statusHeader).toBeTruthy()
+        // The filter multiselect's focusable element is its combobox focus input.
+        const focusInput = statusHeader?.querySelector('.filterMultiSelect input[role="combobox"]') as HTMLInputElement
+        expect(focusInput).toBeTruthy()
+        return focusInput
+      }
+
+      const expectFilterOperableByKeyboard = async (focusInput: HTMLInputElement) => {
+        const onFilterChosenSpy = jest.spyOn(component, 'onFilterChosen')
+
+        focusInput.focus()
+        fixture.detectChanges()
+        expect(document.activeElement).toBe(focusInput)
+        // (onFocus) still wires the focused column as the current filter column
+        expect(onFilterChosenSpy).toHaveBeenCalledWith(expect.objectContaining({ id: 'status' }))
+        expect(focusInput.getAttribute('aria-label')).toBeTruthy()
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Enter', key: 'Enter', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('true')
+
+        focusInput.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape', bubbles: true }))
+        fixture.detectChanges()
+        await fixture.whenStable()
+        expect(focusInput.getAttribute('aria-expanded')).toBe('false')
+      }
+
+      it('should focus and open/close an EQUALS column filter with the keyboard', async () => {
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: 'B' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
+
+      it('should focus and open/close an IS_NOT_EMPTY column filter with the keyboard', async () => {
+        component.columns = [
+          {
+            columnType: ColumnType.STRING,
+            id: 'status',
+            nameKey: 'COLUMN_HEADER_NAME.STATUS',
+            filterable: true,
+            filterType: FilterType.IS_NOT_EMPTY,
+          } as any,
+        ]
+        component.rows.set([{ id: '1', status: 'A' } as any, { id: '2', status: '' } as any])
+        fixture.detectChanges()
+
+        await expectFilterOperableByKeyboard(getStatusFilterFocusInput())
+      })
+    })
   })
 
   describe('should display the paginator currentPageReport  with totalRecordsOnServer -', () => {
