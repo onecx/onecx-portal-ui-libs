@@ -67,7 +67,7 @@
     "EMPTY_FILTER_MESSAGE": "Keine Filter gefunden.",
     "ACTIONS_COLUMN_NAME": "Aktionen",
     "EXPAND_COLLAPSE_COLUMN": "Spalte erweitern/zusammenklappen",
-    "COLUMN_FILTER_ARIA_LABEL": "Spaltenfilter",
+    "COLUMN_FILTER_ARIA_LABEL": "Filter {{column}}, {{count}} aktiv",
     "COLUMN_FILTER_PLACEHOLDER": "Zum Filtern eingeben",
     "FILTER_TITLE": "Filter",
     "FILTER_ARIA_LABEL": "Filter {{column}}",
