@@ -1,4 +1,29 @@
 {
+  "OCX_AI_ASSIST": {
+    "TITLE": "KI-Assistent",
+    "AGENT": "Agent",
+    "ACTION": "Aktion",
+    "CHOOSE_ACTION": "Aktion auswählen",
+    "INPUT": "Text",
+    "RUN": "Ausführen",
+    "RUNNING": "Ergebnis wird erstellt...",
+    "RESULT": "Ergebnis",
+    "RETRY": "Erneut versuchen",
+    "LOADING_AGENTS": "Agenten werden geladen...",
+    "NO_AGENTS": "Für diese Anwendung sind keine KI-Agenten verfügbar.",
+    "ACTIONS": {
+      "TRANSLATE": "Übersetzen",
+      "SUMMARIZE": "Zusammenfassen",
+      "GENERATE": "Generieren"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Zielsprachcode"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "Für diese Anwendung ist kein KI-Provider konfiguriert.",
+      "GENERIC": "Die KI-Anfrage ist fehlgeschlagen. Bitte erneut versuchen."
+    }
+  },
   "OCX_CUSTOM_GROUP_COLUMN_SELECTOR": {
     "ARIA_LABEL": "Spaltengruppe-Selektor",
     "DROPDOWN_LABEL": "Spaltengruppe",

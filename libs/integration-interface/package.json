@@ -9,7 +9,8 @@
   "peerDependencies": {
     "tslib": "^2.6.3",
     "rxjs": "^7.8.1",
-    "@onecx/accelerator": "7.14.1"
+    "@onecx/accelerator": "7.14.1",
+    "zod": "^4.1.12"
   },
   "type": "commonjs",
   "main": "./src/index.js",
