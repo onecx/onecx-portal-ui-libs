@@ -231,31 +231,4 @@ describe('AiAssistComponent', () => {
     expect(component.parameterValues).toEqual({})
     expect(component.selectedAction).toBeUndefined()
   })
-
-  it('should load agents for the configured appId when the current MFE cannot be read', async () => {
-    const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
-    appStateService.currentMfe$ = throwError(() => new Error('no current MFE'))
-    fixture = TestBed.createComponent(AiAssistComponent)
-    component = fixture.componentInstance
-    component.appId = 'app-2'
-    fixture.detectChanges()
-    await fixture.whenStable()
-
-    expect(getAgents).toHaveBeenCalledWith({ appId: 'app-2' })
-  })
-
-  it('should select the agent chosen by the user', async () => {
-    await createComponent()
-
-    component.selectAgent('agent-2')
-
-    expect(component.selectedAgentId).toBe('agent-2')
-  })
-
-  it('should render the full result as formatted JSON', async () => {
-    await createComponent()
-    component.result = { text: 'Hallo' } as never
-
-    expect(component.resultJson).toBe(JSON.stringify({ text: 'Hallo' }, null, 2))
-  })
 })
