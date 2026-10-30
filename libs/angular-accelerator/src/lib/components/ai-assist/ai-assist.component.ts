@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
@@ -22,7 +22,6 @@ const UNKNOWN_ERROR_CODE = 'UNKNOWN'
   selector: 'ocx-ai-assist',
   templateUrl: './ai-assist.component.html',
   styleUrls: ['./ai-assist.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class AiAssistComponent implements OnInit, OnDestroy {
   /** Actions offered by default. Hosts can replace the built-in Translate, Summarize and Generate set. */
