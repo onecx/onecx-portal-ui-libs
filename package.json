@@ -119,6 +119,7 @@
     "@typescript-eslint/utils": "8.70.1",
     "@vitejs/plugin-react": "6.1.1",
     "angular-eslint": "^22.0.0",
+    "axe-core": "^4.13.0",
     "blob-polyfill": "^9.0.20240710",
     "conventional-changelog-conventionalcommits": "^9.1.0",
     "esbuild": "~0.25.12",
