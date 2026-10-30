@@ -20,7 +20,7 @@ import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.component'
 import { provideRouter, Router } from '@angular/router'
-import { of } from 'rxjs'
+import { BehaviorSubject, of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
@@ -40,20 +40,21 @@ export class BreadcrumbServiceMock {
     },
   ])
 
-  generatedItemsSource = of<MenuItem[]>([{
+  generatedItemsSource = of<MenuItem[]>([
+    {
       label: 'Test breadcrumb from generated source',
       show: 'always',
       routerLink: '/test-breadcrumb',
       permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-    }])
+    },
+  ])
 
   generateBreadcrumbs() {
     return this.generatedItemsSource
   }
 }
 
-@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
- template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager, template: '' })
 class TestRouteComponent {}
 
 const mockActions: Action[] = [
@@ -141,33 +142,30 @@ describe('PageHeaderComponent', () => {
     expect(pageHeaderWrapper).toBeTruthy()
   })
 
-  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is true', async () => {
+  it('should not override the visible name of breadcrumb links when manualBreadcrumbs is true', async () => {
     fixture = TestBed.createComponent(PageHeaderComponent)
     component = fixture.componentInstance
     fixture.componentRef.setInput('manualBreadcrumbs', true)
-      
+
     fixture.detectChanges()
     await fixture.whenStable()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from itemsHandler')
     expect(breadcrumbItem).toBeTruthy()
     expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
-    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from itemsHandler page')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBeNull()
   })
 
-  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
-    fixture.componentRef.setInput('manualBreadcrumbs', false)   
+  it('should not override the visible name of breadcrumb links when manualBreadcrumbs is false', async () => {
+    fixture.componentRef.setInput('manualBreadcrumbs', false)
 
     fixture.detectChanges()
     await fixture.whenStable()
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from generated source')
     expect(breadcrumbItem).toBeTruthy()
-    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
-    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from generated source page')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBeNull()
   })
 
   it('should test if breadcrumb is not rendered when there are no breadcrumbs', async () => {
@@ -175,46 +173,54 @@ describe('PageHeaderComponent', () => {
 
     fixture.detectChanges()
     await fixture.whenStable()
-    component.ngAfterViewInit()
 
     const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
     expect(breadcrumbItem).toBeNull()
-    expect(await breadcrumbItem?.getText()).toBeUndefined()
   })
 
-  it('should not add aria-current for non-last breadcrumb with empty label', async () => {
+  it('should set aria-current=page only on the last breadcrumb and follow changes after navigation', async () => {
+    const items$ = new BehaviorSubject<MenuItem[]>([
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
+    ])
+    component.breadcrumbs$ = items$
+    await router.navigateByUrl('/second')
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    let links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, 'page'])
+    expect(links.every((l) => !l.nativeElement.hasAttribute('aria-label'))).toBe(true)
+    expect(links.map((l) => l.nativeElement.tagName)).toEqual(['A', 'A'])
+    const home = fixture.debugElement.query(By.css('.p-breadcrumb-home-item a'))
+    expect(home.attributes['aria-label']).toBeTruthy()
+
+    items$.next([
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
+      { label: 'Third', routerLink: '/third' },
+    ])
+    await router.navigateByUrl('/third')
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+    links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, null, 'page'])
+  })
+
+  it('should not set aria-current on a manual last breadcrumb whose routerLink does not match the current URL', async () => {
     component.breadcrumbs$ = of([
-      {
-        label: 'Second breadcrumb',
-        show: 'always',
-        routerLink: '/second',
-        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      },
-      {
-        label: '',
-        show: 'always',
-        routerLink: '/empty',
-        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
-      }      
-    ]);
+      { label: 'First', routerLink: '/first' },
+      { label: 'Second', routerLink: '/second' },
+    ])
+    await router.navigateByUrl('/elsewhere')
 
     fixture.detectChanges()
     await fixture.whenStable()
-    component.ngAfterViewInit()
-
-    const breadcrumbLinks = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item-link'))
-    expect(breadcrumbLinks[0].attributes['aria-current']).toBeUndefined()
-  })
-
-  it('should handle null ViewChild', async () => {
-    component.breadcrumbElementRef = undefined
-
     fixture.detectChanges()
-    await fixture.whenStable()
-    component.ngAfterViewInit()
-
-    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
-    expect(breadcrumbItem).toBeNull()
+    const links = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item .p-breadcrumb-item-link'))
+    expect(links.map((l) => l.nativeElement.getAttribute('aria-current'))).toEqual([null, null])
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {
@@ -226,7 +232,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -238,7 +244,7 @@ describe('PageHeaderComponent', () => {
     fixture.componentRef.setInput('actions', mockActions)
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeTruthy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeTruthy()
     await (await pageHeaderHarness.getOverflowActionMenuButton())?.click()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(2)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeTruthy()
@@ -246,7 +252,7 @@ describe('PageHeaderComponent', () => {
     userServiceMock.permissionsTopic$.publish([])
 
     expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(0)
-    expect(await pageHeaderHarness.getElementByAriaLabel('My Test Action')).toBeFalsy()
+    expect(await pageHeaderHarness.getInlineActionButtonByLabel('My Test Action')).toBeFalsy()
     expect(await pageHeaderHarness.getOverFlowMenuItems()).toHaveLength(0)
     expect(await pageHeaderHarness.getElementByAriaLabel('More actions')).toBeFalsy()
   })
@@ -761,5 +767,113 @@ describe('PageHeaderComponent', () => {
     expect(await objectInfo.getLabelTooltipContent()).toBeNull()
     expect(await objectInfo.getValueTooltipContent()).toBeNull()
     expect(await objectInfo.getActionItemTooltipContent()).toBeNull()
+  })
+
+  describe('accessible names', () => {
+    const cb = () => undefined
+    let warnSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+    })
+    afterEach(() => warnSpy.mockRestore())
+
+    async function actionButtonName(details: Partial<ObjectDetailItem>): Promise<string | null | undefined> {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Venue', value: 'AIE', actionItemIcon: 'pi pi-copy', actionItemCallback: cb, ...details },
+      ])
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      return btn.getAttribute('aria-label')
+    }
+
+    it('should resolve the object detail action name by key, label, tooltip key, then detail label', async () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { ARIA: 'Aria key', TIP: 'Tip key' })
+      translate.use('en')
+      expect(
+        await actionButtonName({
+          actionItemAriaLabelKey: 'ARIA',
+          actionItemAriaLabel: 'Aria',
+          actionItemTooltipKey: 'TIP',
+        })
+      ).toBe('Aria key')
+      expect(await actionButtonName({ actionItemAriaLabel: 'Aria', actionItemTooltipKey: 'TIP' })).toBe('Aria')
+      expect(await actionButtonName({ actionItemTooltipKey: 'TIP' })).toBe('Tip key')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(0)
+    })
+
+    it('should fall back to the detail label with a dev warning and never expose the icon class', async () => {
+      const name = await actionButtonName({})
+      expect(name).toBe('Venue')
+      expect(name).not.toContain('pi pi-')
+      expect(name).not.toContain('button for')
+      expect(warnSpy.mock.calls.filter(([m]) => String(m).startsWith('ocx-page-header'))).toHaveLength(1)
+    })
+
+    it('should render the object detail action button at least 24x24 px via the min-size class', async () => {
+      await actionButtonName({})
+      const btn: HTMLElement = fixture.nativeElement.querySelector('[name="object-detail-value"] button')
+      expect(btn.classList.contains('object-info-action-button')).toBe(true)
+    })
+
+    it('should let a visible label win over title and ariaLabel on inline actions', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', label: 'Save', title: 'Persist', ariaLabel: 'Store it', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      const btn: HTMLElement = fixture.nativeElement.querySelector('#a1 button, button#a1')
+      expect(btn.getAttribute('aria-label')).toBeNull()
+      expect(btn.textContent).toContain('Save')
+    })
+
+    it('should name icon-only inline actions by ariaLabel, then title', async () => {
+      fixture.componentRef.setInput('actions', [
+        { id: 'a1', icon: 'pi pi-lock', title: 'Title', ariaLabel: 'Aria', show: 'always', actionCallback: cb },
+        { id: 'a2', icon: 'pi pi-lock', title: 'Title only', show: 'always', actionCallback: cb },
+      ])
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('#a1 button, button#a1').getAttribute('aria-label')).toBe('Aria')
+      expect(fixture.nativeElement.querySelector('#a2 button, button#a2').getAttribute('aria-label')).toBe('Title only')
+    })
+
+    it('should resolve inline action names from translation keys and fall back through the chain', () => {
+      const translate = TestBed.inject(TranslateService)
+      translate.setTranslation('en', { LBL: 'Visible', ARIA: 'Hello {{name}}', TITLE: 'Title key', EMPTY: '' })
+      translate.use('en')
+      expect(component.getInlineActionAriaLabel({ labelKey: 'LBL', ariaLabel: 'x' } as Action)).toBeUndefined()
+      expect(
+        component.getInlineActionAriaLabel({ ariaLabelKey: { key: 'ARIA', parameters: { name: 'World' } } } as Action)
+      ).toBe('Hello World')
+      expect(component.getInlineActionAriaLabel({ ariaLabelKey: 'EMPTY', titleKey: 'TITLE' } as Action)).toBe(
+        'Title key'
+      )
+      expect(component.getInlineActionAriaLabel({} as Action)).toBeUndefined()
+    })
+
+    it('should render the figure image as decorative and the subheader as plain content', async () => {
+      fixture.componentRef.setInput('figureImage', 'assets/x.png')
+      fixture.componentRef.setInput('subheader', 'Sub')
+      fixture.detectChanges()
+      const img = fixture.nativeElement.querySelector('.figure img')
+      expect(img?.getAttribute('alt')).toBe('')
+      const sub = fixture.nativeElement.querySelector('#page-subheader')
+      expect(sub.getAttribute('role')).toBeNull()
+      expect(sub.getAttribute('aria-label')).toBeNull()
+    })
+
+    it('should give icon-only object details a text alternative', async () => {
+      fixture.componentRef.setInput('objectDetails', [
+        { label: 'Status', icon: 'pi pi-check', valueTooltipKey: 'STATUS_OK' },
+      ])
+      TestBed.inject(TranslateService).setTranslation('en', { STATUS_OK: 'Confirmed' })
+      TestBed.inject(TranslateService).use('en')
+      fixture.detectChanges()
+      expect(fixture.nativeElement.querySelector('[name="object-detail-value"] .sr-only').textContent).toBe('Confirmed')
+    })
   })
 })
