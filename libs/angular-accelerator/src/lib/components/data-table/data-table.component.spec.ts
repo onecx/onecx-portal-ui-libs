@@ -1600,6 +1600,39 @@ describe('DataTableComponent', () => {
       ])
     })
 
+    it('currentEqualFilterOptions$ should translate a selected filter that has no matching row (TRANSLATION_KEY, empty table)', async () => {
+      const translateService = TestBed.inject(TranslateService)
+      jest.spyOn(translateService, 'get').mockReturnValue(of({ 'BOOK_GENRE.FICTION': 'Fiction' } as any))
+
+      component.columns = ([{ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any])
+      component.stateService.filters.set([{ columnId: 'status', value: 'BOOK_GENRE.FICTION' } as any])
+      component.rows.set([])
+      component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.TRANSLATION_KEY } as any)
+      fixture.detectChanges()
+
+      const res = await firstValueFrom(component.currentEqualFilterOptions$!)
+      expect(res.column?.id).toBe('status')
+      expect(res.options).toHaveLength(1)
+      const option = res.options.find((o: any) => o.value === 'BOOK_GENRE.FICTION')
+      expect(option).toBeDefined()
+      expect(option!.label).toBe('Fiction')
+    })
+
+    it('currentEqualFilterOptions$ should include a selected filter that has no matching row (non-TRANSLATION_KEY, empty table)', async () => {
+      component.columns = ([{ id: 'status', columnType: ColumnType.STRING } as any])
+      component.stateService.filters.set([{ columnId: 'status', value: 'PENDING' } as any])
+      component.rows.set([])
+      component.currentFilterColumn.set({ id: 'status', columnType: ColumnType.STRING } as any)
+      fixture.detectChanges()
+
+      const res = await firstValueFrom(component.currentEqualFilterOptions$!)
+      expect(res.column?.id).toBe('status')
+      expect(res.options).toHaveLength(1)
+      const option = res.options.find((o: any) => o.value === 'PENDING')
+      expect(option).toBeDefined()
+      expect(option!.label).toBe('PENDING')
+    })
+
     it('currentTruthySelectedFilters$ should include values for IS_NOT_EMPTY filters', async () => {
       component.currentFilterColumn.set({ id: 'status', filterType: FilterType.IS_NOT_EMPTY } as any)
       component.stateService.filters.set([
