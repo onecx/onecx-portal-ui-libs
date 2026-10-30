@@ -10,10 +10,10 @@
       optionLabel="columnName"
     >
       <ng-template let-item #item> 
-        <span [attr.aria-label]="item?.columnName ? (item.columnName | translate) : ''">{{ item?.columnName ? (item.columnName | translate) : ''}}</span> 
+        <span>{{ item?.columnName ? (item.columnName | translate) : ''}}</span> 
       </ng-template>
       <ng-template let-item #selectedItem>
-        <span [attr.aria-label]="item?.columnName ? (item.columnName | translate) : ''">{{ item?.columnName ? (item.columnName | translate) : ''}}</span>
+        <span>{{ item?.columnName ? (item.columnName | translate) : ''}}</span>
       </ng-template></p-select
     >
     <label for="dataListGridSortingDropdownInput">{{ ("OCX_LIST_GRID_SORT.DROPDOWN.LABEL" | translate) }}</label>

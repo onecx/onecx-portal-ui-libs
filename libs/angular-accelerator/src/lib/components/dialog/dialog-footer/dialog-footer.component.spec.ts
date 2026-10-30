@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DynamicDialogConfig, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { DialogFooterHarness, provideTranslateTestingService, TestbedHarnessEnvironment } from '../../../../../testing'
@@ -42,6 +43,10 @@ describe('DialogFooterComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     dialogFooterHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DialogFooterHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create dialog-footer component', () => {
