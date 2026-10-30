@@ -32,36 +32,88 @@ const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
 
 /**
- * The shell patches history.pushState/replaceState and publishes CurrentLocationTopic
- * for every call that does NOT contain top-level `isRouterSync`.
- * React Router stores user state under `data.usr`, so the marker would be invisible
- * to the shell. This wrapper copies our marker to the top level before the shell
- * patch runs, preventing an echo back to the shell when we navigate from a topic
- * event. Internal React Router navigation keeps publishing normally.
+ * Install only while a synced router is mounted. The shell checks top-level
+ * `isRouterSync` in its history patch, while React Router nests user state under
+ * `data.usr`. The shell installs its patch during bootstrap before mounting
+ * React remotes, so this wrapper layers over the shell adapter and is removed
+ * when the last synced router unmounts.
  */
-if (typeof window !== 'undefined' && !(window.history as unknown as Record<string, boolean>)[HISTORY_WRAPPER_MARKER]) {
-  const pushState = window.history.pushState.bind(window.history)
-  const replaceState = window.history.replaceState.bind(window.history)
+type HistoryWrapperState = {
+  referenceCount: number
+  originalPushState: History['pushState']
+  originalReplaceState: History['replaceState']
+  wrappedPushState: History['pushState']
+  wrappedReplaceState: History['replaceState']
+}
+
+const normalizeUrl = (url: string) => {
+  const parsedUrl = new URL(url, window.location.origin)
+  return `${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+}
+
+const releaseHistorySyncMarker = (history: History, state: HistoryWrapperState) => {
+  state.referenceCount -= 1
+  if (state.referenceCount > 0) return
+
+  if (history.pushState === state.wrappedPushState) {
+    history.pushState = state.originalPushState
+  }
+  if (history.replaceState === state.wrappedReplaceState) {
+    history.replaceState = state.originalReplaceState
+  }
+  delete (history as unknown as Record<string, unknown>)[HISTORY_WRAPPER_MARKER]
+}
+
+const installHistorySyncMarker = (): (() => void) => {
+  const history = window.history
+  const historyProperties = history as unknown as Record<string, unknown>
+  const existingState = historyProperties[HISTORY_WRAPPER_MARKER] as HistoryWrapperState | undefined
+  if (existingState) {
+    existingState.referenceCount += 1
+    return () => releaseHistorySyncMarker(history, existingState)
+  }
 
   const propagateShellSyncMarker = (data: unknown) => {
-    if (data && typeof data === 'object') {
-      const state = (data as Record<string, unknown>).usr
-      if (state && typeof state === 'object' && (state as Record<string, unknown>)[SHELL_SYNC_MARKER]) {
-        ;(data as Record<string, unknown>).isRouterSync = true
-        delete (state as Record<string, unknown>)[SHELL_SYNC_MARKER]
-      }
+    if (!data || typeof data !== 'object') return data
+
+    const historyData = data as Record<string, unknown>
+    const userState = historyData.usr
+    if (!userState || typeof userState !== 'object' || !(SHELL_SYNC_MARKER in userState)) {
+      return data
     }
-    return data
+
+    const cleanUserState = Object.fromEntries(Object.entries(userState).filter(([key]) => key !== SHELL_SYNC_MARKER))
+    return {
+      ...historyData,
+      usr: cleanUserState,
+      isRouterSync: true,
+    }
   }
 
-  window.history.pushState = function (data: unknown, unused: string, url?: string | URL | null) {
-    return pushState(propagateShellSyncMarker(data), unused, url as string)
+  const originalPushState = history.pushState
+  const originalReplaceState = history.replaceState
+  const wrappedPushState: History['pushState'] = function (data, unused, url) {
+    return originalPushState.call(history, propagateShellSyncMarker(data), unused, url)
   }
-  window.history.replaceState = function (data: unknown, unused: string, url?: string | URL | null) {
-    return replaceState(propagateShellSyncMarker(data), unused, url as string)
+  const wrappedReplaceState: History['replaceState'] = function (data, unused, url) {
+    return originalReplaceState.call(history, propagateShellSyncMarker(data), unused, url)
   }
 
-  ;(window.history as unknown as Record<string, boolean>)[HISTORY_WRAPPER_MARKER] = true
+  const wrapperState: HistoryWrapperState = {
+    referenceCount: 1,
+    originalPushState,
+    originalReplaceState,
+    wrappedPushState,
+    wrappedReplaceState,
+  }
+  history.pushState = wrappedPushState
+  history.replaceState = wrappedReplaceState
+  Object.defineProperty(historyProperties, HISTORY_WRAPPER_MARKER, {
+    configurable: true,
+    value: wrapperState,
+  })
+
+  return () => releaseHistorySyncMarker(history, wrapperState)
 }
 
 const RouterSync: FC<PropsWithChildren> = ({ children }) => {
@@ -81,6 +133,8 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
     navigateRef.current = navigate
   })
 
+  useLayoutEffect(() => installHistorySyncMarker(), [])
+
   useEffect(() => {
     const baseHref = document.querySelector('base')?.getAttribute('href') ?? '/'
     const normalizedBaseHref = baseHref.endsWith('/') ? baseHref : `${baseHref}/`
@@ -94,17 +148,17 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
         return
       }
 
-      const targetUrl = topicUrl
-      if (skipPublishUntil.current === targetUrl) {
+      const normalizedTargetUrl = normalizeUrl(topicUrl)
+      if (skipPublishUntil.current === normalizedTargetUrl) {
         return
       }
-      if (routerUrlRef.current !== targetUrl) {
-        skipPublishUntil.current = targetUrl
+      if (normalizeUrl(routerUrlRef.current) !== normalizedTargetUrl) {
+        skipPublishUntil.current = normalizedTargetUrl
         setCurrentLocation({
-          url: targetUrl,
+          url: normalizedTargetUrl,
           isFirst: location.isFirst,
         })
-        navigateRef.current(targetUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+        navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
       }
     })
 
@@ -120,7 +174,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   useLayoutEffect(() => {
     routerUrlRef.current = routerUrl
     if (skipPublishUntil.current !== null) {
-      if (routerUrl === skipPublishUntil.current) {
+      if (normalizeUrl(routerUrl) === skipPublishUntil.current) {
         skipPublishUntil.current = null
       }
       return

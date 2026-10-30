@@ -1,39 +1,44 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { TextDecoder, TextEncoder } from 'node:util'
 import { createElement, Fragment } from 'react'
-import { CurrentLocationTopic, type CurrentLocationTopicPayload } from '@onecx/integration-interface'
+import type { CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
 const loggerError = jest.fn()
 
 Object.assign(globalThis, { TextDecoder, TextEncoder })
 
-const { Route, Routes, useLocation, useNavigate } = require('react-router') as typeof import('react-router')
-const { SyncedRouterProvider } = require('./syncedLocationContext') as {
-  SyncedRouterProvider: typeof import('./syncedLocationContext').SyncedRouterProvider
+const historyMethodsBeforeContextImport = {
+  pushState: window.history.pushState,
+  replaceState: window.history.replaceState,
 }
+
+const { Route, Routes, useLocation, useNavigate } = jest.requireActual<typeof import('react-router')>('react-router')
+const { SyncedRouterProvider } = jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
 
 const appBase = '/app/sample-app'
 const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
 const mockPublishedLocations: CurrentLocationTopicPayload[] = []
+let mockSubscribeCalls = 0
 let shouldPublishReject = false
 let topicLastValue: CurrentLocationTopicPayload = { url: appBase, isFirst: true }
-
 jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
     subscribe(callback: (location: CurrentLocationTopicPayload) => void) {
+      mockSubscribeCalls += 1
+      mockLocationListeners.push(callback)
       callback(topicLastValue)
-      const listener = (location: CurrentLocationTopicPayload) => {
-        topicLastValue = location
-        callback(location)
+      return {
+        unsubscribe: () => {
+          const index = mockLocationListeners.indexOf(callback)
+          if (index >= 0) mockLocationListeners.splice(index, 1)
+        },
       }
-      mockLocationListeners.push(listener)
-      return { unsubscribe: jest.fn() }
     }
 
     publish(location: CurrentLocationTopicPayload) {
       topicLastValue = location
       mockPublishedLocations.push(location)
-      mockLocationListeners.forEach((listener) => listener(location))
+      mockLocationListeners.slice().forEach((listener) => listener(location))
       return shouldPublishReject ? Promise.reject(new Error('publish failed')) : Promise.resolve()
     }
 
@@ -43,7 +48,7 @@ jest.mock('@onecx/integration-interface', () => ({
 
 jest.mock('@onecx/react-integration-interface', () => ({
   useTopic: (_valueTopic: unknown, TopicClass: new () => unknown) => {
-    const React = require('react')
+    const React = jest.requireActual<typeof import('react')>('react')
     const [topic] = React.useState(() => new TopicClass())
     return topic
   },
@@ -80,7 +85,8 @@ const renderRouter = () => render(createElement(SyncedRouterProvider, null, crea
 const publishLocation = (payload: CurrentLocationTopicPayload) => {
   act(() => {
     if (payload.url) window.history.pushState({}, '', payload.url)
-    mockLocationListeners[0](payload)
+    topicLastValue = payload
+    mockLocationListeners.slice().forEach((listener) => listener(payload))
   })
 }
 
@@ -88,6 +94,7 @@ describe('SyncedRouterProvider', () => {
   beforeEach(() => {
     mockLocationListeners.length = 0
     mockPublishedLocations.length = 0
+    mockSubscribeCalls = 0
     shouldPublishReject = false
     topicLastValue = { url: appBase, isFirst: true }
     loggerError.mockClear()
@@ -96,6 +103,11 @@ describe('SyncedRouterProvider', () => {
     base.setAttribute('href', '/app/')
     document.head.append(base)
     window.history.replaceState({}, '', appBase)
+  })
+
+  it('does not patch global history when importing the context module', () => {
+    expect(window.history.pushState).toBe(historyMethodsBeforeContextImport.pushState)
+    expect(window.history.replaceState).toBe(historyMethodsBeforeContextImport.replaceState)
   })
 
   it('updates the React route when the shell navigates to a subpage', async () => {
@@ -175,17 +187,34 @@ describe('SyncedRouterProvider', () => {
   })
 
   it('marks topic-driven navigation as isRouterSync to suppress shell echo', async () => {
-    renderRouter()
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    const { unmount } = renderRouter()
 
     await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
-    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
     publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
 
     expect(await screen.findByText('Subpage')).toBeTruthy()
-    const calls = replaceStateSpy.mock.calls
-    const lastCall = calls[calls.length - 1]
-    expect(lastCall[0]).toMatchObject({ isRouterSync: true })
+    expect(replaceStateSpy.mock.calls.some(([state]) => state?.isRouterSync === true)).toBe(true)
+    unmount()
+    expect(window.history.replaceState).toBe(replaceStateSpy)
     replaceStateSpy.mockRestore()
+  })
+
+  it('does not leave shell-publish suppression stuck after URL normalization', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record one?#`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() => {
+      expect(mockPublishedLocations).toContainEqual({
+        url: `${appBase}/subpage/record-1?tab=details#summary`,
+        isFirst: false,
+      })
+    })
   })
 
   it('publishes React navigation with the pathname, query, and hash', async () => {
@@ -253,21 +282,38 @@ describe('SyncedRouterProvider', () => {
   })
 
   it('does not throw when history state is not an object', () => {
+    const { unmount } = renderRouter()
+
     expect(() => {
       act(() => {
         window.history.pushState(null, '', '/some-url')
       })
     }).not.toThrow()
+
+    unmount()
   })
 
-  it('does not re-wrap history when the wrapper marker is already present', () => {
-    const pushStateBefore = window.history.pushState
+  it('installs and restores the history wrapper with the mounted providers', () => {
+    const pushStateBeforeMount = window.history.pushState
+    const replaceStateBeforeMount = window.history.replaceState
+    const first = renderRouter()
 
-    jest.isolateModules(() => {
-      require('./syncedLocationContext')
-    })
+    expect(window.history.pushState).not.toBe(pushStateBeforeMount)
+    expect(window.history.replaceState).not.toBe(replaceStateBeforeMount)
 
-    expect(window.history.pushState).toBe(pushStateBefore)
+    const wrappedPushState = window.history.pushState
+    const wrappedReplaceState = window.history.replaceState
+    const second = renderRouter()
+    expect(window.history.pushState).toBe(wrappedPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+
+    first.unmount()
+    expect(window.history.pushState).toBe(wrappedPushState)
+    expect(window.history.replaceState).toBe(wrappedReplaceState)
+
+    second.unmount()
+    expect(window.history.pushState).toBe(pushStateBeforeMount)
+    expect(window.history.replaceState).toBe(replaceStateBeforeMount)
   })
 
   it('keeps an internal React route when the topic replays its last value on re-subscription', async () => {
@@ -278,11 +324,14 @@ describe('SyncedRouterProvider', () => {
     await waitFor(() =>
       expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     )
+    expect(mockSubscribeCalls).toBe(1)
+    expect(mockLocationListeners).toHaveLength(1)
 
     unmount()
     renderRouter()
 
-    await waitFor(() => expect(mockLocationListeners).toHaveLength(2))
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    expect(mockSubscribeCalls).toBe(2)
     expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     expect(screen.getByText('Subpage')).toBeTruthy()
   })
