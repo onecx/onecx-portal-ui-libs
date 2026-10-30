@@ -374,4 +374,80 @@ describe('DiagramComponent', () => {
       expect(component.chartOptions().plugins?.legend?.labels?.color).toEqual(expectedColor)
     })
   })
+  describe('Reduced motion', () => {
+    const reducedMotionQuery = '(prefers-reduced-motion: reduce)'
+    const originalMatchMedia = globalThis.matchMedia
+    let reducedMotionActive: boolean
+    let reducedMotionListeners: Set<() => void>
+    let reducedMotionMediaQuery: MediaQueryList
+
+    // The outer fixture was created before matchMedia was mocked, so replace it
+    // (destroying the old one) instead of keeping a second live component.
+    function createDiagram() {
+      fixture.destroy()
+      fixture = TestBed.createComponent(DiagramComponent)
+      fixture.componentRef.setInput('data', diagramData)
+      fixture.detectChanges()
+      return fixture
+    }
+
+    beforeEach(() => {
+      reducedMotionActive = false
+      reducedMotionListeners = new Set()
+      reducedMotionMediaQuery = {
+        media: reducedMotionQuery,
+        get matches() {
+          return reducedMotionActive
+        },
+        addEventListener: jest.fn((_type: string, listener: () => void) => reducedMotionListeners.add(listener)),
+        removeEventListener: jest.fn((_type: string, listener: () => void) => reducedMotionListeners.delete(listener)),
+      } as unknown as MediaQueryList
+      globalThis.matchMedia = jest.fn((query: string) =>
+        query === reducedMotionQuery ? reducedMotionMediaQuery : originalMatchMedia(query)
+      )
+    })
+
+    afterEach(() => {
+      globalThis.matchMedia = originalMatchMedia
+    })
+
+    it('should keep the default chart animation when reduced motion is not requested', () => {
+      const diagramFixture = createDiagram()
+
+      expect(diagramFixture.componentInstance.chartOptions().animation).toBeUndefined()
+    })
+
+    it('should disable the chart animation when reduced motion is requested', () => {
+      reducedMotionActive = true
+      const diagramFixture = createDiagram()
+
+      expect(diagramFixture.componentInstance.chartOptions().animation).toBe(false)
+    })
+
+    it('should update the chart animation when the reduced motion preference changes', () => {
+      const diagramFixture = createDiagram()
+      expect(reducedMotionMediaQuery.addEventListener).toHaveBeenCalledWith(
+        'change',
+        diagramFixture.componentInstance.refreshTheme
+      )
+
+      reducedMotionActive = true
+      reducedMotionListeners.forEach((listener) => listener())
+      expect(diagramFixture.componentInstance.chartOptions().animation).toBe(false)
+
+      reducedMotionActive = false
+      reducedMotionListeners.forEach((listener) => listener())
+      expect(diagramFixture.componentInstance.chartOptions().animation).toBeUndefined()
+    })
+
+    it('should remove the reduced motion listener on destroy', () => {
+      const diagramFixture = createDiagram()
+      const refreshTheme = diagramFixture.componentInstance.refreshTheme
+
+      diagramFixture.destroy()
+
+      expect(reducedMotionMediaQuery.removeEventListener).toHaveBeenCalledWith('change', refreshTheme)
+      expect(reducedMotionListeners.size).toBe(0)
+    })
+  })
 })
