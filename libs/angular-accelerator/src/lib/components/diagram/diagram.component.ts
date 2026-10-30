@@ -6,7 +6,14 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
 import { OptimusIcon } from '../../utils/optimus-icon.utils'
-import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
+import {
+  addHighContrastListener,
+  ensureGraphicsContrast,
+  getLabelColor,
+  getThemeColor,
+  hasHighContrast,
+  removeHighContrastListener,
+} from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
@@ -20,6 +27,24 @@ export interface DiagramLayouts {
 
 export interface DiagramComponentState {
   activeDiagramType?: DiagramType
+}
+
+/**
+ * Payload of the `dataSelected` output.
+ *
+ * Emitted when a chart segment is clicked and when a legend entry is activated (click, Enter or Space).
+ */
+export interface DiagramDataSelectedEvent {
+  /** Position of the selected entry in the `data` input. */
+  index: number
+  /** The selected entry of the `data` input. */
+  data: DiagramData
+}
+
+export interface DiagramLegendItem {
+  label: string
+  value: number
+  color: string | undefined
 }
 
 export type ChartType = 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'polarArea' | 'radar'
@@ -61,6 +86,10 @@ export class DiagramComponent implements OnDestroy {
   fullHeight = input<boolean>(false)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  /**
+   * Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the page outline.
+   */
+  titleHeadingLevel = input<number>(2)
   customLegends = input<boolean>(false)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
@@ -75,7 +104,10 @@ export class DiagramComponent implements OnDestroy {
 
   selectedDiagramType = computed(() => allDiagramTypes.find((v) => v.layout === this.diagramType()))
   chartType = computed(() => this.diagramTypeToChartType(this.diagramType()))
-  dataSelected = output<any>()
+  /**
+   * Emits the selected entry when a chart segment is clicked or a legend entry is activated with mouse or keyboard.
+   */
+  dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<DiagramComponentState>()
   chartOptions = signal<ChartOptions>({})
@@ -100,7 +132,7 @@ export class DiagramComponent implements OnDestroy {
 
   private static nextUniqueId = 0;
   uniqueInstanceId: number;
-  legendItems: { label: string | undefined, color: string | undefined, value?: number }[] = []
+  legendItems: DiagramLegendItem[] = []
 
   constructor() {
     this.refreshTheme()
@@ -127,27 +159,31 @@ export class DiagramComponent implements OnDestroy {
 
     this.amountOfData.set(data.reduce((acc, current) => acc + current.value, 0))
     const COLORS = this.generateColors(data, colorScale, colorRangeInfo)
+    // Segments are separated by a border in the background color, so adjacent segments stay distinguishable
+    const segmentBorderColor = getThemeColor('--content-bg-color')
     this.chartData.set({
       labels: data.map((d) => d.label),
       datasets: [
         {
           data: inputData,
           backgroundColor: COLORS,
+          ...(segmentBorderColor && { borderColor: segmentBorderColor }),
         },
       ],
     })
 
     this.legendItems = data.map((value, index) => ({
       label: value.label,
-      color: COLORS[index]
+      value: value.value,
+      color: COLORS[index],
     }))
 
     const labelColor = getLabelColor(this.highContrast())
     this.chartOptions.set({
       plugins: {
+        // the legend is rendered as keyboard accessible HTML below the chart
         legend: {
-          display: !this.customLegends(),
-          position: 'bottom',                    
+          display: false,
           labels: { color: labelColor },
         },
       },
@@ -181,7 +217,7 @@ export class DiagramComponent implements OnDestroy {
   }
 
   generateDiagramValueString(data: DiagramData[]): string {
-    return data.map((item) => `${item.label}:${item.value}`).join(', ')
+    return data.map((item) => `${item.label}: ${item.value}`).join(', ')
   }
 
   private diagramTypeToChartType(value: DiagramType): ChartType {
@@ -190,8 +226,15 @@ export class DiagramComponent implements OnDestroy {
     else return 'pie'
   }
 
-  dataClicked(event: []) {
-    this.dataSelected.emit(event.length)
+  dataClicked(event: { element: { index: number } }) {
+    this.selectData(event.element.index)
+  }
+
+  selectData(index: number) {
+    const selected = this.data()?.[index]
+    if (selected) {
+      this.dataSelected.emit({ index, data: selected })
+    }
   }
 
   onDiagramTypeChanged(event: any) {
@@ -202,6 +245,11 @@ export class DiagramComponent implements OnDestroy {
     })
   }
 }
-function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any) {
-  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo)
+// Generated colors are adjusted to the theme so every segment reaches 3:1 against the background (WCAG 1.4.11)
+function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any): string[] {
+  const background = getThemeColor('--content-bg-color')
+  const towards = getThemeColor('--text-color')
+  return ColorUtils.interpolateColors(amountOfData, colorScale, colorRangeInfo).map((color: string) =>
+    ensureGraphicsContrast(color, background, towards)
+  )
 }

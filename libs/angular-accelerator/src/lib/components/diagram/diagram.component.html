@@ -1,8 +1,13 @@
 @if (chartTitleKey() || chartDescriptionKey()) {
   @if (chartTitleKey()) {
-    <header class="diagram-title  w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">
-      {{ chartTitleKey() | translate }}
-    </header>
+    @switch (titleHeadingLevel()) {
+      @case (1) { <h1 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h1> }
+      @case (3) { <h3 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h3> }
+      @case (4) { <h4 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h4> }
+      @case (5) { <h5 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h5> }
+      @case (6) { <h6 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h6> }
+      @default { <h2 class="diagram-title w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-title'">{{ chartTitleKey() | translate }}</h2> }
+    }
   }
   @if (chartDescriptionKey()) {
     <p class="diagram-description  w-full flex justify-center" [attr.id]="'ocx-' + uniqueInstanceId + '-description'">
@@ -22,8 +27,7 @@
 </div>
 }
 <div class="w-full flex justify-center" [ngClass]="{'h-full': useFullHeight()}">
-  <p-chart tabindex="0" 
-    [attr.aria-describedby]="'ocx-' + uniqueInstanceId + '-sr-only-table'" 
+  <p-chart
     [attr.id]="'ocx-' + uniqueInstanceId + '-chart'"
     [attr.data-automation-type]="chartType()"
     [type]="chartType()"
@@ -33,9 +37,7 @@
     [ariaLabel]="(data() ? 'OCX_DIAGRAM.ARIA_LABEL' : 'OCX_DIAGRAM.EMPTY_ARIA_LABEL') | translate: {total: generateTotal(data() ?? []), valueString: generateDiagramValueString(data() ?? [])}"></p-chart>
   <ng-container [ngTemplateOutlet]="chartDetailsForSr"></ng-container>
 </div>
-@if(customLegends() && chartType() === 'pie') {
-<ng-container [ngTemplateOutlet]="customLegendsTable"></ng-container>
-}
+<ng-container [ngTemplateOutlet]="legend"></ng-container>
 <div class="w-full flex justify-center mt-2 sumKey" aria-hidden="true">
   <p class="text-base font-medium text-surface-700">
     <span name="sumLabel"> {{ sumKey() | translate }}</span> : <span name="amountOfData">{{ amountOfData() }}</span>
@@ -53,26 +55,24 @@
   @if (data()) {
   <div class="w-full flex justify-center sr-only" [attr.id]="'ocx-' + uniqueInstanceId + '-sr-only-diagram-details'">
     <table [attr.id]="'ocx-' + uniqueInstanceId + '-sr-only-table'">
-      <caption [attr.id]="'ocx-' + uniqueInstanceId + '-table-caption'"> {{ chartTitleKey() | translate }} </caption>
+      @if (chartTitleKey()) {
+      <caption [attr.id]="'ocx-' + uniqueInstanceId + '-table-caption'">{{ chartTitleKey() | translate }}</caption>
+      }
       <thead>
         <tr>
-          <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COLOR' | translate }}</th>
           <th scope="col">{{ 'OCX_DIAGRAM.TABLE.LABEL' | translate }}</th>
           <th scope="col">{{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}</th>
         </tr>
       </thead>
       <tbody>
-        @for (item of data(); track item) {
+        @for (item of data(); track $index) {
         <tr>
-          <td>
-            <span>{{ item.backgroundColor || ' ' }}</span>
-          </td>
-          <td>{{ item.label }}</td>
+          <th scope="row">{{ item.label }}</th>
           <td>{{ item.value }}</td>
         </tr>
         }
         <tr>
-          <td colspan="2">{{ sumKey() | translate }}</td>
+          <th scope="row">{{ sumKey() | translate }}</th>
           <td>{{ amountOfData() }}</td>
         </tr>
       </tbody>
@@ -81,47 +81,20 @@
 }
 </ng-template>
 
-<ng-template #customLegendsTable>
-  <div aria-hidden="true" class="custom-legends-container">
-    <div class="custom-legends-content-container">
-      <table class="legends-table">
-        @for (item of legendItems; track $index; let i = $index) {
-          <tr class="sr-only">
-            @if(i % 2 === 0) {
-            <ng-container>
-              <th>LEGEND COLUMN 1</th>
-              @if(legendItems[i + 1])
-              {
-              <th>LEGEND COLUMN 2</th>
-              }
-            </ng-container>
-            }
-          </tr>
-        }
-        @for (item of legendItems; track $index; let i = $index) {
-        <tr>
-          @if(i % 2 === 0) {
-          <ng-container>
-            <td>
-              <span class="box" [style.backgroundColor]="legendItems[i].color"></span>
-              {{ legendItems[i].label }}
-              <span class="sr-only">{{ item.label }}, {{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}: {{ item.value
-                }}</span>
-            </td>
-            @if(legendItems[i + 1])
-            {
-            <td>
-              <span class="box" [style.backgroundColor]="legendItems[i + 1].color"></span>
-              {{ legendItems[i + 1].label }}
-              <span class="sr-only">{{ legendItems[i + 1].label }}, {{ 'OCX_DIAGRAM.TABLE.COUNT' | translate }}: {{
-                legendItems[i + 1].value }}</span>
-            </td>
-            }
-          </ng-container>
-          }
-        </tr>
-        }
-      </table>
-    </div>
+<!-- Legend: every entry is a button, so segments can be selected with the keyboard -->
+<ng-template #legend>
+  @if (legendItems.length) {
+  <div class="diagram-legend" [class.custom-legends-container]="customLegends()">
+    <ul class="diagram-legend-list" [attr.aria-label]="'OCX_DIAGRAM.LEGEND.ARIA_LABEL' | translate">
+      @for (item of legendItems; track $index; let i = $index) {
+      <li>
+        <button type="button" class="diagram-legend-item" (click)="selectData(i)">
+          <span class="box" aria-hidden="true" [style.backgroundColor]="item.color"></span>
+          <span>{{ item.label }}</span><span class="sr-only">: {{ item.value }}</span>
+        </button>
+      </li>
+      }
+    </ul>
   </div>
+  }
 </ng-template>
