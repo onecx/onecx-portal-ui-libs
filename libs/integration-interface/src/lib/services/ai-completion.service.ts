@@ -36,7 +36,6 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
  * The schema is never sent to the provider.
  *
  * Only provider errors marked as retryable are retried, at most twice, with bounded exponential backoff.
- * Failures are thrown as AiProviderError.
  */
 export class OneCXAiCompletionService {
   private readonly aiCompletionGatherer = new AiCompletionGatherer(consumerAiCompletionProvider)
@@ -48,24 +47,33 @@ export class OneCXAiCompletionService {
       message: input.message,
       systemPrompt: input.systemPrompt,
     }
-    for (let attempt = 0; ; attempt++) {
-      try {
-        const response = await this.requestCompletion(request)
-        return this.parseResponse(response, input.outputSchema)
-      } catch (error) {
-        if (!isAiProviderError(error) || !error.retryable) {
-          throw error
-        }
-        if (attempt >= MAX_RETRIES) {
-          throw new AiProviderError('RETRIES_EXHAUSTED', 'AI completion failed after retrying', { retryable: false })
-        }
-        await sleep(Math.min(BASE_BACKOFF_MS * 2 ** attempt, MAX_BACKOFF_MS))
-      }
-    }
+    return this.attemptCompletion(request, input.outputSchema, 0)
   }
 
   destroy(): void {
     this.aiCompletionGatherer.destroy()
+  }
+
+  private async attemptCompletion<T>(
+    request: AiCompletionRequest,
+    outputSchema: ZodType<T>,
+    attempt: number
+  ): Promise<T> {
+    try {
+      const response = await this.requestCompletion(request)
+      const result = this.parseResponse(response, outputSchema)
+      return result
+    } catch (error) {
+      if (!isAiProviderError(error) || !error.retryable) {
+        throw error
+      }
+      if (attempt >= MAX_RETRIES) {
+        throw new AiProviderError('RETRIES_EXHAUSTED', 'AI completion failed after retrying', { retryable: false })
+      }
+      const backoffMs = Math.min(BASE_BACKOFF_MS * 2 ** attempt, MAX_BACKOFF_MS)
+      await sleep(backoffMs)
+      return this.attemptCompletion(request, outputSchema, attempt + 1)
+    }
   }
 
   private async requestCompletion(request: AiCompletionRequest): Promise<AiCompletionResponse> {

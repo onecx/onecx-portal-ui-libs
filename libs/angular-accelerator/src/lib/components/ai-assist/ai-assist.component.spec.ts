@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import { AiAgentResponse, AiProviderError, OneCXAiAgentService, OneCXAiCompletionService } from '@onecx/integration-interface'
-import { of } from 'rxjs'
-import { provideNoopAnimations } from '@angular/platform-browser/animations'
+import { of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { AiAssistComponent } from './ai-assist.component'
 import { DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
@@ -31,11 +31,11 @@ describe('AiAssistComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
-        AngularAcceleratorModule,
         TranslateTestingModule.withTranslations({
           en: require('../../../../assets/i18n/en.json'),
           de: require('../../../../assets/i18n/de.json'),
         }),
+        AngularAcceleratorModule,
       ],
       providers: [
         provideNoopAnimations(),
@@ -118,6 +118,33 @@ describe('AiAssistComponent', () => {
 
     expect(getCompletion).not.toHaveBeenCalled()
     expect(component.canRun).toBe(false)
+  })
+
+  it('should load agents for the configured appId when the current MFE cannot be read', async () => {
+    const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
+    appStateService.currentMfe$ = throwError(() => new Error('no current MFE'))
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    component.appId = 'app-2'
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(getAgents).toHaveBeenCalledWith({ appId: 'app-2' })
+  })
+
+  it('should select the agent chosen by the user', async () => {
+    await createComponent()
+
+    component.selectAgent('agent-2')
+
+    expect(component.selectedAgentId).toBe('agent-2')
+  })
+
+  it('should render the full result as formatted JSON', async () => {
+    await createComponent()
+    component.result = { text: 'Hallo' } as never
+
+    expect(component.resultJson).toBe(JSON.stringify({ text: 'Hallo' }, null, 2))
   })
 
   it('should show the error state and retry explicitly on a failed completion', async () => {
