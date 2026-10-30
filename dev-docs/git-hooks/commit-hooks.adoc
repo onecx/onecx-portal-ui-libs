@@ -1,0 +1,29 @@
+= Commit Hooks - Pre-commit and Commit Message Checks
+This document describes the local Git hooks of this repository. The hooks come from the shared OneCX pre-commit template in `onecx/onecx-ai-workflows` (`templates/pre-commit/npm`) and are installed with https://typicode.github.io/husky/[Husky]. They mirror, but do not replace, the checks in CI (`ci.yml` / `lint.yml`).
+
+== Setup
+. Run `npm install` (or `npm ci`) in the repository root.
+.. The `prepare` script (`husky || true`) points Git to the `.husky/` folder. No further step is needed.
+.. If the hooks do not run, check that `git config core.hooksPath` returns `.husky/_`, then run `npm run prepare` again.
+
+== What runs on every commit
+. `.husky/pre-commit` runs the root npm scripts below, if they exist in `package.json`:
+.. `npm run lint`: `nx affected -t lint`, the same command as in CI.
+.. `npm run prettier`: `prettier -c --cache .`. This only checks the formatting. Nothing is fixed or staged again.
+. `.husky/commit-msg` checks the commit message with commitlint, using `.commitlintrc.json`.
+.. The message must follow https://www.conventionalcommits.org/[Conventional Commits].
+.. Allowed types (`type-enum` in `.commitlintrc.json`): `chore`, `ci`, `docs`, `feat`, `fix`, `refactor`. The type must be lower case and the subject must be 5 to 200 characters long. The other `@commitlint/config-conventional` rules apply as well, for example a body line may have at most 100 characters.
+.. `test:`, `build:`, `perf:`, `style:` and `revert:` are currently rejected. The type list comes from the shared template, so a change belongs there first.
+.. If `WORKFLOW_FORBIDDEN_TERMS` is set (comma- or newline-separated), the hook also rejects a commit whose message, author or committer contains one of these terms.
+. If any check fails, the commit is aborted. Fix the problem and commit again.
+
+== Heavier checks
+. The checks `build`, `test:ci`, `sonar`, `test:arch` and `test:a11y` only run when `CI` or `FORCE_CI_COMMIT_HOOKS` is set, and only if the script exists in `package.json`.
+.. In this repository `build` runs. `sonar` exists but is skipped unless `RUN_SONAR_COMMIT_HOOKS=1` (see below). `test` exists, but the hook calls `test:ci`, which does not exist, so no tests run, even with `FORCE_CI_COMMIT_HOOKS`. `test:arch` and `test:a11y` do not exist.
+.. Example: `FORCE_CI_COMMIT_HOOKS=1 git commit -m "chore: check the full build"`.
+. `sonar` is skipped by default, because it needs a SonarQube scanner, a Sonar server and a library project configuration. Set `RUN_SONAR_COMMIT_HOOKS=1` (together with `CI` or `FORCE_CI_COMMIT_HOOKS`) to run it. Note that `npm run sonar` in this repository expects a library name and fails without one.
+. Additional script names can be added with `EXTRA_LINT_SCRIPTS` (always run) and `EXTRA_QA_SCRIPTS` (run with the heavier checks), separated by spaces.
+
+== Skipping the hooks
+. `git commit --no-verify` or `HUSKY=0` skips the hooks. The CI lint step still checks the change in the pull request.
+. The release workflow (`release.yml`) sets `HUSKY=0`, so the release commit of semantic-release does not run any hook.

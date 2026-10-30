@@ -1,0 +1,48 @@
+#!/usr/bin/env sh
+# lint/prettier always run; build/test/sonar/arch are heavier and only enforced in CI or when explicitly forced.
+
+failed=0
+
+has_script() {
+  node -e "const s=(require('./package.json').scripts||{}); process.exit(s['$1'] ? 0 : 1)" 2>/dev/null
+}
+
+run_check() {
+  name="$1"
+  echo "-> $name: npm run $name"
+  if npm run "$name"; then
+    echo "OK: $name"
+  else
+    echo "FAILED: $name"
+    failed=1
+  fi
+}
+
+# shellcheck disable=SC2086 # EXTRA_LINT_SCRIPTS is intentionally word-split, one script name per word
+for name in lint prettier $EXTRA_LINT_SCRIPTS; do
+  if has_script "$name"; then
+    run_check "$name"
+  fi
+done
+
+if [ -n "$CI" ] || [ -n "$FORCE_CI_COMMIT_HOOKS" ]; then
+  echo "pre-commit: CI/FORCE_CI_COMMIT_HOOKS detected, running remaining configured QA checks..."
+  # shellcheck disable=SC2086 # EXTRA_QA_SCRIPTS is intentionally word-split, one script name per word
+  for name in build test:ci sonar test:arch test:a11y $EXTRA_QA_SCRIPTS; do
+    # sonar needs a scanner, a Sonar server and per-library project config, so it is opt-in only.
+    if [ "$name" = "sonar" ] && [ "$RUN_SONAR_COMMIT_HOOKS" != "1" ]; then
+      echo "pre-commit: skipping sonar (set RUN_SONAR_COMMIT_HOOKS=1 to run it)."
+      continue
+    fi
+    if has_script "$name"; then
+      run_check "$name"
+    fi
+  done
+fi
+
+if [ "$failed" -ne 0 ]; then
+  echo "pre-commit: one or more QA checks failed, commit aborted." >&2
+  exit 1
+fi
+
+exit 0
