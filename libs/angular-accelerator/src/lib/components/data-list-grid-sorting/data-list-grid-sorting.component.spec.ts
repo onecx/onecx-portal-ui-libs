@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { firstValueFrom } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { DataSortDirection } from '../../model/data-sort-direction'
@@ -25,7 +26,13 @@ describe('DataListGridSortingComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridSortingComponent],
       imports: [AngularAcceleratorOptimusModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
-      providers: [provideTranslateTestingService({}), DataViewStateService],
+      providers: [
+        provideTranslateTestingService({
+          en: require('../../../../assets/i18n/en.json'),
+          de: require('../../../../assets/i18n/de.json'),
+        }),
+        DataViewStateService,
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataListGridSortingComponent)
@@ -110,6 +117,68 @@ describe('DataListGridSortingComponent', () => {
       expect(component.sortDirectionToTitle(DataSortDirection.DESCENDING)).toBe(
         'OCX_LIST_GRID_SORT.TOGGLE_BUTTON.DESCENDING_TOOLTIP'
       )
+    })
+  })
+
+  describe('sortDirectionToLabel', () => {
+    it.each([
+      [DataSortDirection.ASCENDING, 'OCX_LIST_GRID_SORT.DIRECTION.ASCENDING'],
+      [DataSortDirection.DESCENDING, 'OCX_LIST_GRID_SORT.DIRECTION.DESCENDING'],
+      [DataSortDirection.NONE, 'OCX_LIST_GRID_SORT.DIRECTION.NONE'],
+    ])('should map %s to %s', (direction, key) => {
+      expect(component.sortDirectionToLabel(direction)).toBe(key)
+    })
+  })
+
+  describe('sorting button accessible name', () => {
+    const renderIn = async (lang: string, direction: DataSortDirection) => {
+      await firstValueFrom(TestBed.inject(TranslateService).use(lang))
+      component.sortDirection = direction
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      return (
+        fixture.nativeElement.querySelector('#dataListGridSortingButton button') as HTMLButtonElement
+      ).getAttribute('aria-label')
+    }
+
+    it.each([
+      [
+        'en',
+        DataSortDirection.ASCENDING,
+        'Current sorting direction: Ascending. Toggle sorting direction to Descending',
+      ],
+      [
+        'en',
+        DataSortDirection.DESCENDING,
+        'Current sorting direction: Descending. Toggle sorting direction to Ascending',
+      ],
+      [
+        'de',
+        DataSortDirection.ASCENDING,
+        'Aktuelle Sortierrichtung: Aufsteigend. Sortierrichtung auf Absteigend ändern',
+      ],
+      [
+        'de',
+        DataSortDirection.DESCENDING,
+        'Aktuelle Sortierrichtung: Absteigend. Sortierrichtung auf Aufsteigend ändern',
+      ],
+    ])('should translate the sort direction sentence (%s, %s)', async (lang, direction, expected) => {
+      expect(await renderIn(lang, direction)).toBe(expected)
+    })
+
+    it.each(['en', 'de'])('should not expose raw enum values or translation keys in aria-labels (%s)', async (lang) => {
+      await renderIn(lang, DataSortDirection.ASCENDING)
+
+      const labels = Array.from(fixture.nativeElement.querySelectorAll('[aria-label]')).map((el) =>
+        (el as HTMLElement).getAttribute('aria-label')
+      )
+
+      expect(labels.length).toBeGreaterThan(0)
+      labels.forEach((label) => {
+        expect(label).not.toMatch(/\b(ASCENDING|DESCENDING|NONE)\b/)
+        expect(label).not.toMatch(/[A-Z_]+\.[A-Z_.]+/)
+      })
     })
   })
 

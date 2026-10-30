@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common'
 import { signal } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
-import { TranslateModule } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
+import { firstValueFrom } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { CustomGroupColumnSelectorComponent } from './custom-group-column-selector.component'
@@ -27,7 +28,13 @@ describe('CustomGroupColumnSelectorComponent', () => {
         TranslateModule.forRoot(),
         OcxTooltipDirective,
       ],
-      providers: [provideTranslateTestingService({}), DataViewStateService],
+      providers: [
+        provideTranslateTestingService({
+          en: require('../../../../assets/i18n/en.json'),
+          de: require('../../../../assets/i18n/de.json'),
+        }),
+        DataViewStateService,
+      ],
     }).compileComponents()
 
     fixture = TestBed.createComponent(CustomGroupColumnSelectorComponent)
@@ -712,6 +719,71 @@ describe('CustomGroupColumnSelectorComponent', () => {
       expect(pickList.selectedItemsSource).toEqual([])
       expect(pickList.selectedItemsTarget).toEqual([])
       expect(document.querySelectorAll('.p-listbox-option[aria-selected="true"]').length).toBe(0)
+    })
+  })
+
+  describe('footer button accessible names', () => {
+    async function openDialogIn(lang: string, inputs: Record<string, string> = {}) {
+      await firstValueFrom(TestBed.inject(TranslateService).use(lang))
+      Object.entries(inputs).forEach(([name, value]) => fixture.componentRef.setInput(name, value))
+      fixture.componentRef.setInput('columns', [makeColumn('A')])
+      fixture.componentRef.setInput('displayedColumns', [makeColumn('A')])
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+      await fixture.whenStable()
+      fixture.detectChanges()
+      return {
+        save: fixture.debugElement.query(By.css('#saveButton button')).nativeElement as HTMLButtonElement,
+        cancel: fixture.debugElement.query(By.css('#cancelButton button')).nativeElement as HTMLButtonElement,
+      }
+    }
+
+    it.each([
+      ['en', 'Save', 'Cancel'],
+      ['de', 'Speichern', 'Abbrechen'],
+    ])(
+      'should name save and cancel by their translated visible text by default (%s)',
+      async (lang, saveText, cancelText) => {
+        const { save, cancel } = await openDialogIn(lang)
+
+        expect(save.textContent?.trim()).toBe(saveText)
+        expect(save.getAttribute('aria-label')).toBe(saveText)
+        expect(cancel.textContent?.trim()).toBe(cancelText)
+        expect(cancel.getAttribute('aria-label')).toBe(cancelText)
+      }
+    )
+
+    it('should keep the accessible name in sync with a custom visible label', async () => {
+      const { save, cancel } = await openDialogIn('en', {
+        saveButtonLabel: 'Apply columns',
+        cancelButtonLabelKey: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.NO',
+      })
+
+      expect(save.getAttribute('aria-label')).toBe('Apply columns')
+      expect(cancel.textContent?.trim()).toBe('No')
+      expect(cancel.getAttribute('aria-label')).toBe('No')
+    })
+
+    it('should translate saveButtonAriaLabelKey and cancelButtonAriaLabelKey instead of exposing the raw key', async () => {
+      const { save, cancel } = await openDialogIn('de', {
+        saveButtonAriaLabelKey: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL',
+        cancelButtonAriaLabelKey: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL',
+      })
+
+      expect(save.getAttribute('aria-label')).toBe('Speichern')
+      expect(cancel.getAttribute('aria-label')).toBe('Abbrechen')
+    })
+
+    it('should prefer the plain aria-label inputs over keys and visible text', async () => {
+      const { save, cancel } = await openDialogIn('en', {
+        saveButtonAriaLabel: 'Save column group',
+        saveButtonAriaLabelKey: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL',
+        cancelButtonAriaLabel: 'Cancel column group',
+        cancelButtonAriaLabelKey: 'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL',
+      })
+
+      expect(save.getAttribute('aria-label')).toBe('Save column group')
+      expect(cancel.getAttribute('aria-label')).toBe('Cancel column group')
     })
   })
 })
