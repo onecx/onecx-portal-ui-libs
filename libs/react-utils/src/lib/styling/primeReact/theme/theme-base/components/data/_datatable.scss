@@ -92,8 +92,8 @@
     }
 
     &:focus-visible {
-      box-shadow: $inputListItemFocusShadow;
-      outline: 0 none;
+      outline: $focusOutline;
+      outline-offset: $focusOutlineInsetOffset;
     }
   }
 
@@ -136,8 +136,8 @@
       }
 
       &.p-highlight-contextmenu {
-        outline: 0.15rem solid $focusOutlineColor;
-        outline-offset: -0.15rem;
+        outline: $focusOutline;
+        outline-offset: $focusOutlineInsetOffset;
       }
 
       &.p-datatable-dragpoint-top > td {
@@ -158,8 +158,8 @@
       }
 
       &:focus-visible {
-        outline: 0.15rem solid $focusOutlineColor;
-        outline-offset: -0.15rem;
+        outline: $focusOutline;
+        outline-offset: $focusOutlineInsetOffset;
       }
     }
   }
@@ -173,8 +173,8 @@
         }
 
         &:focus-visible {
-          outline: 0.15rem solid $focusOutlineColor;
-          outline-offset: -0.15rem;
+          outline: $focusOutline;
+          outline-offset: $focusOutlineInsetOffset;
         }
       }
     }
