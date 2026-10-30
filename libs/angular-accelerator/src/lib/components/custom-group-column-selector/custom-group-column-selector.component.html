@@ -16,6 +16,7 @@
   id="customGroupColumnSelectorDialog"
   [(visible)]="visible"
   [style]="{ width: '70%' }"
+  [breakpoints]="{ '640px': '95vw' }"
   [modal]="true"
   [draggable]="draggableColumnGroupSelectorDialog()"
   [resizable]="resizableColumnGroupSelectorDialog()"
@@ -43,7 +44,8 @@
     [sourceAriaLabel]="resolvedActiveColumnsLabel"
     [targetAriaLabel]="resolvedInactiveColumnsLabel"
     [dragdrop]="true"
-    [responsive]="false"
+    [responsive]="true"
+    breakpoint="639px"
     [sourceStyle]="{ height: '300px' }"
     [targetStyle]="{ height: '300px' }"
     [upButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.UP' | translate)"
@@ -56,13 +58,13 @@
     [allLeftButtonAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.ALL_LEFT' | translate)"
   >
     <ng-template let-item #item>
-      <div>{{ item.nameKey | translate }}</div>
+      <div class="wrap-anywhere">{{ item.nameKey | translate }}</div>
     </ng-template>
   </p-pickList>
 
   <div class="pt-4">
     <p class="text-xl font-bold">{{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.TITLE' | translate}}</p>
-    <div class="flex gap-6 px-3">
+    <div class="flex flex-wrap gap-6 px-3">
       <div>
         <p id="frozenActionColumnLabel" class="mb-1">
           {{'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CONFIGURE_ACTION_COLUMN.FREEZE' | translate}}
