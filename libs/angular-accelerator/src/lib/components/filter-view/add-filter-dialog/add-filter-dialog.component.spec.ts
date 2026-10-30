@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { firstValueFrom } from 'rxjs'
@@ -6,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { DialogModule } from '@openng/optimus-ui/dialog'
-import { MultiSelectModule } from '@openng/optimus-ui/multiselect'
+import { MultiSelect, MultiSelectModule } from '@openng/optimus-ui/multiselect'
 import { SelectModule } from '@openng/optimus-ui/select'
 import { AddFilterDialogComponent } from './add-filter-dialog.component'
 import type { DataTableColumn } from '../../../model/data-table-column.model'
@@ -450,5 +451,19 @@ describe('AddFilterDialogComponent (class logic)', () => {
     const options = await valueOptions()
     expect(options.map((o) => o.value)).toEqual(['KEY_A', 'KEY_B'])
     expect(options.map((o) => o.label)).toHaveLength(2)
+  })
+
+  it('should not autofocus the value MultiSelect', async () => {
+    fixture.componentRef.setInput('columns', [makeColumn({ id: 'c1', nameKey: 'C1' })])
+    fixture.componentRef.setInput('data', [{ c1: 'a' }])
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    const multiSelect = fixture.debugElement.query(By.directive(MultiSelect)).componentInstance as MultiSelect
+    expect(multiSelect.autofocus).toBe(false)
+    const input = fixture.nativeElement.querySelector('#ocxAddFilterValueInput') as HTMLElement
+    expect(input).toBeTruthy()
+    expect(input.hasAttribute('autofocus')).toBe(false)
   })
 })
