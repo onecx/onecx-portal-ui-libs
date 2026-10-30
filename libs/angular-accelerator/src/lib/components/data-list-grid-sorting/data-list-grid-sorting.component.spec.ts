@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import userEvent from '@testing-library/user-event'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
@@ -85,6 +86,30 @@ describe('DataListGridSortingComponent', () => {
 
       const nextDirection = component.nextSortDirection()
       expect(nextDirection).toBe(DataSortDirection.ASCENDING)
+    })
+  })
+
+  describe('sort direction button keyboard activation', () => {
+    it.each([
+      ['Enter', '{Enter}'],
+      ['Space', ' '],
+    ])('should advance exactly one state on %s', async (_name, keys) => {
+      fixture.componentRef.setInput('sortStates', [
+        DataSortDirection.ASCENDING,
+        DataSortDirection.DESCENDING,
+        DataSortDirection.NONE,
+      ])
+      component.sortDirection = DataSortDirection.ASCENDING
+      fixture.detectChanges()
+      const changeSpy = jest.spyOn(component.sortDirectionChange, 'emit')
+      const button = fixture.nativeElement.querySelector('#dataListGridSortingButton button') as HTMLElement
+
+      button.focus()
+      await userEvent.setup().keyboard(keys)
+
+      expect(changeSpy).toHaveBeenCalledTimes(1)
+      expect(changeSpy).toHaveBeenCalledWith(DataSortDirection.DESCENDING)
+      expect(component.stateService.sortDirection()).toBe(DataSortDirection.DESCENDING)
     })
   })
 

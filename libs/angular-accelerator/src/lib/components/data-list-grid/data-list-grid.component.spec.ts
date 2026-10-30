@@ -2,10 +2,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, DestroyRef } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
+import { FilterType } from '../../model/filter.model'
 import {
   provideAppStateServiceMock,
   provideUserServiceMock,
@@ -1427,6 +1429,73 @@ describe('DataListGridComponent', () => {
         expect(announceSpy).toHaveBeenNthCalledWith(1, '6 Results Found')
         expect(announceSpy).toHaveBeenNthCalledWith(2, '2 Results Found')
       })
+    })
+  })
+
+  describe('results announcement ownership', () => {
+    let announceSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      announceSpy = jest.spyOn(TestBed.inject(LiveAnnouncer), 'announce').mockResolvedValue()
+    })
+
+    async function render() {
+      fixture.detectChanges()
+      await fixture.whenStable()
+    }
+
+    it('should not announce the initial data at page load', async () => {
+      const newFixture = TestBed.createComponent(DataListGridComponent)
+      newFixture.componentRef.setInput('data', mockData)
+      newFixture.componentRef.setInput('columns', mockColumns)
+      newFixture.detectChanges()
+      await newFixture.whenStable()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce the filtered item count once after a client-side filter change', async () => {
+      stateService.filters.set([
+        { columnId: 'name', value: 'example', filterType: FilterType.EQUALS },
+        { columnId: 'name', value: 'name 1', filterType: FilterType.EQUALS },
+      ])
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
+    })
+
+    it('should announce the displayed item count once after a client-side sort change', async () => {
+      stateService.sortColumn.set('name')
+      stateService.sortDirection.set(DataSortDirection.DESCENDING)
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('5 Results Found')
+    })
+
+    it('should not announce new data while a search header owns the search results', async () => {
+      TestBed.inject(ResultsAnnouncementService).registerSearchHeader({
+        onDestroy: () => () => undefined,
+      } as unknown as DestroyRef)
+
+      fixture.componentRef.setInput('data', mockData.slice(0, 2))
+      await render()
+
+      expect(announceSpy).not.toHaveBeenCalled()
+    })
+
+    it('should announce new data next to a search header when announceResults is true', async () => {
+      TestBed.inject(ResultsAnnouncementService).registerSearchHeader({
+        onDestroy: () => () => undefined,
+      } as unknown as DestroyRef)
+      fixture.componentRef.setInput('announceResults', true)
+
+      fixture.componentRef.setInput('data', mockData.slice(0, 2))
+      await render()
+
+      expect(announceSpy).toHaveBeenCalledTimes(1)
+      expect(announceSpy).toHaveBeenCalledWith('2 Results Found')
     })
   })
 
