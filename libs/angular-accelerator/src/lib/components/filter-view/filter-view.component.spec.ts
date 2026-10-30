@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
 import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -70,6 +70,11 @@ describe('FilterViewComponent (class logic)', () => {
       return panelMock
     }
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should initialize columnFilterDataRows and display filters from service', () => {
@@ -161,6 +166,21 @@ describe('FilterViewComponent (class logic)', () => {
 
     expect(component.stateService.filters()).toEqual([{ columnId: 'c1', value: 'keep' }])
     expect(setFiltersSpy).toHaveBeenCalledWith([{ columnId: 'c1', value: 'keep' }])
+  })
+
+  describe('removeFilterValue (accessible name of the remove button)', () => {
+    it('should return printable strings and numbers', () => {
+      expect(component.removeFilterValue({ id: 'r', value: 'abc' } as any)).toBe('abc')
+      expect(component.removeFilterValue({ id: 'r', value: 42 } as any)).toBe('42')
+    })
+
+    it('should return undefined for values that are not plain text so the generic name is used', () => {
+      expect(component.removeFilterValue({ id: 'r', value: true } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: { a: 1 } } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: new Date() } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r', value: '  ' } as any)).toBeUndefined()
+      expect(component.removeFilterValue({ id: 'r' } as any)).toBeUndefined()
+    })
   })
 
   it('should open the add filter dialog via PortalDialogService in onAddFilter', async () => {

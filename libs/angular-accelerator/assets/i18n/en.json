@@ -75,10 +75,13 @@
     "SHOWING": "{{first}} - {{last}} of {{totalRecords}}",
     "SHOWING_WITH_TOTAL_ON_SERVER": "{{first}} - {{last}} of {{totalRecords}} ({{totalRecordsOnServer}})",
     "MORE_ACTIONS": "More actions",
+    "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
+    "EXPAND_ROW_ARIA_LABEL": "Toggle row details: {{row}}",
     "ACTIONS": {
       "VIEW": "View",
       "EDIT": "Edit",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "DEFAULT": "Action"
     },
     "TOGGLE_BUTTON": {
       "ASCENDING_TITLE": "Sort Ascending",
@@ -88,7 +91,8 @@
     },
     "SELECT_ALL_ARIA_LABEL": "Select all table rows",
     "SELECT_ALL_TOOLTIP": "Select all",
-    "SELECT_ARIA_LABEL": "Select table row with id {{key}}, row summary: {{rowSummary}}",
+    "SELECT_ROW_ARIA_LABEL": "Select row: {{row}}",
+    "SELECT_ROW_FALLBACK_ARIA_LABEL": "Select row",
     "FILTER_YES": "Yes",
     "FILTER_NO": "No",
     "COLLAPSED_ROW": "Toggle row details. Current state: Collapsed",
@@ -103,8 +107,10 @@
     "MENU": {
       "VIEW": "View",
       "EDIT": "Edit",
-      "DELETE": "Delete"
+      "DELETE": "Delete",
+      "DEFAULT": "Action"
     },
+    "ROW_ACTION_ARIA_LABEL": "{{action}}: {{row}}",
     "MORE_ACTIONS_ARIA_LABEL": "More actions",
     "MORE_ACTIONS_TOOLTIP": "Display more actions"
   },
@@ -143,7 +149,8 @@
       "VALUE": "Filter value",
       "ACTIONS": "Actions",
       "REMOVE_FILTER_TITLE": "Remove filter",
-      "REMOVE_FILTER_ARIA_LABEL": "Remove filter"
+      "REMOVE_FILTER_ARIA_LABEL": "Remove filter",
+      "REMOVE_FILTER_ROW_ARIA_LABEL": "Remove filter: {{column}}: {{value}}"
     },
     "PANEL_TITLE": "Filters",
     "ADD_FILTER": {

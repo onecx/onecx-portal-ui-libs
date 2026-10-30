@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
-import { PTableCheckboxHarness } from '@onecx/angular-testing'
+import { PTableCheckboxHarness, expectNoAxeViolations } from '@onecx/angular-testing'
 import { DataTableHarness, provideTranslateTestingService } from '../../../../testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
@@ -21,6 +21,8 @@ import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
@@ -246,6 +248,10 @@ describe('DataTableComponent', () => {
     fixture.detectChanges()
     dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     router = TestBed.inject(Router)
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create the data table component', () => {
@@ -1139,6 +1145,259 @@ describe('DataTableComponent', () => {
 
         expect(spy).not.toHaveBeenCalled()
         expect(callbackSpy).toHaveBeenCalledWith(component.rows()[0])
+      })
+    })
+  })
+
+  describe('accessible names of row-level buttons', () => {
+    let warnSpy: jest.SpyInstance
+    const buttons = (selector: string): HTMLElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll(selector)) as HTMLElement[]
+
+    beforeEach(() => {
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+      translateService.setTranslation('en', {
+        OCX_DATA_TABLE: {
+          ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+          EXPAND_ROW_ARIA_LABEL: 'Toggle row details: {{row}}',
+          MORE_ACTIONS: 'More actions',
+          ACTIONS: { VIEW: 'View', EDIT: 'Edit', DELETE: 'Delete', DEFAULT: 'Action' },
+        },
+      }, true)
+      translateService.setTranslation('de', {
+        OCX_DATA_TABLE: {
+          ROW_ACTION_ARIA_LABEL: '{{action}}: {{row}}',
+          EXPAND_ROW_ARIA_LABEL: 'Zeilendetails umschalten: {{row}}',
+          MORE_ACTIONS: 'Weitere Aktionen',
+          ACTIONS: { VIEW: 'Anzeigen', EDIT: 'Bearbeiten', DELETE: 'Löschen', DEFAULT: 'Aktion' },
+        },
+      }, true)
+      translateService.use('en')
+      component.rows.set([
+        { id: 'r1', name: 'First row' },
+        { id: 'r2', name: 'Second row' },
+      ] as any)
+      fixture.componentRef.setInput('rowLabelField', 'name')
+    })
+
+    afterEach(() => warnSpy.mockRestore())
+
+    it('should name built-in action buttons with the row label and keep them unique', () => {
+      component.editTableRow.subscribe(() => undefined)
+      component.deleteTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('deletePermission', 'DELETE')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Edit: First row', 'Delete: First row', 'Edit: Second row', 'Delete: Second row'])
+      expect(new Set(labels).size).toBe(labels.length)
+      const ids = buttons('button[id]').map((b) => b.id)
+      expect(new Set(ids).size).toBe(ids.length)
+    })
+
+    it('should not use translation key, date or relative date columns as row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.columns = [
+        { id: 'status', columnType: ColumnType.TRANSLATION_KEY, nameKey: 'S' },
+        { id: 'startDate', columnType: ColumnType.DATE, nameKey: 'D' },
+        { id: 'modificationDate', columnType: ColumnType.RELATIVE_DATE, nameKey: 'M' },
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+      ] as any
+      fixture.detectChanges()
+      expect(
+        component.rowLabel({ id: 'r1', status: 'STATUS.ACTIVE', startDate: '2023-09-12T09:34:11Z', name: 'Nice name' })
+      ).toBe('Nice name')
+      expect(component.rowLabel({ id: 'r2', status: 'STATUS.ACTIVE' })).toBe('r2')
+    })
+
+    it('should use the translated action name in German without English text', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      translateService.use('de')
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Bearbeiten: First row', 'Bearbeiten: Second row'])
+    })
+
+    it('should fall back to the first displayed column value and the row id for the row label', () => {
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      fixture.detectChanges()
+      expect(component.rowLabel({ id: 'r1', name: 'First row' })).toBe('First row')
+      expect(component.rowLabel({ id: 'only-id' })).toBe('only-id')
+    })
+
+    it('should shorten long row labels in action button names to at most 100 characters', () => {
+      component.editTableRow.subscribe(() => undefined)
+      fixture.componentRef.setInput('editPermission', 'EDIT')
+      fixture.componentRef.setInput('rowLabelField', undefined)
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const label = buttons('[name="data-table-action-button"]')[0]?.getAttribute('aria-label') ?? ''
+      const rowLabel = label.slice(label.indexOf(': ') + 2)
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+      expect(component.rowLabel({ id: 'r1', name: 'x'.repeat(250) })).toBe(rowLabel)
+    })
+
+    it('should never render an empty aria-label or title for actions without labelKey and warn', () => {
+      userServiceMockPublish(['ADDITIONAL#VIEW', 'OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'inline', permission: 'ADDITIONAL#VIEW', callback: () => undefined },
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const inline = buttons('[name="data-table-action-button"]')
+      expect(inline.map((b) => b.getAttribute('aria-label'))).toEqual(['Action: First row', 'Action: Second row'])
+      inline.forEach((b) => expect(b.getAttribute('title')).toBe('Action'))
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('has no labelKey'))
+    })
+
+    it('should not render an empty overflow menu item for actions without labelKey', async () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'overflow', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      await (await dataTable.getOverflowActionMenuButton())?.click()
+      const menuItems = await (await dataTable.getOverflowMenu())!.getAllMenuItems()
+      expect(menuItems.length).toBe(1)
+      expect(await menuItems[0].getText()).toBe('Action')
+    })
+
+    it('should name the overflow trigger with the row label', () => {
+      userServiceMockPublish(['OVERFLOW#VIEW'])
+      component.additionalActions = [
+        { id: 'o', labelKey: 'L', permission: 'OVERFLOW#VIEW', callback: () => undefined, showAsOverflow: true },
+      ]
+      fixture.detectChanges()
+
+      const labels = buttons('[name="data-table-overflow-action-button"]').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['More actions: First row', 'More actions: Second row'])
+    })
+
+    it('should name the expand toggle with the row label', () => {
+      fixture.componentRef.setInput('expandable', true)
+      component.parentTemplates.set([{ getType: () => 'expansion' } as any])
+      fixture.detectChanges()
+
+      const labels = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))
+      expect(labels).toEqual(['Toggle row details: First row', 'Toggle row details: Second row'])
+      const titles = buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('title'))
+      expect(titles).toEqual(labels)
+
+      translateService.use('de')
+      fixture.detectChanges()
+      expect(buttons('td[name="expansion-column"] button').map((b) => b.getAttribute('aria-label'))).toEqual([
+        'Zeilendetails umschalten: First row',
+        'Zeilendetails umschalten: Second row',
+      ])
+    })
+
+    function userServiceMockPublish(permissions: string[]) {
+      TestBed.inject(UserServiceMock).permissionsTopic$.publish(permissions)
+    }
+  })
+
+  describe('accessible names of row selection checkboxes', () => {
+    const readTranslations = (lang: string) =>
+      JSON.parse(readFileSync(join(__dirname, `../../../../assets/i18n/${lang}.json`), 'utf-8'))
+    const checkboxInputs = (): HTMLInputElement[] =>
+      Array.from(fixture.nativeElement.querySelectorAll('tbody input[type="checkbox"]')) as HTMLInputElement[]
+    const checkboxLabels = () => checkboxInputs().map((input) => input.getAttribute('aria-label'))
+
+    beforeEach(() => {
+      translateService.setTranslation('en', readTranslations('en'), true)
+      translateService.setTranslation('de', readTranslations('de'), true)
+      translateService.use('en')
+      component.columns = [
+        { id: 'name', columnType: ColumnType.STRING, nameKey: 'N' },
+        { id: 'details', columnType: ColumnType.STRING, nameKey: 'D' },
+      ] as any
+      component.rows.set([
+        { id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', name: 'First row', secret: 'hidden value', details: { a: 1 } },
+        { id: '5f8bb05b-d089-485e-a234-0bb6ff25234e', name: 'Second row', secret: 'hidden value' },
+      ] as any)
+      component.selectionChanged.subscribe(() => undefined)
+    })
+
+    it('should name the checkbox "Select row: <row label>" using visible columns only', () => {
+      fixture.detectChanges()
+
+      const labels = checkboxLabels()
+      expect(labels).toEqual(['Select row: First row', 'Select row: Second row'])
+      labels.forEach((label) => {
+        expect(label).not.toContain('195ee34e')
+        expect(label).not.toContain('5f8bb05b')
+        expect(label).not.toContain('hidden value')
+        expect(label).not.toContain('[object Object]')
+        expect(label?.length).toBeLessThanOrEqual(100 + 'Select row: '.length)
+      })
+    })
+
+    it('should use the German translation', () => {
+      translateService.use('de')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Zeile auswählen: First row', 'Zeile auswählen: Second row'])
+    })
+
+    it('should use a generic name instead of the row id if no visible column has a value', () => {
+      component.rows.set([{ id: '195ee34e-41c6-47b7-8fc4-3f245dee7651', secret: 'hidden value' }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+    })
+
+    it('should skip object values of visible columns when the name is empty', () => {
+      component.rows.set([{ id: 'r1', name: '', details: { a: 1 } }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row'])
+      expect(checkboxLabels()[0]).not.toContain('[object Object]')
+    })
+
+    it('should shorten long row labels to at most 100 characters', () => {
+      component.rows.set([{ id: 'r1', name: 'x'.repeat(250) }] as any)
+      fixture.detectChanges()
+
+      const rowLabel = checkboxLabels()[0]?.replace('Select row: ', '') ?? ''
+      expect(rowLabel.length).toBe(100)
+      expect(rowLabel.endsWith('\u2026')).toBe(true)
+    })
+
+    it('should name the disabled checkbox of a selected row that cannot be deselected', () => {
+      fixture.componentRef.setInput('selectionEnabledField', 'selectable')
+      component.rows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      component.stateService.selectedRows.set([{ id: 'r1', name: 'Locked row', selectable: false }] as any)
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: Locked row'])
+    })
+
+    it('should prefer the rowLabelField', () => {
+      fixture.componentRef.setInput('rowLabelField', 'secret')
+      fixture.detectChanges()
+
+      expect(checkboxLabels()).toEqual(['Select row: hidden value', 'Select row: hidden value'])
+    })
+
+    it('should have no axe label or aria-input-field-name violations', async () => {
+      fixture.detectChanges()
+
+      await expectNoAxeViolations(fixture.nativeElement, { rules: ['label', 'aria-input-field-name'] })
+    })
+
+    it('should provide the selection keys in English and German', () => {
+      ;['en', 'de'].forEach((lang) => {
+        const keys = readTranslations(lang).OCX_DATA_TABLE
+        expect(keys.SELECT_ROW_ARIA_LABEL).toContain('{{row}}')
+        expect(keys.SELECT_ROW_FALLBACK_ARIA_LABEL).toBeTruthy()
+        expect(keys.SELECT_ARIA_LABEL).toBeUndefined()
       })
     })
   })
@@ -2335,9 +2594,4 @@ describe('DataTableComponent', () => {
     })
   })
 
-  it('should return row summary for object entries when getRowSummary is called', () => {
-      const summary = component.getRowSummary({ id: '1', name: 'Alice', active: true })
-
-      expect(summary).toBe('id: 1,name: Alice,active: true')
-  })
 })
