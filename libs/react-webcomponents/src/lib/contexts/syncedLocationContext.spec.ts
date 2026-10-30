@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { TextDecoder, TextEncoder } from 'node:util'
-import { createElement, Fragment } from 'react'
+import { createElement, Fragment, useContext } from 'react'
 import type { CurrentLocationTopicPayload } from '@onecx/integration-interface'
 
 const loggerError = jest.fn()
@@ -13,7 +13,8 @@ const historyMethodsBeforeContextImport = {
 }
 
 const { Route, Routes, useLocation, useNavigate } = jest.requireActual<typeof import('react-router')>('react-router')
-const { SyncedRouterProvider } = jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
+const { SyncedRouterProvider, SyncedLocationContext } =
+  jest.requireActual<typeof import('./syncedLocationContext')>('./syncedLocationContext')
 
 const appBase = '/app/sample-app'
 const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[] = []
@@ -80,7 +81,14 @@ const RouterContent = () => {
   )
 }
 
+const SyncedUrlReader = () => {
+  const syncedLocation = useContext(SyncedLocationContext)
+  return createElement('output', { 'data-testid': 'synced-url' }, syncedLocation?.url ?? '')
+}
+
 const renderRouter = () => render(createElement(SyncedRouterProvider, null, createElement(RouterContent)))
+const renderRouterWithSyncedReader = () =>
+  render(createElement(SyncedRouterProvider, null, createElement(RouterContent), createElement(SyncedUrlReader)))
 
 const publishLocation = (payload: CurrentLocationTopicPayload) => {
   act(() => {
@@ -354,5 +362,27 @@ describe('SyncedRouterProvider', () => {
       expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     )
     expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+  it('does not navigate on the initial topic replay', async () => {
+    topicLastValue = { url: `${appBase}/subpage/record-1`, isFirst: true }
+    window.history.replaceState({}, '', appBase)
+
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(mockPublishedLocations).toEqual([])
+  })
+
+  it('exposes pathname-only url via SyncedLocationContext', async () => {
+    renderRouterWithSyncedReader()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    fireEvent.click(screen.getByText('Navigate in React'))
+
+    await waitFor(() =>
+      expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
+    )
+    expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
   })
 })

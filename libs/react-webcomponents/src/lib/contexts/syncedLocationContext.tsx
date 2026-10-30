@@ -121,12 +121,13 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
   const routerUrl = toUrl(locationHook)
   const [currentLocation, setCurrentLocation] = useState<CurrentLocationTopicPayload>({
-    url: routerUrl,
+    url: locationHook.pathname,
     isFirst: false,
   })
   const routerUrlRef = useRef(routerUrl)
   const navigateRef = useRef(navigate)
   const skipPublishUntil = useRef<string | null>(null)
+  const lastPublishedUrlRef = useRef(routerUrl)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
   useLayoutEffect(() => {
@@ -153,11 +154,12 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
         return
       }
       if (normalizeUrl(routerUrlRef.current) !== normalizedTargetUrl) {
+        // The initial replay represents the shell's current location and should
+        // not overwrite the browser URL with a potentially stale value.
+        if (location.isFirst) {
+          return
+        }
         skipPublishUntil.current = normalizedTargetUrl
-        setCurrentLocation({
-          url: normalizedTargetUrl,
-          isFirst: location.isFirst,
-        })
         navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
       }
     })
@@ -174,13 +176,20 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   useLayoutEffect(() => {
     routerUrlRef.current = routerUrl
     if (skipPublishUntil.current !== null) {
-      if (normalizeUrl(routerUrl) === skipPublishUntil.current) {
-        skipPublishUntil.current = null
-      }
+      // React Router may normalize the topic URL (encoded chars, trailing ?/#),
+      // so we clear the guard on the render after a topic-driven navigation
+      // regardless of whether the final URL exactly matches the target.
+      // Update lastPublishedUrlRef so the topic-driven URL is not echoed back.
+      skipPublishUntil.current = null
+      lastPublishedUrlRef.current = routerUrl
       return
     }
-    if (routerUrl !== currentLocation.url) {
-      setCurrentLocation({ url: routerUrl, isFirst: false })
+    const currentPathname = locationHook.pathname
+    if (currentPathname !== currentLocation.url) {
+      setCurrentLocation({ url: currentPathname, isFirst: false })
+    }
+    if (routerUrl !== lastPublishedUrlRef.current) {
+      lastPublishedUrlRef.current = routerUrl
       currentLocation$
         .publish({
           url: routerUrl,
