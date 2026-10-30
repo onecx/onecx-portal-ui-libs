@@ -199,7 +199,7 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
           logger.error('publish failed:', err)
         })
     }
-  }, [routerUrl, currentLocation.url, currentLocation$])
+  }, [routerUrl, currentLocation.url, currentLocation$, locationHook.pathname])
 
   return <SyncedLocationContext.Provider value={currentLocation}>{children}</SyncedLocationContext.Provider>
 }
