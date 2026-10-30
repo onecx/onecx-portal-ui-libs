@@ -1,0 +1,98 @@
+= OneCX Content
+
+// '--' has to be escaped in link
+:content_storybook: https://main\--65f7f64d4506c9f2dfe59383.chromatic.com/?path=/docs/components-contentcomponent\--docs
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+This document describes the `OcxContentComponent` (`<ocx-content>`) and the related `OcxContentDirective` (`[ocxContent]`) from `@onecx/angular-accelerator`.
+
+The Content component wraps arbitrary projected content in a styled card area. It optionally renders a heading above the content. Both the component (`<ocx-content>`) and the directive (`[ocxContent]`) apply the `ocx-card` CSS class to the host element and share the same styling and title-rendering behaviour.
+
+Please visit the {content_storybook}[Content component storybook page] to interact with live examples and verify that the component fits your use case.
+
+[#usage]
+== Usage
+
+Import `AngularAcceleratorModule` (or declare `OcxContentComponent` and `OcxContentDirective` individually) and use the component or directive in your template.
+
+=== Using the component
+
+[source, html]
+----
+<!-- Without a title -->
+<ocx-content>
+  <p>Your content goes here.</p>
+</ocx-content>
+
+<!-- With a title -->
+<ocx-content [title]="'My Section'">
+  <p>Your content goes here.</p>
+</ocx-content>
+
+<!-- With a title and additional style classes -->
+<ocx-content [title]="'My Section'" [styleClass]="'py-4 mt-2'">
+  <p>Your content goes here.</p>
+</ocx-content>
+----
+
+=== Using the directive
+
+The `[ocxContent]` attribute directive can be applied to any HTML element to obtain the same card styling and optional title:
+
+[source, html]
+----
+<!-- Without a title -->
+<div ocxContent>
+  <p>Your content goes here.</p>
+</div>
+
+<!-- With a title -->
+<div [ocxContent]="'My Section'">
+  <p>Your content goes here.</p>
+</div>
+----
+
+=== Nesting with OcxContentContainerComponent
+
+`<ocx-content>` is often combined with `<ocx-content-container>` to compose multi-section layouts:
+
+[source, html]
+----
+<ocx-content-container layout="horizontal">
+  <ocx-content [title]="'Profile'" class="w-full sm:w-8">
+    <app-profile-details />
+  </ocx-content>
+  <ocx-content [title]="'Settings'" class="w-full sm:w-4">
+    <app-settings-form />
+  </ocx-content>
+</ocx-content-container>
+----
+
+NOTE: When multiple `<ocx-content>` or `[ocxContent]` elements appear on the same page, each title element receives a unique DOM id automatically to avoid conflicts.
+
+[#inputs]
+== Inputs
+
+=== OcxContentComponent
+
+.OcxContentComponent inputs
+[cols="1,1,1,2", options="header"]
+|===
+| Input name | Type | Default | Description
+
+| `title` | `string` | `''` | Optional heading rendered above the projected content. When empty no heading element is added to the DOM.
+| `styleClass` | `string \| undefined` | `undefined` | One or more CSS classes applied to the wrapping `div` element in addition to the default `ocx-card` class.
+|===
+
+=== OcxContentDirective
+
+.OcxContentDirective inputs (`[ocxContent]`)
+[cols="1,1,1,2", options="header"]
+|===
+| Input name | Type | Default | Description
+
+| `ocxContent` | `string` | `''` | Optional heading rendered above the host element's content. Bind an empty string or omit to render without a title.
+|===
