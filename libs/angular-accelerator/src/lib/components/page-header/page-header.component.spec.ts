@@ -24,6 +24,7 @@ import { of } from 'rxjs'
 import { BreadcrumbService } from '../../services/breadcrumb.service'
 import { Component, Injectable, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 export function provideBreadcrumbServiceMock() {
   return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
@@ -133,6 +134,10 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges()
     pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
     jest.restoreAllMocks()
+  })
+
+  it('should have no axe violations', async () => {
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create', async () => {
