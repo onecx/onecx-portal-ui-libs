@@ -1,11 +1,12 @@
 import { Gatherer } from "@onecx/accelerator"
 
-import type { AiAgentRequest, AiAgentResponse } from "./ai-agent.model"
+import type { AiAgentProviderResult, AiAgentRequest } from "./ai-agent.model"
 
 /**
  * This class lets consumers gather the AI agents that are available to them.
  * Each provider (for example the AI Provider remote component) registers a callback and answers
- * with its agents, or with null if it does not want to contribute to the request.
+ * with its agents, with null if it does not want to contribute, or with an AiProviderError if it failed.
+ * The callback must not reject: the underlying gatherer does not handle rejections.
  *
  * @example
  * ```ts
@@ -19,8 +20,8 @@ import type { AiAgentRequest, AiAgentResponse } from "./ai-agent.model"
  * });
  * ```
  */
-export class AiAgentGatherer extends Gatherer<AiAgentRequest, AiAgentResponse[] | null> {
-    constructor(callback: (request: AiAgentRequest) => Promise<AiAgentResponse[] | null>) {
+export class AiAgentGatherer extends Gatherer<AiAgentRequest, AiAgentProviderResult> {
+    constructor(callback: (request: AiAgentRequest) => Promise<AiAgentProviderResult>) {
         super("aiAgent", 1, callback)
     }
 }

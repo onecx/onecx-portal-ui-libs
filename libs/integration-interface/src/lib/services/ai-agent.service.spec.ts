@@ -1,5 +1,6 @@
 import { OneCXAiAgentService, consumerAiAgentProvider } from './ai-agent.service'
 import type { AiAgentRequest, AiAgentResponse } from '../gatherers/ai-agent/v1/ai-agent.model'
+import { AiProviderError } from '../errors/ai-provider-error'
 
 const createGathererMock = () => {
   const gather = jest.fn()
@@ -77,6 +78,29 @@ describe('OneCXAiAgentService', () => {
     gathererMock.gather.mockResolvedValue([])
 
     expect(await service.getAgents(sampleRequest)).toEqual([])
+  })
+
+  it('should return the answered agents when another provider fails', async () => {
+    const error = new AiProviderError('PROVIDER_ERROR', 'provider down', { retryable: true })
+    gathererMock.gather.mockResolvedValue([error, [{ id: 'a1', name: 'Agent 1' }]])
+
+    expect(await service.getAgents(sampleRequest)).toEqual([{ id: 'a1', name: 'Agent 1' }])
+  })
+
+  it('should throw the first AiProviderError when every answering provider fails', async () => {
+    const first = new AiProviderError('PROVIDER_ERROR', 'first failed')
+    const second = new AiProviderError('TIMEOUT', 'second failed')
+    gathererMock.gather.mockResolvedValue([first, null, second])
+
+    await expect(service.getAgents(sampleRequest)).rejects.toBe(first)
+  })
+
+  it('should pass appId through to the gatherer request without modifying it', async () => {
+    gathererMock.gather.mockResolvedValue([])
+
+    await service.getAgents({ appId: 'app-42' })
+
+    expect(gathererMock.gather).toHaveBeenCalledWith({ appId: 'app-42' })
   })
 
   it('should destroy the gatherer on destroy', () => {
