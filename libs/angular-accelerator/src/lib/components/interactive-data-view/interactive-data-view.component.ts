@@ -239,6 +239,10 @@ export class InteractiveDataViewComponent implements OnInit {
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
