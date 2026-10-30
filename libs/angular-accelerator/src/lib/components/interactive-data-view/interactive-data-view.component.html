@@ -111,6 +111,8 @@
     (pageSizeChanged)="onPageSizeChange($event)"
     [frozenActionColumn]="stateService.actionColumnConfigFrozen()"
     [actionColumnPosition]="stateService.actionColumnConfigPosition()"
+    [rowGrouping]="rowGrouping()"
+    [groupCellTemplate]="_groupCell()"
     [stringTableCellTemplate]="_stringTableCell()"
     [numberTableCellTemplate]="_numberTableCell()"
     [dateTableCellTemplate]="_dateTableCell()"

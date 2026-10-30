@@ -17,14 +17,54 @@ import { firstValueFrom, of } from 'rxjs'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataAction } from '../../model/data-action'
 import { Router } from '@angular/router'
-import { Component, ChangeDetectionStrategy } from '@angular/core'
+import { Component, ChangeDetectionStrategy, ViewChild } from '@angular/core'
 import { provideRouter } from '@angular/router'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { planRowGroups } from '../../utils/row-grouping-planner'
+import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
+
+// This suite instantiates the full DataTable (a large Angular/PrimeNG component) many times.
+// Under parallel-worker CPU contention the per-row render can exceed Jest's 5s default, so
+// raise the test/hook ceiling to keep the assertions deterministic rather than timing-flaky.
+jest.setTimeout(60000)
 
 @Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
  template: '' })
 class TestRouteComponent {}
+
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `<ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping"></ocx-data-table>`,
+})
+class GroupingHostComponent {
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent
+  rows: Row[] = []
+  columns: any[] = []
+  rowGrouping: any = undefined
+}
+
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
+    <ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping">
+      <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount" let-rowObject="rowObject" let-column="column">
+        <span data-testid="custom-group">
+          CUSTOM:[{{ groupKey }}] members={{ memberCount }}
+        </span>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+class GroupingGroupCellHostComponent {
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent
+  rows: Row[] = []
+  columns: any[] = []
+  rowGrouping: any = undefined
+}
 
 describe('DataTableComponent', () => {
   let fixture: ComponentFixture<DataTableComponent>
@@ -220,7 +260,13 @@ describe('DataTableComponent', () => {
   ]
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DataTableComponent, TestRouteComponent],
+      declarations: [
+        DataTableComponent,
+        TestRouteComponent,
+        GroupingHostComponent,
+        GroupingGroupCellHostComponent,
+        InlineGroupCellHostComponent,
+      ],
       imports: [AngularAcceleratorOptimusModule, BrowserAnimationsModule, AngularAcceleratorModule],
       providers: [
         provideTranslateTestingService(TRANSLATIONS),
@@ -2340,4 +2386,465 @@ describe('DataTableComponent', () => {
 
       expect(summary).toBe('id: 1,name: Alice,active: true')
   })
+
+  describe('row grouping', () => {
+    const groupRows: Row[] = [
+      { id: 'r1', name: 'A', status: 'one' },
+      { id: 'r2', name: 'B', status: 'one' },
+      { id: 'r3', name: 'C', status: 'two' },
+      { id: 'r4', name: 'D', status: 'three' },
+    ]
+    const groupColumns: DataTableColumn[] = [
+      { columnType: ColumnType.STRING, id: 'name', nameKey: 'COLUMN_HEADER_NAME.NAME' },
+      { columnType: ColumnType.STRING, id: 'status', nameKey: 'COLUMN_HEADER_NAME.STATUS' },
+    ]
+    const groupingConfig = { columnId: 'status' } as DataTableRowGroupingConfig
+
+    type GroupingHost = {
+      rows: Row[]
+      columns: any[]
+      rowGrouping: any
+      dataTable: DataTableComponent
+    }
+
+    async function createGroupingHost(
+      hostType: new () => GroupingHost,
+      rows: Row[],
+      columns: DataTableColumn[],
+      rowGrouping: any = groupingConfig
+    ): Promise<{
+      fixture: ComponentFixture<GroupingHost>
+      child: DataTableComponent
+      harness: DataTableHarness
+    }> {
+      const fixture = TestBed.createComponent(hostType)
+      const host = fixture.componentInstance
+      host.rows = rows
+      host.columns = columns
+      host.rowGrouping = rowGrouping
+      fixture.detectChanges()
+      const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      return { fixture, child: host.dataTable, harness }
+    }
+
+    async function waitUntil(fn: () => boolean | Promise<boolean>, message: string): Promise<void> {
+      const start = Date.now()
+      while (Date.now() - start < 20000) {
+        if (await fn()) {
+          return
+        }
+        await new Promise<void>((resolve) => setTimeout(resolve, 15))
+      }
+      throw new Error(message)
+    }
+
+    it('should render default group cells (raw column value), scoped rowgroup with full colspan', async () => {
+      const { harness } = await createGroupingHost(GroupingHostComponent, groupRows, groupColumns)
+
+      await waitUntil(() => harness.getGroupCellLabels().then((l) => l.length === 3), 'group cells not rendered')
+
+      const scopes = await harness.getGroupCellScopes()
+      const colspans = await harness.getGroupCellColspans()
+      const rowspans = await harness.getGroupCellRowspans()
+      const labels = await harness.getGroupCellLabels()
+
+      expect(scopes).toEqual(['rowgroup', 'rowgroup', 'rowgroup'])
+      expect(colspans).toEqual([2, 2, 2])
+      expect(rowspans).toEqual([NaN, NaN, NaN])
+      expect(labels).toEqual(expect.arrayContaining(['one', 'two', 'three']))
+      expect(labels.some((label) => label?.includes('CUSTOM:'))).toBe(false)
+    })
+
+    it('should render the custom #groupCell content template with the full context', async () => {
+      const { harness } = await createGroupingHost(GroupingGroupCellHostComponent, groupRows, groupColumns)
+
+      await waitUntil(
+        () => harness.getGroupCellLabels().then((l) => l.some((t) => t?.includes('members=2') ?? false)),
+        'custom group cell not rendered'
+      )
+
+      const labels = await harness.getGroupCellLabels()
+      expect(labels).toEqual(
+        expect.arrayContaining([expect.stringContaining('CUSTOM:[one]'), expect.stringContaining('members=2')])
+      )
+    })
+
+    it('should render non-adjacent members together in first-occurrence group order before pagination', async () => {
+      const rows: Row[] = [
+        { id: 'B1', status: 'B' },
+        { id: 'A1', status: 'A' },
+        { id: 'B2', status: 'B' },
+        { id: 'C1', status: 'C' },
+        { id: 'A2', status: 'A' },
+      ]
+      const { fixture, child, harness } = await createGroupingHost(GroupingHostComponent, rows, groupColumns)
+      const renderedSequence = async () =>
+        Promise.all(
+          (await harness.getRows()).map(async (row) => {
+            const element = await row.host()
+            return (await element.getAttribute('id')) ?? (await element.text())
+          })
+        )
+
+      expect(await renderedSequence()).toEqual([
+        'B',
+        'ocx-expanded-row-B1',
+        'ocx-expanded-row-B2',
+        'A',
+        'ocx-expanded-row-A1',
+        'ocx-expanded-row-A2',
+        'C',
+        'ocx-expanded-row-C1',
+      ])
+      expect(rows.map((row) => row.id)).toEqual(['B1', 'A1', 'B2', 'C1', 'A2'])
+
+      child.onPageChange({ first: 3, rows: 3 })
+      fixture.detectChanges()
+      expect(await renderedSequence()).toEqual(['A', 'ocx-expanded-row-A2', 'C', 'ocx-expanded-row-C1'])
+      expect(child.getGroupContext(rows[4])).toMatchObject({ groupKey: 'A', memberCount: 2 })
+
+      child.onPageChange({ first: 0, rows: 10 })
+      fixture.componentInstance.rowGrouping = undefined
+      fixture.detectChanges()
+      expect(await renderedSequence()).toEqual(rows.map((row) => `ocx-expanded-row-${row.id}`))
+    })
+
+    it('should preserve filtered and sorted row order when the configured grouping column is missing', async () => {
+      const rows: Row[] = [
+        { id: 'r1', name: 'C', status: 'one' },
+        { id: 'r2', name: 'B', status: 'two' },
+        { id: 'r3', name: 'A', status: 'one' },
+        { id: 'r4', name: 'D', status: 'excluded' },
+      ]
+      const { fixture, child, harness } = await createGroupingHost(
+        GroupingHostComponent,
+        rows,
+        [groupColumns[0]]
+      )
+      child.sortColumn = 'name'
+      child.sortDirection = DataSortDirection.ASCENDING
+      child.filters = [
+        { columnId: 'status', value: 'one', filterType: FilterType.EQUALS },
+        { columnId: 'status', value: 'two', filterType: FilterType.EQUALS },
+      ]
+      fixture.detectChanges()
+
+      expect(await harness.getGroupCellLabels()).toEqual([])
+      expect(child.rowGroupPlan()).toBeNull()
+      expect(child.groupedRows().map((row) => row.id)).toEqual(['r3', 'r2', 'r1'])
+      expect(await Promise.all((await harness.getRows()).map(async (row) =>
+        (await row.host()).getAttribute('id')
+      ))).toEqual(['ocx-expanded-row-r3', 'ocx-expanded-row-r2', 'ocx-expanded-row-r1'])
+      expect(child.isRowGroupStart(rows[0])).toBe(false)
+      expect(child.getGroupContext(rows[0])).toBeUndefined()
+    })
+
+    it('should disable grouping when its displayed column is hidden and resume when it is restored', async () => {
+      const rows: Row[] = [
+        { id: 'A1', name: 'First', status: 'A' },
+        { id: 'B1', name: 'Second', status: 'B' },
+        { id: 'A2', name: 'Third', status: 'A' },
+      ]
+      const { fixture, child, harness } = await createGroupingHost(GroupingHostComponent, rows, groupColumns)
+      expect(await harness.getGroupCellLabels()).toEqual(['A', 'B'])
+      expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'A2', 'B1'])
+
+      fixture.componentInstance.columns = [groupColumns[0]]
+      fixture.detectChanges()
+
+      expect(await harness.getGroupCellLabels()).toEqual([])
+      expect(child.rowGroupPlan()).toBeNull()
+      expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'B1', 'A2'])
+      expect(await Promise.all((await harness.getRows()).map(async (row) =>
+        (await row.host()).getAttribute('id')
+      ))).toEqual(['ocx-expanded-row-A1', 'ocx-expanded-row-B1', 'ocx-expanded-row-A2'])
+
+      fixture.componentInstance.columns = groupColumns
+      fixture.detectChanges()
+
+      expect(await harness.getGroupCellLabels()).toEqual(['A', 'B'])
+      expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'A2', 'B1'])
+      expect(child.getGroupContext(rows[0])).toMatchObject({ groupKey: 'A', memberCount: 2 })
+    })
+
+    it.each([GroupingHostComponent, GroupingGroupCellHostComponent])(
+      'should repeat continuation headers across pages with %p',
+      async (hostType) => {
+        const rows: Row[] = Array.from({ length: 12 }, (_, index) => ({
+          id: `r${index + 1}`,
+          name: `Row ${index + 1}`,
+          status: index < 7 ? 'one' : index < 11 ? 'two' : 'three',
+        }))
+        const { fixture, child, harness } = await createGroupingHost(hostType, rows, groupColumns)
+        child.pageSizes.set([3, 5])
+        child.pageSize = 5
+        fixture.detectChanges()
+
+        const keys = async () =>
+          Promise.all((await harness.getGroupCells()).map((cell) => cell.getAttribute('data-group-key')))
+        expect(await keys()).toEqual(['one'])
+
+        child.onPageChange({ first: 5, rows: 5 })
+        fixture.detectChanges()
+        expect(await keys()).toEqual(['one', 'two'])
+        expect(child.getGroupContext(rows[5])).toMatchObject({
+          groupKey: 'one',
+          memberCount: 7,
+          rowObject: { id: 'r1' },
+        })
+        expect(child.isRowGroupStart(rows[6])).toBe(false)
+        expect(child.getGroupContext(rows[6])).toBeUndefined()
+        expect(
+          (await harness.getGroupCellLabels()).every((label) => label?.includes('one') || label?.includes('two'))
+        ).toBe(true)
+
+        child.onPageChange({ first: 10, rows: 5 })
+        fixture.detectChanges()
+        expect(await keys()).toEqual(['two', 'three'])
+        expect(child.getGroupContext(rows[10])).toMatchObject({ groupKey: 'two', memberCount: 4 })
+
+        child.onPageChange({ first: 3, rows: 3 })
+        fixture.detectChanges()
+        expect(await keys()).toEqual(['one'])
+        expect(child.isRowGroupStart(rows[3])).toBe(true)
+        expect(child.isRowGroupStart(rows[5])).toBe(false)
+
+        child.onPageChange({ first: 0, rows: 5 })
+        fixture.detectChanges()
+        expect(await keys()).toEqual(['one'])
+      }
+    )
+
+    it('should repeat page headers using groupKeyPath and strict key identity, excluding invalid keys', async () => {
+      const rows: Row[] = [
+        { id: 'r1', status: 'number', 'group.key': 1 },
+        { id: 'r2', status: 'string', 'group.key': '1' },
+        { id: 'r3', status: 'invalid', 'group.key': null },
+        { id: 'r4', status: 'number', 'group.key': 1 },
+        { id: 'r5', status: 'string', 'group.key': '1' },
+        { id: 'r6', status: 'number', 'group.key': 1 },
+      ]
+      const { fixture, child, harness } = await createGroupingHost(GroupingGroupCellHostComponent, rows, groupColumns, {
+        columnId: 'status',
+        groupKeyPath: 'group.key',
+      })
+      child.onPageChange({ first: 2, rows: 2 })
+      fixture.detectChanges()
+
+      expect(await harness.getGroupCellLabels()).toEqual([expect.stringContaining('members=3')])
+      expect(child.isRowGroupStart(rows[2])).toBe(false)
+      expect(child.getGroupContext(rows[3])).toMatchObject({ groupKey: 1, rowObject: { id: 'r1' } })
+
+      child.onPageChange({ first: 4, rows: 2 })
+      fixture.detectChanges()
+      expect(await harness.getGroupCellLabels()).toEqual([expect.stringContaining('members=2')])
+      expect(child.getGroupContext(rows[1])?.groupKey).toBe('1')
+      expect(child.getGroupContext(rows[4])).toBeUndefined()
+      expect(child.getGroupContext(rows[5])).toBeUndefined()
+    })
+
+    it('should not add page-local group headers when pagination is disabled', async () => {
+      component.rows.set(groupRows)
+      component.columns = groupColumns
+      fixture.componentRef.setInput('rowGrouping', groupingConfig)
+      fixture.componentRef.setInput('paginator', false)
+      component.onPageChange({ first: 1, rows: 1 })
+      fixture.detectChanges()
+
+      expect(await dataTable.getGroupCellLabels()).toEqual(['one', 'two', 'three'])
+      expect(component.isRowGroupStart(groupRows[1])).toBe(false)
+      expect(component.getGroupContext(groupRows[1])).toBeUndefined()
+    })
+
+    it('should render a single-member group', async () => {
+      const { harness } = await createGroupingHost(
+        GroupingGroupCellHostComponent,
+        [{ id: 'only', name: 'x', status: 'solo' }],
+        groupColumns
+      )
+
+      await waitUntil(
+        () => harness.getGroupCellLabels().then((l) => l.some((t) => t?.includes('members=1') ?? false)),
+        'single-member group not rendered'
+      )
+
+      const labels = await harness.getGroupCellLabels()
+      expect(labels).toEqual(expect.arrayContaining([expect.stringContaining('CUSTOM:[solo]')]))
+      expect(labels).toEqual(expect.arrayContaining([expect.stringContaining('members=1')]))
+    })
+
+    it('should include an empty-string group and expose an empty label via the context', async () => {
+      const { child } = await createGroupingHost(
+        GroupingHostComponent,
+        [
+          { id: 'a', name: 'A', status: '' },
+          { id: 'b', name: 'B', status: '' },
+        ],
+        groupColumns
+      )
+
+      await waitUntil(
+        () => child.rowGroupPlan() !== null && child.rowGroupPlan().groups.length === 1,
+        'empty group not planned'
+      )
+
+      const emptyGroupContext = child.getGroupContext({ id: 'a', name: 'A', status: '' } as Row)
+      expect(emptyGroupContext.label).toBe('')
+      expect(emptyGroupContext.memberCount).toBe(2)
+      expect(child.rowGroupPlan().groups).toHaveLength(1)
+    })
+
+    it('should not render any group cells when no grouping config is provided', async () => {
+      const fixture = TestBed.createComponent(GroupingHostComponent)
+      const host = fixture.componentInstance
+      host.rows = groupRows
+      host.columns = groupColumns
+      host.rowGrouping = undefined
+      fixture.detectChanges()
+      const child = host.dataTable
+      const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+
+      await waitUntil(() => child.rowGroupPlan() === null, 'plan not null without config')
+
+      const labels = await harness.getGroupCellLabels()
+      expect(labels).toEqual([])
+      expect(child.rowGroupPlan()).toBeNull()
+    })
+
+    it('should prefer the groupCell input template over the content child', async () => {
+      const fixture = TestBed.createComponent(InlineGroupCellHostComponent)
+      const host = fixture.componentInstance
+      host.rows = groupRows
+      host.columns = groupColumns
+      host.rowGrouping = groupingConfig
+      fixture.detectChanges()
+
+      const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
+      await waitUntil(
+        () => harness.getGroupCellLabels().then((l) => l.some((t) => t?.includes('INPUT_GROUP') ?? false)),
+        'input group cell not rendered'
+      )
+
+      const labels = await harness.getGroupCellLabels()
+      expect(labels).toEqual(expect.arrayContaining([expect.stringContaining('INPUT_GROUP')]))
+      expect(labels.some((label) => label?.includes('CUSTOM:'))).toBe(false)
+    })
+
+    it('should mark only first-occurrence rows as group starts via isRowGroupStart', async () => {
+      const { fixture } = await createGroupingHost(GroupingGroupCellHostComponent, groupRows, groupColumns)
+      const host = fixture.componentInstance
+      const child = host.dataTable
+
+      await waitUntil(() => child.rowGroupPlan() !== null, 'plan not computed')
+
+      const rows: Row[] = [
+        { id: 'g1', name: 'A', status: 'x' },
+        { id: 'g2', name: 'B', status: 'x' },
+        { id: 'g3', name: 'C', status: 'y' },
+      ]
+      host.rows = rows
+      fixture.detectChanges()
+      await waitUntil(() => child.rowGroupPlan().groups.length === 2, 'groups not recomputed')
+
+      expect(child.isRowGroupStart(rows[0])).toBe(true)
+      expect(child.isRowGroupStart(rows[1])).toBe(false)
+      expect(child.isRowGroupStart(rows[2])).toBe(true)
+
+      const expected = planRowGroups(rows, 'status').groupStartIds
+      rows.forEach((row) => expect(child.isRowGroupStart(row)).toBe(expected.has(row.id)))
+
+      host.rowGrouping = undefined
+      fixture.detectChanges()
+      await waitUntil(() => child.rowGroupPlan() === null, 'plan not cleared after config removal')
+      expect(child.isRowGroupStart(rows[0])).toBe(false)
+    })
+
+    it('should return the full group context and undefined when no grouping is configured', async () => {
+      const { fixture, child } = await createGroupingHost(GroupingHostComponent, groupRows, groupColumns)
+      const host = fixture.componentInstance
+
+      await waitUntil(() => child.rowGroupPlan() !== null, 'plan not computed')
+
+      const context = child.getGroupContext({ id: 'r1', name: 'A', status: 'one' } as Row)
+      expect(context.groupKey).toBe('one')
+      expect(context.label).toBe('one')
+      expect(context.memberCount).toBe(2)
+      expect(context.rowObject).toMatchObject({ id: 'r1' })
+      expect(context.column.id).toBe('status')
+
+      // A non-first-occurrence row is not a group start, so no context is available.
+      expect(child.getGroupContext({ id: 'r2', name: 'B', status: 'one' } as Row)).toBeUndefined()
+
+      // With no grouping config the plan is null and no context can be produced.
+      host.rowGrouping = undefined
+      fixture.detectChanges()
+      await waitUntil(() => child.rowGroupPlan() === null, 'plan not cleared after config removal')
+      expect(child.getGroupContext({ id: 'r1', name: 'A', status: 'one' } as Row)).toBeUndefined()
+    })
+
+    it('should compute the group colspan identically to the data row colspan', async () => {
+      const { child } = await createGroupingHost(GroupingHostComponent, groupRows, groupColumns)
+
+      expect(child.getGroupColspan()).toBe(groupColumns.length)
+      expect(child.getGroupColspan()).toBe(child.getRowColspan(false))
+      expect(child.getGroupColspan()).toBe(child.getRowColspan(!!child.expansionTemplate()))
+    })
+
+    it('should derive group membership from groupKeyPath when it is provided', async () => {
+      const rows: Row[] = [
+        { id: 'r1', name: 'A', status: 'one' },
+        { id: 'r2', name: 'B', status: 'one' },
+        { id: 'r3', name: 'A', status: 'two' },
+        { id: 'r4', name: 'B', status: 'two' },
+      ]
+      const { child } = await createGroupingHost(GroupingHostComponent, rows, groupColumns, {
+        columnId: 'status',
+        groupKeyPath: 'name',
+      } as DataTableRowGroupingConfig)
+
+      await waitUntil(
+        () => child.rowGroupPlan() !== null && child.rowGroupPlan().groups.length === 2,
+        'groupKeyPath groups not planned'
+      )
+
+      // Membership is keyed by `name` (groupKeyPath), not by `status` (columnId):
+      // had groupKeyPath been ignored the keys would be 'one' / 'two' instead of 'A' / 'B'.
+      const labels = child
+        .rowGroupPlan()
+        .groups.map((g) => g.label)
+        .sort()
+      expect(labels).toEqual(['A', 'B'])
+
+      const context = child.getGroupContext({ id: 'r1', name: 'A', status: 'one' } as Row)
+      expect(context.groupKey).toBe('A')
+      expect(context.label).toBe('A')
+      expect(context.memberCount).toBe(2)
+      expect(context.column.id).toBe('status')
+
+      // r1 and r3 both map to name 'A'; only the first occurrence starts a group.
+      expect(child.isRowGroupStart({ id: 'r1', name: 'A', status: 'one' } as Row)).toBe(true)
+      expect(child.isRowGroupStart({ id: 'r3', name: 'A', status: 'two' } as Row)).toBe(false)
+    })
+  })
 })
+
+@Component({
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `
+    <ocx-data-table [rows]="rows" [columns]="columns" [rowGrouping]="rowGrouping" [groupCellTemplate]="inputTemplate">
+      <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount">
+        <span data-testid="custom-group">CUSTOM:[{{ groupKey }}] members={{ memberCount }}</span>
+      </ng-template>
+      <ng-template #inputTemplate let-groupKey="groupKey">
+        <span data-testid="input-group">INPUT_GROUP:[{{ groupKey }}]</span>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+class InlineGroupCellHostComponent {
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent
+  rows: Row[] = []
+  columns: any[] = []
+  rowGrouping: any = undefined
+}
