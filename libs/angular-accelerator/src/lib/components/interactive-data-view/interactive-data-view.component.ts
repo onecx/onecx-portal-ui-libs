@@ -91,9 +91,11 @@ export class InteractiveDataViewComponent implements OnInit, AfterContentInit {
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the viewItem output. */
   @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the editItem output. */
   @Input() editActionUrl: RowActionUrl | undefined
   @Input() tableSelectionEnabledField: string | undefined
   @Input() tableAllowSelectAll = true

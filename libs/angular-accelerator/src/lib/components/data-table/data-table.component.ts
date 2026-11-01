@@ -219,9 +219,11 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the viewTableRow output. */
   @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the editTableRow output. */
   @Input() editActionUrl: RowActionUrl | undefined
   @Input() selectionEnabledField: string | undefined
   @Input() allowSelectAll = true
@@ -1051,17 +1053,34 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
     return ObjectUtils.resolveFieldData(object, key)
   }
 
-  resolveActionRouterLink(routerLink: DataAction['routerLink'], row: Row | null): string | undefined {
+  resolveActionRouterLink(routerLink: DataAction['routerLink']): string | undefined {
+    return typeof routerLink === 'string' ? routerLink : undefined
+  }
+
+  async onAdditionalActionClick(action: DataAction, row: Row): Promise<void> {
+    if (action.routerLink != null) {
+      const resolvedLink = await this.resolveAsyncActionRouterLink(action.routerLink, row)
+      await this.router.navigate([resolvedLink])
+      return
+    }
+
+    action.callback?.(row)
+  }
+
+  private async resolveAsyncActionRouterLink(
+    routerLink: NonNullable<DataAction['routerLink']>,
+    row: Row | null
+  ): Promise<string> {
     if (typeof routerLink === 'string') {
       return routerLink
     }
 
     if (typeof routerLink === 'function') {
       const resolvedLink = routerLink(row)
-      return typeof resolvedLink === 'string' ? resolvedLink : undefined
+      return typeof resolvedLink === 'string' ? resolvedLink : await resolvedLink
     }
 
-    return undefined
+    return await routerLink
   }
 
   resolveRowActionUrl(actionUrl: RowActionUrl | undefined, row: Row | null): string | undefined {
@@ -1093,7 +1112,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
   }
 
   private toOverflowMenuItem(action: DataAction, row: Row | null, translations: Record<string, string>): MenuItem {
-    const routerLink = this.resolveActionRouterLink(action.routerLink, row)
+    const routerLink = this.resolveActionRouterLink(action.routerLink)
     return {
       label: translations[action.labelKey || ''] || action.labelKey || action.id || 'Action',
       icon: action.icon,
@@ -1101,7 +1120,7 @@ export class DataTableComponent extends DataSortBase implements OnInit, AfterCon
       disabled: action.disabled || (!!action.actionEnabledField && !this.fieldIsTruthy(row, action.actionEnabledField)),
       visible: !action.actionVisibleField || this.fieldIsTruthy(row, action.actionVisibleField),
       routerLink,
-      command: routerLink !== undefined ? undefined : () => action.callback?.(row),
+      command: routerLink !== undefined ? undefined : () => this.onAdditionalActionClick(action, row as Row),
     }
   }
 
