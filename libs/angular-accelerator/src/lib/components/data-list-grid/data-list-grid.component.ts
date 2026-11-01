@@ -122,9 +122,11 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
   @Input() deleteActionEnabledField: string | undefined
   @Input() viewActionVisibleField: string | undefined
   @Input() viewActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the viewItem output. */
   @Input() viewActionUrl: RowActionUrl | undefined
   @Input() editActionVisibleField: string | undefined
   @Input() editActionEnabledField: string | undefined
+  /** When set, this router link takes precedence over the editItem output. */
   @Input() editActionUrl: RowActionUrl | undefined
   @Input() viewMenuItemKey: string | undefined
   @Input() editMenuItemKey: string | undefined
@@ -636,7 +638,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       menuItems.push({
         label: translations[this.viewMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.VIEW'],
         icon: PrimeIcons.EYE,
-        url: viewActionUrl,
+        routerLink: viewActionUrl,
         command: this.viewActionUrl === undefined ? () => this.viewItem.emit(selectedItem) : undefined,
         disabled: viewDisabled,
         visible: viewVisible && (this.viewActionUrl === undefined || !!viewActionUrl),
@@ -647,7 +649,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
       menuItems.push({
         label: translations[this.editMenuItemKey || 'OCX_DATA_LIST_GRID.MENU.EDIT'],
         icon: PrimeIcons.PENCIL,
-        url: editActionUrl,
+        routerLink: editActionUrl,
         command: this.editActionUrl === undefined ? () => this.editItem.emit(selectedItem) : undefined,
         disabled: editDisabled,
         visible: editVisible && (this.editActionUrl === undefined || !!editActionUrl),
@@ -761,7 +763,7 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
 
   private async handleAction(action: DataAction, data: any): Promise<void> {
     if (action.routerLink != null) {
-      const resolvedLink = await this.resolveRouterLink(action.routerLink)
+      const resolvedLink = await this.resolveRouterLink(action.routerLink, data)
       await this.router.navigate([resolvedLink])
       return
     }
@@ -775,13 +777,13 @@ export class DataListGridComponent extends DataSortBase implements OnInit, DoChe
     void this.handleAction(action, data)
   }
 
-  private async resolveRouterLink(routerLink: DataActionRouterLink): Promise<string> {
+  private async resolveRouterLink(routerLink: DataActionRouterLink, data?: any): Promise<string> {
     if (typeof routerLink === 'string') {
       return routerLink
     }
 
     if (typeof routerLink === 'function') {
-      const result = routerLink()
+      const result = routerLink(data)
       return typeof result === 'string' ? result : await result
     }
 

@@ -80,6 +80,8 @@ const ActionLinksTemplate: StoryFn = (args) => ({
       [editPermission]="editPermission"
       [viewPermission]="viewPermission"
       [totalRecordsOnServer]="totalRecordsOnServer"
+      [viewActionEnabledField]="viewActionEnabledField"
+      [editActionEnabledField]="editActionEnabledField"
       [viewActionUrl]="viewActionUrl"
       [editActionUrl]="editActionUrl"
       (deleteItem)="deleteItem($event)"
@@ -230,6 +232,16 @@ export const ListWithViewEditActionLinks = {
   render: ActionLinksTemplate,
   args: {
     ...defaultComponentArgs,
+  },
+}
+
+export const ListWithConditionallyDisabledViewEditActionLinks = {
+  argTypes: defaultArgTypes,
+  render: ActionLinksTemplate,
+  args: {
+    ...defaultComponentArgs,
+    viewActionEnabledField: 'available',
+    editActionEnabledField: 'available',
   },
 }
 
@@ -449,6 +461,17 @@ export const GridWithViewEditActionLinks = {
   args: {
     ...defaultComponentArgs,
     layout: 'grid',
+  },
+}
+
+export const GridWithConditionallyDisabledViewEditActionLinks = {
+  argTypes: defaultArgTypes,
+  render: ActionLinksTemplate,
+  args: {
+    ...defaultComponentArgs,
+    layout: 'grid',
+    viewActionEnabledField: 'available',
+    editActionEnabledField: 'available',
   },
 }
 
