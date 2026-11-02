@@ -62,6 +62,26 @@ class TestHostComponentNull {
 	tooltipText = 'Tooltip with null options'
 }
 
+@Component({
+	// eslint-disable-next-line @angular-eslint/prefer-standalone
+	standalone: false,
+	template: `
+    <span
+      class="ocx-tooltip-host ocx-tooltip-host-cursor"
+      [style.cursor]="hostCursor"
+      [ocxTooltip]="tooltipText"
+      [ocxTooltipCursor]="cursor"
+      tooltipPosition="top">
+      Cursor
+    </span>
+  `
+})
+class TestHostComponentCursor {
+	tooltipText: string | undefined = 'Tooltip with cursor'
+	cursor: string | null | undefined = 'default'
+	hostCursor: string | undefined = undefined
+}
+
 describe('OcxTooltip', () => {
 	const HOST_SELECTOR_1 = '.ocx-tooltip-host1'
 	const HOST_SELECTOR_2 = '.ocx-tooltip-host2'
@@ -75,7 +95,7 @@ describe('OcxTooltip', () => {
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull],
+			declarations: [TestHostComponent, TestHostComponentNoID, TestHostComponentNull, TestHostComponentCursor],
 			imports: [NoopAnimationsModule, OcxTooltipDirective]
 		}).compileComponents()
 
@@ -301,6 +321,105 @@ describe('OcxTooltip', () => {
 			directive.applyIdToContainer()
 
 			expect(spy).not.toHaveBeenCalledWith(directive.container, 'id', '')
+		})
+	})
+
+	describe('Cursor', () => {
+		const HOST_SELECTOR_CURSOR = '.ocx-tooltip-host-cursor'
+
+		const setup = (props: Partial<TestHostComponentCursor>) => {
+			const cursorFixture = TestBed.createComponent(TestHostComponentCursor)
+			Object.assign(cursorFixture.componentInstance, props)
+			cursorFixture.detectChanges()
+			const host = cursorFixture.debugElement.query(By.css(HOST_SELECTOR_CURSOR)).nativeElement as HTMLElement
+			return { cursorFixture, host }
+		}
+
+		it('should apply cursor pointer by default', () => {
+			const host = fixture.debugElement.query(By.css(HOST_SELECTOR_1)).nativeElement as HTMLElement
+
+			expect(host.style.cursor).toBe('pointer')
+		})
+
+		it('should apply cursor pointer when ocxTooltipCursor is undefined', () => {
+			const { host } = setup({ cursor: undefined })
+
+			expect(host.style.cursor).toBe('pointer')
+		})
+
+		it('should apply a custom cursor value', () => {
+			const { host } = setup({ cursor: 'default' })
+
+			expect(host.style.cursor).toBe('default')
+		})
+
+		it('should not set an inline cursor when ocxTooltipCursor is null', () => {
+			const { host } = setup({ cursor: null })
+
+			expect(host.style.cursor).toBe('')
+		})
+
+		it('should keep the host cursor styling when ocxTooltipCursor is null', () => {
+			const { cursorFixture, host } = setup({ cursor: null, hostCursor: 'help' })
+
+			expect(host.style.cursor).toBe('help')
+
+			cursorFixture.componentInstance.tooltipText = undefined
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('help')
+		})
+
+		it('should keep the configured cursor when the tooltip text changes', () => {
+			const { cursorFixture, host } = setup({ cursor: 'default' })
+
+			cursorFixture.componentInstance.tooltipText = 'Changed tooltip'
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('default')
+		})
+
+		it('should remove the configured cursor when the tooltip text is cleared and reapply it when set again', () => {
+			const { cursorFixture, host } = setup({ cursor: 'default' })
+
+			cursorFixture.componentInstance.tooltipText = undefined
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('')
+
+			cursorFixture.componentInstance.tooltipText = 'Tooltip again'
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('default')
+		})
+
+		it('should apply a changed cursor value', () => {
+			const { cursorFixture, host } = setup({ cursor: 'default' })
+
+			cursorFixture.componentInstance.cursor = 'help'
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('help')
+		})
+
+		it('should remove the cursor it applied when ocxTooltipCursor changes to null', () => {
+			const { cursorFixture, host } = setup({ cursor: 'default' })
+
+			cursorFixture.componentInstance.cursor = null
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('')
+		})
+
+		it('should restore the host cursor styling when ocxTooltipCursor changes to null', () => {
+			const { cursorFixture, host } = setup({ cursor: 'default', hostCursor: 'help' })
+
+			expect(host.style.cursor).toBe('default')
+
+			cursorFixture.componentInstance.cursor = null
+			cursorFixture.detectChanges()
+
+			expect(host.style.cursor).toBe('help')
 		})
 	})
 })
