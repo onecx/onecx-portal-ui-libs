@@ -34,7 +34,7 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
       this.content = value
       this.setOption({ tooltipLabel: value })
       this.ensureIdAndAriaDescribedBy()
-      this.applyCursor(!!value, this.ocxTooltipCursor())
+      this.applyCursor()
     })
   }
 
@@ -58,8 +58,9 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     super.show()
   }
 
-  private applyCursor(hasTooltip: boolean, cursor: string | null | undefined): void {
-    if (cursor !== null && hasTooltip) {
+  private applyCursor(): void {
+    const cursor = this.ocxTooltipCursor()
+    if (cursor !== null && this.content) {
       if (!this.cursorApplied) {
         this.hostCursor = this.el.nativeElement.style.cursor
       }
