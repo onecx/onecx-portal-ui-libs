@@ -9,7 +9,10 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
    * CSS cursor applied to the host element while a tooltip text is set.
    * - Not set (default): `pointer` is applied.
    * - Any CSS cursor value (e.g. `default`, `help`): that value is applied instead.
+   * - Empty string: falls back to `pointer`.
    * - `null`: the directive does not set or remove the cursor style, so the host's own styling applies.
+   *
+   * When the tooltip text is cleared or the input changes to `null`, the host's previous inline cursor is restored.
    *
    * Use a non-pointer value on elements that are not clickable, e.g. `ocxTooltipCursor="default"`.
    */
@@ -56,22 +59,15 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
   }
 
   private applyCursor(hasTooltip: boolean, cursor: string | null | undefined): void {
-    if (cursor === null) {
-      // Leave the host's own styling untouched, only revert a cursor this directive applied before
-      if (this.cursorApplied) {
-        this.restoreHostCursor()
-      }
-      return
-    }
-    if (hasTooltip) {
+    if (cursor !== null && hasTooltip) {
       if (!this.cursorApplied) {
-        this.hostCursor = this.el.nativeElement.style?.cursor ?? ''
+        this.hostCursor = this.el.nativeElement.style.cursor
       }
       this.renderer.setStyle(this.el.nativeElement, 'cursor', cursor || 'pointer')
       this.cursorApplied = true
-    } else {
-      this.renderer.removeStyle(this.el.nativeElement, 'cursor')
-      this.cursorApplied = false
+    } else if (this.cursorApplied) {
+      // Only revert a cursor this directive applied, the host's own styling stays untouched
+      this.restoreHostCursor()
     }
   }
 
