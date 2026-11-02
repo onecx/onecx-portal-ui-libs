@@ -14,12 +14,30 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
     this.content = value
     this.setOption({ tooltipLabel: value })
     this.ensureIdAndAriaDescribedBy()
-    if (value) {
-      this.renderer.setStyle(this.el.nativeElement, 'cursor', 'pointer')
-    } else {
-      this.renderer.removeStyle(this.el.nativeElement, 'cursor')
-    }
-  } 
+    this.applyCursor()
+  }
+
+  /**
+   * CSS cursor applied to the host element while a tooltip text is set.
+   * - Not set (default): `pointer` is applied.
+   * - Any CSS cursor value (e.g. `default`, `help`): that value is applied instead.
+   * - `null`: the directive does not set or remove the cursor style, so the host's own styling applies.
+   *
+   * Use a non-pointer value on elements that are not clickable, e.g. `ocxTooltipCursor="default"`.
+   */
+  @Input()
+  get ocxTooltipCursor(): string | null | undefined {
+    return this._ocxTooltipCursor
+  }
+
+  set ocxTooltipCursor(value: string | null | undefined) {
+    this._ocxTooltipCursor = value
+    this.applyCursor()
+  }
+
+  private _ocxTooltipCursor: string | null | undefined = 'pointer'
+  private cursorApplied = false
+  private hostCursor = ''
 
   private generatedId: string | undefined
   private resolvedId: string | undefined
@@ -50,6 +68,36 @@ export class OcxTooltipDirective extends Tooltip implements AfterViewInit, OnCha
 
   override show(): void {
     super.show()
+  }
+
+  private applyCursor(): void {
+    const cursor = this._ocxTooltipCursor
+    if (cursor === null) {
+      // Leave the host's own styling untouched, only revert a cursor this directive applied before
+      if (this.cursorApplied) {
+        this.restoreHostCursor()
+      }
+      return
+    }
+    if (this.content) {
+      if (!this.cursorApplied) {
+        this.hostCursor = this.el.nativeElement.style?.cursor ?? ''
+      }
+      this.renderer.setStyle(this.el.nativeElement, 'cursor', cursor || 'pointer')
+      this.cursorApplied = true
+    } else {
+      this.renderer.removeStyle(this.el.nativeElement, 'cursor')
+      this.cursorApplied = false
+    }
+  }
+
+  private restoreHostCursor(): void {
+    if (this.hostCursor) {
+      this.renderer.setStyle(this.el.nativeElement, 'cursor', this.hostCursor)
+    } else {
+      this.renderer.removeStyle(this.el.nativeElement, 'cursor')
+    }
+    this.cursorApplied = false
   }
 
   private ensureIdAndAriaDescribedBy(): void {
