@@ -5,7 +5,7 @@
 
 [#overview]
 == Overview
-The `OcxTooltipDirective` (`ocxTooltip`) from `@onecx/angular-accelerator` extends the PrimeNG tooltip. It shows the tooltip on hover and focus, links the tooltip to its host via `aria-describedby` and closes the tooltip with the `Escape` key. All inputs of the PrimeNG tooltip, e.g. `tooltipPosition` or `tooltipOptions`, can be used as well.
+The `OcxTooltipDirective` (`ocxTooltip`) from `@onecx/angular-accelerator` extends the Optimus UI tooltip (`@openng/optimus-ui/tooltip`). It shows the tooltip on hover and focus, links the tooltip to its host via `aria-describedby` and closes the tooltip with the `Escape` key. All inputs of the Optimus UI tooltip, e.g. `tooltipPosition` or `tooltipOptions`, can be used as well.
 
 [source, html]
 ----
@@ -20,7 +20,7 @@ The `OcxTooltipDirective` (`ocxTooltip`) from `@onecx/angular-accelerator` exten
 | Name | Type | Default | Description
 
 | `ocxTooltip` | `string \| TemplateRef<HTMLElement> \| undefined` | `undefined` | Content of the tooltip. If empty, no tooltip is shown.
-| `ocxTooltipCursor` | `string \| null \| undefined` | `'pointer'` | CSS cursor applied to the host element while a tooltip text is set. Not set or `undefined`: `pointer` is applied. Any CSS cursor value, e.g. `default` or `help`: that value is applied instead. `null`: the directive does not set or remove the cursor style, so the host's own styling applies.
+| `ocxTooltipCursor` | `string \| null \| undefined` | `'pointer'` | CSS cursor applied to the host element while a tooltip text is set. Not set or `undefined`: `pointer` is applied. Any CSS cursor value, e.g. `default` or `help`: that value is applied instead. An empty string falls back to `pointer`. `null`: the directive does not set or remove the cursor style, so the host's own styling applies. When the tooltip text is cleared or the input changes to `null`, the host's previous inline cursor is restored.
 |===
 
 [#cursor]
@@ -36,3 +36,4 @@ By default, the directive applies `cursor: pointer` to its host as an inline sty
 <span class="my-label" [ocxTooltip]="'Additional information'" [ocxTooltipCursor]="null">Label</span>
 ----
 
+The data table column header labels with a tooltip use `cursor: default`.
