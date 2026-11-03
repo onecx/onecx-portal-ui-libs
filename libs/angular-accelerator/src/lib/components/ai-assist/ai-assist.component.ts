@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AiAgentResponse,
@@ -31,14 +31,20 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   /** Application id used to load agents. Defaults to the appId of the current MFE. */
   @Input() appId?: string
 
+  /** Text of the field the assistant works on. The result is offered back through replaceText. */
+  @Input() inputText = ''
+  /** Emits the accepted AI suggestion when the user chooses Replace text. */
+  @Output() replaceText = new EventEmitter<string>()
+
   loadState: AiAssistLoadState = 'loading'
+  open = false
   agents: AiAgentResponse[] = []
   selectedAgentId?: string
   selectedActionId?: string
   parameterValues: Record<string, string> = {}
-  inputText = ''
   runState: AiAssistRunState = 'idle'
   result?: unknown
+  suggestion = ''
   errorCode?: string
 
   private readonly agentService = new OneCXAiAgentService()
@@ -75,17 +81,35 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     return JSON.stringify(this.result, null, 2)
   }
 
+  get isReviewReady(): boolean {
+    return this.runState === 'success' && this.resultText !== undefined
+  }
+
   get canRun(): boolean {
     return (
-      this.runState !== 'running' &&
-      !!this.selectedAction &&
-      !!this.selectedAgent &&
-      this.inputText.trim().length > 0
+      this.runState !== 'running' && !!this.selectedAction && !!this.selectedAgent && this.inputText.trim().length > 0
     )
   }
 
   get errorMessageKey(): string {
     return this.errorCode === 'NO_PROVIDER' ? 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER' : 'OCX_AI_ASSIST.ERRORS.GENERIC'
+  }
+
+  toggle(): void {
+    this.open = !this.open
+  }
+
+  close(): void {
+    this.open = false
+  }
+
+  initials(name: string | undefined): string {
+    return (name ?? '')
+      .split(/\s+/)
+      .filter((part) => part.length > 0)
+      .slice(0, 2)
+      .map((part) => part[0].toUpperCase())
+      .join('')
   }
 
   loadAgents(): void {
@@ -119,6 +143,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.runState = 'running'
     this.errorCode = undefined
     this.result = undefined
+    this.suggestion = ''
     const systemPrompt = [
       action.buildInstruction(this.parameterValues),
       `Respond only with JSON matching ${action.outputDescription}. Do not write anything outside the JSON.`,
@@ -132,6 +157,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
         message: this.inputText,
         outputSchema: action.outputSchema,
       })
+      this.suggestion = this.resultText ?? ''
       this.runState = 'success'
     } catch (error) {
       this.errorCode = isAiProviderError(error) ? error.code : UNKNOWN_ERROR_CODE
@@ -141,6 +167,16 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   retry(): Promise<void> {
     return this.runState === 'error' ? this.run() : Promise.resolve()
+  }
+
+  tryAgain(): Promise<void> {
+    return this.run()
+  }
+
+  replace(): void {
+    this.replaceText.emit(this.suggestion)
+    this.resetResult()
+    this.open = false
   }
 
   private async fetchAgents(appId: string | undefined): Promise<void> {
@@ -157,6 +193,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   private resetResult(): void {
     this.result = undefined
+    this.suggestion = ''
     this.runState = 'idle'
     this.errorCode = undefined
   }
