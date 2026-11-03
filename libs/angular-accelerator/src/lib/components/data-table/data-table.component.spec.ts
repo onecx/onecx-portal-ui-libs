@@ -37,6 +37,9 @@ describe('DataTableComponent', () => {
       SEARCH_RESULTS_FOUND: '{{results}} Results Found',
       NO_SEARCH_RESULTS_FOUND: 'No Results Found',
     },
+    BOOK_GENRE: {
+      FICTION: 'Fiction',
+    },
   }
 
   const GERMAN_LANGUAGE = 'de'
@@ -1137,6 +1140,46 @@ describe('DataTableComponent', () => {
       checked = await dataTable.getHarnessesForCheckboxes('checked')
       expect(unchecked.length).toBe(0)
       expect(checked.length).toBe(2)
+    })
+  })
+
+  describe('currentEqualFilterOptions$ translation_key label', () => {
+    const statusColumn = mockColumns.find((c) => c.id === 'status')!
+
+    it('should show the translated label for a selected filter whose rows are no longer present', async () => {
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      component.columns = mockColumns
+      component.filters = [{ columnId: 'status', value: selectedKey }] as any
+      // The search criteria narrows the result set so the selected option no longer appears as a row.
+      component.rows = []
+      component.onFilterChosen(statusColumn)
+
+      const { options } = (await firstValueFrom(component.currentEqualFilterOptions$ as any)) as {
+        options: { label: string; value: string; toFilterBy: string }[]
+      }
+      const option = options.find((o) => o.value === selectedKey)
+
+      expect(option).toBeDefined()
+      // Regression: the raw key was shown instead of the translation once the row set became empty.
+      expect(option!.label).toBe('Fiction')
+    })
+
+    it('should show translated labels for the visible rows while keeping the selected filter', async () => {
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      const otherKey = 'BOOK_GENRE.NON_FICTION'
+      component.columns = mockColumns
+      component.rows = [{ id: 'r1', status: otherKey } as any]
+      component.filters = [{ columnId: 'status', value: selectedKey }] as any
+      component.onFilterChosen(statusColumn)
+
+      const { options } = (await firstValueFrom(component.currentEqualFilterOptions$ as any)) as {
+        options: { label: string; value: string; toFilterBy: string }[]
+      }
+
+      expect(options.map((o) => o.value)).toEqual(expect.arrayContaining([otherKey, selectedKey]))
+      expect(options.find((o) => o.value === otherKey)!.label).toBe(otherKey)
+      // The orphaned, still-selected filter stays readable with its translation.
+      expect(options.find((o) => o.value === selectedKey)!.label).toBe('Fiction')
     })
   })
 
