@@ -92,3 +92,73 @@ describe('applyDefaultsRecursive', () => {
     expect(schema.parse({})['a']).toBeUndefined()
   })
 })
+
+// Regression coverage for the scalar-or-scale form the global typography primitive uses: a field
+// that is either a scalar string or a partial object of named tokens (e.g. font size). The default
+// tree supplies a (possibly partial) object, and partial baseline *input* must keep its supplied
+// entries while gaining the defaulted ones — without ever synthesizing a value the author omitted.
+describe('applyDefaultsRecursive on a scalar-or-scale (union) field', () => {
+  const ref = (s: z.ZodTypeAny) => z.union([s, z.string()]) // mimics `withRef`
+  const scaleShape = z.object({
+    // A "scale" leaf: scalar CSS string/ref, or an object of named tokens (intentionally partial).
+    size: z
+      .union([
+        ref(z.string()),
+        z.object({
+          sm: ref(z.string()).optional(),
+          md: ref(z.string()).optional(),
+          lg: ref(z.string()).optional(),
+        }),
+      ])
+      .optional(),
+  })
+
+  it('fills a scale leaf from a partial object default when the input is empty', () => {
+    const schema = applyDefaultsRecursive(scaleShape, { size: { md: '1rem' } })
+
+    expect(schema.parse({})).toEqual({ size: { md: '1rem' } })
+  })
+
+  it('keeps supplied scale entries and gains the defaulted ones (partial baseline fill)', () => {
+    const schema = applyDefaultsRecursive(scaleShape, { size: { md: '1rem' } })
+
+    // The author supplies only `sm`; the baseline default fills `md` — the supplied value wins.
+    expect(schema.parse({ size: { sm: '0.875rem' } })).toEqual({ size: { sm: '0.875rem', md: '1rem' } })
+  })
+
+  it('lets a supplied scalar beat the scale default (no object is synthesized)', () => {
+    const schema = applyDefaultsRecursive(scaleShape, { size: { md: '1rem' } })
+
+    expect(schema.parse({ size: '14px' })).toEqual({ size: '14px' })
+  })
+
+  it('does not fill a scale entry that has no default of its own', () => {
+    const schema = applyDefaultsRecursive(scaleShape, { size: { md: '1rem' } })
+
+    // `lg` has no default; a partial input must not gain one.
+    expect((schema.parse({ size: { sm: '0.875rem' } })['size'] as Record<string, unknown>)['lg']).toBeUndefined()
+  })
+
+  it('still parses when no default is supplied for the scale field', () => {
+    const schema = applyDefaultsRecursive(scaleShape, {})
+
+    expect(schema.parse({})['size']).toBeUndefined()
+    expect(schema.parse({ size: { md: '12px' } })).toEqual({ size: { md: '12px' } })
+  })
+
+  it('unwraps a default/prefault-wrapped union before recursing (wrapper forms)', () => {
+    const wrapped = z.object({
+      size: z
+        .union([
+          ref(z.string()).optional(),
+          z.object({ md: ref(z.string()).optional(), lg: ref(z.string()).optional() }),
+        ])
+        .optional()
+        .prefault({}),
+    })
+    const schema = applyDefaultsRecursive(wrapped, { size: { md: '1rem' } })
+
+    expect(schema.parse({})).toEqual({ size: { md: '1rem' } })
+    expect(schema.parse({ size: { lg: '1.125rem' } })).toEqual({ size: { md: '1rem', lg: '1.125rem' } })
+  })
+})

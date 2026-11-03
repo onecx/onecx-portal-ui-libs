@@ -43,34 +43,38 @@ Throughout this document, tokens marked with *(+light/dark)* support dual-mode a
 
 Global typography baseline applied to all text unless overridden at a more specific level.
 
+`family` and `style` are scalar. The other four properties are **independent named scales** and may be given as either a plain scalar string (legacy) or a partial object of named entries:
+
 [cols="3,4,4"]
 |===
 | Token Path | CSS Variable | Description
 
 | `primitives.font.family`
 | `--onecx-theme-primitives-font-family`
-| Font family for all text (e.g. `"Inter"`, `"sans-serif"`)
+| Font family for all text — scalar (e.g. `"Inter"`, `"sans-serif"`)
 
 | `primitives.font.size`
 | `--onecx-theme-primitives-font-size`
-| Base font size (e.g. `"1rem"`, `"14px"`)
+| Font size — scalar, or a scale of `xs`, `sm`, `md`, `lg`, `xl` (canonical baseline: `md`)
 
 | `primitives.font.weight`
 | `--onecx-theme-primitives-font-weight`
-| Default font weight (e.g. `"400"`, `"normal"`)
+| Font weight — scalar, or a scale of `light`, `normal`, `medium`, `semibold`, `bold` (canonical baseline: `normal`)
 
 | `primitives.font.lineHeight`
 | `--onecx-theme-primitives-font-lineHeight`
-| Default line height (e.g. `"1.5"`, `"24px"`)
+| Line height — scalar, or a scale of `xs`, `sm`, `md`, `lg`, `xl` (canonical baseline: `md`)
 
 | `primitives.font.letterSpacing`
 | `--onecx-theme-primitives-font-letterSpacing`
-| Default letter spacing (e.g. `"0"`, `"0.01em"`)
+| Letter spacing — scalar, or a scale of `tight`, `normal`, `wide` (canonical baseline: `normal`)
 
 | `primitives.font.style`
 | `--onecx-theme-primitives-font-style`
-| Default font style (e.g. `"normal"`, `"italic"`)
+| Font style — scalar (e.g. `"normal"`, `"italic"`)
 |===
+
+A scale is optional and partial — only the entries a theme actually supplies need to be set. Each scaled property reduces to its **canonical** entry (`size`/`lineHeight` → `md`, `weight`/`letterSpacing` → `normal`) wherever a single scalar value is required (for example at a PrimeNG preset token or a CSS `var()`); if the canonical entry is absent, nothing is emitted so the existing fallback/CSS inheritance takes over. Local (per-usage) typography stays scalar and cannot supply a whole global scale.
 
 [#primitives-space]
 == Primitives: Space

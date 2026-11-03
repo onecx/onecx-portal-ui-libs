@@ -57,8 +57,8 @@ const dialogTitleShape = z
   .register(themeSchemaRegistry, { id: 'dialogTitleShape' })
 
 const dialogTitleDefaults = {
-  fontSize: '{{primitives.font.size}}',
-  fontWeight: '{{primitives.font.weight}}',
+  fontSize: '{{primitives.font.size.md}}',
+  fontWeight: '{{primitives.font.weight.normal}}',
 }
 
 const dialogButtonStateShape = z
@@ -114,7 +114,7 @@ const dialogContentShape = z
 
 const dialogContentDefaults = {
   padding: '{{primitives.space.md}}',
-  fontSize: '{{primitives.font.size}}',
+  fontSize: '{{primitives.font.size.md}}',
 }
 
 const dialogFooterShape = z
