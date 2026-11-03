@@ -148,8 +148,8 @@ describe('AiAssistComponent', () => {
 
     const suggestion = fixture.nativeElement.querySelector('#ocxAiAssistSuggestion') as HTMLTextAreaElement
     expect(suggestion.value).toBe('Hallo')
-    expect(fixture.nativeElement.textContent).toContain('Replace text')
-    expect(fixture.nativeElement.textContent).toContain('Try again')
+    expect(fixture.nativeElement.textContent).toContain('OCX_AI_ASSIST.REPLACE_TEXT')
+    expect(fixture.nativeElement.textContent).toContain('OCX_AI_ASSIST.TRY_AGAIN')
   })
 
   it('should offer the completion as an editable suggestion and emit it on replace', async () => {
