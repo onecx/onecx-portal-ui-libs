@@ -77,10 +77,6 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     return typeof text === 'string' ? text : undefined
   }
 
-  get resultJson(): string {
-    return JSON.stringify(this.result, null, 2)
-  }
-
   get isReviewReady(): boolean {
     return this.runState === 'success' && this.resultText !== undefined
   }

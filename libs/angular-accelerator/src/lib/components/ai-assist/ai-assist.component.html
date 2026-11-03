@@ -159,8 +159,7 @@
     ></p-button>
     } @if (runState === 'success' && !isReviewReady) {
     <div class="ocx-ai-assist__result">
-      <h4>{{ 'OCX_AI_ASSIST.RESULT' | translate }}</h4>
-      <pre>{{ resultJson }}</pre>
+      <p-message severity="warn" [text]="'OCX_AI_ASSIST.ERRORS.GENERIC' | translate"></p-message>
       <p-button
         type="button"
         severity="secondary"
