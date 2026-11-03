@@ -17,7 +17,19 @@ describe('DEFAULT_AI_ASSIST_ACTIONS', () => {
 
   it('should expose the target language parameter with its default value', () => {
     expect(translate.parameters).toEqual([
-      { key: 'targetLanguage', labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE', defaultValue: 'en' },
+      {
+        key: 'targetLanguage',
+        labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE',
+        defaultValue: 'en',
+        options: [
+          { value: 'en', label: 'English' },
+          { value: 'de', label: 'German' },
+          { value: 'pl', label: 'Polish' },
+          { value: 'fr', label: 'French' },
+          { value: 'es', label: 'Spanish' },
+          { value: 'it', label: 'Italian' },
+        ],
+      },
     ])
   })
 

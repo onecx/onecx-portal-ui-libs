@@ -30,15 +30,18 @@ const Template: StoryFn<AiAssistComponent> = (args) => ({
   props: args,
 })
 
-/** Agents come from AI providers; without a provider in Storybook the empty state is shown. */
+/** Agents come from AI providers; without a provider in Storybook the empty state is shown. Open the panel with the toggle icon. */
 export const Default = {
   render: Template,
-  args: {},
+  args: {
+    inputText: 'Hello, welcome to OneCX.',
+  },
 }
 
 export const WithAdditionalActions = {
   render: Template,
   args: {
+    inputText: 'Hello, welcome to OneCX.',
     defaultActions: DEFAULT_AI_ASSIST_ACTIONS.filter((action) => action.id !== 'generate'),
     additionalActions: [
       {

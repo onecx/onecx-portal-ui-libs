@@ -1,9 +1,16 @@
 import { z, type ZodType } from 'zod'
 
+export interface AiAssistParameterOption {
+  value: string
+  label: string
+}
+
 export interface AiAssistActionParameter {
   key: string
   labelKey: string
   defaultValue: string
+  /** When set, the parameter is chosen from these options instead of typed. */
+  options?: AiAssistParameterOption[]
 }
 
 export interface AiAssistActionDefinition<T = unknown> {
@@ -31,7 +38,21 @@ export const DEFAULT_AI_ASSIST_ACTIONS: AiAssistActionDefinition<AiAssistTextRes
       `Translate the user's text into the language with code "${parameters['targetLanguage'] ?? 'en'}". Keep the meaning and formatting.`,
     outputDescription: '{"text": string} containing the translated text',
     outputSchema: textOutputSchema,
-    parameters: [{ key: 'targetLanguage', labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE', defaultValue: 'en' }],
+    parameters: [
+      {
+        key: 'targetLanguage',
+        labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE',
+        defaultValue: 'en',
+        options: [
+          { value: 'en', label: 'English' },
+          { value: 'de', label: 'German' },
+          { value: 'pl', label: 'Polish' },
+          { value: 'fr', label: 'French' },
+          { value: 'es', label: 'Spanish' },
+          { value: 'it', label: 'Italian' },
+        ],
+      },
+    ],
   },
   {
     id: 'summarize',
