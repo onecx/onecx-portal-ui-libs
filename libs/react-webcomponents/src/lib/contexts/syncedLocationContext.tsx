@@ -150,7 +150,11 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       }
 
       const normalizedTargetUrl = normalizeUrl(topicUrl)
-      if (skipPublishUntil.current === normalizedTargetUrl) {
+      if (skipPublishUntil.current !== null) {
+        // Ignore new topic events while a topic-driven navigation is still pending.
+        // React Router resolves navigation asynchronously; processing another
+        // event before the current one settles would overwrite skipPublishUntil
+        // and could leave the shell and the MFE out of sync.
         return
       }
       if (normalizeUrl(routerUrlRef.current) !== normalizedTargetUrl) {
@@ -175,6 +179,10 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   // extra render between the URL change and the publish.
   useLayoutEffect(() => {
     routerUrlRef.current = routerUrl
+    const currentPathname = locationHook.pathname
+    if (currentPathname !== currentLocation.url) {
+      setCurrentLocation({ url: currentPathname, isFirst: false })
+    }
     if (skipPublishUntil.current !== null) {
       // React Router may normalize the topic URL (encoded chars, trailing ?/#),
       // so we clear the guard on the render after a topic-driven navigation
@@ -183,10 +191,6 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       skipPublishUntil.current = null
       lastPublishedUrlRef.current = routerUrl
       return
-    }
-    const currentPathname = locationHook.pathname
-    if (currentPathname !== currentLocation.url) {
-      setCurrentLocation({ url: currentPathname, isFirst: false })
     }
     if (routerUrl !== lastPublishedUrlRef.current) {
       lastPublishedUrlRef.current = routerUrl

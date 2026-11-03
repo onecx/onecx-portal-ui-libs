@@ -324,6 +324,16 @@ describe('SyncedRouterProvider', () => {
     expect(window.history.replaceState).toBe(replaceStateBeforeMount)
   })
 
+  it('updates SyncedLocationContext after shell-driven navigation', async () => {
+    renderRouterWithSyncedReader()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    publishLocation({ url: `${appBase}/subpage/record-1`, isFirst: false })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
+  })
+
   it('does not overwrite an unrelated history patch during release', () => {
     const { unmount } = renderRouter()
 
