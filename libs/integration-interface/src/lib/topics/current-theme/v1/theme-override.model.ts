@@ -1,5 +1,5 @@
 export enum OverrideType {
-    PRIMENG = 'PRIMENG',
+    OPTIMUS = 'OPTIMUS',
     CSS = 'CSS'
 }
 

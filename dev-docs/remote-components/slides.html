@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Remote Components &amp; Slots — Area Showcase</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css">
+<style>
+  :root {
+    --shell: #475569; --shell-bg: #f1f5f9;
+    --app: #2563eb;   --app-bg: #eff6ff;
+    --rc: #ea580c;    --rc-bg: #fff7ed;
+    --slot: #7c3aed;  --slot-bg: #f5f3ff;
+    --topic: #0d9488; --topic-bg: #f0fdfa;
+    --ok: #16a34a; --bad: #dc2626; --muted: #64748b;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .reveal { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 26px; color: #1e293b; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: inherit; color: #0f172a; text-transform: none; letter-spacing: -0.01em; }
+  .reveal h1 { font-size: 2.1em; }
+  .reveal h2 { font-size: 1.35em; margin-bottom: 0.5em; }
+  .reveal h3 { font-size: 0.9em; margin: 0 0 0.3em; }
+  .reveal section { text-align: left; height: 100%; }
+  .reveal section.center { text-align: center; }
+  .reveal ul { margin: 0 0 0 1em; }
+  .reveal li { margin-bottom: 0.25em; }
+  .reveal code, .mono { font-family: var(--mono); font-size: 0.85em; }
+  .reveal p code, .reveal li code, .reveal td code { color: #9a3412; background: #fff7ed; padding: 0 0.2em; border-radius: 4px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 0.7em; }
+  .tiny { font-size: 0.55em; }
+  .kicker { font-size: 0.55em; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slot); margin-bottom: 0.2em; }
+  .row { display: flex; gap: 24px; align-items: stretch; }
+  .col { flex: 1; min-width: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .note { font-size: 0.55em; color: var(--muted); position: absolute; bottom: 10px; left: 0; right: 0; }
+
+  /* colour helpers */
+  .c-shell { color: var(--shell); } .c-app { color: var(--app); } .c-rc { color: var(--rc); }
+  .c-slot { color: var(--slot); } .c-topic { color: var(--topic); } .c-ok { color: var(--ok); } .c-bad { color: var(--bad); }
+  .b-shell { border-color: var(--shell) !important; background: var(--shell-bg); }
+  .b-app   { border-color: var(--app) !important;   background: var(--app-bg); }
+  .b-rc    { border-color: var(--rc) !important;    background: var(--rc-bg); }
+  .b-slot  { border-color: var(--slot) !important;  background: var(--slot-bg); border-style: dashed !important; }
+  .b-topic { border-color: var(--topic) !important; background: var(--topic-bg); }
+
+  .box { border: 2px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; background: white; position: relative; }
+  .box > .lbl { position: absolute; top: -0.75em; left: 10px; background: white; padding: 0 6px; font-size: 0.5em; font-weight: 700; letter-spacing: 0.04em; border-radius: 4px; }
+  .chip { display: inline-block; font-size: 0.55em; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1.5px solid currentColor; white-space: nowrap; }
+  .pill { display: inline-block; font-size: 0.6em; padding: 3px 12px; border-radius: 999px; color: white; font-weight: 600; }
+  .bg-shell { background: var(--shell); } .bg-app { background: var(--app); } .bg-rc { background: var(--rc); } .bg-slot { background: var(--slot); } .bg-topic { background: var(--topic); }
+
+  /* code cards */
+  pre.code { font-family: var(--mono); font-size: 0.5em; line-height: 1.45; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 0; box-shadow: none; width: auto; white-space: pre; overflow: hidden; }
+  pre.code .k { color: #c084fc; } pre.code .s { color: #86efac; } pre.code .c { color: #64748b; } pre.code .t { color: #fdba74; } pre.code .a { color: #93c5fd; } pre.code .hl { background: rgba(250, 204, 21, 0.18); border-radius: 3px; }
+  pre.code.light { background: #f8fafc; color: #1e293b; border: 1px solid #e2e8f0; }
+  pre.code.light .k { color: #7c3aed; } pre.code.light .s { color: #15803d; } pre.code.light .c { color: #94a3b8; } pre.code.light .t { color: #c2410c; } pre.code.light .a { color: #1d4ed8; }
+
+  /* section dividers */
+  section.divider { display: flex !important; flex-direction: column; justify-content: center; }
+  section.divider .num { font-size: 3.2em; font-weight: 800; color: var(--slot); line-height: 1; opacity: 0.25; }
+  section.divider h1 { margin: 0.1em 0 0.3em; font-size: 1.9em; }
+
+  /* step engine: elements with data-from / data-until are shown depending on how many .step fragments are visible */
+  [data-from], [data-until] { transition: opacity 0.45s ease, visibility 0.45s ease; }
+  .off { opacity: 0 !important; visibility: hidden !important; }
+  [data-lit] { transition: all 0.45s ease; }
+  .fragment.step { display: none; }
+  .stack { display: grid; } .stack > * { grid-area: 1 / 1; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============ TITLE ============ -->
+<section class="center" style="display:flex!important;flex-direction:column;justify-content:center;">
+  <div class="kicker">OneCX Dev Docs · Area 6</div>
+  <h1 style="margin:0.2em 0;">Remote Components <span class="c-slot">&amp;</span> Slots</h1>
+  <p class="muted" style="margin-top:0">How a widget from one app ends up inside another</p>
+  <svg viewBox="0 0 640 230" style="width:560px;margin:20px auto 0;display:block">
+    <rect x="10" y="10" width="620" height="210" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <rect x="22" y="22" width="596" height="34" rx="6" fill="white" stroke="#cbd5e1"/>
+    <rect x="30" y="28" width="70" height="22" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="470" y="28" width="38" height="22" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="514" y="28" width="38" height="22" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="558" y="28" width="52" height="22" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="22" y="66" width="110" height="142" rx="6" fill="white" stroke="#cbd5e1"/>
+    <rect x="30" y="74" width="94" height="126" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="142" y="66" width="476" height="142" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="160" y="84" width="200" height="14" rx="3" fill="#bfdbfe"/>
+    <rect x="160" y="106" width="300" height="10" rx="3" fill="#dbeafe"/>
+    <rect x="160" y="122" width="260" height="10" rx="3" fill="#dbeafe"/>
+    <rect x="160" y="146" width="440" height="50" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" stroke-dasharray="6 4"/>
+    <rect x="170" y="154" width="130" height="34" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <rect x="310" y="154" width="130" height="34" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  </svg>
+  <p class="small" style="margin-top:14px">
+    <span class="chip c-shell">Shell</span> <span class="chip c-app">App</span>
+    <span class="chip c-slot">Slot</span> <span class="chip c-rc">Remote Component</span>
+  </p>
+</section>
+
+<!-- ============ AGENDA ============ -->
+<section>
+  <h2>Today</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:40px">
+    <div class="box b-app" style="padding:18px"><div class="pill bg-app">1</div><h3 style="margin-top:12px">App vs Remote Component</h3><p class="small muted">same DNA, different job</p></div>
+    <div class="box b-slot" style="padding:18px"><div class="pill bg-slot">2</div><h3 style="margin-top:12px">Who does what</h3><p class="small muted">Shell · Host · Slot · RC</p></div>
+    <div class="box b-slot" style="padding:18px"><div class="pill bg-slot">3</div><h3 style="margin-top:12px">Slot lifecycle</h3><p class="small muted">data → spans → components</p></div>
+    <div class="box b-rc" style="padding:18px"><div class="pill bg-rc">4</div><h3 style="margin-top:12px">Data into the RC</h3><p class="small muted">where from, what it is</p></div>
+    <div class="box b-topic" style="padding:18px"><div class="pill bg-topic">5</div><h3 style="margin-top:12px">Styles &amp; size</h3><p class="small muted">isolation · resizing</p></div>
+  </div>
+</section>
+
+<!-- ============ PART 1 ============ -->
+<section class="divider">
+  <div class="num">1</div>
+  <h1>App <span class="muted">vs</span> <span class="c-rc">Remote Component</span></h1>
+  <p class="muted">Same DNA, different job</p>
+</section>
+
+<!-- One page, many pieces -->
+<section>
+  <h2>One page, many pieces</h2>
+  <div class="row">
+    <div style="flex:1.55">
+      <div class="box b-shell" style="padding:14px;height:500px;display:flex;flex-direction:column;gap:10px">
+        <span class="lbl c-shell">Shell</span>
+        <div class="box b-slot" style="display:flex;gap:8px;padding:8px;align-items:center">
+          <span class="lbl c-slot">header.start / .center / .end</span>
+          <div class="box b-rc tiny" style="padding:4px 8px">logo</div>
+          <div class="box b-rc tiny" style="padding:4px 8px;flex:1">horizontal menu</div>
+          <div class="box b-rc tiny" style="padding:4px 8px">avatar menu</div>
+        </div>
+        <div style="display:flex;gap:10px;flex:1">
+          <div class="box b-slot" style="width:120px;padding:8px;display:flex">
+            <span class="lbl c-slot">body-start</span>
+            <div class="box b-rc tiny" style="flex:1;padding:6px">vertical menu</div>
+          </div>
+          <div class="box b-app" style="flex:1;padding:14px">
+            <span class="lbl c-app">App · routed by URL</span>
+            <div style="height:14px;width:55%;background:#bfdbfe;border-radius:4px;margin:6px 0 10px"></div>
+            <div style="height:10px;width:80%;background:#dbeafe;border-radius:4px;margin-bottom:6px"></div>
+            <div style="height:10px;width:70%;background:#dbeafe;border-radius:4px;margin-bottom:20px"></div>
+            <div class="box b-slot" style="display:flex;gap:8px;padding:12px 8px 8px">
+              <span class="lbl c-slot">&lt;ocx-slot name="…"&gt; inside the App</span>
+              <div class="box b-rc tiny" style="padding:6px 10px;flex:1">RC from product X</div>
+              <div class="box b-rc tiny" style="padding:6px 10px;flex:1">RC from product Y</div>
+            </div>
+          </div>
+        </div>
+        <div class="box b-slot tiny" style="padding:6px 10px"><span class="lbl c-slot">footer</span><span class="chip c-rc" style="font-size:1em">footer menu</span></div>
+      </div>
+    </div>
+    <div class="col" style="padding-top:20px">
+      <div class="box b-app" style="margin-bottom:18px"><div><b class="c-app">App</b></div>
+        <ul class="small"><li>owns a URL route</li><li>one at a time</li><li>fills the main area</li></ul></div>
+      <div class="box b-rc"><div><b class="c-rc">Remote Component</b></div>
+        <ul class="small"><li>fills a <b>named slot</b></li><li>many at once</li><li>in the Shell <i>or</i> inside an App / RC</li><li>same RC → many slots</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- Same DNA -->
+<section>
+  <h2>What is the <span class="c-ok">same</span></h2>
+  <div style="display:flex;align-items:center;gap:28px;margin-top:40px">
+    <div class="box b-app" style="text-align:center;min-width:150px"><b class="c-app" style="font-size:1.1em">App</b></div>
+    <div style="font-size:1.4em;color:#64748b">=</div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px" class="small">
+      <div class="box">📦 Module Federation remote</div>
+      <div class="box">🏷️ own <code>productName|appId</code></div>
+      <div class="box">🎨 own <code>styles.css</code>, scoped</div>
+      <div class="box">🌐 own i18n at own URL</div>
+      <div class="box">🔐 permissions from Shell</div>
+      <div class="box">📡 Topics for Shell state</div>
+      <div class="box">⚙️ own BFF</div>
+      <div class="box">🧱 Angular or web component</div>
+    </div>
+    <div style="font-size:1.4em;color:#64748b">=</div>
+    <div class="box b-rc" style="text-align:center;min-width:150px"><b class="c-rc" style="font-size:1.1em">Remote<br>Component</b></div>
+  </div>
+</section>
+
+<!-- What's different -->
+<section>
+  <h2>What is <span class="c-rc">different</span></h2>
+  <table style="width:100%;font-size:0.62em;border-collapse:separate;border-spacing:0 6px">
+    <thead><tr><th style="width:24%;border:0"></th><th class="c-app" style="border:0">App</th><th class="c-rc" style="border:0">Remote Component</th></tr></thead>
+    <tbody>
+      <tr><td><b>Appears because…</b></td><td class="b-app">URL matches a Workspace route</td><td class="b-rc">Workspace assigns it to a slot</td></tr>
+      <tr><td><b>Mounted by</b></td><td class="b-app">Shell router / <code>WebcomponentLoader</code></td><td class="b-rc"><code>&lt;ocx-slot&gt;</code> in any host</td></tr>
+      <tr><td><b>How many</b></td><td class="b-app">one current App</td><td class="b-rc">many · same RC in many slots</td></tr>
+      <tr><td><b>Bootstrap</b></td><td class="b-app"><code>bootstrapModule</code> / <code>createAppEntrypoint</code></td><td class="b-rc"><code>bootstrapRemoteComponent</code></td></tr>
+      <tr><td><b>Routing</b></td><td class="b-app">own routes, follows URL</td><td class="b-rc">only a <code>**</code> fallback route</td></tr>
+      <tr><td><b>Learns who it is via</b></td><td class="b-app"><code>currentMfe$</code> Topic</td><td class="b-rc"><code>RemoteComponentConfig</code> from the slot</td></tr>
+      <tr><td><b>Talks to its host via</b></td><td class="b-app">Topics</td><td class="b-rc">Topics <b>+ inputs / outputs</b></td></tr>
+      <tr><td><b>Lives as long as</b></td><td class="b-app">the route is active</td><td class="b-rc">its host slot exists</td></tr>
+    </tbody>
+  </table>
+  <style>.reveal table td { padding: 8px 14px !important; border: 0 !important; } .reveal table td.b-app, .reveal table td.b-rc { border-radius: 6px; }</style>
+</section>
+
+<!-- One product exposes both -->
+<section>
+  <h2>One product exposes <span class="c-app">both</span></h2>
+  <div class="row">
+    <div class="col">
+      <h3 class="muted">onecx-workspace-ui · <code>webpack.config.js</code></h3>
+<pre class="code light">exposes: {
+  <span class="hl"><span class="s">'./OneCXWorkspaceModule'</span>: <span class="s">'src/main.ts'</span>,</span>   <span class="c">// App</span>
+  <span class="s">'./OneCXWorkspaceDataComponent'</span>:  <span class="c">// RC</span>
+    <span class="s">'…/workspace-data.component.main.ts'</span>,
+  <span class="s">'./OneCXUserAvatarMenuComponent'</span>: …, <span class="c">// RC</span>
+  <span class="s">'./OneCXVerticalMainMenuComponent'</span>: …, <span class="c">// RC</span>
+  <span class="s">'./OneCXTopbarLogoComponent'</span>: …,  <span class="c">// RC</span>
+  <span class="c">// … 9 more Remote Components</span>
+}</pre>
+      <ul class="small" style="margin-top:20px">
+        <li>same build, same remoteEntry</li>
+        <li>each RC = its own <b>exposed module</b></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3 class="muted"><code>workspace-data.component.bootstrap.ts</code></h3>
+<pre class="code"><span class="k">bootstrapRemoteComponent</span>(
+  OneCXWorkspaceDataComponent,
+  <span class="hl"><span class="s">'ocx-workspace-data-component'</span></span>, <span class="c">// elementName</span>
+  environment.production,
+  [
+    provideHttpClient(…),
+    importProvidersFrom(AngularAuthModule),
+    <span class="hl">provideRouter([{ path: <span class="s">'**'</span>, children: [] }])</span>
+  ]
+)</pre>
+      <ul class="small" style="margin-top:20px">
+        <li>defines a <b>custom element</b></li>
+        <li>shares Angular platform + <code>NgZone</code></li>
+        <li><code>**</code> route → router always activatable</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section class="divider">
+  <div class="num">2</div>
+  <h1>Slot <span class="muted">↔</span> <span class="c-rc">Remote Component</span></h1>
+  <p class="muted">Who is involved and who does what</p>
+</section>
+
+<!-- The cast -->
+<section>
+  <h2>The cast</h2>
+  <svg viewBox="0 0 1200 520" style="width:100%;height:540px">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+    </defs>
+    <!-- BFF -->
+    <rect x="10" y="40" width="190" height="100" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text x="105" y="80" text-anchor="middle" font-weight="700" font-size="22">Workspace</text>
+    <text x="105" y="108" text-anchor="middle" font-size="17" fill="#64748b">config (Shell BFF)</text>
+    <!-- Shell -->
+    <rect x="270" y="20" width="270" height="140" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="2.5"/>
+    <text x="405" y="55" text-anchor="middle" font-weight="800" font-size="22" fill="#475569">Shell</text>
+    <text x="405" y="85" text-anchor="middle" font-size="17">load workspace config</text>
+    <text x="405" y="110" text-anchor="middle" font-size="17"><tspan font-family="monospace">mapSlots()</tspan> legacy names</text>
+    <text x="405" y="135" text-anchor="middle" font-size="17">answer permission RPC</text>
+    <!-- Topic -->
+    <rect x="610" y="55" width="270" height="70" rx="35" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/>
+    <text x="745" y="88" text-anchor="middle" font-weight="700" font-size="18" fill="#0d9488">RemoteComponentsTopic</text>
+    <text x="745" y="110" text-anchor="middle" font-size="15" fill="#0d9488">{ components, slots }</text>
+    <!-- Host -->
+    <rect x="560" y="230" width="630" height="270" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="1170" y="262" text-anchor="end" font-weight="800" font-size="20" fill="#2563eb">Host (Shell, App or RC)</text>
+    <rect x="590" y="285" width="250" height="190" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 5"/>
+    <text x="715" y="318" text-anchor="middle" font-weight="800" font-size="19" fill="#7c3aed">&lt;ocx-slot name&gt;</text>
+    <text x="715" y="350" text-anchor="middle" font-size="16">+ SlotService</text>
+    <text x="715" y="380" text-anchor="middle" font-size="16">+ PermissionService</text>
+    <text x="715" y="420" text-anchor="middle" font-size="15" fill="#64748b">libs</text>
+    <rect x="920" y="300" width="240" height="160" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+    <text x="1040" y="360" text-anchor="middle" font-weight="800" font-size="20" fill="#ea580c">Remote</text>
+    <text x="1040" y="388" text-anchor="middle" font-weight="800" font-size="20" fill="#ea580c">Component</text>
+    <!-- MF -->
+    <rect x="200" y="300" width="250" height="70" rx="10" fill="white" stroke="#94a3b8" stroke-width="2"/>
+    <text x="325" y="333" text-anchor="middle" font-weight="700" font-size="17">Module Federation</text>
+    <text x="325" y="356" text-anchor="middle" font-size="15" fill="#64748b">remoteEntry.js of RC's product</text>
+    <rect x="200" y="400" width="250" height="70" rx="35" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="325" y="440" text-anchor="middle" font-weight="700" font-size="17" fill="#0d9488">PermissionsRpcTopic</text>
+    <!-- arrows -->
+    <line x1="200" y1="90" x2="268" y2="90" stroke="#64748b" stroke-width="2.5" marker-end="url(#ar)"/>
+    <line x1="540" y1="90" x2="608" y2="90" stroke="#64748b" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="574" y="80" text-anchor="middle" font-size="14" fill="#64748b">publish</text>
+    <line x1="745" y1="125" x2="715" y2="282" stroke="#64748b" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="760" y="200" font-size="14" fill="#64748b">subscribe</text>
+    <line x1="588" y1="330" x2="452" y2="335" stroke="#64748b" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="520" y="322" text-anchor="middle" font-size="14" fill="#64748b">load</text>
+    <line x1="588" y1="430" x2="452" y2="435" stroke="#64748b" stroke-width="2.5" marker-end="url(#ar)" marker-start="url(#ar)"/>
+    <text x="520" y="425" text-anchor="middle" font-size="14" fill="#64748b">ask</text>
+    <path d="M198 435 H140 V215 H370 V164" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-start="url(#ar)" marker-end="url(#ar)"/>
+    <text x="150" y="240" font-size="14" fill="#64748b">answers</text>
+    <line x1="842" y1="380" x2="918" y2="380" stroke="#ea580c" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="880" y="370" text-anchor="middle" font-size="14" fill="#ea580c">creates</text>
+  </svg>
+</section>
+
+<!-- Responsibilities -->
+<section>
+  <h2>Who does what</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+    <div class="box b-shell"><h3 class="c-shell">Shell</h3>
+      <ul class="small"><li>loads Workspace config</li><li>normalises legacy slot names</li><li>publishes <code>RemoteComponentsTopic</code></li><li>answers permission RPC</li><li>hosts its own slot groups</li></ul></div>
+    <div class="box b-app"><h3 class="c-app">Host page</h3>
+      <ul class="small"><li>places <code>&lt;ocx-slot name&gt;</code></li><li>provides <code>SLOT_SERVICE</code></li><li>passes <code>inputs</code> / <code>outputs</code></li><li>optional: <code>isSomeComponent­DefinedForSlot</code> → fallback UI</li></ul></div>
+    <div class="box b-slot"><h3 class="c-slot">Slot (libs)</h3>
+      <ul class="small"><li>name → components</li><li>loads via MF</li><li>asks permissions</li><li><b>keeps order</b> (spans)</li><li>hands over config</li><li>scopes styles</li><li>reports size</li></ul></div>
+    <div class="box b-rc"><h3 class="c-rc">Remote Component</h3>
+      <ul class="small"><li>implements the config contract</li><li>keeps <code>baseUrl</code></li><li>declares inputs / outputs</li><li>calls its own BFF</li><li>own translations</li></ul></div>
+  </div>
+  <p style="text-align:center;margin-top:36px" class="small"><b>Nobody hard-codes the RC.</b> <span class="muted">The Workspace decides what goes where.</span></p>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section class="divider">
+  <div class="num">3</div>
+  <h1>Slot lifecycle</h1>
+  <p class="muted">From data to pixels</p>
+</section>
+
+<!-- Overview -->
+<section>
+  <h2>The stages</h2>
+  <style>
+    .chev { display: flex; gap: 6px; margin-top: 40px; }
+    .chev > div { flex: 1; padding: 16px 10px 16px 26px; color: white; font-weight: 700; font-size: 0.6em; clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%, 12% 50%); min-height: 90px; display: flex; flex-direction: column; justify-content: center; }
+    .chev > div:first-child { clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%); padding-left: 14px; }
+    .chev small { display: block; font-weight: 400; opacity: 0.9; margin-top: 4px; }
+  </style>
+  <div class="chev">
+    <div class="bg-shell">0 · Publish<small>Shell → Topic</small></div>
+    <div class="bg-slot">1 · Init<small>ngOnInit</small></div>
+    <div class="bg-slot">2 · Resolve<small>name → RCs</small></div>
+    <div class="bg-slot" style="background:#5b21b6">3 · Spans<small>one span each</small></div>
+    <div class="bg-slot">4 · Load<small>parallel</small></div>
+    <div class="bg-rc">5 · Replace<small>+ config</small></div>
+    <div class="bg-rc">6 · Live<small>inputs · size</small></div>
+    <div class="bg-shell">7 · Destroy<small>cleanup</small></div>
+  </div>
+  <div class="grid2" style="margin-top:50px">
+    <div class="box"><b>Synchronous</b> <span class="muted small">(stages 1–3)</span><p class="small muted" style="margin:6px 0 0">data is already on the Topic → slot knows <b>how many</b> RCs and in <b>which order</b> immediately</p></div>
+    <div class="box"><b>Asynchronous</b> <span class="muted small">(stages 4–5)</span><p class="small muted" style="margin:6px 0 0">module download + permission RPC per RC → finish in <b>any order</b></p></div>
+  </div>
+</section>
+
+<!-- Stage 0: the data -->
+<section>
+  <div class="kicker">Stage 0 · before any slot exists</div>
+  <h2>The data the slot reads</h2>
+  <div class="row">
+    <div style="width:330px;display:flex;flex-direction:column;gap:14px;align-items:stretch">
+      <div class="box" style="text-align:center"><b>Shell BFF</b><div class="tiny muted">workspace config</div></div>
+      <div style="text-align:center">↓</div>
+      <div class="box b-shell" style="text-align:center"><b class="c-shell">mapSlots()</b>
+        <div class="tiny mono" style="margin-top:6px">onecx-shell-header-right<br>↓<br><b>onecx-shell-header.end</b></div></div>
+      <div style="text-align:center">↓</div>
+      <div class="box b-topic" style="text-align:center;border-radius:40px"><b class="c-topic" style="font-size:0.8em">RemoteComponentsTopic</b><div class="tiny muted">every MFE can read it</div></div>
+    </div>
+    <div class="col">
+<pre class="code light" style="font-size:0.52em">{
+  <span class="a">slots</span>: [{
+    name: <span class="s">'onecx-shell-header.end'</span>,
+    components: [<span style="background:#fde68a">'notifications'</span>, <span style="background:#bbf7d0">'help'</span>, <span style="background:#bfdbfe">'avatar-menu'</span>]  <span class="c">// ← order!</span>
+  }],
+  <span class="a">components</span>: [{
+    name: <span style="background:#bfdbfe">'avatar-menu'</span>,
+    productName: <span class="s">'onecx-workspace'</span>,  appId: <span class="s">'onecx-workspace-ui'</span>,
+    baseUrl: <span class="s">'/mfe/workspace'</span>,
+    remoteEntryUrl: <span class="s">'/mfe/workspace/remoteEntry.js'</span>,
+    exposedModule: <span class="s">'./OneCXUserAvatarMenuComponent'</span>,
+    technology: <span class="s">'WebComponentModule'</span>,
+    elementName: <span class="s">'ocx-user-avatar-menu-component'</span>
+  },
+  { name: <span style="background:#bbf7d0">'help'</span>, … },
+  { name: <span style="background:#fde68a">'notifications'</span>, … }]
+}</pre>
+      <ul class="small" style="margin-top:14px">
+        <li><b>Slot</b> = name + list of component <b>names</b></li>
+        <li><b>Component</b> = who it is + how to load it</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Stage 1-2: resolve -->
+<section>
+  <div class="kicker">Stages 1 – 2 · init &amp; resolve</div>
+  <h2>Slot asks: <span class="mono c-slot" style="font-size:0.8em">"what goes into me?"</span></h2>
+  <div style="display:flex;align-items:center;gap:14px;margin-top:30px">
+    <div class="box b-slot" style="width:220px;text-align:center"><b class="c-slot">&lt;ocx-slot&gt;</b><div class="tiny">ngOnInit</div></div>
+    <div class="small">→</div>
+    <div class="box" style="flex:1">
+      <div class="mono tiny c-slot" style="margin-bottom:8px">SlotService.getComponentsForSlot(name)</div>
+      <ol class="small" style="margin:0 0 0 1.2em">
+        <li>find slot by <code>name</code></li>
+        <li>names → <code>RemoteComponent</code>s <span class="muted">(unknown names dropped)</span></li>
+        <li>per RC <b>start</b>: MF load ‖ permission RPC</li>
+      </ol>
+    </div>
+    <div class="small">→</div>
+    <div style="width:330px">
+      <div class="box b-rc tiny mono" style="margin-bottom:8px">[0] notifications · <span class="c-bad">Promise</span> · <span class="c-bad">Promise</span></div>
+      <div class="box b-rc tiny mono" style="margin-bottom:8px">[1] help · <span class="c-bad">Promise</span> · <span class="c-bad">Promise</span></div>
+      <div class="box b-rc tiny mono">[2] avatar-menu · <span class="c-bad">Promise</span> · <span class="c-bad">Promise</span></div>
+      <div class="tiny muted" style="margin-top:6px;text-align:center">componentType · permissions</div>
+    </div>
+  </div>
+  <div class="box b-slot" style="margin-top:50px;text-align:center">
+    The slot gets the <b>full list right away</b> — but every entry is still <b class="c-bad">pending</b>.
+    <div class="small muted">count + order known now · content later</div>
+  </div>
+</section>
+
+<!-- Stage 3-5: the key animation -->
+<section class="stepper">
+  <div class="kicker">Stages 3 – 5 · placeholders, then replace</div>
+  <h2 style="margin-bottom:12px">Spans first, components later</h2>
+  <style>
+    .tl-row { display: flex; align-items: center; gap: 10px; height: 46px; }
+    .tl-name { width: 150px; font-size: 0.55em; font-weight: 600; text-align: right; }
+    .tl-track { position: relative; flex: 1; height: 26px; background: #f1f5f9; border-radius: 6px; }
+    .tl-bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: repeating-linear-gradient(45deg, #fed7aa, #fed7aa 8px, #fdba74 8px, #fdba74 16px); }
+    .tl-done { position: absolute; top: -4px; font-size: 0.6em; transform: translateX(-50%); }
+    .nowline { position: absolute; top: -8px; bottom: -8px; width: 3px; background: var(--slot); left: 0; transition: left 0.6s ease; border-radius: 2px; }
+    .stepper[data-step="2"] .nowline { left: 30%; } .stepper[data-step="3"] .nowline { left: 58%; } .stepper[data-step="4"] .nowline { left: 92%; }
+    .dom { font-family: var(--mono); font-size: 0.52em; line-height: 1.5; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 14px 18px; }
+    .dom .ind { padding-left: 24px; height: 30px; }
+    .dom .span { color: #a78bfa; } .dom .rc { color: #fdba74; font-weight: 700; }
+    .scr { display: flex; justify-content: flex-end; gap: 8px; align-items: center; background: #f1f5f9; border: 2px solid var(--shell); border-radius: 8px; padding: 10px; height: 64px; }
+    .scr .cell { display: grid; align-items: center; justify-items: center; }
+    .scr .cell > * { grid-area: 1 / 1; }
+    .ghost { width: 14px; height: 30px; border: 2px dashed var(--slot); border-radius: 4px; }
+    .widget { padding: 8px 14px; border-radius: 6px; background: var(--rc-bg); border: 2px solid var(--rc); font-size: 0.5em; font-weight: 700; color: var(--rc); white-space: nowrap; }
+    .cap { font-size: 0.6em; padding: 10px 14px; border-left: 5px solid var(--slot); background: var(--slot-bg); border-radius: 0 8px 8px 0; min-height: 60px; }
+  </style>
+  <div class="row">
+    <div class="col">
+      <div class="stack" style="margin-bottom:16px">
+        <div class="cap" data-until="1"><b>Slot has the list</b> (3 entries, all pending).<br>Nothing in the DOM yet.</div>
+        <div class="cap" data-from="1" data-until="2"><b>Stage 3:</b> <code>createSpansForComponents()</code><br>one empty <code>&lt;span data-index&gt;</code> per entry — <b>synchronously</b></div>
+        <div class="cap" data-from="2" data-until="3"><b>help</b> is ready first → goes <b>exactly where span 1 is</b>, span removed</div>
+        <div class="cap" data-from="3" data-until="4"><b>avatar-menu</b> ready → replaces span 2</div>
+        <div class="cap" data-from="4"><b>notifications</b> (slowest) → replaces span 0.<br><b class="c-ok">Final order = Workspace config order</b></div>
+      </div>
+      <div class="tiny muted" style="margin:0 0 4px 160px">time → &nbsp; (module download ‖ permissions)</div>
+      <div style="position:relative">
+        <div class="tl-row"><div class="tl-name">[0] notifications</div><div class="tl-track"><div class="tl-bar" style="width:92%"></div><div class="tl-done" style="left:92%" data-from="4">✅</div></div></div>
+        <div class="tl-row"><div class="tl-name">[1] help</div><div class="tl-track"><div class="tl-bar" style="width:30%"></div><div class="tl-done" style="left:30%" data-from="2">✅</div></div></div>
+        <div class="tl-row"><div class="tl-name">[2] avatar-menu</div><div class="tl-track"><div class="tl-bar" style="width:58%"></div><div class="tl-done" style="left:58%" data-from="3">✅</div></div></div>
+        <div style="position:absolute;left:160px;right:0;top:0;bottom:0;pointer-events:none"><div class="nowline" data-from="2"></div></div>
+      </div>
+      <div class="tiny muted" style="margin-top:24px">On screen — header end slot:</div>
+      <div class="scr">
+        <div class="cell"><div class="ghost" data-from="1" data-until="4"></div><div class="widget" data-from="4">🔔 notifications</div></div>
+        <div class="cell"><div class="ghost" data-from="1" data-until="2"></div><div class="widget" data-from="2">❓ help</div></div>
+        <div class="cell"><div class="ghost" data-from="1" data-until="3"></div><div class="widget" data-from="3">👤 avatar-menu</div></div>
+      </div>
+    </div>
+    <div style="width:520px">
+      <div class="dom">
+        <div>&lt;<span style="color:#c4b5fd">ocx-slot</span> name=<span style="color:#86efac">"onecx-shell-header.end"</span>&gt;</div>
+        <div class="ind stack"><span class="span" data-from="1" data-until="4">&lt;span data-index="0"&gt;&lt;/span&gt;</span><span class="rc" data-from="4">&lt;ocx-notifications …&gt;</span></div>
+        <div class="ind stack"><span class="span" data-from="1" data-until="2">&lt;span data-index="1"&gt;&lt;/span&gt;</span><span class="rc" data-from="2">&lt;ocx-help …&gt;</span></div>
+        <div class="ind stack"><span class="span" data-from="1" data-until="3">&lt;span data-index="2"&gt;&lt;/span&gt;</span><span class="rc" data-from="3">&lt;ocx-user-avatar-menu-component …&gt;</span></div>
+        <div>&lt;/<span style="color:#c4b5fd">ocx-slot</span>&gt;</div>
+      </div>
+<pre class="code light" style="margin-top:16px;font-size:0.44em"><span class="c">// slot.component.ts (simplified)</span>
+<span class="k">const</span> span = el.querySelector(<span class="s">`span[data-index="${index}"]`</span>)
+el.<span class="a">insertBefore</span>(element, span)
+span.<span class="a">remove</span>()</pre>
+    </div>
+  </div>
+  <p class="note">Names illustrative. Web-component flavour shown; Angular flavour inserts at the same index via <code>ViewContainerRef</code> and removes the span.</p>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+</section>
+
+<!-- Why spans -->
+<section class="stepper">
+  <h2>Why spans?</h2>
+  <style>
+    .race { display: flex; align-items: center; gap: 10px; }
+    .race .lane { display: flex; gap: 8px; align-items: center; height: 54px; padding: 6px 10px; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 8px; min-width: 420px; }
+    .race .t { width: 60px; font-size: 0.5em; color: var(--muted); text-align: right; }
+  </style>
+  <div class="grid2">
+    <div class="box" style="border-color:var(--bad)">
+      <h3 class="c-bad">✗ Append when ready</h3>
+      <div class="race"><div class="t">t1</div><div class="lane"><div class="widget">❓ help</div></div></div>
+      <div class="race" data-from="1"><div class="t">t2</div><div class="lane"><div class="widget">❓ help</div><div class="widget">👤 avatar</div></div></div>
+      <div class="race" data-from="2"><div class="t">t3</div><div class="lane"><div class="widget">❓ help</div><div class="widget">👤 avatar</div><div class="widget">🔔 notif.</div></div></div>
+      <p class="small c-bad" style="margin-top:14px" data-from="3">order = network luck<br><span class="muted">different on every reload</span></p>
+    </div>
+    <div class="box" style="border-color:var(--ok)">
+      <h3 class="c-ok">✓ Reserve a span per index</h3>
+      <div class="race"><div class="t">t1</div><div class="lane"><div class="ghost"></div><div class="widget">❓ help</div><div class="ghost"></div></div></div>
+      <div class="race" data-from="1"><div class="t">t2</div><div class="lane"><div class="ghost"></div><div class="widget">❓ help</div><div class="widget">👤 avatar</div></div></div>
+      <div class="race" data-from="2"><div class="t">t3</div><div class="lane"><div class="widget">🔔 notif.</div><div class="widget">❓ help</div><div class="widget">👤 avatar</div></div></div>
+      <p class="small c-ok" style="margin-top:14px" data-from="3">order = Workspace config<br><span class="muted">stable, every time</span></p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px" data-from="3">
+    <div class="box b-slot small">⚡ loads stay <b>parallel</b></div>
+    <div class="box b-slot small">👀 each RC shows <b>as soon as ready</b></div>
+    <div class="box b-slot small">💥 failed load → just an <b>empty span</b></div>
+    <div class="box b-slot small">⚛️ React: one <code>&lt;div&gt;</code> per RC — same idea</div>
+  </div>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+</section>
+
+<!-- Stage 5: two flavours -->
+<section>
+  <div class="kicker">Stage 5 · create &amp; hand over</div>
+  <h2>Two ways in, same payload</h2>
+  <div style="text-align:center;margin-bottom:10px"><span class="box b-slot" style="display:inline-block"><b>Did MF return a <code>componentType</code>?</b> <span class="muted small">(only for <code>technology: Angular</code>)</span></span></div>
+  <div class="grid2">
+    <div class="box b-app">
+      <span class="lbl c-app">YES · Angular-init flavour</span>
+<pre class="code" style="margin-top:8px">ref = viewContainerRef.<span class="a">createComponent</span>(type, { index })
+<span class="k">if</span> (<span class="s">'ocxInitRemoteComponent'</span> <span class="k">in</span> ref.instance)
+  ref.instance.<span class="t">ocxInitRemoteComponent</span>(config)</pre>
+      <p class="small" style="margin:10px 0 0">RC implements <code>ocxRemoteComponent</code></p>
+    </div>
+    <div class="box b-rc">
+      <span class="lbl c-rc">NO · web-component flavour</span>
+<pre class="code" style="margin-top:8px">el = document.<span class="a">createElement</span>(elementName)
+el.<span class="t">ocxRemoteComponentConfig</span> = config
+slot.insertBefore(el, span)</pre>
+      <p class="small" style="margin:10px 0 0">RC implements <code>ocxRemoteWebcomponent</code> · <b>React slot: always this</b></p>
+    </div>
+  </div>
+  <div style="text-align:center;font-size:1.2em;color:var(--muted)">↘ &nbsp; ↙</div>
+  <div class="box b-slot" style="display:flex;gap:30px;justify-content:center;align-items:center">
+    <b class="c-slot">Both:</b>
+    <span class="small"><code>data-style-id="product|app"</code></span>
+    <span class="small"><code>data-style-isolation</code></span>
+    <span class="small">load RC <code>styles.css</code> for this slot</span>
+  </div>
+  <p class="small" style="text-align:center;margin-top:16px">💡 Implement <b>both</b> contracts → RC works in any host <span class="muted">(Shell toast, workspace-data do this)</span></p>
+</section>
+
+<!-- Stage 6-7 -->
+<section>
+  <div class="kicker">Stages 6 – 7 · live &amp; destroy</div>
+  <h2>After it is on screen</h2>
+  <div class="grid2">
+    <div class="box b-rc">
+      <h3 class="c-rc">Live</h3>
+      <div class="box" style="margin:10px 0"><span class="mono tiny">combineLatest(assignedComponents, inputs, outputs)</span>
+        <div class="small" style="margin-top:6px">→ <code>setInput()</code> / <code>el[prop] = value</code></div></div>
+      <ul class="small">
+        <li>re-applied on <b>every</b> change</li>
+        <li>late RCs get current inputs too</li>
+        <li><code>ResizeObserver</code> → size events <span class="muted">(part 5)</span></li>
+      </ul>
+    </div>
+    <div class="box b-shell">
+      <h3 class="c-shell">Destroy <span class="muted small">(host removes the slot)</span></h3>
+      <ul class="small" style="margin-top:14px">
+        <li>drop RC style usage <b>for this slot</b></li>
+        <li>style tag removed when unused</li>
+        <li>observer disconnected, Topics destroyed</li>
+        <li>view container cleared</li>
+      </ul>
+      <p class="small muted" style="margin-top:20px">⚠️ initial render uses <code>take(1)</code>: Workspace changes after init don't re-render an existing slot</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 4 ============ -->
+<section class="divider">
+  <div class="num">4</div>
+  <h1>Data into the <span class="c-rc">Remote Component</span></h1>
+  <p class="muted">Where it comes from and what it is</p>
+</section>
+
+<!-- Four sources hub -->
+<section>
+  <h2>Four sources</h2>
+  <svg viewBox="0 0 1200 540" style="width:100%;height:560px">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+    </defs>
+    <circle cx="600" cy="270" r="110" fill="#fff7ed" stroke="#ea580c" stroke-width="4"/>
+    <text x="600" y="262" text-anchor="middle" font-weight="800" font-size="26" fill="#ea580c">Remote</text>
+    <text x="600" y="294" text-anchor="middle" font-weight="800" font-size="26" fill="#ea580c">Component</text>
+    <!-- 1 config -->
+    <rect x="20" y="20" width="380" height="140" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+    <text x="40" y="55" font-weight="800" font-size="22" fill="#7c3aed">① Slot → config</text>
+    <text x="40" y="88" font-size="18" font-family="monospace">appId · productName</text>
+    <text x="40" y="114" font-size="18" font-family="monospace">baseUrl · permissions</text>
+    <text x="40" y="142" font-size="16" fill="#64748b">once, at creation</text>
+    <line x1="400" y1="130" x2="510" y2="200" stroke="#7c3aed" stroke-width="4" marker-end="url(#ah)"/>
+    <!-- 2 inputs/outputs -->
+    <rect x="800" y="20" width="380" height="140" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="820" y="55" font-weight="800" font-size="22" fill="#2563eb">② Host → inputs</text>
+    <text x="820" y="88" font-size="18">any shape the host + RC agree on</text>
+    <text x="820" y="114" font-size="18">outputs: events back ↑</text>
+    <text x="820" y="142" font-size="16" fill="#64748b">ongoing, re-applied on change</text>
+    <line x1="800" y1="120" x2="695" y2="195" stroke="#2563eb" stroke-width="4" marker-end="url(#ah)"/>
+    <line x1="710" y1="215" x2="815" y2="150" stroke="#2563eb" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+    <!-- 3 topics -->
+    <rect x="20" y="380" width="380" height="140" rx="14" fill="#f0fdfa" stroke="#0d9488" stroke-width="2.5"/>
+    <text x="40" y="415" font-weight="800" font-size="22" fill="#0d9488">③ Shell → Topics</text>
+    <text x="40" y="448" font-size="18">user profile · workspace · theme</text>
+    <text x="40" y="474" font-size="18">resized events · …</text>
+    <text x="40" y="502" font-size="16" fill="#64748b">page-wide state, subscribe any time</text>
+    <line x1="400" y1="410" x2="510" y2="340" stroke="#0d9488" stroke-width="4" marker-end="url(#ah)"/>
+    <!-- 4 own BFF -->
+    <rect x="800" y="380" width="380" height="140" rx="14" fill="#f8fafc" stroke="#475569" stroke-width="2.5"/>
+    <text x="820" y="415" font-weight="800" font-size="22" fill="#475569">④ Own BFF</text>
+    <text x="820" y="448" font-size="18">business data</text>
+    <text x="820" y="474" font-size="18">URL built from <tspan font-family="monospace">baseUrl</tspan></text>
+    <text x="820" y="502" font-size="16" fill="#64748b">needs ① first</text>
+    <line x1="800" y1="410" x2="695" y2="340" stroke="#475569" stroke-width="4" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  </svg>
+</section>
+
+<!-- RemoteComponentConfig anatomy -->
+<section>
+  <div class="kicker">Source ①</div>
+  <h2><code style="font-size:0.9em;background:none;color:#7c3aed">RemoteComponentConfig</code></h2>
+  <style>
+    .anat { display: grid; grid-template-columns: 1fr 60px 300px 60px 1fr; align-items: center; row-gap: 22px; margin-top: 20px; }
+    .anat .from, .anat .use { font-size: 0.6em; padding: 10px 14px; border-radius: 8px; }
+    .anat .from { background: var(--shell-bg); text-align: right; }
+    .anat .use { background: var(--rc-bg); }
+    .anat .f { font-family: var(--mono); font-weight: 700; text-align: center; padding: 12px; border: 2.5px solid var(--slot); border-radius: 8px; background: var(--slot-bg); font-size: 0.75em; }
+    .anat .arr { text-align: center; color: var(--muted); }
+  </style>
+  <div class="anat">
+    <div class="small muted" style="text-align:right"><b>comes from</b></div><div></div><div class="small muted" style="text-align:center"><b>field</b></div><div></div><div class="small muted"><b>used for</b></div>
+    <div class="from">Workspace <code>RemoteComponent</code> record</div><div class="arr">→</div><div class="f">appId<br>productName</div><div class="arr">→</div><div class="use">style scope id <code>product|app</code> · permission key</div>
+    <div class="from">Workspace <code>RemoteComponent.baseUrl</code></div><div class="arr">→</div><div class="f">baseUrl</div><div class="arr">→</div><div class="use">BFF base path · assets · images</div>
+    <div class="from">Shell, via <code>PermissionsRpcTopic</code></div><div class="arr">→</div><div class="f">permissions</div><div class="arr">→</div><div class="use">what the RC may show / do</div>
+  </div>
+  <div class="grid2" style="margin-top:34px">
+    <div class="box small">🚫 <b>no slot name</b> in config<br><span class="muted">→ pass via inputs (Shell groups send <code>slotGroupName</code>)</span></div>
+    <div class="box small">📥 want it in DI? RC provides <code>REMOTE_COMPONENT_CONFIG</code> <b>itself</b><br><span class="muted"><code>ReplaySubject(1)</code> · slot doesn't provide it</span></div>
+  </div>
+</section>
+
+<!-- Permissions round-trip -->
+<section>
+  <div class="kicker">Source ① · the <code>permissions</code> field</div>
+  <h2>Permissions: a round-trip to the Shell</h2>
+  <svg viewBox="0 0 1200 470" style="width:100%;height:480px;font-family:system-ui">
+    <defs><marker id="sq" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+    <g font-size="18" font-weight="700" text-anchor="middle">
+      <rect x="40" y="10" width="200" height="54" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/><text x="140" y="44" fill="#7c3aed">Slot / SlotService</text>
+      <rect x="340" y="10" width="200" height="54" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/><text x="440" y="44" fill="#7c3aed">PermissionService</text>
+      <rect x="640" y="10" width="220" height="54" rx="27" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/><text x="750" y="44" fill="#0d9488">PermissionsRpcTopic</text>
+      <rect x="960" y="10" width="200" height="54" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="2"/><text x="1060" y="44" fill="#475569">Shell proxy</text>
+    </g>
+    <g stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"><line x1="140" y1="64" x2="140" y2="460"/><line x1="440" y1="64" x2="440" y2="460"/><line x1="750" y1="64" x2="750" y2="460"/><line x1="1060" y1="64" x2="1060" y2="460"/></g>
+    <g font-size="17">
+      <line x1="140" y1="110" x2="436" y2="110" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#sq)"/><text x="290" y="100" text-anchor="middle" font-family="monospace">getPermissions(appId, product)</text>
+      <rect x="452" y="128" width="200" height="34" rx="6" fill="#fef9c3" stroke="#ca8a04"/><text x="552" y="151" text-anchor="middle" font-size="15">cache miss · key app:product</text>
+      <line x1="440" y1="195" x2="746" y2="195" stroke="#0d9488" stroke-width="2.5" marker-end="url(#sq)"/><text x="595" y="185" text-anchor="middle" font-family="monospace">{ appId, productName }</text>
+      <line x1="750" y1="230" x2="1056" y2="230" stroke="#0d9488" stroke-width="2.5" marker-end="url(#sq)"/><text x="905" y="220" text-anchor="middle">request (no permissions)</text>
+      <rect x="980" y="248" width="160" height="34" rx="6" fill="#f1f5f9" stroke="#475569"/><text x="1060" y="271" text-anchor="middle" font-size="15">load / cache</text>
+      <line x1="1060" y1="310" x2="754" y2="310" stroke="#475569" stroke-width="2.5" marker-end="url(#sq)"/><text x="905" y="300" text-anchor="middle" font-family="monospace">{ …, permissions: [ ] }</text>
+      <line x1="750" y1="345" x2="444" y2="345" stroke="#0d9488" stroke-width="2.5" marker-end="url(#sq)"/><text x="595" y="335" text-anchor="middle">filtered answer</text>
+      <line x1="440" y1="390" x2="144" y2="390" stroke="#7c3aed" stroke-width="2.5" marker-end="url(#sq)"/><text x="290" y="380" text-anchor="middle">Promise resolves</text>
+      <rect x="40" y="410" width="340" height="40" rx="6" fill="#fff7ed" stroke="#ea580c"/><text x="210" y="436" text-anchor="middle" font-size="16">→ goes into config of the RC</text>
+    </g>
+  </svg>
+  <p class="small muted" style="text-align:center;margin:0">2nd RC from the same app → cache hit, no RPC · no timeout in the client</p>
+</section>
+
+<!-- inputs/outputs real example -->
+<section>
+  <div class="kicker">Source ② · real example from onecx-workspace-ui</div>
+  <h2>Inputs in, outputs back</h2>
+  <div class="row" style="align-items:center">
+    <div class="col">
+      <h3 class="c-app">Host · <code>workspace-props.component.html</code></h3>
+<pre class="code light" style="font-size:0.5em">&lt;<span class="k">ocx-slot</span>
+  class=<span class="s">"hidden"</span>
+  [name]=<span class="s">"themeSlotName"</span>   <span class="c">&lt;!-- 'onecx-theme-data' --&gt;</span>
+  <span class="hl">[inputs]=<span class="s">"{ dataType: 'themes' }"</span></span>
+  <span class="hl">[outputs]=<span class="s">"{ themes: themesEmitter }"</span></span>
+&gt;&lt;/<span class="k">ocx-slot</span>&gt;</pre>
+<pre class="code light" style="font-size:0.5em;margin-top:10px">themesEmitter = <span class="k">new</span> EventEmitter&lt;Theme[]&gt;()
+isThemeComponentDefined$ = slotService
+  .<span class="a">isSomeComponentDefinedForSlot</span>(slotName)</pre>
+    </div>
+    <div style="width:110px;text-align:center">
+      <div class="c-app" style="font-weight:800">dataType<br>→</div>
+      <div style="height:40px"></div>
+      <div class="c-rc" style="font-weight:800">←<br>themes</div>
+    </div>
+    <div class="col">
+      <h3 class="c-rc">RC side <span class="muted small">(shape the host expects)</span></h3>
+<pre class="code" style="font-size:0.5em"><span class="c">// e.g. a theme-data RC from the theme product</span>
+<span class="t">@Input</span>() dataType?: <span class="s">'themes'</span>
+<span class="t">@Input</span>() themes = <span class="k">new</span> EventEmitter&lt;Theme[]&gt;()
+
+<span class="a">ngOnChanges</span>() {
+  <span class="c">// fetch from own BFF …</span>
+  <span class="k">this</span>.themes.<span class="a">emit</span>(result)
+}</pre>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px">
+    <div class="box b-slot small">🙈 <b>hidden</b> slot = headless data RC</div>
+    <div class="box b-slot small">📤 outputs are passed <b>in</b> as emitters</div>
+    <div class="box b-slot small">🔤 matched by <b>string</b> → typo = silent</div>
+    <div class="box b-slot small">🪂 no RC assigned → host shows fallback</div>
+  </div>
+</section>
+
+<!-- What the RC does with config -->
+<section>
+  <div class="kicker">Sources ① + ④ · real example</div>
+  <h2>What the RC does with its config</h2>
+  <div class="row">
+    <div style="flex:1.3">
+      <h3 class="muted"><code>workspace-data.component.ts</code></h3>
+<pre class="code" style="font-size:0.48em"><span class="k">export class</span> OneCXWorkspaceDataComponent
+  <span class="k">implements</span> <span class="hl">ocxRemoteComponent, ocxRemoteWebcomponent</span> {
+
+  <span class="t">@Input</span>() <span class="k">set</span> ocxRemoteComponentConfig(c) {
+    <span class="k">this</span>.ocxInitRemoteComponent(c)       <span class="c">// WC flavour → same path</span>
+  }
+
+  ocxInitRemoteComponent(config: RemoteComponentConfig) {
+    <span class="hl"><span class="k">this</span>.baseUrl.next(config.baseUrl)</span>      <span class="c">// → translations loader</span>
+    <span class="hl"><span class="k">this</span>.workspaceApi.configuration = <span class="k">new</span> Configuration({</span>
+      basePath: join(config.baseUrl, apiPrefix) <span class="c">// → own BFF</span>
+    })
+  }
+}</pre>
+    </div>
+    <div class="col" style="padding-top:40px">
+      <div class="box b-rc" style="margin-bottom:14px"><b>1.</b> both contracts → any host</div>
+      <div class="box b-rc" style="margin-bottom:14px"><b>2.</b> <code>baseUrl</code> → <code>ReplaySubject</code> → late readers OK</div>
+      <div class="box b-rc" style="margin-bottom:14px"><b>3.</b> BFF calls relative to <b>own</b> origin</div>
+      <div class="box b-rc"><b>4.</b> i18n: <code>provideTranslationPathFromMeta(import.meta.url)</code> <span class="muted small">(newer way)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PART 5 ============ -->
+<section class="divider">
+  <div class="num">5</div>
+  <h1>Styles <span class="muted">&amp;</span> size</h1>
+  <p class="muted">Isolation and resizing</p>
+</section>
+
+<!-- Style isolation -->
+<section class="stepper">
+  <div class="kicker">Style isolation</div>
+  <h2 style="margin-bottom:12px">Every RC is its own style island</h2>
+  <style>
+    .card { padding: 10px 14px; border-radius: 6px; background: #e2e8f0; color: #334155; font-size: 0.55em; font-weight: 700; margin: 6px 0; transition: all 0.5s ease; border: 2px solid transparent; }
+    .stepper[data-step="1"] .card.app, .stepper[data-step="2"] .card.app, .stepper[data-step="3"] .card.app { background: #2563eb; color: white; }
+    .stepper[data-step="2"] .card.rcc, .stepper[data-step="3"] .card.rcc { background: #ea580c; color: white; }
+    .stepper[data-step="3"] .accent { border-color: #db2777 !important; }
+    .attr { font-family: var(--mono); font-size: 0.45em; color: var(--muted); }
+    .fence { border: 3px solid #db2777; border-radius: 10px; }
+  </style>
+  <div class="row">
+    <div style="flex:1.1">
+      <div class="box b-app" style="padding:16px">
+        <span class="lbl c-app">App content</span>
+        <div class="attr">data-style-id="onecx-workspace|onecx-workspace-ui"</div>
+        <div class="card app accent">.card</div>
+        <div class="card app">.card</div>
+        <div class="box b-slot" style="padding:14px;margin-top:14px">
+          <span class="lbl c-slot">&lt;ocx-slot&gt;</span>
+          <div class="box b-rc" style="padding:12px;position:relative">
+            <span class="lbl c-rc">RC element</span>
+            <div class="attr">data-style-id="onecx-theme|onecx-theme-ui"<br><b style="color:#db2777">data-style-isolation</b></div>
+            <div class="card rcc accent">.card</div>
+            <div style="position:absolute;right:10px;top:10px;font-size:0.5em;font-weight:800;color:#db2777" data-from="1">🛑 App rules stop here</div>
+          </div>
+        </div>
+        <div class="card app">.card</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="tiny muted" style="margin-bottom:4px">&lt;head&gt;</div>
+      <div class="stack">
+        <div class="box small muted" data-until="1" style="text-align:center;padding:30px">nothing loaded yet</div>
+        <div data-from="1">
+<pre class="code" style="font-size:0.42em"><span class="c">/* style[data-app-styles="onecx-workspace|onecx-workspace-ui"] */</span>
+<span class="k">@scope</span> ([data-style-id=<span class="s">"onecx-workspace|…"</span>])
+    <span class="k">to</span> (<span class="hl">[data-style-isolation]</span>) {
+  <span class="a">.card</span> { background: <span class="s">blue</span> }
+  <span class="a">:scope</span> { <span class="t">--accent</span>: <span class="s">pink</span> } <span class="c">/* was :root */</span>
+}</pre>
+          <div data-from="2" style="margin-top:10px">
+<pre class="code" style="font-size:0.42em"><span class="c">/* loaded by the slot for this RC */</span>
+<span class="k">@scope</span> ([data-style-id=<span class="s">"onecx-theme|onecx-theme-ui"</span>])
+    <span class="k">to</span> ([data-style-isolation]) {
+  <span class="a">.card</span> { background: <span class="s">orange</span> }
+}</pre>
+          </div>
+        </div>
+      </div>
+      <div class="stack" style="margin-top:14px">
+        <div class="cap" data-until="1">Slot marks the RC root with <b>its own</b> id + isolation boundary</div>
+        <div class="cap" data-from="1" data-until="2">App's <code>.card</code> matches only <b>between</b> from and to</div>
+        <div class="cap" data-from="2" data-until="3">RC's own sheet styles the RC — one sheet per <code>product|app</code></div>
+        <div class="cap" data-from="3" style="border-color:#db2777;background:#fdf2f8">⚠️ boundary stops <b>selectors</b>, not <b>inheritance</b>: <code>--accent</code> still flows into the RC</div>
+      </div>
+    </div>
+  </div>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+</section>
+
+<!-- Style usage per slot -->
+<section class="stepper">
+  <div class="kicker">Style lifecycle</div>
+  <h2>Styles are counted <b>per slot</b></h2>
+  <style>
+    .usage { display: inline-block; font-family: var(--mono); font-size: 0.5em; padding: 4px 10px; border-radius: 6px; background: var(--slot-bg); border: 2px solid var(--slot); color: var(--slot); margin: 4px; }
+    .sheet { font-family: var(--mono); font-size: 0.5em; padding: 14px; border-radius: 10px; border: 2.5px solid var(--rc); background: var(--rc-bg); transition: all 0.5s; }
+    .stepper[data-step="4"] .sheet { opacity: 0.25; border-style: dashed; text-decoration: line-through; }
+  </style>
+  <div class="row" style="margin-top:20px">
+    <div style="width:420px;display:flex;flex-direction:column;gap:14px">
+      <div class="box" data-lit="1"><b>1.</b> RC created in slot <code>A</code><span class="small muted"> → fetch + add sheet</span></div>
+      <div class="box" data-lit="2"><b>2.</b> same RC in slot <code>B</code><span class="small muted"> → reuse sheet</span></div>
+      <div class="box" data-lit="3"><b>3.</b> slot <code>A</code> destroyed<span class="small muted"> → sheet stays</span></div>
+      <div class="box" data-lit="4"><b>4.</b> slot <code>B</code> destroyed<span class="small muted"> → sheet removed</span></div>
+    </div>
+    <div class="col">
+      <div class="tiny muted">&lt;head&gt;</div>
+      <div class="stack" style="min-height:220px;align-items:start">
+        <div class="box muted small" data-until="1" style="text-align:center;padding:40px">—</div>
+        <div class="sheet" data-from="1">
+          &lt;style data-app-styles="onecx-theme|onecx-theme-ui"&gt;
+          <div style="margin-top:14px;font-family:system-ui;font-size:1.1em">used by:
+            <span class="usage" data-from="1" data-until="3">slot A</span>
+            <span class="usage" data-from="2" data-until="4">slot B</span>
+            <span data-from="4" class="c-bad" style="font-weight:700">nobody</span>
+          </div>
+        </div>
+      </div>
+      <p class="small" style="margin-top:20px">Key = <code>product|app</code> + <b>slot name</b><br><span class="muted">no ghost styles, no premature removal</span></p>
+    </div>
+  </div>
+  <style>.stepper [data-lit] { opacity: 0.35; } .stepper [data-lit].lit { opacity: 1; border-color: var(--slot); background: var(--slot-bg); }</style>
+  <span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span><span class="fragment step"></span>
+</section>
+
+<!-- Resize pipeline -->
+<section class="stepper">
+  <div class="kicker">Slot resizing</div>
+  <h2>The host measures, the RC listens — <span class="c-topic">opt-in</span></h2>
+  <style>
+    .pipe { display: flex; align-items: center; gap: 8px; margin-top: 30px; }
+    .pipe .box { text-align: center; font-size: 0.55em; padding: 12px 8px; }
+    .pipe .ar { color: var(--muted); font-size: 0.8em; }
+    .gate { width: 190px; border: 3px solid var(--bad) !important; background: #fef2f2; transition: all 0.5s; }
+    .stepper[data-step="1"] .gate, .stepper[data-step="2"] .gate { border-color: var(--ok) !important; background: #f0fdf4; }
+  </style>
+  <div class="pipe">
+    <div class="box b-slot" style="width:150px"><b class="c-slot">slot element</b><br>resizes</div><div class="ar">→</div>
+    <div class="box" style="width:150px"><b>ResizeObserver</b></div><div class="ar">→</div>
+    <div class="box" style="width:170px"><b>debounce 100 ms</b><br><span class="muted">starts at −1 × −1</span></div><div class="ar">→</div>
+    <div class="box b-topic" style="width:170px;border-radius:30px"><b class="c-topic">ResizedEvents­Topic</b><br>.publish()</div><div class="ar">→</div>
+    <div class="box gate"><b>gate</b><br><span class="stack"><span data-until="1" class="c-bad">✗ nobody asked → dropped</span><span data-from="1" class="c-ok">✓ name on the list</span></span></div><div class="ar">→</div>
+    <div class="box b-rc" style="width:140px"><b class="c-rc">RC</b><br><span class="stack"><span data-until="1">…silence</span><span data-from="1">gets size</span></span></div>
+  </div>
+  <div class="row" style="margin-top:40px">
+    <div class="col">
+<pre class="code light" style="font-size:0.46em"><span class="c">// window['@onecx/integration-interface'].resizedEvents</span>
+{
+  slot_resized:       [<span data-from="1" class="s">'onecx-shell-vertical-menu'</span>],
+  slot_group_resized: [ ]
+}</pre>
+    </div>
+    <div class="col">
+      <div class="stack">
+        <div class="cap" data-until="1">Slots measure <b>always</b>, but publish is gated → no event spam</div>
+        <div class="cap" data-from="1" data-until="2">RC calls <code>ResizedEventsTopic.requestEvent(SLOT_RESIZED, name)</code><br>→ added to list + <code>REQUESTED_EVENTS_CHANGED</code></div>
+        <div class="cap" data-from="2">Slot re-publishes its <b>current</b> size immediately<br>→ first event = baseline, then every change</div>
+      </div>
+    </div>
+  </div>
+  <span class="fragment step"></span><span class="fragment step"></span>
+</section>
+
+<!-- Interactive resize demo -->
+<section>
+  <div class="kicker">Try it · simulation modelled on the Workspace topbar logo RC</div>
+  <h2>Drag the menu width</h2>
+  <style>
+    #rz-page { display: flex; height: 270px; border: 2px solid var(--shell); border-radius: 10px; background: var(--shell-bg); overflow: hidden; }
+    #rz-box { width: 300px; flex: none; border-right: 3px dashed var(--slot); background: var(--slot-bg); padding: 10px; box-sizing: border-box; position: relative; }
+    #rz-logo { border: 2.5px solid var(--rc); background: var(--rc-bg); border-radius: 8px; padding: 10px; font-weight: 800; color: var(--rc); text-align: center; font-size: 0.7em; transition: width 0.2s; box-sizing: border-box; overflow: hidden; white-space: nowrap; }
+    #rz-log { font-family: var(--mono); font-size: 0.42em; height: 230px; overflow: hidden; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 10px 14px; line-height: 1.6; }
+    #rz-log .drop { color: #f87171; } #rz-log .ok { color: #86efac; } #rz-log .req { color: #93c5fd; }
+    .rz-btn { font: inherit; font-size: 0.55em; padding: 8px 14px; border-radius: 8px; border: 2px solid var(--topic); background: var(--topic-bg); color: var(--topic); font-weight: 700; cursor: pointer; }
+    .rz-btn[disabled] { opacity: 0.5; cursor: default; }
+  </style>
+  <div class="row">
+    <div style="flex:1.2">
+      <div id="rz-page">
+        <div id="rz-box">
+          <div class="tiny c-slot mono" style="margin-bottom:8px">onecx-shell-body-start</div>
+          <div id="rz-logo">◆ OneCX Workspace</div>
+          <div class="tiny muted" style="margin-top:10px" id="rz-variant">regular logo</div>
+        </div>
+        <div style="flex:1;padding:14px" class="small muted">App content…</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;margin-top:16px">
+        <input id="rz-slider" type="range" min="120" max="420" value="300" style="flex:1">
+        <button class="rz-btn" id="rz-request">requestEvent(…)</button>
+        <button class="rz-btn" id="rz-reset" style="border-color:#94a3b8;color:#475569;background:white">reset</button>
+      </div>
+      <div class="tiny muted" style="margin-top:8px">observer callbacks: <b id="rz-raw">0</b> · published: <b id="rz-pub">0</b> · delivered: <b id="rz-del">0</b> · small logo &lt; 235 px</div>
+    </div>
+    <div class="col"><div id="rz-log"></div></div>
+  </div>
+</section>
+
+<!-- Slot vs group -->
+<section>
+  <h2>Slot size vs <span class="c-shell">slot group</span> size</h2>
+  <div class="box b-shell" style="padding:24px 16px 16px;margin-top:20px">
+    <span class="lbl c-shell">ocx-shell-slot-group name="onecx-shell-header" → SLOT_GROUP_RESIZED</span>
+    <div style="display:flex;gap:10px">
+      <div class="box b-slot small" style="width:22%"><span class="lbl c-slot">.start</span>SLOT_RESIZED</div>
+      <div class="box b-slot small" style="flex:1"><span class="lbl c-slot">.center · flex-grow</span>SLOT_RESIZED</div>
+      <div class="box b-slot small" style="width:22%"><span class="lbl c-slot">.end</span>SLOT_RESIZED</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px">
+    <div class="box small">📐 need the <b>region</b>? <br>→ <code>SLOT_GROUP_RESIZED</code> + group name</div>
+    <div class="box small">📏 need <b>your slot</b>? <br>→ <code>SLOT_RESIZED</code> + full slot name</div>
+    <div class="box small" style="border-color:var(--bad)">⚛️ React slot reports <b>no</b> <code>SLOT_RESIZED</code><br><span class="muted">groups (Shell) always do</span></div>
+  </div>
+  <p class="small muted" style="margin-top:20px">Groups also pass <code>slotGroupName</code> as an input to every RC inside.</p>
+</section>
+
+<!-- Shell slot map -->
+<section>
+  <div class="kicker">Reference</div>
+  <h2>Where the Shell offers slots</h2>
+  <style>.sg { border: 2px dashed var(--slot); background: var(--slot-bg); border-radius: 8px; padding: 6px 10px; font-family: var(--mono); font-size: 0.42em; color: var(--slot); font-weight: 700; }</style>
+  <div class="row">
+    <div style="flex:1.4">
+      <div class="box b-shell" style="display:flex;flex-direction:column;gap:6px;padding:12px">
+        <div class="sg">onecx-shell-header .start · .center · .end</div>
+        <div class="sg">onecx-shell-sub-header</div>
+        <div style="display:flex;gap:6px;height:220px">
+          <div class="sg" style="width:110px">onecx-shell-body-start<br>↓ column</div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="sg">onecx-shell-body-header</div>
+            <div class="box b-app" style="flex:1;display:flex;align-items:center;justify-content:center"><span class="small c-app">App (router-outlet)</span></div>
+            <div class="sg">onecx-shell-body-footer</div>
+          </div>
+          <div class="sg" style="width:110px">onecx-shell-body-end<br>↓ column</div>
+        </div>
+        <div class="sg">onecx-shell-footer</div>
+      </div>
+      <div class="sg" style="margin-top:8px;border-style:solid">onecx-shell-extensions <span style="font-weight:400">(plain slot, no group)</span></div>
+    </div>
+    <div class="col">
+      <h3>Legacy names → normalised</h3>
+      <table style="font-size:0.62em;width:100%">
+        <tr><td class="mono">…-vertical-menu</td><td class="mono">body-start.start</td></tr>
+        <tr><td class="mono">…-horizontal-menu</td><td class="mono">header.center</td></tr>
+        <tr><td class="mono">…-header-left</td><td class="mono">header.start</td></tr>
+        <tr><td class="mono">…-header-right</td><td class="mono">header.end</td></tr>
+        <tr><td class="mono">…-sub-header</td><td class="mono">body-header.center</td></tr>
+        <tr><td class="mono">…-footer / page-footer</td><td class="mono">body-footer.start</td></tr>
+      </table>
+      <p class="small" style="margin-top:14px">⚠️ group name ≠ slot<br><span class="muted">assign to <code>header.end</code>, not <code>header</code></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Pitfalls -->
+<section>
+  <h2>Pitfalls cheat sheet</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 20px" class="small">
+    <div class="box">🔇 RC implements <b>neither</b> contract → no config, no error</div>
+    <div class="box">🏷️ web component without <code>elementName</code> → not rendered</div>
+    <div class="box">🔤 typo in input / output name → silently ignored</div>
+    <div class="box">⚛️ React host + Angular RC → error, not rendered</div>
+    <div class="box">💉 <code>REMOTE_COMPONENT_CONFIG</code> → RC must provide it</div>
+    <div class="box">🧩 <code>SLOT_SERVICE</code> missing in host → slot stays empty</div>
+    <div class="box">📏 no <code>requestEvent</code> → no size events</div>
+    <div class="box">🎨 CSS variables cross the isolation boundary</div>
+  </div>
+</section>
+
+<!-- Recap -->
+<section>
+  <h2>Recap</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px">
+    <div class="box b-app"><h3 class="c-app">App vs RC</h3><p class="small">same remote, own styles, own BFF<br><b>RC: slot instead of route</b></p></div>
+    <div class="box b-slot"><h3 class="c-slot">Slot</h3><p class="small">name → RCs from Topic<br><b>spans keep the order</b><br>while loads race</p></div>
+    <div class="box b-rc"><h3 class="c-rc">Data</h3><p class="small">config (once) · inputs/outputs<br>Topics · own BFF via <code>baseUrl</code></p></div>
+  </div>
+  <h3 style="margin-top:44px">Read more · <span class="muted">dev-docs/remote-components/</span></h3>
+  <div style="display:flex;gap:10px;flex-wrap:wrap" class="small">
+    <a class="chip c-slot" href="slot-assignment.adoc">slot-assignment</a>
+    <a class="chip c-slot" href="slot-rendering.adoc">slot-rendering</a>
+    <a class="chip c-slot" href="host-communication.adoc">host-communication</a>
+    <a class="chip c-slot" href="shell-slots-catalogue.adoc">shell-slots-catalogue</a>
+    <a class="chip c-slot" href="slot-size-reporting.adoc">slot-size-reporting</a>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>
+  // Step engine: count visible ".fragment.step" markers on the slide and toggle
+  // [data-from]/[data-until]/[data-lit] elements accordingly.
+  function applySteps(slide) {
+    if (!slide) return;
+    const n = slide.querySelectorAll('.fragment.step.visible').length;
+    slide.dataset.step = n;
+    slide.querySelectorAll('[data-from],[data-until]').forEach((el) => {
+      const from = el.dataset.from !== undefined ? +el.dataset.from : -Infinity;
+      const until = el.dataset.until !== undefined ? +el.dataset.until : Infinity;
+      el.classList.toggle('off', !(n >= from && n < until));
+    });
+    slide.querySelectorAll('[data-lit]').forEach((el) => el.classList.toggle('lit', n >= +el.dataset.lit));
+  }
+
+  Reveal.initialize({ hash: true, slideNumber: 'c/t', width: 1280, height: 760, margin: 0.04, center: false, transition: 'slide' })
+    .then(() => {
+      document.querySelectorAll('.reveal .slides section').forEach(applySteps);
+      applySteps(Reveal.getCurrentSlide());
+    });
+  Reveal.on('slidechanged', (e) => applySteps(e.currentSlide));
+  Reveal.on('fragmentshown', () => applySteps(Reveal.getCurrentSlide()));
+  Reveal.on('fragmenthidden', () => applySteps(Reveal.getCurrentSlide()));
+
+  // Resize demo: real ResizeObserver + 100 ms debounce + opt-in gate, as in SlotComponent / ResizedEventsTopic.
+  (function () {
+    const box = document.getElementById('rz-box');
+    const logo = document.getElementById('rz-logo');
+    const variant = document.getElementById('rz-variant');
+    const slider = document.getElementById('rz-slider');
+    const log = document.getElementById('rz-log');
+    const reqBtn = document.getElementById('rz-request');
+    const counters = { raw: 0, pub: 0, del: 0 };
+    let registered = false;
+    let current = -1;
+    let timer;
+
+    const setCount = (k) => { document.getElementById('rz-' + k).textContent = counters[k]; };
+    const addLog = (msg, cls) => {
+      const line = document.createElement('div');
+      line.className = cls;
+      line.textContent = msg;
+      log.appendChild(line);
+      while (log.children.length > 12) log.removeChild(log.firstChild);
+    };
+    const deliver = (w) => {
+      counters.del++; setCount('del');
+      addLog('✓ RC got SLOT_GROUP_RESIZED { width: ' + w + ' }', 'ok');
+      const small = w < 235;
+      logo.style.width = w > 0 ? (w - 20) + 'px' : '';
+      logo.textContent = small ? '◆' : '◆ OneCX Workspace';
+      variant.textContent = small ? 'small logo (< 235 px)' : 'regular logo';
+    };
+    const publish = (w) => {
+      current = w;
+      counters.pub++; setCount('pub');
+      if (!registered) { addLog('✗ dropped { width: ' + w + ' } — nobody asked', 'drop'); return; }
+      deliver(w);
+    };
+
+    slider.addEventListener('input', () => { box.style.width = slider.value + 'px'; });
+    // Prevent Reveal from hijacking arrow keys while the slider has focus.
+    slider.addEventListener('keydown', (e) => e.stopPropagation());
+
+    new ResizeObserver(() => {
+      counters.raw++; setCount('raw');
+      clearTimeout(timer);
+      timer = setTimeout(() => publish(+slider.value), 100);
+    }).observe(box);
+
+    reqBtn.addEventListener('click', () => {
+      if (registered) return;
+      registered = true;
+      reqBtn.disabled = true;
+      addLog("requestEvent(SLOT_GROUP_RESIZED, 'onecx-shell-body-start')", 'req');
+      addLog('→ REQUESTED_EVENTS_CHANGED → re-publish current size', 'req');
+      counters.pub++; setCount('pub');
+      deliver(current);
+    });
+
+    document.getElementById('rz-reset').addEventListener('click', () => {
+      registered = false;
+      reqBtn.disabled = false;
+      Object.keys(counters).forEach((k) => { counters[k] = 0; setCount(k); });
+      log.innerHTML = '';
+      logo.style.width = '';
+      logo.textContent = '◆ OneCX Workspace';
+      variant.textContent = 'regular logo';
+    });
+  })();
+</script>
+</body>
+</html>

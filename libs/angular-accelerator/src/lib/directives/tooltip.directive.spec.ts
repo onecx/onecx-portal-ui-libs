@@ -1,7 +1,7 @@
 import { TestBed, ComponentFixture, fakeAsync, tick } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { By } from '@angular/platform-browser'
 import { HarnessLoader } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from './tooltip.directive'
@@ -10,6 +10,7 @@ import { OcxTooltipHarness } from '@onecx/angular-accelerator/testing'
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
 	standalone: false,
+	changeDetection: ChangeDetectionStrategy.Eager,
 	template: `
     <button
       class="ocx-tooltip-host ocx-tooltip-host1"
@@ -29,6 +30,7 @@ class TestHostComponent {
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
 	standalone: false,
+	changeDetection: ChangeDetectionStrategy.Eager,
 	template: `
     <button
       class=" ocx-tooltip-host ocx-tooltip-host2"
@@ -48,6 +50,7 @@ class TestHostComponentNoID {
 @Component({
 	// eslint-disable-next-line @angular-eslint/prefer-standalone
 	standalone: false,
+	changeDetection: ChangeDetectionStrategy.Eager,
 	template: `
     <button
       class="ocx-tooltip-host ocx-tooltip-host4"

@@ -1,0 +1,50 @@
+[#additional-breaking-changes]
+= Additional Breaking Changes
+
+The following libs v6 changes are easy to miss because they are not component/service renames covered elsewhere in this guide. Review them and update your application and tests as needed.
+
+[#model-relocation]
+== User/Page Model Types Moved to @onecx/integration-interface
+
+`PageInfo`, `UserProfile`, `AvatarInfo` and `UserPerson` are no longer exported from `@onecx/portal-integration-angular`'s model folder. Import them from `@onecx/integration-interface` instead (this package already shipped these types in v5, so the import can be switched before or after the version upgrade):
+
+.Before:
+[source, typescript]
+----
+import { PageInfo } from '@onecx/portal-integration-angular';
+import { UserProfile, AvatarInfo, UserPerson } from '@onecx/portal-integration-angular';
+----
+
+.After:
+[source, typescript]
+----
+import { PageInfo } from '@onecx/integration-interface';
+import { UserProfile, AvatarInfo, UserPerson } from '@onecx/integration-interface';
+----
+
+[IMPORTANT]
+====
+The `Portal` and `MenuItem` DTO model types (`libs/portal-integration-angular/.../model/portal.ts` and `menu-item.model.ts` in v5) were dropped entirely in v6 with no replacement export. If your application still references these types directly, replace that usage with the corresponding workspace/menu remote API types, or remove the dependency on them.
+====
+
+[#test-harness-renames]
+== PrimeNG Test Harness Renames and Path Changes
+
+Several Angular CDK test harnesses for PrimeNG components in `@onecx/angular-testing` were renamed or moved:
+
+* `PDropdownHarness` → renamed to `PSelectHarness` (file renamed from `p-dropdown.harness.ts` to `primeng/p-select.harness.ts`)
+* `PTableCheckboxHarness` → import path changed from `@onecx/angular-testing` (`p-tableCheckbox.harness.ts`) to the `primeng` subfolder (`primeng/p-tableCheckbox.harness.ts`); the class name is unchanged
+
+Update your spec files accordingly:
+
+.Before:
+[source, typescript]
+----
+import { PDropdownHarness } from '@onecx/angular-testing';
+----
+
+.After:
+[source, typescript]
+----
+import { PSelectHarness } from '@onecx/angular-testing';
+----

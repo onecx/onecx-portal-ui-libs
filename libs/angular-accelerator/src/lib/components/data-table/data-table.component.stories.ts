@@ -2,22 +2,22 @@ import { BrowserModule } from '@angular/platform-browser'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular'
 import { RouterModule } from '@angular/router'
-import { TableModule } from 'primeng/table'
-import { ButtonModule } from 'primeng/button'
-import { MultiSelectModule } from 'primeng/multiselect'
+import { TableModule } from '@openng/optimus-ui/table'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { MultiSelectModule } from '@openng/optimus-ui/multiselect'
 import { UserService } from '@onecx/angular-integration-interface'
 import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { DataTableComponent } from './data-table.component'
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { ColumnType } from '../../model/column-type.model'
-import { MenuModule } from 'primeng/menu'
-import { CheckboxModule } from 'primeng/checkbox'
+import { MenuModule } from '@openng/optimus-ui/menu'
+import { CheckboxModule } from '@openng/optimus-ui/checkbox'
 import { FormsModule } from '@angular/forms'
 import { DynamicLocaleId, HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip'
-import { SkeletonModule } from 'primeng/skeleton'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
+import { SkeletonModule } from '@openng/optimus-ui/skeleton'
 import { action } from 'storybook/actions'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
@@ -125,6 +125,17 @@ const defaultComponentArgs = {
   viewPermission: 'TEST_MGMT#TEST_VIEW',
 }
 
+const rowGroupingArgs = {
+  rowGrouping: { columnId: 'product' },
+  rows: [
+    { id: 1, product: 'Apples', amount: 2, available: true, expiration: new Date(2021, 5, 4) },
+    { id: 2, product: 'Apples', amount: 4, available: false, expiration: new Date(2021, 6, 4) },
+    { id: 3, product: 'Bananas', amount: 10, available: true, expiration: new Date(2021, 7, 4) },
+    { id: 4, product: 'Bananas', amount: 7, available: true, expiration: new Date(2021, 8, 4) },
+    { id: 5, product: 'Strawberries', amount: 5, available: false, expiration: new Date(2021, 9, 4) },
+  ],
+}
+
 const dataTableSelectionArgs = {
   selectionChanged: {
     observed: () => true,
@@ -162,6 +173,22 @@ export const WithMockData = {
   }),
   args: {
     ...defaultComponentArgs,
+  },
+}
+
+export const WithTooltipData = {
+  render: WithMockData.render,
+  args: {
+    ...defaultComponentArgs,
+    columns: defaultComponentArgs.columns.map((column) => ({
+      ...column,
+      tooltip: {
+        product: 'Name of the product',
+        amount: 'Number of items in stock',
+        expiration: 'Date after which the product must not be sold',
+      }[column.id],
+      tooltipKey: column.id === 'available' ? 'datatable.availableTooltip' : undefined,
+    })),
   },
 }
 
@@ -660,7 +687,7 @@ const RowExpansionTemplate: StoryFn<DataTableComponent> = (args) => ({
       (rowCollapsed)="rowCollapsed($event)"
     >
       <ng-template pTemplate="expansion" let-rowObject="rowObject">
-        <div class="p-3 surface-50 border-round">
+        <div class="p-3 bg-surface-50 rounded-border">
           <p class="m-0 mb-2"><strong>Product:</strong> {{ rowObject.product }}</p>
           <p class="m-0 mb-2"><strong>Amount:</strong> {{ rowObject.amount }}</p>
           <p class="m-0"><strong>Available:</strong> {{ rowObject.available }}</p>
@@ -710,10 +737,10 @@ const CaptionTemplateStory: StoryFn<DataTableComponent> = (args) => ({
   },
   template: `
     <ng-template #captionTpl>
-      <div class="flex justify-content-between align-items-center w-full">
+      <div class="flex justify-between items-center w-full">
         <div>
           <p class="text-xl font-bold">{{ 'OCX_DATA_TABLE_CAPTION.TITLE' | translate }}</p>
-          <p class="text-md">{{ 'OCX_DATA_TABLE_CAPTION.DESCRIPTION' | translate }}</p>
+          <p class="text-base">{{ 'OCX_DATA_TABLE_CAPTION.DESCRIPTION' | translate }}</p>
         </div>
       </div>
     </ng-template>
@@ -732,6 +759,36 @@ export const WithCaptionTemplate = {
   render: CaptionTemplateStory,
   args: {
     ...defaultComponentArgs,
+  },
+}
+
+const RowGroupingStory: StoryFn<DataTableComponent> = (args) => ({
+  props: {
+    ...args,
+  },
+  template: `
+    <ocx-data-table
+      [columns]="columns"
+      [rows]="rows"
+      [rowGrouping]="rowGrouping"
+      [paginator]="paginator"
+      [emptyResultsMessage]="emptyResultsMessage"
+    >
+      <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount">
+        <div class="flex justify-content-between align-items-center w-full">
+          <span class="font-bold">{{ groupKey }}</span>
+          <span class="text-sm text-gray-500">{{ memberCount }} {{ memberCount === 1 ? 'item' : 'items' }}</span>
+        </div>
+      </ng-template>
+    </ocx-data-table>
+  `,
+})
+
+export const WithRowGrouping = {
+  render: RowGroupingStory,
+  args: {
+    ...defaultComponentArgs,
+    ...rowGroupingArgs,
   },
 }
 

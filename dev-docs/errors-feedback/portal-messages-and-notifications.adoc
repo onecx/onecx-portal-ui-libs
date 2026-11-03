@@ -1,0 +1,101 @@
+= Portal messages & notifications
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+How does an App show a toast (a Portal Message) to the user, and what is a Notification: and why does a message only actually appear if the Shell's toast Remote Component is placed on the page?
+
+== Why it exists
+
+An App needs to tell the user something happened, "saved", "something failed", "here is a warning", without owning the toast itself. If every App rendered its own toast, several Apps on one page would each draw a separate stack and fight over placement. Instead the message is a Topic: an App publishes it, and exactly one well-known consumer, the Shell's toast Remote Component, collects and displays it. The same split applies to the `notification` Topic, which carries a structured cross-App notification.
+
+== How it works
+
+Both mechanisms are a Topic that an App publishes and the page (or another App) consumes. The *display* of the message, though, is deliberately owned by a single Remote Component in the Shell.
+
+=== The `message` Topic: toast messages
+
+. An App builds a message. In the libraries the message shape is the link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`PortalMessage`], and the payload is assembled by link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`buildPortalMessagePayload(severity, message, summary, detail)`], which merges the severity and the (optionally translated) `summary`/`detail` into the message.
+. The App publishes the payload to the `message` Topic.
+. The Shell's *toast Remote Component*, a PrimeNG `<p-toast>`, subscribes to the `message` Topic and pushes each received message into PrimeNG's `MessageService`.
+
+The critical consequence of "a Remote Component displays it": the component only exists in the DOM if the Workspace *assigns it to a Slot*. If no Slot hosts the toast Remote Component, a published message has no viewer and simply does not appear. Publishing to the Topic is therefore not sufficient on its own: the Shell must have the toast component mounted for the message to be visible.
+
+[source,mermaid]
+----
+flowchart TD
+  A["App: buildPortalMessagePayload()"] --> B["message$.publish(payload)"]
+  B --> C{"Shell toast Remote Component<br/>assigned to a Slot?"}
+  C -- yes --> D["p-toast / MessageService.add()"]
+  C -- no --> E["no viewer; message not shown"]
+----
+
+=== The `notification` Topic: cross-App messages
+
+A link:{libs}/integration-interface/src/lib/topics/notification/v1/notification.model.ts[`Notification`] is a structured cross-App message: it carries a `type`, an `address`, HTTP-style `headers`, and a `body` with sender/receiver ids, a `persist` flag and `contentMeta`. It is meant to be read by *another App* (or by a later stage of the page), not rendered directly by the Shell. The libraries expose a link:{libs}/integration-interface/src/lib/services/notification.service.ts[`NotificationService`] that owns the `notification` Topic so an App can publish to it. The current Shell has no notification UI; the Topic is consumed by Apps.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries define the Topics, the payload shape, and the convenience services; they do not render anything.
+
+* link:{libs}/integration-interface/src/lib/topics/message/v1/message.topic.ts[`MessageTopic`]: `Topic<Message>`, name `message`, version 1, with the link:{libs}/integration-interface/src/lib/topics/message/v1/message.model.ts[`Message`] model (`severity`, `summary`, `detail`, `life`, `sticky`, `closable`, `icon`, …).
+* link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`buildPortalMessagePayload` / `buildTranslatedMessage` / `resolveTranslation`] and the `PortalMessage` type: the framework-agnostic helpers that build and translate the payload.
+* Angular: link:{libs}/angular-integration-interface/src/lib/services/portal-message.service.ts[`PortalMessageService`]: `success`/`info`/`error`/`warning` helpers that translate `summaryKey`/`detailKey` and publish to the `message` Topic.
+* Angular: link:{libs}/angular-integration-interface/src/lib/services/notification.service.ts[`NotificationService`]: an injectable wrapper around the integration-interface `NotificationService` exposing the `notificationTopic`.
+* React: link:{libs}/react-integration-interface/src/lib/contexts/portalMessageContext.tsx[`PortalMessageProvider` / `usePortalMessage`]: the React equivalent of `PortalMessageService`, using the same `buildPortalMessagePayload`/`resolveTranslation` helpers.
+
+=== Shell side
+
+The Shell provides the single consumer that turns a published message into a toast, and it is gated on being placed in a Slot.
+
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`OneCXShellToastComponent`]: selector `ocx-shell-toast`. In its constructor it subscribes to `PortalMessageService.message$` and calls PrimeNG's `MessageService.add(message)` for each message; its template is just `<p-toast>`.
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[`shell-toast.component.bootstrap.ts`]: bootstraps the component as a remote/web component (`ocx-shell-toast-component`) so it can be loaded as a Remote Component.
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.main.ts[`shell-toast.component.main.ts`]: the entry that imports the bootstrap.
+
+== Angular / React
+
+The *publishing* side is symmetric. Angular Apps use link:{libs}/angular-integration-interface/src/lib/services/portal-message.service.ts[`PortalMessageService`]; React Apps use link:{libs}/react-integration-interface/src/lib/contexts/portalMessageContext.tsx[`usePortalMessage`]. Both publish the same payload to the same `message` Topic, so an Angular and a React App can share one toast. The *consumer* (the Shell's `p-toast`) is Angular and PrimeNG-based; a React Shell would provide its own equivalent Remote Component that subscribes to the Topic. There is no React `NotificationService`: the notification helper is currently Angular-only.
+
+== Edge cases & pitfalls
+
+* *A message is only shown if the toast Remote Component is in a Slot.* The `message` Topic has no built-in fallback viewer. If the Workspace does not assign the Shell's toast Remote Component to a Slot, publishing a message produces no visible toast. This is the difference between "published" and "shown".
+* *Translation is best-effort.* `summaryKey`/`detailKey` are only resolved when a translation is available; a missing key leaves `summary`/`detail` `undefined` (the helper returns the raw key only when a translate function is missing, and `undefined` when the key itself is absent). A message with only a `summaryKey` and no translation shows no summary text.
+* *PrimeNG does not change-detect automatically for toasts.* The Shell's toast component calls `detectChanges()` inside a `setTimeout` after adding a message; PrimeNG otherwise delays stacking/pushing messages until change detection runs.
+* *A Notification is not a toast.* The `notification` Topic and the `message` Topic are different: a Notification is structured data for another App (with `address`, `headers`, `body`, `persist`), while a Portal Message is a user-facing toast. Publishing a Notification does not show a toast, and vice versa.
+
+== Debugging
+
+* *No toast appears even though the App published.* The Shell only shows a message that reaches the toast Remote Component, and that component is only mounted when the Workspace assigns it to a Slot (link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`OneCXShellToastComponent`]). Confirm the `ocx-shell-toast` remote is present in the DOM; if it is absent, the Workspace has not assigned it, and no amount of publishing will render a toast. This is the most common cause.
+* *A toast appears but stacked, delayed, or blank.* The Shell's toast component forces change detection with `setTimeout(() => this.cdr.detectChanges())` after each `messageService.add(message)`, because PrimeNG does not detect toasts automatically. If messages arrive faster than a frame, they are queued and rendered together when detection runs; a missing summary means the `summaryKey` had no translation (see *Edge cases*).
+* *Verify what an App actually published.* The payload the App builds with `buildPortalMessagePayload` is what the `message` Topic carries (link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`buildPortalMessagePayload`]). Read the Topic value from `window` or the Topic inspector to check `severity`, `summary` and `detail` before suspecting the Shell.
+* *A Notification "does nothing".* The `notification` Topic has no Shell UI; it is for another App. Check the consuming App subscribed to the Topic. If no App consumes it, publishing is expected to have no visible effect.
+
+General Topic inspection is in Area 13 (Diagnostics).
+
+== Related Units
+
+* link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the App-load-failure path publishes a Portal Message (the "remote load error" toast).
+* Area 6, Remote Components & Slots, how the toast Remote Component is assigned to a Slot and rendered.
+* Area 10, Localization, where the `summaryKey`/`detailKey` translations come from.
+* Area 1, Integration Contract & Topics, the delivery mechanism behind the `message` and `notification` Topics.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/message/v1/message.topic.ts[`MessageTopic`]
+* link:{libs}/integration-interface/src/lib/topics/message/v1/message.model.ts[`Message`]
+* link:{libs}/integration-interface/src/lib/utils/portal-message.utils.ts[`PortalMessage`, `buildPortalMessagePayload`, `resolveTranslation`, `buildTranslatedMessage`]
+* link:{libs}/angular-integration-interface/src/lib/services/portal-message.service.ts[`PortalMessageService` (Angular)]
+* link:{libs}/react-integration-interface/src/lib/contexts/portalMessageContext.tsx[`PortalMessageProvider` / `usePortalMessage` (React)]
+* link:{libs}/integration-interface/src/lib/topics/notification/v1/notification.topic.ts[`NotificationTopic`]
+* link:{libs}/integration-interface/src/lib/topics/notification/v1/notification.model.ts[`Notification`]
+* link:{libs}/integration-interface/src/lib/services/notification.service.ts[`NotificationService`]
+* link:{libs}/angular-integration-interface/src/lib/services/notification.service.ts[`NotificationService` (Angular)]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.ts[`OneCXShellToastComponent` (Shell)]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.bootstrap.ts[`shell-toast.component.bootstrap.ts` (Shell)]
+* link:{shell}/src/app/remotes/shell-toast/shell-toast.component.main.ts[`shell-toast.component.main.ts` (Shell)]

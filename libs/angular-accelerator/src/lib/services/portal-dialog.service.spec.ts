@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { CommonModule } from '@angular/common'
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, inject } from '@angular/core'
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, Output, inject, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { DialogService, DynamicDialogModule, DynamicDialogRef } from 'primeng/dynamicdialog'
+import { DialogService, DynamicDialogModule, DynamicDialogRef } from '@openng/optimus-ui/dynamicdialog'
 import { Observable, of, Subscription } from 'rxjs'
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
@@ -12,7 +12,7 @@ import {
   provideShellCapabilityServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { DivHarness, InputHarness, provideTranslateTestingService } from '@onecx/angular-testing'
-import { PrimeIcons } from 'primeng/api'
+import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DialogContentHarness, DialogFooterHarness } from '../../../testing'
 import { AngularAcceleratorModule } from '../angular-accelerator.module'
 import { DialogContentComponent } from '../components/dialog/dialog-content/dialog-content.component'
@@ -34,6 +34,7 @@ import { withDocumentUndefined } from '../../test-setup'
 // This component is in charge of dialog display
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<h1>BaseTestComponent</h1><button id="showDialogButton" (click)="show('title', 'message', 'button1', 'button2')">Show Dialog</button>`,
 })
 class BaseTestComponent implements OnDestroy {
@@ -84,6 +85,7 @@ class BaseTestComponent implements OnDestroy {
 // This component should be displayed for testing inputs
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<div class="testHeader">{{ header }}</div>`,
 })
 class TestWithInputsComponent {
@@ -93,6 +95,7 @@ class TestWithInputsComponent {
 // This component should be displayed for testing result manipulation
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<h1>DialogResultTestComponent</h1>`,
 })
 class DialogResultTestComponent implements DialogResult<string> {
@@ -106,6 +109,7 @@ class DialogResultTestComponent implements DialogResult<string> {
 // Each time button is clicked, dialogResult is increased by 1
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<h1>DialogButtonClickedWithResultComponent</h1>`,
 })
 class DialogButtonClickedWithResultComponent implements DialogResult<number>, DialogButtonClicked {
@@ -147,6 +151,7 @@ class DialogButtonClickedWithResultComponent implements DialogResult<number>, Di
 // This component should be displayed for testing primary button enablement
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<h1>DialogPrimaryButtonDisabledComponent</h1>`,
 })
 class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisabled {
@@ -157,6 +162,7 @@ class DialogPrimaryButtonDisabledComponent implements DialogPrimaryButtonDisable
 // This component should be displayed for testing secondary button enablement
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<h1>DialogSecondaryButtonDisabledComponent</h1>`,
 })
 class DialogSecondaryButtonDisabledComponent implements DialogSecondaryButtonDisabled {
@@ -172,6 +178,7 @@ interface NameAndSurnameObject {
 // This component should be displayed for testing every part of the PortalDialogService feature
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `<div>
     <h1>CompleteDialogComponent</h1>
     @if (!isNameValid) {
@@ -444,33 +451,33 @@ describe('PortalDialogService', () => {
     fixture.componentInstance.show(
       'title',
       'message',
-      { key: 'BUTTON', icon: PrimeIcons.TIMES },
-      { key: 'BUTTON', icon: PrimeIcons.TRASH }
+      { key: 'BUTTON', icon: OpenngIcons.TIMES },
+      { key: 'BUTTON', icon: OpenngIcons.TRASH }
     )
 
     const footerHarness = await rootLoader.getHarness(DialogFooterHarness)
     const primaryButtonLabel = await footerHarness.getPrimaryButtonLabel()
     const primaryButtonIcon = await footerHarness.getPrimaryButtonIcon()
     expect(primaryButtonLabel).toBe(translations['BUTTON'])
-    expect(primaryButtonIcon).toBe(PrimeIcons.TIMES)
+    expect(primaryButtonIcon).toBe(OpenngIcons.TIMES)
 
     const secondaryButtonLabel = await footerHarness.getSecondaryButtonLabel()
     const secondaryButtonIcon = await footerHarness.getSecondaryButtonIcon()
     expect(secondaryButtonLabel).toBe(translations['BUTTON'])
-    expect(secondaryButtonIcon).toBe(PrimeIcons.TRASH)
+    expect(secondaryButtonIcon).toBe(OpenngIcons.TRASH)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as string and icon', async () => {
     jest.spyOn(pDialogService, 'open')
 
-    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: PrimeIcons.TIMES }, 'button1', 'button2')
+    fixture.componentInstance.show('title', { message: 'MESSAGE', icon: OpenngIcons.TIMES }, 'button1', 'button2')
 
     const contentHarness = await rootLoader.getHarness(DialogContentHarness)
     const dialogMessageContentHarness = await contentHarness.getDialogMessageContent()
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual(translations['MESSAGE'])
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain(PrimeIcons.TIMES)
+    expect(icon).toContain(OpenngIcons.TIMES)
   })
 
   it('should display dialog with message and icon if DialogMessage provided as TranslationKey and icon', async () => {
@@ -478,7 +485,7 @@ describe('PortalDialogService', () => {
 
     fixture.componentInstance.show(
       'title',
-      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: PrimeIcons.TIMES },
+      { message: { key: 'MESSAGE_PARAM', parameters: { val: 'dialogMessageParam' } }, icon: OpenngIcons.TIMES },
       'button1',
       'button2'
     )
@@ -488,7 +495,7 @@ describe('PortalDialogService', () => {
     const message = await dialogMessageContentHarness?.getMessageContent()
     expect(message).toEqual('myMessage dialogMessageParam')
     const icon = await dialogMessageContentHarness?.getIconValue()
-    expect(icon).toContain(PrimeIcons.TIMES)
+    expect(icon).toContain(OpenngIcons.TIMES)
   })
 
   it('should display dialog with custom component if provided', async () => {

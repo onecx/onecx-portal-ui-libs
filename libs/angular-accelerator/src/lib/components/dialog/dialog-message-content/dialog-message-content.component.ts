@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 
 @Component({
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: `./dialog-message-content.component.html`,
 })
 export class DialogMessageContentComponent {

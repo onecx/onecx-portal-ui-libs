@@ -11,7 +11,7 @@ describe('Theme overrides typing & behavior', () => {
     displayName: 'OneCX',
     overrides: [
       {
-        type: 'PRIMENG',
+        type: 'OPTIMUS',
         value:
           '{"semantic":{ "primary": {"500": "#3b82f6"},"extend":{"onecx":{"topbar": {"bg":{"color":"#3b82f6"}}}}}}',
       },
@@ -22,12 +22,12 @@ describe('Theme overrides typing & behavior', () => {
     ],
   };
 
-  it('should classify overrides as PRIMENG or CSS using the enum', () => {
+  it('should classify overrides as OPTIMUS or CSS using the enum', () => {
     // Treat incoming data as ThemeOverride[] at runtime
     const overrides = theme.overrides as ThemeOverride[];
 
-    // First override is PRIMENG (JSON string to parse)
-    expect(overrides[0].type).toBe(OverrideType.PRIMENG);
+    // First override is OPTIMUS (JSON string to parse)
+    expect(overrides[0].type).toBe(OverrideType.OPTIMUS);
     expect(typeof overrides[0].value).toBe('string');
 
     // Second override is CSS (raw string)

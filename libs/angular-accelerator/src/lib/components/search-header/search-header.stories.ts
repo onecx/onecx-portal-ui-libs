@@ -3,12 +3,12 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
 import { Meta, StoryFn, applicationConfig, argsToTemplate, moduleMetadata } from '@storybook/angular'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { ButtonModule } from 'primeng/button'
-import { SelectModule } from 'primeng/select'
-import { InputTextModule } from 'primeng/inputtext'
-import { MenuModule } from 'primeng/menu'
-import { SkeletonModule } from 'primeng/skeleton'
+import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
+import { ButtonModule } from '@openng/optimus-ui/button'
+import { SelectModule } from '@openng/optimus-ui/select'
+import { InputTextModule } from '@openng/optimus-ui/inputtext'
+import { MenuModule } from '@openng/optimus-ui/menu'
+import { SkeletonModule } from '@openng/optimus-ui/skeleton'
 import { DynamicPipe } from '../../pipes/dynamic.pipe'
 import { StorybookTranslateModule } from '../../storybook-translate.module'
 import { PageHeaderComponent, Action } from '../page-header/page-header.component'
@@ -16,10 +16,10 @@ import { StorybookBreadcrumbModule } from './../../storybook-breadcrumb.module'
 import { SearchHeaderComponent } from './search-header.component'
 import { provideHttpClient } from '@angular/common/http'
 import { StorybookThemeModule } from '../../storybook-theme.module'
-import { TooltipModule } from 'primeng/tooltip'
-import { FloatLabelModule } from 'primeng/floatlabel'
+import { TooltipModule } from '@openng/optimus-ui/tooltip'
+import { FloatLabelModule } from '@openng/optimus-ui/floatlabel'
 import { action } from 'storybook/actions'
-import { TagModule } from 'primeng/tag'
+import { TagModule } from '@openng/optimus-ui/tag'
 import { provideConfigurationServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
 import { AdvancedDirective } from '../../directives/advanced.directive'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
@@ -106,7 +106,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -120,7 +120,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -134,7 +134,7 @@ export const WithCustomTemplates = {
                     id="name"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'Name'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -168,7 +168,7 @@ export const WithViewMode = {
                     id="basic"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'basic'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -182,7 +182,7 @@ export const WithViewMode = {
                     id="advanced"
                     pInputText
                     type="text"
-                    class="w-18rem"
+                    class="w-[18rem]"
                     [ocxTooltip]="'advanced'"
                     tooltipPosition="top"
                     tooltipEvent="hover"
@@ -284,7 +284,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
                   id="searchInput"
                   pInputText
                   type="text"
-                  class="w-18rem"
+                  class="w-[18rem]"
                   placeholder="Enter search term"
                 />
                 <label for="searchInput">Search Term</label>
@@ -292,7 +292,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
             </div>
           </form>
         </ocx-search-header>
-        <div class="mb-4 p-4 surface-card border-round shadow-1">
+        <div class="mb-4 p-4 bg-surface-0 rounded-border shadow-sm">
           <div class="mb-3 flex gap-2">
             <p-button label="Loading" (onClick)="applyLoading()"></p-button>
             <p-button label="Results Found" (onClick)="applyLoadedWithResults()"></p-button>
@@ -303,7 +303,7 @@ const SearchNoResultsTemplate: StoryFn<any> = (args) => {
             <p-tag [value]="loading() ? 'Loading' : (searchResultsCount() && searchResultsCount() > 0 ? 'Results Found' : 'No Results')" [severity]="loading() ? 'warning' : (searchResultsCount() && searchResultsCount() > 0 ? 'success' : 'danger')" class="ml-2"></p-tag>
             <span class="ml-3">Count: {{ searchResultsCount() ?? '-' }}</span>
           </div>
-          <p class="text-sm text-600">Use buttons to switch among Loading, Results Found, and No Results states.</p>
+          <p class="text-sm text-surface-600">Use buttons to switch among Loading, Results Found, and No Results states.</p>
         </div>
       </div>
     `,

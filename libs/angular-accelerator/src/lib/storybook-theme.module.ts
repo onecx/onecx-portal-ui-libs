@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
-import { providePrimeNG } from 'primeng/config'
+import { provideOptimus } from '@openng/optimus-ui/config'
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async'
-import { CustomPreset } from '@onecx/angular-utils/theme/primeng'
+import { CustomPreset } from '@onecx/angular-utils/theme/optimus'
 
 /**
   A utility module adding theme for Storybook stories
@@ -9,7 +9,7 @@ import { CustomPreset } from '@onecx/angular-utils/theme/primeng'
 @NgModule({
   providers: [
     provideAnimationsAsync(),
-    providePrimeNG({
+    provideOptimus({
       theme: {
         preset: CustomPreset,
         options: { darkModeSelector: false },

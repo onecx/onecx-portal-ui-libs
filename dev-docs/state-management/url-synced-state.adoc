@@ -1,0 +1,129 @@
+= URL-synced state (fragment parameters)
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does an NgRx App keep a slice of its state in sync with the URL, and why does OneCX serialise that state into the URL fragment (`#…`) instead of the query string (`?…`)?
+
+== Why it exists
+
+Some App state is *derivable from the URL*: a selected tab, a sort order, an open filter. An App wants to read that state back on page load and to reflect it in the address bar when the user changes it. The obvious Angular tool for this is the query string. But a OneCX page is not a single app: the Shell and one or more Micro Front Ends share one `window.location` (Area 7). A fragment is the only part of a URL that is **never sent to the server**. The browser strips it before building the request. Fragments are still part of the shared client-side URL (`window.location.hash`), so the Shell and every Micro Front End can read and modify them; they are not an isolation boundary or "app-private" storage. The NgRx helpers in this Unit implement a store ↔ URL-fragment round-trip, plus the router-store filters that decide *which* URL changes matter.
+
+The libraries ship the query-params variants too, but they are **deprecated** in favour of the fragment variants (see the `@deprecated` JSDoc and the Known issues below). This Unit documents the fragment behaviour as the current mechanism; the deprecated query-params helpers are the pointer to the replacement.
+
+== How it works
+
+There are two halves: a *writer* (an effect that serialises store state into the URL fragment) and a set of *filters* (operators over `RouterNavigatedAction` that decide which URL changes an effect should react to).
+
+=== The writer: `createFragmentParamsEffect`
+
+link:{libs}/ngrx-accelerator/src/lib/utils/effects/create-fragment-params-effect.ts[`createFragmentParamsEffect`] builds an NgRx effect with the shape:
+
+[source,typescript]
+----
+createFragmentParamsEffect(actions$, actionType, router, activatedRoute, reducer)
+----
+
+where `reducer` is a plain `(state, action) => state` the App supplies. The effect:
+
+. filters `actions$` to the given `actionType` with `ofType(actionType)`;
+. pairs each action with the latest `activatedRoute.fragment` via `concatLatestFrom(() => activatedRoute.fragment)`;
+. in a `tap`, if there is no fragment yet it does nothing; otherwise it
+.. attempts to compute `fragmentPrefix = fragment.split('?')[0] + '?'`: intended as the part of the fragment before any `?` (a named anchor like `#myAnchor`) plus the `?`; however the implementation does not strip a named-anchor prefix when parsing;
+.. parses the fragment parameters by calling `new URLSearchParams(fragment)` (i.e. it passes the full fragment string) to build the param set;
+.. runs the App's `reducer` over those params to produce the *next* set of parameters;
+.. serialises them back to a query string with a small `getUrlParams` helper (when serialising arrays it emits repeated parameter keys; `undefined`/`null` become empty strings);
+.. calls `router.navigate([], { relativeTo: activatedRoute, fragment: fragmentPrefix + formattedFragmentParams, replaceUrl: true, onSameUrlNavigation: 'reload' })`.
+
+The effect is registered with `{ dispatch: false }`, so it only *writes the URL* and does not re-enter the action stream. `replaceUrl: true` updates the URL without a new history entry: the fragment mirrors the store rather than being a navigation of its own. `onSameUrlNavigation: 'reload'` makes the router still run when the fragment alone changes, so the read side (see below) fires.
+
+The net round-trip: a store action → the effect → the URL fragment changes → the router emits a `RouterNavigatedAction` → the App's read effect (see "The filters") reacts.
+
+=== The filters: which URL changes matter
+
+The write side is only half the contract. An App also needs to *read* the URL: it wants its read effects to fire only when the URL part that matters to them actually changed, and only when the App is the one that owns the current route. `ngrx-accelerator` ships three such operators, all over `RouterNavigatedAction` (the router-store action). Two of them compare the action's URL with the previous router state captured via `withLatestFrom(router.events)` filtered to `RoutesRecognized`; the scope filter instead reads the current `router.routerState` directly:
+
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-fragment-params-changed.ts[`filterOutFragmentParamsHaveNotChanged(router, zodType, allowEmptyFragmentParamsList = false)`], passes a `RouterNavigatedAction` only if the *fragment* parameters actually changed. It extracts the fragment's `?…` params (`fragment.split('?')[1]`), parses the previous and current sets, validates both against the supplied Zod schema (`zodType.safeParse`) and keeps the action only when the two parsed objects differ (compared with `fast-deep-equal`). Note: the reader helper builds the parsed object with `Object.fromEntries(new URLSearchParams(queryString))`, which keeps only the final value for any repeated parameter key, repeated keys therefore do not round-trip through the documented read/write path. If the schema rejects either side, the action is dropped. `allowEmptyFragmentParamsList` opts in to treating "no fragment params at all" as a valid (empty) state.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-only-fragment-params-changed.ts[`filterOutOnlyFragmentParamsChanged(router)`]: the opposite filter. It passes an action only when the *path* changed, i.e. when `previousRouterState.snapshot.url.split('#')[0] !== action.payload.event.urlAfterRedirects.split('#')[0]`. In other words it drops navigations that are pure fragment changes. Use it when an effect should run on real navigations but *not* re-run just because the fragment moved (which `createFragmentParamsEffect` itself triggers).
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-navigated-to.ts[`filterForNavigatedTo(router, component)`]: the scope filter. It passes an action only when the given `component` is the active route, by walking `router.routerState.root` recursively (`checkForComponent`). This is what keeps an App's read effects from firing for navigations that the App does not own (e.g. when the Shell navigates to another MFE, or back/forward lands the user somewhere else).
+
+The intended composition is: `actions$ | filterForNavigatedTo(router, MyComponent) | filterOutOnlyFragmentParamsChanged(router)` for the "the URL really moved to my route" effects, and `... | filterOutFragmentParamsHaveNotChanged(router, schema)` for the "the fragment changed, re-sync the store" read effect.
+
+=== Why fragment, not query, parameters
+
+The query-string helpers, `createQueryParamsEffect`, `filterOutQueryParamsHaveNotChanged`, `filterOutOnlyQueryParamsChanged`, do the same job on the query string. They are all marked `@deprecated` in the code, with the JSDoc pointing at the fragment variants as the replacement. The deprecation was introduced together with the fragment variants in commit `84c808ed` ("chore: create effect to manage uri params (#1205)").
+
+The reason for the switch is the property the query string does not have in a OneCX page: *a fragment is not sent to the server*. The query string is. In a OneCX page the Shell and every MFE share the same URL, and the backend (or the Shell's BFF) sees the query string of the whole page. An App keeping state in the query string would therefore:
+
+* leak its state to the backend / BFF and to the network,
+* collide with the query parameters the Shell or the backend relies on, and
+* leak across MFEs that share the same address bar.
+
+The fragment fixes the server-leak concern but is still shared client-side state: the Shell and other MFEs can read and modify it. The libraries reflect the trade-off by deprecating the query-params helpers and promoting the fragment variants as the current API.
+
+== Libs side / Shell side
+
+=== Libs side
+
+All of this lives in link:{libs}/ngrx-accelerator[`@onecx/ngrx-accelerator`]:
+
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/create-fragment-params-effect.ts[`createFragmentParamsEffect`]: the writer (and its `getUrlParams` helper, in the same file).
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-fragment-params-changed.ts[`filterOutFragmentParamsHaveNotChanged`]: the "fragment actually changed" filter.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-only-fragment-params-changed.ts[`filterOutOnlyFragmentParamsChanged`]: the "drop pure-fragment navigations" filter.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-navigated-to.ts[`filterForNavigatedTo`]: the "is my component active" filter.
+* The deprecated query-params variants: link:{libs}/ngrx-accelerator/src/lib/utils/effects/create-query-params-effect.ts[`createQueryParamsEffect`], link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-query-params-changed.ts[`filterOutQueryParamsHaveNotChanged`], link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-only-query-params-changed.ts[`filterOutOnlyQueryParamsChanged`].
+
+These are plain NgRx/rxjs helpers: the App wires them into its own `EffectsClass` and `ActivatedRoute`/`Router`. The store slice the fragment syncs against is whatever the App uses: for the Shell context it is the `onecx` slice from Unit 1, but the helpers are agnostic about that.
+
+=== Shell side
+
+The Shell side is the *shared URL* and the `current-location` Topic that every MFE's router follows (Area 7). The helpers in this Unit do not talk to the Shell directly; they operate on the App's own `Router`/`ActivatedRoute`. What they depend on from the Shell is the guarantee that the App's router is kept in step with the shared URL: the multiple-router contract of Area 7. If the Shell is not the one publishing the current URL (e.g. a standalone run), the filters still work but there is only one router following it. The Shell's URL wiring is in `app.module.ts`; link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell).
+
+== Angular / React
+
+All of this is Angular: the helpers are built on `@angular/router` (`Router`, `ActivatedRoute`, `RoutesRecognized`) and `@ngrx/router-store` (`RouterNavigatedAction`). A React App has no `ActivatedRoute`; the equivalent in React is `react-router`'s `useSearchParams` / `useLocation`, and the round-trip has to be written by hand. The libraries do not ship a React version of this Unit.
+
+== Edge cases & pitfalls
+
+* *The fragment needs a `?` to carry parameters.* `createFragmentParamsEffect` builds `fragmentPrefix` as `fragment.split('?')[0] + '?'`, but it parses the full fragment via `new URLSearchParams(fragment)` without stripping a named-anchor prefix. Fragments that include a named anchor are therefore not reliably handled by the reader/writer pair. Namespacing fragment parameter keys avoids collisions between MFEs, but it does not make named-anchor fragments work; avoid anchors until the writer strips them before parsing.
+* *`replaceUrl: true` means no history entry.* The writer updates the fragment without a new history entry. Back/forward therefore does not step through intermediate store states that only changed the fragment: it steps through real navigations. Combine with `filterOutOnlyFragmentParamsChanged` so a back/forward that changes only the fragment does not also fire the "real navigation" effects.
+* *An empty fragment is skipped.* If `activatedRoute.fragment` is `null`/`undefined`, `createFragmentParamsEffect` does nothing. An App that wants to write "no parameters" must still pass a non-null fragment.
+* *The schema in the filter is a gate.* `filterOutFragmentParamsHaveNotChanged` drops the action when *either* the previous or the current fragment params fail the Zod `safeParse`. A fragment that the schema does not accept is silently ignored, not an error.
+* *Multiple MFEs and one URL.* Two MFEs writing to the same URL is a conflict. The fragment is shared too, so fragment parameter keys need namespacing when multiple MFEs use them. The libraries do not namespace fragments per MFE, and per-MFE anchor segments do not make named-anchor fragments parse correctly.
+* *`onSameUrlNavigation: 'reload'`.* The writer forces the router to run when the URL does not otherwise change, which is what makes the read side fire. If an App sets a different `onSameUrlNavigation` on its router, the write→read loop can break.
+
+== Debugging
+
+* *Is the writer firing?* Add `console.log` inside the `tap` (or subscribe to `actions$` filtered to the action type) and to the fragment: log `activatedRoute.fragment` and the computed `formattedFragmentParams`. Compare with the actual `window.location.hash`: they should match after a tick.
+* *Is the reader firing?* Log the action inside the read effect after each filter. If `filterForNavigatedTo` is present, confirm `router.routerState.root` really resolves to the App's `component` for the navigation you expect.
+* *Why is the URL not changing?* Check `replaceUrl: true` is still set and that no router guard is blocking the `navigate([])` call the effect makes. For the shared URL itself, see Area 13 (Diagnostics): `tracing-communication.adoc`.
+
+== Known issues
+
+* *The fragment-params helpers are not exported from the package public API.* The three recommended fragment variants, `createFragmentParamsEffect` (`create-fragment-params-effect.ts`), `filterOutFragmentParamsHaveNotChanged` (`filter-for-fragment-params-changed.ts`) and `filterOutOnlyFragmentParamsChanged` (`filter-for-only-fragment-params-changed.ts`), are **not** re-exported by link:{libs}/ngrx-accelerator/src/index.ts[`src/index.ts`]. The public barrel still exports only the *deprecated* query-params helpers (`create-query-params-effect`, `filter-for-only-query-params-changed`, `filter-for-query-params-changed`), `filter-for-navigated-to`, the child-selector helper and the two `localStorage` helpers. The deprecation JSDoc on the query-params helpers points at the fragment variants as the replacement, but a consumer importing from the package root cannot import the replacement; the only way to reach it today is a deep import of the source file. The fragment helpers landed in commit `84c808ed` ("chore: create effect to manage uri params (#1205)"), which added the files and the deprecation notes but left `src/index.ts` unchanged. A follow-up should add the three fragment exports to `src/index.ts` (and then remove the deprecated query-params exports in a major). Fixing this is out of scope for this documentation ticket.
+
+== Related Units
+
+* link:shell-context-to-store.adoc[Shell context → App ngrx store]: the store slice this Unit's fragment syncs against when the App syncs Shell context.
+* link:persisting-state.adoc[Persisting state across reloads]: the other "state that must survive" round-trip, against `localStorage` instead of the URL.
+* Area 7 (Navigation & Routing): the shared URL, `current-location` and the multiple-router contract these helpers operate on.
+* Area 2 (Application Bootstrap): when the App's `ActivatedRoute`/`Router` first becomes meaningful.
+* Area 13 (Diagnostics): observing the URL-change traffic at runtime.
+
+== Sources
+
+Code::
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/create-fragment-params-effect.ts[`createFragmentParamsEffect`] and its `getUrlParams` helper.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-fragment-params-changed.ts[`filterOutFragmentParamsHaveNotChanged`] (and its `getFragmentParams` helper, in the same file).
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-only-fragment-params-changed.ts[`filterOutOnlyFragmentParamsChanged`].
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-navigated-to.ts[`filterForNavigatedTo`] and `checkForComponent`.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/create-query-params-effect.ts[`createQueryParamsEffect`]: deprecated.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-query-params-changed.ts[`filterOutQueryParamsHaveNotChanged`]: deprecated.
+* link:{libs}/ngrx-accelerator/src/lib/utils/effects/filter-for-only-query-params-changed.ts[`filterOutOnlyQueryParamsChanged`]: deprecated.
+* link:{libs}/ngrx-accelerator/src/index.ts[`@onecx/ngrx-accelerator` public API]: the barrel that (currently) omits the fragment exports.
+* link:{libs}/ngrx-accelerator[`@onecx/ngrx-accelerator` package root]
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (Shell): the Shell's URL wiring (see Area 7).

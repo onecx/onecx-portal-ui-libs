@@ -1,0 +1,7 @@
+{
+  "audited": "2026-10-13",
+  "libs":  { "repo": "markuczy/onecx-portal-ui-libs", "branch": "docs/dev-docs-improvements", "commit": "9a26c21554582f3e0acfab4e89a7101bdbe89e19" },
+  "shell": { "repo": "onecx/onecx-shell-ui", "branch": "main", "commit": "6a92987a8cde757bcba1bf0b05596feefb596133" },
+  "passes": 2,
+  "clean": true
+}

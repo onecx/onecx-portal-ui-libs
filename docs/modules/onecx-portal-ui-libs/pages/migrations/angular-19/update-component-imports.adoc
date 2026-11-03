@@ -29,7 +29,6 @@ The imports of the following components need to be changed from `@onecx/portal-i
 
 The imports of the following components need to be changed from `@onecx/portal-integration-angular` to `@onecx/shell-core`:
 
-* `PortalFooterComponent`
 * `HeaderComponent`
 * `PortalViewportComponent`
 
@@ -73,6 +72,7 @@ The following components and services have been completely removed from libs v6,
 * `UserProfileAPIService`
 * `AppInlineProfileComponent`
 * `AnnouncementsApiService`
+* `PortalFooterComponent` (not moved to `@onecx/shell-core` — removed entirely; replace with a custom footer component if one is required)
 
 [#replaced-components-same-library]
 == Replaced Components and Functions in the Same Library

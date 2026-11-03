@@ -59,7 +59,7 @@ npm uninstall --save keycloak-angular
 ====
 If you use Keycloak as your identity provider and want to keep using it with the new authentication module, you may need to install `keycloak-js`.
 
-Check whether your application still requires `keycloak-js` by referencing xref:migrations/angular-20/remove-keycloak-js.adoc[Remove keycloak-js]. If it is required, install it:
+Check whether your application still requires `keycloak-js` by referencing xref:../angular-20/remove-keycloak-js.adoc[Remove keycloak-js]. If it is required, install it:
 
 [source, bash]
 ----

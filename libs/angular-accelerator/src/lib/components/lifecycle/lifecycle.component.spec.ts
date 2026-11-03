@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { TimelineModule } from 'primeng/timeline'
+import { TimelineModule } from '@openng/optimus-ui/timeline'
 import { LifecycleHarness, TestbedHarnessEnvironment } from '../../../../testing'
 import { LifecycleComponent, LifecycleStep } from './lifecycle.component'
 

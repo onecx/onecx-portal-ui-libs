@@ -1,0 +1,75 @@
+= Errors, Loading & User Feedback
+:idprefix:
+:idseparator: -
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This Area covers how a running OneCX page reacts to failure, what it shows while it is busy, and how it tells the user something happened.
+
+== Problem
+
+A OneCX page can fail at several different moments: before the workspace is even configured, while a remote module is being loaded, in the middle of a navigation, or at any time afterwards. Each of those moments needs its own reaction: a page, a spinner, a toast. The work is split between the libraries and the Shell: the libraries define the *Topics* and the reusable error/loading building blocks, and the Shell decides where a given failure lands and what the user actually sees. Until now this behaviour was only documented in short, partly outdated pages. This Area describes it from the current code of both repositories.
+
+== Big picture
+
+The libraries expose four Topics that a page uses to signal or read state, plus a few reusable components and services:
+
+* `globalError`: a single, page-wide error signal (a `string`, e.g. an error code).
+* `globalLoading`: a single, page-wide loading flag (a `boolean`).
+* `message`: a Portal Message to show to the user (a toast).
+* `notification`: a structured cross-App notification.
+
+The Shell is the consumer that turns these into UI: an initialization-error page, a global-error page, a not-found page, the Shell's own toast Remote Component, and a route-area loading spinner (the PortalViewport spinner).
+
+The three questions this Area answers, and where the answer lives:
+
+* *What error pages can be seen.* The Shell shows four user-facing screens: the initialization-error page, the App-load error page, the global-error page, and the not-found page. Unit 1, link:./failure-taxonomy.adoc[Failure taxonomy map], maps each failure mode to its screen.
+* *Who controls which error page.* The libraries define the Topics and the reusable components; the Shell decides what a failure becomes, from the route it navigates to to the toast it mounts. Units 2 to 4 work this out per mechanism.
+* *How to debug failures.* Each Unit has a Debugging section; general tooling is in Area 13 (Diagnostics).
+
+[source,mermaid]
+----
+flowchart TD
+  subgraph Failures
+    A["Initialization failure<br/>(workspace config / user profile)"]
+    B["Remote module load failure"]
+    C["Global error<br/>(globalError Topic)"]
+    D["Unknown URL"]
+    E["Background request"]
+  end
+
+  A --> A1["init-error page<br/>portal-initialization-error-page"]
+  B --> B1["error page + toast"]
+  C --> C1["global-error page"]
+  D --> D1["not-found page"]
+  E --> E1["Portal Message<br/>(shell-toast)"]
+
+  subgraph Loading
+    GL["globalLoading Topic"]
+    RL["RoutesService.loadChildren()"] --> RS["RoutesService.showContent$"]
+    RS --> PVS["PortalViewport spinner (bound to showContent$)"]
+  end
+----
+
+IMPORTANT: The Shell's route-area spinner (the one rendered by the PortalViewportComponent) is bound to RoutesService.showContent$; RoutesService.loadChildren() updates that signal while route children are loading. This is a distinct signal from the libraries' globalLoading Topic: publishing globalLoading does not, by itself, toggle the PortalViewport spinner.
+
+[NOTE]
+====
+Anything that reaches the `globalError` or `globalLoading` Topic is *page-global*: the value is shared across every Topic instance on the page. See Area 1 (Integration Contract & Topics) for the delivery mechanism.
+====
+
+== Unit map
+
+All Units of this Area, in reading order. Every Unit follows the link:../unit-template.adoc[Unit template].
+
+. link:./failure-taxonomy.adoc[Failure taxonomy map]: the four failure modes and the screen or signal each one lands on.
+. link:./initialization-failures.adoc[Initialization failures & init-error page]: how a workspace-config or user-profile failure is captured, carried in the URL fragment, and rendered.
+. link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the two post-bootstrap failures (a remote module that fails to load, and a `globalError` value) and their distinct destinations.
+. link:./global-loading.adoc[Global loading]: the page-wide `globalLoading` flag and the separate route-area spinner it does not drive.
+. link:./portal-messages-and-notifications.adoc[Portal Messages & Notifications]: the `message` and `notification` Topics and the Shell's toast Remote Component.
+
+== Related Areas
+
+* Area 1 (Integration Contract & Topics): how the Topics this Area relies on are delivered across the page.
+* Area 7 (Navigation & Routing): how the not-found page and the Current App route are selected.
+* Area 2 (Application Bootstrap): the load path whose failure is covered by Unit 3.
+* Area 10 (Localization): where the translated strings on the error and not-found pages come from.

@@ -18,6 +18,7 @@
   [style]="{ width: '70%' }"
   [modal]="true"
   [draggable]="draggableColumnGroupSelectorDialog()"
+  [resizable]="resizableColumnGroupSelectorDialog()"
   [closeAriaLabel]="('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABELS.CLOSE' | translate)"
 >
   <ng-template pTemplate="header">
@@ -32,11 +33,11 @@
   <p-pickList
     [source]="displayedColumnsModel()"
     [target]="hiddenColumnsModel()"
-    (onMoveToTarget)="syncColumnModels()"
-    (onMoveToSource)="syncColumnModels()"
-    (onMoveAllToTarget)="syncColumnModels()"
-    (onMoveAllToSource)="syncColumnModels()"
-    (onSourceReorder)="syncColumnModels()"
+    (onMoveToTarget)="syncColumnModels(restoreColumnGroupSelectorOrder())"
+    (onMoveToSource)="syncColumnModels(restoreColumnGroupSelectorOrder())"
+    (onMoveAllToTarget)="syncColumnModels(restoreColumnGroupSelectorOrder())"
+    (onMoveAllToSource)="syncColumnModels(restoreColumnGroupSelectorOrder())"
+    (onSourceReorder)="syncColumnModels(false)"
     [sourceHeader]="resolvedActiveColumnsLabel"
     [targetHeader]="resolvedInactiveColumnsLabel"
     [sourceAriaLabel]="resolvedActiveColumnsLabel"
@@ -112,7 +113,7 @@
       (onClick)="onSaveClick()"
       [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
       [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
-      [disabled]="!hasActiveColumns()"
+      [disabled]="!canSave()"
     ></p-button>
   </ng-template>
 </p-dialog>

@@ -1,7 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '/node_modules/primeflex/primeflex.scss';
+/*
+ * `tailwind` pulls in the library's compiled Tailwind CSS v4 utilities (built
+ * from `tailwind.css` by the `build:styles` target), which replace the previous
+ * PrimeFlex import. It is imported WITHOUT a `.css` extension so that Sass
+ * inlines its contents rather than emitting a runtime `@import url(...)` that a
+ * bundler may not resolve.
+ */
+@import './tailwind';
 
 @import '../src/lib/directives/loading-indicator.directive.scss';
 
-@import '../src/lib/directives/content.directive.scss'; 
+@import '../src/lib/directives/content.directive.scss';

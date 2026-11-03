@@ -1,16 +1,16 @@
-import { Component, computed, effect, input, model, output, signal, OnDestroy } from '@angular/core'
+import { Component, computed, effect, input, model, output, signal, OnDestroy, ChangeDetectionStrategy } from '@angular/core'
 import { ChartData, ChartOptions } from 'chart.js'
 import * as d3 from 'd3-scale-chromatic'
-import { PrimeIcons } from 'primeng/api'
+import { OpenngIcons } from '@openng/optimus-ui/api'
 import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ColorUtils } from '../../utils/colorutils'
-import { PrimeIcon } from '../../utils/primeicon.utils'
+import { OptimusIcon } from '../../utils/optimus-icon.utils'
 import { addHighContrastListener, getLabelColor, hasHighContrast, removeHighContrastListener } from '../../utils/diagram-contrast-utils'
 
 export interface DiagramLayouts {
   id: string
-  icon: PrimeIcon
+  icon: OptimusIcon
   layout: DiagramType
   tooltip?: string
   tooltipKey: string
@@ -27,21 +27,21 @@ export type ChartType = 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnu
 const allDiagramTypes: DiagramLayouts[] = [
   {
     id: 'diagram-pie',
-    icon: PrimeIcons.CHART_PIE,
+    icon: OpenngIcons.CHART_PIE,
     layout: DiagramType.PIE,
     tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
     labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.PIE',
   },
   {
     id: 'diagram-horizontal-bar',
-    icon: PrimeIcons.BARS,
+    icon: OpenngIcons.BARS,
     layout: DiagramType.HORIZONTAL_BAR,
     tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
     labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.HORIZONTAL_BAR',
   },
   {
     id: 'diagram-vertical-bar',
-    icon: PrimeIcons.CHART_BAR,
+    icon: OpenngIcons.CHART_BAR,
     layout: DiagramType.VERTICAL_BAR,
     tooltipKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
     labelKey: 'OCX_DIAGRAM.SWITCH_DIAGRAM_TYPE.VERTICAL_BAR',
@@ -52,6 +52,7 @@ const allDiagramTypes: DiagramLayouts[] = [
   standalone: false,
   selector: 'ocx-diagram',
   templateUrl: './diagram.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./diagram.component.scss'],
 })
 export class DiagramComponent implements OnDestroy {

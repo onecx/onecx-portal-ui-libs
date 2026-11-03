@@ -1,5 +1,6 @@
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 
+export * from './add-filter-dialog.harness'
 export * from './column-group-selection.harness'
 export * from './consent.harness'
 export * from './content-container.harness'

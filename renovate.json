@@ -25,12 +25,12 @@
     },
     {
       "matchFileNames": ["package.json"],
-      "groupName": "Root PrimeNG",
+      "groupName": "Root Optimus UI",
       "matchDepTypes": ["dependencies", "devDependencies"],
-      "groupSlug": "root-primeng",
+      "groupSlug": "root-optimus-ui",
       "prPriority": 6,
       "schedule": ["before 6am every weekday"],
-      "matchPackageNames": ["/^@primeng\\//", "/^primeng$/"],
+      "matchPackageNames": ["/^@openng\\//"],
       "matchUpdateTypes": ["minor", "patch"]
     },
     {

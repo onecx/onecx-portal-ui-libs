@@ -1,0 +1,154 @@
+= Missing-translation fallback
+:toc: macro
+:toc-title: Contents
+:toclevels: 2
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+toc::[]
+
+== Question answered
+
+When a translation key cannot be found in a language, what does the page do, and in what order, before it finally shows the raw key to the user?
+
+== Why it exists
+
+ngx-translate's default behaviour for a missing key is to render the key itself. On a OneCX page that is usually wrong: the same concept often exists under a *different* locale the user can understand, or is provided *dynamically* by the Shell rather than shipped as a static file. The fallback must therefore be a *chain*, walk the user's locales, and for each one try the static files first and the Shell's dynamic translations second, and only give up (raw key) when every link in the chain misses.
+
+Two constraints shape it:
+
+* The chain must be *stateless*: it must not change the active language or reset the already-loaded tables while probing a fallback language, or the UI would flicker.
+* The dynamic leg is optional and cross-repository: it depends on a Shell capability the page may not have, so the whole chain must degrade gracefully to the static leg and then to the raw key. Importantly, the handler only proceeds to the static/raw-key fallbacks when any outstanding dynamic lookups for the current locale have completed (i.e. the service has observed a `RECEIVED` message for those contexts). If the Shell advertises the capability but never publishes a corresponding `RECEIVED` message for in-flight contexts, the dynamic wait has no timeout and the resolution can remain pending, preventing the outer locale walk and the raw-key fallback from running.
+
+The design encodes this as an Angular ngx-translate `MissingTranslationHandler` (the static and glue logic) on top of a *framework-agnostic* `DynamicTranslationService` (the dynamic leg and its shared cache).
+
+== How it works
+
+The entry point is ngx-translate's `MissingTranslationHandler` contract, implemented by link:{libs}/angular-utils/src/lib/utils/multi-language-missing-translation-handler.utils.ts[`MultiLanguageMissingTranslationHandler`]. ngx-translate calls its `handle(params)` whenever a key is absent for the current language; `params` carries the key and a reference to the `TranslateService`.
+
+The resolution is a single outer walk over the user's locales, and for each locale a three-step lookup:
+
+[source,mermaid]
+----
+flowchart TD
+  K["missing key<br/>ngx-translate calls handle(params)"] --> L["locales = profile.settings.locales<br/>? else getNormalizedBrowserLocales()"]
+  L --> W["walk locales in order (first match wins)"]
+  W --> S["1. static table<br/>currentLoader.getTranslation(lang)<br/>+ interpolate"]
+  S -- found --> R["resolved string"]
+  S -- absent --> D["2. dynamic translations<br/>DynamicTranslationService.getTranslations(lang, contexts)"]
+  D -- found --> R
+  D -- absent --> W
+  W -- every locale missed --> RAW["3. raw key<br/>handle() returns params.key"]
+----
+
+. *The locale list.* The handler derives the candidate locales from the *profile*, not from ngx-translate's own fallback configuration: `profile.settings.locales`, falling back to `getNormalizedBrowserLocales()` when the profile has no `settings.locales`. It takes only the first profile emission (`take(1)`, `shareReplay(1)`) so the list is stable for the duration of one resolution.
+. *The per-locale lookup, static first.* For each locale the handler calls `params.translateService.currentLoader.getTranslation(lang)`: the low-level ngx-translate API that fetches one language table *without* changing the active language or resetting cached tables (it deliberately avoids `reloadLang`, which would emit language-change events). It reads the key from that table with `getValue`, interpolates it with the `TranslateParser`, and if that yields a string it is returned.
+. *The per-locale lookup, dynamic second.* If the static table misses the key, the handler falls back to the dynamic leg for the *same* language (described below), merging the returned records and looking the key up again.
+. *First match wins, raw key last.* The outer walk tries locales in order and stops at the first one that resolves the key. Only when *every* locale misses does `handle()` catch the failure and return the raw `params.key`.
+
+=== The dynamic leg: `DynamicTranslationService`
+
+The dynamic leg is a framework-agnostic service, link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`], shared by Angular and React. Its `getTranslations(locale, contexts)` resolves a set of *translation contexts* (namespaces) for one locale, from a page-wide cache and the Shell:
+
+. *Capability gate.* Before touching the cache it calls `hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)`. If the Shell does not advertise that capability, it returns empty records immediately: the dynamic leg is a no-op and the fallback continues with the static leg / raw key. This is what makes the chain degrade gracefully (see link:#known-issues[Known issues]).
+. *Shared cache.* Translations are cached on `globalThis` under `onecx/integration-interface.dynamicTranslationsCache` (via link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`getDynamicTranslationsCache`]), shaped as `locale → context name → version → table`. A context that the page has already resolved for a locale is returned from cache with no Topic traffic.
+. *Version matching.* A context may be versioned (`{name, version}`) or not. An unversioned context resolves to the first cached version. A versioned context matches an exact cached version, else the highest cached version that `satisfies` the requested semantic version (`semver`, `includePrerelease: true`), else, if any cached version is an explicit `null` ("the Shell knows this context has no translations"), it is skipped.
+. *Request / wait.* Contexts not yet in cache are marked as in-flight, a `REQUESTED` message is published on the `dynamicTranslations` Topic, and the service waits for a `RECEIVED` message before collecting. The service's implementation listens for `RECEIVED` messages and uses `first()` to complete: there is no built-in timeout. Consequently, the handler only guarantees that the dynamic leg contributes results when the lookup completes (a `RECEIVED` is observed). If the Shell advertises the capability but never answers a `REQUESTED` (for example, due to a bug, misconfiguration, or message loss), the wait can remain pending and the outer locale walk/raw-key fallback will not run until that happens. Once every context is complete the context-keyed map is returned.
+
+The `contexts` themselves are built by the Angular handler in `createTranslationContexts()`: one context per `MULTI_LANGUAGE_IDENTIFIER` entry (each library and the App register a `{name, version, type}` namespace via `provideMultiLanguageIdentifier`: for example `@onecx/angular-utils`, `@onecx/angular-accelerator`), and, when no identifier is tagged as an *app*, one extra app-scoped context `{name}` taken from the Angular `APP_ID`'s `appElementName`. These contexts scope which dynamic namespaces the Shell is asked to provide for that locale.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant NgX as ngx-translate
+  participant H as MultiLanguageMissingTranslationHandler
+  participant D as DynamicTranslationService
+  participant S as Shell (capability + Topic)
+  NgX->>H: handle(missing key)
+  loop each locale in profile.settings.locales
+    H->>H: static table lookup (getTranslation)
+    alt static miss
+      H->>D: getTranslations(locale, contexts)
+      D->>S: hasShellCapability(DYNAMIC_TRANSLATIONS_TOPIC)?
+      S-->>D: advertised? (else empty records)
+      D->>S: REQUESTED {locale, contexts} (on miss)
+      S-->>D: RECEIVED (translations cached)
+      D-->>H: merged table
+      H->>H: lookup key in merged table
+    end
+  end
+  H-->>NgX: first match, else raw key
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries own the *decision* of the whole chain.
+
+* The glue and the static leg live in `@onecx/angular-utils`: link:{libs}/angular-utils/src/lib/utils/multi-language-missing-translation-handler.utils.ts[`MultiLanguageMissingTranslationHandler`] walks the locales, does the static `getTranslation` lookup, interpolates, and merges dynamic records with link:{libs}/angular-utils/src/lib/utils/deep-merge.utils.ts[`mergeDeep`]. Its locale list comes from link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService.profile$`] and `getNormalizedBrowserLocales` (link:{libs}/accelerator/src/lib/utils/get-normalized-browser-locales.utils.ts[accelerator]); its contexts come from link:{libs}/angular-utils/src/lib/injection-tokens/multi-language-identifier.ts[`MULTI_LANGUAGE_IDENTIFIER`] (registered by link:{libs}/angular-utils/src/lib/providers/multi-language-identifier.provider.ts[`provideMultiLanguageIdentifier`]).
+* The dynamic leg and its cache are framework-agnostic in `@onecx/integration-interface`: link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`], the `dynamicTranslations` Topic and its `REQUESTED`/`RECEIVED` messages (link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`dynamic-translations.topic.ts`]), and the capability check (link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`hasShellCapability`] over link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC`]).
+* `@onecx/angular-integration-interface` wires it for Angular: a `providedIn: 'root'` link:{libs}/angular-integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`] that wraps the framework-agnostic one, and `ShellCapabilityService.setCapabilities` (link:{libs}/angular-integration-interface/src/lib/services/shell-capability.service.ts[shell-capability.service.ts]) as the entry point that records what the Shell advertises. The Angular missing-key path above consumes that wrapper automatically through `MultiLanguageMissingTranslationHandler`.
+
+=== Shell side
+
+The Shell owns the *supply*. It is the only participant that can provide *dynamic* translations: the strings that are not shipped as static files in any micro-frontend. For the dynamic leg to do anything, the Shell must (a) advertise the `dynamicTranslationsTopic` capability (recorded page-wide under `onecx-shell-capabilities`) and (b) answer the `dynamicTranslations` Topic's `REQUESTED` messages by publishing the requested contexts and a `RECEIVED`. The Shell's own static translations are loaded like any App (link:./app-translations.adoc[App translations load & sharing]); the *dynamic* supply is a separate Shell responsibility.
+
+== Angular / React
+
+* **Angular**: the `MultiLanguageMissingTranslationHandler` above is the whole mechanism; it is registered as the `MissingTranslationHandler` in the translation providers (the Shell does so in link:{shell}/src/app/app.module.ts[`app.module.ts`; Apps inherit it from link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorMissingTranslationHandler`], a thin subclass). It reads the static leg via `TranslateService.currentLoader` and the dynamic leg via the Angular `DynamicTranslationService`.
+* **React**: React uses i18next, not ngx-translate, so it has no `MissingTranslationHandler`. The React libraries in this repository only expose the capability helpers in link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`shellCapability.ts`] (`setCapabilities`, `useShellCapability`); they do not automatically consume `DynamicTranslationService` or implement this fallback walk for missing keys. An App may call the framework-agnostic service explicitly if it wants a dynamic leg, but that is outside the built-in React library wiring. The i18next pipeline around it is described in link:./react-translations.adoc[React translations].
+
+== Edge cases & pitfalls
+
+* **The locale list comes from the profile, not from ngx-translate.** The handler re-derives the candidate locales from `profile.settings.locales` and ignores ngx-translate's `fallbackLang`/`fallbackLangs` configuration. A profile with a different locale order than the page's `fallbackLangs` therefore changes the resolution order here.
+* **No static loader**: if the page has no translation loader configured, ngx-translate installs a `TranslateNoOpLoader`; the handler logs a warning and the static leg yields nothing, so resolution relies entirely on the dynamic leg (or the raw key).
+* **Non-string static values**: the static table may hold functions, strings, numbers, booleans or objects. Only functions and strings are passed to interpolation as-is; numbers/booleans/bigints are stringified; anything else is treated as a miss and the dynamic leg is tried.
+* **The dynamic leg is silent unless the capability is advertised.** Because `hasShellCapability` reads a page-global the Shell must set, a page where the capability is never registered silently skips the dynamic leg (see link:#known-issues[Known issues]). In Angular that means the handler keeps walking to the next fallback; in React there is no automatic missing-key consumer here at all unless an App adds one.
+* **Version mismatches are not errors.** A requested semantic version that no cached version satisfies is not a failure; the service looks for the highest satisfying version and, failing that, for an explicit `null` (known empty). The key then simply misses and the next locale / raw key is tried.
+* **A locale that is not a safe cache key** (`__proto__`, `constructor`, …) is skipped for the dynamic leg so the cache is never polluted.
+
+== Debugging
+
+* The handler logs under the `MultiLanguageMissingTranslationHandler` namespace: a debug line on entry, a warning when a single locale misses both legs, and a warning when the whole walk falls through to the raw key.
+* The dynamic service logs under `DynamicTranslationService`, including the capability check, the cache categorisation (missing/pending), the `REQUESTED` message and each `RECEIVED`.
+* The `dynamicTranslations` Topic (v1) traffic is visible with the general Topic tooling in link:../diagnostics/tracing-communication.adoc[13. Diagnostics, Tracing cross-App communication].
+* `globalThis['@onecx/integration-interface'].dynamicTranslationsCache` (Angular/React) and `window.onecx-shell-capabilities` are both inspectable from the console to confirm whether the dynamic leg is even active.
+
+[#known-issues]
+== Known issues
+
+* **The Shell does not advertise or answer the dynamic-translations capability.** The dynamic leg is gated on `hasShellCapability(ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC)`, which reads `window.onecx-shell-capabilities`. As of the current `main` code of the Shell repository, the Shell neither sets `dynamicTranslationsTopic` in that list nor answers the `dynamicTranslations` Topic's `REQUESTED` messages. The actual behaviour is therefore: `getTranslations` short-circuits to empty records, the per-locale dynamic lookup always misses, and the *only* fallbacks that ever fire are the static per-locale walk and finally the raw key. This is the behaviour of the code as written; the dynamic supply is a documented follow-up (the Shell must advertise the capability and publish translations on the Topic). Sources: link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`hasShellCapability`], link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`getTranslations` capability gate], and the Shell's `app.module.ts`.
+
+* **The Shell advertises the capability but does not respond to requests.** If the Shell sets `dynamicTranslationsTopic` in `onecx-shell-capabilities` but never publishes a `RECEIVED` message (for example due to a bug, misconfiguration, or message loss), the libraries will publish `REQUESTED` and then wait for completion. The current `DynamicTranslationService.waitForTranslations()` implementation filters for `RECEIVED` messages and completes with `first()` but does not apply any timeout: so the resolution can remain pending indefinitely and prevent the outer locale walk and the raw-key fallback from executing. This is distinct from the capability-not-advertised case and should be handled either by fixing the Shell or by adding a timeout/guard in the libraries' implementation.
+
+== Related Units
+
+* link:./app-translations.adoc[App translations load & sharing]: the static tables the first leg of this Unit reads.
+* link:./profile-and-language.adoc[Profile load & language decision]: the `profile.settings.locales` and `lang$` this Unit walks.
+* link:./remote-component-translations.adoc[Remote Component translations]: the paths that feed the static tables for Remote Components.
+* link:../integration-contract/versioning-and-capabilities.adoc[1. Integration Contract & Topics, Versioning & Shell capability negotiation], how the `onecx-shell-capabilities` list is meant to be populated.
+* link:../integration-contract/message-delivery.adoc[1. Integration Contract & Topics, Topic message delivery], the `REQUESTED`/`RECEIVED` Topic traffic.
+* link:./react-translations.adoc[React translations]: the i18next pipeline that shares the same dynamic leg.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/utils/multi-language-missing-translation-handler.utils.ts[`MultiLanguageMissingTranslationHandler` (`multi-language-missing-translation-handler.utils.ts`)]
+* link:{libs}/angular-utils/src/lib/injection-tokens/multi-language-identifier.ts[`MULTI_LANGUAGE_IDENTIFIER` (`multi-language-identifier.ts`)]
+* link:{libs}/angular-utils/src/lib/providers/multi-language-identifier.provider.ts[`provideMultiLanguageIdentifier` (`multi-language-identifier.provider.ts`)]
+* link:{libs}/angular-utils/src/lib/utils/deep-merge.utils.ts[`mergeDeep` (`deep-merge.utils.ts`)]
+* link:{libs}/integration-interface/src/lib/services/dynamic-translation.service.ts[`DynamicTranslationService`, `getDynamicTranslationsCache`, `UNVERSIONED_KEY`, `TranslationContext` (`dynamic-translation.service.ts`)]
+* link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.topic.ts[`DynamicTranslationsTopic` (`dynamic-translations.topic.ts`)]
+* link:{libs}/integration-interface/src/lib/topics/dynamic-translations/v1/dynamic-translations.model.ts[`DynamicTranslationsMessageType`, `TranslationsRequested`, `TranslationsReceived` (`dynamic-translations.model.ts`)]
+* link:{libs}/integration-interface/src/lib/utils/shell-capability.utils.ts[`hasShellCapability` (`shell-capability.utils.ts`)]
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability.DYNAMIC_TRANSLATIONS_TOPIC` (`shell-capability.model.ts`)]
+* link:{libs}/angular-integration-interface/src/lib/services/dynamic-translation.service.ts[Angular `DynamicTranslationService` wrapper (`dynamic-translation.service.ts`)]
+* link:{libs}/angular-integration-interface/src/lib/services/shell-capability.service.ts[`ShellCapabilityService` (`shell-capability.service.ts`)]
+* link:{libs}/angular-integration-interface/src/lib/services/user.service.ts[`UserService.profile$` (`user.service.ts`)]
+* link:{libs}/accelerator/src/lib/utils/get-normalized-browser-locales.utils.ts[`getNormalizedBrowserLocales` (accelerator)]
+* link:{libs}/angular-accelerator/src/lib/angular-accelerator.module.ts[`AngularAcceleratorMissingTranslationHandler` (`angular-accelerator.module.ts`)]
+* link:{libs}/react-integration-interface/src/lib/contexts/shellCapability.ts[`setCapabilities`, `useShellCapability` (`shellCapability.ts`)]
+* link:{shell}/src/app/app.module.ts[Shell translation providers & capability (Shell)]

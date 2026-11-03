@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Integration Contract &amp; Topics — Area Showcase</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/monokai.css">
+<style>
+  :root { --onecx-blue: #1b4f8c; }
+  .reveal { font-size: 28px; }
+  .reveal h1, .reveal h2, .reveal h3 { color: var(--onecx-blue); text-transform: none; }
+  .reveal h1 { font-size: 1.6em; }
+  .reveal h2 { font-size: 1.2em; }
+  .reveal h3 { font-size: 0.95em; }
+  .reveal section { text-align: left; }
+  .reveal section.center { text-align: center; }
+  .reveal ul, .reveal ol { display: block; }
+  .reveal li { margin-bottom: 0.35em; }
+  .reveal code { color: #c0392b; }
+  .reveal pre code { font-size: 0.55em; max-height: 480px; }
+  .badge {
+    display: inline-block; font-size: 0.4em; font-weight: 600; letter-spacing: 0.05em;
+    background: var(--onecx-blue); color: white; padding: 0.2em 0.7em; border-radius: 1em;
+    vertical-align: middle; margin-left: 0.6em;
+  }
+  .unit-no {
+    display: inline-block; width: 1.6em; height: 1.6em; line-height: 1.6em; text-align: center;
+    background: var(--onecx-blue); color: white; border-radius: 50%; font-size: 0.6em; margin-right: 0.4em;
+  }
+  .quote { font-style: italic; border-left: 4px solid var(--onecx-blue); padding-left: 0.6em; color: #444; }
+  .small { font-size: 0.6em; color: #555; }
+  .two-col { display: flex; gap: 1.2em; }
+  .two-col > div { flex: 1; }
+  table.catalogue { font-size: 0.5em; border-collapse: collapse; width: 100%; }
+  table.catalogue th, table.catalogue td { border: 1px solid #ccc; padding: 0.4em 0.6em; text-align: left; }
+  table.catalogue th { background: #eef3fa; }
+  .mermaid { background: white; }
+  .footer-note { font-size: 0.4em; color: #888; margin-top: 1em; }
+  .fit-shrink { transform-origin: top center; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1: Title -->
+<section class="center">
+  <h1>Integration Contract &amp; Topics</h1>
+  <h3>Area 1 of the OneCX Dev Docs</h3>
+  <p class="small">A walkthrough of how Apps, Remote Components and the Shell talk to each other.</p>
+</section>
+
+<!-- 2: Problem -->
+<section>
+  <h2>Problem</h2>
+  <p>A OneCX page hosts several independently built, independently released units at once — one Shell,
+  the routed App, and any Remote Components it hosts — in different frameworks, with no shared object
+  graph and no guarantee they load together.</p>
+  <p class="quote">Yet they must stay in sync: the Shell owns the workspace, theme, route and user
+  profile — and Apps/Remote Components need to read and react to those values.</p>
+</section>
+
+<!-- 3: Big picture -->
+<section>
+  <h2>Big picture</h2>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><strong>Libraries</strong> (<code>@onecx/accelerator</code>, <code>@onecx/integration-interface</code>,
+        Angular/React adapters) provide the <code>Topic</code>/<code>Gatherer</code> primitives.</li>
+        <li><strong>Shell</strong> advertises capabilities, publishes shared state, answers requests.</li>
+        <li><strong>Apps / Remote Components</strong> subscribe to state, may publish or answer too.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="mermaid">
+sequenceDiagram
+  participant Shell
+  participant App
+  participant Remote as Remote Component
+
+  Shell->>Shell: publish workspace / theme / user
+  App->>App: subscribe to shared Topics
+  Remote->>App: TopicGet (late subscriber asks for current state)
+  App-->>Remote: TopicNext (current value)
+  App->>Shell: RPC request (e.g. permissions)
+  Shell-->>App: RPC response
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4: Unit map -->
+<section>
+  <h2>Unit map <span class="badge">8 Units</span></h2>
+  <ol>
+    <li>Why a message-based contract</li>
+    <li>Topic message delivery</li>
+    <li>Transports &amp; tab scope</li>
+    <li>Topic lifecycle</li>
+    <li>Request/response: Gatherers &amp; RPC Topics</li>
+    <li>Versioning &amp; Shell capability negotiation</li>
+    <li>Framework adapters</li>
+    <li>Topic &amp; Gatherer catalogue</li>
+  </ol>
+</section>
+
+<!-- 5: Unit 1 -->
+<section>
+  <h2><span class="unit-no">1</span>Why a message-based contract</h2>
+  <p>Units are built, versioned and released independently, run in different frameworks, and may load
+  at different times — so no unit may ever hold a reference to another unit's code.</p>
+  <p class="quote">A unit can only (1) publish a message onto a Topic and (2) subscribe to a Topic.
+  The only way to obtain a value from the Shell, or from another App, is to ask for it over a Topic
+  and wait for the message that carries the answer.</p>
+  <p class="small">Request/response is built from the same primitive: the asker publishes onto a
+  Topic configured not to request state on start-up (<code>sendGetMessage = false</code>); the
+  answerer subscribes and publishes the answer back.</p>
+</section>
+
+<!-- 6: Unit 2 -->
+<section>
+  <h2><span class="unit-no">2</span>Topic message delivery</h2>
+  <p>Every message carries a <code>name</code> and a <code>version</code>; a subscriber only accepts
+  one where both match. <code>publish(value)</code> sends a <code>TopicNext</code> then a
+  <code>TopicResolve</code>, and only resolves once every live instance has applied the value.</p>
+  <div class="mermaid">
+sequenceDiagram
+  participant Publisher as Topic (publisher)
+  participant Browser as Browser message queue
+  participant Subscriber as Topic (subscriber)
+
+  Publisher->>Browser: send TopicNext (id=1)
+  Publisher->>Browser: send TopicResolve (resolveId=1)
+  Note over Publisher: publish() awaits the returned promise
+  Browser-->>Subscriber: TopicNext (id=1)
+  Subscriber->>Subscriber: handleTopicNextMessage -> apply value
+  Browser-->>Publisher: TopicResolve (resolveId=1)
+  Publisher->>Publisher: handleTopicResolveMessage -> resolve promise
+  Note over Publisher: publish() resolves only now
+  </div>
+</section>
+
+<!-- 6b: Unit 2 worked example -->
+<section>
+  <h2><span class="unit-no">2</span>Worked example: three live instances</h2>
+  <p class="small">Added during this audit to make the ordering guarantee concrete — oldest-created
+  instance first, within each message; <code>TopicNext</code> always fully drained before
+  <code>TopicResolve</code> is even looked at.</p>
+  <div class="mermaid">
+sequenceDiagram
+  participant P as P (created 3rd, publisher)
+  participant Browser
+  participant T1 as T1 (created 1st)
+  participant T2 as T2 (created 2nd)
+
+  P->>Browser: send TopicNext (id=1)
+  P->>Browser: send TopicResolve (resolveId=1)
+  Note over P: publish() awaits the returned promise
+
+  rect rgb(235,245,255)
+  Note over T1,P: TopicNext dispatched to every listener, oldest-created first
+  Browser-->>T1: TopicNext (id=1)
+  T1->>T1: handleTopicNextMessage -> apply value
+  Browser-->>T2: TopicNext (id=1)
+  T2->>T2: handleTopicNextMessage -> apply value
+  Browser-->>P: TopicNext (id=1)
+  P->>P: handleTopicNextMessage -> apply value (P is a subscriber too)
+  end
+
+  rect rgb(255,248,235)
+  Note over T1,P: Only once all three are done does TopicResolve get dispatched
+  Browser-->>T1: TopicResolve (resolveId=1)
+  T1->>T1: no resolver for id=1 -> no-op
+  Browser-->>T2: TopicResolve (resolveId=1)
+  T2->>T2: no resolver for id=1 -> no-op
+  Browser-->>P: TopicResolve (resolveId=1)
+  P->>P: handleTopicResolveMessage -> resolve promise
+  end
+
+  Note over P: publish() resolves only now
+  </div>
+</section>
+
+<!-- 7: Unit 3 -->
+<section>
+  <h2><span class="unit-no">3</span>Transports &amp; tab scope</h2>
+  <ul>
+    <li><code>window.postMessage</code> &mdash; broadcasts to <strong>everyone</strong> listening on the page's
+    <code>message</code> event, no channel/filtering at all.</li>
+    <li><code>BroadcastChannel</code> &mdash; delivers only to listeners that opened the
+    <strong>same channel name</strong>; the browser itself filters before any JS runs.</li>
+  </ul>
+  <table class="catalogue">
+    <tr><th><code>useBroadcastChannel</code></th><th>Transport</th><th>Channel name (per Topic)</th></tr>
+    <tr><td><code>'V2'</code> (default)</td><td>BroadcastChannel, tab-scoped</td><td><code>TopicV2-&lt;name&gt;|&lt;version&gt;-&lt;tabId&gt;</code></td></tr>
+    <tr><td><code>true</code></td><td>BroadcastChannel, broad (legacy v1)</td><td><code>Topic-&lt;name&gt;|&lt;version&gt;</code></td></tr>
+    <tr><td><code>false</code></td><td><code>window.postMessage</code></td><td>the page's <code>message</code> event (no dedicated channel)</td></tr>
+  </table>
+  <p class="quote">Per context given by the team running this audit: an earlier version used a single,
+  shared channel for every Topic — every instance received every message and filtered it in JavaScript,
+  which scaled badly as the number of Topics/instances grew. Folding <code>name|version|tabId</code>
+  into the channel name moves that filtering down to the browser itself.</p>
+</section>
+
+<!-- 8: Unit 4 -->
+<section>
+  <h2><span class="unit-no">4</span>Topic lifecycle</h2>
+  <p>A <code>Topic</code> is a subscription, not a value: it registers a <code>window</code>
+  listener and opens channels at construction, and holds them until <code>destroy()</code>.</p>
+  <p class="quote">Every message is delivered to every listener still attached. If a route's Topic is
+  never destroyed, live listeners for it only grow across the session — each later publish does
+  proportionally more work, one callback per surviving instance.</p>
+</section>
+
+<!-- 9a: Unit 5 - Gatherer -->
+<section>
+  <h2><span class="unit-no">5</span>Gatherers &amp; RPC Topics</h2>
+  <p>Two request/response shapes built on the same <code>Topic</code> primitive.</p>
+  <h3>Gatherer (scatter/gather)</h3>
+  <p>One asker, <strong>every</strong> instance answers; the asker collects them all.</p>
+  <div class="mermaid">
+sequenceDiagram
+  participant Caller
+  participant Local as Gatherer (local)
+  participant Remote as Gatherer (remote)
+
+  Caller->>Local: gather(request)
+  Local->>Local: id = Gatherer.id++, promises[id] = []
+  Local->>Remote: publish({ id, request })
+  Note over Caller: await publish (waits for all peers to register)
+  Local->>Local: ownIds has id -> skip
+  Remote->>Remote: not own -> promises[id].push(P)
+  Remote->>Remote: callback(request) -> response
+  Remote->>Remote: resolve(response)
+  Note over Caller: publish resolved
+  Caller->>Caller: Promise.all(promises[id]) -> Response[]
+  </div>
+  <p class="small">E.g. guards across Apps, or AI completion where you don't know who will answer.</p>
+</section>
+
+<!-- 9b: Unit 5 - RPC Topics -->
+<section>
+  <h2><span class="unit-no">5</span>Gatherers &amp; RPC Topics</h2>
+  <h3>RPC Topic (one asker, one designated answerer)</h3>
+  <p>A plain <code>Topic</code> subclass with <code>sendGetMessage = false</code> — no replay, no
+  promise array. The asker subscribes to the matching answer <em>before</em> publishing the request;
+  the designated answerer republishes the answer onto the same topic, resolving the asker's
+  subscription.</p>
+  <ul>
+    <li><strong>Ask</strong> &mdash; e.g. a Remote Component's <code>PermissionService.getPermissions</code>
+    awaits a filtered subscription, then publishes <code>{ appId, productName }</code> on the
+    <code>PermissionsRpcTopic</code>.</li>
+    <li><strong>Answer</strong> &mdash; the Shell's <code>permission-proxy.service.ts</code> filters for
+    unanswered requests and republishes <code>{ appId, productName, permissions }</code>.</li>
+  </ul>
+  <p class="quote">No built-in timeout: if the designated answerer never responds, the asker's
+  promise never resolves on its own.</p>
+</section>
+
+<!-- 10: Unit 6 -->
+<section>
+  <h2><span class="unit-no">6</span>Versioning &amp; Shell capability negotiation</h2>
+  <h3>Topic version</h3>
+  <p class="small">"Will this message be delivered at all?" — gates message acceptance per Topic.</p>
+
+  <h3>Shell capability</h3>
+  <p class="small">"Does this Shell provide the feature I want?" — a per-Shell-run declaration,
+  checked via <code>hasShellCapability(cap)</code>.</p>
+  <ul class="small">
+    <li><code>CURRENT_LOCATION_TOPIC</code> · <code>PARAMETERS_TOPIC</code></li>
+    <li><code>ACTIVENESS_AWARE_MENUS</code> · <code>DYNAMIC_TRANSLATIONS_TOPIC</code></li>
+  </ul>
+</section>
+
+<!-- 11: Unit 7 -->
+<section>
+  <h2><span class="unit-no">7</span>Framework adapters</h2>
+  <p>Angular wraps each shared Topic in an <code>@Injectable</code> service and destroys it in
+  <code>ngOnDestroy</code>; React's <code>useTopic</code> hook creates it lazily and destroys only
+  the instance it created, deferred past a StrictMode double-mount.</p>
+  <p class="small">A further ngrx layer subscribes the shared Topic and dispatches store actions —
+  covered in depth in Area 12 (Shell context → App ngrx store).</p>
+</section>
+
+<!-- 12: Unit 8 -->
+<section>
+  <h2><span class="unit-no">8</span>Topic &amp; Gatherer catalogue</h2>
+  <p class="small">One-line purpose added to every entry during this audit.</p>
+  <table class="catalogue">
+    <tr><th>Class</th><th>Purpose</th><th>Owning Area</th></tr>
+    <tr><td><code>CurrentWorkspaceTopic</code></td><td>The current Workspace (name, routes, products).</td><td>Area 3</td></tr>
+    <tr><td><code>PermissionsTopic</code></td><td>The user's permissions, pushed to subscribers.</td><td>Area 9</td></tr>
+    <tr><td><code>PermissionsRpcTopic</code></td><td>RPC: ask the Shell for one app's permissions.</td><td>Area 9</td></tr>
+    <tr><td><code>ParametersTopic</code></td><td>Shell-owned named parameters Apps can read.</td><td>Area 3</td></tr>
+    <tr><td><code>GuardGatherer</code></td><td>Collects cross-App route guard results.</td><td>Area 7</td></tr>
+  </table>
+  <p class="footer-note">Full catalogue: 21 Topics + 1 Gatherer entry — see <code>topic-catalogue.adoc</code>.</p>
+</section>
+
+<!-- 13: Related Areas / closing -->
+<section class="center">
+  <h2>Related Areas</h2>
+  <p>Areas 2–12 each describe concrete Topics and state flows on top of this contract.</p>
+  <p>Area 13 — Tracing cross-App communication — explains how to observe Topic traffic at runtime.</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+  // Reveal.js clips (rather than scrolls) content taller than the viewport, and
+  // its scaled stage makes per-slide scrolling unreliable. Instead, shrink any
+  // slide whose content overflows so everything stays visible without scrolling.
+  function fitSlide(slide) {
+    if (!slide) return;
+    slide.querySelectorAll(':scope > .fit-shrink').forEach((el) => {
+      el.classList.remove('fit-shrink');
+      el.style.transform = '';
+    });
+    requestAnimationFrame(() => {
+      const viewportHeight = window.innerHeight;
+      const rect = slide.getBoundingClientRect();
+      if (rect.height <= viewportHeight) return;
+      const scale = Math.max(0.5, (viewportHeight - 20) / rect.height);
+      slide.classList.add('fit-shrink');
+      slide.style.transform = `scale(${scale})`;
+    });
+  }
+
+  Reveal.initialize({
+    hash: true,
+    slideNumber: true,
+    plugins: [ RevealHighlight ],
+  }).then(() => {
+    mermaid.run({ querySelector: '.mermaid' }).then(() => {
+      fitSlide(Reveal.getCurrentSlide());
+    });
+  });
+
+  Reveal.on('slidechanged', (event) => {
+    mermaid.run({ querySelector: '.mermaid' }).then(() => {
+      fitSlide(event.currentSlide);
+    });
+  });
+</script>
+</body>
+</html>

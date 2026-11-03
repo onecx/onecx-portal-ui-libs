@@ -1,10 +1,12 @@
+:mcp_setup_guide_fallback: https://onecx.github.io/docs/documentation/current/onecx-docs-dev/ai/mcp_server_setup.html
+
 .AI Migration Agent
 [%collapsible]
 ====
 
 **Before You Start**
 
-Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the xref:documentation:onecx-docs-dev:ai/mcp_server_setup.adoc[MCP Server Setup Guide].
+Make sure you have the Recommended MCP servers configured before running the migration agent. For detailed setup instructions, see the xref:documentation:onecx-docs-dev:ai/mcp_server_setup.adoc[MCP Server Setup Guide] ({mcp_setup_guide_fallback}[published reference]).
 
 **Setup**
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core'
+import { Component, ViewChild, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
@@ -16,6 +16,7 @@ import { provideRouter } from '@angular/router'
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ocx-search-header>
       <ng-template ocxAdvanced>
@@ -35,6 +36,7 @@ class HostInsideSearchHeaderComponent {
 @Component({
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ng-template ocxAdvanced>
       <div id="advanced-content">Advanced Content</div>

@@ -1,0 +1,147 @@
+= Framework adapters
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+This is Unit 7 of the link:README.adoc[Integration Contract & Topics] Area. Units 1–6 define the messaging contract; this Unit explains how it is exposed to app code.
+
+== Question answered
+
+How do the Angular, React and ngrx adapters wrap the framework-agnostic `Topic`, who owns and destroys each `Topic` instance in each framework, and how does a Topic value reach the ngrx store?
+
+== Why it exists
+
+The contract is the framework-agnostic `Topic` in `@onecx/accelerator` (link:why-message-based.adoc[Unit 1], link:message-delivery.adoc[Unit 2]), but app code should never touch a raw `Topic`. A `Topic` is a *subscription*, not a value: for its whole lifetime it owns a `window` listener and one or two `BroadcastChannel` handles (link:topic-lifecycle.adoc[Unit 4]). Raw `Topic`s in components would leak those resources and force every app to handle the `isInitialized`/replay contract itself.
+
+Three layers solve this: Angular services, React contexts, and ngrx store connectors that push a Topic value into the app's store. They follow two rules:
+
+* *One `Topic` instance per adapter instance.* Each Angular service instance, and each React provider or hook call, gets its own `Topic` unless a parent passes one in. Distinct instances still communicate over the shared `name`/`version` channel.
+* *The adapter owns the lifecycle it stores.* It keeps the `Topic` reference and calls `destroy` at its framework's lifecycle point. App code sees only an observable, a service, a context value or an ngrx action.
+
+== How it works
+
+The adapter sits *above* the `Topic` and never changes its behaviour:
+
+* *Creation is lazy, per adapter instance.* An Angular service getter creates the `Topic` on first access (`this._config$ ??= new ConfigurationTopic()`) and keeps that one reference, which it can hand to other consumers (link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`configuration.service.ts`]). React's `AppStateProvider` calls `useTopic` once per state topic, and `useTopic` creates a new instance whenever no external topic is passed (link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext.tsx`], link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]).
+* *The value is exposed through `asObservable()` and `isInitialized`.* Angular reads a value with `firstValueFrom(topic.asObservable())` and surfaces the `topic.isInitialized` promise. React subscribes the topic into React state and puts `isInitialized` in the context value.
+* *The `Topic` can be injected.* Every Angular service getter has a setter for an external `Topic` (`set config$(source)`), and `useTopic(valueTopic, TopicClass)` uses an external instance when one is passed. A parent, such as a Remote Component host, uses this to share one `Topic` across several child wrappers.
+* *Destroy is delegated to the accelerator.* The adapter only calls `topic.destroy()`. link:topic-lifecycle.adoc[Unit 4] covers what `destroy` releases and the one listener it leaves behind.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App as App code (component / hook)
+  participant Adapter as Service / Context
+  participant Topic as Topic (accelerator)
+  participant Shell
+
+  Adapter->>Topic: new Topic()  (lazy, per adapter instance)
+  Topic->>Shell: TopicGet (late subscriber)
+  Shell-->>Topic: TopicNext (current value)
+  Topic-->>Adapter: asObservable() / isInitialized
+  App->>Adapter: subscribe / firstValueFrom
+  Note over Adapter,App: on route/component unmount
+  Adapter->>Topic: destroy()
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+Each framework package builds on the same `@onecx/integration-interface` `Topic` classes:
+
+* `@onecx/angular-integration-interface`: `@Injectable` services (link:{libs}/angular-integration-interface/src/index.ts[`index.ts`]).
+* `@onecx/react-integration-interface`: React contexts and the `useTopic` hook (link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]).
+* `@onecx/ngrx-integration-interface`: ngrx store connectors (link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[`store-connectors/index.ts`]).
+
+Four *framework-agnostic* adapters live in `@onecx/integration-interface` so both frameworks share them: `IconService`, `NotificationService`, `ImageRepositoryService` and `DynamicTranslationService` (link:{libs}/integration-interface/src/lib/services/icon.service.ts[`icon.service.ts`]). The framework layers stay thin; the Angular `IconService`, for example, imports the shared one (link:{libs}/angular-integration-interface/src/lib/services/icon.service.ts[`icon.service.ts`]).
+
+=== Shell side
+
+The Shell publishes the shared state that app adapters consume, using Angular adapter services itself:
+
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts`] initializes `ConfigurationService` via `configurationServiceInitializer`. It publishes workspace and location state through `AppStateService` (`publishCurrentWorkspace`, `urlChangeListenerInitializer`).
+* link:{shell}/src/app/shell/services/routes.service.ts[`src/app/shell/services/routes.service.ts`] publishes loading and current-MFE updates through `AppStateService.globalLoading$` / `currentMfe$`. It reports remote-load failures through `PortalMessageService.error`.
+
+As the tab's host, the Shell keeps its Topics for the tab's lifetime instead of destroying them per route (link:topic-lifecycle.adoc[Unit 4]).
+
+== Angular / React
+
+Only the wrapper and the destroy point differ; the underlying `Topic` is identical.
+
+[cols="1,2,2", options="header"]
+|===
+| |Angular |React
+
+|Wrapper
+|An `@Injectable` service that owns one `Topic` per shared mechanism.
+|The `useTopic(valueTopic, TopicClass)` hook, plus a context that subscribes the topic into React state and exposes `isInitialized` (link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`configurationContext.tsx`]).
+
+|Destroy point
+|`ngOnDestroy`.
+|Unmount. Destruction is deferred by a zero-delay `setTimeout` and guarded by a mounted ref, so a StrictMode double-mount does not destroy a `Topic` the component immediately reuses (link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`use-topic.utils.ts`]).
+
+|What is destroyed
+|Every stored reference, including one assigned through a setter, so a shared external topic is torn down with the service.
+|Only the `Topic` the hook *created*. An external instance is left for its owner to destroy (link:topic-lifecycle.adoc[Unit 4]).
+|===
+
+The cleanup rule is the one structural difference. Two Angular examples:
+
+* *`ConfigurationService`* publishes the loaded config on `init()`, exposes `topic.isInitialized` as `isInitialized`, and calls `config$.destroy()` on teardown (link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`configuration.service.ts`]).
+* *`AppStateService`* aggregates several state `Topic`s (workspace, current page/MFE/location, global loading/error, authentication) and destroys each in `ngOnDestroy` (link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`app-state.service.ts`]).
+
+=== ngrx store connectors
+
+In ngrx apps, store connectors subscribe the (shared) `Topic` and dispatch a store action, wiring the Shell context and the URL into the app's store (link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-workspace-store-connector-service.ts[`current-workspace-store-connector-service.ts`]). link:../state-management/shell-context-to-store.adoc[Shell context → App ngrx store] (Area 12) covers this in depth.
+
+== Edge cases & pitfalls
+
+* *Only the adapter should create a `Topic` for app code.* A `Topic` constructed in a component bypasses the adapter-instance and lifecycle rules and leaks its resources (link:topic-lifecycle.adoc[Unit 4]).
+* *Setter-injected topics are not caller-owned in Angular.* When a parent shares one `Topic` across wrappers, React leaves it to its owner, but Angular service teardown still calls `destroy()` on it.
+* *Angular teardown can destroy Shell Topics.* `OnDestroy` fires per route or component, while Shell Topics live for the tab. A Shell-owned topic passed into an Angular adapter can be destroyed with that adapter; React's external-instance path has no such side effect.
+* *Publishing is delegated.* Adapter publishing, such as `ConfigurationService.init()`, is ordinary `Topic` publishing with Unit 2's await/resolve semantics.
+
+== Debugging
+
+`Topic`, `TopicPublisher` and `Gatherer` log under `@onecx/accelerator:Topic:<name>`, `@onecx/accelerator:TopicPublisher:<name>` and `@onecx/accelerator:Gatherer:<name>` (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`], link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]). The Area's link:README.adoc#debugging-conventions[Debugging conventions] list the `localStorage.debug` patterns.
+
+* Watch `isInitialized` to confirm the adapter received the value its `TopicGet` requested from the Shell.
+* Confirm that wrappers share a `Topic` only when the same external instance was passed to them.
+
+== Known issues
+
+* *The `window` listener survives `destroy`.* A destroyed `Topic` can keep a live `window` `message` listener because of the capture-flag mismatch described in link:topic-lifecycle.adoc[Topic lifecycle]. The adapters inherit this, because they call the `Topic`'s own `destroy()`.
+
+== Related Units
+
+* link:why-message-based.adoc[Why a message-based contract]: why the contract is a `Topic`.
+* link:message-delivery.adoc[Topic message delivery]: the `asObservable`/`isInitialized` the adapters expose.
+* link:topic-lifecycle.adoc[Topic lifecycle]: where and what `destroy` releases.
+* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]: the request/response wrappers the adapters also expose.
+* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]: capability checks the adapters branch on.
+* link:topic-catalogue.adoc[Topic & Gatherer catalogue]: the full list of the wrapped Topics.
+* link:../state-management/shell-context-to-store.adoc[Shell context → App ngrx store] (Area 12).
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13).
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`]
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`]
+* link:{libs}/integration-interface/src/index.ts[`integration-interface/src/index.ts`]
+* link:{libs}/integration-interface/src/lib/services/icon.service.ts[`integration-interface/.../icon.service.ts`]
+* link:{libs}/angular-integration-interface/src/index.ts[`angular-integration-interface/src/index.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/configuration.service.ts[`angular-integration-interface/.../configuration.service.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`angular-integration-interface/.../app-state.service.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/icon.service.ts[`angular-integration-interface/.../icon.service.ts`]
+* link:{libs}/react-integration-interface/src/lib/utils/use-topic.utils.ts[`react-integration-interface/.../use-topic.utils.ts`]
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`react-integration-interface/.../appStateContext.tsx`]
+* link:{libs}/react-integration-interface/src/lib/contexts/configurationContext.tsx[`react-integration-interface/.../configurationContext.tsx`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/index.ts[`ngrx-integration-interface/.../store-connectors/index.ts`]
+* link:{libs}/ngrx-integration-interface/src/lib/store-connector/store-connectors/current-workspace-store-connector-service.ts[`ngrx-integration-interface/.../current-workspace-store-connector-service.ts`]
+* link:{shell}/src/bootstrap.ts[`bootstrap.ts` (Shell)]
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]
+* link:{shell}/src/app/shell/services/routes.service.ts[`src/app/shell/services/routes.service.ts` (Shell)]

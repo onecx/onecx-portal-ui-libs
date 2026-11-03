@@ -1,0 +1,182 @@
+
+= Images
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:overview: ./README.adoc
+:image_model: {libs}/integration-interface/src/lib/topics/image-repository/image-repository.model.ts
+:image_topic: {libs}/integration-interface/src/lib/topics/image-repository/image-repository.topic.ts
+:image_service: {libs}/integration-interface/src/lib/services/image-repository.service.ts
+:image_service_angular: {libs}/angular-integration-interface/src/lib/services/image-repository.service.ts
+:image_context_react: {libs}/react-integration-interface/src/lib/contexts/imageRepositoryContext.tsx
+:logo_utils: {libs}/angular-accelerator/src/lib/utils/image-logo-url.utils.ts
+:topic_base: {libs}/accelerator/src/lib/topic/topic.ts
+:shell_app_module: {shell}/src/app/app.module.ts
+:shell_image_repo: {shell}/src/app/shell/services/image-repository.service.ts
+
+== Question answered
+
+How are images (logos, brand assets) delivered to OneCX applications via the image repository, so an application can resolve a well-known image name to its current URL?
+
+== Why it exists
+
+Some images are not static assets bundled with an application; they come from the backend and can change per Workspace or per theme (a Workspace logo, a picture that an administrator swapped out). An application should not hard-code those URLs or know how they are built. OneCX therefore keeps an *image repository*, a map from an image *name* to its current *URL*, that the Shell publishes, and gives each framework a small service to resolve names against it.
+
+== How it works
+
+The mechanism is a single Topic carrying one value: an `ImageRepositoryInfo`. The Shell builds the map and publishes it; applications read it and look up the URL for a name. Unlike the icon flow (see the sibling Unit), this is not a per-image-name request/reply exchange: the only request is the Topic's initial `TopicGet`, and the application simply reads the published repository for names it already knows.
+
+[#the-model]
+=== The `ImageRepositoryInfo` model
+
+link:{image_model}[`image-repository.model.ts`] defines the payload:
+
+[source,typescript]
+----
+interface ImageRepositoryInfo {
+  images: { [key: string]: string }
+}
+----
+
+A flat map from an image name to its URL. The names are the stable, well-known keys (for example the picture kinds the backend exposes for a theme); the values are the URLs to fetch.
+
+[#the-channel]
+=== The channel: `ImageRepositoryTopic`
+
+link:{image_topic}[`image-repository.topic.ts`] exposes it through link:{topic_base}[`Topic`]:
+
+[source,typescript]
+----
+export class ImageRepositoryTopic extends Topic<ImageRepositoryInfo> {
+  constructor() {
+    super('imageRepository', 1)
+  }
+}
+----
+
+It is a Topic named `imageRepository` at version `1`. Unlike the icon Topic, it is constructed with the default `sendGetMessage = true`, so creating the `ImageRepositoryTopic` initiates the Topic's normal `TopicGet` flow: the constructor either sends `TopicGet` immediately, or, if the accelerator was initialized less than two seconds ago, schedules a 100 ms check that sends only if the Topic is still uninitialized. The lazy getter does that construction before `getUrl` subscribes with `firstValueFrom(this.imageRepositoryTopic.asObservable())`, so construction initiates the immediate-or-deferred request path and the subscription then waits for the first published repository value. This makes the repository a read-mostly value; the Shell publishes it once per theme, and any late subscriber still gets the latest map.
+
+[#resolution]
+=== Resolving a name to a URL
+
+The framework-agnostic `ImageRepositoryService` (link:{image_service}[`image-repository.service.ts`]) owns the lookup:
+
+[source,typescript]
+----
+async getUrl(names: string[]): Promise<string | undefined>
+async getUrl(names: string[], fallbackUrl: string): Promise<string>
+async getUrl(names: string[], fallbackUrl?: string): Promise<string | undefined> {
+    if (!names || names.length === 0) {
+        return fallbackUrl;
+    }
+    const imagePaths = await firstValueFrom(this.imageRepositoryTopic.asObservable());
+    const urls = imagePaths.images || {};
+    const isUrlListEmpty = Object.entries(urls).length === 0;
+    if (isUrlListEmpty) {
+        return fallbackUrl;
+    }
+    for (const name of names) {
+        if (name in urls) {
+            return urls[name];
+        }
+    }
+    return fallbackUrl;
+}
+----
+
+It takes an *ordered list* of candidate names and returns the URL of the first name that exists in the repository. Passing several names is the fallback mechanism itself: an application tries its preferred names in order and degrades to `fallbackUrl` (or `undefined`) only when none resolve.
+
+The flow:
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant App
+  participant Service as ImageRepositoryService
+  participant Topic as ImageRepositoryTopic
+  participant Shell
+  App->>Service: getUrl(names, fallbackUrl?)
+  Service->>Topic: imageRepositoryTopic getter creates new ImageRepositoryTopic()
+  alt Topic init older than 2 s (or missing)
+    Topic->>Shell: TopicGet immediately
+  else Topic init within 2 s
+    Topic-->>Topic: schedule 100 ms check
+  end
+  Service->>Topic: firstValueFrom(asObservable()) subscribes
+  opt 100 ms timer fires and Topic still uninitialized
+    Topic->>Shell: TopicGet
+  end
+  Shell-->>Topic: publish ImageRepositoryInfo { images }
+  Topic-->>Service: current ImageRepositoryInfo
+  Service->>Service: getUrl(names) -> first matching URL, else fallback
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+`@onecx/integration-interface` provides the framework-agnostic `ImageRepositoryService` (link:{image_service}[`image-repository.service.ts`]): a lazily-created `imageRepositoryTopic` getter plus `getUrl(names, fallbackUrl?)` and `destroy()`. It does not build the repository or the URLs; it only reads the Topic and resolves names.
+
+Two helpers sit alongside it:
+
+* link:{logo_utils}[`ImageLogoUrlUtils.createLogoUrl(apiPrefix, url)`] (in `@onecx/angular-accelerator`) turns a backend-relative image URL into an absolute one: if the URL is not already an `http`/`https` URL it is prefixed with the API base. This is how a repository value that is a relative path (relative to the backend) becomes a fetchable address.
+* The repository itself is resolved by name only: the service does not apply the prefix, so a caller combines `getUrl` with `createLogoUrl` when the returned URL is backend-relative.
+
+=== Shell side
+
+The Shell is the only publisher of the Topic (separate repository, read-only here; linked via `github.com/onecx/onecx-shell-ui/blob/main/…`). Its `ImageRepositoryService` (link:{shell_image_repo}), run by the `imageRepositoryServiceInitializer` in link:{shell_app_module}[`src/app/app.module.ts`], builds the map on every `init()`:
+
+* Waits for the first theme emission to learn the active theme identifier (the image repository is theme-scoped, like the theme itself).
+* Asks the Workspace-config BFF for the available image kinds for that theme (`getAvailableImageTypes`), and constructs a URL for each kind.
+* Publishes the resulting `images` map on `imageRepositoryTopic`.
+* On any failure it logs and falls back to an empty `images` object, so subscribers still resolve (to their fallback) instead of hanging.
+
+Because the Shell publishes the full map once per theme, applications never fetch the URL list themselves: they just read the shared Topic.
+
+== Angular / React
+
+The resolution API is the same; only the way you reach it differs.
+
+=== Angular
+
+link:{image_service_angular}[`ImageRepositoryService`] (`@onecx/angular-integration-interface`, `providedIn: 'root'`) wraps the framework-agnostic service and exposes `imageRepositoryTopic`, `getUrl(names, fallbackUrl?)`, and `destroy()` from `ngOnDestroy`. An Angular service injects it and calls `getUrl`.
+
+=== React
+
+link:{image_context_react}[`imageRepositoryContext.tsx`] (`@onecx/react-integration-interface`) provides the `ImageRepositoryProvider` / `useImageRepositoryService` pair. The provider creates the shared service (or accepts one via `value.imageRepositoryService`) and destroys it on unmount only when it created it itself; the hook returns the context value (its `imageRepositoryService`) and throws if used outside a provider. A React component reads `imageRepositoryService` from the hook and calls `getUrl` on it.
+
+== Edge cases & pitfalls
+
+* *It resolves the repository once per call.* `getUrl` reads the *first* `ImageRepositoryInfo` on the Topic at call time. If the theme (and therefore the repository) changes later, a value resolved earlier is not refreshed: re-call `getUrl` after the theme changes.
+* *`names` is an ordered fallback list, not a multi-image request.* The first name that exists wins. Order the list from most-specific to least-specific.
+* *An empty repository means "fallback".* If the Shell published an empty `images` map (its failure path) or none of your names exist, `getUrl` returns `fallbackUrl` or `undefined`. Guard against `undefined` before rendering an `<img>`.
+* *Backend-relative URLs need the prefix.* A repository value that is not an absolute `http(s)` URL is relative to the backend; use `ImageLogoUrlUtils.createLogoUrl` (or the equivalent in your app) to prefix the API base before it is usable.
+* *The topic is theme-scoped.* The Shell builds the map from the *active* theme. Before a theme is known the Shell waits, so the first publication may arrive after the first theme emission rather than immediately at startup.
+
+== Debugging
+
+* In the console, inspect the `ImageRepositoryInfo` the Topic carries (the `images` map) to see which names currently resolve and to what URL.
+* Confirm the Shell has published the repository at all: if `images` is empty, the BFF lookup for the active theme failed (check the Shell logs) or the theme was not known yet.
+* Verify the final URL is absolute: a relative value means the API-base prefix (`createLogoUrl`) was not applied.
+
+== Related Units
+
+* link:{overview}[Theming & Visual Assets overview]: the Area this Unit belongs to.
+* link:theme-to-page.adoc[Theme → page]: where the active theme is applied; the image repository is built per theme.
+* link:icons.adoc[Icons]: the sibling Unit covering icons (a request/reply flow, as opposed to the read-mostly repository here).
+
+== Sources
+
+Code::
+* link:{image_model}[`integration-interface/.../image-repository/image-repository.model.ts`]: `ImageRepositoryInfo`.
+* link:{image_topic}[`integration-interface/.../image-repository/image-repository.topic.ts`]: `ImageRepositoryTopic` (`imageRepository`, v1).
+* link:{image_service}[`integration-interface/.../services/image-repository.service.ts`]: framework-agnostic `ImageRepositoryService.getUrl`.
+* link:{image_service_angular}[`angular-integration-interface/.../services/image-repository.service.ts`]: the Angular `providedIn: 'root'` wrapper.
+* link:{image_context_react}[`react-integration-interface/.../contexts/imageRepositoryContext.tsx`]: `ImageRepositoryProvider` / `useImageRepositoryService` (React).
+* link:{logo_utils}[`angular-accelerator/.../utils/image-logo-url.utils.ts`]: `ImageLogoUrlUtils.createLogoUrl`.
+* link:{topic_base}[`accelerator/.../topic/topic.ts`]: the `Topic` base class (default `sendGetMessage = true`).
+* Shell (read-only, via `github.com/onecx/onecx-shell-ui/blob/main`):
+** link:{shell_image_repo}[`src/app/shell/services/image-repository.service.ts`]: Shell `ImageRepositoryService`: waits for the first theme, fetches the image kinds from the BFF, publishes the `images` map (empty on failure).
+** link:{shell_app_module}[`src/app/app.module.ts`]: the `imageRepositoryServiceInitializer` that runs it on startup.

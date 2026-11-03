@@ -9,23 +9,23 @@
     [attr.manual]="manualBreadcrumbs()"
   ></p-breadcrumb>
   } }
-  <div class="title-bar flex flex-row md:justify-content-between align-items-center p-3">
+  <div class="title-bar flex flex-row md:justify-between items-center p-3">
     <div class="title-wrap">
       @if (showFigure()) {
-      <div class="mr-2 figure relative flex h-2rem w-2rem md:h-3rem md:w-3rem">
+      <div class="mr-2 figure relative flex h-[2rem] w-[2rem] md:h-[3rem] md:w-[3rem]">
         <div #previewImage class="figure-image absolute top-0 left-0 right-0 bottom-0">
           <ng-content select="[figureImage]"></ng-content>
           @if (figureImage() && !figureImageLoadError()) {
           <img
             [ocxSrc]="figureImage()"
             alt="Figure Image"
-            class="w-full border-round-sm"
+            class="w-full rounded-sm"
             (error)="handleImageError()"
           />
           }
         </div>
         @if (previewImage.children.length === 0 || figureImageLoadError()) {
-        <div class="colorblob flex-1 border-round"></div>
+        <div class="colorblob flex-1 rounded-border"></div>
         }
       </div>
       } @if (!loading()) {
@@ -39,7 +39,7 @@
         }
       </div>
       } @else {
-      <div class="header justify-content-evenly">
+      <div class="header justify-evenly">
         <p-skeleton width="10rem"></p-skeleton>
         <p-skeleton width="10rem"></p-skeleton>
       </div>
@@ -126,7 +126,7 @@
     @if (objectDetails()) { @for (item of objectDetails(); track item) {
     <div class="object-info" [ngClass]="objectInfoLayoutClasses()">
       <span
-        class="flex font-medium text-600 object-info-grid-label"
+        class="flex font-medium text-surface-600 object-info-grid-label"
         name="object-detail-label"
         [ocxTooltip]="item.labelTooltipKey ? ((typeof item.labelTooltipKey === 'string' ? item.labelTooltipKey : item.labelTooltipKey.key) | translate : (typeof item.labelTooltipKey === 'object' ? item.labelTooltipKey.parameters : undefined)) : ''"
         tooltipEvent="hover"
@@ -137,12 +137,12 @@
       @if (item.icon || item.value) {
       <span class="object-info-grid-value">
         <span
-          class="flex text-900 align-items-center gap-2 w-max"
+          class="flex text-surface-900 items-center gap-2 w-max"
           [ngClass]="generateItemStyle(item)"
           name="object-detail-value"
         >
           <span
-            class="flex align-items-center gap-2"
+            class="flex items-center gap-2"
             [ocxTooltip]="item.valueTooltipKey ? ((typeof item.valueTooltipKey === 'string' ? item.valueTooltipKey : item.valueTooltipKey.key) | translate : (typeof item.valueTooltipKey === 'object' ? item.valueTooltipKey.parameters : undefined)) : ''"
             tooltipEvent="hover"
             tooltipPosition="top"

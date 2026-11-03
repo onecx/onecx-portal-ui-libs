@@ -1,0 +1,166 @@
+= Custom auth service contract
+
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+What a *custom* auth service must provide, and how the Shell loads and wires it into the shared `AuthService` contract.
+
+== Why it exists
+
+Some OneCX deployments do not use the built-in Keycloak mechanism: they run a home-grown identity provider, or integrate an enterprise directory, or need a custom token format. Rather than fork the Shell for each of those cases, the mechanism is *pluggable*: when `AUTH_SERVICE=custom` the Shell loads a remote Module Federation module that exposes an `AuthServiceFactory` as its default export, calls it to obtain a concrete `AuthService`, and then treats the result exactly like the Keycloak or disabled implementations. The provider lives outside this repository and outside the Shell, so the Shell stays provider-agnostic.
+
+The contract has two halves:
+
+* the `AuthService` interface every provider must satisfy (also used by Keycloak and the disabled service: see the previous Units);
+* the *loading* machinery (`AuthServiceFactory` + the `Injectables` callback) that lets the remote reuse Shell-provided services (the built-in `KeycloakAuthService`, or the resolved page `Config`) instead of re-implementing them.
+
+== How it works
+
+=== The contract
+
+Every `AuthService` implementation, Keycloak, custom or disabled, satisfies the `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthService`]` interface:
+
+[source,typescript]
+----
+init(config?: Record<string, unknown>): Promise<boolean>
+getHeaderValues(): Record<string, string>
+logout(): void
+updateTokenIfNeeded(): Promise<boolean>
+----
+
+`init()` is called once by the Shell wrapper and must resolve truthy on success (a truthy result is what unlocks the `link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[isAuthenticated$]` gate: see the link:./mechanism-selection.adoc[Ownership & mechanism selection] Unit). `getHeaderValues()` returns the headers an App attaches to requests; `updateTokenIfNeeded()` refreshes the token; `logout()` ends the session.
+
+The same file declares the two contract pieces specific to *custom* loading:
+
+* `link:{libs}/shell-auth/src/lib/auth.service.ts[`AuthServiceFactory`]`: a function the remote module exports as its default. It receives an `injectorFunction` and returns an `AuthService` (or a `Promise` of one):
+
+[source,typescript]
+----
+type AuthServiceFactory = (
+  injectorFunction: (injectable: Injectables) => Promise<unknown> | unknown
+) => AuthService | Promise<AuthService>
+----
+
+* `link:{libs}/shell-auth/src/lib/auth.service.ts[`Injectables`]`: the enum of services a custom provider may request through that `injectorFunction`:
+
+|===
+| Value | Resolves to
+| `KEYCLOAK_AUTH_SERVICE` | the Shell's `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[KeycloakAuthService]` instance
+| `CONFIG` | the resolved page `link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[Config]`
+|===
+
+The `injectorFunction` is provided by the wrapper (`retrieveInjectables()`), so a custom provider that wants to *wrap* the built-in Keycloak service or read the workspace configuration does not have to duplicate that work.
+
+=== Loading the remote
+
+In `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[auth-service-wrapper.ts]`, the `custom` case of `initializeAuthService()` calls `getAuthServiceFactory()` and then `Promise.resolve(factory((injectable) => retrieveInjectables(injectable)))`. The factory is loaded as a remote Module Federation module through three configuration keys (all read from the `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[ConfigurationService]`):
+
+|===
+| Key | Effect | Default
+
+| `AUTH_SERVICE_CUSTOM_URL`
+| Remote entry URL. Required: unset throws `URL of the custom auth service is not defined`.
+| none (required)
+
+| `AUTH_SERVICE_CUSTOM_MODULE_NAME`
+| Exposed module name on the remote.
+| `./CustomAuth`
+
+| `CUSTOM_AUTH_SHARE_SCOPE`
+| Module Federation share scope for the remote.
+| none
+|===
+
+`getAuthServiceFactory()`:
+
+. reads `AUTH_SERVICE_CUSTOM_URL`; throws if it is falsy;
+. reads `AUTH_SERVICE_CUSTOM_MODULE_NAME` (default `./CustomAuth`) and `CUSTOM_AUTH_SHARE_SCOPE`;
+. builds a remote config via `createRemoteConfig(remoteEntry, 'custom-auth-service', 'module', shareScope)`;
+. fetches the Shell's Module Federation instance with `getShellMfInstance()` and throws `Shell module federation instance not found` if it is missing;
+. `registerAndLoadRemote<...>(instance, remoteConfig, exposedModule)` and throws `Failed to load custom auth service module` if the load fails;
+. returns `module.default`: the `AuthServiceFactory`.
+
+`retrieveInjectables()` maps the `Injectables` values: `KEYCLOAK_AUTH_SERVICE` resolves to `this.injector.get(KeycloakAuthService)`, `CONFIG` resolves to `this.configService.getConfig()`, and any other value throws `unknown injectable type`.
+
+The wrapper then initialises the returned `AuthService` and reports the result through `getInitResult()` exactly as it does for Keycloak/disabled: publishing `isAuthenticated$` only when `init()` is truthy.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant W as AuthServiceWrapper
+  participant C as ConfigurationService
+  participant MF as Shell MF instance
+  participant R as remote CustomAuth module
+  participant F as AuthServiceFactory
+  participant S as custom AuthService
+  W->>C: AUTH_SERVICE_CUSTOM_URL / MODULE_NAME / SHARE_SCOPE
+  W->>MF: registerAndLoadRemote(exposedModule)
+  MF-->>W: remote module
+  W->>R: module.default (AuthServiceFactory)
+  W->>F: factory(injectorFunction)
+  F->>W: injectorFunction(KEYCLOAK_AUTH_SERVICE|CONFIG)
+  F-->>W: AuthService
+  W->>S: init()
+  S-->>W: true / falsy
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `link:{libs}/shell-auth/src/lib/auth.service.ts[auth.service.ts]`: the `AuthService` interface, the `Injectables` enum and the `AuthServiceFactory` type (the whole custom contract).
+* `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[auth-service-wrapper.ts]`: `getAuthServiceFactory()` (remote load) and `retrieveInjectables()` (the `injectorFunction`); the `custom` branch of `initializeAuthService()`.
+* `link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[keycloak-auth.service.ts]`: the `KeycloakAuthService` a custom provider can obtain via `Injectables.KEYCLOAK_AUTH_SERVICE`.
+* `link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[config-key.model.ts]`: the `AUTH_SERVICE_CUSTOM_URL`, `AUTH_SERVICE_CUSTOM_MODULE_NAME` and `CUSTOM_AUTH_SHARE_SCOPE` keys.
+* The remote-loading helpers (`createRemoteConfig`, `getShellMfInstance`, `registerAndLoadRemote`) come from `@onecx/angular-utils` (`link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[get-load-remote-entry-options.utils.ts]`).
+
+=== Shell side
+
+The Shell owns two responsibilities here. First, it hosts the Module Federation instance the wrapper pulls via `getShellMfInstance()`: without it the custom load fails (`Shell module federation instance not found`). Second, it distributes the `AUTH_SERVICE_CUSTOM_*` keys through the `ConfigurationService` so the wrapper can resolve the remote. The *provider* module itself (`CustomAuth` or the configured exposed module) is written and deployed by the deployment team as a separate Module Federation remote; it is not part of the Shell repository, and this documentation is read-only with respect to both.
+
+The Shell's `link:{shell}/src/app/app.module.ts[app.module.ts]` imports `provideAuthService()` from `@onecx/shell-auth`, which runs the wrapper's initialiser at startup; the custom path is taken whenever `AUTH_SERVICE=custom` is configured.
+
+== Angular / React
+
+The custom-service contract is *entirely* framework-agnostic and lives in the Shell through the libs. Both Angular and React Apps consume the result the same way: they never load the remote themselves; they wait on `isAuthenticated$.isInitialized` and then call the `window` proxy (see link:./obtaining-tokens.adoc[How Apps obtain tokens] and link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]). The `AuthService` returned by the remote is opaque to the Apps regardless of the mechanism that produced it.
+
+== Edge cases & pitfalls
+
+* *The custom URL is mandatory.* `getAuthServiceFactory()` throws when `AUTH_SERVICE_CUSTOM_URL` is unset, so a page with `AUTH_SERVICE=custom` but no URL configured fails initialisation rather than falling back.
+* *A Shell MF instance is required.* The custom load uses the Shell's Module Federation instance; a standalone consumer without it gets `Shell module federation instance not found`.
+* *The exposed module defaults to `./CustomAuth`.* If the remote exposes the factory under a different name, set `AUTH_SERVICE_CUSTOM_MODULE_NAME`; the module's *default export* must be the `AuthServiceFactory`.
+* *A falsy `init()` blocks the page.* Like the other mechanisms, the wrapper publishes `isAuthenticated$` only on a truthy `init()`; a custom `init()` that resolves falsy leaves the gate uninitialised and Apps await indefinitely.
+* *`injectorFunction` throws on unknown keys.* Only `Injectables.KEYCLOAK_AUTH_SERVICE` and `Injectables.CONFIG` resolve; requesting anything else throws `unknown injectable type`.
+* *The remote may return a `Promise<AuthService>`.* The wrapper awaits `Promise.resolve(factory(...))`, so a synchronous or async factory both work; a factory that throws surfaces as an initialisation failure.
+
+== Debugging
+
+* The `link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[AuthServiceWrapper]` has no logger of its own, so the custom selection path is not directly observable in the `debug` output; the `@onecx/shell-auth` prefix (set in `link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[logger.utils.ts]`) is only used by `KeycloakAuthService` when a provider reuses the built-in Keycloak service. Enable `DEBUG='@onecx/shell-auth:*'` and trace the three `getAuthServiceFactory()` throw messages in the devtools to pin down a failure.
+* In the devtools, confirm `window.onecxAuth.authServiceProxy.v1` was mounted and that `getHeaderValues()` returns the custom provider's headers: a custom mechanism that mounts the proxy but returns `{}` means its `getHeaderValues()` implementation is not producing tokens.
+* A custom module that never resolves check the remote entry URL (`AUTH_SERVICE_CUSTOM_URL`), the exposed module name, and the share scope; the three throw messages in `getAuthServiceFactory()` pin down which of those failed. General tooling lives in Area 13 (Diagnostics).
+
+== Related Units
+
+* link:./mechanism-selection.adoc[Ownership & mechanism selection (keycloak, custom, disabled, authenticated gating)]
+* link:./keycloak.adoc[Keycloak integration]
+* link:./obtaining-tokens.adoc[How Apps obtain tokens]
+* link:./tokens-on-http-calls.adoc[Tokens on HTTP calls]
+* link:../README.adoc#shell-context[3. Shell Context & Runtime Configuration]: the `AUTH_SERVICE_CUSTOM_*` keys come from the workspace configuration.
+* link:../README.adoc#bootstrap[2. Application Bootstrap]: the custom provider is loaded as a remote Module Federation module; the loading machinery belongs to that Area.
+
+== Sources
+
+Code::
+* link:{libs}/shell-auth/src/lib/auth.service.ts[`shell-auth/src/lib/auth.service.ts`]
+* link:{libs}/shell-auth/src/lib/auth-service-wrapper.ts[`shell-auth/src/lib/auth-service-wrapper.ts`]
+* link:{libs}/shell-auth/src/lib/auth_services/keycloak-auth.service.ts[`shell-auth/src/lib/auth_services/keycloak-auth.service.ts`]
+* link:{libs}/shell-auth/src/lib/utils/logger.utils.ts[`shell-auth/src/lib/utils/logger.utils.ts`]
+* link:{libs}/angular-integration-interface/src/lib/model/config-key.model.ts[`angular-integration-interface/src/lib/model/config-key.model.ts`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`angular-integration-interface/src/lib/services/app-state.service.ts`]
+* link:{libs}/angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts[`angular-utils/src/lib/utils/get-load-remote-entry-options.utils.ts`]
+* link:{libs}/integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts[`integration-interface/src/lib/topics/configuration/v1/configuration.topic.ts`]
+* link:{shell}/src/app/app.module.ts[`src/app/app.module.ts` (Shell)]

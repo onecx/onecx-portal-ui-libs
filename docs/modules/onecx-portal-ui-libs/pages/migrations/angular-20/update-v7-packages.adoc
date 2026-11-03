@@ -27,6 +27,14 @@ If the following packages are used in your project, update them to ensure compat
 | `^20.3.0`
 | Updated for Angular 20 compatibility
 
+| `primeicons`
+| `^7.0.0`
+| Updated for Angular 20 compatibility
+
+| `primeflex`
+| `^4.0.0`
+| Updated for Angular 20 compatibility
+
 | `@primeng/themes`
 | `^20.0.0`
 | Updated for Angular 20 compatibility

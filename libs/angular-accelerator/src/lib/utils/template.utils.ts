@@ -1,4 +1,4 @@
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 
 export function findTemplate(templates: PrimeTemplate[], names: string[]): PrimeTemplate | undefined {
   for (let index = 0; index < names.length; index++) {

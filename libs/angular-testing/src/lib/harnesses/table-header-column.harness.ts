@@ -1,6 +1,6 @@
 import { ContentContainerComponentHarness } from '@angular/cdk/testing'
 import { ButtonHarness } from './button.harness'
-import { PMultiSelectHarness } from './primeng/p-multiSelect.harness'
+import { PMultiSelectHarness } from './optimus/p-multiSelect.harness'
 
 export class TableHeaderColumnHarness extends ContentContainerComponentHarness {
   static hostSelector = 'th'

@@ -1,0 +1,99 @@
+= Global loading
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+What is the `globalLoading` flag, who publishes it, and how does it relate to the loading spinner the Shell shows in the route area?
+
+== Why it exists
+
+Loading a Micro-Front-End takes time: the Shell has to download the remote module, load its shared dependencies and translate them, and, when the target App has not been seen yet on this page, publish its environment (`currentMfe`), refresh permissions and load its styles. During all of that the user is staring at the route area. The page needs a single, page-wide "I am busy" flag that any part of the page can read, and it needs a spinner for the region that is actually being loaded. The subtle part is that these are two *separate* signals, and only one of them drives the Shell's spinner.
+
+== How it works
+
+There are two signals, and they are not the same thing:
+
+. *`globalLoading`*: a `Topic<boolean>` in the libraries. A single, page-wide busy flag: publishing `true` means "the page is doing something", `false` means "it is not". Because it is a Topic it is shared across every instance on the page within a tab. Any App or the Shell can publish or subscribe to it; nothing in the Shell binds a spinner to it directly.
+. *`RoutesService.showContent$`*: a `BehaviorSubject<boolean>` *inside the Shell* (default `true`). This is the signal the route-area spinner is actually bound to. The Shell template renders the `router-outlet` when `showContent$` is truthy and a full-screen `ocx-shell-loading-spinner` when it is false.
+
+The Shell updates `showContent$` from two places:
+
+* the `Router` events. A `NavigationEnd` or `NavigationSkipped` event drives `showContent$` back to `true`: content is shown again once navigation settles.
+* `RoutesService.loadChildren()` and its helper `updateAppState()`. While a route's remote module is being loaded (and, on the first load of an App, while its environment/permissions/styles are being refreshed) the Shell sets `showContent$` to `false`, and publishes `globalLoading` `true` at the same time.
+
+So the two signals move together *because the Shell sets them together* while a module loads: not because one drives the other. Publishing `globalLoading` on its own does nothing to the spinner: the Shell never reads that Topic to decide whether to show the spinner.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Router as Angular Router
+  participant RS as RoutesService
+  participant GL as globalLoading Topic
+  participant SP as PortalViewport spinner
+
+  Router->>RS: loadChildren() for matched route
+  RS->>SP: showContent$ = false (spinner shows)
+  RS->>GL: publish(true)
+  Note over RS: download + instantiate remote module
+  RS-->>GL: publish(false)
+  Router->>SP: NavigationEnd -> showContent$ = true (spinner hides)
+----
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries provide the flag and a reusable indicator, but no spinner of their own in the Shell's route area.
+
+* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`]: `Topic<boolean>`, name `globalLoading`, version 1. The page-wide busy flag.
+* The Angular `AppStateService` re-exposes it so an App reads `globalLoading$`: link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`].
+* A reusable loading indicator for an *App* to place over its own region: link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`] (`[ocxLoadingIndicator]`), which renders link:{libs}/angular-accelerator/src/lib/components/loading-indicator/loading-indicator.component.ts[`LoadingIndicatorComponent`] either as a full-page overlay or a loader appended to the host element. This is separate from the Shell's route-area spinner.
+
+=== Shell side
+
+The Shell is the only place the route-area spinner lives, and it is driven by its own signal, not by the `globalLoading` Topic.
+
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]: holds `showContent$` (default `true`), drives it from the `Router` events and from `loadChildren()` / `updateAppState()`, and publishes `globalLoading` in the same window.
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[`portal-viewport.component.html`]: the template that decides: `@if (routesService.showContent$ | async) { <router-outlet> } @else { <ocx-shell-loading-spinner> }`.
+* link:{shell}/src/app/shell/components/app-loading-spinner/app-loading-spinner.component.ts[`AppLoadingSpinnerComponent`]: selector `ocx-shell-loading-spinner`, the full-screen spinner element.
+
+== Angular / React
+
+`globalLoading` is framework-agnostic: a React App reads it through link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext`] and can publish to the same Topic. The route-area spinner, however, is Shell-specific and Angular: `showContent$` is an Angular `BehaviorSubject` read in the Angular template, and `ocx-shell-loading-spinner` is an Angular component. A React Shell would need its own equivalent signal and view; the mechanism (a Shell-owned loading flag distinct from the page-wide `globalLoading` Topic) is what carries over.
+
+== Edge cases & pitfalls
+
+* *`globalLoading` and the spinner are different signals.* This is the page's core point. The Shell binds the route-area spinner to `RoutesService.showContent$`, **not** to the `globalLoading` Topic. Publishing `globalLoading = true` does not, by itself, show the spinner, and setting `showContent$ = false` does not publish `globalLoading`. They happen to be set together during a module load, which is the only time they line up.
+* *`showContent$` is reset by the Router, not by `loadChildren`.* `loadChildren()` turns the spinner *on*; it is a `NavigationEnd`/`NavigationSkipped` Router event that turns it *off*. If navigation never settles, the spinner would stay: which is why the reset is wired to the Router, not to the end of the `loadRemote` call.
+* *First load vs. subsequent loads.* `loadChildren()` always hides content (`showContent$ = false`) and publishes `globalLoading` `true` around the module load. The extra environment refresh in `updateAppState()` only publishes `globalLoading` and sets `showContent$` when the App's `remoteBaseUrl` differs from the one already loaded and the flag was not already on: so re-entering an already-loaded App does not necessarily re-publish the flag.
+
+== Debugging
+
+* *A module is loading.* `loadChildren()` logs `➡ Load remote module <exposedModule>` when it starts the download and `Load remote module <exposedModule> finished.` when it succeeds (link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`]). While it runs, `showContent$` is `false` (the spinner is up) and `globalLoading` is `true`. A spinner that stays after `finished.` means navigation never settled: the reset comes from a `NavigationEnd`/`NavigationSkipped` Router event, not from the end of the load.
+* *An App reports busy but the Shell spinner is absent.* Read `showContent$` and `globalLoading` separately. If `globalLoading` is `true` while `showContent$` is `true`, an App published the Topic on its own; the Shell's route-area spinner is bound only to `showContent$`, so it will not show. This is the expected behaviour, not a fault.
+* *The spinner is up but no module load started.* Check whether `NavigationEnd`/`NavigationSkipped` fired; `showContent$` returns to `true` only on those Router events.
+
+General Topic and `window` inspection is in Area 13 (Diagnostics).
+
+== Related Units
+
+* link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: what happens when the module load this flag guards *fails*.
+* link:./failure-taxonomy.adoc[Failure taxonomy map]: the busy state as one of the page's reactions.
+* Area 7, Navigation & Routing, the `NavigationEnd`/`NavigationSkipped` events that reset `showContent$`.
+* Area 2, Application Bootstrap, the module-federation load path that `loadChildren()` drives.
+* Area 13, Diagnostics, observing `window`/Topic state to watch `globalLoading`.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/global-loading/v1/global-loading.topic.ts[`GlobalLoadingTopic`]
+* link:{libs}/angular-integration-interface/src/lib/services/app-state.service.ts[`AppStateService`]
+* link:{libs}/angular-accelerator/src/lib/directives/loading-indicator.directive.ts[`LoadingIndicatorDirective`]
+* link:{libs}/angular-accelerator/src/lib/components/loading-indicator/loading-indicator.component.ts[`LoadingIndicatorComponent`]
+* link:{shell}/src/app/shell/services/routes.service.ts[`RoutesService`: `showContent$`, `loadChildren()`, `updateAppState()` (Shell)]
+* link:{shell}/src/app/shell/components/portal-viewport/portal-viewport.component.html[`portal-viewport.component.html` (Shell)]
+* link:{shell}/src/app/shell/components/app-loading-spinner/app-loading-spinner.component.ts[`AppLoadingSpinnerComponent` (Shell)]
+* link:{libs}/react-integration-interface/src/lib/contexts/appStateContext.tsx[`appStateContext` (React)]

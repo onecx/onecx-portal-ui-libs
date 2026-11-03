@@ -1,0 +1,108 @@
+= Parameters
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How are Parameters loaded on the Shell and delivered to the Apps that read them?
+
+== Why it exists
+
+Configuration (link:runtime-configuration.adoc[Runtime configuration]) is deployment-wide. Parameters are *per-App, per-Product* settings managed in the OneCX back-end's parameter management. An App asks for the value of key `K` for its product and app id, without caring where the value is stored or fetched. The Shell owns the fetch because it knows the current Workspace and the Remote Components on the page.
+
+Parameters differ structurally from Configuration in two ways:
+
+* **Per-App scoping.** The `parameters` Topic payload is a list of `{ productName, appId, parameters }`, not a flat map. A value resolves only for the App whose `productName`/`appId` matches.
+* **Typed values.** A parameter value is `boolean | number | string | object`; Configuration is always `Record<string, string>`.
+
+== How it works
+
+The Shell produces the `parameters` Topic at the end of the workspace-config bootstrap. The App reads it through a capability-gated `get()`.
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant WsInit as workspaceConfigInitializer
+  participant PS as ParametersService (Shell)
+  participant Cache as localStorage
+  participant BFF as Parameter BFF
+  participant Topic as parameters
+  participant App as App (get)
+  WsInit->>PS: initialize()
+  PS->>Cache: read
+  PS->>BFF: getParameters (missing/expired only)
+  BFF-->>PS: values
+  PS->>Cache: write (3,600,000s expiry, about 1000h / 41d16h)
+  PS->>Topic: publish(payload)
+  App->>Topic: get(key) (gated on PARAMETERS_TOPIC capability)
+  Topic-->>App: findParameterValue -> value or default
+----
+
+* *Producer:* the Shell's link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] reads a `localStorage` cache and builds a request from the current Workspace routes and Remote Components. It fetches only missing or expired parameters through the generated Parameter BFF client, updates the cache, and publishes the payload to the `parameters` Topic. Expired entries are refetched on the next Shell parameter initialization. The cache expiry is meant to be 1 hour but is 3,600,000 seconds (about 1000 hours / 41 days 16 hours) because of a units mismatch (see <<known-issues>>).
+* *Consumer:* the App calls `ParametersService.get(key, defaultValue, ...)` (Angular) or `useParameters().get(key, defaultValue, ...)` (React). It checks the `PARAMETERS_TOPIC` Shell capability, resolves `productName`/`appId` from `currentMfe$` when not passed, looks the value up with the shared `findParameterValue`, and falls back to `defaultValue`.
+
+The libs only *carry* and *consume* the value. The Shell is the single producer (see link:context-readiness.adoc[Context overview & readiness]).
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]: topic name `parameters`, version 1. The payload is a `ParametersTopicPayload` = `{ parameters: ApplicationParameters[] }`. Each `ApplicationParameters` is `{ productName, appId, parameters }`, where `parameters` is `Record<string, ParameterValue>` and `ParameterValue` is `boolean | number | string | object`.
+* link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`parameters.utils.ts`]: `findParameterValue(payload, key, productName, appId)` is the pure lookup both frameworks share. It finds the entry matching `productName` + `appId` and returns `?.parameters[key]` (or `undefined`).
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability`]: includes `PARAMETERS_TOPIC`, the capability an App checks before reading.
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`]: the Angular consumer. `get(key, defaultValue, productName?, appId?)` returns `defaultValue` immediately when the `PARAMETERS_TOPIC` capability is absent. Otherwise it resolves `productName`/`appId` from `AppStateService.currentMfe$` when not given, then runs `firstValueFrom(parameters$ ...)` through `findParameterValue`, `?? defaultValue`. It has two overloads: the 2-arg App form and the 4-arg Remote-Component form.
+* link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`ParametersProvider` / `useParameters`]: the React equivalent, using `useShellCapability().hasCapability(PARAMETERS_TOPIC)` and `useAppState().currentMfe$`.
+
+=== Shell side
+
+* link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell): the producer. `initialize()` starts `init()` without awaiting it, so it does not block the rest of bootstrap. `init()` reads the cache and builds a `GetParametersRequest` from the current Workspace routes and Remote Components, skipping any with a valid cache entry. It fetches the rest via the generated Parameter BFF client, stores each entry with an `expirationDate`, and publishes to the `parameters` Topic.
+* `workspaceConfigInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`]: calls `parametersService.initialize()` as its final step. It runs *after* the Workspace and Remote Components are published, so the request covers exactly the current page.
+
+== Angular / React
+
+Delivery is identical; only the consumer shape differs.
+
+* *Angular:* `ParametersService.get(key, defaultValue)` for Apps, `ParametersService.get(key, defaultValue, productName, appId)` for Remote Components. `productName`/`appId` default to the current MFE from `AppStateService.currentMfe$`.
+* *React:* `useParameters().get(key, defaultValue, productName?, appId?)` inside a `ParametersProvider`, with the same `findParameterValue` and the same capability gate.
+
+Both return a Promise that awaits `currentMfe$` (when identity is not passed) and then the `parameters` Topic. _Edge cases & pitfalls_ covers what happens when either has not emitted.
+
+== Edge cases & pitfalls
+
+* *Capability-gated.* `get()` returns `defaultValue` when the Shell does not advertise `PARAMETERS_TOPIC`. An older Shell or a non-OneCX host yields defaults, and the only signal is the value you passed in.
+* *Pending or rejected reads.* `get()` awaits `currentMfe$` (when `productName`/`appId` are not passed) and then the `parameters` Topic with `firstValueFrom`. If either observable completes without emitting, the Promise rejects; if it neither emits nor completes, the Promise stays pending. The capability gate does *not* imply the Topic is populated. `defaultValue` applies only after a lookup runs and finds no value; it never resolves a pending or rejected read. Gate reads on readiness (link:context-readiness.adoc[Context overview & readiness]) for both identity and parameters, or use explicit timeouts and rejection handling.
+* *No value is "global."* A parameter set for product X is invisible to an App of product Y. `findParameterValue` matches only the exact `productName` + `appId` pair.
+* *Remote Components must pass their own identity.* A Remote Component in a host App does not get its own `productName`/`appId` automatically. If it does not pass them, it reads against the host's MFE context.
+
+== Debugging
+
+* The Shell caches in `localStorage` under `onecx-parameters-cache`. Inspect it to see what was last fetched and each entry's `expirationDate`.
+* Confirm the capability with `shellCapabilityService.hasCapability(PARAMETERS_TOPIC)` (Angular) or `useShellCapability().hasCapability(PARAMETERS_TOPIC)` (React). `false` means `get()` always returns the default.
+* Confirm `currentMfe$` has a value before debugging "missing" parameters. A wrong `productName`/`appId` resolves to `undefined` and silently returns the default.
+* For raw cross-App Topic traffic, including `parameters`, see Area 13 (Diagnostics): link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication].
+
+== Known issues
+
+* *Cache expiration unit mismatch.* The Shell defines `cacheExpirationTimeMs = 3600 * 1000` (milliseconds, intended as 1 hour) but passes it to `Date.setSeconds`, which treats it as seconds. The stored `expirationDate` therefore lies 3,600,000 seconds (≈1000 hours / 41 days 16 hours) in the future instead of 1 hour. Follow-up: pass seconds (3600) to `setSeconds`, or use `setTime`/`setMilliseconds` with the millisecond value.
+
+== Related Units
+
+* link:configuration-kinds.adoc[Configuration vs App Config vs Parameter]: how Parameters sit alongside the other two settings kinds.
+* link:runtime-configuration.adoc[Runtime configuration]: the other (deployment-wide, string-valued) settings channel.
+* link:workspace-config-loading.adoc[Workspace config load & distribution]: the bootstrap step that triggers `parametersService.initialize()`.
+* link:current-app-and-api-base-url.adoc[Current App & API base URL resolution]: the `currentMfe$` that parameters resolve `productName`/`appId` against.
+* link:context-readiness.adoc[Context overview & readiness]: the `isInitialized` gate.
+
+== Sources
+
+Code::
+* link:{libs}/integration-interface/src/lib/topics/parameters/v1/parameters.topic.ts[`ParametersTopic`]
+* link:{libs}/integration-interface/src/lib/utils/parameters.utils.ts[`parameters.utils.ts`] (`findParameterValue`)
+* link:{libs}/integration-interface/src/lib/models/shell-capability.model.ts[`ShellCapability`] (`PARAMETERS_TOPIC`)
+* link:{libs}/angular-integration-interface/src/lib/services/parameters.service.ts[`ParametersService`] (Angular)
+* link:{libs}/react-integration-interface/src/lib/contexts/parametersContext.tsx[`ParametersProvider` / `useParameters`] (React)
+* link:{shell}/src/app/shell/services/parameters.service.ts[`ParametersService`] (Shell)
+* link:{shell}/src/app/app.module.ts[`app.module.ts`] (`workspaceConfigInitializer`) (Shell)

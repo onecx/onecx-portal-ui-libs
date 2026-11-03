@@ -15,8 +15,8 @@ import {
   provideUserServiceMock,
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
-import { BreadcrumbModule } from 'primeng/breadcrumb'
-import { ButtonModule } from 'primeng/button'
+import { BreadcrumbModule } from '@openng/optimus-ui/breadcrumb'
+import { ButtonModule } from '@openng/optimus-ui/button'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
 import { PageHeaderComponent } from '../page-header/page-header.component'

@@ -1,0 +1,136 @@
+= Application & Angular component styles
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u1: ./why-style-isolation.adoc
+:u2: ./stylesheet-loading.adoc
+:u3: ./scope-model.adoc
+:u8: ./scope-polyfill.adoc
+:u9: ./primeng-style-scoping.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+== Question answered
+
+How do Angular component styles, the per-component stylesheets the Angular compiler emits, fit into OneCX's style isolation, and where does the isolation model take over from the framework?
+
+== Why it exists
+
+An Angular application ships two distinct kinds of CSS. *Component styles* are the per-component stylesheets written inside each `@Component`; the Angular compiler emits them already scoped to that component (emulated view encapsulation), so they cannot restyle another component or another application. *Application styles* are the rules that are not bound to a single component, shared layout, resets, global-to-the-app helpers, and the application exposes them through a single `styles.css`.
+
+The isolation model described in this Area only wraps the *second* kind: `styles.css` is fetched, {scope_at_rule}-scoped and usage-counted (link:{u2}[Unit 2], link:{u3}[Unit 3]). Component styles are left to the framework's own encapsulation. This Unit explains the boundary between the two, and what OneCX still has to do for component styles to work: chiefly, making the shared PrimeNG variables available to them on a per-scope basis.
+
+== How it works
+
+=== Two stylesheets, two owners
+
+The important division is ownership and mechanism, not just content:
+
+[cols="1,1,2", options="header"]
+|===
+|Kind |Owner |Mechanism
+
+|Component styles
+|The Angular compiler (per `@Component`); the Shell re-prefixes shared variables for `_nghost` styles and wraps tagged non-encapsulated styles in `@scope`
+|Emulated view encapsulation rewrites selectors with a per-app encapsulation attribute, so a component's styles match only that component's rendered DOM. From one observer on `document.head` the Shell re-prefixes the PrimeNG variables of `_nghost` component styles for their scope and wraps the non-encapsulated component styles it tags in an {scope_at_rule} block (see below).
+
+|Application styles (`styles.css`)
+|OneCX libs
+|Fetched from `<appUrl>/styles.css`, wrapped in an {scope_at_rule} block bound to the scope id (link:{u3}[Unit 3]), loaded and removed on demand (link:{u2}[Unit 2]); `provideAppStylesInitializer` re-prefixes variables in this stylesheet only.
+|===
+
+Because component styles are self-contained, a Remote Component's own Angular styles stay with it even when it is nested inside another application's content: the nested scope opened by the Slot (link:{u3}[Unit 3], `data-style-id` / `data-style-isolation`) does not need to re-scope the component's own encapsulated CSS. What the nested scope *must* make available to those component styles is the set of shared variables they read.
+
+=== Where OneCX takes over: scoped variables
+
+Angular component styles reference the shared design variables (notably PrimeNG's `--p-` variables) by their unscoped names. If every scope carried the same `--p-` values, one scope's theme could bleed into another. The isolation model therefore re-binds those variables per scope:
+
+* `scopePrimengCss` and `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`] rewrite `--p-` to a per-scope `--<scopeId>-` prefix, so each scope resolves its own copy of the variables.
+* For the loaded application `styles.css` only, `provideAppStylesInitializer` (link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]) runs when the app boots: it computes the scope id with `getScopeIdentifier`, finds the element with `getAppStyleByScope(scopeId)` and rewrites that stylesheet's content with `replacePrimengPrefix` in place (`replaceStyleContent`). It does not process Angular component CSS.
+* Separately, the Shell's `styleChangesListenerInitializer` (link:{shell}/src/app/shell/utils/styles/style-changes-listener.utils.ts[`style-changes-listener.utils.ts`]) observes newly added style elements in `document.head` and delegates Angular component style updates to `updateAngularComponentsStyles` (link:{shell}/src/app/shell/utils/styles/update-angular-components-styles.utils.ts[`update-angular-components-styles.utils.ts`]). That function recognizes component CSS containing `_nghost` selectors, finds the corresponding host element, resolves its scope id from the nearest `data-style-id` boundary, and replaces the PrimeNG variable prefix for eligible styles. This Shell path handles component styles; it is separate from the libs initializer for application `styles.css`.
+
+The `@scope` wrapper itself, and the `:root`/`html` → `:scope` rewrite, are produced for the application stylesheet by `createApplicationScopedCss` in link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`] (link:{u3}[Unit 3]); component styles do not pass through it.
+
+=== The Shell wraps non-encapsulated component styles
+
+Angular also creates some component styles that carry no `_nghost` marker in their selectors. Those are not self-scoping, and they reach `document.head` through Angular's shared style host as plain `<style>` elements with no per-app marker. The Shell tags and wraps them so they stay inside the app's scope, from the same `styleChangesListenerInitializer` observer that handles the `_nghost` case:
+
+* `ensureAngularComponentStylesContainStyleId` (link:{shell}/src/app/shell/utils/styles/shared-styles-host-overwrites.utils.ts[`shared-styles-host-overwrites.utils.ts`]) overwrites `document.createElementFromSharedStylesHost` so the style element Angular Core creates is marked with the app's scope id (`dataset.markedForWrapping`), read from the app's own element, the one named by `DynamicAppId.appElementName`, via `getStyleDataOrIntermediateStyleData`.
+* `updateRequiredWrappingStyles` (link:{shell}/src/app/shell/utils/styles/update-required-wrapping-styles.utils.ts[`update-required-wrapping-styles.utils.ts`]) wraps each such marked style in an {scope_at_rule} block, `@scope([data-style-id="<scopeId>"]) to ([data-style-isolation])`, applies the `:root`/`html` to `:scope` rewrite (`replaceRootAndHtmlWithScope`), replaces the node in place and marks it wrapped. On a browser without native {scope_at_rule} it writes the `@supports (@scope(...))` fallback instead and keeps the original CSS on the element as `onecxOriginalCss`, so the polyfill (link:{u8}[Unit 8]) can deconstruct it. Styles that already carry `_nghost`, are already marked wrapped, or already contain the scope block are left alone.
+
+=== The boundary the component styles render into
+
+The Angular side that hosts a Remote Component, the `SlotComponent` (link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`]), opens the scope the nested component's styles render into: `createAngularComponent` writes `data-style-id` (`addDataStyleId`) and `data-style-isolation` (`addDataStyleIsolation`) on the component's host element and loads or reuses the owning application's `styles.css` (`updateComponentStyles` → `updateStylesForRcCreation`, the link:{u2}[Unit 2] RC path). On `ngOnDestroy` it calls `removeAllRcUsagesFromStyles` so a destroyed Slot releases its usage markers. The framework then renders the component's own encapsulated styles inside that boundary.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `scopePrimengCss`, `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix` (per-scope variable binding), `getScopeIdentifier`, `isCssScopeRuleSupported()`.
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `createApplicationScopedCss` (the `{scope_at_rule}` wrapper for `styles.css`) and `getAppStyleByScope`.
+* link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]: `provideAppStylesInitializer` / `updateAppStyle`, the boot-time re-prefix of the loaded `styles.css`.
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]: `getStyleDataFromInjector` (resolves an app's scope data from its injector and `APP_ID`), `addStyleToHead`, `replaceStyleContent`.
+* link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`]: `updateStylesForRcCreation` (the RC `styles.css` load; link:{u2}[Unit 2]).
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`SlotComponent`]: places the RC scope boundary and drives the RC stylesheet load/removal.
+
+=== Shell side
+
+The Shell does not author component styles; it makes the page ready for them and adjusts the styles Angular injects. It installs the scope polyfill (link:{u8}[Unit 8]), loads its own and the legacy sheets (link:./shell-stylesheets.adoc[Shell's own stylesheets & legacy portal layout]), and, from one observer on `document.head`, re-prefixes the shared PrimeNG variables of `_nghost` component styles for the nearest scope and wraps the tagged non-encapsulated component styles in an {scope_at_rule} block. The Angular application and the Slot are where component styles and their scoped variables actually come together; the Shell also provides the shared boundary attributes and the fallback that keeps the model working on browsers without native {scope_at_rule}.
+
+== Angular / React
+
+This is where the two frameworks differ most, because only Angular gives its component styles the framework encapsulation described above.
+
+* *Angular:* component styles are already confined by the compiler; the Shell re-prefixes their shared *variables* and wraps the tagged non-encapsulated component styles in an {scope_at_rule} block when those style elements are added. Separately, OneCX libs re-prefix `styles.css` at app boot. The `SlotComponent` opens the nested scope the RC renders into.
+* *React:* there is no per-component view encapsulation. PrimeReact injects its component-library styles into global `<style>` elements (identified by `data-primereact-style-id` or an id starting `primereact_`), so they would otherwise be global to the page. React therefore scopes them *itself*: `scopeCss` in link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts`] wraps the CSS in an {scope_at_rule} block (`@scope(<root>) to (<limit>)`) and rewrites `:root` to `:scope`, and `isPrimeReactStyle` / `getStyleFromNode` / `shouldInclude` decide which PrimeReact sheets are picked up. A per-app `StyleRegistry` (link:{libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx[`StyleRegistry.tsx`]) renders a scoped style container per product (`themeStyleId = PRODUCT_NAME|PRODUCT_NAME`), applies the theme variables via `applyThemeVariables` on `CurrentThemeTopic` updates, and is what the `withAppStyles` / `withRemoteStyles` HOCs (link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withAppStyles/index.tsx[`withAppStyles`], link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withRemoteStyles/index.tsx[`withRemoteStyles`]) wrap components in. React app/remote contexts (link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`app`], link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`remotes`]) render the same `data-style-id` / `data-style-isolation` boundary attributes the Angular side does.
+* In short: Angular *keeps* the framework encapsulation and only scopes the variables; React *recreates* a scope boundary for its component-library styles because the framework gives it none.
+
+== Edge cases & pitfalls
+
+* *Do not double-scope component styles.* `createApplicationScopedCss` wraps only the application `styles.css`. An Angular component's own encapsulated styles already carry their own scoping; pushing them through the {scope_at_rule} producer is unnecessary and would fight the framework's encapsulation.
+* *Component styles still read shared variables.* Emulated encapsulation confines selectors, not custom properties: a `--p-` variable set on an ancestor can still reach a component's styles by inheritance. That is exactly why the per-scope rename (`replacePrimengPrefix`) exists: without it a neighbouring scope's theme could leak into a component.
+* *Nested RC.* The `SlotComponent` opens the nested `data-style-id` / `data-style-isolation` scope before the RC's own component styles render inside it; the RC's component styles stay the RC's, while the shared variables resolve to the RC's scope.
+* *React fallback gap.* `scopeCss` emits a bare `@scope(...)` block, whereas the Shell's unsupported-browser fallback deconstructs `@supports (@scope(...))` wrappers. See the *Known issues* note in link:{u8}[Unit 8]; the React producer and the Shell fallback are not yet aligned.
+
+== Debugging
+
+In the devtools:
+
+* *Angular:* inspect a component's elements for the Angular encapsulation attribute (the per-app `_ngcontent-`/`_nghost-` attribute): that is the framework scoping the component's own styles. Then inspect the app's `style[data-app-styles="<scopeId>"]` (link:{u2}[Unit 2]) for the `@scope(...)` block and the `--<scopeId>-` prefixed variables that the component styles consume.
+* *Scope id.* `getScopeIdentifier` builds it; the libs log under `scope.utils` when a scope id cannot be built.
+* *React:* look for the PrimeReact `<style data-primereact-style-id>` / `primereact_…` elements and the `@scope(...)` blocks `scopeCss` wrote; `attachPrimeReactScoper` (link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`scopingFunctionality`]) reads the existing `style[data-app-styles]` to apply the app's theme variables.
+
+General runtime inspection is covered by the *Diagnostics* Area.
+
+== Related Units
+
+* link:{u1}[Why isolation & style kinds]: the two stylesheet kinds this Unit draws the line between.
+* link:{u2}[App/Remote Component stylesheet load & removal]: the application `styles.css` lifecycle these component styles are complementary to.
+* link:{u3}[The @scope scoping model]: the boundary and the shared-variable rules the component styles render against.
+* link:{u8}[Scope polyfill]: the fallback for browsers without native {scope_at_rule}, including the React `@scope` gap.
+* link:{area}[Styling & Style Isolation: Area overview]
+* link:{u9}[PrimeNG/PrimeReact style scoping]: the detailed treatment of the variables these styles read.
+* *Remote Components & Slots* (the Slot that opens a nested scope) and *Theming & Visual Assets* (the theme variables the scoped variables carry): other Areas.
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `scopePrimengCss`, `replacePrimengPrefix` / `scopeIdentifierToVariablePrefix`, `getScopeIdentifier`, `isCssScopeRuleSupported`
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `createApplicationScopedCss`, `replaceRootAndHtmlWithScope`, `getAppStyleByScope`
+* link:{libs}/angular-utils/theme/primeng/src/utils/app-styles-initializer.ts[`app-styles-initializer.ts`]: `provideAppStylesInitializer`, `updateAppStyle`
+* link:{shell}/src/app/shell/utils/styles/style-changes-listener.utils.ts[`style-changes-listener.utils.ts` (Shell)]: `styleChangesListenerInitializer` observes added style elements and delegates component CSS updates
+* link:{shell}/src/app/shell/utils/styles/update-angular-components-styles.utils.ts[`update-angular-components-styles.utils.ts` (Shell)]: `updateAngularComponentsStyles` identifies Angular component styles and re-prefixes variables for the nearest scope
+* link:{shell}/src/app/shell/utils/styles/shared-styles-host-overwrites.utils.ts[`shared-styles-host-overwrites.utils.ts` (Shell)]: `ensureAngularComponentStylesContainStyleId`, the shared style host overwrite that tags non-encapsulated styles with the app's scope id
+* link:{shell}/src/app/shell/utils/styles/update-required-wrapping-styles.utils.ts[`update-required-wrapping-styles.utils.ts` (Shell)]: `updateRequiredWrappingStyles`, the {scope_at_rule} wrap for the tagged non-encapsulated component styles
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]: `getStyleDataFromInjector`, `addStyleToHead`, `replaceStyleContent`
+* link:{libs}/angular-utils/style/src/utils/app-styles-lifecycle.utils.ts[`app-styles-lifecycle.utils.ts`]: `updateStylesForRcCreation`
+* link:{libs}/angular-remote-components/src/lib/components/slot/slot.component.ts[`slot.component.ts`]: `SlotComponent` (`createAngularComponent`, `addDataStyleId`, `addDataStyleIsolation`, `updateComponentStyles`, `ngOnDestroy`)
+* link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/functions/index.ts[`scopingFunctionality/functions/index.ts`] (React): `scopeCss`, `isPrimeReactStyle`, `getStyleFromNode`, `shouldInclude`
+* link:{libs}/react-utils/src/lib/styling/primeReact/scopingFunctionality/index.ts[`attachPrimeReactScoper`] (React)
+* link:{libs}/react-utils/src/lib/styling/primeReact/theme/StyleRegistry.tsx[`StyleRegistry.tsx`] (React): per-app scoped style container
+* link:{libs}/react-utils/src/lib/styling/primeReact/theme/applyThemeVariables.ts[`applyThemeVariables.ts`] (React)
+* link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withAppStyles/index.tsx[`withAppStyles`] (React)
+* link:{libs}/react-utils/src/lib/styling/primeReact/hocs/withRemoteStyles/index.tsx[`withRemoteStyles`] (React)
+* link:{libs}/react-utils/src/lib/styling/primeReact/contexts/app/index.tsx[`app` context] and link:{libs}/react-utils/src/lib/styling/primeReact/contexts/remotes/index.tsx[`remotes` context] (React)
+* link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]: the fallback these blocks rely on

@@ -1,4 +1,4 @@
-import { Component, DebugElement } from '@angular/core'
+import { Component, DebugElement, ChangeDetectionStrategy } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { LoadingIndicatorDirective } from './loading-indicator.directive'
@@ -7,6 +7,7 @@ import { LoadingIndicatorComponent } from '../components/loading-indicator/loadi
 @Component({
   selector: 'ocx-test-full-page',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div 
       [ocxLoadingIndicator]="isLoading" 
@@ -22,6 +23,7 @@ class TestFullPageComponent {
 @Component({
   selector: 'ocx-test-element',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div 
       [ocxLoadingIndicator]="isLoading" 
@@ -37,6 +39,7 @@ class TestElementComponent {
 @Component({
   selector: 'ocx-test-small-loader',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div 
       [ocxLoadingIndicator]="isLoading" 
@@ -53,6 +56,7 @@ class TestSmallLoaderComponent {
 @Component({
   selector: 'ocx-test-default',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div [ocxLoadingIndicator]="isLoading">
       Content

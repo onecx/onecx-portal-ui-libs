@@ -1,0 +1,86 @@
+= Why isolation & style kinds
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u2: ./stylesheet-loading.adoc
+:u3: ./scope-model.adoc
+:u8: ./scope-polyfill.adoc
+
+== Question answered
+
+Why does OneCX keep each application's CSS inside its own content, and what kinds of stylesheets does that isolation have to keep apart?
+
+== Why it exists
+
+A OneCX page is not a single application. It hosts the Shell, at least one Microfrontend, and often many Remote Components, each of which ships CSS that would otherwise be global to the whole document. Style isolation keeps each application's CSS bound to the content it owns so one app does not quietly restyle another app or the Shell.
+
+The full scope model, the scope id, the `data-style-*` attributes, nested Remote Components, and how `@scope` matches rules, is covered in link:{u3}[Unit 3]. This page only explains *why* style isolation exists and *which kinds of stylesheets* appear on the page.
+
+The core pieces are:
+
+* a *scope identifier* that marks which content belongs to which application;
+* scoped stylesheets, so rules apply only inside the content they belong to;
+* on-demand loading and removal of application stylesheets when content appears or disappears.
+
+The scoping primitive is the CSS link:https://developer.mozilla.org/en-US/docs/Web/CSS/@scope[`@scope`] at-rule. Because not every browser supports it, the Shell also installs a polyfill (link:{u8}[Unit 8]) that rewrites scoped stylesheets when native `@scope` is unavailable.
+
+== Stylesheet kinds
+
+OneCX uses several stylesheet categories on the same page:
+
+* *Application stylesheets*: the CSS that belongs to a specific MFE or Remote Component.
+* *Shell stylesheets*: the Shell's own page-level styles.
+* *Legacy portal-layout stylesheets*: compatibility styles that still need to reach older content.
+* *Shared theme / token styles*: variables and tokens that multiple applications may read.
+
+The important distinction is *who owns it* and *whether it is meant to leak across scope boundaries*, not simply *what* a stylesheet is.
+
+== How it works
+
+The libraries provide the scope vocabulary and the scoped-CSS helpers; the Shell initializes the polyfill and loads the Shell and legacy stylesheets. The Angular and React implementations both use the same scope ids and boundary attributes, but they place the scoped styles in different ways.
+
+=== Libs side
+
+* `scope.utils.ts` defines the scope id derivation and the `data-style-*` attributes.
+* `app-styles-scope.utils.ts` turns application CSS into scoped `@scope` blocks.
+* The stylesheet helpers also handle per-scope PrimeNG variables and other scope-specific naming.
+
+=== Shell side
+
+* `app.module.ts` selects the polyfill mode and starts the Shell's style initialization.
+* `shell-styles.utils.ts` loads the Shell's own stylesheet.
+* `legacy-style.utils.ts` loads the legacy portal-layout sheets.
+* `scope-polyfill/polyfill.ts` rewrites scoped stylesheets when the browser lacks native support.
+
+== Angular / React
+
+Both frameworks rely on the same isolation model: the same scope ids, the same boundary attributes, and the same `@scope`-based confinement. What differs is the producer that writes the scoped CSS and the component layer that attaches the attributes. The exact model details live in Unit 3; the framework-specific producers are covered in later Units.
+
+== Edge cases & pitfalls
+
+* *Shell content is special.* The Shell opts out of per-app scoping for its own content.
+* *Some styles are intentionally global.* Shared tokens and legacy compatibility sheets are not application-private.
+* *`@scope` support still matters.* Without native support the Shell relies on the polyfill path from Unit 8.
+
+== Debugging
+
+If a stylesheet appears in the wrong place, first check which category it belongs to and whether the owning application is the Shell, an MFE, or a Remote Component. For the exact scope boundary rules, inspect Unit 3; for stylesheet load and removal, inspect Unit 2.
+
+== Related Units
+
+* link:{u2}[App/Remote Component stylesheet load & removal (usage counting)]
+* link:{u3}[`@scope` scoping model]
+* link:{u8}[Scope polyfill]
+* link:{area}[Styling & Style Isolation: Area overview]
+
+== Sources
+
+Code::
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)]
+* link:{shell}/src/app/shell/utils/styles/shell-styles.utils.ts[`shell-styles.utils.ts` (Shell)]
+* link:{shell}/src/app/shell/utils/styles/legacy-style.utils.ts[`legacy-style.utils.ts` (Shell)]
+* link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]

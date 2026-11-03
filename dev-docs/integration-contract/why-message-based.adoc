@@ -1,0 +1,85 @@
+= Why a message-based contract
+:idprefix:
+:idseparator: -
+:dev-docs-index: ../README.adoc
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+
+== Question answered
+
+Why do Apps, Remote Components and the Shell communicate only through Topics instead of calling each other's code?
+
+== Why it exists
+
+A OneCX page combines one Shell, the currently routed App and any Remote Components it hosts, all in the same tab. These units are:
+
+* *Released independently.* Each unit is built, versioned and released on its own. An App must not depend on the running Shell or neighbouring App version, and the Shell must not import App code.
+* *Written in different frameworks.* The Shell and many Apps use Angular; some Apps and Remote Components use React. They share no DI container, observable graph or guaranteed runtime objects.
+* *Loaded at different times.* A direct reference needs the other unit to be loaded and reachable.
+
+Direct calls and shared singletons need shared runtime references and compatible code. The browser's *event/message* channel needs neither and decouples senders from receivers. OneCX therefore defines the integration contract as a set of *Topics*: named, versioned message channels.
+
+The resulting constraint: *a unit never holds a reference to another unit's code.* It can only publish onto and subscribe to Topics. To get a value from the Shell or another App, it asks over a Topic and waits for the answer message.
+
+== How it works
+
+The framework-agnostic `Topic` in the accelerator is the base unit:
+
+* *Identity.* A `Topic` has a *name* and a *version* and extends `TopicPublisher` (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`], link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`topic-publisher.ts`]).
+* *Send.* `publish(value)` wraps the value in a message and posts it (`TopicPublisher.publish`).
+* *Read.* A `Topic` is an RxJS `Subscribable<T>`. Subscribe to it, or await one value with `firstValueFrom(topic.asObservable())`.
+* *Concrete Topics.* Shared Topics are thin subclasses that only fix name and version, for example `CurrentWorkspaceTopic extends Topic<Workspace>` with `('currentPortal', 1)` (link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`current-workspace.topic.ts`]).
+
+Request/response (RPC) reuses this primitive. The asker publishes onto the Topic, and the answerer subscribes and publishes the answer back. RPC Topics pass `sendGetMessage = false` to the `Topic` constructor so they do not request state on start-up, for example `PermissionsRpcTopic extends Topic<PermissionsRpc>` with `('permissionsRpc', 1, false)` (link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`permissions-rpc.topic.ts`]). link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics] covers RPC and `Gatherer`, the framework-agnostic scatter/gather on `Topic`.
+
+== Libs side / Shell side
+
+=== Libs side
+
+* `@onecx/accelerator` provides `Topic`, `TopicPublisher`, the message classes and `Gatherer` (link:{libs}/accelerator/src/lib/utils/gatherer.ts[`gatherer.ts`]).
+* `@onecx/integration-interface` provides the concrete Topics and RPC Topics shared by the Shell and the Apps (link:{libs}/integration-interface/src/index.ts[`index.ts`]).
+* `@onecx/angular-integration-interface` and `@onecx/react-integration-interface` wrap each Topic in a framework service or context, so App code never touches the raw `Topic`.
+
+=== Shell side
+
+The Shell is the authoritative publisher of shared state (workspace, theme, current location, user profile, …) and answers its RPC Topics. Other units, including Apps, can also publish and answer Topics.
+
+Before it bootstraps the module, the Shell advertises its capabilities so consumers can check whether a Topic or RPC is available (link:{shell}/src/bootstrap.ts[`bootstrap.ts`]). It answers an RPC Topic by publishing onto it, for example `permission-proxy.service.ts` publishing onto `PermissionsRpcTopic` (link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts`]).
+
+== Angular / React
+
+The message contract is identical in both frameworks. Only the wrapper differs: an Angular service or a React context/hook over the same `Topic`. link:framework-adapters.adoc[Framework adapters] (Unit 7) explains how each wrapper creates, exposes and destroys its `Topic`.
+
+== Edge cases & pitfalls
+
+* *No direct calls.* You cannot import a Shell class or hold a reference to another App. The only handles are `publish` and `subscribe`. A mechanism that seems to need a shared object violates the contract and must become a Topic.
+* *No guaranteed load order.* An App can subscribe before the Shell publishes, and a unit can ask before the answerer exists. The contract is therefore *eventually consistent*: late subscribers are replayed the current value (see link:message-delivery.adoc[Topic message delivery]), and consumers wait on `isInitialized` instead of expecting the value at construction time.
+* *Versioning is part of the contract.* A consumer receives only messages whose name *and* version match (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`]). Changing a Topic's meaning without a version bump silently breaks consumers. See link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation].
+* *Tab scope.* The default V2 BroadcastChannel includes a per-page tab id, so normal Topic traffic stays in one tab. With BroadcastChannel disabled, Topics use that page's `postMessage`. V1 BroadcastChannel is a legacy compatibility transport with a broader channel name, not the default cross-tab contract. See link:transports-and-tab-scope.adoc[Transports & tab scope].
+
+== Debugging
+
+The accelerator logs every Topic under `@onecx/accelerator:Topic:<name>` with the levels `debug`, `info`, `warn` and `error` (link:{libs}/accelerator/src/lib/topic/topic.ts[`topic.ts`]). The Area's link:README.adoc#debugging-conventions[Debugging conventions] list the `localStorage.debug` patterns.
+
+== Related Units
+
+* link:message-delivery.adoc[Topic message delivery]: the concrete message types and ordering.
+* link:transports-and-tab-scope.adoc[Transports & tab scope]
+* link:topic-lifecycle.adoc[Topic lifecycle]
+* link:gatherers-and-rpc-topics.adoc[Request/response: Gatherers & RPC Topics]
+* link:versioning-and-capabilities.adoc[Versioning & Shell capability negotiation]
+* link:framework-adapters.adoc[Framework adapters]
+* link:../diagnostics/tracing-communication.adoc[Tracing cross-App communication] (Area 13)
+
+== Sources
+
+Code::
+* link:{libs}/accelerator/src/lib/declarations.ts[`accelerator/src/lib/declarations.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic.ts[`accelerator/src/lib/topic/topic.ts`]
+* link:{libs}/accelerator/src/lib/topic/topic-publisher.ts[`accelerator/src/lib/topic/topic-publisher.ts`]
+* link:{libs}/accelerator/src/lib/utils/gatherer.ts[`accelerator/src/lib/utils/gatherer.ts`]
+* link:{libs}/integration-interface/src/index.ts[`integration-interface/src/index.ts`]
+* link:{libs}/integration-interface/src/lib/topics/current-workspace/v1/current-workspace.topic.ts[`integration-interface/.../current-workspace.topic.ts`]
+* link:{libs}/integration-interface/src/lib/topics/permissions-rpc/v1/permissions-rpc.topic.ts[`integration-interface/.../permissions-rpc.topic.ts`]
+* link:{shell}/src/bootstrap.ts[`bootstrap.ts` (Shell)]
+* link:{shell}/src/app/shell/services/permission-proxy.service.ts[`permission-proxy.service.ts` (Shell)]

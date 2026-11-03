@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core'
+import { Component, input, ChangeDetectionStrategy } from '@angular/core'
 
 export interface LifecycleStep {
   id: string
@@ -9,6 +9,7 @@ export interface LifecycleStep {
 @Component({
   standalone: false,
   selector: 'ocx-lifecycle',
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './lifecycle.component.html',
 })
 export class LifecycleComponent {

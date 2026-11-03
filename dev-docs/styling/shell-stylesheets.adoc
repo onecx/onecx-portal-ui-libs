@@ -1,0 +1,165 @@
+= Shell's own stylesheets & legacy portal layout
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:shell: https://github.com/onecx/onecx-shell-ui/blob/main
+:area: ./README.adoc
+:u1: ./why-style-isolation.adoc
+:u2: ./stylesheet-loading.adoc
+:u3: ./scope-model.adoc
+:u8: ./scope-polyfill.adoc
+:u9: ./primeng-style-scoping.adoc
+:scope_at_rule: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
+
+== Question answered
+
+Where do the Shell's own and the legacy portal-layout stylesheets come from, how are they loaded, and how are they scoped so they reach only the content that needs them?
+
+== Why it exists
+
+The Shell is the one application that is always on the page and that hosts the others. It needs styles of its own, and older content still relies on a set of "portal layout" rules that used to live in a single shared global stylesheet. Both must be in place before any application loads, yet neither may leak into content that has opted out of them. This Unit is about those Shell-owned sheets and the initializer that loads them. Application stylesheets (loaded on demand) are link:{u2}[Unit 2]; the {scope_at_rule} model is link:{u3}[Unit 3]; the browser fallback that rewrites these sheets is link:{u8}[Unit 8].
+
+== How it works
+
+=== The sheets and their markers
+
+Three `<style>` elements are created in the document head by the Shell, each from a stylesheet the Shell ships:
+
+[cols="1,1,2,2", options="header"]
+|===
+|Sheet |Fetched from |Dataset attribute |`@scope` *from* selector
+
+|Shell's own styles
+|`./shell-styles.css`
+|`data-shell-styles-styles`
+|`[data-style-id="shell-ui"]`
+
+|Legacy portal layout (static)
+|`./portal-layout-styles.css`
+|`data-portal-layout-styles-styles`
+|`[data-style-id]:not([data-no-portal-layout-styles])`
+
+|Legacy portal layout (dynamic)
+|`./portal-layout-styles.css`
+|`data-dynamic-content-portal-layout-styles`
+|`body > :not([data-no-portal-layout-styles])`
+|===
+
+Each sheet is written as a {scope_at_rule} block, so its rules apply only between the *from* boundary above and a `data-style-isolation` boundary (link:{u3}[Unit 3]). The CSS is fetched as plain text and rewritten with `replaceRootWithScope` (link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]), which turns `:root` into `:scope` so root-level rules re-anchor to the scope's own element instead of the page. On a browser without native {scope_at_rule}, the same content is wrapped in an `@supports (@scope(...))` block and the original CSS is stashed on a `onecxOriginalCss` property for the polyfill (link:{u8}[Unit 8]).
+
+=== The initializer
+
+All three sheets are loaded by `styleInitializer` in link:{shell}/src/app/app.module.ts[`app.module.ts`], registered as an Angular `provideAppInitializer`. It runs in three stages:
+
+. It reads the polyfill mode from configuration (`CONFIG_KEY.POLYFILL_SCOPE_MODE`) and starts the matching scope polyfill: `applyPrecisionPolyfill()` or `applyPerformancePolyfill()` from link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts`] (link:{u8}[Unit 8]).
+. It then loads both sheets *in parallel*, each gated on `appStateService.isAuthenticated$.isInitialized` so the Shell and legacy styles only appear once the workspace is authenticated:
+.. Shell branch: `fetchShellStyles(http)` → `loadShellStyles(css)` (link:{shell}/src/app/shell/utils/styles/shell-styles.utils.ts[`shell-styles.utils.ts`]).
+.. Portal-layout branch: `fetchPortalLayoutStyles(http)` → `loadPortalLayoutStyles(css)` (link:{shell}/src/app/shell/utils/styles/legacy-style.utils.ts[`legacy-style.utils.ts`]).
+
+[source,mermaid]
+----
+sequenceDiagram
+  participant Init as styleInitializer (app.module.ts)
+  participant Cfg as ConfigurationService
+  participant Poly as scope-polyfill
+  participant Sh as shell-styles.utils
+  participant Lg as legacy-style.utils
+  participant Auth as isAuthenticated$
+  Init->>Cfg: getProperty(POLYFILL_SCOPE_MODE)
+  Init->>Poly: applyPrecision/applyPerformancePolyfill()
+  par Shell styles
+    Init->>Auth: await isInitialized
+    Init->>Sh: fetchShellStyles(http)
+    Sh-->>Init: loadShellStyles(css)
+  and Portal layout styles
+    Init->>Auth: await isInitialized
+    Init->>Lg: fetchPortalLayoutStyles(http)
+    Lg-->>Init: loadPortalLayoutStyles(css)
+  end
+----
+
+A second, separate initializer lazily starts `styleChangesListenerInitializer` (link:{shell}/src/app/shell/utils/styles/style-changes-listener.utils.ts[`style-changes-listener.utils.ts`]) to react to later stylesheet changes; it is not part of the initial load described here.
+
+=== Scoping the legacy rules
+
+The two legacy sheets are deliberately different, even though both come from the same `portal-layout-styles.css` fetch:
+
+* *Static* sheet. Its *from* selector `[data-style-id]:not([data-no-portal-layout-styles])` (the `portalLayoutStylesSheetId` constant in link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]) matches any scope that has a `data-style-id` but has *not* opted out. It styles the usual application content.
+* *Dynamic* sheet. Its *from* selector `body > :not([data-no-portal-layout-styles])` (the `dynamicPortalLayoutStylesSheetId` constant) matches content appended directly under `body` that has not opted out: the dynamic-content case. It is kept in a *separate* `<style>` element because the precision polyfill relies on the dynamic rules being their own sheet (see the comment in `loadDynamicPortalLayoutStylesStyles`).
+
+Content that is libs-v6 compatible carries `data-no-portal-layout-styles` and is therefore excluded from *both* legacy sheets. The Shell itself (`data-style-id="shell-ui"`) carries no opt-out, so the Shell always receives the portal-layout rules.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The libraries provide the vocabulary and the primitives; the Shell decides when and what to load.
+
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `shellScopeId` (`shell-ui`), the `data-style-id` / `data-style-isolation` / `data-no-portal-layout-styles` attribute constants, the `portalLayoutStylesSheetId` / `dynamicPortalLayoutStylesSheetId` selectors, the `dataPortalLayoutStylesKey` / `dataDynamicPortalLayoutStylesKey` dataset keys, and `isCssScopeRuleSupported()`.
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]: `addStyleToHead`, which creates the `<style>`, sets the dataset attributes and appends it to the head.
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `replaceRootWithScope` (the `:root` → `:scope` rewrite applied to all three sheets).
+* link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants]: `dataShellStylesKey` / `dataShellStylesAttribute` (defined, but *not* the marker the Shell actually writes; see link:#known-issues[Known issues]).
+
+=== Shell side
+
+The Shell is the only consumer of these sheets:
+
+* link:{shell}/src/app/app.module.ts[`app.module.ts`]: `styleInitializer`: polyfill mode, then the parallel, auth-gated load of both sheets.
+* link:{shell}/src/app/shell/utils/styles/shell-styles.utils.ts[`shell-styles.utils.ts`]: `fetchShellStyles` / `loadShellStyles`; writes the `data-shell-styles-styles` sheet scoped to `shell-ui`.
+* link:{shell}/src/app/shell/utils/styles/legacy-style.utils.ts[`legacy-style.utils.ts`]: `fetchPortalLayoutStyles` / `loadPortalLayoutStyles` and the static/dynamic `loadPortalLayoutStylesStyles` / `loadDynamicPortalLayoutStylesStyles` that create the two legacy sheets.
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts`]: `markElement` (records the sheet marker on a JavaScript property) plus the wrapper helpers (`wrapWithDiv`, `createWrapper`, `appendStyleData`, …) used when the Shell adds scoped attributes to dynamically appended content (the *Dynamic content* Units).
+* link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts`]: the polyfill the initializer starts (link:{u8}[Unit 8]).
+
+== Angular / React
+
+These sheets are Shell-owned and page-level, so the mechanism is framework-agnostic: the Shell is an Angular application and the three `<style>` elements serve Angular *and* React content on the same page alike. The framework only shows up in *who* stamps the `data-style-id` / `data-style-isolation` / `data-no-portal-layout-styles` attributes the selectors match against, the Angular Shell and `SlotComponent` versus the React app/remote contexts, which is the producer difference covered in link:{u3}[Unit 3], not a difference in how these sheets are loaded.
+
+== Edge cases & pitfalls
+
+* *Auth-gated load.* Both sheets load only after `isAuthenticated$` resolves. Before that the Shell and legacy styles are simply absent; a page that "has no Shell styles" at an early moment is usually pre-auth, not a missing file.
+* *The Shell never opts out.* The Shell's *from* selector is `data-style-id="shell-ui"` with no `:not(...)`, so the Shell always receives the portal-layout rules. An *application* opts out with `data-no-portal-layout-styles`.
+* *Two sheets, one CSS.* `loadPortalLayoutStyles` creates both the static and the dynamic sheet from the same `portal-layout-styles.css`. Merging them would break the precision polyfill, which keys off the dynamic sheet being separate.
+* *Genuinely global sheets are out of scope here.* The Shell also injects `splash.scss` and `global-styles.scss` via `<link>`: genuinely global, unscoped stylesheets. They are a *kind* of stylesheet (link:{u1}[Unit 1]), not a scoped Shell/legacy sheet, and this Unit does not cover them.
+* *The marker is set two ways.* `addStyleToHead` writes the visible dataset attribute; `markElement` *also* records the marker on the JS property `element.onecx.markers`. Only the dataset attribute is observable in the DOM.
+* *Unsupported browsers.* The `{scope_at_rule}` blocks are only applied natively when the browser supports the rule; otherwise the `@supports (@scope(...))` wrapper plus the polyfill (link:{u8}[Unit 8]) take over.
+
+== Debugging
+
+In the devtools, look at the document `<head>`:
+
+* `style[data-shell-styles-styles]`: the Shell's own rules; its `@scope` block should be scoped to `[data-style-id="shell-ui"]`.
+* `style[data-portal-layout-styles-styles]` and `style[data-dynamic-content-portal-layout-styles]`: the two legacy sheets; their *from* selectors should match the content you expect.
+* A missing Shell/legacy sheet usually means the fetch of `./shell-styles.css` / `./portal-layout-styles.css` failed, or `styleInitializer` has not run because auth has not initialized.
+* Legacy rules that do not apply: confirm the target carries `data-style-id` and lacks `data-no-portal-layout-styles`; for body-appended content, confirm the dynamic sheet's `body > :not(...)` actually matches.
+
+Whether a sheet is being re-scoped by the fallback (and how) is a link:{u8}[Unit 8] question. General runtime inspection is covered by the *Diagnostics* Area.
+
+[#known-issues]
+== Known issues
+
+* The Shell writes the shell-styles sheet under the dataset key `shellStylesStyles`, which becomes the attribute `data-shell-styles-styles`: a doubled "styles". The libraries define `dataShellStylesAttribute = 'data-shell-styles'` and `dataShellStylesKey = 'shellStyles'` (link:{libs}/angular-utils/style/src/api/constants.ts[`constants.ts`]) but the Shell does not use them, and the old `style-types.adoc` documents `data-shell-styles`. Follow-up: reconcile the Shell's marker with the libs constants (in `shell-styles.utils.ts`).
+* The legacy *static* sheet is written under `portalLayoutStylesStyles` (`data-portal-layout-styles-styles`), whereas the old `style-types.adoc` documents `data-portal-layout-styles`. Follow-up: reconcile the static legacy marker with the documented attribute (in `legacy-style.utils.ts`). The *dynamic* marker `data-dynamic-content-portal-layout-styles` does match the documented name.
+
+== Related Units
+
+* link:{u1}[Why isolation & style kinds]: the categories these sheets fall into.
+* link:{u2}[App/Remote Component stylesheet load & removal]: the on-demand application sheets, the counterpart to these always-present ones.
+* link:{u3}[The @scope scoping model]: the `@scope` blocks and `data-style-*` attributes these sheets target.
+* link:{u8}[Scope polyfill]: how these `@supports (@scope(...))` blocks are rewritten when the rule is unsupported.
+* link:{area}[Styling & Style Isolation: Area overview]
+* link:{u9}[PrimeNG/PrimeReact style scoping] and the *Dynamic content* Units (the `style-data.utils.ts` wrappers feed them): other Units of this Area.
+* *Theming & Visual Assets* (the global theme sheets) and *Bootstrap* (when the authenticated workspace that gates this load is established): other Areas.
+
+== Sources
+
+Code::
+* link:{shell}/src/app/app.module.ts[`app.module.ts` (Shell)]: `styleInitializer`
+* link:{shell}/src/app/shell/utils/styles/shell-styles.utils.ts[`shell-styles.utils.ts` (Shell)]: `fetchShellStyles`, `loadShellStyles`
+* link:{shell}/src/app/shell/utils/styles/legacy-style.utils.ts[`legacy-style.utils.ts` (Shell)]: `fetchPortalLayoutStyles`, `loadPortalLayoutStyles`, static/dynamic loaders
+* link:{shell}/src/app/shell/utils/styles/style-data.utils.ts[`style-data.utils.ts` (Shell)]: `markElement`, wrapper helpers
+* link:{shell}/src/app/shell/utils/styles/style-changes-listener.utils.ts[`style-changes-listener.utils.ts` (Shell)]: `styleChangesListenerInitializer`
+* link:{shell}/src/scope-polyfill/polyfill.ts[`scope-polyfill/polyfill.ts` (Shell)]
+* link:{libs}/angular-utils/src/lib/utils/scope.utils.ts[`scope.utils.ts`]: `shellScopeId`, `data-style-*` attributes, `portalLayoutStylesSheetId` / `dynamicPortalLayoutStylesSheetId`, `isCssScopeRuleSupported`
+* link:{libs}/angular-utils/style/src/utils/dom-style.utils.ts[`dom-style.utils.ts`]: `addStyleToHead`
+* link:{libs}/angular-utils/style/src/utils/app-styles-scope.utils.ts[`app-styles-scope.utils.ts`]: `replaceRootWithScope`
+* link:{libs}/angular-utils/style/src/api/constants.ts[`angular-utils/style` constants]: `dataShellStylesKey` / `dataShellStylesAttribute`

@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, Router, RouterModule } from '@angular/router'
-import { Component } from '@angular/core'
+import { Component, ChangeDetectionStrategy } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { UserService } from '@onecx/angular-integration-interface'
 import { DataViewStateService } from '../../services/data-view-state.service'
@@ -13,11 +13,11 @@ import {
 } from '@onecx/angular-integration-interface/mocks'
 import { ensureIntersectionObserverMockExists, ensureOriginMockExists } from '@onecx/angular-testing'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { TooltipStyle } from 'primeng/tooltip'
+import { TooltipStyle } from '@openng/optimus-ui/tooltip'
 import { firstValueFrom, of } from 'rxjs'
 import { DataListGridHarness } from '../../../../testing/data-list-grid.harness'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
-import { AngularAcceleratorPrimeNgModule } from '../../angular-accelerator-primeng.module'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
@@ -27,7 +27,8 @@ import { DataSortDirection } from '../../model/data-sort-direction'
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
 
-@Component({ standalone: false, template: '' })
+@Component({ standalone: false, changeDetection: ChangeDetectionStrategy.Eager,
+ template: '' })
 class TestRouteComponent {}
 
 describe('DataListGridComponent', () => {
@@ -237,7 +238,7 @@ describe('DataListGridComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DataListGridComponent, TestRouteComponent],
       imports: [
-        AngularAcceleratorPrimeNgModule,
+        AngularAcceleratorOptimusModule,
         AngularAcceleratorModule,
         RouterModule.forRoot([{ path: '**', component: TestRouteComponent }]),
         NoopAnimationsModule,
@@ -299,7 +300,7 @@ describe('DataListGridComponent', () => {
       TestBed.resetTestingModule()
       await TestBed.configureTestingModule({
         declarations: [DataListGridComponent],
-        imports: [AngularAcceleratorPrimeNgModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
+        imports: [AngularAcceleratorOptimusModule, AngularAcceleratorModule, RouterModule, NoopAnimationsModule],
         providers: [
           provideTranslateTestingService(TRANSLATIONS),
           { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },

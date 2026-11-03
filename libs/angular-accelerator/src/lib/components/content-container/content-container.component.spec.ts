@@ -24,7 +24,7 @@ describe('OcxContentContainerComponent', () => {
   })
 
   it('should render a horizontal layout container with md breakpoint by default', async () => {
-    const expectedClasses = ['flex', 'gap-3', 'flex-column', 'md:flex-row']
+    const expectedClasses = ['flex', 'gap-3', 'flex-col', 'md:flex-row']
     expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClasses)
     expect(await ocxContentContainerHarness.getLayout()).toEqual('horizontal')
     expect(await ocxContentContainerHarness.getBreakpoint()).toEqual('md')
@@ -35,7 +35,7 @@ describe('OcxContentContainerComponent', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const expectedClassesLG = ['flex', 'gap-3', 'flex-column', 'lg:flex-row']
+    const expectedClassesLG = ['flex', 'gap-3', 'flex-col', 'lg:flex-row']
     expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClassesLG)
     expect(await ocxContentContainerHarness.getLayout()).toEqual('horizontal')
     expect(await ocxContentContainerHarness.getBreakpoint()).toEqual('lg')
@@ -46,14 +46,14 @@ describe('OcxContentContainerComponent', () => {
     fixture.detectChanges()
     await fixture.whenStable()
 
-    const expectedClasses = ['flex', 'gap-3', 'flex-column']
+    const expectedClasses = ['flex', 'gap-3', 'flex-col']
     expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedClasses)
     expect(await ocxContentContainerHarness.getLayout()).toEqual('vertical')
     expect(await ocxContentContainerHarness.getBreakpoint()).toBeUndefined()
   })
 
   it('should render a container with specified style classes and remove conflicting classes', async () => {
-    let expectedStyleClasses = ['flex', 'gap-3', 'flex-column', 'md:flex-row']
+    let expectedStyleClasses = ['flex', 'gap-3', 'flex-col', 'md:flex-row']
     expect(await ocxContentContainerHarness.getLayoutClasses()).toEqual(expectedStyleClasses)
 
     fixture.componentRef.setInput('styleClass', 'py-4 flex-row gap-2')

@@ -1,0 +1,76 @@
+= Enforcing the effects-only boundary with the ngrx linter rules
+:idprefix:
+:idseparator: -
+:libs: ../../libs
+:dev-docs-index: ../README.adoc
+
+== Question answered
+
+How does an NgRx App keep store dispatch and HTTP calls out of components and into `@ngrx/effects`, using the lint rules the libs ship?
+
+== Why it exists
+
+An NgRx App has a boundary: side effects (dispatching into the store, calling HTTP) belong in `@ngrx/effects`, and components should only read state through selectors and dispatch plain UI actions. Nothing in the type system stops a developer from calling `Store.dispatch()` or an `HttpClient` inside a component or directly in an effect method. The libraries answer that with an ESLint plugin, link:{libs}/ngrx-linter-rules[`@onecx/ngrx-linter-rules`], that turns the boundary into static checks so the violation is caught at lint time instead of at review time. The plugin is NgRx-specific: the two rules are written against the shape of `createEffect` classes and Angular `@Component` classes, and the plugin has no React counterpart (a React App enforces the same boundary with its own lint rules).
+
+== How it works
+
+The plugin is a plain ESLint plugin. link:{libs}/ngrx-linter-rules/src/index.ts[`src/index.ts`] exports three things:
+
+* `rules`: the rule modules, mapped from the kebab-case rule name to its implementation in link:{libs}/ngrx-linter-rules/src/lib/rules/index.ts[`src/lib/rules/index.ts`].
+* `configs`: the shareable configs, defined in link:{libs}/ngrx-linter-rules/src/lib/configs.ts[`src/lib/configs.ts`]. The single `recommended` config registers the plugin under the name `@onecx/ngrx-linter-rules` and sets every rule to `warn`.
+* `plugin`: the object `{ rules, configs }` that a consumer hands to ESLint, typed by link:{libs}/ngrx-linter-rules/src/lib/types.ts[`NgrxLinterRulesPlugin`].
+
+There are two rules, both of `type: 'problem'`:
+
+* link:{libs}/ngrx-linter-rules/src/lib/rules/no-store-dispatch-in-effect.rule.ts[`no-store-dispatch-in-effect`]: disallows calling `Store.dispatch()` inside an effect class. It walks class declarations, keeps the ones whose body contains a `createEffect(` call, and inside those it flags a `.dispatch(...)` call whose callee object resolves, through the TypeScript type checker, to a symbol named `Store`. It skips test files (`*.spec.ts`, `*.test.ts`, `/testing/`, `/mocks/`).
+* link:{libs}/ngrx-linter-rules/src/lib/rules/http-calls-only-in-effects.rule.ts[`http-calls-only-in-effects`]: enforces that HTTP calls happen in effects and not in `@Component` classes. It flags an HTTP-looking call that sits inside a `@Component` class but not inside a `createEffect(` call. It recognises HTTP calls several ways: the `HttpClient` verbs (`get`, `post`, `put`, `patch`, `delete`, `head`, `options`, `request`), OpenAPI-style generated service names (an object whose name ends in `ApiService` or `ControllerService`, or an import from a `/generated/` path), and verb-prefixed names like `getUser`. It skips test files and files under `/generated/`.
+
+The two rules differ in how much analysis they need. `no-store-dispatch-in-effect` resolves the dispatch target by symbol name with the TypeScript type checker, so it calls `ESLintUtils.getParserServices(context, true)` and only reports accurately under typed linting. `http-calls-only-in-effects` works on the AST and the decorators, so it does not need the type checker.
+
+== Libs side / Shell side
+
+=== Libs side
+
+The whole plugin lives in link:{libs}/ngrx-linter-rules[`@onecx/ngrx-linter-rules`] and is CommonJS (link:{libs}/ngrx-linter-rules/package.json[`package.json`], `type: commonjs`, `main: ./src/index.js`), so it loads as a normal ESLint plugin package. Its only runtime dependency is `tslib`; the `@typescript-eslint/utils` used by the rule sources is a lint-time dependency. There is no NgRx dependency: the rules detect NgRx by the textual presence of `createEffect(`, not by importing `@ngrx/effects`.
+
+=== Shell side
+
+There is no Shell side to this Unit. The plugin is a build/lint tool consumed by Apps (or the Shell) at development time; it does not run inside a OneCX page and does not read the store at runtime.
+
+== Angular / React
+
+Both rules are Angular-specific. `http-calls-only-in-effects` keys off the `@Component` decorator, and `no-store-dispatch-in-effect` keys off the `Store` type from `@ngrx/store`. A React App has neither; it would enforce the "keep effects in effects, keep HTTP in effects" boundary with its own lint rules, and the libraries do not ship those.
+
+== Edge cases & pitfalls
+
+* *`no-store-dispatch-in-effect` needs the type checker.* It resolves the dispatch target by symbol name using the TypeScript type checker, so it only reports accurately under typed linting. Run it with the `@typescript-eslint` recommended-type-checked config, not the fast parser-only one.
+* *Both rules are `warn`, not `error`, by default.* The `recommended` config sets them to `warn`, so a violation does not fail the build unless the App raises them to `error`.
+* *The effect detection is textual.* A class is treated as an effect because its source contains `createEffect(`. A helper that builds effects indirectly (so the string `createEffect(` never appears in the class body) is not recognised, and its dispatch/HTTP calls are not checked.
+* *`http-calls-only-in-effects` is heuristic and conservative.* It recognises HTTP by name and shape, so it can miss a genuinely HTTP call that uses an unusual name, and it deliberately ignores calls inside generated files so the generated OpenAPI clients do not self-flag.
+
+== Debugging
+
+* *Did the rule fire?* Run ESLint with `--rule` context or open the reported file at the flagged call; both rules report at the `CallExpression` node of the offending dispatch or HTTP call.
+* *Why did it not fire?* Confirm the file is linted with the typed parser service, that the class actually contains the `@Component` decorator or a `createEffect(` call, and that the file is not a test or `/generated/` file (both of which are excluded).
+
+== Known issues
+
+None found in the code reviewed for this Unit. Both rules behave as described, and the `recommended` config correctly wires the plugin name to the two rule modules.
+
+== Related Units
+
+* link:shell-context-to-store.adoc[Shell context to App ngrx store]: the slice and connectors that produce the dispatch boundary this Unit helps enforce.
+* link:url-synced-state.adoc[URL-synced state (fragment parameters)]: the `createFragmentParamsEffect` is itself a `createEffect` class this Unit's rules are built around.
+* Area 2 (Application Bootstrap): where the App's `ESLint` config (and thus the plugin) is set up.
+
+== Sources
+
+Code::
+* link:{libs}/ngrx-linter-rules[`@onecx/ngrx-linter-rules` package root]
+* link:{libs}/ngrx-linter-rules/src/index.ts[`rules`, `configs`, `plugin` exports]
+* link:{libs}/ngrx-linter-rules/src/lib/rules/index.ts[`rules` map]
+* link:{libs}/ngrx-linter-rules/src/lib/configs.ts[`configs` (`recommended`)]
+* link:{libs}/ngrx-linter-rules/src/lib/rules/no-store-dispatch-in-effect.rule.ts[`noStoreDispatchInEffect`]
+* link:{libs}/ngrx-linter-rules/src/lib/rules/http-calls-only-in-effects.rule.ts[`httpCallsOnlyInEffects`]
+* link:{libs}/ngrx-linter-rules/src/lib/types.ts[`NgrxLinterRulesPlugin`]
+* link:{libs}/ngrx-linter-rules/package.json[`package.json`] (CommonJS, `tslib` dependency)

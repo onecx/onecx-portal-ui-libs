@@ -53,10 +53,10 @@ export const WithNestedOCXContent = {
     },
     template: `
         <ocx-content-container layout="${args.layout}" breakpoint="${args.breakpoint}" styleClass="${args.styleClass}">
-            <ocx-content class="w-full sm:w-8">
+            <ocx-content class="w-full sm:w-2/3">
               <p>Content inside of ocx-content without title</p>
             </ocx-content>
-            <ocx-content title="My Title" class="w-full sm:w-4">
+            <ocx-content title="My Title" class="w-full sm:w-1/3">
               <p>Content inside of ocx-content with title</p>
             </ocx-content>
         </ocx-content-container>

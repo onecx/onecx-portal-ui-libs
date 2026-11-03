@@ -13,7 +13,7 @@ import { PermissionsTopic, Theme, UserProfile, Workspace } from '@onecx/integrat
 import { provideAlwaysGrantPermissionChecker, provideMultiLanguageIdentifier, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 import { provideTokenInterceptor } from '@onecx/angular-auth'
 import { provideAuthService } from '@onecx/shell-auth'
-import { MessageService } from 'primeng/api'
+import { MessageService } from '@openng/optimus-ui/api'
 import { createLogger } from './logger.utils'
 import { LIB_VERSION } from '../../version'
 

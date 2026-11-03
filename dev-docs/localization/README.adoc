@@ -1,0 +1,108 @@
+= Localization
+:idprefix:
+:idseparator: -
+
+Localization is the Area that answers a single, shared question: **which user is signed in, in which language, and where do the words on screen come from.** The mechanism is split across the libraries in this repository and the https://github.com/onecx/onecx-shell-ui[OneCX Shell], and it is consumed by both Angular (ngx-translate) and React (i18next) on the same page.
+
+== Problem
+
+A OneCX page is a module-federation composition: several Apps and Remote Components, built with different frameworks, share one browser window. That creates two constraints that a plain i18n setup cannot meet:
+
+* There is exactly **one signed-in user** and **one active language**, but many frameworks that must all stay in step with that decision.
+* Each App and Remote Component ships **its own translation files** at its own base URL, shared libraries ship their own, and all of them must be merged without key collisions: while the *same* file is never fetched more than once, even when several Apps need it.
+
+This Area documents how both problems are solved. It does not describe how to *configure* a translation for your App (that belongs in https://github.com/onecx/docs-guides-ui[docs-guides-ui]); it explains the runtime mechanism and why it is shaped the way it is.
+
+== Big picture
+
+The work is divided along the same libs / Shell boundary that the rest of the Dev Docs use. The Shell owns the *input* (the signed-in user and the profile it fetched); the libraries own the *decision* and the *distribution*.
+
+[source,mermaid]
+----
+flowchart LR
+  subgraph Shell
+    Init[user-profile initialiser<br/>app.module.ts]
+    Trans["translation setup<br/>(ngx-translate, OnecxTranslateLoader)"]
+  end
+  subgraph integration-interface
+    Topic["UserProfileTopic<br/>userProfile v1"]
+    Decide["resolveProfileLanguage()"]
+  end
+  subgraph angular-utils
+    Cache["TranslationCacheService<br/>window.onecxTranslations"]
+    Loader["OnecxTranslateLoader + combined loader"]
+  end
+  Init -->|publish profile| Topic
+  Topic --> Decide
+  Decide -->|lang$| A[Angular UserService]
+  Decide -->|lang$| R[React UserProvider]
+  Trans --> Loader
+  Loader --> Cache
+  A -->|use language| NgX[ngx-translate]
+  R -->|switch language| I18N[i18next]
+----
+
+Four Units in this Area describe the core mechanism in depth:
+
+* **Profile load & language decision**: the profile Topic and the pure function that turns a profile into the one language every framework must use.
+* **App translations load & sharing**: how per-App and per-library translation files are resolved, deep-merged, and shared page-wide through a global cache.
+* **Remote Component translations**: how a Remote Component adds its own translation files, at its own base URL, to the shared loader chain and cache.
+* **Missing-translation fallback**: the locale walk and the static → dynamic → raw-key fallback when a key cannot be found.
+
+Three further Units cover the surrounding mechanisms: link:./locale-and-timezone-formatting.adoc[locale & timezone formatting], the link:./react-translations.adoc[React pipeline], and link:./dynamic-translations.adoc[dynamic translations].
+
+== Unit map
+
+All Units of this Area, in reading order; each is linked to its page (all seven are now written).
+
+. Profile load & language decision: link:./profile-and-language.adoc[`profile-and-language.adoc`]
+. App translations load & sharing: link:./app-translations.adoc[`app-translations.adoc`]
+. Remote Component translations: link:./remote-component-translations.adoc[`remote-component-translations.adoc`]
+. Missing-translation fallback: link:./missing-translation-fallback.adoc[`missing-translation-fallback.adoc`]
+. Locale & timezone formatting: link:./locale-and-timezone-formatting.adoc[`locale-and-timezone-formatting.adoc`]
+. React translations: link:./react-translations.adoc[`react-translations.adoc`]
+. Dynamic translations: link:./dynamic-translations.adoc[`dynamic-translations.adoc`]
+
+== Reading order
+
+1. link:./profile-and-language.adoc[Profile load & language decision]: read first: it defines the `lang$` stream every other Unit depends on.
+2. link:./app-translations.adoc[App translations load & sharing]: the loading, merging and page-wide sharing of translation files.
+3. link:./remote-component-translations.adoc[Remote Component translations]: how a Remote Component plugs its own files into that shared chain.
+4. link:./missing-translation-fallback.adoc[Missing-translation fallback]: what happens to a key none of the loaded files resolved.
+5. The remaining Units build on all four; follow the number order above.
+
+== Related Areas
+
+* link:../authentication/obtaining-tokens.adoc[8. Authentication]: the identity that the profile is built from; the Dev Docs index notes that the user profile itself is covered here, in Area 10.
+* link:../shell-context/current-app-and-api-base-url.adoc[3. Shell Context & Runtime Configuration]: where the profile and its settings come from.
+* link:../styling/primeng-style-scoping.adoc[4. PrimeNG/PrimeReact style scoping]: the `primeng` translation keys are handed to the PrimeNG configuration on every language change.
+* link:../diagnostics/logging.adoc[13. Diagnostics]: general tools for observing the Topics and `window` state these Units rely on.
+
+== Cross-Area links
+
+The Units in this Area link out to the following Units in other Areas. Each path is a fixed slug from the Dev Docs top index; pages that already exist in the repository are linked, and planned pages stay as plain-text references until they are written. All seven Units of this Area are now written and linked in the Unit map above.
+
+|===
+|Link |Target Area: Unit
+
+|link:../integration-contract/message-delivery.adoc[`integration-contract/message-delivery.adoc`]
+|1. Integration Contract & Topics: Topic message delivery
+
+|link:../shell-context/context-readiness.adoc[`shell-context/context-readiness.adoc`]
+|3. Shell Context & Runtime Configuration: Context overview & readiness
+
+|link:../shell-context/current-app-and-api-base-url.adoc[`shell-context/current-app-and-api-base-url.adoc`]
+|3. Shell Context & Runtime Configuration: Current App & API base URL resolution
+
+|link:../styling/primeng-style-scoping.adoc[`styling/primeng-style-scoping.adoc`]
+|4. Styling & Style Isolation: PrimeNG/PrimeReact style scoping
+
+|link:../authentication/obtaining-tokens.adoc[`authentication/obtaining-tokens.adoc`]
+|8. Authentication: How Apps obtain tokens
+
+|link:../diagnostics/logging.adoc[`diagnostics/logging.adoc`]
+|13. Diagnostics: Logging
+
+|link:../diagnostics/tracing-communication.adoc[`diagnostics/tracing-communication.adoc`]
+|13. Diagnostics: Tracing cross-App communication
+|===

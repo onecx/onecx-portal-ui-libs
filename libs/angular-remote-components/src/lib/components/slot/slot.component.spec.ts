@@ -10,7 +10,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { Component, EventEmitter, Input } from '@angular/core'
+import { Component, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core'
 import { provideSlotServiceMock, SlotServiceMock } from '@onecx/angular-remote-components/mocks'
 import { SlotHarness } from '@onecx/angular-remote-components/testing'
 import { SlotComponent } from './slot.component'
@@ -70,6 +70,7 @@ class ResizeObserverMock {
 @Component({
   selector: 'ocx-mock-angular-component',
   template: `<div>Mock Angular Component</div>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 class MockAngularComponent implements ocxRemoteComponent {

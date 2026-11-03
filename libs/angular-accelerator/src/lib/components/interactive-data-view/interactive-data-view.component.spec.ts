@@ -1,9 +1,17 @@
-import { SlotService } from '@onecx/angular-remote-components'
-import { TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
+import { TestBed, ComponentFixture } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { SlotService } from '@onecx/angular-remote-components'
 import { BehaviorSubject } from 'rxjs'
-import { PrimeTemplate } from 'primeng/api'
+import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import * as loggerUtils from '../../utils/logger.utils'
@@ -334,6 +342,57 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component.displayedColumnKeys()).toEqual(['b', 'c'])
     })
 
+    it('should offer only the active (displayed) columns to the Filter View', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+
+      // `b` and `c` belong to the active group; `a` is available but not active.
+      fixture.componentRef.setInput('columns', [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['other'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+        { id: 'c', nameKey: 'C', predefinedGroupKeys: ['g2'] } as any,
+      ])
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
+      component.ngOnInit()
+      fixture.detectChanges()
+
+      expect(component.activeOrAllColumns().map((c) => c.id)).toEqual(['b', 'c'])
+    })
+
+    it('should offer no columns when a configured column group has no active columns', () => {
+      const { fixture, component } = createComponentWithFixture(true)
+
+      fixture.componentRef.setInput('columns', [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g2'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g2'] } as any,
+      ])
+      fixture.componentRef.setInput('defaultGroupKey', 'g2')
+      component.ngOnInit()
+      fixture.detectChanges()
+
+      component.displayedColumnKeys.set([])
+
+      expect(component.activeOrAllColumns()).toEqual([])
+    })
+
+    it('should fall back to all available columns for the Filter View when no column is active', () => {
+      const { component } = createComponent(true)
+
+      // Set columns through the real `@Input() set columns` setter so the available
+      // columns signal is populated (a signal-shaped replacement would skip it).
+      component.columns = [
+        { id: 'a', nameKey: 'A', predefinedGroupKeys: ['g1'] } as any,
+        { id: 'b', nameKey: 'B', predefinedGroupKeys: ['g1'] } as any,
+      ]
+      setInputSignal(component, 'defaultGroupKey', '')
+
+      component.ngOnInit()
+      TestBed.tick()
+
+      // displayedColumnKeys stays empty (no defaultGroupKey) -> the full set is offered.
+      expect(component.displayedColumnKeys()).toEqual([])
+      expect(component.activeOrAllColumns().map((c) => c.id)).toEqual(['a', 'b'])
+    })
+
     it('should initialize displayedColumnKeys from defaultGroupKey', () => {
       const { fixture, component } = createComponentWithFixture(true)
 
@@ -511,6 +570,78 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     })
   })
 
+  describe('column group selector dialog configuration', () => {
+    it('should default resizableColumnGroupSelectorDialog to true', () => {
+      const { component } = createComponent(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    it('should default restoreColumnGroupSelectorOrder to false', () => {
+      const { component } = createComponent(true)
+      expect(component.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should default draggableColumnGroupSelectorDialog to true independently of resizing', () => {
+      const { component } = createComponent(true)
+      expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    // The hosted selector only renders in the 'table' layout, so the fixture must switch to it.
+    // The selector (standalone: false) plus its own template dependencies are declared/imported so
+    // the child instance can be inspected; the other ocx-* children in the IDV template only emit
+    // non-fatal "unknown element" warnings and do not affect the assertion.
+    const createTableLayoutFixture = (): ComponentFixture<InteractiveDataViewComponent> => {
+      const slotService = {
+        isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
+      } as unknown as SlotService
+
+      TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent, CustomGroupColumnSelectorComponent],
+        imports: [CommonModule, AngularAcceleratorOptimusModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
+        providers: [
+          { provide: SlotService, useValue: slotService },
+          DataViewStateService,
+          provideTranslateTestingService({}),
+        ],
+      })
+
+      const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+
+      fixture.componentRef.setInput('layout', 'table')
+      return fixture
+    }
+
+    const querySelectorChild = (fixture: ComponentFixture<InteractiveDataViewComponent>): CustomGroupColumnSelectorComponent => {
+      const selectorDebugElement = fixture.debugElement.query(By.css('ocx-custom-group-column-selector'))
+      expect(selectorDebugElement).toBeTruthy()
+      return selectorDebugElement.componentInstance as CustomGroupColumnSelectorComponent
+    }
+
+    it('should forward the default dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should forward custom dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.componentRef.setInput('draggableColumnGroupSelectorDialog', false)
+      fixture.componentRef.setInput('resizableColumnGroupSelectorDialog', true)
+      fixture.componentRef.setInput('restoreColumnGroupSelectorOrder', true)
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(false)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(true)
+    })
+  })
+
   describe('wiring and event forwarding (EventEmitters)', () => {
     it('should not forward delete/view/edit when not observed', () => {
       const { component } = createComponent(true)
@@ -600,7 +731,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   })
 
   describe('template computed signals', () => {
-    it('should return childTableCell when no PrimeNG template is defined', () => {
+    it('should return childTableCell when no Optimus template is defined', () => {
       const { component } = createComponent(true)
 
       const mockTemplate = {} as TemplateRef<any>
@@ -610,7 +741,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._tableCell()).toBe(mockTemplate)
     })
 
-    it('should return PrimeNG template when defined for tableCell', () => {
+    it('should return Optimus template when defined for tableCell', () => {
       const { component } = createComponent(true)
 
       const mockPrimeTemplate = {} as TemplateRef<any>
@@ -621,11 +752,26 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'templates', [primeTemplateWrapper])
 
-      expect(component.primeNgTableCell()).toBe(mockPrimeTemplate)
+      expect(component.optimusTableCell()).toBe(mockPrimeTemplate)
       expect(component._tableCell()).toBe(mockPrimeTemplate)
     })
 
-    it('should prioritize PrimeNG template over childContent for dateTableCell', () => {
+    it('should return Optimus template when defined for columnHeader', () => {
+      const { component } = createComponent(true)
+
+      const mockPrimeTemplate = {} as TemplateRef<any>
+      const primeTemplateWrapper = {
+        getType: () => 'columnHeader',
+        template: mockPrimeTemplate,
+      } as PrimeTemplate
+
+      setInputSignal(component, 'templates', [primeTemplateWrapper])
+
+      expect(component.optimusColumnHeader()).toBe(mockPrimeTemplate)
+      expect(component._columnHeader()).toBe(mockPrimeTemplate)
+    })
+
+    it('should prioritize Optimus template over childContent for dateTableCell', () => {
       const { component } = createComponent(true)
 
       const childTemplate = {} as TemplateRef<any>
@@ -663,13 +809,13 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       setInputSignal(component, 'templates', templates)
 
-      expect(component.primeNgGridItem()).toBe(gridItemTemplate)
-      expect(component.primeNgListItem()).toBe(listItemTemplate)
+      expect(component.optimusGridItem()).toBe(gridItemTemplate)
+      expect(component.optimusListItem()).toBe(listItemTemplate)
       expect(component._gridItem()).toBe(gridItemTemplate)
       expect(component._listItem()).toBe(listItemTemplate)
     })
 
-    it('should handle all table cell types with PrimeNG template prioritization', () => {
+    it('should handle all table cell types with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const relativeDateTableCellTemplate = {} as TemplateRef<any>
@@ -692,7 +838,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._numberTableCell()).toBe(numberTableCellTemplate)
     })
 
-    it('should handle list value templates with PrimeNG template prioritization', () => {
+    it('should handle list value templates with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const listValueTemplate = {} as TemplateRef<any>
@@ -721,7 +867,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._dateListValue()).toBe(dateListValueTemplate)
     })
 
-    it('should handle table filter cell templates with PrimeNG template prioritization', () => {
+    it('should handle table filter cell templates with Optimus template prioritization', () => {
       const { component } = createComponent(true)
 
       const tableFilterCellTemplate = {} as TemplateRef<any>
@@ -770,7 +916,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._topCenter()).toBe(topCenterTemplate)
     })
 
-    it('should fall back to child template for all template types when no PrimeNG template is found', () => {
+    it('should fall back to child template for all template types when no Optimus template is found', () => {
       const { component } = createComponent(true)
 
       const mockTemplate = {} as TemplateRef<any>
@@ -799,6 +945,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', mockTemplate)
       setInputSignal(component, 'childStringTableFilterCell', mockTemplate)
       setInputSignal(component, 'childNumberTableFilterCell', mockTemplate)
+      setInputSignal(component, 'childColumnHeader', mockTemplate)
 
       expect(component._tableCell()).toBe(mockTemplate)
       expect(component._dateTableCell()).toBe(mockTemplate)
@@ -823,9 +970,10 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBe(mockTemplate)
       expect(component._stringTableFilterCell()).toBe(mockTemplate)
       expect(component._numberTableFilterCell()).toBe(mockTemplate)
+      expect(component._columnHeader()).toBe(mockTemplate)
     })
 
-    it('should return undefined for all template types when neither PrimeNG nor child template is defined', () => {
+    it('should return undefined for all template types when neither Optimus nor child template is defined', () => {
       const { component } = createComponent(true)
 
       setInputSignal(component, 'templates', [])
@@ -852,6 +1000,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       setInputSignal(component, 'childTranslationKeyTableFilterCell', undefined)
       setInputSignal(component, 'childStringTableFilterCell', undefined)
       setInputSignal(component, 'childNumberTableFilterCell', undefined)
+      setInputSignal(component, 'childColumnHeader', undefined)
 
       expect(component._tableCell()).toBeUndefined()
       expect(component._dateTableCell()).toBeUndefined()
@@ -876,6 +1025,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(component._translationKeyTableFilterCell()).toBeUndefined()
       expect(component._stringTableFilterCell()).toBeUndefined()
       expect(component._numberTableFilterCell()).toBeUndefined()
+      expect(component._columnHeader()).toBeUndefined()
     })
   })
 
@@ -1442,6 +1592,23 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       // No warning on initial resolution
       expect(consoleWarnSpy).not.toHaveBeenCalled()
       jest.restoreAllMocks()
+    })
+  })
+
+  describe('row grouping pass-through', () => {
+    it('should resolve the group cell template from the content child when no input is set', () => {
+      const childTpl = {} as any
+
+      const { component: withChild } = createComponent()
+      setInputSignal(withChild, 'groupCellTemplate', undefined)
+      setInputSignal(withChild, 'optimusGroupCell', undefined)
+      setInputSignal(withChild, 'childGroupCell', childTpl)
+      expect((withChild as any)._groupCell()).toBe(childTpl)
+    })
+
+    it('should default rowGrouping to undefined', () => {
+      const { component } = createComponent()
+      expect(component.rowGrouping()).toBeUndefined()
     })
   })
 })
