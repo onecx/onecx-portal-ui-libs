@@ -1,0 +1,96 @@
+= OneCX DataTable Row Grouping
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+The `<ocx-data-table>` component can render **single-level row groups**. When a
+`rowGrouping` configuration is provided, the table renders one semantic
+row-group header cell (a `<th scope="rowgroup">`) above the first row of each
+group. Groups are computed from the currently displayed rows, so they respect
+filtering, sorting, and pagination.
+
+Grouping is opt-in: a table without a `rowGrouping` configuration renders
+exactly as before (no group header cells).
+
+[#usage]
+== Usage
+Provide a `rowGrouping` configuration that references a column by its `id`.
+The value of that column on each displayed row determines group membership.
+
+[source, html]
+----
+<ocx-data-table
+  [columns]="columns"
+  [rows]="rows"
+  [rowGrouping]="{ columnId: 'status' }"
+>
+</ocx-data-table>
+----
+
+The group key is read by *direct property access* on the displayed (flattened)
+row using the column id. Nested values that have been flattened by the table
+can be grouped by supplying a `groupKeyPath` that matches the flattened,
+dot-joined key.
+
+[#configuration]
+== Configuration
+
+.DataTableRowGroupingConfig
+[cols="1,1,1,2", options="header"]
+|===
+| Property | Type | Default | Description
+
+| `columnId` | `string` | - | *Required.* The id of the column to group by. Must match a configured column.
+| `groupKeyPath` | `string` | `columnId` | The row property to read the group key from. Defaults to `columnId`.
+|===
+
+Only string and numeric group keys form groups. `NaN` keys and non-primitive
+keys (objects, `null`, `undefined`) are excluded. Group identity uses strict
+equality, so the numeric `1` and the string `'1'` are distinct groups that
+happen to share the same label.
+
+[#group-cell]
+== Custom group-cell template
+By default, the group header renders the grouping column's normal cell
+presentation for the group's first row. Provide a `#groupCell` template (or the
+`groupCellTemplate` input) to fully customize the group header. The input
+template takes precedence over the projected content template.
+
+[source, html]
+----
+<ocx-data-table
+  [columns]="columns"
+  [rows]="rows"
+  [rowGrouping]="{ columnId: 'status' }"
+>
+  <ng-template #groupCell let-groupKey="groupKey" let-memberCount="memberCount" let-column="column">
+    <div>
+      <span class="font-bold">{{ groupKey }}</span>
+      <span>{{ memberCount }} rows</span>
+    </div>
+  </ng-template>
+</ocx-data-table>
+----
+
+[#context]
+== Template context
+
+.DataTableGroupCellContext
+[cols="1,1,2", options="header"]
+|===
+| Property | Type | Description
+
+| `groupKey` | `string \| number` | The raw group key value.
+| `label` | `string` | The display label (string form of the key; empty string for an empty-string key).
+| `memberCount` | `number` | The number of displayed rows in the group.
+| `rowObject` | `Row` | The first row of the group.
+| `column` | `DataTableColumn` | The grouping column definition.
+|===
+
+[#a11y]
+== Accessibility
+Each group header is a single table cell with `scope="rowgroup"` and a
+`colspan` matching the data-row width, so assistive technology reads it as the
+label for the rows that follow.
