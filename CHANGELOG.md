@@ -1,3 +1,10 @@
+## [9.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0...v9.1.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1940](https://github.com/onecx/onecx-portal-ui-libs/issues/1940)) ([5d942c9](https://github.com/onecx/onecx-portal-ui-libs/commit/5d942c9bf32abde07e995232a655035900ede7bf))
+* implement issue [#387](https://github.com/onecx/onecx-portal-ui-libs/issues/387) - Render basic row groups in DataTable ([#1815](https://github.com/onecx/onecx-portal-ui-libs/issues/1815)) ([07df0e9](https://github.com/onecx/onecx-portal-ui-libs/commit/07df0e9be820a89c45e72e1402029a5171c310fc))
+
 ## [9.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.9999.0...v9.0.0) (2026-10-29)
 
 ### ⚠ BREAKING CHANGES
