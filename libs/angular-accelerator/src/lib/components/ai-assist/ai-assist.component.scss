@@ -97,12 +97,7 @@
 
   &__review-column {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-
-    textarea {
-      width: 100%;
-    }
+    width: 100%;
   }
 
   &__actions {

@@ -51,14 +51,14 @@
         {{ 'OCX_AI_ASSIST.READY_TO_REVIEW' | translate }}
       </div>
       <div class="ocx-ai-assist__review-columns">
-        <div class="ocx-ai-assist__review-column">
+        <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
+          <textarea pTextarea id="ocxAiAssistBefore" class="w-full" rows="6" readonly [value]="inputText"></textarea>
           <label for="ocxAiAssistBefore">{{ 'OCX_AI_ASSIST.BEFORE' | translate }}</label>
-          <textarea pTextarea id="ocxAiAssistBefore" rows="6" readonly [value]="inputText"></textarea>
-        </div>
-        <div class="ocx-ai-assist__review-column">
+        </p-floatlabel>
+        <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
+          <textarea pTextarea id="ocxAiAssistSuggestion" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
           <label for="ocxAiAssistSuggestion">{{ 'OCX_AI_ASSIST.AI_SUGGESTION' | translate }}</label>
-          <textarea pTextarea id="ocxAiAssistSuggestion" rows="6" [(ngModel)]="suggestion"></textarea>
-        </div>
+        </p-floatlabel>
       </div>
       <div class="ocx-ai-assist__actions">
         <p-button
