@@ -1,3 +1,9 @@
+## [5.58.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.58.0...v5.58.1) (2026-11-03)
+
+### Bug Fixes
+
+* enable Sonar SCM detection and checkout v7 ([#1770](https://github.com/onecx/onecx-portal-ui-libs/issues/1770)) ([4ce2068](https://github.com/onecx/onecx-portal-ui-libs/commit/4ce20688ce2e71c97f2ad2c29234963835a5d687))
+
 ## [5.58.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v5.57.0...v5.58.0) (2026-07-08)
 
 ### Features
