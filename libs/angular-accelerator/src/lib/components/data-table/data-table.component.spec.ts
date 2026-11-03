@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -41,6 +41,9 @@ describe('DataTableComponent', () => {
       ALL: 'All',
       SEARCH_RESULTS_FOUND: '{{results}} Results Found',
       NO_SEARCH_RESULTS_FOUND: 'No Results Found',
+    },
+    BOOK_GENRE: {
+      FICTION: 'Fiction',
     },
   }
 
@@ -252,6 +255,78 @@ describe('DataTableComponent', () => {
   it('loads dataTableHarness', async () => {
     const dataTable = await TestbedHarnessEnvironment.harnessForFixture(fixture, DataTableHarness)
     expect(dataTable).toBeTruthy()
+  })
+
+  describe('column header tooltips', () => {
+    beforeEach(() => {
+      translateService.setTranslation('en', { COLUMN_HEADER_NAME: { NAME: 'Name' } }, true)
+    })
+
+    const getLabel = (): HTMLElement => fixture.nativeElement.querySelector('th[scope="col"] span[tooltipposition="top"]')
+
+    const getTooltipText = (label: HTMLElement) =>
+      document.getElementById(label.getAttribute('aria-describedby') ?? '')?.querySelector('.p-tooltip-text')
+        ?.textContent ?? null
+
+    const trigger = (label: HTMLElement, event: string) => {
+      label.dispatchEvent(new Event(event))
+      tick(200)
+      fixture.detectChanges()
+    }
+
+    it('should show the translated tooltipKey as tooltip', fakeAsync(() => {
+      translateService.setTranslation('en', { CUSTOM_TOOLTIP: 'Custom tooltip' }, true)
+      component.columns.set([{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }])
+      fixture.detectChanges()
+
+      const label = getLabel()
+      trigger(label, 'mouseenter')
+
+      expect(getTooltipText(label)).toBe('Custom tooltip')
+
+      trigger(label, 'mouseleave')
+    }))
+
+    it.each([
+      { tooltip: 'Product details', tooltipKey: undefined, expected: 'Product details' },
+      { tooltip: 'Product details', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Product details' },
+      { tooltip: '', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Translated tooltip' },
+    ])('should resolve tooltip content for %o', ({ tooltip, tooltipKey, expected }) =>
+      fakeAsync(() => {
+        translateService.setTranslation(
+          'en',
+          {
+            'Product details': 'This translation must not replace the plain label',
+            CUSTOM_TOOLTIP: 'Translated tooltip',
+          },
+          true
+        )
+        component.columns.set([{ ...mockColumns[0], tooltip, tooltipKey }])
+        fixture.detectChanges()
+
+        const label = getLabel()
+        trigger(label, 'mouseenter')
+
+        expect(label.textContent?.trim()).toBe('Name')
+        expect(getTooltipText(label)).toBe(expected)
+
+        trigger(label, 'mouseleave')
+      })()
+    )
+
+    it.each([
+      { tooltipKey: undefined, tooltip: undefined },
+      { tooltipKey: '', tooltip: undefined },
+      { tooltipKey: undefined, tooltip: '' },
+      { tooltipKey: '', tooltip: '' },
+    ])('should render only the label when tooltip options are %o', (options) => {
+      component.columns.set([{ ...mockColumns[0], ...options }])
+      fixture.detectChanges()
+
+      const header: HTMLElement = fixture.nativeElement.querySelector('th[scope="col"]')
+      expect(header.querySelector('span[tooltipposition="top"]')).toBeNull()
+      expect(header.textContent?.trim()).toBe('Name')
+    })
   })
 
   describe('should display the paginator currentPageReport -', () => {
@@ -1986,6 +2061,48 @@ describe('DataTableComponent', () => {
 
       const result = await firstValueFrom(component.hasVisibleOverflowMenuItems({}))
       expect(result).toBe(false)
+    })
+  })
+
+  describe('currentEqualFilterOptions$ translation_key label', () => {
+    const statusColumn = mockColumns.find((c) => c.id === 'status')!
+
+    it('should show the translated label for a selected filter whose rows are no longer present', async () => {
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      component.columns.set(mockColumns)
+      component.filters.set([{ columnId: 'status', value: selectedKey }] as any)
+      // The search criteria narrows the result set so the selected option no longer appears as a row.
+      component.rows.set([])
+      component.onFilterChosen(statusColumn)
+      fixture.detectChanges()
+
+      const { options } = (await firstValueFrom(component.currentEqualFilterOptions$ as any)) as {
+        options: { label: string; value: string; toFilterBy: string }[]
+      }
+      const option = options.find((o) => o.value === selectedKey)
+
+      expect(option).toBeDefined()
+      // Regression: the raw key was shown instead of the translation once the row set became empty.
+      expect(option!.label).toBe('Fiction')
+    })
+
+    it('should show translated labels for the visible rows while keeping the selected filter', async () => {
+      const selectedKey = 'BOOK_GENRE.FICTION'
+      const otherKey = 'BOOK_GENRE.NON_FICTION'
+      component.columns.set(mockColumns)
+      component.rows.set([{ id: 'r1', status: otherKey } as any])
+      component.filters.set([{ columnId: 'status', value: selectedKey }] as any)
+      component.onFilterChosen(statusColumn)
+      fixture.detectChanges()
+
+      const { options } = (await firstValueFrom(component.currentEqualFilterOptions$ as any)) as {
+        options: { label: string; value: string; toFilterBy: string }[]
+      }
+
+      expect(options.map((o) => o.value)).toEqual(expect.arrayContaining([otherKey, selectedKey]))
+      expect(options.find((o) => o.value === otherKey)!.label).toBe(otherKey)
+      // The orphaned, still-selected filter stays readable with its translation.
+      expect(options.find((o) => o.value === selectedKey)!.label).toBe('Fiction')
     })
   })
 
