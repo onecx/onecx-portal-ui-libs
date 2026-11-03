@@ -22,6 +22,7 @@ import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 import { Filter } from '../../model/filter.model'
 import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import {
@@ -164,6 +165,14 @@ export class DataViewComponent implements OnInit {
 
   sortStates = input<DataSortDirection[]>([])
   pageSizes = input<number[]>([10, 25, 50])
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  groupCellTemplate = input<TemplateRef<any> | undefined>()
+  groupCellChildTemplate = contentChild<TemplateRef<any>>('groupCellTemplate')
+  get groupCell(): TemplateRef<any> | undefined {
+    return this.groupCellTemplate() || this.groupCellChildTemplate()
+  }
 
   stringTableCellTemplate = input<TemplateRef<any> | undefined>()
   stringTableCellChildTemplate = contentChild<TemplateRef<any>>('stringTableCellTemplate')
