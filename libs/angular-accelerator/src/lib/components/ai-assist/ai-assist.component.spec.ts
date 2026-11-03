@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { AppStateService } from '@onecx/angular-integration-interface'
-import { AiAgentResponse, AiProviderError, OneCXAiAgentService, OneCXAiCompletionService } from '@onecx/integration-interface'
+import {
+  AiAgentResponse,
+  AiProviderError,
+  OneCXAiAgentService,
+  OneCXAiCompletionService,
+} from '@onecx/integration-interface'
 import { of, throwError } from 'rxjs'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
@@ -113,6 +118,80 @@ describe('AiAssistComponent', () => {
 
     expect(getCompletion).not.toHaveBeenCalled()
     expect(component.canRun).toBe(false)
+  })
+
+  it('should keep the panel closed by default and toggle it', async () => {
+    await createComponent()
+
+    expect(component.open).toBe(false)
+    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).toBeNull()
+
+    component.toggle()
+    fixture.detectChanges()
+    expect(component.open).toBe(true)
+    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).not.toBeNull()
+
+    component.close()
+    fixture.detectChanges()
+    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).toBeNull()
+  })
+
+  it('should render the review state with the replace and try again actions', async () => {
+    await createComponent()
+    component.open = true
+    component.selectAction('translate')
+    component.inputText = 'Hello'
+    await component.run()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    const suggestion = fixture.nativeElement.querySelector('#ocxAiAssistSuggestion') as HTMLTextAreaElement
+    expect(suggestion.value).toBe('Hallo')
+    expect(fixture.nativeElement.textContent).toContain('Replace text')
+    expect(fixture.nativeElement.textContent).toContain('Try again')
+  })
+
+  it('should offer the completion as an editable suggestion and emit it on replace', async () => {
+    const replaced = jest.fn()
+    await createComponent()
+    component.replaceText.subscribe(replaced)
+    component.open = true
+    component.selectAction('translate')
+    component.inputText = 'Hello'
+
+    await component.run()
+    expect(component.isReviewReady).toBe(true)
+    expect(component.suggestion).toBe('Hallo')
+
+    component.suggestion = 'Hallo Welt'
+    component.replace()
+
+    expect(replaced).toHaveBeenCalledWith('Hallo Welt')
+    expect(component.open).toBe(false)
+    expect(component.runState).toBe('idle')
+    expect(component.suggestion).toBe('')
+  })
+
+  it('should run the action again when the user asks to try again', async () => {
+    await createComponent()
+    component.selectAction('translate')
+    component.inputText = 'Hello'
+    await component.run()
+
+    getCompletion.mockResolvedValueOnce({ text: 'Hallo Welt' })
+    await component.tryAgain()
+
+    expect(getCompletion).toHaveBeenCalledTimes(2)
+    expect(component.suggestion).toBe('Hallo Welt')
+  })
+
+  it('should derive agent initials from the first two words of the name', async () => {
+    await createComponent()
+
+    expect(component.initials('Event Management AI Agent')).toBe('EM')
+    expect(component.initials('translator')).toBe('T')
+    expect(component.initials(undefined)).toBe('')
   })
 
   it('should load agents for the configured appId when the current MFE cannot be read', async () => {

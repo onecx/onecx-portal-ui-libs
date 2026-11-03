@@ -1,21 +1,74 @@
 .ocx-ai-assist {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 
-  &__title {
-    margin: 0;
+  &__toggle {
+    display: flex;
+    justify-content: flex-end;
   }
 
-  &__field {
+  &__panel {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--p-content-border-color, #dee2e6);
+    border-radius: var(--p-border-radius, 6px);
+    background: var(--p-content-background, #fff);
+  }
 
-    textarea,
-    input[type='text'] {
-      width: 100%;
-    }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  &__selectors,
+  &__parameters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__selectors > * {
+    flex: 1 1 12rem;
+  }
+
+  &__parameter {
+    flex: 1 1 12rem;
+  }
+
+  &__run {
+    flex: 0 0 auto;
+  }
+
+  &__agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--p-primary-color, #3b82f6);
+    color: var(--p-primary-contrast-color, #fff);
   }
 
   &__status {
@@ -23,14 +76,45 @@
     margin: 0;
   }
 
-  &__result {
+  &__review {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__review-status {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  &__review-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  &__review-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 
     textarea {
       width: 100%;
     }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  &__result {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
     pre {
       white-space: pre-wrap;
