@@ -16,6 +16,7 @@ import { provideAuthService } from '@onecx/shell-auth'
 import { MessageService } from '@openng/optimus-ui/api'
 import { createLogger } from './logger.utils'
 import { LIB_VERSION } from '../../version'
+import { provideStandaloneHtmlLang } from './standalone-html-lang.utils'
 
 const logger = createLogger('expose-standalone')
 
@@ -117,6 +118,7 @@ export function provideStandaloneProviders(config?: Partial<ProvideStandalonePro
     },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideMultiLanguageIdentifier('@onecx/angular-standalone-shell', LIB_VERSION, 'lib'),
+    provideStandaloneHtmlLang(),
     provideAlwaysGrantPermissionChecker(),
     provideTokenInterceptor(),
     provideAuthService(),
