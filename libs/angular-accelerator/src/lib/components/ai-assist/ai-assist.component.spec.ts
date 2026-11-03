@@ -214,11 +214,11 @@ describe('AiAssistComponent', () => {
     expect(component.selectedAgentId).toBe('agent-2')
   })
 
-  it('should render the full result as formatted JSON', async () => {
+  it('should not expose the raw response envelope when no text is returned', async () => {
     await createComponent()
-    component.result = { text: 'Hallo' } as never
+    component.result = { conversationId: null, message: '{}' } as never
 
-    expect(component.resultJson).toBe(JSON.stringify({ text: 'Hallo' }, null, 2))
+    expect(component.resultText).toBeUndefined()
   })
 
   it('should show the error state and retry explicitly on a failed completion', async () => {
