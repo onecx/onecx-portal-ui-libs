@@ -16,9 +16,9 @@ export const tabsPanelShape = z.object({
 
 export const tabsPanelDefaults = {
   font: {
-    size: '{{primitives.font.size}}',
-    weight: '{{primitives.font.weight}}',
-    lineHeight: '{{primitives.font.lineHeight}}',
+    size: '{{primitives.font.size.md}}',
+    weight: '{{primitives.font.weight.normal}}',
+    lineHeight: '{{primitives.font.lineHeight.md}}',
   },
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',

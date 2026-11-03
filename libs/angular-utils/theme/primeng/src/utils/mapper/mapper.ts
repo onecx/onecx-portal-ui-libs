@@ -1,14 +1,7 @@
 import type { ThemePropertiesV2 } from '@onecx/integration-interface';
 import type { MappingRule, CssRule } from './mapper.types';
 import { resolveThemeRefs } from './resolve-refs';
-import {
-  getByPath,
-  setByPath,
-  cssVar,
-  isLightDark,
-  isScalarTypographyPath,
-  resolveScalarTypography,
-} from './mapper.utils';
+import { getByPath, setByPath, cssVar, isLightDark } from './mapper.utils';
 import { MAPPING_RULES } from './mapping-rules';
 import { CSS_RULES } from './css-rules';
 
@@ -48,13 +41,7 @@ function applyMappingRule(
   resolved: unknown,
   preset: Record<string, unknown>
 ): void {
-  // Scalar-typography consumption boundaries reduce a scale object or a dangling
-  // reference to a single CSS string (or nothing), so the preset never receives a
-  // scale object or an unresolved reference as a typography token. Non-typography
-  // paths keep the ordinary `getByPath` read.
-  let value: unknown = isScalarTypographyPath(rule.from)
-    ? resolveScalarTypography(resolved, rule.from)
-    : getByPath(resolved, rule.from);
+  let value = getByPath(resolved, rule.from);
   if (value === undefined) return;
 
   if (rule.transform) {
@@ -88,14 +75,8 @@ function buildCss(cssRules: CssRule[], resolved: unknown): string {
         // Static / structural declaration — always emit.
         lines.push(`  ${decl.property}: ${decl.value};`);
       } else if (decl.from !== undefined) {
-        // Scalar-typography declarations are gated on a usable scalar so a scale
-        // object without its canonical entry, or a dangling reference, emits no
-        // unguarded `var()` that would defeat fallback. Non-typography declarations
-        // keep the plain existence check.
-        const present = isScalarTypographyPath(decl.from)
-          ? resolveScalarTypography(resolved, decl.from) !== undefined
-          : getByPath(resolved, decl.from) !== undefined;
-        if (present) {
+        const themeValue = getByPath(resolved, decl.from);
+        if (themeValue !== undefined) {
           lines.push(`  ${decl.property}: ${cssVar(decl.from)};`);
         }
       }

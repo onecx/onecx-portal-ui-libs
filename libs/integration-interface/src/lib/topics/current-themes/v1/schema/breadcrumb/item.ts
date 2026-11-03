@@ -21,8 +21,8 @@ export class BreadcrumbItemSchema {
     label: z
       .object({
         font: font.pick({ weight: true, size: true }).default({
-          weight: '{{primitives.font.weight}}',
-          size: '{{primitives.font.size}}',
+          weight: '{{primitives.font.weight.normal}}',
+          size: '{{primitives.font.size.md}}',
         }),
       })
       .prefault({}),

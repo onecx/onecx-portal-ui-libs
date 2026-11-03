@@ -85,8 +85,8 @@ export const multiselectLabelContainerDefaults = {
       paddingY: '{{primitives.space.sm}}',
     },
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
       style: '{{primitives.font.style}}',
     },
     sm: {

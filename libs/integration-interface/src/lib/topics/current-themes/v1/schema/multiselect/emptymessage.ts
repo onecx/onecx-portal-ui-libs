@@ -19,8 +19,8 @@ export const multiselectEmptyMessageDefaults = {
   paddingX: '{{primitives.space.sm}}',
   paddingY: '{{primitives.space.sm}}',
   font: {
-    weight: '{{primitives.font.weight}}',
-    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight.normal}}',
+    size: '{{primitives.font.size.md}}',
     style: '{{primitives.font.style}}',
   },
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',

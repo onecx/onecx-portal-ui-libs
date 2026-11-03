@@ -25,7 +25,7 @@ export class MenuSchema {
     paddingY: withRef(z.string()).default('{{primitives.spacing.sm}}'),
     font: font.pick({ weight: true, size: true }).default({
       weight: '{{primitives.font.weight.normal}}',
-      size: '{{primitives.font.size}}',
+      size: '{{primitives.font.size.md}}',
     }),
     background: bg
       .pick({ color: true })

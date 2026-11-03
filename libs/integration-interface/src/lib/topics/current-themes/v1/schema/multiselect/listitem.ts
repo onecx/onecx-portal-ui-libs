@@ -38,8 +38,8 @@ export const multiselectListItemDefaults = {
     paddingY: '{{primitives.space.sm}}',
     gap: '{{primitives.space.sm}}',
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
     },
     border: {
       width: '{{primitives.border.width.none}}',

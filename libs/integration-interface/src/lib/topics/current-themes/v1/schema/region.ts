@@ -5,11 +5,11 @@ import { themeSchemaRegistry } from "./registry";
 export const fontWithDefaults = z
   .object({
     family: withRef(z.string()).default("{{primitives.font.family}}"),
-    size: withRef(z.string()).default("{{primitives.font.size}}"),
-    weight: withRef(z.string()).default("{{primitives.font.weight}}"),
-    lineHeight: withRef(z.string()).default("{{primitives.font.lineHeight}}"),
+    size: withRef(z.string()).default("{{primitives.font.size.md}}"),
+    weight: withRef(z.string()).default("{{primitives.font.weight.normal}}"),
+    lineHeight: withRef(z.string()).default("{{primitives.font.lineHeight.md}}"),
     letterSpacing: withRef(z.string()).default(
-      "{{primitives.font.letterSpacing}}"
+      "{{primitives.font.letterSpacing.normal}}"
     ),
     style: withRef(z.string()).default("{{primitives.font.style}}"),
   })

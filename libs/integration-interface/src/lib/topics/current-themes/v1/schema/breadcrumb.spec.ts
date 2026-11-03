@@ -17,8 +17,8 @@ const BREADCRUMB_ITEM_BASE_TOKENS = {
   },
   label: {
     font: {
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
   },
   focusRing: {

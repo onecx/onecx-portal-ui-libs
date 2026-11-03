@@ -273,8 +273,8 @@ Object {
                         },
                         "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                         "font": Object {
-                          "size": "{{primitives.font.size}}",
-                          "weight": "{{primitives.font.weight}}",
+                          "size": "{{primitives.font.size.md}}",
+                          "weight": "{{primitives.font.weight.normal}}",
                         },
                         "height": "2.5rem",
                         "padding": "{{primitives.space.xs}}",
@@ -312,7 +312,7 @@ Object {
                   "weekDayLabel": Object {
                     "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                     "font": Object {
-                      "size": "{{primitives.font.size}}",
+                      "size": "{{primitives.font.size.md}}",
                       "weight": "{{primitives.font.weight.bold}}",
                     },
                     "padding": "{{primitives.space.xs}}",
@@ -337,8 +337,8 @@ Object {
                         },
                         "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                         "font": Object {
-                          "size": "{{primitives.font.size}}",
-                          "weight": "{{primitives.font.weight}}",
+                          "size": "{{primitives.font.size.md}}",
+                          "weight": "{{primitives.font.weight.normal}}",
                         },
                         "height": "2.5rem",
                         "padding": "{{primitives.space.xs}}",
@@ -396,8 +396,8 @@ Object {
                         },
                         "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                         "font": Object {
-                          "size": "{{primitives.font.size}}",
-                          "weight": "{{primitives.font.weight}}",
+                          "size": "{{primitives.font.size.md}}",
+                          "weight": "{{primitives.font.weight.normal}}",
                         },
                         "height": "2.5rem",
                         "padding": "{{primitives.space.xs}}",
@@ -462,8 +462,8 @@ Object {
                       "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                       "font": Object {
                         "family": "{{primitives.font.family}}",
-                        "size": "{{primitives.font.size}}",
-                        "weight": "{{primitives.font.weight}}",
+                        "size": "{{primitives.font.size.md}}",
+                        "weight": "{{primitives.font.weight.normal}}",
                       },
                       "padding": "{{primitives.space.sm}}",
                     },
@@ -511,8 +511,8 @@ Object {
                       "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                       "font": Object {
                         "family": "{{primitives.font.family}}",
-                        "size": "{{primitives.font.size}}",
-                        "weight": "{{primitives.font.weight}}",
+                        "size": "{{primitives.font.size.md}}",
+                        "weight": "{{primitives.font.weight.normal}}",
                       },
                       "padding": "{{primitives.space.sm}}",
                     },
@@ -607,8 +607,8 @@ Object {
                       },
                       "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                       "font": Object {
-                        "size": "{{primitives.font.size}}",
-                        "weight": "{{primitives.font.weight}}",
+                        "size": "{{primitives.font.size.md}}",
+                        "weight": "{{primitives.font.weight.normal}}",
                       },
                       "padding": "{{primitives.space.sm}}",
                     },
@@ -645,8 +645,8 @@ Object {
                       },
                       "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                       "font": Object {
-                        "size": "{{primitives.font.size}}",
-                        "weight": "{{primitives.font.weight}}",
+                        "size": "{{primitives.font.size.md}}",
+                        "weight": "{{primitives.font.weight.normal}}",
                       },
                       "padding": "{{primitives.space.sm}}",
                     },
@@ -673,8 +673,8 @@ Object {
                 "yearMonthNav": Object {
                   "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                   "font": Object {
-                    "size": "{{primitives.font.size}}",
-                    "weight": "{{primitives.font.weight}}",
+                    "size": "{{primitives.font.size.md}}",
+                    "weight": "{{primitives.font.weight.normal}}",
                   },
                   "gap": "{{primitives.space.sm}}",
                 },
@@ -747,8 +747,8 @@ Object {
                   },
                   "font": Object {
                     "family": "{{primitives.font.family}}",
-                    "size": "{{primitives.font.size}}",
-                    "weight": "{{primitives.font.weight}}",
+                    "size": "{{primitives.font.size.md}}",
+                    "weight": "{{primitives.font.weight.normal}}",
                   },
                   "padding": "{{primitives.space.xs}}",
                   "width": "3rem",
@@ -799,8 +799,8 @@ Object {
                   "color": "{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}",
                   "font": Object {
                     "family": "{{primitives.font.family}}",
-                    "size": "{{primitives.font.size}}",
-                    "weight": "{{primitives.font.weight}}",
+                    "size": "{{primitives.font.size.md}}",
+                    "weight": "{{primitives.font.weight.normal}}",
                   },
                   "padding": "{{primitives.space.xs}}",
                 },

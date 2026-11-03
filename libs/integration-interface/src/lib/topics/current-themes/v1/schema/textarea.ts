@@ -95,9 +95,9 @@ export const textareaShape = z.object({
 /** Full mandatory baseline token set on `defaultVariant.defaultState` (no severity wrapper). */
 const baselineStateTokens = {
   font: {
-    weight: '{{primitives.font.weight}}',
-    lineHeight: '{{primitives.font.lineHeight}}',
-    letterSpacing: '{{primitives.font.letterSpacing}}',
+    weight: '{{primitives.font.weight.normal}}',
+    lineHeight: '{{primitives.font.lineHeight.md}}',
+    letterSpacing: '{{primitives.font.letterSpacing.normal}}',
     style: '{{primitives.font.style}}',
   },
   border: {
@@ -118,17 +118,17 @@ const baselineStateTokens = {
     shadow: '{{primitives.shadow.none}}',
   },
   sm: {
-    font: { size: '{{primitives.font.size}}' },
+    font: { size: '{{primitives.font.size.md}}' },
     paddingX: '{{primitives.space.xs}}',
     paddingY: '{{primitives.space.xs}}',
   },
   md: {
-    font: { size: '{{primitives.font.size}}' },
+    font: { size: '{{primitives.font.size.md}}' },
     paddingX: '{{primitives.space.md}}',
     paddingY: '{{primitives.space.md}}',
   },
   lg: {
-    font: { size: '{{primitives.font.size}}' },
+    font: { size: '{{primitives.font.size.md}}' },
     paddingX: '{{primitives.space.md}}',
     paddingY: '{{primitives.space.md}}',
   },

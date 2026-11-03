@@ -73,7 +73,7 @@ describe('picklist schema', () => {
             radius: '{{primitives.border.radius.none}}',
           },
           font: {
-            weight: '{{primitives.font.weight}}',
+            weight: '{{primitives.font.weight.normal}}',
           },
         })
       })
