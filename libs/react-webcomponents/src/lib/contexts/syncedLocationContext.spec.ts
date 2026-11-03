@@ -324,6 +324,23 @@ describe('SyncedRouterProvider', () => {
     expect(window.history.replaceState).toBe(replaceStateBeforeMount)
   })
 
+  it('does not overwrite an unrelated history patch during release', () => {
+    const { unmount } = renderRouter()
+
+    const foreignPushState = jest.fn()
+    const foreignReplaceState = jest.fn()
+    window.history.pushState = foreignPushState as unknown as History['pushState']
+    window.history.replaceState = foreignReplaceState as unknown as History['replaceState']
+
+    unmount()
+
+    expect(window.history.pushState).toBe(foreignPushState)
+    expect(window.history.replaceState).toBe(foreignReplaceState)
+
+    window.history.pushState = historyMethodsBeforeContextImport.pushState
+    window.history.replaceState = historyMethodsBeforeContextImport.replaceState
+  })
+
   it('keeps an internal React route when the topic replays its last value on re-subscription', async () => {
     const { unmount } = renderRouter()
 
