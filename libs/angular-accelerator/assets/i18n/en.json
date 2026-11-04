@@ -1,4 +1,35 @@
 {
+  "OCX_AI_ASSIST": {
+    "TITLE": "AI assist",
+    "TOGGLE": "Open AI assist",
+    "CLOSE": "Close AI assist",
+    "AGENT": "Agent",
+    "ACTION": "Task",
+    "RUN": "Run",
+    "RUNNING": "Generating result...",
+    "RESULT": "Result",
+    "READY_TO_REVIEW": "Ready to review",
+    "BEFORE": "Before",
+    "AI_SUGGESTION": "AI suggestion · editable",
+    "TRY_AGAIN": "Try again",
+    "REPLACE_TEXT": "Replace text",
+    "RETRY": "Retry",
+    "LOADING_AGENTS": "Loading agents...",
+    "NO_AGENTS": "No AI agents are available for this application.",
+    "ACTIONS": {
+      "TRANSLATE": "Translate",
+      "SUMMARIZE": "Summarize",
+      "GENERATE": "Generate"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Translate field content to"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "No AI provider is configured for this application.",
+      "AGENT_NOT_FOUND": "No AI agent is configured for this context.",
+      "GENERIC": "The AI request failed. Try again."
+    }
+  },
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
     "CANCEL": "Cancel"

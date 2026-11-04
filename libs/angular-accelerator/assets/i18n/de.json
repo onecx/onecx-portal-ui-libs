@@ -1,4 +1,35 @@
 {
+  "OCX_AI_ASSIST": {
+    "TITLE": "KI-Assistent",
+    "TOGGLE": "KI-Assistent öffnen",
+    "CLOSE": "KI-Assistent schließen",
+    "AGENT": "Agent",
+    "ACTION": "Aufgabe",
+    "RUN": "Ausführen",
+    "RUNNING": "Ergebnis wird erstellt...",
+    "RESULT": "Ergebnis",
+    "READY_TO_REVIEW": "Bereit zur Prüfung",
+    "BEFORE": "Vorher",
+    "AI_SUGGESTION": "KI-Vorschlag · bearbeitbar",
+    "TRY_AGAIN": "Erneut versuchen",
+    "REPLACE_TEXT": "Text ersetzen",
+    "RETRY": "Erneut versuchen",
+    "LOADING_AGENTS": "Agenten werden geladen...",
+    "NO_AGENTS": "Für diese Anwendung sind keine KI-Agenten verfügbar.",
+    "ACTIONS": {
+      "TRANSLATE": "Übersetzen",
+      "SUMMARIZE": "Zusammenfassen",
+      "GENERATE": "Generieren"
+    },
+    "PARAMETERS": {
+      "TARGET_LANGUAGE": "Feldinhalt übersetzen in"
+    },
+    "ERRORS": {
+      "NO_PROVIDER": "Für diese Anwendung ist kein KI-Provider konfiguriert.",
+      "AGENT_NOT_FOUND": "Für diesen Kontext ist kein KI-Agent konfiguriert.",
+      "GENERIC": "Die KI-Anfrage ist fehlgeschlagen. Bitte erneut versuchen."
+    }
+  },
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Bestätigen",
     "CANCEL": "Abbrechen"

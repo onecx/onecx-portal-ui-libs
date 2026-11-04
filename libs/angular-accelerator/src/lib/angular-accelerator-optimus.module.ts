@@ -22,6 +22,8 @@ import { TooltipModule } from '@openng/optimus-ui/tooltip'
 import { RippleModule } from '@openng/optimus-ui/ripple'
 import { provideOptimus } from '@openng/optimus-ui/config'
 import { TimelineModule } from '@openng/optimus-ui/timeline'
+import { InputTextModule } from '@openng/optimus-ui/inputtext'
+import { TextareaModule } from '@openng/optimus-ui/textarea'
 
 @NgModule({
   imports: [
@@ -47,6 +49,8 @@ import { TimelineModule } from '@openng/optimus-ui/timeline'
     TimelineModule,
     RippleModule,
     SharedModule,
+    InputTextModule,
+    TextareaModule,
   ],
   exports: [
     BreadcrumbModule,
@@ -71,6 +75,8 @@ import { TimelineModule } from '@openng/optimus-ui/timeline'
     TimelineModule,
     RippleModule,
     SharedModule,
+    InputTextModule,
+    TextareaModule,
   ],
   providers: [provideOptimus()],
 })
