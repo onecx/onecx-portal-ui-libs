@@ -1,3 +1,10 @@
+## [7.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.14.1...v7.15.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1827](https://github.com/onecx/onecx-portal-ui-libs/issues/1827)) ([d7ab051](https://github.com/onecx/onecx-portal-ui-libs/commit/d7ab051235f8c008d49d4f7a612ebc8770295edd))
+* **integration-interface:** add AiAgentService with ai-agent gatherer ([#1918](https://github.com/onecx/onecx-portal-ui-libs/issues/1918)) ([d1003e3](https://github.com/onecx/onecx-portal-ui-libs/commit/d1003e3e179d47434a3731d9a386b1fcc0f415cb))
+
 ## [7.14.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.14.0...v7.14.1) (2026-10-27)
 
 ### Bug Fixes
