@@ -22,3 +22,6 @@
 *** xref:onecx-portal-ui-libs:components/search-header.adoc[SearchHeader]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/index.adoc[InteractiveDataView]
 *** xref:documentation:onecx-portal-ui-libs:components/interactive-data-view/data-table-column.adoc[DataTableColumn]
+
+** Directives
+*** xref:onecx-portal-ui-libs:directives/tooltip.adoc[OcxTooltip]
