@@ -259,6 +259,18 @@ describe('AiAssistComponent', () => {
     expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.GENERIC')
   })
 
+  it('should show an empty suggestion when a successful completion contains no text', async () => {
+    getCompletion.mockResolvedValueOnce({ conversationId: null, message: '{}' })
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    await component.run()
+
+    expect(component.runState).toBe('success')
+    expect(component.suggestion).toBe('')
+  })
+
   it('should not run again when retry is called without a previous error', async () => {
     await createComponent()
     component.selectAction('summarize')
