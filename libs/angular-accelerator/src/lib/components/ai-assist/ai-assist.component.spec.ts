@@ -105,6 +105,18 @@ describe('AiAssistComponent', () => {
     expect(component.actions.map((action) => action.id)).toEqual(['translate', 'generate', 'extractKeywords'])
   })
 
+  it('should select no action when there are no actions to offer', async () => {
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    component.defaultActions = []
+    component.additionalActions = []
+    fixture.detectChanges()
+    await fixture.whenStable()
+
+    expect(component.actions).toEqual([])
+    expect(component.selectedActionId).toBeUndefined()
+  })
+
   it('should run the selected action with an instruction that requires JSON and show the text result', async () => {
     await createComponent()
     component.selectAction('translate')
