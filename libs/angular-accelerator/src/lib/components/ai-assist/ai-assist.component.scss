@@ -3,9 +3,28 @@
   flex-direction: column;
   gap: 0.5rem;
 
-  &__toggle {
+  &__field {
+    position: relative;
     display: flex;
-    justify-content: flex-end;
+    width: 100%;
+  }
+
+  &__input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    ::ng-deep input,
+    ::ng-deep textarea {
+      padding-right: 2.5rem;
+    }
+  }
+
+  &__toggle {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    z-index: 1;
+    display: flex;
   }
 
   &__panel {
