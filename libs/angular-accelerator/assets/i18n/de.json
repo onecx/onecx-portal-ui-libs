@@ -36,6 +36,7 @@
     },
     "ERRORS": {
       "NO_PROVIDER": "Für diese Anwendung ist kein KI-Provider konfiguriert.",
+      "AGENT_NOT_FOUND": "Für diesen Kontext ist kein KI-Agent konfiguriert.",
       "GENERIC": "Die KI-Anfrage ist fehlgeschlagen. Bitte erneut versuchen."
     }
   },
