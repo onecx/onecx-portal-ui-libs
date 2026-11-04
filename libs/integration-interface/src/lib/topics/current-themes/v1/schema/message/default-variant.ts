@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import {
   messageCloseButtonSeverityShape,
   messageDefaultSeverityCloseButtonDefaults,
@@ -63,15 +64,17 @@ const messageDefaultVariantSeverityShape = z.object({
  * color variant rather than a `severity.*` primitive (see the add-theme-usage skill's
  * severity → primitive color mapping).
  */
-export const messageDefaultVariantShape = z.object({
-  defaultSeverity: messageDefaultSeverityShape.prefault({}),
-  info: messageDefaultVariantSeverityShape.prefault({}),
-  success: messageDefaultVariantSeverityShape.prefault({}),
-  warning: messageDefaultVariantSeverityShape.prefault({}),
-  danger: messageDefaultVariantSeverityShape.prefault({}),
-  contrast: messageDefaultVariantSeverityShape.prefault({}),
-  secondary: messageDefaultVariantSeverityShape.prefault({}),
-})
+export const messageDefaultVariantShape = z
+  .object({
+    defaultSeverity: messageDefaultSeverityShape.prefault({}),
+    info: messageDefaultVariantSeverityShape.prefault({}),
+    success: messageDefaultVariantSeverityShape.prefault({}),
+    warning: messageDefaultVariantSeverityShape.prefault({}),
+    danger: messageDefaultVariantSeverityShape.prefault({}),
+    contrast: messageDefaultVariantSeverityShape.prefault({}),
+    secondary: messageDefaultVariantSeverityShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'messageDefaultVariantShape', axis: 'severity' })
 
 const messageDefaultSeverityDefaults = {
   border: {

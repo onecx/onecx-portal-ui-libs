@@ -4,12 +4,16 @@ import { bg, border, font, transition, withRef } from '../primitives'
 import { themeSchemaRegistry } from '../registry'
 import { FieldsetSettingsSchema } from './settings'
 
-const contentShape = z.object({
-  paddingX: withRef(z.string()).optional(),
-  paddingY: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
-  font: font.pick({ weight: true, family: true, size: true }).optional(),
-})
+// Static container tokens (padding/gap/font) that sit next to `defaultVariant` at the root and
+// must not vary by it — opts out of the root's variant axis.
+const contentShape = z
+  .object({
+    paddingX: withRef(z.string()).optional(),
+    paddingY: withRef(z.string()).optional(),
+    gap: withRef(z.string()).optional(),
+    font: font.pick({ weight: true, family: true, size: true }).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'fieldset.content', axis: 'none' })
 
 const toggleIconShape = z.object({
   size: withRef(z.string()).optional(),
@@ -31,13 +35,19 @@ const legendButtonStateShape = z.object({
   toggleIcon: toggleIconShape.prefault({}),
 })
 
-const legendButtonShape = z.object({
-  defaultState: legendButtonStateShape.prefault({}),
-  hover: legendButtonStateShape.prefault({}),
-  focus: legendButtonStateShape.prefault({}),
-  active: legendButtonStateShape.prefault({}),
-  disabled: legendButtonStateShape.prefault({}),
-})
+// The legend button is a child component whose keys are its named states. `child: true` re-roots
+// the fallback into its own scope; `axis: 'state'` makes every key a state member so the named
+// states fall back to `defaultState` within that scope. `legendButtonStateShape` (the value of
+// each state) stays unmarked so its tokens fall back within the state scope.
+const legendButtonShape = z
+  .object({
+    defaultState: legendButtonStateShape.prefault({}),
+    hover: legendButtonStateShape.prefault({}),
+    focus: legendButtonStateShape.prefault({}),
+    active: legendButtonStateShape.prefault({}),
+    disabled: legendButtonStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'fieldset.legendButton', axis: 'state', child: true })
 
 const fieldsetVariantShape = z.object({
   background: bg.pick({ color: true }).optional(),
@@ -137,8 +147,13 @@ export const fieldsetDefaults = {
   },
 }
 
+// Root marker goes on the final applied export (`applyDefaultsRecursive` rebuilds the root object
+// fresh, so a marker on `fieldsetShape` would be discarded). `defaultVariant` is the single variant
+// member; `content` (axis: 'none') and `settings` (axis: 'setting') opt out of the variant axis, and
+// `legendButton` re-roots as a child component (see `legendButtonShape`).
 export const fieldset = applyDefaultsRecursive(fieldsetShape, fieldsetDefaults).register(themeSchemaRegistry, {
   id: 'fieldset',
+  axis: 'variant',
 })
 
 export class FieldsetSchema {

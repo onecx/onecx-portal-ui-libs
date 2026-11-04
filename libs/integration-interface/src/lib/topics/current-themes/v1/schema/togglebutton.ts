@@ -33,7 +33,7 @@ export const togglebuttonSettings = z
   .object({
     // Component-specific settings can be added here if needed
   })
-  .register(themeSchemaRegistry, { id: 'togglebuttonSettings' })
+  .register(themeSchemaRegistry, { id: 'togglebuttonSettings', axis: 'setting' })
 
 // Default (unchecked) interaction states
 export const hoverTogglebuttonTokens = z.object({

@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { icon, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { stateContrast } from './data-table-base-tokens'
 
 /** The sort/filter icon base: an `icon` block plus the icon-name string(s). */
@@ -20,21 +21,27 @@ const iconStateShape = z.object({
   icon: icon.pick({ color: true }).prefault({}),
 })
 
+// Sort/filter icons are child components whose keys are their states (defaultState/hover/active/
+// focus); the icon base content stays unmarked so its tokens fall back within the state scope.
 /** Sort-control icons (header only). */
-export const dataTableSortIconsShape = z.object({
-  defaultState: sortIconBaseShape.prefault({}),
-  hover: iconStateShape.prefault({}),
-  active: iconStateShape.prefault({}),
-  focus: iconStateShape.prefault({}),
-})
+export const dataTableSortIconsShape = z
+  .object({
+    defaultState: sortIconBaseShape.prefault({}),
+    hover: iconStateShape.prefault({}),
+    active: iconStateShape.prefault({}),
+    focus: iconStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dataTable.header.sortIcons', axis: 'state', child: true })
 
 /** Filter-control icons (header only). */
-export const dataTableFilterIconsShape = z.object({
-  defaultState: filterIconBaseShape.prefault({}),
-  hover: iconStateShape.prefault({}),
-  active: iconStateShape.prefault({}),
-  focus: iconStateShape.prefault({}),
-})
+export const dataTableFilterIconsShape = z
+  .object({
+    defaultState: filterIconBaseShape.prefault({}),
+    hover: iconStateShape.prefault({}),
+    active: iconStateShape.prefault({}),
+    focus: iconStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'dataTable.header.filterIcons', axis: 'state', child: true })
 
 const iconBaseTokens = {
   size: '{{primitives.icon.sm}}',

@@ -23,10 +23,13 @@ export const accordionDefaults = {
   },
 }
 
+// Root marker goes on the final applied export (`applyDefaultsRecursive` rebuilds the root object
+// fresh, so a marker on `accordionShape` would be discarded). `defaultVariant` is the single
+// variant member; `panel` re-roots as a child component (see `accordionPanelShape`).
 export const accordion: z.ZodType<AccordionShapeInput, AccordionShapeInput> = applyDefaultsRecursive(
   accordionShape,
   accordionDefaults
-).register(themeSchemaRegistry, { id: 'accordion' })
+).register(themeSchemaRegistry, { id: 'accordion', axis: 'variant' })
 
 export class AccordionSchema {
   static readonly schema = accordion
