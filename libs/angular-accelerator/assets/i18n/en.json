@@ -26,6 +26,7 @@
     },
     "ERRORS": {
       "NO_PROVIDER": "No AI provider is configured for this application.",
+      "AGENT_NOT_FOUND": "No AI agent is configured for this context.",
       "GENERIC": "The AI request failed. Try again."
     }
   },
