@@ -30,9 +30,9 @@ export function consumerAiCompletionProvider(_request: AiCompletionRequest): Pro
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 // Models often wrap JSON answers in a markdown code fence (```json ... ```) even when asked for plain JSON.
-const CODE_FENCE_PATTERN = /^\s*```[\w-]*\s*\n?([\s\S]*?)\n?\s*```\s*$/
+const CODE_FENCE_PATTERN = /^```[^\n]*\n([\s\S]*?)\n?```$/
 
-const unwrapCodeFence = (message: string): string => CODE_FENCE_PATTERN.exec(message)?.[1] ?? message
+const unwrapCodeFence = (message: string): string => CODE_FENCE_PATTERN.exec(message.trim())?.[1] ?? message
 
 /**
  * Thin service wrapper around AiCompletionGatherer that lets consumers request AI completions.
