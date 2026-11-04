@@ -78,6 +78,14 @@ describe('AiAssistComponent', () => {
     expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.NO_PROVIDER')
   })
 
+  it('should map an agent-not-found error to its own message key', async () => {
+    getAgents.mockRejectedValue(new AiProviderError('AGENT_NOT_FOUND', 'none'))
+
+    await createComponent()
+
+    expect(component.errorMessageKey).toBe('OCX_AI_ASSIST.ERRORS.AGENT_NOT_FOUND')
+  })
+
   it('should offer the default actions and append the optional additional actions', async () => {
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
