@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block of a carousel indicator button.
@@ -19,20 +20,31 @@ const carouselIndicatorStateShape = z.object({
  * states as flat siblings.
  * All keys are optional — defaults are applied at the carousel schema level.
  */
-export const carouselIndicatorShape = z.object({
-  width: withRef(z.string()).optional(),
-  height: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
+// The indicator is a child component (re-roots the fallback) whose single `defaultVariant` key is
+// the default variant member. Its `defaultVariant` slot holds the states (axis: 'state'); `width`,
+// `height` and `focusRing` are static siblings of those states and opt out (axis: 'none').
+export const carouselIndicatorShape = z
+  .object({
+    width: withRef(z.string().register(themeSchemaRegistry, { id: 'carouselIndicatorWidth', axis: 'none' }))
+      .optional(),
+    height: withRef(z.string().register(themeSchemaRegistry, { id: 'carouselIndicatorHeight', axis: 'none' }))
+      .optional(),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'carouselIndicatorFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z
-    .object({
-      defaultState: carouselIndicatorStateShape.prefault({}),
-      hover: carouselIndicatorStateShape.prefault({}),
-      active: carouselIndicatorStateShape.prefault({}),
-      focus: carouselIndicatorStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: carouselIndicatorStateShape.prefault({}),
+        hover: carouselIndicatorStateShape.prefault({}),
+        active: carouselIndicatorStateShape.prefault({}),
+        focus: carouselIndicatorStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'carouselIndicatorStateSlot', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'carouselIndicator', axis: 'variant', child: true })
 
 /**
  * Default tokens for the carousel indicators.

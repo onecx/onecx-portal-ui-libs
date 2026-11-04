@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 type CanonicalSeverity = 'info' | 'success' | 'warning' | 'danger' | 'contrast'
 
@@ -16,15 +17,17 @@ const messageSimpleSeverityShape = z.object({
  * `simple` named variant — no background, no border, no shadow; only the root content
  * padding (down to 0) and, per severity, the text color differ from the filled look.
  */
-export const messageSimpleShape = z.object({
-  defaultSeverity: messageSimpleDefaultSeverityShape.prefault({}),
-  info: messageSimpleSeverityShape.prefault({}),
-  success: messageSimpleSeverityShape.prefault({}),
-  warning: messageSimpleSeverityShape.prefault({}),
-  danger: messageSimpleSeverityShape.prefault({}),
-  contrast: messageSimpleSeverityShape.prefault({}),
-  secondary: messageSimpleSeverityShape.prefault({}),
-})
+export const messageSimpleShape = z
+  .object({
+    defaultSeverity: messageSimpleDefaultSeverityShape.prefault({}),
+    info: messageSimpleSeverityShape.prefault({}),
+    success: messageSimpleSeverityShape.prefault({}),
+    warning: messageSimpleSeverityShape.prefault({}),
+    danger: messageSimpleSeverityShape.prefault({}),
+    contrast: messageSimpleSeverityShape.prefault({}),
+    secondary: messageSimpleSeverityShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'messageSimpleShape', axis: 'severity' })
 
 const severityDefaults = (severity: CanonicalSeverity) => ({
   color: `{{primitives.defaultVariant.defaultState.severity.${severity}.contrast}}`,

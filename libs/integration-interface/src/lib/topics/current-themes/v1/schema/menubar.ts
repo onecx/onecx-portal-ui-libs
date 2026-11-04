@@ -4,6 +4,11 @@ import { themeSchemaRegistry } from './registry'
 import { tooltip } from './tooltip'
 import { applyDefaultsRecursive } from './defaults-helper'
 
+// Static scalar tokens sit next to the named variant/state members and must not vary by them, so
+// they are registered with `axis: 'none'` on their inner schema (a `withRef` union would drop the
+// marker).
+const staticToken = (id: string) => withRef(z.string().register(themeSchemaRegistry, { id, axis: 'none' })).optional()
+
 const DEFAULT_MENUBAR_BORDER = {
   color: '{{primitives.area.surface.defaultState.defaultSeverity.border.color}}',
   radius: '{{primitives.radius.md}}',
@@ -49,29 +54,34 @@ const DEFAULT_MENUBAR_FOCUS_RING = {
   shadow: '{{primitives.focusRing.shadow.md}}',
 }
 
-const menubarSettingsShape = z.object({
-  autoHide: withRef(z.boolean()).optional(),
-  autoHideDelay: withRef(z.number()).optional(),
-  autoDisplay: withRef(z.boolean()).optional(),
-  showDivider: withRef(z.boolean()).optional(),
-  showBackdrop: withRef(z.boolean()).optional(),
-})
+// Behavioral options with no visual tokens — they opt out of any enclosing axis (axis: 'setting').
+const menubarSettingsShape = z
+  .object({
+    autoHide: withRef(z.boolean()).optional(),
+    autoHideDelay: withRef(z.number()).optional(),
+    autoDisplay: withRef(z.boolean()).optional(),
+    showDivider: withRef(z.boolean()).optional(),
+    showBackdrop: withRef(z.boolean()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'menubarSettingsShape', axis: 'setting' })
 
+// Leaf-token severity content (per-state tokens). Kept unmarked so its tokens fall back within the
+// enclosing state scope; `shadow`/`cursor`/`size` sit next to the state axis and opt out (none).
 const menubarBaseSeverityStylesShape = z.object({
   background: bg.optional(),
   color: color.optional(),
   border: border.optional(),
   transition: transition.optional(),
-  shadow: withRef(z.string()).optional(),
+  shadow: staticToken('menubarBaseShadow'),
   icon: icon.optional(),
 })
 
 const menubarSeverityWithCursorShape = menubarBaseSeverityStylesShape.extend({
-  cursor: withRef(z.string()).optional(),
+  cursor: staticToken('menubarItemCursor'),
 })
 
 const menubarSeverityWithSizeShape = menubarBaseSeverityStylesShape.extend({
-  size: withRef(z.string()).optional(),
+  size: staticToken('menubarMobileButtonSize'),
 })
 
 const menubarBaseSeverityDefaults = {
@@ -82,25 +92,50 @@ const menubarBaseSeverityDefaults = {
   shadow: DEFAULT_MENUBAR_SHADOW,
 }
 
-const menubarItemShape = z.object({
-  defaultVariant: z.object({
-    defaultState: z.object({
-      defaultSeverity: menubarSeverityWithCursorShape.optional(),
-    }).prefault({}),
-    state: z.object({
-      focus: z.object({
-        defaultSeverity: menubarSeverityWithCursorShape.optional(),
-      }).optional(),
-      active: z.object({
-        defaultSeverity: menubarSeverityWithCursorShape.optional(),
-      }).optional(),
-    }).optional(),
-  }).prefault({}),
-  padding: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
-  tooltip: tooltip.optional(),
-})
+// The item is a nested component (re-roots the fallback). It uses the primitives `variantWithStates`
+// shape: the `defaultVariant` slot is unmarked (a marked node would classify its `state` group as a
+// member); the `defaultState` baseline and the `state` group's keys (`focus`/`active`) are the named
+// interactive states. Static tokens (`padding`/`gap`/`focusRing`/`tooltip`) sit next to the states
+// and opt out of the axis (none).
+const menubarItemShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: z
+          .object({
+            defaultSeverity: menubarSeverityWithCursorShape.optional(),
+          })
+          .prefault({}),
+        state: z
+          .object({
+            focus: z
+              .object({
+                defaultSeverity: menubarSeverityWithCursorShape.optional(),
+              })
+              .optional(),
+            active: z
+              .object({
+                defaultSeverity: menubarSeverityWithCursorShape.optional(),
+              })
+              .optional(),
+          })
+          .register(themeSchemaRegistry, { id: 'menubarItemStateGroupShape', axis: 'state' })
+          .optional(),
+      })
+      .register(themeSchemaRegistry, { id: 'menubarItemVariantShape' })
+      .prefault({}),
+    padding: staticToken('menubarItemPadding'),
+    gap: staticToken('menubarItemGap'),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'menubarItemFocusRingShape', axis: 'none' })
+      .optional(),
+    tooltip: tooltip
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'menubarItemTooltipShape', axis: 'none' })
+      .optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'menubarItemShape', axis: 'variant', child: true })
 
 const menubarSubmenuScreenSettingsShape = z.object({
   xs: layout
@@ -110,43 +145,79 @@ const menubarSubmenuScreenSettingsShape = z.object({
     .optional(),
 })
 
-const menubarSubmenuShape = z.object({
-  defaultVariant: z.object({
-    defaultState: z.object({
-      defaultSeverity: menubarBaseSeverityStylesShape.optional(),
-    }).prefault({}),
-    state: z.object({
-      active: z.object({
-        defaultSeverity: menubarSeverityWithCursorShape.optional(),
-      }).optional(),
-      focus: z.object({
-        defaultSeverity: menubarSeverityWithCursorShape.optional(),
-      }).optional(),
+// The submenu is a nested component (re-roots the fallback). Like `item`, it uses the primitives
+// `variantWithStates` shape (unmarked `defaultVariant` slot; a named `state` group holds the
+// interactive states). Static tokens and behavioral settings opt out of the axis (none).
+const menubarSubmenuShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: z
+          .object({
+            defaultSeverity: menubarBaseSeverityStylesShape.optional(),
+          })
+          .prefault({}),
+        state: z
+          .object({
+            active: z
+              .object({
+                defaultSeverity: menubarSeverityWithCursorShape.optional(),
+              })
+              .optional(),
+            focus: z
+              .object({
+                defaultSeverity: menubarSeverityWithCursorShape.optional(),
+              })
+              .optional(),
+          })
+          .register(themeSchemaRegistry, { id: 'menubarSubmenuStateGroupShape', axis: 'state' })
+          .optional(),
+      })
+      .register(themeSchemaRegistry, { id: 'menubarSubmenuVariantShape' })
+      .prefault({}),
+    padding: staticToken('menubarSubmenuPadding'),
+    gap: staticToken('menubarSubmenuGap'),
+    minWidth: staticToken('menubarSubmenuMinWidth'),
+    maxWidth: staticToken('menubarSubmenuMaxWidth'),
+    screenSettings: menubarSubmenuScreenSettingsShape.register(themeSchemaRegistry, {
+      id: 'menubarSubmenuScreenSettingsShape',
+      axis: 'none',
     }).optional(),
-  }).prefault({}),
-  padding: withRef(z.string()).optional(),
-  gap: withRef(z.string()).optional(),
-  minWidth: withRef(z.string()).optional(),
-  maxWidth: withRef(z.string()).optional(),
-  screenSettings: menubarSubmenuScreenSettingsShape.optional(),
-})
+  })
+  .register(themeSchemaRegistry, { id: 'menubarSubmenuShape', axis: 'variant', child: true })
 
 const menubarSeparatorShape = border.optional()
 
 //todo: when p-button schema is added use it instead of menubarMobileButton schema
-const menubarMobileButtonShape = z.object({
-  defaultVariant: z.object({
-    defaultState: z.object({
-      defaultSeverity: menubarSeverityWithSizeShape.optional(),
-    }).prefault({}),
-    state: z.object({
-      hover: z.object({
-        defaultSeverity: menubarSeverityWithSizeShape.optional(),
-      }).optional(),
-    }).optional(),
-  }).prefault({}),
-  focusRing: borderWithShadow.optional(),
-})
+// The mobile button is a nested component (re-roots the fallback), mirroring `item`/`submenu`.
+const menubarMobileButtonShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: z
+          .object({
+            defaultSeverity: menubarSeverityWithSizeShape.optional(),
+          })
+          .prefault({}),
+        state: z
+          .object({
+            hover: z
+              .object({
+                defaultSeverity: menubarSeverityWithSizeShape.optional(),
+              })
+              .optional(),
+          })
+          .register(themeSchemaRegistry, { id: 'menubarMobileButtonStateGroupShape', axis: 'state' })
+          .optional(),
+      })
+      .register(themeSchemaRegistry, { id: 'menubarMobileButtonVariantShape' })
+      .prefault({}),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'menubarMobileButtonFocusRingShape', axis: 'none' })
+      .optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'menubarMobileButtonShape', axis: 'variant', child: true })
 
 export const menubarShape = z.object({
   settings: menubarSettingsShape.optional(),

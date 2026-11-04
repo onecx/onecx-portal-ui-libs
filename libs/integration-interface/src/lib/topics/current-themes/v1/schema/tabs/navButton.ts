@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, focusRingShape, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 const navButtonStateShape = z.object({
   nextIcon: withRef(z.string()).optional(),
@@ -10,10 +11,15 @@ const navButtonStateShape = z.object({
   focusRing: focusRingShape.optional(),
 })
 
-export const tabsNavButtonShape = z.object({
-  defaultState: navButtonStateShape.prefault({}),
-  hover: navButtonStateShape.prefault({}),
-})
+// The navButton is a child component whose own keys are the interaction states (defaultState,
+// hover). `child: true` re-roots the fallback and `axis: 'state'` classifies its keys as state
+// members; the per-state content is left unmarked.
+export const tabsNavButtonShape = z
+  .object({
+    defaultState: navButtonStateShape.prefault({}),
+    hover: navButtonStateShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'tabs.navButton', axis: 'state', child: true })
 
 export const tabsNavButtonDefaults = {
   defaultState: {

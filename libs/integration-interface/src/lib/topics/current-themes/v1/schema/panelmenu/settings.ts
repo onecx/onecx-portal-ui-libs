@@ -10,4 +10,4 @@ export const panelMenuSettingsShape = z
   .object({
     multiple: withRef(z.boolean()).default(false),
   })
-  .register(themeSchemaRegistry, { id: 'panelmenuSettings' })
+  .register(themeSchemaRegistry, { id: 'panelmenuSettings', axis: 'setting' })

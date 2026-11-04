@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * PanelMenu header (the clickable trigger row of each top-level panel).
@@ -19,16 +20,22 @@ const panelMenuHeaderStateShape = z.object({
   submenuIcon: panelMenuHeaderIconShape.prefault({}),
 })
 
-export const panelMenuHeaderShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: panelMenuHeaderStateShape.prefault({}),
-      hover: panelMenuHeaderStateShape.prefault({}),
-      selected: panelMenuHeaderStateShape.prefault({}),
-      disabled: panelMenuHeaderStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+// The header is a child component (re-roots the fallback) whose single `defaultVariant` key is
+// the default variant member. Its `defaultVariant` slot holds the states (axis: 'state'); the
+// per-state content shape stays unmarked so its tokens fall back within the header's state scope.
+export const panelMenuHeaderShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: panelMenuHeaderStateShape.prefault({}),
+        hover: panelMenuHeaderStateShape.prefault({}),
+        selected: panelMenuHeaderStateShape.prefault({}),
+        disabled: panelMenuHeaderStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'panelmenu.header.defaultVariant', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'panelmenu.header', axis: 'variant', child: true })
 
 /**
  * Default tokens for the panelmenu header row.

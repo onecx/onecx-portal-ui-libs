@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 type CanonicalSeverity = 'info' | 'success' | 'warning' | 'danger' | 'contrast'
 
@@ -22,15 +23,17 @@ const messageOutlinedSeverityShape = z.object({
  * `outlined` named variant — border only, no fill background. Only the root border width
  * and, per severity, the text/border color differ from the filled look (no background/shadow).
  */
-export const messageOutlinedShape = z.object({
-  defaultSeverity: messageOutlinedDefaultSeverityShape.prefault({}),
-  info: messageOutlinedSeverityShape.prefault({}),
-  success: messageOutlinedSeverityShape.prefault({}),
-  warning: messageOutlinedSeverityShape.prefault({}),
-  danger: messageOutlinedSeverityShape.prefault({}),
-  contrast: messageOutlinedSeverityShape.prefault({}),
-  secondary: messageOutlinedSeverityShape.prefault({}),
-})
+export const messageOutlinedShape = z
+  .object({
+    defaultSeverity: messageOutlinedDefaultSeverityShape.prefault({}),
+    info: messageOutlinedSeverityShape.prefault({}),
+    success: messageOutlinedSeverityShape.prefault({}),
+    warning: messageOutlinedSeverityShape.prefault({}),
+    danger: messageOutlinedSeverityShape.prefault({}),
+    contrast: messageOutlinedSeverityShape.prefault({}),
+    secondary: messageOutlinedSeverityShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'messageOutlinedShape', axis: 'severity' })
 
 const severityDefaults = (severity: CanonicalSeverity) => ({
   color: `{{primitives.defaultVariant.defaultState.severity.${severity}.contrast}}`,

@@ -28,11 +28,17 @@ const dataListGridSortingButtonStateShape = z.object({
   icon: icon.pick({ color: true }).optional(),
 })
 
-export const dataListGridSortingButtonShape = z.object({
-  defaultState: dataListGridSortingButtonStateShape.optional(),
-  hover: dataListGridSortingButtonStateShape.optional(),
-  focus: dataListGridSortingButtonStateShape.optional(),
-})
+// The sorting button's only axis is a state slot (defaultState/hover/focus) — a nested component
+// that re-roots the fallback (`child: true`), with no `defaultVariant` wrapper so it is marked
+// `axis: 'state'` (otherwise only `defaultState` would be recognised and `hover`/`focus` would
+// carry no fallback). The per-state content (`dataListGridSortingButtonStateShape`) stays unmarked.
+export const dataListGridSortingButtonShape = z
+  .object({
+    defaultState: dataListGridSortingButtonStateShape.optional(),
+    hover: dataListGridSortingButtonStateShape.optional(),
+    focus: dataListGridSortingButtonStateShape.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'dataListGridSortingButtonShape', axis: 'state', child: true })
 
 export const dataListGridSortingButtonDefaults = {
   // `icon` is picked to `color` only in the shape, so only `color` carries a

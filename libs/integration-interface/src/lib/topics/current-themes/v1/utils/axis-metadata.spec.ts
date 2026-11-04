@@ -33,10 +33,14 @@ describe('schema node marker', () => {
     expect(entry?.axis).toEqual('state')
   })
 
-  it('classifies messageSettings as a structural pass-through (axis de-assigned)', () => {
+  it('classifies messageSettings as a setting (opts out of the root variant axis)', () => {
+    // `message` is now a marked usage: its root is a `variant` container (defaultVariant/outlined/
+    // simple), so its behavioral `settings` block must opt out of that axis — `axis: 'setting'` is
+    // the only way a child of a relaxed-axis root skips classification (an unmarked child would be
+    // recorded as a variant member). See `message-axis-metadata.spec.ts`.
     const entry = themeSchemaRegistry.get(messageSettingsShape)
     expect(entry).toBeDefined()
-    expect(entry?.axis).toBeUndefined()
+    expect(entry?.axis).toBe('setting')
   })
 
   it('classifies the flattened input root as a variant container', () => {

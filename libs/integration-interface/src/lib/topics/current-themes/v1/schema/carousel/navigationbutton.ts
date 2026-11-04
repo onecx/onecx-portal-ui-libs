@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block of the carousel navigation button.
@@ -19,19 +20,30 @@ const carouselNavigationButtonStateShape = z.object({
  * as flat siblings.
  * All keys are optional — defaults are applied at the carousel schema level.
  */
-export const carouselNavigationButtonShape = z.object({
-  padding: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
+// The navigation button is a child component (re-roots the fallback) whose single `defaultVariant`
+// key is the default variant member. Its `defaultVariant` slot holds the states (axis: 'state');
+// `padding` and `focusRing` are static siblings of those states and opt out (axis: 'none').
+export const carouselNavigationButtonShape = z
+  .object({
+    padding: withRef(
+      z.string().register(themeSchemaRegistry, { id: 'carouselNavigationButtonPadding', axis: 'none' })
+    ).optional(),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'carouselNavigationButtonFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z
-    .object({
-      defaultState: carouselNavigationButtonStateShape.prefault({}),
-      hover: carouselNavigationButtonStateShape.prefault({}),
-      focus: carouselNavigationButtonStateShape.prefault({}),
-      disabled: carouselNavigationButtonStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: carouselNavigationButtonStateShape.prefault({}),
+        hover: carouselNavigationButtonStateShape.prefault({}),
+        focus: carouselNavigationButtonStateShape.prefault({}),
+        disabled: carouselNavigationButtonStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'carouselNavigationButtonStateSlot', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'carouselNavigationButton', axis: 'variant', child: true })
 
 /**
  * Default tokens for the carousel navigation buttons.
