@@ -1,3 +1,9 @@
+## [8.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.14.0...v8.15.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1939](https://github.com/onecx/onecx-portal-ui-libs/issues/1939)) ([07e04de](https://github.com/onecx/onecx-portal-ui-libs/commit/07e04de87bff07cf19e5b7efead1da1295d722ae))
+
 ## [8.14.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.13.0...v8.14.0) (2026-11-02)
 
 ### Features
