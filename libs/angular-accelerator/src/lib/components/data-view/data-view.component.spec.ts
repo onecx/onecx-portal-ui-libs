@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { ActivatedRoute, RouterModule } from '@angular/router'
 import { DataViewModule } from 'primeng/dataview'
@@ -240,6 +241,16 @@ describe('DataViewComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should pass View/Edit URL inputs through to the list-grid child', () => {
+    component.viewActionUrl = '/details'
+    component.editActionUrl = '/edit'
+    fixture.detectChanges()
+
+    const listGrid = fixture.debugElement.query(By.directive(DataListGridComponent)).componentInstance
+    expect(listGrid.viewActionUrl).toBe('/details')
+    expect(listGrid.editActionUrl).toBe('/edit')
   })
 
   describe('Table row selection ', () => {

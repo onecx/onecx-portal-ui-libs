@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { Router } from '@angular/router'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
 import { provideUserServiceMock, UserServiceMock } from '@onecx/angular-integration-interface/mocks'
@@ -796,6 +797,77 @@ describe('DataTableComponent', () => {
       expect(newTableActions.length).toBe(0)
     })
 
+    it('should render row-specific view and edit URLs as native links', async () => {
+      userService.permissionsTopic$.publish(['TABLE#VIEW', 'TABLE#EDIT'])
+      component.viewActionUrl = (row) => `/details/${row.id}`
+      component.editActionUrl = (row) => `/edit/${row.id}`
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const viewLink = fixture.nativeElement.querySelector('#rowId-viewButton') as HTMLAnchorElement
+      const editLink = fixture.nativeElement.querySelector('#rowId-editButton') as HTMLAnchorElement
+      expect(viewLink.tagName).toBe('A')
+      expect(viewLink.getAttribute('href')).toBe('/details/rowId')
+      expect(editLink.tagName).toBe('A')
+      expect(editLink.getAttribute('href')).toBe('/edit/rowId')
+    })
+
+    it('should keep link actions subject to permission and visibility rules', async () => {
+      userService.permissionsTopic$.publish(['TABLE#VIEW'])
+      component.viewActionUrl = (row) => `/details/${row.id}`
+      component.editActionUrl = (row) => `/edit/${row.id}`
+      component.viewActionVisibleField = 'ready'
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+      expect(fixture.nativeElement.querySelector('#rowId-viewButton')).toBeNull()
+      expect(fixture.nativeElement.querySelector('#rowId-editButton')).toBeNull()
+
+      component.rows = [{ ...component.rows[0], ready: true }]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(fixture.nativeElement.querySelector('#rowId-viewButton')).not.toBeNull()
+      expect(fixture.nativeElement.querySelector('#rowId-editButton')).toBeNull()
+    })
+
+    it('should render a disabled link when a URL action is not enabled for the row', async () => {
+      userService.permissionsTopic$.publish(['TABLE#VIEW', 'TABLE#EDIT'])
+      component.viewActionUrl = '/details'
+      component.editActionUrl = '/edit'
+      component.viewActionEnabledField = 'ready'
+      component.editActionEnabledField = 'ready'
+      component.rows = [{ ...component.rows[0], ready: false }]
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const viewLink = fixture.nativeElement.querySelector('#rowId-viewButton') as HTMLAnchorElement
+      expect(viewLink).not.toBeNull()
+      expect(viewLink.getAttribute('href')).toBeNull()
+      expect(viewLink.getAttribute('aria-disabled')).toBe('true')
+      expect(viewLink.getAttribute('tabindex')).toBe('-1')
+      expect(viewLink.classList.contains('p-disabled')).toBe(true)
+
+      const editLink = fixture.nativeElement.querySelector('#rowId-editButton') as HTMLAnchorElement
+      expect(editLink).not.toBeNull()
+      expect(editLink.getAttribute('href')).toBeNull()
+      expect(editLink.getAttribute('aria-disabled')).toBe('true')
+      expect(editLink.getAttribute('tabindex')).toBe('-1')
+      expect(editLink.classList.contains('p-disabled')).toBe(true)
+    })
+
+    it('should hide a URL action when its row resolver returns undefined', async () => {
+      userService.permissionsTopic$.publish(['TABLE#VIEW'])
+      component.viewActionUrl = () => undefined
+
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      expect(fixture.nativeElement.querySelector('#rowId-viewButton')).toBeNull()
+    })
+
     it('should show custom inline actions if user has permission', async () => {
       userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
 
@@ -818,6 +890,30 @@ describe('DataTableComponent', () => {
 
       const newTableActions = await dataTable.getActionButtons()
       expect(newTableActions.length).toBe(0)
+    })
+
+    it('should navigate when an inline routerLink resolves asynchronously from the row', async () => {
+      const router = TestBed.inject(Router)
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true)
+      const routerLink = jest.fn(async (row: Row) => `/details/${row.id}`)
+      userService.permissionsTopic$.publish(['ADDITIONAL#VIEW'])
+      component.additionalActions = [
+        {
+          permission: 'ADDITIONAL#VIEW',
+          id: 'details',
+          routerLink,
+        },
+      ]
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const button = fixture.nativeElement.querySelector('button#rowId-detailsActionButton') as HTMLButtonElement
+      const actionClickSpy = jest.spyOn(component, 'onAdditionalActionClick')
+      button.click()
+      await actionClickSpy.mock.results[0].value
+
+      expect(routerLink).toHaveBeenCalledWith(component.rows[0])
+      expect(navigateSpy).toHaveBeenCalledWith(['/details/rowId'])
     })
 
     it('should show overflow menu when user has permission for at least one action', async () => {
