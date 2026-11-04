@@ -571,9 +571,9 @@ describe('InteractiveDataViewComponent (class logic)', () => {
   })
 
   describe('column group selector dialog configuration', () => {
-    it('should default resizableColumnGroupSelectorDialog to false', () => {
+    it('should default resizableColumnGroupSelectorDialog to true', () => {
       const { component } = createComponent(true)
-      expect(component.resizableColumnGroupSelectorDialog()).toBe(false)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
     })
 
     it('should default restoreColumnGroupSelectorOrder to false', () => {
@@ -584,7 +584,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
     it('should default draggableColumnGroupSelectorDialog to true independently of resizing', () => {
       const { component } = createComponent(true)
       expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
-      expect(component.resizableColumnGroupSelectorDialog()).toBe(false)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
     })
 
     // The hosted selector only renders in the 'table' layout, so the fixture must switch to it.
@@ -624,7 +624,7 @@ describe('InteractiveDataViewComponent (class logic)', () => {
 
       const selector = querySelectorChild(fixture)
       expect(selector.draggableColumnGroupSelectorDialog()).toBe(true)
-      expect(selector.resizableColumnGroupSelectorDialog()).toBe(false)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
       expect(selector.restoreColumnGroupSelectorOrder()).toBe(false)
     })
 
@@ -1592,6 +1592,23 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       // No warning on initial resolution
       expect(consoleWarnSpy).not.toHaveBeenCalled()
       jest.restoreAllMocks()
+    })
+  })
+
+  describe('row grouping pass-through', () => {
+    it('should resolve the group cell template from the content child when no input is set', () => {
+      const childTpl = {} as any
+
+      const { component: withChild } = createComponent()
+      setInputSignal(withChild, 'groupCellTemplate', undefined)
+      setInputSignal(withChild, 'optimusGroupCell', undefined)
+      setInputSignal(withChild, 'childGroupCell', childTpl)
+      expect((withChild as any)._groupCell()).toBe(childTpl)
+    })
+
+    it('should default rowGrouping to undefined', () => {
+      const { component } = createComponent()
+      expect(component.rowGrouping()).toBeUndefined()
     })
   })
 })

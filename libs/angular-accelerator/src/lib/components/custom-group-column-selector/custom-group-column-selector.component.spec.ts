@@ -607,8 +607,8 @@ describe('CustomGroupColumnSelectorComponent', () => {
   })
 
   describe('new boolean inputs', () => {
-    it('should default resizableColumnGroupSelectorDialog to false', () => {
-      expect(component.resizableColumnGroupSelectorDialog()).toBe(false)
+    it('should default resizableColumnGroupSelectorDialog to true', () => {
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
     })
 
     it('should default restoreColumnGroupSelectorOrder to false', () => {
@@ -617,7 +617,7 @@ describe('CustomGroupColumnSelectorComponent', () => {
 
     it('should default draggableColumnGroupSelectorDialog to true and keep it independent of resizing', () => {
       expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
-      expect(component.resizableColumnGroupSelectorDialog()).toBe(false)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
     })
   })
 

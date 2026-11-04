@@ -2,5 +2,8 @@
   "OCX_DATA_TABLE_CAPTION": {
       "TITLE": "Produkte",
       "DESCRIPTION": "Beschreibung der Tabelle"
+  },
+  "datatable": {
+    "availableTooltip": "Gibt an, ob das Produkt bestellt werden kann"
   }
 }

@@ -81,7 +81,7 @@ const defaultComponentArgs = {
   activeColumnsLabel: 'Active',
   inactiveColumnsLabel: 'Inactive',
   draggableColumnGroupSelectorDialog: true,
-  resizableColumnGroupSelectorDialog: false,
+  resizableColumnGroupSelectorDialog: true,
   restoreColumnGroupSelectorOrder: false,
 }
 
