@@ -1,16 +1,21 @@
 <section class="ocx-ai-assist" aria-labelledby="ocxAiAssistTitle">
-  <div class="ocx-ai-assist__toggle">
-    <p-button
-      type="button"
-      icon="pi pi-sparkles"
-      severity="secondary"
-      [text]="true"
-      [rounded]="true"
-      [attr.aria-expanded]="open"
-      aria-controls="ocxAiAssistPanel"
-      [attr.aria-label]="'OCX_AI_ASSIST.TOGGLE' | translate"
-      (onClick)="toggle()"
-    ></p-button>
+  <div class="ocx-ai-assist__field">
+    <div class="ocx-ai-assist__input">
+      <ng-content></ng-content>
+    </div>
+    <div class="ocx-ai-assist__toggle">
+      <p-button
+        type="button"
+        icon="pi pi-sparkles"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [attr.aria-expanded]="open"
+        aria-controls="ocxAiAssistPanel"
+        [attr.aria-label]="'OCX_AI_ASSIST.TOGGLE' | translate"
+        (onClick)="toggle()"
+      ></p-button>
+    </div>
   </div>
 
   @if (open) {

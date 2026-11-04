@@ -62,6 +62,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   private readonly appStateService = inject(AppStateService)
 
   ngOnInit(): void {
+    this.selectAction(this.actions[0]?.id)
     this.loadAgents()
   }
 
