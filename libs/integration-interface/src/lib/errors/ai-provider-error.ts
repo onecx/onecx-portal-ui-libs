@@ -1,5 +1,6 @@
 export type AiProviderErrorCode =
   | 'NO_PROVIDER'
+  | 'AGENT_NOT_FOUND'
   | 'PROVIDER_ERROR'
   | 'INVALID_JSON'
   | 'SCHEMA_MISMATCH'

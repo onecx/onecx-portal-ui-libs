@@ -89,7 +89,13 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   }
 
   get errorMessageKey(): string {
-    return this.errorCode === 'NO_PROVIDER' ? 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER' : 'OCX_AI_ASSIST.ERRORS.GENERIC'
+    if (this.errorCode === 'NO_PROVIDER') {
+      return 'OCX_AI_ASSIST.ERRORS.NO_PROVIDER'
+    }
+    if (this.errorCode === 'AGENT_NOT_FOUND') {
+      return 'OCX_AI_ASSIST.ERRORS.AGENT_NOT_FOUND'
+    }
+    return 'OCX_AI_ASSIST.ERRORS.GENERIC'
   }
 
   toggle(): void {
