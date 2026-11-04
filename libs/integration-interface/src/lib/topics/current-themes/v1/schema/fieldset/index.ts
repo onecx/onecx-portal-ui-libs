@@ -72,8 +72,8 @@ export const fieldsetDefaults = {
     paddingY: '{{primitives.space.md}}',
     gap: '{{primitives.space.md}}',
     font: {
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
       family: '{{primitives.font.family}}',
     },
   },
@@ -92,8 +92,8 @@ export const fieldsetDefaults = {
       paddingY: '{{primitives.space.md}}',
       gap: '{{primitives.space.md}}',
       font: {
-        size: '{{primitives.font.size}}',
-        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size.md}}',
+        weight: '{{primitives.font.weight.normal}}',
         family: '{{primitives.font.family}}',
       },
       focusRing: {

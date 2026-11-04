@@ -44,7 +44,7 @@ Object {
       },
       "color": "{{primitives.defaultVariant.state.active.defaultSeverity.contrast}}",
       "font": Object {
-        "weight": "{{primitives.font.weight}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
     },
     "defaultState": Object {
@@ -78,7 +78,7 @@ Object {
       "icon": Object {
         "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
         "font": Object {
-          "weight": "{{primitives.font.weight}}",
+          "weight": "{{primitives.font.weight.normal}}",
         },
         "size": "{{primitives.icon.size.sm}}",
       },
@@ -101,7 +101,7 @@ Object {
       },
       "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.contrast}}",
       "font": Object {
-        "weight": "{{primitives.font.weight}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
     },
     "hover": Object {
@@ -116,7 +116,7 @@ Object {
       "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.contrast}}",
       "cursor": "{{primitives.defaultVariant.state.hover.defaultSeverity.cursor}}",
       "font": Object {
-        "weight": "{{primitives.font.weight}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
     },
   },
@@ -150,9 +150,9 @@ Object {
     "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
     "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
     "font": Object {
-      "lineHeight": "{{primitives.font.lineHeight}}",
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
+      "lineHeight": "{{primitives.font.lineHeight.md}}",
+      "size": "{{primitives.font.size.md}}",
+      "weight": "{{primitives.font.weight.normal}}",
     },
     "justifyContent": "{{primitives.layout.justifyContent}}",
     "paddingX": "{{primitives.space.md}}",

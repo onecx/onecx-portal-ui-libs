@@ -42,8 +42,8 @@ export const multiselectChipDefaults = {
     gap: '{{primitives.space.xs}}',
     transitionDuration: '{{primitives.transition.duration}}',
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
     },
     background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
     color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',

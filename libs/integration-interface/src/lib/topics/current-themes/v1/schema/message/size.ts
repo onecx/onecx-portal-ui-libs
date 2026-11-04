@@ -19,14 +19,14 @@ export const messageSizeShape = z.object({
 export const messageSmDefaults = {
   content: { padding: '{{primitives.space.xs}}' },
   // font has no size scale in primitives — same flat token reused across all size tiers (see badge.ts)
-  text: { font: { size: '{{primitives.font.size}}' } },
+  text: { font: { size: '{{primitives.font.size.md}}' } },
   icon: { size: '{{primitives.icon.sm}}' },
   closeIcon: { size: '{{primitives.icon.sm}}' },
 }
 
 export const messageLgDefaults = {
   content: { padding: '{{primitives.space.md}}' },
-  text: { font: { size: '{{primitives.font.size}}' } },
+  text: { font: { size: '{{primitives.font.size.md}}' } },
   icon: { size: '{{primitives.icon.lg}}' },
   closeIcon: { size: '{{primitives.icon.lg}}' },
 }

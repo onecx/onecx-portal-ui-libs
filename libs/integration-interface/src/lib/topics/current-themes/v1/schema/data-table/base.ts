@@ -34,5 +34,5 @@ export const dataTableBaseDefaults = {
 }
 
 export const dataTableColumnTitleDefaults = {
-  font: { weight: '{{primitives.font.weight}}' },
+  font: { weight: '{{primitives.font.weight.normal}}' },
 }

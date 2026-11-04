@@ -95,7 +95,7 @@ primitives = {
   variant: colorVariants               // primary, secondary, tertiary, quaternary, quinary
   area?: areas                         // canvas, surface, onSurface, overlay
   shadow?: shadow                      // none, sm, md, lg, xl
-  font?: font                          // family, size, weight, lineHeight, letterSpacing, style
+  font?: fontShape                     // scalar family/style + independent size/weight/lineHeight/letterSpacing scales
   space?: space                        // xs, sm, md, lg, xl, xxl
   layout?: layout                      // contentMaxWidth, gap
   radius?: radius                      // none, sm, md, lg, xl, full
@@ -141,6 +141,56 @@ A color value is either a plain CSS string or a dual-mode object:
 ----
 
 At runtime the Shell injects both as separate CSS custom properties and combines them with the CSS `light-dark()` function. See <<shell-css-variable-injection>>.
+
+[#global-typography]
+=== Global Typography (Font Scales)
+
+The global `font` primitive (link:{schema_root}/schema/primitives.ts[`fontShape`]) exposes the six agreed properties: scalar `family` and `style`, and **independent named scales** for `size`, `weight`, `lineHeight`, and `letterSpacing`. Each scale is optional and may be partial — a theme only needs to configure the values it actually supplies.
+
+[source,typescript]
+----
+fontShape = {
+  family?: string | ref                 // scalar (no named entries)
+  style?:  string | ref                 // scalar (no named entries)
+  size?:       string | ref | { xs?, sm?, md?, lg?, xl? }
+  weight?:     string | ref | { light?, normal?, medium?, semibold?, bold? }
+  lineHeight?: string | ref | { xs?, sm?, md?, lg?, xl? }
+  letterSpacing?: string | ref | { tight?, normal?, wide? }
+}
+----
+
+The scales are **independent** — changing `size` does not implicitly change `lineHeight`. There is no scale member named `default` and no coordinated typography recipe; a scale object never synthesizes a value a theme did not supply.
+
+[caption="Canonical baseline entries"]
+[caption="Each scaled property reduces to a single canonical value where a scalar is required (e.g. at a PrimeNG preset token or a CSS `var()`). `family`/`style` are scalar and have no canonical entry."]
+[cols="1,1,3"]
+|===
+| Property | Canonical entry | Named entries
+
+| `size`
+| `md`
+| `xs`, `sm`, `md`, `lg`, `xl`
+
+| `weight`
+| `normal`
+| `light`, `normal`, `medium`, `semibold`, `bold`
+
+| `lineHeight`
+| `md`
+| `xs`, `sm`, `md`, `lg`, `xl`
+
+| `letterSpacing`
+| `normal`
+| `tight`, `normal`, `wide`
+|===
+
+**Local usage typography stays scalar.** Per-usage (variant/state/severity/leaf) font tokens remain plain CSS strings or explicit `{{path}}` references — a usage override cannot supply an entire global scale. Baseline defaults reference the canonical named tokens (`{{primitives.font.size.md}}`, `{{primitives.font.weight.normal}}`, `{{primitives.font.lineHeight.md}}`, `{{primitives.font.letterSpacing.normal}}`), while deliberate usage selections keep their own named tokens (e.g. a smaller-control `size.sm`).
+
+**Sparse axis inheritance.** A sparse severity override that changes only a single property does **not** reset the unrelated properties — the established variant/state/severity fallback order is preserved, so a selected-state semibold weight survives a severity override that changes only size (see <<shell-css-variable-injection>> for the fallback mechanism).
+
+**Legacy compatibility.** A legacy theme that sets a global font property to a plain scalar string is still supported. A canonical reference (`{{primitives.font.size.md}}`) against a scalar resolves to that scalar (the canonical baseline); a non-canonical reference (`{{primitives.font.size.sm}}`) against a scalar is unavailable and is *not* synthesized.
+
+**Missing canonical tokens.** Where a scale is present but lacks its canonical entry, the mapper emits **nothing** for that property at a scalar-typography boundary (no scale object, no dangling `var()`) so existing fallback/CSS inheritance takes over — the library does not invent a value to complete the scale.
 
 [#areas]
 === Areas

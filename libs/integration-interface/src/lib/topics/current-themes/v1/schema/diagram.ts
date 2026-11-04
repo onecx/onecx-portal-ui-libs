@@ -33,8 +33,8 @@ export const diagramShape = z.object({
 const textDefaults = {
   font: {
     family: '{{primitives.font.family}}',
-    size: '{{primitives.font.size}}',
-    weight: '{{primitives.font.weight}}',
+    size: '{{primitives.font.size.md}}',
+    weight: '{{primitives.font.weight.normal}}',
   },
 }
 

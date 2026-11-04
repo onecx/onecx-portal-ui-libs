@@ -28,7 +28,7 @@ export class MenuItemSchema {
   static readonly label = {
     font: font.pick({ family: true, size: true, weight: true }).default({
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
+      size: '{{primitives.font.size.md}}',
       weight: '{{primitives.font.weight.normal}}',
     }),
   }
@@ -44,7 +44,7 @@ export class MenuItemSchema {
     padding: withRef(z.string()).default('{{primitives.spacing.sm}}'),
     font: font.pick({ family: true, size: true, weight: true }).default({
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
+      size: '{{primitives.font.size.md}}',
       weight: '{{primitives.font.weight.normal}}',
     }),
     background: bg

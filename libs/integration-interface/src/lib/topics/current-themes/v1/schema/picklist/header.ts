@@ -22,7 +22,7 @@ export class PicklistPanelHeaderSchema {
         radius: '{{primitives.border.radius.none}}',
       }),
       font: font.pick({ weight: true }).default({
-        weight: '{{primitives.font.weight}}',
+        weight: '{{primitives.font.weight.normal}}',
       }),
     })
     .register(themeSchemaRegistry, { id: 'picklistPanelHeader' })

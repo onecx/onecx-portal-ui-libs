@@ -53,8 +53,8 @@ export const calendarTimeInputDefaults = {
   width: '3rem',
   padding: '{{primitives.space.xs}}',
   font: {
-    weight: '{{primitives.font.weight}}',
-    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight.normal}}',
+    size: '{{primitives.font.size.md}}',
     family: '{{primitives.font.family}}',
   },
   focusRing: {

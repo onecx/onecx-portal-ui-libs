@@ -71,8 +71,8 @@ export const calendarTodayButtonDefaults = {
       padding: '{{primitives.space.sm}}',
       font: {
         family: '{{primitives.font.family}}',
-        size: '{{primitives.font.size}}',
-        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size.md}}',
+        weight: '{{primitives.font.weight.normal}}',
       },
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
       background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
@@ -118,8 +118,8 @@ export const calendarClearButtonDefaults = {
       padding: '{{primitives.space.sm}}',
       font: {
         family: '{{primitives.font.family}}',
-        size: '{{primitives.font.size}}',
-        weight: '{{primitives.font.weight}}',
+        size: '{{primitives.font.size.md}}',
+        weight: '{{primitives.font.weight.normal}}',
       },
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
       background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',

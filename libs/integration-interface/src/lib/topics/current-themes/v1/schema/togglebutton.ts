@@ -5,10 +5,10 @@ import { themeSchemaRegistry } from './registry'
 // Root level properties
 const defaultFont = {
   family: '{{primitives.font.family}}',
-  size: '{{primitives.font.size}}',
-  weight: '{{primitives.font.weight}}',
-  lineHeight: '{{primitives.font.lineHeight}}',
-  letterSpacing: '{{primitives.font.letterSpacing}}',
+  size: '{{primitives.font.size.md}}',
+  weight: '{{primitives.font.weight.normal}}',
+  lineHeight: '{{primitives.font.lineHeight.md}}',
+  letterSpacing: '{{primitives.font.letterSpacing.normal}}',
   style: '{{primitives.font.style}}',
 }
 

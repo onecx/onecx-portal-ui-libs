@@ -89,8 +89,8 @@ export const inputShape = z.object({
 const defaultSeverityTokens = {
   transitionDuration: '{{primitives.transition.duration}}',
   font: {
-    weight: '{{primitives.font.weight}}',
-    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight.normal}}',
+    size: '{{primitives.font.size.md}}',
   },
   padding: {
     x: '{{primitives.space.md}}',
@@ -105,14 +105,14 @@ const defaultSeverityTokens = {
     shadow: '{{primitives.shadow.none}}',
   },
   sm: {
-    fontSize: '{{primitives.font.size}}',
+    fontSize: '{{primitives.font.size.sm}}',
     padding: {
       x: '{{primitives.space.sm}}',
       y: '{{primitives.space.xs}}',
     },
   },
   lg: {
-    fontSize: '{{primitives.font.size}}',
+    fontSize: '{{primitives.font.size.lg}}',
     padding: {
       x: '{{primitives.space.lg}}',
       y: '{{primitives.space.md}}',

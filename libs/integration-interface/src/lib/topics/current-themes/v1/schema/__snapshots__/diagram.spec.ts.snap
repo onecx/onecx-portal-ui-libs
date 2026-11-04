@@ -11,22 +11,22 @@ Object {
   "description": Object {
     "font": Object {
       "family": "{{primitives.font.family}}",
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
+      "size": "{{primitives.font.size.md}}",
+      "weight": "{{primitives.font.weight.normal}}",
     },
   },
   "footer": Object {
     "font": Object {
       "family": "{{primitives.font.family}}",
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
+      "size": "{{primitives.font.size.md}}",
+      "weight": "{{primitives.font.weight.normal}}",
     },
   },
   "header": Object {
     "font": Object {
       "family": "{{primitives.font.family}}",
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
+      "size": "{{primitives.font.size.md}}",
+      "weight": "{{primitives.font.weight.normal}}",
     },
   },
   "selectButton": Object {
