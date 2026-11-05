@@ -60,6 +60,8 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   private readonly agentService = new OneCXAiAgentService()
   private readonly completionService = new OneCXAiCompletionService()
   private readonly appStateService = inject(AppStateService)
+  // Incremented whenever the action, agent, or result is reset, so a late completion can detect it is stale.
+  private runCounter = 0
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
@@ -136,6 +138,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   selectAgent(agentId: string | undefined): void {
     this.selectedAgentId = agentId
+    this.resetResult()
   }
 
   selectAction(actionId: string | undefined): void {
@@ -153,6 +156,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     if (!action || !agent || this.inputText.trim().length === 0) {
       return
     }
+    const runId = ++this.runCounter
     this.runState = 'running'
     this.errorCode = undefined
     this.result = undefined
@@ -162,7 +166,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
       `Respond only with JSON matching ${action.outputDescription}. Do not write anything outside the JSON.`,
     ].join('\n')
     try {
-      this.result = await this.completionService.getCompletion({
+      const result = await this.completionService.getCompletion({
         agentId: agent.id,
         agentName: agent.name,
         systemPrompt,
@@ -170,9 +174,16 @@ export class AiAssistComponent implements OnInit, OnDestroy {
         message: this.inputText,
         outputSchema: action.outputSchema,
       })
+      if (runId !== this.runCounter) {
+        return
+      }
+      this.result = result
       this.suggestion = this.resultText ?? ''
       this.runState = 'success'
     } catch (error) {
+      if (runId !== this.runCounter) {
+        return
+      }
       this.errorCode = isAiProviderError(error) ? error.code : UNKNOWN_ERROR_CODE
       this.runState = 'error'
     }
@@ -205,6 +216,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   }
 
   private resetResult(): void {
+    this.runCounter++
     this.result = undefined
     this.suggestion = ''
     this.runState = 'idle'
