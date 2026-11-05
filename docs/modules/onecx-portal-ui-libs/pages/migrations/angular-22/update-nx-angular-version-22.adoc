@@ -1,0 +1,58 @@
+[#upgrade-nx-to-angular-22]
+= Upgrade NX Application to Angular 22
+
+This guide describes how to upgrade an NX-based OneCX application to Angular 22. Complete the pre-migration steps from the main migration guide before you continue.
+
+== Update NX and Angular packages
+
+Angular 22 requires **NX 23.1.0 or later**; NX 23.0 and older do not support Angular 22. Update the NX and Angular packages in your workspace by running `nx migrate` with an NX 23 version, for example:
+
+[source, bash]
+----
+npx nx migrate 23.3.1
+----
+
+Apply all proposed updates up to Angular 22. Angular 22 also requires **TypeScript `>=6.0 <6.1`**; make sure the migration updates `typescript` accordingly.
+
+For details on NX / Angular compatibility, refer to the https://nx.dev/docs/technologies/angular/guides/angular-nx-version-matrix[Angular NX Version Matrix].
+
+For details on `nx migrate`, refer to the official documentation: https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
+
+== Update package versions in `package.json`
+
+1. Update all used `@onecx/*` packages to version `^9.0.0`.
++
+.Example:
+[source, bash]
+----
+npm install @onecx/<package-name>@^9
+----
+
+2. Update the packages listed here to the specified versions: xref:./update-v9-packages.adoc[Required Package Updates].
+3. After updating `package.json`, run `npm install` to install the new versions. If you see peer dependency errors, update the affected packages to compatible versions.
+
+[NOTE]
+====
+If you still see dependency conflicts that reference old versions, reinstall dependencies from scratch:
+
+[source, bash]
+----
+rm -rf node_modules package-lock.json .angular dist ~/.angular/cache && npm cache clean --force && npm install
+----
+====
+
+== Run NX migration
+
+After updating package versions, run:
+
+[source, bash]
+----
+nx migrate --run-migrations
+----
+
+[#change-detection]
+=== Explicit change detection
+
+In Angular 22, `ChangeDetectionStrategy.OnPush` is the default for components that do not declare a `changeDetection`, and `ChangeDetectionStrategy.Default` is deprecated in favor of `ChangeDetectionStrategy.Eager`. The Angular update migration (`change-detection-eager`) keeps the previous behavior by adding `changeDetection: ChangeDetectionStrategy.Eager` to components without an explicit strategy. Keep these additions unless you deliberately move a component to `OnPush`. The OneCX UI libraries v9 were migrated the same way.
+
+After this step, proceed with the remaining post-migration steps.

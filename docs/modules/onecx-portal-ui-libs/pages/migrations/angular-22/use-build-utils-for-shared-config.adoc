@@ -1,0 +1,33 @@
+[#use-build-utils-for-shared-config]
+= Import shared library configuration helpers from `@onecx/build-utils`
+
+In OneCX UI libraries v9, `@onecx/accelerator` no longer exports the Module Federation helpers `getOneCXSharedLibraryConfig` and `getOneCXSharedRecommendations`. They are only available from `@onecx/build-utils`.
+
+`@onecx/build-utils` is already published for v8 (since 8.7.0) with the same functions, so you can switch the imports before upgrading to Angular 22.
+
+== Required change
+
+. Install `@onecx/build-utils` as a dev dependency, using the same version as your other `@onecx/*` libraries:
++
+[source,bash]
+----
+npm install @onecx/build-utils@^8 --save-dev
+----
+
+. Update the imports in your Module Federation or webpack configuration:
++
+[source,javascript]
+----
+// before
+const { getOneCXSharedLibraryConfig } = require('@onecx/accelerator')
+
+// after
+const { getOneCXSharedLibraryConfig } = require('@onecx/build-utils')
+----
+
+The function signatures are unchanged. For usage details, see xref:libraries/build-utils.adoc[@onecx/build-utils].
+
+[NOTE]
+====
+In v9, the shared library recommendations treat `@openng/optimus-ui` packages as shared libraries instead of `primeng` packages. No change in your configuration is needed for this.
+====

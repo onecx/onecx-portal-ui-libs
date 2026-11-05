@@ -18,7 +18,7 @@ This work has two distinct parts, and it is worth keeping them separate:
 * **Utility CSS — PrimeFlex → Tailwind CSS.** This is a utility-CSS change in the OneCX UI libraries v9 line (Angular 22). It replaces the PrimeFlex utility classes with **Tailwind CSS v4** (Optimus UI styled mode) and ships a compiled, scoped CSS contract. It is independent of any component rebuild and is documented in the xref:migrations/angular-22/migrate-to-optimus-ui.adoc#utility-css-contract[Angular 22 migration guide].
 * **Components — rebuild on Angular Material.** This is the larger, still **deferred** step. The `@onecx/*` accelerator components are rebuilt on **Angular Material**, styled with **Tailwind CSS** — a library maintained by the Angular team itself and closely aligned with the framework's direction. The step-by-step guides for this part are published here as each area is finalized.
 
-Angular 23 support builds on Angular 22 support. The OneCX libraries have already moved from PrimeNG to **Optimus UI** with Angular 22 (see the xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide]); the PrimeFlex → Tailwind utility migration described above ships in the same v9 line.
+Angular 23 support builds on Angular 22 support. The OneCX libraries have already moved from PrimeNG to **Optimus UI** with Angular 22 (see the xref:migrations/angular-22/index.adoc[Angular 22 migration guide]); the PrimeFlex → Tailwind utility migration described above ships in the same v9 line.
 
 For the high-level plan and rough timing, see the xref:onecx-docs-overview:release-overview.adoc[Release Overview].
 
@@ -84,7 +84,7 @@ The step-by-step guides are published on this page as each area is finalized, an
 [#related-resources]
 == Related resources
 
-* xref:migrations/angular-22/migration-plan.adoc[Angular 22 migration guide] (the previous version)
+* xref:migrations/angular-22/index.adoc[Angular 22 migration guide] (the previous version)
 * https://material.angular.io/guide/getting-started[Angular Material Getting Started]
 * https://tailwindcss.com/docs/installation[Tailwind CSS Installation]
 * https://github.com/primefaces/optimus-ui[Optimus UI Repository]
