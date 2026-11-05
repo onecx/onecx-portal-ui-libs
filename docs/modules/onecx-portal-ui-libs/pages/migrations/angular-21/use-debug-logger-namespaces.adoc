@@ -25,4 +25,4 @@ localStorage.debug = '@onecx/angular-auth*'
 location.reload()
 ----
 
-See also xref:../../browser-logging.adoc[Browser Logging] for more details on how to use debug-js namespaces for troubleshooting and debugging purposes.
+See also xref:documentation:docs-guides-ui:development/browser-logging.adoc[Browser Logging] for more details on how to use debug-js namespaces for troubleshooting and debugging purposes.
