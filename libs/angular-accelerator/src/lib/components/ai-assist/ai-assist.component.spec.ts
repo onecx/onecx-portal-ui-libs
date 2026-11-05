@@ -255,6 +255,7 @@ describe('AiAssistComponent', () => {
   })
 
   it('should reset to the starting state when the panel is closed', async () => {
+    getAgents.mockResolvedValue([agent, { id: 'agent-2', name: 'Second partner', appId: 'app-1' }])
     await createComponent()
     component.selectAction('translate')
     component.selectAgent('agent-2')
