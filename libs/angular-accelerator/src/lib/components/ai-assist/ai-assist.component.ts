@@ -116,7 +116,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.open = false
-    this.selectAction(this.actions[0]?.id)
+    this.selectAction(this.actions[0].id)
     this.selectAgent(this.agents[0]?.id)
   }
 
