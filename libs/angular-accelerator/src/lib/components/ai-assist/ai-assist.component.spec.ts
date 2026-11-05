@@ -239,6 +239,38 @@ describe('AiAssistComponent', () => {
     expect(component.selectedAgentId).toBe('agent-2')
   })
 
+  it('should return to the settings when the user edits the request after a result', async () => {
+    await createComponent()
+    component.selectAction('translate')
+    component.inputText = 'Hello'
+    await component.run()
+    expect(component.isReviewReady).toBe(true)
+
+    component.editSettings()
+
+    expect(component.isReviewReady).toBe(false)
+    expect(component.runState).toBe('idle')
+    expect(component.resultText).toBeUndefined()
+    expect(component.inputText).toBe('Hello')
+  })
+
+  it('should reset to the starting state when the panel is closed', async () => {
+    await createComponent()
+    component.selectAction('translate')
+    component.selectAgent('agent-2')
+    component.inputText = 'Hello'
+    await component.run()
+    expect(component.isReviewReady).toBe(true)
+
+    component.close()
+
+    expect(component.open).toBe(false)
+    expect(component.selectedActionId).toBe(component.actions[0].id)
+    expect(component.selectedAgentId).toBe(component.agents[0].id)
+    expect(component.runState).toBe('idle')
+    expect(component.resultText).toBeUndefined()
+  })
+
   it('should discard a late completion when the user changes the action while it runs', async () => {
     let resolveCompletion: (value: { text: string }) => void = () => undefined
     getCompletion.mockReturnValueOnce(new Promise((resolve) => (resolveCompletion = resolve)))
