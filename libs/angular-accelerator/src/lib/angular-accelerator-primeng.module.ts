@@ -22,12 +22,16 @@ import { TooltipModule } from 'primeng/tooltip'
 import { RippleModule } from 'primeng/ripple'
 import { providePrimeNG } from 'primeng/config'
 import { TimelineModule } from 'primeng/timeline'
+import { InputTextModule } from 'primeng/inputtext'
+import { TextareaModule } from 'primeng/textarea'
 
 @NgModule({
   imports: [
     BreadcrumbModule,
     ChipModule,
     CheckboxModule,
+    InputTextModule,
+    TextareaModule,
     SelectModule,
     ButtonModule,
     DialogModule,
@@ -53,6 +57,8 @@ import { TimelineModule } from 'primeng/timeline'
     BreadcrumbModule,
     ChipModule,
     CheckboxModule,
+    InputTextModule,
+    TextareaModule,
     SelectModule,
     ButtonModule,
     DialogModule,
