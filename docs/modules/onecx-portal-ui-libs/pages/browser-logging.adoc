@@ -1,5 +1,7 @@
 = Browser Logging (debug-js)
 
+NOTE: This page has moved to xref:documentation:docs-guides-ui:development/browser-logging.adoc[UI > Development > Browser Logging], which has the current list of library namespaces.
+
 OneCX UI libraries use https://www.npmjs.com/package/debug[`debug`] (aka *debug-js*) for runtime logging.
 
 This means:
