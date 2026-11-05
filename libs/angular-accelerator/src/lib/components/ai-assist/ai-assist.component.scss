@@ -1,0 +1,138 @@
+.ocx-ai-assist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__field {
+    position: relative;
+    display: flex;
+    width: 100%;
+  }
+
+  &__input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    ::ng-deep input,
+    ::ng-deep textarea {
+      padding-right: 2.5rem;
+    }
+  }
+
+  &__toggle {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    z-index: 1;
+    display: flex;
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--p-content-border-color, #dee2e6);
+    border-radius: var(--p-border-radius, 6px);
+    background: var(--p-content-background, #fff);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  &__selectors,
+  &__parameters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__selectors > * {
+    flex: 1 1 12rem;
+  }
+
+  &__parameter {
+    flex: 1 1 12rem;
+  }
+
+  &__run {
+    flex: 0 0 auto;
+  }
+
+  &__agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--p-primary-color, #3b82f6);
+    color: var(--p-primary-contrast-color, #fff);
+  }
+
+  &__status {
+    display: block;
+    margin: 0;
+  }
+
+  &__review {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__review-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  &__review-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  &__review-column {
+    display: flex;
+    width: 100%;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  &__result {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    pre {
+      white-space: pre-wrap;
+      margin: 0;
+    }
+  }
+}
