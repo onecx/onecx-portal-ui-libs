@@ -161,6 +161,16 @@ describe('AiAssistComponent', () => {
     expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).toBeNull()
   })
 
+  it('should close without an agent selected when no agents are available', async () => {
+    getAgents.mockResolvedValue([])
+    await createComponent()
+
+    component.close()
+
+    expect(component.open).toBe(false)
+    expect(component.selectedAgentId).toBeUndefined()
+  })
+
   it('should render the review state with the replace and try again actions', async () => {
     await createComponent()
     component.open = true
