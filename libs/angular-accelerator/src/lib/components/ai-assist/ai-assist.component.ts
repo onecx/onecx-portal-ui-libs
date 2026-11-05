@@ -116,6 +116,8 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.open = false
+    this.selectAction(this.actions[0]?.id)
+    this.selectAgent(this.agents[0]?.id)
   }
 
   initials(name: string | undefined): string {
@@ -195,6 +197,10 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   tryAgain(): Promise<void> {
     return this.run()
+  }
+
+  editSettings(): void {
+    this.resetResult()
   }
 
   replace(): void {
