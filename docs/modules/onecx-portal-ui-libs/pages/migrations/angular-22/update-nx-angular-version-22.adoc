@@ -18,6 +18,11 @@ For details on NX / Angular compatibility, refer to the https://nx.dev/docs/tech
 
 For details on `nx migrate`, refer to the official documentation: https://nx.dev/docs/guides/tips-n-tricks/advanced-update[NX Migrate Documentation].
 
+[NOTE]
+====
+`@onecx/nx-plugin` is versioned independently of the `@onecx/*` libraries and is not required for this migration. At the time of writing there is no stable release of `@onecx/nx-plugin` for Angular 22: the latest stable version (8.1.0) depends on `@nx/angular` `^19`, and 9.x is only available as a release candidate. The Angular 21 guide lists `@onecx/nx-plugin@^22.1.3`; no such version is published on npm, so do not rely on that entry.
+====
+
 == Update package versions in `package.json`
 
 1. Update all used `@onecx/*` packages to version `^9.0.0`.

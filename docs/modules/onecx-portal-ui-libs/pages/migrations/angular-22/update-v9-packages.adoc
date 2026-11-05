@@ -39,6 +39,14 @@ If the following packages are used in your project, update them to ensure compat
 | `^2.0.2`
 | Replaces `@primeuix/styled`; required by `@onecx/angular-utils`
 
+| `@openng/icons`
+| `^1.0.0`
+| Replaces `primeicons`
+
+| `@openng/optimus-ui-locale`
+| `^2.0.2`
+| Replaces `primelocale`
+
 |===
 
 The `primeng`, `primeicons`, `@primeng/themes`, `@primeuix/*` and `primelocale` packages are no longer used by the OneCX UI libraries. The complete replacement mapping and the automated migration are described in xref:./migrate-to-optimus-ui.adoc[Migrate from PrimeNG to Optimus UI].
@@ -52,7 +60,9 @@ Run this command to update the supporting packages:
 ----
 npm install @openng/optimus-ui@^2.0.2 \
   @openng/optimus-ui-themes@^2.0.2 \
-  @openng/optimus-ui-styled@^2.0.2
+  @openng/optimus-ui-styled@^2.0.2 \
+  @openng/icons@^1.0.0 \
+  @openng/optimus-ui-locale@^2.0.2
 
 npm install @ngrx/<package-name>@^22
 

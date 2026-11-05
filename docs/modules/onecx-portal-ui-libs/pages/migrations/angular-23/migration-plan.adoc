@@ -87,4 +87,4 @@ The step-by-step guides are published on this page as each area is finalized, an
 * xref:migrations/angular-22/index.adoc[Angular 22 migration guide] (the previous version)
 * https://material.angular.io/guide/getting-started[Angular Material Getting Started]
 * https://tailwindcss.com/docs/installation[Tailwind CSS Installation]
-* https://github.com/primefaces/optimus-ui[Optimus UI Repository]
+* https://github.com/openng-org/optimus-ui[Optimus UI Repository]
