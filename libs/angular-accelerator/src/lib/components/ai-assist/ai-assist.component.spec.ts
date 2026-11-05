@@ -234,6 +234,57 @@ describe('AiAssistComponent', () => {
     expect(component.selectedAgentId).toBe('agent-2')
   })
 
+  it('should discard a late completion when the user changes the action while it runs', async () => {
+    let resolveCompletion: (value: { text: string }) => void = () => undefined
+    getCompletion.mockReturnValueOnce(new Promise((resolve) => (resolveCompletion = resolve)))
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    const running = component.run()
+    component.selectAction('translate')
+    resolveCompletion({ text: 'Late summary' })
+    await running
+
+    expect(component.selectedActionId).toBe('translate')
+    expect(component.runState).toBe('idle')
+    expect(component.resultText).toBeUndefined()
+    expect(component.suggestion).toBe('')
+  })
+
+  it('should discard a late completion when the user changes the agent while it runs', async () => {
+    let resolveCompletion: (value: { text: string }) => void = () => undefined
+    getCompletion.mockReturnValueOnce(new Promise((resolve) => (resolveCompletion = resolve)))
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    const running = component.run()
+    component.selectAgent('agent-2')
+    resolveCompletion({ text: 'Late summary' })
+    await running
+
+    expect(component.selectedAgentId).toBe('agent-2')
+    expect(component.runState).toBe('idle')
+    expect(component.resultText).toBeUndefined()
+  })
+
+  it('should discard a late error when the user changes the action while it runs', async () => {
+    let rejectCompletion: (reason: unknown) => void = () => undefined
+    getCompletion.mockReturnValueOnce(new Promise((_, reject) => (rejectCompletion = reject)))
+    await createComponent()
+    component.selectAction('summarize')
+    component.inputText = 'Long text'
+
+    const running = component.run()
+    component.selectAction('translate')
+    rejectCompletion(new AiProviderError('TIMEOUT', 'timeout', { retryable: true }))
+    await running
+
+    expect(component.runState).toBe('idle')
+    expect(component.errorCode).toBeUndefined()
+  })
+
   it('should not expose the raw response envelope when no text is returned', async () => {
     await createComponent()
     component.result = { conversationId: null, message: '{}' } as never
