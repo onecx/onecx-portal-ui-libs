@@ -214,5 +214,5 @@ Because the library's file is a fully-resolved stylesheet rather than a Tailwind
 [#related]
 == Related
 
-* xref:./migration-plan.adoc[OneCX UI Library Migration Plan: PrimeNG → Angular Material]
+* xref:migrations/angular-23/migration-plan.adoc[OneCX UI Library Migration Plan: PrimeNG → Angular Material]
 * https://github.com/openng-org/optimus-ui[Optimus UI repository]
