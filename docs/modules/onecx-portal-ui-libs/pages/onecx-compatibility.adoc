@@ -162,4 +162,4 @@ const config = withModuleFederationPlugin({
 Expose App styles.css::
 Impact: No styles for the application are loaded
 +
-* Ensure your App exposes its styles.css as described in xref:documentation:docs-guides-ui:setup/recommended/expose-component-styles.adoc[Expose Component Styles].
+* Ensure your App exposes its styles.css as described in xref:documentation:docs-guides-ui:setup/recommended/expose-component-styles/angular.adoc#angular-expose-app-styles[Expose App styles.css].
