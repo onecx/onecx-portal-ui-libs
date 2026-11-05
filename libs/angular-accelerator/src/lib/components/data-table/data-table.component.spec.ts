@@ -367,6 +367,13 @@ describe('DataTableComponent', () => {
       trigger(label, 'mouseleave')
     }))
 
+    it('should use the default cursor for column header labels with a tooltip', () => {
+      component.columns = [{ ...mockColumns[0], tooltipKey: 'CUSTOM_TOOLTIP' }]
+      fixture.detectChanges()
+
+      expect(getLabel().style.cursor).toBe('default')
+    })
+
     it.each([
       { tooltip: 'Product details', tooltipKey: undefined, expected: 'Product details' },
       { tooltip: 'Product details', tooltipKey: 'CUSTOM_TOOLTIP', expected: 'Product details' },
