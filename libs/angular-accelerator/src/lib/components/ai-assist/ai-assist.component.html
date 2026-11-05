@@ -69,6 +69,13 @@
         <p-button
           type="button"
           severity="secondary"
+          icon="pi pi-sliders-h"
+          [label]="'OCX_AI_ASSIST.EDIT_SETTINGS' | translate"
+          (onClick)="editSettings()"
+        ></p-button>
+        <p-button
+          type="button"
+          severity="secondary"
           icon="pi pi-undo"
           [label]="'OCX_AI_ASSIST.TRY_AGAIN' | translate"
           (onClick)="tryAgain()"
