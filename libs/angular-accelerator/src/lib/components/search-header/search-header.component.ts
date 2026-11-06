@@ -1,6 +1,6 @@
 import {
   Component,
-  ElementRef,
+  DestroyRef,
   EventEmitter,
   Output,
   Signal,
@@ -14,7 +14,6 @@ import {
   output,
   signal,
   untracked,
-  viewChild,
   ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -37,6 +36,7 @@ import { Action } from '../page-header/page-header.component'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
+import { ResultsAnnouncementService } from '../../services/results-announcement.service'
 import { TranslateService } from '@ngx-translate/core'
 
 export interface SearchHeaderComponentState {
@@ -52,10 +52,16 @@ export interface SearchConfigData {
 }
 
 /**
- * To trigger the search when Enter key is pressed inside a search parameter field,
- * an EventListener for keyup enter event is added for HTML elements which have an input.
- * Please add the EventListener yourself manually, if you want to have that functionality for some other elements
- * which do not have an input element.
+ * The search is triggered when the Enter key is pressed inside an input of the projected search parameter fields
+ * (one delegated keydown listener on the criteria container, no per-input listeners).
+ * Please trigger the search yourself, if you want to have that functionality for other elements
+ * which are not an input element.
+ *
+ * After each search, the result count (`searchResultsCount`) is announced to screen readers once.
+ * For asynchronous searches, bind `loading` and set it to true while the search runs: the count is
+ * announced when loading has finished. Without `loading`, the count present at the next change
+ * detection after the search is announced. Without a result count, the data table or list grid
+ * announces its next new data instead.
  */
 @Component({
   standalone: false,
@@ -67,6 +73,10 @@ export interface SearchConfigData {
 export class SearchHeaderComponent {
   private readonly translate = inject(TranslateService)
   private readonly liveAnnouncer = inject(LiveAnnouncer)
+  private readonly resultsAnnouncement = inject(ResultsAnnouncementService)
+  private searchResultsAnnouncementPending = false
+  /** Incremented per search with a result count, so that every search is announced, even with an unchanged count. */
+  private readonly searchRequests = signal(0)
   header = input<string>('')
   subheader = input<string | undefined>(undefined)
 
@@ -106,8 +116,6 @@ export class SearchHeaderComponent {
 
   formGroup = contentChild<FormGroup | undefined>(FormGroup)
   visibleFormControls = contentChildren<FormControlName>(FormControlName, { descendants: true })
-
-  searchParameterFields = viewChild<ElementRef | undefined>('searchParameterFields')
 
   hasAdvanced = signal<boolean>(false)
 
@@ -158,10 +166,10 @@ export class SearchHeaderComponent {
       this.actions()
       untracked(() => {
         this.updateHeaderActions()
-        setTimeout(() => this.addKeyUpEventListener())
       })
     })
 
+    this.resultsAnnouncement.registerSearchHeader(inject(DestroyRef))
     this.announceSearchResults()
 
     const configurationService = inject(ConfigurationService)
@@ -186,6 +194,7 @@ export class SearchHeaderComponent {
   }
 
   onSearchClicked() {
+    this.prepareSearchResultsAnnouncement()
     this.searched.emit()
   }
 
@@ -209,20 +218,25 @@ export class SearchHeaderComponent {
     this.headerActions.set(headerActions.concat(this.actions()))
   }
 
-  addKeyUpEventListener() {
-    const inputElements = this.searchParameterFields()?.nativeElement.querySelectorAll('input')
-    inputElements.forEach((inputElement: any) => {
-      if (!inputElement.listenerAdded) {
-        inputElement.addEventListener('keyup', (event: any) => this.onSearchKeyup(event))
-        inputElement.listenerAdded = true
-      }
-    })
-  }
-
-  onSearchKeyup(event: any) {
-    if (event.code === 'Enter') {
-      this.onSearchClicked()
+  /**
+   * Handles Enter (including NumpadEnter) pressed inside the search criteria and triggers a single search.
+   * Ignored for non-input targets (e.g. textarea, buttons), for Enter events already handled by a widget
+   * (defaultPrevented), for Enter that picks an option of an open combobox/overlay and for inputs inside a
+   * listbox (e.g. a multiple autocomplete, where Enter edits the selection).
+   */
+  onSearchKeydown(event: Event) {
+    const keyEvent = event as KeyboardEvent
+    const target = keyEvent.target as HTMLElement
+    if (
+      keyEvent.defaultPrevented ||
+      keyEvent.isComposing ||
+      target.tagName !== 'INPUT' ||
+      target.getAttribute('aria-expanded') === 'true' ||
+      target.closest('[role="listbox"], [role="dialog"]')
+    ) {
+      return
     }
+    this.onSearchClicked()
   }
 
   private isVisible(control: string) {
@@ -231,22 +245,37 @@ export class SearchHeaderComponent {
     )
   }
 
+  /**
+   * Without a result count, the data component announces the next new data instead.
+   */
+  private prepareSearchResultsAnnouncement() {
+    if (this.searchResultsCount() === null) {
+      this.resultsAnnouncement.requestSearchResultsAnnouncement()
+    } else {
+      this.resultsAnnouncement.clearSearchResultsAnnouncementRequest()
+      this.searchResultsAnnouncementPending = true
+      this.searchRequests.update((requests) => requests + 1)
+    }
+  }
+
+  /**
+   * Announces the result count once after each search, when loading has finished
+   * (or right away, if loading is not used). Nothing is announced at page load.
+   */
   private announceSearchResults() {
     effect(() => {
-      let announmentKey = ''
-      if (this.loading()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.SEARCHING'
-      } else if (!this.loading() && !this.searchResultsCount()) {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
-      } else {
-        announmentKey = 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+      this.searchRequests()
+      const loading = this.loading()
+      const count = this.searchResultsCount()
+      if (loading || !this.searchResultsAnnouncementPending) {
+        return
       }
+      this.searchResultsAnnouncementPending = false
+      const announcementKey = count
+        ? 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.RESULTS_FOUND'
+        : 'OCX_SEARCH_HEADER.ANNOUNCEMENTS.NO_RESULTS'
 
-      firstValueFrom(
-        this.translate.get(announmentKey, {
-          count: !this.loading() && this.searchResultsCount() ? this.searchResultsCount() : null,
-        })
-      ).then((translatedText: string) => {
+      firstValueFrom(this.translate.get(announcementKey, { count: count || null })).then((translatedText: string) => {
         this.liveAnnouncer.announce(translatedText, 'polite')
       })
     })
