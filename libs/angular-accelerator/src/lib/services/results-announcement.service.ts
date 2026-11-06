@@ -113,6 +113,10 @@ export class DisplayedResultsAnnouncer {
     this.previous = state
   }
 
+  /**
+   * Determines whether the rendered change should be announced. Client-side filter and sort
+   * changes announce immediately; server-side changes wait for new items.
+   */
   private isAnnouncementDue(previous: DisplayedResultsState, current: DisplayedResultsState): boolean {
     let due = false
     if (current.items !== previous.items) {
