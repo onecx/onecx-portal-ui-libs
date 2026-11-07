@@ -15,6 +15,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { DiagramType } from '../../model/diagram-type'
 import { ObjectUtils } from '../../utils/objectutils'
 import { toObservable } from '@angular/core/rxjs-interop'
+import { DiagramDataSelectedEvent } from '../diagram/diagram.component'
 
 export interface GroupByCountDiagramComponentState {
   activeDiagramType?: DiagramType
@@ -33,6 +34,10 @@ export class GroupByCountDiagramComponent {
   diagramType = model<DiagramType>(DiagramType.PIE)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
+  /**
+   * Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the page outline.
+   */
+  titleHeadingLevel = input<number>(2)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
    *
@@ -60,7 +65,10 @@ export class GroupByCountDiagramComponent {
   
   colors = model<Record<string, string>>({})
 
-  dataSelected = output<any>()
+  /**
+   * Emits the selected entry when a chart segment is clicked or a legend entry is activated with mouse or keyboard.
+   */
+  dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<GroupByCountDiagramComponentState>()
 
@@ -123,7 +131,7 @@ export class GroupByCountDiagramComponent {
     })
   }
 
-  dataClicked(event: any) {
+  dataClicked(event: DiagramDataSelectedEvent) {
     this.dataSelected.emit(event)
   }
 
