@@ -30,6 +30,7 @@ const toUrl = ({ pathname, search, hash }: { pathname: string; search: string; h
 
 const SHELL_SYNC_MARKER = '__onecxShellSync'
 const HISTORY_WRAPPER_MARKER = '__onecxRouterSyncWrapped'
+const MAX_OWN_PUBLISHED_URLS = 10
 
 /**
  * Install only while a synced router is mounted. The shell checks top-level
@@ -127,6 +128,8 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
   const routerUrlRef = useRef(routerUrl)
   const navigateRef = useRef(navigate)
   const skipPublishUntil = useRef<string | null>(null)
+  const pendingTopicUrlRef = useRef<string | null>(null)
+  const ownPublishedUrlsRef = useRef<string[]>([])
   const lastPublishedUrlRef = useRef(routerUrl)
   const currentLocation$ = useTopic(undefined, CurrentLocationTopic)
 
@@ -150,19 +153,27 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       }
 
       const normalizedTargetUrl = normalizeUrl(topicUrl)
+      const ownPublishIndex = ownPublishedUrlsRef.current.indexOf(topicUrl)
+      if (ownPublishIndex !== -1) {
+        // Topic delivers our own publishes back asynchronously. Drop the echo and
+        // anything published before it, otherwise it would revert newer navigation.
+        ownPublishedUrlsRef.current.splice(0, ownPublishIndex + 1)
+        return
+      }
+      // The initial replay represents the shell's current location and should
+      // not overwrite the browser URL with a potentially stale value.
+      if (location.isFirst) {
+        return
+      }
       if (skipPublishUntil.current !== null) {
-        // Ignore new topic events while a topic-driven navigation is still pending.
-        // React Router resolves navigation asynchronously; processing another
-        // event before the current one settles would overwrite skipPublishUntil
-        // and could leave the shell and the MFE out of sync.
+        // A topic-driven navigation is still pending. Keep only the latest target
+        // and apply it once the pending navigation settles (see the layout effect).
+        if (normalizedTargetUrl !== skipPublishUntil.current) {
+          pendingTopicUrlRef.current = topicUrl
+        }
         return
       }
       if (normalizeUrl(routerUrlRef.current) !== normalizedTargetUrl) {
-        // The initial replay represents the shell's current location and should
-        // not overwrite the browser URL with a potentially stale value.
-        if (location.isFirst) {
-          return
-        }
         skipPublishUntil.current = normalizedTargetUrl
         navigateRef.current(topicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
       }
@@ -190,16 +201,31 @@ const RouterSync: FC<PropsWithChildren> = ({ children }) => {
       // Update lastPublishedUrlRef so the topic-driven URL is not echoed back.
       skipPublishUntil.current = null
       lastPublishedUrlRef.current = routerUrl
+      const pendingTopicUrl = pendingTopicUrlRef.current
+      pendingTopicUrlRef.current = null
+      if (pendingTopicUrl !== null && normalizeUrl(pendingTopicUrl) !== normalizeUrl(routerUrl)) {
+        skipPublishUntil.current = normalizeUrl(pendingTopicUrl)
+        navigateRef.current(pendingTopicUrl, { replace: true, state: { [SHELL_SYNC_MARKER]: true } })
+      }
       return
     }
     if (routerUrl !== lastPublishedUrlRef.current) {
       lastPublishedUrlRef.current = routerUrl
+      const ownPublishedUrls = ownPublishedUrlsRef.current
+      ownPublishedUrls.push(routerUrl)
+      if (ownPublishedUrls.length > MAX_OWN_PUBLISHED_URLS) {
+        ownPublishedUrls.shift()
+      }
       currentLocation$
         .publish({
           url: routerUrl,
           isFirst: false,
         })
         .catch((err) => {
+          const failedIndex = ownPublishedUrlsRef.current.indexOf(routerUrl)
+          if (failedIndex !== -1) {
+            ownPublishedUrlsRef.current.splice(failedIndex, 1)
+          }
           logger.error('publish failed:', err)
         })
     }
