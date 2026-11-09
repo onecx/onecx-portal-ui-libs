@@ -470,6 +470,47 @@ describe('SyncedRouterProvider', () => {
     replaceStateSpy.mockRestore()
   })
 
+  it('ignores the newest echo after the own-publish history exceeds its limit', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    for (let i = 0; i < 11; i++) {
+      fireEvent.click(screen.getByText(i % 2 === 0 ? 'Navigate in React' : 'Navigate to root in React'))
+    }
+    const newest = mockDeferredEchoes[mockDeferredEchoes.length - 1]
+    mockDeferredEchoes.length = 0
+    mockDeferEchoes = false
+
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    act(() => {
+      mockLocationListeners.slice().forEach((listener) => listener(newest))
+    })
+
+    expect(screen.getByTestId('location').textContent).toBe(newest.url)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('applies a shell event for a URL whose publish failed earlier', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    shouldPublishReject = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    shouldPublishReject = false
+    await waitFor(() => expect(loggerError).toHaveBeenCalled())
+    mockDeferredEchoes.length = 0
+    mockDeferEchoes = false
+
+    publishLocation({ url: appBase, isFirst: false })
+    expect(await screen.findByText('Root page')).toBeTruthy()
+
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+  })
+
   it('still applies shell events after own echoes were consumed', async () => {
     renderRouter()
 
