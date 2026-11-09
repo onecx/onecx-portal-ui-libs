@@ -21,6 +21,8 @@ const mockLocationListeners: ((location: CurrentLocationTopicPayload) => void)[]
 const mockPublishedLocations: CurrentLocationTopicPayload[] = []
 let mockSubscribeCalls = 0
 let shouldPublishReject = false
+let mockDeferEchoes = false
+const mockDeferredEchoes: CurrentLocationTopicPayload[] = []
 let topicLastValue: CurrentLocationTopicPayload = { url: appBase, isFirst: true }
 jest.mock('@onecx/integration-interface', () => ({
   CurrentLocationTopic: class {
@@ -39,7 +41,11 @@ jest.mock('@onecx/integration-interface', () => ({
     publish(location: CurrentLocationTopicPayload) {
       topicLastValue = location
       mockPublishedLocations.push(location)
-      mockLocationListeners.slice().forEach((listener) => listener(location))
+      if (mockDeferEchoes) {
+        mockDeferredEchoes.push(location)
+      } else {
+        mockLocationListeners.slice().forEach((listener) => listener(location))
+      }
       return shouldPublishReject ? Promise.reject(new Error('publish failed')) : Promise.resolve()
     }
 
@@ -72,6 +78,7 @@ const RouterContent = () => {
       { onClick: () => navigate(`${appBase}/subpage/record-1?tab=details#summary`) },
       'Navigate in React'
     ),
+    createElement('button', { onClick: () => navigate(appBase) }, 'Navigate to root in React'),
     createElement(
       Routes,
       null,
@@ -98,12 +105,22 @@ const publishLocation = (payload: CurrentLocationTopicPayload) => {
   })
 }
 
+const deliverDeferredEchoes = () => {
+  act(() => {
+    mockDeferredEchoes.splice(0).forEach((payload) => {
+      mockLocationListeners.slice().forEach((listener) => listener(payload))
+    })
+  })
+}
+
 describe('SyncedRouterProvider', () => {
   beforeEach(() => {
     mockLocationListeners.length = 0
     mockPublishedLocations.length = 0
     mockSubscribeCalls = 0
     shouldPublishReject = false
+    mockDeferEchoes = false
+    mockDeferredEchoes.length = 0
     topicLastValue = { url: appBase, isFirst: true }
     loggerError.mockClear()
     document.querySelector('base')?.remove()
@@ -411,5 +428,62 @@ describe('SyncedRouterProvider', () => {
       expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
     )
     expect(screen.getByTestId('synced-url').textContent).toBe(`${appBase}/subpage/record-1`)
+  })
+
+  it('applies the latest of two different shell URLs delivered before a render', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    act(() => {
+      window.history.pushState({}, '', `${appBase}/subpage/record-1`)
+      mockLocationListeners[0]({ url: `${appBase}/subpage/record-1`, isFirst: false })
+      window.history.pushState({}, '', `${appBase}/subpage/record-2`)
+      mockLocationListeners[0]({ url: `${appBase}/subpage/record-2`, isFirst: false })
+    })
+
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-2`)
+    expect(window.location.pathname).toBe(`${appBase}/subpage/record-2`)
+  })
+
+  it('ignores late echoes of its own publishes after a second internal navigation', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    fireEvent.click(screen.getByText('Navigate to root in React'))
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(mockDeferredEchoes.map((location) => location.url)).toEqual([
+      `${appBase}/subpage/record-1?tab=details#summary`,
+      appBase,
+    ])
+
+    const replaceStateSpy = jest.spyOn(window.history, 'replaceState')
+    deliverDeferredEchoes()
+
+    expect(screen.getByTestId('location').textContent).toBe(appBase)
+    expect(screen.getByText('Root page')).toBeTruthy()
+    expect(window.location.pathname).toBe(appBase)
+    expect(replaceStateSpy).not.toHaveBeenCalled()
+    replaceStateSpy.mockRestore()
+  })
+
+  it('still applies shell events after own echoes were consumed', async () => {
+    renderRouter()
+
+    await waitFor(() => expect(mockLocationListeners).toHaveLength(1))
+    mockDeferEchoes = true
+    fireEvent.click(screen.getByText('Navigate in React'))
+    deliverDeferredEchoes()
+    mockDeferEchoes = false
+
+    publishLocation({ url: appBase, isFirst: false })
+    expect(await screen.findByText('Root page')).toBeTruthy()
+
+    publishLocation({ url: `${appBase}/subpage/record-1?tab=details#summary`, isFirst: false })
+    expect(await screen.findByText('Subpage')).toBeTruthy()
+    expect(screen.getByTestId('location').textContent).toBe(`${appBase}/subpage/record-1?tab=details#summary`)
   })
 })
