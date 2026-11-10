@@ -8,6 +8,7 @@ import { of } from 'rxjs'
 import type { Observable } from 'rxjs'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { RippleModule } from '@openng/optimus-ui/ripple'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 class FakeTranslateLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<TranslationObject> {
@@ -92,6 +93,13 @@ describe('OcxConsentComponent', () => {
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    // Known violation: the consent component renders an icon-only button without an accessible name.
+    // The check fails once this is fixed, so remove the entry together with the fix.
+    await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
   })
 
   it('should show message when consent is missing', async () => {

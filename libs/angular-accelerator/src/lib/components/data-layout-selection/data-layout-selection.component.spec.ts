@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -19,6 +20,11 @@ describe('DataLayoutSelectionComponent', () => {
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
     component = fixture.componentInstance
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should create', () => {
