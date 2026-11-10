@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideTranslateTestingService, expectNoAxeViolations } from '@onecx/angular-testing'
 import { FilterViewComponent } from './filter-view.component'
 import { AddFilterDialogComponent } from './add-filter-dialog/add-filter-dialog.component'
 import type { DataTableColumn } from '../../model/data-table-column.model'
@@ -70,6 +70,11 @@ describe('FilterViewComponent (class logic)', () => {
       return panelMock
     }
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
   })
 
   it('should initialize columnFilterDataRows and display filters from service', () => {

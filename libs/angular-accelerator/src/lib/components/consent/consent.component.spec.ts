@@ -8,6 +8,8 @@ import { of } from 'rxjs'
 import type { Observable } from 'rxjs'
 import { ButtonModule } from '@openng/optimus-ui/button'
 import { RippleModule } from '@openng/optimus-ui/ripple'
+import userEvent from '@testing-library/user-event'
+import { expectNoAxeViolations } from '@onecx/angular-testing'
 
 class FakeTranslateLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<TranslationObject> {
@@ -92,6 +94,13 @@ describe('OcxConsentComponent', () => {
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    // Known violation: the consent component renders an icon-only button without an accessible name.
+    // The check fails once this is fixed, so remove the entry together with the fix.
+    await expectNoAxeViolations(fixture.nativeElement, { allow: ['button-name'] })
   })
 
   it('should show message when consent is missing', async () => {
@@ -232,7 +241,11 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual([])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: false, purpose: undefined })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: false,
+      purpose: undefined,
+    })
   })
 
   it('should scope consent to purpose when purpose is provided', async () => {
@@ -243,14 +256,15 @@ describe('OcxConsentComponent', () => {
 
     const stored = JSON.parse(localStorage.getItem('onecx-consent') ?? '[]') as string[]
     expect(stored).toEqual(['https://example.com::maps'])
-    expect(fixture.componentInstance.lastConsent()).toEqual({ url: 'https://example.com', hasConsent: true, purpose: 'maps' })
+    expect(fixture.componentInstance.lastConsent()).toEqual({
+      url: 'https://example.com',
+      hasConsent: true,
+      purpose: 'maps',
+    })
   })
 
   it('should keep unrelated consent entries when withdrawing without purpose', async () => {
-    localStorage.setItem(
-      'onecx-consent',
-      JSON.stringify(['https://example.com/legal', 'https://example.com/other'])
-    )
+    localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com/legal', 'https://example.com/other']))
 
     fixture = TestBed.createComponent(HostComponent)
     harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
@@ -327,5 +341,79 @@ describe('OcxConsentComponent', () => {
     fixture.detectChanges()
 
     expect(await harness.isConsentMessageVisible()).toBe(true)
+  })
+
+  describe('withdraw control accessibility', () => {
+    let emitted: unknown[]
+
+    beforeEach(async () => {
+      localStorage.setItem('onecx-consent', JSON.stringify(['https://example.com']))
+      fixture = TestBed.createComponent(HostComponent)
+      harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+      emitted = []
+      fixture.componentInstance.onConsentChanged = (event: unknown) => emitted.push(event)
+      fixture.componentInstance.withdrawKey.set('OCX_CONSENT.WITHDRAW')
+      fixture.componentInstance.showWithdraw.set(true)
+      fixture.detectChanges()
+    })
+
+    function getWithdrawButton(): HTMLButtonElement {
+      return (fixture.nativeElement as HTMLElement).querySelector('.ocx-consent__withdraw') as HTMLButtonElement
+    }
+
+    it('should render the withdraw control as a native button with an accessible name', () => {
+      const button = getWithdrawButton()
+
+      expect(button.tagName).toBe('BUTTON')
+      expect(button.getAttribute('type')).toBe('button')
+      expect(button.textContent?.trim()).toBe('Default withdraw')
+      expect(button.hasAttribute('aria-label')).toBe(false)
+    })
+
+    it('should reach the withdraw button with Tab', async () => {
+      const user = userEvent.setup()
+
+      await user.tab()
+
+      expect(document.activeElement).toBe(getWithdrawButton())
+    })
+
+    it.each(['{Enter}', ' '])('should emit consent withdrawal once when pressing %s', async (key) => {
+      const user = userEvent.setup()
+      getWithdrawButton().focus()
+
+      await user.keyboard(key)
+
+      expect(emitted).toEqual([{ url: 'https://example.com', hasConsent: false, purpose: undefined }])
+    })
+
+    it('should have no axe button-name, aria-allowed-attr or aria-prohibited-attr violations', async () => {
+      await expectNoAxeViolations(fixture.nativeElement, {
+        rules: ['button-name', 'aria-allowed-attr', 'aria-prohibited-attr'],
+      })
+    })
+  })
+})
+
+@Component({
+  selector: 'ocx-consent',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: `<a class="cursor-pointer text-primary underline" (click)="clicks = clicks + 1">Withdraw</a>`,
+})
+class LegacyConsentMarkupComponent {
+  clicks = 0
+}
+
+describe('OcxConsentHarness with legacy withdraw markup', () => {
+  it('should find and click the legacy anchor withdraw control', async () => {
+    await TestBed.configureTestingModule({ imports: [LegacyConsentMarkupComponent] }).compileComponents()
+    const fixture = TestBed.createComponent(LegacyConsentMarkupComponent)
+    const harness = await TestbedHarnessEnvironment.harnessForFixture(fixture, OcxConsentHarness)
+
+    expect(await harness.isWithdrawVisible()).toBe(true)
+    await harness.clickWithdraw()
+
+    expect(fixture.componentInstance.clicks).toBe(1)
   })
 })

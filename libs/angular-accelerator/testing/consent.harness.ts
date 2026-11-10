@@ -1,6 +1,12 @@
 import { ComponentHarness } from '@angular/cdk/testing'
 import { ButtonHarness } from '@onecx/angular-testing'
 
+/**
+ * Matches the withdraw control: the native button (current markup) and the
+ * anchor used by earlier versions (legacy markup), so the harness works with both.
+ */
+const WITHDRAW_SELECTOR = 'button.ocx-consent__withdraw, a.cursor-pointer.text-primary.underline'
+
 export class OcxConsentHarness extends ComponentHarness {
   static hostSelector = 'ocx-consent'
 
@@ -21,12 +27,12 @@ export class OcxConsentHarness extends ComponentHarness {
   }
 
   async clickWithdraw(): Promise<void> {
-    const button = await this.locatorFor('a.cursor-pointer.text-primary.underline')()
+    const button = await this.locatorFor(WITHDRAW_SELECTOR)()
     await button.click()
   }
 
   async isWithdrawVisible(): Promise<boolean> {
-    const withdraw = await this.locatorForOptional('a.cursor-pointer.text-primary.underline')()
+    const withdraw = await this.locatorForOptional(WITHDRAW_SELECTOR)()
     return !!withdraw
   }
 
