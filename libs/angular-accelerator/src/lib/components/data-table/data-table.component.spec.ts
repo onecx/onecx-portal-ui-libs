@@ -398,6 +398,16 @@ describe('DataTableComponent', () => {
     })
   })
 
+  describe('column header tooltips', () => {
+    it('should use the default cursor for column header labels with a tooltip', () => {
+      component.columns = [{ ...mockColumns[0], sortable: true, tooltipKey: 'CUSTOM_TOOLTIP' }]
+      fixture.detectChanges()
+
+      const label: HTMLElement = fixture.nativeElement.querySelector(`#${mockColumns[0].id}-header-name`)
+      expect(label.style.cursor).toBe('default')
+    })
+  })
+
   describe('Frozen action column', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewTableRow.subscribe((event) => console.log(event))

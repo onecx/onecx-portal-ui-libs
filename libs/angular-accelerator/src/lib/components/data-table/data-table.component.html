@@ -182,6 +182,7 @@
                 class="flex"
                 id="{{column.id}}-header-name"
                 [ocxTooltip]="column.tooltipKey ? (column.tooltipKey | translate) : ''"
+                ocxTooltipCursor="default"
                 tooltipPosition="top"
               >
                 <ng-container [ngTemplateOutlet]="columnHeaderLabel" [ngTemplateOutletContext]="{ column: column }"></ng-container>
