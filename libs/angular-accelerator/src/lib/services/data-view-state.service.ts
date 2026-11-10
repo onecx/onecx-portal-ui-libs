@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core'
+import { Injectable, effect, signal } from '@angular/core'
+import { warnOnActionsWithoutLabelKey } from '../utils/row-action-label.utils'
 import { Filter } from '../model/filter.model'
 import { DataAction } from '../model/data-action'
 import { DataTableColumn } from '../model/data-table-column.model'
@@ -43,4 +44,9 @@ export class DataViewStateService {
   pageSize = signal<number | undefined>(10)
   listGridPaginator = signal<boolean>(true)
   tablePaginator = signal<boolean>(true)
+
+  constructor() {
+    // Single place for the dev-mode warning, so it is logged once per change even if several views share this state
+    effect(() => warnOnActionsWithoutLabelKey(this.additionalActions()))
+  }
 }
