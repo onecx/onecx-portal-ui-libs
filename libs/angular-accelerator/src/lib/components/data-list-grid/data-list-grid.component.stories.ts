@@ -10,7 +10,6 @@ import { UserServiceMock, provideUserServiceMock } from '@onecx/angular-integrat
 import { StorybookTranslateModule } from './../../storybook-translate.module'
 import { DataListGridComponent } from './data-list-grid.component'
 import { IfPermissionDirective } from '../../directives/if-permission.directive'
-import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { TooltipModule } from '@openng/optimus-ui/tooltip'
@@ -40,7 +39,7 @@ const DataListGridComponentSBConfig: Meta<DataListGridComponent> = {
       ],
     }),
     moduleMetadata({
-      declarations: [DataListGridComponent, IfPermissionDirective, TooltipOnOverflowDirective],
+      declarations: [DataListGridComponent, IfPermissionDirective],
       imports: [
         DataViewModule,
         MenuModule,

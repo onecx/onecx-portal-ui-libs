@@ -668,6 +668,49 @@ describe('CustomGroupColumnSelectorComponent', () => {
     })
   })
 
+  describe('responsive layout (WCAG 1.4.10 reflow)', () => {
+    function openDialog() {
+      const a = makeColumn('A_very_long_column_name_without_any_spaces_that_must_wrap')
+      const b = makeColumn('B')
+      fixture.componentRef.setInput('columns', [a, b])
+      fixture.componentRef.setInput('displayedColumns', [a])
+      component.onOpenCustomGroupColumnSelectionDialogClick()
+      fixture.detectChanges()
+    }
+
+    it('should stack the pick list below 640px and keep two columns above', () => {
+      openDialog()
+      const pickList = component.pickList()
+
+      expect(pickList?.responsive).toBe(true)
+      expect(pickList?.breakpoint).toBe('639px')
+    })
+
+    it('should widen the dialog to the viewport below 640px', () => {
+      openDialog()
+      const dialog = fixture.debugElement.query(By.css('p-dialog')).componentInstance
+
+      expect(dialog.breakpoints).toEqual({ '640px': '95vw' })
+    })
+
+    it('should let pick list item labels wrap instead of overflowing', () => {
+      openDialog()
+      const items: HTMLElement[] = Array.from(document.querySelectorAll('.p-picklist .p-listbox-option .wrap-anywhere'))
+
+      expect(items.length).toBe(2)
+      expect(items.map((item) => item.textContent?.trim())).toContain(
+        'A_very_long_column_name_without_any_spaces_that_must_wrap'
+      )
+    })
+
+    it('should let the action column settings wrap on narrow viewports', () => {
+      openDialog()
+      const settings = document.querySelector('#frozenActionColumn')?.closest('.flex')
+
+      expect(settings?.classList).toContain('flex-wrap')
+    })
+  })
+
   describe('pick list selection cleared on reopen', () => {
     it('should clear the stale item selection so no option stays highlighted after close and reopen', () => {
       const a = makeColumn('A')

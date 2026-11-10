@@ -23,6 +23,8 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from './data-list-grid.component'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { DataSortDirection } from '../../model/data-sort-direction'
+import { By } from '@angular/platform-browser'
+import { TooltipOnOverflowDirective } from '../../directives/tooltipOnOverflow.directive'
 
 ensureOriginMockExists()
 ensureIntersectionObserverMockExists()
@@ -429,6 +431,62 @@ describe('DataListGridComponent', () => {
     fixture.detectChanges()
     await fixture.whenStable()
   }
+  describe('list cell reflow (WCAG 1.4.10 / 1.4.12)', () => {
+    beforeEach(async () => {
+      fixture.componentRef.setInput('layout', 'list')
+      fixture.detectChanges()
+      await setUpListActionButtonMockData()
+      // Let the harness stabilize the fixture so the deferred list items are rendered.
+      await listGrid.getActionButtons('list')
+    })
+
+    it('should render the list items with action buttons', async () => {
+      expect((await listGrid.getActionButtons('list')).length).toBeGreaterThan(0)
+    })
+
+    it('should not apply the mouse-only tooltip-on-overflow truncation to list cells', () => {
+      expect(fixture.debugElement.queryAll(By.directive(TooltipOnOverflowDirective)).length).toBe(0)
+    })
+
+    it('should let list cell labels and values wrap instead of truncating them', () => {
+      const cells: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.ocx-data-list-grid-cell'))
+      expect(cells.length).toBeGreaterThan(0)
+
+      for (const cell of cells) {
+        expect(cell.classList).toContain('wrap-anywhere')
+        expect(cell.classList).toContain('max-w-full')
+        const label = cell.querySelector<HTMLElement>('.ocx-data-list-grid-cell-label')
+        const value = cell.querySelector<HTMLElement>('.ocx-data-list-grid-cell-value')
+        expect(label).not.toBeNull()
+        expect(value).not.toBeNull()
+      }
+    })
+
+    it('should wrap the item title row and its action buttons on narrow viewports', () => {
+      const titleRows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.item-name-row'))
+      expect(titleRows.length).toBeGreaterThan(0)
+      for (const row of titleRows) {
+        expect(row.classList).toContain('flex-wrap')
+        expect(row.querySelector('.item-name')?.classList).toContain('wrap-anywhere')
+      }
+    })
+  })
+
+  describe('grid item reflow (WCAG 1.4.10)', () => {
+    it('should let grid item titles and subtitles wrap', async () => {
+      fixture.componentRef.setInput('layout', 'grid')
+      fixture.detectChanges()
+      await fixture.whenStable()
+
+      const gridItems: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.data-grid-items'))
+      expect(gridItems.length).toBeGreaterThan(0)
+      for (const item of gridItems) {
+        expect(item.classList).toContain('wrap-anywhere')
+        expect(item.classList).toContain('min-w-0')
+      }
+    })
+  })
+
   describe('Disable list action buttons based on field path', () => {
     it('should not disable any list action button by default', async () => {
       fixture.componentRef.setInput('layout', 'list')
