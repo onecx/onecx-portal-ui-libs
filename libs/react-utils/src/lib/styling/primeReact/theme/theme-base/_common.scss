@@ -74,3 +74,30 @@
     }
   }
 }
+
+/*
+ * WCAG 2.3.3 (Animation from Interactions) and 2.2.2 (Pause, Stop, Hide):
+ * when the operating system asks for reduced motion, PrimeReact components run
+ * their animations and transitions in a single, near-instant step. Infinite
+ * effects (skeleton shimmer, spinning loading icons, progress spinners) stop
+ * and overlays (dialogs, dropdown panels, masks) open and close without a
+ * visible transition. A short duration is used instead of `none` so that
+ * `animationend` / `transitionend` still fire and `forwards` animations keep
+ * their end state.
+ *
+ * `:not(#\#)` matches every element (no element has the id "#") but lifts
+ * the selector to ID-level specificity, so these rules win over every
+ * class-based PrimeReact animation rule without resorting to `!important`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :is(.p-component, .p-progress-spinner, .p-component-overlay):not(#\#),
+  :is(.p-component, .p-progress-spinner) :not(#\#),
+  :is(.p-component, .p-component *):not(#\#)::before,
+  :is(.p-component, .p-component *):not(#\#)::after {
+    animation-duration: 1ms;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+    transition-duration: 1ms;
+    transition-delay: 0s;
+  }
+}

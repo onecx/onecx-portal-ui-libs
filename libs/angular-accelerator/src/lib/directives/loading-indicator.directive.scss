@@ -46,3 +46,10 @@ $loader-border-bottom-color: transparent;
 		left: 45%;
 	}
 }
+
+/* WCAG 2.3.3 / 2.2.2: show a static ring instead of an infinite spin when the user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.loader {
+		animation: none;
+	}
+}
