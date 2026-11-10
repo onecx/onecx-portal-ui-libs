@@ -52,6 +52,7 @@ import { DialogFooterComponent } from './components/dialog/dialog-footer/dialog-
 import { DialogInlineComponent } from './components/dialog/dialog-inline/dialog-inline.component'
 import { GlobalErrorComponent } from './components/error-component/global-error.component'
 import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component'
+import { AiAssistComponent } from './components/ai-assist/ai-assist.component'
 import { BasicDirective } from './directives/basic.directive'
 import { LoadingIndicatorDirective } from './directives/loading-indicator.directive'
 import { MessageService } from '@openng/optimus-ui/api'
@@ -85,6 +86,7 @@ function appInitializer(userService: UserService) {
     AddFilterDialogComponent
   ],
   declarations: [
+    AiAssistComponent,
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     DataLayoutSelectionComponent,
@@ -147,6 +149,7 @@ function appInitializer(userService: UserService) {
   ],
   exports: [
     AngularRemoteComponentsModule,
+    AiAssistComponent,
     ColumnGroupSelectionComponent,
     CustomGroupColumnSelectorComponent,
     DataLayoutSelectionComponent,
