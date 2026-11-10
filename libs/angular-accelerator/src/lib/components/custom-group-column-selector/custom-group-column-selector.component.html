@@ -101,18 +101,20 @@
   </div>
 
   <ng-template pTemplate="footer">
+    @let cancelLabel = cancelButtonLabel() || (cancelButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate);
+    @let saveLabel = saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate);
     <p-button
       id="cancelButton"
       (onClick)="onCancelClick()"
-      [label]="cancelButtonLabel() || (cancelButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_LABEL' | translate)"
+      [label]="cancelLabel"
       styleClass="p-button"
-      [ariaLabel]="cancelButtonLabel() || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.CANCEL_BUTTON_ARIA_LABEL' | translate)"
+      [ariaLabel]="cancelButtonAriaLabel() || (cancelButtonAriaLabelKey() | translate) || cancelLabel"
     ></p-button>
     <p-button
       id="saveButton"
       (onClick)="onSaveClick()"
-      [label]="saveButtonLabel() || (saveButtonLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_LABEL' | translate)"
-      [ariaLabel]="saveButtonAriaLabelKey() || (saveButtonAriaLabelKey() | translate) || ('OCX_CUSTOM_GROUP_COLUMN_SELECTOR.SAVE_BUTTON_ARIA_LABEL' | translate)"
+      [label]="saveLabel"
+      [ariaLabel]="saveButtonAriaLabel() || (saveButtonAriaLabelKey() | translate) || saveLabel"
       [disabled]="!canSave()"
     ></p-button>
   </ng-template>

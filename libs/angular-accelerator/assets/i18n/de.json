@@ -58,6 +58,11 @@
       "DESCENDING_TOOLTIP": "Absteigend sortieren",
       "DEFAULT_TOOLTIP": "Standardsortierung"
     },
+    "DIRECTION": {
+      "ASCENDING": "Aufsteigend",
+      "DESCENDING": "Absteigend",
+      "NONE": "Keine"
+    },
     "SORTING_BUTTON_ARIA_LABEL": "Aktuelle Sortierrichtung: {{currentDirection}}. Sortierrichtung auf {{nextDirection}} ändern"
   },
   "OCX_DATA_TABLE": {
@@ -197,6 +202,9 @@
     "EXPORT": "Alle Ereignisse exportieren",
     "CONTROLS": {
       "ARIA_LABEL": "Suchsteuerungen"
+    },
+    "CRITERIA": {
+      "ARIA_LABEL": "Suchkriterien"
     },
     "ANNOUNCEMENTS": {
       "SEARCHING": "Suche läuft...",

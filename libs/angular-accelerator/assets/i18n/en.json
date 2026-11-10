@@ -58,7 +58,12 @@
       "DESCENDING_TOOLTIP": "Sort Descending",
       "DEFAULT_TOOLTIP": "Default Sort"
     },
-    "SORTING_BUTTON_ARIA_LABEL": "Current Sorting direction: {{currentDirection}}. Toggle sorting direction to {{nextDirection}}"
+    "DIRECTION": {
+      "ASCENDING": "Ascending",
+      "DESCENDING": "Descending",
+      "NONE": "None"
+    },
+    "SORTING_BUTTON_ARIA_LABEL": "Current sorting direction: {{currentDirection}}. Toggle sorting direction to {{nextDirection}}"
   },
   "OCX_DATA_TABLE": {
     "SEARCH_RESULTS_FOUND": "{{results}} Results Found",
@@ -196,6 +201,9 @@
     "EXPORT": "Export all events",
     "CONTROLS": {
       "ARIA_LABEL": "Search controls"
+    },
+    "CRITERIA": {
+      "ARIA_LABEL": "Search criteria"
     },
     "ANNOUNCEMENTS": {
       "SEARCHING": "Searching...",
