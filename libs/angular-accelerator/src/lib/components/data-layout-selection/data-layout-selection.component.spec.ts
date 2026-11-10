@@ -2,6 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { DataLayoutSelectionComponent } from './data-layout-selection.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { DataViewStateService } from '../../services/data-view-state.service'
+import { expectNoAxeViolations, provideTranslateTestingService } from '@onecx/angular-testing'
+import { FormsModule } from '@angular/forms'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 
 describe('DataLayoutSelectionComponent', () => {
   let component: DataLayoutSelectionComponent
@@ -11,14 +15,39 @@ describe('DataLayoutSelectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DataLayoutSelectionComponent],
-      imports: [TranslateModule.forRoot()],
-      providers: [DataViewStateService],
-      schemas: [],
+      imports: [TranslateModule.forRoot(), AngularAcceleratorOptimusModule, FormsModule, OcxTooltipDirective],
+      providers: [DataViewStateService, provideTranslateTestingService({})],
     }).compileComponents()
 
     fixture = TestBed.createComponent(DataLayoutSelectionComponent)
     component = fixture.componentInstance
     stateService = TestBed.inject(DataViewStateService)
+  })
+
+  it('should have no axe violations', async () => {
+    fixture.detectChanges()
+    await expectNoAxeViolations(fixture.nativeElement)
+  })
+
+  describe('layout toggle buttons', () => {
+    beforeEach(async () => {
+      fixture.componentRef.setInput('supportedViewLayouts', ['list', 'grid', 'table'])
+      fixture.detectChanges()
+      await fixture.whenStable()
+    })
+
+    // The unit-test axe run (happy-dom) does not flag a nameless custom-element host with role="button" (p-togglebutton),
+    // so this DOM assertion is the guard for the button names. The Storybook axe run covers button-name.
+    it('should give every icon-only toggle button a visually hidden accessible name', () => {
+      const toggleButtons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('[role="button"]'))
+
+      expect(toggleButtons.map((button) => button.querySelector('.sr-only')?.textContent?.trim())).toEqual([
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.LIST',
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.GRID',
+        'OCX_DATA_LAYOUT_SELECTION.LAYOUT.TABLE',
+      ])
+      toggleButtons.forEach((button) => expect(button.querySelector('.sr-only')?.closest('[aria-hidden]')).toBeNull())
+    })
   })
 
   it('should create', () => {
@@ -45,7 +74,7 @@ describe('DataLayoutSelectionComponent', () => {
       fixture.detectChanges()
       component.onDataViewLayoutChange({
         layout: 'table',
-        icon: 'pi pi-address-book'
+        icon: 'pi pi-address-book',
       })
 
       expect(stateService.layout()).toBe('table')
@@ -71,7 +100,6 @@ describe('DataLayoutSelectionComponent', () => {
 
   describe('onDataViewLayoutChange', () => {
     it('should call service setLayout and update layout signal', () => {
-
       fixture.detectChanges()
 
       component.onDataViewLayoutChange({ icon: 'x' as any, layout: 'grid' })
