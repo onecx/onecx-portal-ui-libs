@@ -1,6 +1,6 @@
 {
   "name": "@onecx/integration-interface",
-  "version": "9.0.0",
+  "version": "9.2.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "peerDependencies": {
     "rxjs": "^7.8.1",
     "zod": "^4.1.12",
-    "@onecx/accelerator": "9.0.0"
+    "@onecx/accelerator": "9.2.0"
   },
   "type": "module",
   "dependencies": {

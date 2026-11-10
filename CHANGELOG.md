@@ -1,3 +1,21 @@
+## [9.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.1.0...v9.2.0) (2026-11-06)
+
+### Features
+
+* move tailwind angular 22 app plugins to build-utils ([#1952](https://github.com/onecx/onecx-portal-ui-libs/issues/1952)) ([371b17e](https://github.com/onecx/onecx-portal-ui-libs/commit/371b17ed7dc0bc6d11847cf0cd30d6413ee592e8))
+
+### Bug Fixes
+
+* **angular-accelerator:** disable autofocus in filter-view ([#1928](https://github.com/onecx/onecx-portal-ui-libs/issues/1928)) ([9c64e0d](https://github.com/onecx/onecx-portal-ui-libs/commit/9c64e0db0f8f57d765c3a6d3f7a9d17628d79b7b)), closes [onecx/internal-tasks#514](https://github.com/onecx/internal-tasks/issues/514)
+* v9 column-header getting focused ([#1950](https://github.com/onecx/onecx-portal-ui-libs/issues/1950)) ([abdfd45](https://github.com/onecx/onecx-portal-ui-libs/commit/abdfd45417e3db2254e7db2524e5830e6d07022e))
+
+## [9.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0...v9.1.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1940](https://github.com/onecx/onecx-portal-ui-libs/issues/1940)) ([5d942c9](https://github.com/onecx/onecx-portal-ui-libs/commit/5d942c9bf32abde07e995232a655035900ede7bf))
+* implement issue [#387](https://github.com/onecx/onecx-portal-ui-libs/issues/387) - Render basic row groups in DataTable ([#1815](https://github.com/onecx/onecx-portal-ui-libs/issues/1815)) ([07df0e9](https://github.com/onecx/onecx-portal-ui-libs/commit/07df0e9be820a89c45e72e1402029a5171c310fc))
+
 ## [9.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.9999.0...v9.0.0) (2026-10-29)
 
 ### ⚠ BREAKING CHANGES

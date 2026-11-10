@@ -21,7 +21,14 @@ export default [
   {
     files: ['**/*.json'],
     rules: {
-      '@nx/dependency-checks': 'error',
+      '@nx/dependency-checks': [
+        'error',
+        {
+          // `@tailwindcss/postcss` is a peer dependency (installed by the consuming app) that is only
+          // `require`d lazily inside the tailwind-postcss.cjs plugin, so the static scanner can't see it.
+          ignoredDependencies: ['@tailwindcss/postcss'],
+        },
+      ],
     },
     languageOptions: {
       parser: jsoncEslintParser,

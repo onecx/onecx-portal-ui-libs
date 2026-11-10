@@ -1,6 +1,6 @@
 {
   "name": "@onecx/build-utils",
-  "version": "9.0.0",
+  "version": "9.2.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -19,7 +19,32 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.mjs"
     },
+    "./plugins/*": {
+      "require": "./plugins/*.cjs",
+      "import": "./plugins/*.cjs",
+      "default": "./plugins/*.cjs"
+    },
     "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "postcss": "^8.0.0",
+    "webpack": "^5.0.0",
+    "webpack-sources": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tailwindcss/postcss": {
+      "optional": true
+    },
+    "postcss": {
+      "optional": true
+    },
+    "webpack": {
+      "optional": true
+    },
+    "webpack-sources": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
