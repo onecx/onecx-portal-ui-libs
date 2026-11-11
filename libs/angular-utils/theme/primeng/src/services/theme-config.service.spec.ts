@@ -123,6 +123,7 @@ const THEME_V2_MOCK: CurrentThemes = {
     }
   }
 }
+
 describe('ThemeConfigService', () => {
   let currentThemes$: FakeTopic<CurrentThemes>
   let currentMfe$: FakeTopic<MfeInfo>
@@ -150,7 +151,7 @@ describe('ThemeConfigService', () => {
     semantic: { primary: { 500: '#mapped' } },
   }
 
-  const configure = (options: ThemeConfigServiceTestOptions = {}, extraProviders: any[] = []) => {
+  const configure = (options: ThemeConfigServiceTestOptions = {}, extraProviders: any[] = [], imports: any[] = []) => {
     currentThemes$ = new FakeTopic<CurrentThemes>()
     currentMfe$ = new FakeTopic<MfeInfo>({
       appId: 'app-id',
@@ -161,6 +162,7 @@ describe('ThemeConfigService', () => {
     const configServiceMock = { getProperty: jest.fn() }
 
     TestBed.configureTestingModule({
+      imports,
       providers: [
         ThemeConfigService,
         { provide: IS_ADVANCED_THEMING, useValue: options.isAdvanced ?? false },
@@ -681,6 +683,23 @@ describe('ThemeConfigService', () => {
 
       expect((properties.primitives?.variant?.primary?.bg as any)?.color).toEqual('#1976d2')
       expect(properties.primitives?.font?.family).toEqual('Inter, sans-serif')
+    })
+
+    it('throws when the slot group maps to an unknown region', async () => {
+      const rcContext = new ReplaySubject<{ slotGroupName: string }>(1)
+      rcContext.next({ slotGroupName: SLOT_GROUP_PREFIX + 'body' })
+
+      configure({}, [
+        { provide: REMOTE_COMPONENT_CONTEXT, useValue: rcContext }
+      ])
+      const themeConfigService = TestBed.inject(ThemeConfigService)
+      const themeParam = { ...THEME_V2_MOCK, properties: THEME_V2_MOCK.properties.v2 ?? {} }
+
+      const invoke = () => (themeConfigService['getThemeProperties'])(themeParam)
+
+      await expect(invoke()).rejects.toThrow(
+        `Invalid slot group name: ${SLOT_GROUP_PREFIX}body. Expected one of: header, subHeader, bodyStart, bodyHeader, bodyFooter, bodyEnd, footer`
+      )
     })
   })
 })

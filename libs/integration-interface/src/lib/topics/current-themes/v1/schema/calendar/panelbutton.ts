@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for calendar panel buttons.
@@ -18,19 +19,31 @@ const calendarPanelButtonStateShape = z.object({
  * `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarPanelButtonShape = z.object({
-  width: withRef(z.string()).optional(),
-  height: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
+export const calendarPanelButtonShape = z
+  .object({
+    width: withRef(
+      z.string().register(themeSchemaRegistry, { id: 'calendarPanelButtonWidth', axis: 'none' })
+    ).optional(),
+    height: withRef(
+      z.string().register(themeSchemaRegistry, { id: 'calendarPanelButtonHeight', axis: 'none' })
+    ).optional(),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'calendarPanelButtonFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z.object({
-    defaultState: calendarPanelButtonStateShape.prefault({}),
-    hover: calendarPanelButtonStateShape.prefault({}),
-    focus: calendarPanelButtonStateShape.prefault({}),
-    active: calendarPanelButtonStateShape.prefault({}),
-    disabled: calendarPanelButtonStateShape.prefault({}),
-  }).prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: calendarPanelButtonStateShape.prefault({}),
+        hover: calendarPanelButtonStateShape.prefault({}),
+        focus: calendarPanelButtonStateShape.prefault({}),
+        active: calendarPanelButtonStateShape.prefault({}),
+        disabled: calendarPanelButtonStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarPanelButtonVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarPanelButtonShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for calendar panel buttons.

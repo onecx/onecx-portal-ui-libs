@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for calendar picker cells. No named severities exist for this
@@ -21,16 +22,21 @@ const calendarPickerCellStateShape = z.object({
  * Shape for calendar picker cells (dateCell, monthCell, yearCell).
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarPickerCellShape = z.object({
-  defaultVariant: z.object({
-    defaultState: calendarPickerCellStateShape.prefault({}),
-    hover: calendarPickerCellStateShape.prefault({}),
-    selected: calendarPickerCellStateShape.prefault({}),
-    focus: calendarPickerCellStateShape.prefault({}),
-    active: calendarPickerCellStateShape.prefault({}),
-    disabled: calendarPickerCellStateShape.prefault({}),
-  }).prefault({}),
-})
+export const calendarPickerCellShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarPickerCellStateShape.prefault({}),
+        hover: calendarPickerCellStateShape.prefault({}),
+        selected: calendarPickerCellStateShape.prefault({}),
+        focus: calendarPickerCellStateShape.prefault({}),
+        active: calendarPickerCellStateShape.prefault({}),
+        disabled: calendarPickerCellStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarPickerCellVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarPickerCellShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for calendar picker cells.

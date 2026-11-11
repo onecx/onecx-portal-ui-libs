@@ -4,7 +4,7 @@ import { toColorString } from '../../../mapper.utils';
 export const baseRules: MappingRule[] = [
   // ─── Root ─────────────────────────────────────────────────────────────────
   {
-    from: 'usages.tabs.tab.activeBar.transition.duration',
+    from: 'usages.tabs.tab.defaultState.activeBar.transition.duration',
     to: 'components.tabs.root.transitionDuration',
   },
 

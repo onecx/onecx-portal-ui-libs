@@ -24,28 +24,36 @@ const SPINNER: CssRule = {
   selector: '.full-overlay .loader,.element-overlay .loader',
   declarations: [
     {
-      property: 'border-color',
-      from: 'usages.loadingIndicator.spinner.border.color',
+      property: 'border-top-color',
+      from: 'usages.loadingIndicator.overlay.spinner.border.color',
+    },
+    {
+      property: 'border-right-color',
+      from: 'usages.loadingIndicator.overlay.spinner.border.color',
+    },
+    {
+      property: 'border-left-color',
+      from: 'usages.loadingIndicator.overlay.spinner.border.color',
     },
     {
       property: 'border-bottom-color',
-      from: 'usages.loadingIndicator.spinner.border.trackColor',
+      value: 'transparent',
     },
     {
       property: 'width',
-      from: 'usages.loadingIndicator.spinner.size',
+      from: 'usages.loadingIndicator.overlay.spinner.size',
     },
     {
       property: 'height',
-      from: 'usages.loadingIndicator.spinner.size',
+      from: 'usages.loadingIndicator.overlay.spinner.size',
     },
     {
       property: 'border-width',
-      from: 'usages.loadingIndicator.spinner.border.width',
+      from: 'usages.loadingIndicator.overlay.spinner.border.width',
     },
     {
       property: 'animation-duration',
-      from: 'usages.loadingIndicator.spinner.animationDuration',
+      from: 'usages.loadingIndicator.overlay.spinner.animationDuration',
     },
   ],
 };

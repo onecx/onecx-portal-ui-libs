@@ -1,29 +1,25 @@
-import z from "zod"
-import { bg, withRef, transition } from "../primitives"
-import { themeSchemaRegistry } from "../registry"
+import * as z from 'zod'
+import { bg, withRef, transition } from '../primitives'
 
 /**
- * Tabs active bar component schema definition. Represents the active tab indicator for each tab.
+ * Tabs active bar shape. Represents the active-tab indicator bar.
  */
-export class TabsActiveBarSchema {
-    private static readonly tabsActiveBarTransitionTokens = {
-        duration: "{{primitives.transition.duration}}",
-    }
+export const tabsActiveBarShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  height: withRef(z.string()).optional(),
+  position: withRef(z.enum(['top', 'bottom', 'left', 'right'])).optional(),
+  positionOffset: withRef(z.string()).optional(),
+  transition: transition.optional(),
+  shadow: withRef(z.string()).optional(),
+})
 
-    private static readonly tokens = {
-        background: z
-            .union([bg, withRef(z.string())])
-            .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-        height: withRef(z.string()).default("{{primitives.border.width.sm}}"),
-        position: withRef(z.enum(['top', 'bottom', 'left', 'right'])).default('bottom'),
-        positionOffset: withRef(z.string()).default("{{primitives.space.none}}"),
-        transition: transition.default(this.tabsActiveBarTransitionTokens),
-        shadow: withRef(z.string()).default("{{primitives.shadow.none}}"),
-    }
-
-    static readonly schema = z
-        .object({
-            ...this.tokens,
-        })
-        .register(themeSchemaRegistry, { id: 'tabsActiveBar' })
+export const tabsActiveBarDefaults = {
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  height: '{{primitives.border.width.sm}}',
+  position: 'bottom',
+  positionOffset: '{{primitives.space.none}}',
+  transition: {
+    duration: '{{primitives.transition.duration}}',
+  },
+  shadow: '{{primitives.shadow.none}}',
 }

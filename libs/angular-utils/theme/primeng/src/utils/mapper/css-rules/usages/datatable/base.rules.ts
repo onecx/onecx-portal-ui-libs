@@ -7,27 +7,27 @@ export const baseRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.table.base.bg',
+        from: 'usages.dataTable.base.background',
       },
       {
         property: 'border-color',
-        from: 'usages.table.base.border.color',
+        from: 'usages.dataTable.base.border.color',
       },
       {
         property: 'border-width',
-        from: 'usages.table.base.border.width',
+        from: 'usages.dataTable.base.border.width',
       },
       {
         property: 'border-style',
-        from: 'usages.table.base.border.style',
+        from: 'usages.dataTable.base.border.style',
       },
       {
         property: 'border-radius',
-        from: 'usages.table.base.border.radius',
+        from: 'usages.dataTable.base.border.radius',
       },
       {
         property: 'box-shadow',
-        from: 'usages.table.base.shadow',
+        from: 'usages.dataTable.base.shadow',
       },
       {
         // Required for border-radius to clip child elements (header, rows).
@@ -64,7 +64,7 @@ export const baseRules: CssRule[] = [
     declarations: [
       {
         property: 'border-collapse',
-        from: 'usages.table.base.borderCollapse',
+        from: 'usages.dataTable.base.borderCollapse',
       },
     ],
   },
@@ -80,19 +80,19 @@ export const baseRules: CssRule[] = [
     declarations: [
       {
         property: 'border-top-width',
-        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.top',
+        from: 'usages.dataTable.row.cell.defaultState.border.width.top',
       },
       {
         property: 'border-right-width',
-        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.right',
+        from: 'usages.dataTable.row.cell.defaultState.border.width.right',
       },
       {
         property: 'border-bottom-width',
-        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.bottom',
+        from: 'usages.dataTable.row.cell.defaultState.border.width.bottom',
       },
       {
         property: 'border-left-width',
-        from: 'usages.table.row.defaultState.even.defaultState.cell.defaultState.border.width.left',
+        from: 'usages.dataTable.row.cell.defaultState.border.width.left',
       },
     ],
   },
@@ -103,7 +103,7 @@ export const baseRules: CssRule[] = [
     declarations: [
       {
         property: 'background',
-        from: 'usages.table.base.bg',
+        from: 'usages.dataTable.base.background',
       },
       {
         property: 'border-top',

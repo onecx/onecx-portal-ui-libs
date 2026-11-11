@@ -1,71 +1,99 @@
 import * as z from 'zod'
-import { dialog } from './schema/dialog'
-import { menubar } from './schema/menubar'
+import { dialog, dialogShape } from './schema/dialog'
+import { menubar, menubarShape } from './schema/menubar'
 import { primitives } from './schema/primitives'
 import { badge } from './schema/badge'
 import { badgeShape } from './schema/badge'
 import { region } from './schema/region'
-import { table } from './schema/table'
+import { dataTable, dataTableShape } from './schema/data-table/data-table'
 import { tooltip } from './schema/tooltip'
+import { tooltipShape } from './schema/tooltip'
 import { carousel } from './schema/carousel'
-import { toggleswitch } from './schema/toggleswitch'
-import { tabs } from './schema/tabs'
+import type { CarouselShapeInput } from './schema/carousel'
+import { toggleswitch, toggleSwitchShape } from './schema/toggleswitch'
+import { tabs, tabsShape } from './schema/tabs'
 import { themeSchemaRegistry } from './schema/registry'
-import { fieldset } from './schema/fieldset'
-import { diagram } from './schema/diagram'
-import { dropdown } from './schema/dropdown'
-import { dropdownShape } from './schema/dropdown'
-import { textarea } from './schema/textarea'
+import { FALLBACK_ORDER_DEFAULT, type RelaxedAxisKind } from './utils/axis-metadata'
+import { diagram, diagramShape } from './schema/diagram'
+import { groupByCountDiagram, groupByCountDiagramShape } from './schema/group-by-count-diagram'
+import { fieldset, fieldsetShape } from './schema/fieldset'
+import { dropdown, dropdownShape } from './schema/dropdown'
+import { textarea, textareaShape } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
 import { togglebutton, togglebuttonShape } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
+import { interactiveDataViewShape } from './schema/interactive-data-view/interactive-data-view'
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
+import { messageShape } from './schema/message/message'
 import { selectbutton, selectbuttonShape } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
-import { ripple } from './schema/ripple'
+import { loadingIndicatorShape } from './schema/loading-indicator'
+import { ripple, rippleShape } from './schema/ripple'
 import { panelmenu } from './schema/panelmenu'
 import type { PanelMenuShapeInput } from './schema/panelmenu'
 import { menu } from './schema/menu'
 import { breadcrumb } from './schema/breadcrumb'
+import { content, contentShape } from './schema/content'
 import { pageHeader } from './schema/page-header'
-import { content } from './schema/content'
 import { dataview } from './schema/dataview'
+import { dataviewShape } from './schema/dataview/dataview'
+import { chip, chipShape } from './schema/chip'
+import { customGroupColumnSelector, customGroupColumnSelectorShape } from './schema/custom-group-column-selector'
+import { dataListGrid, dataListGridShape } from './schema/data-list-grid'
+import { paginator, paginatorShape } from './schema/paginator'
+import { skeleton, skeletonShape } from './schema/skeleton'
+import { pageHeaderShape } from './schema/page-header/index'
+import { button, ButtonShapeInput } from './schema/button'
+import { multiselect, multiselectShape } from './schema/multiselect'
 
 type UsagesInput = {
-  dialog?: z.input<typeof dialog>
+  dialog?: z.input<typeof dialogShape>
   badge?: z.input<typeof badgeShape>
-  menubar?: z.input<typeof menubar>
+  menubar?: z.input<typeof menubarShape>
   region?: z.input<typeof region>
-  table?: z.input<typeof table>
-  tooltip?: z.input<typeof tooltip>
-  carousel?: z.input<typeof carousel>
-  fieldset?: z.input<typeof fieldset>
-  diagram?: z.input<typeof diagram>
+  dataTable?: z.input<typeof dataTableShape>
+  tooltip?: z.input<typeof tooltipShape>
+  carousel?: CarouselShapeInput
+  fieldset?: z.input<typeof fieldsetShape>
   dropdown?: z.input<typeof dropdownShape>
-  tabs?: z.input<typeof tabs>
-  toggleswitch?: z.input<typeof toggleswitch>
-  textarea?: z.input<typeof textarea>
+  diagram?: z.input<typeof diagramShape>
+  groupByCountDiagram?: z.input<typeof groupByCountDiagramShape>
+  tabs?: z.input<typeof tabsShape>
+  toggleswitch?: z.input<typeof toggleSwitchShape>
+  textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
   togglebutton?: z.input<typeof togglebuttonShape>
   calendar?: CalendarShapeInput
-  interactiveDataView?: z.input<typeof interactiveDataView>
+  interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
-  message?: z.input<typeof message>
+  message?: z.input<typeof messageShape>
   selectbutton?: z.input<typeof selectbuttonShape>
-  loadingIndicator?: z.input<typeof loadingIndicator>
-  ripple?: z.input<typeof ripple>
+  loadingIndicator?: z.input<typeof loadingIndicatorShape>
+  ripple?: z.input<typeof rippleShape>
   panelmenu?: PanelMenuShapeInput
   menu?: z.input<typeof menu>
   breadcrumb?: z.input<typeof breadcrumb>
-  pageHeader?: z.input<typeof pageHeader>
-  content?: z.input<typeof content>
-  dataview?: z.input<typeof dataview>
+  pageHeader?: z.input<typeof pageHeaderShape>
+  content?: z.input<typeof contentShape>
+  dataview?: z.input<typeof dataviewShape>
+  chip?: z.input<typeof chipShape>
+  customGroupColumnSelector?: z.input<typeof customGroupColumnSelectorShape>
+  dataListGrid?: z.input<typeof dataListGridShape>
+  paginator?: z.input<typeof paginatorShape>
+  skeleton?: z.input<typeof skeletonShape>
+  // Hand-written concrete type (mirrors `CalendarShapeInput`/`PanelMenuShapeInput`) — the loose
+  // `applyDefaultsRecursive` output would expose no keys and collapse the `usages.button` arm of
+  // `ThemePath`. See `ButtonShapeInput` in schema/button.
+  button?: ButtonShapeInput
+  multiselect?: z.input<typeof multiselectShape>
 }
+
+type UsageSettingsInput<TUsage> = TUsage extends { settings?: infer TSettings } ? TSettings : never
 
 const usages: z.ZodType<UsagesInput> = z
   .object({
@@ -73,12 +101,13 @@ const usages: z.ZodType<UsagesInput> = z
     badge: (badge as typeof badge).optional(),
     menubar: (menubar as typeof menubar).optional(),
     region: (region as typeof region).optional(),
-    table: (table as typeof table).optional(),
+    dataTable: (dataTable as typeof dataTableShape).optional(),
     tooltip: (tooltip as typeof tooltip).optional(),
     carousel: (carousel as typeof carousel).optional(),
     tabs: (tabs as typeof tabs).optional(),
-    fieldset: (fieldset as typeof fieldset).optional(),
+    fieldset: (fieldset as typeof fieldsetShape).optional(),
     diagram: (diagram as typeof diagram).optional(),
+    groupByCountDiagram: (groupByCountDiagram as typeof groupByCountDiagram).optional(),
     input: (input as typeof input).optional(),
     dropdown: (dropdown as typeof dropdown).optional(),
     toggleswitch: (toggleswitch as typeof toggleswitch).optional(),
@@ -98,6 +127,13 @@ const usages: z.ZodType<UsagesInput> = z
     pageHeader: (pageHeader as typeof pageHeader).optional(),
     content: (content as typeof content).optional(),
     dataview: (dataview as typeof dataview).optional(),
+    chip: (chip as typeof chip).optional(),
+    customGroupColumnSelector: (customGroupColumnSelector as typeof customGroupColumnSelector).optional(),
+    dataListGrid: (dataListGrid as typeof dataListGrid).optional(),
+    paginator: (paginator as typeof paginator).optional(),
+    skeleton: (skeleton as typeof skeleton).optional(),
+    button: (button as typeof button).optional(),
+    multiselect: (multiselect as typeof multiselect).optional(),
   })
   .register(themeSchemaRegistry, { id: 'usages' })
 
@@ -136,6 +172,7 @@ export const themePropertiesV2 = z
     primitives: primitives as typeof primitives,
     usages: usages.optional(),
     regionOverrides: regionOverrides as typeof regionOverrides,
+    fallbackOrder: z.array(z.enum(['state', 'variant', 'severity'])).default(FALLBACK_ORDER_DEFAULT),
   })
   .register(themeSchemaRegistry, { id: 'themePropertiesV2' })
 
@@ -153,7 +190,16 @@ export type ThemePropertiesV2 = {
   primitives?: PrimitivesInput
   usages?: UsagesInput
   regionOverrides?: RegionOverridesInput
+  fallbackOrder?: RelaxedAxisKind[]
 }
+
+export type ThemeUsageName = keyof UsagesInput
+export type ThemeUsageNameWithSettings = {
+  [TUsage in ThemeUsageName]: UsageSettingsInput<NonNullable<UsagesInput[TUsage]>> extends never ? never : TUsage
+}[ThemeUsageName]
+export type ThemeUsageSettings<TUsage extends ThemeUsageNameWithSettings> = UsageSettingsInput<
+  NonNullable<UsagesInput[TUsage]>
+>
 
 export type ThemeProperties = {
   v2?: ThemePropertiesV2

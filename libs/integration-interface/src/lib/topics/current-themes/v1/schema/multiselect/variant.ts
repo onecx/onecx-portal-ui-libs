@@ -1,18 +1,16 @@
+/**
+ * The content shared by `defaultVariant` and `filled` (see `./multiselect.ts`): `labelContainer`
+ * and `overlay`. Only the shape is shared here — defaults differ per variant and are composed
+ * in `multiselect.ts`.
+ */
 import * as z from 'zod'
 import { themeSchemaRegistry } from '../registry'
-import { MultiselectLabelContainerSchema } from './labelcontainer'
-import { MultiselectOverlaySchema } from './overlay'
+import { multiselectLabelContainerShape } from './labelcontainer'
+import { multiselectOverlayShape } from './overlay'
 
-/**
- * Multiselect variant schema.
- */
-export class MultiselectVariantSchema {
-  static readonly schema = z
-    .object({
-      labelContainer: (
-        MultiselectLabelContainerSchema.schema as typeof MultiselectLabelContainerSchema.schema
-      ).prefault({}),
-      overlay: (MultiselectOverlaySchema.schema as typeof MultiselectOverlaySchema.schema).prefault({}),
-    })
-    .register(themeSchemaRegistry, { id: 'multiselectVariant' })
-}
+export const multiselectVariantShape = z
+  .object({
+    labelContainer: multiselectLabelContainerShape.prefault({}),
+    overlay: multiselectOverlayShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'multiselectVariantShape' })

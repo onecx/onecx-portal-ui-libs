@@ -4,48 +4,50 @@ import { toColorString } from '../../../mapper.utils';
 export const footerRules: MappingRule[] = [
   // ─── Footer row ───────────────────────────────────────────────────────────
   {
-    from: 'usages.table.footer.defaultState.bg',
+    from: 'usages.dataTable.footer.background',
     to: 'components.datatable.footer.background',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.contrast',
+    from: 'usages.dataTable.footer.color',
     to: 'components.datatable.footer.color',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.border.color',
+    from: 'usages.dataTable.footer.border.color',
     to: 'components.datatable.footer.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.border.width',
+    from: 'usages.dataTable.footer.border.width',
     to: 'components.datatable.footer.borderWidth',
     transform: (v) => (typeof v === 'string' ? v : undefined),
   },
+  // PrimeNG's footer token takes a single padding value; the vertical axis is
+  // handled by the companion CSS rules (padding-top / padding-bottom).
   {
-    from: 'usages.table.footer.defaultState.padding',
+    from: 'usages.dataTable.footer.paddingX',
     to: 'components.datatable.footer.padding',
   },
 
   // ─── Footer cells ─────────────────────────────────────────────────────────
   {
-    from: 'usages.table.footer.defaultState.cell.defaultState.bg',
+    from: 'usages.dataTable.footer.cell.defaultState.background',
     to: 'components.datatable.footerCell.background',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.cell.defaultState.contrast',
+    from: 'usages.dataTable.footer.cell.defaultState.color',
     to: 'components.datatable.footerCell.color',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.cell.defaultState.border.color',
+    from: 'usages.dataTable.footer.cell.defaultState.border.color',
     to: 'components.datatable.footerCell.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.table.footer.defaultState.cell.defaultState.padding',
+    from: 'usages.dataTable.footer.cell.defaultState.paddingX',
     to: 'components.datatable.footerCell.padding',
   },
 ];

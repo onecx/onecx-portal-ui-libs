@@ -1,3 +1,1 @@
-import { MessageSchema } from "./message/index"
-
-export const message = MessageSchema.schema
+export { message } from './message/message'

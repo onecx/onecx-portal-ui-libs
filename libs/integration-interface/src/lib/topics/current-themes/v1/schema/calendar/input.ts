@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { inputShape, inputDefaults } from '../input'
 import { calendarIconShape, calendarIconDefaults } from './inputicon'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape for the calendar's input field.
@@ -15,10 +16,12 @@ import { calendarIconShape, calendarIconDefaults } from './inputicon'
  * (A shallow `.extend()` cannot re-nest the generic input's severity blocks,
  * so calendar-only tokens are added at the root rather than inside a state.)
  */
-export const calendarInputShape = inputShape.extend({
-  icon: calendarIconShape.prefault({}),
-  shadow: z.string().optional(),
-})
+export const calendarInputShape = inputShape
+  .extend({
+    icon: calendarIconShape.prefault({}),
+    shadow: z.string().register(themeSchemaRegistry, { id: 'calendarInputShadow', axis: 'none' }).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarInputShape', axis: 'variant', child: true })
 
 /**
  * Defaults for the calendar input.

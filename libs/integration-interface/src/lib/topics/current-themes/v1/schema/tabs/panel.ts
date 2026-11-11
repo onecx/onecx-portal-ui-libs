@@ -1,31 +1,29 @@
+import * as z from 'zod'
+import { bg, color, font, withRef } from '../primitives'
+
 /**
- * Tabs panel component schema definition
+ * Tabs panel (tabpanel) shape. The content panel shown for the active tab.
  */
+export const tabsPanelShape = z.object({
+  font: font.pick({ size: true, weight: true, lineHeight: true }).optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  alignItems: withRef(z.string()).optional(),
+  justifyContent: withRef(z.string()).optional(),
+})
 
-import z from "zod"
-import { themeSchemaRegistry } from "../registry"
-import { bg, color, font, withRef } from "../primitives"
-
-export class TabsPanelSchema {
-    private static readonly panelFontTokens = {
-        size: "{{primitives.font.size}}",
-        weight: "{{primitives.font.weight}}",
-        lineHeight: "{{primitives.font.lineHeight}}",
-    }
-
-    private static readonly tokens = {
-        font: font.pick({size: true, weight: true, lineHeight: true}).default(this.panelFontTokens),
-        background: z.union([bg, withRef(z.string())]).default("{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}"),
-        color: color.default("{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}"),
-        paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-        paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-        alignItems: withRef(z.string()).default("{{primitives.layout.alignItems}}"),
-        justifyContent: withRef(z.string()).default("{{primitives.layout.justifyContent}}"),
-    }
-
-    static readonly schema = z
-        .object({
-        ...this.tokens,
-        })
-        .register(themeSchemaRegistry, { id: 'tabsPanel' })
+export const tabsPanelDefaults = {
+  font: {
+    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight}}',
+    lineHeight: '{{primitives.font.lineHeight}}',
+  },
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
+  alignItems: '{{primitives.layout.alignItems}}',
+  justifyContent: '{{primitives.layout.justifyContent}}',
 }

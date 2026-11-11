@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for calendar footer buttons (todayButton / clearButton).
@@ -23,18 +24,28 @@ const calendarFooterButtonStateShape = z.object({
  * `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarFooterButtonShape = z.object({
-  minWidth: withRef(z.string()).optional(),
-  focusRing: borderWithShadow.optional(),
+export const calendarFooterButtonShape = z
+  .object({
+    minWidth: withRef(
+      z.string().register(themeSchemaRegistry, { id: 'calendarFooterButtonMinWidth', axis: 'none' })
+    ).optional(),
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'calendarFooterButtonFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z.object({
-    defaultState: calendarFooterButtonStateShape.prefault({}),
-    hover: calendarFooterButtonStateShape.prefault({}),
-    focus: calendarFooterButtonStateShape.prefault({}),
-    active: calendarFooterButtonStateShape.prefault({}),
-    disabled: calendarFooterButtonStateShape.prefault({}),
-  }).prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: calendarFooterButtonStateShape.prefault({}),
+        hover: calendarFooterButtonStateShape.prefault({}),
+        focus: calendarFooterButtonStateShape.prefault({}),
+        active: calendarFooterButtonStateShape.prefault({}),
+        disabled: calendarFooterButtonStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarFooterButtonVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarFooterButtonShape', axis: 'variant', child: true })
 
 /**
  * Shared focus ring for the footer buttons.

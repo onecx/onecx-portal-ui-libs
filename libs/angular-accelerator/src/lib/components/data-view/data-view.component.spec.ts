@@ -18,6 +18,17 @@ import { ColumnType } from '../../model/column-type.model'
 import { DataListGridComponent } from '../data-list-grid/data-list-grid.component'
 import { DataTableComponent } from '../data-table/data-table.component'
 import { DataViewComponent } from './data-view.component'
+jest.mock('@onecx/angular-utils', () => {
+  const { signal } = jest.requireActual('@angular/core')
+  return {
+    ...jest.requireActual('@onecx/angular-utils'),
+    useAcceleratorTableThemeDefaults: jest.fn(() => ({
+      checkboxColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+      frozenActionColumnThemeSetting: signal<boolean | undefined>(undefined),
+      actionColumnPositionThemeSetting: signal<'left' | 'right' | undefined>(undefined),
+    })),
+  }
+})
 
 describe('DataViewComponent', () => {
   const mutationObserverMock = jest.fn(function MutationObserver(callback) {
@@ -264,8 +275,8 @@ describe('DataViewComponent', () => {
     it('should render an unpinnend action column on the right side of the table by default', async () => {
       component.viewItem.subscribe((event) => console.log(event))
 
-      expect(component.frozenActionColumn()).toBe(false)
-      expect(component.actionColumnPosition()).toBe('right')
+      expect(component.frozenActionColumnResolved()).toBe(false)
+      expect(component.actionColumnPositionResolved()).toBe('right')
       expect(await dataTable?.getActionColumnHeader('left')).toBe(null)
       expect(await dataTable?.getActionColumn('left')).toBe(null)
 

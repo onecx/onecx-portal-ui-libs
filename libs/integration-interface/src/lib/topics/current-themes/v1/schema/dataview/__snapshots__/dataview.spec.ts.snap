@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`dataview schema resolves the expected default token tree 1`] = `
+Object {
+  "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+  "border": Object {
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+    "offset": "{{primitives.border.offset.none}}",
+    "radius": "{{primitives.border.radius.none}}",
+    "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+    "width": "{{primitives.border.width.none}}",
+  },
+  "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+  "content": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "gap": "{{primitives.space.sm}}",
+    "paddingX": "{{primitives.space.sm}}",
+    "paddingY": "{{primitives.space.sm}}",
+  },
+  "footer": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "gap": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+    "paginator": Object {
+      "paddingX": "{{primitives.space.sm}}",
+      "paddingY": "{{primitives.space.sm}}",
+    },
+  },
+  "gap": "{{primitives.space.sm}}",
+  "header": Object {
+    "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+    "border": Object {
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+      "offset": "{{primitives.border.offset.none}}",
+      "radius": "{{primitives.border.radius.none}}",
+      "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+      "width": "{{primitives.border.width.none}}",
+    },
+    "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+    "gap": "{{primitives.space.md}}",
+    "paddingX": "{{primitives.space.md}}",
+    "paddingY": "{{primitives.space.md}}",
+    "paginator": Object {
+      "paddingX": "{{primitives.space.sm}}",
+      "paddingY": "{{primitives.space.sm}}",
+    },
+  },
+  "paddingX": "{{primitives.space.sm}}",
+  "paddingY": "{{primitives.space.sm}}",
+  "settings": Object {
+    "alwaysShowPaginator": true,
+    "loading": false,
+    "pageLinks": 5,
+    "paginator": false,
+    "paginatorDropdownScrollHeight": "200px",
+    "paginatorPosition": "bottom",
+    "showCurrentPageReport": false,
+    "showFirstLastIcon": true,
+    "showJumpToPageDropdown": false,
+    "showPageLinks": true,
+  },
+}
+`;

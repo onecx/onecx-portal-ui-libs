@@ -1,36 +1,33 @@
-import { withRef, bg, color, border } from "../primitives"
 import * as z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { TabsListContentSchema } from "./listContent"
-
+import { bg, color, border, withRef } from '../primitives'
+import { tabsListContentDefaults, tabsListContentShape } from './listContent'
 
 /**
- * Tabs list component schema definition. Tab list contains all tabs and allows to scroll through them if they don't fit into the viewport. 
+ * Tabs tablist shape. The tab list contains all tabs and allows scrolling
+ * through them if they don't fit into the viewport.
  */
-export class TabsTabListSchema {
-    private static readonly tabslistborderTokens = {
-        width: "{{primitives.border.width.none}}",
-        radius: "{{primitives.border.radius.none}}",
-        offset: "{{primitives.border.offset.none}}",
-        style: "{{primitives.border.style}}",
-        color: "{{primitives.border.color}}",
-    }
+export const tabsListShape = z.object({
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+  gap: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  border: border.optional(),
+  content: tabsListContentShape.prefault({}),
+})
 
-    private static readonly tokens = {
-        background: z
-        .union([bg, withRef(z.string())])
-        .default('{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}'),
-        color: color.default('{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}'),
-        gap: withRef(z.string()).default('{{primitives.space.md}}'),
-        paddingX: withRef(z.string()).default('{{primitives.space.md}}'),
-        paddingY: withRef(z.string()).default('{{primitives.space.md}}'),
-        border: border.default(this.tabslistborderTokens),
-    }
-
-    static readonly schema = z
-        .object({
-        ...this.tokens,
-        content: (TabsListContentSchema.schema as typeof TabsListContentSchema.schema).prefault({}),
-        })
-        .register(themeSchemaRegistry, { id: "tabsTabList" })
+export const tabsListDefaults = {
+  background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+  gap: '{{primitives.space.md}}',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
+  border: {
+    width: '{{primitives.border.width.none}}',
+    radius: '{{primitives.border.radius.none}}',
+    offset: '{{primitives.border.offset.none}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+  },
+  content: tabsListContentDefaults,
 }

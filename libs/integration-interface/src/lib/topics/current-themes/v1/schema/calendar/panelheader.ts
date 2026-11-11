@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 import { calendarNavigationSelectorShape, calendarNavigationSelectorDefaults } from './navigationselector'
 import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbutton'
 
@@ -8,11 +9,13 @@ import { calendarPanelButtonShape, calendarPanelButtonDefaults } from './panelbu
  * header. It is a static text element (no own variant/state tree), so its
  * tokens sit flat — analogous to `today` and `timeSeparator`.
  */
-const calendarYearMonthNavShape = z.object({
-  gap: withRef(z.string()).optional(),
-  font: font.pick({ weight: true, size: true }).optional(),
-  color: color.optional(),
-})
+const calendarYearMonthNavShape = z
+  .object({
+    gap: withRef(z.string()).optional(),
+    font: font.pick({ weight: true, size: true }).optional(),
+    color: color.optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarYearMonthNavShape', child: true })
 
 /**
  * Shape of a single state block of the calendar panel header.
@@ -37,15 +40,18 @@ const calendarPanelHeaderStateShape = z.object({
  * Shape for the calendar panel header.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarPanelHeaderShape = z.object({
-  defaultVariant: z
-    .object({
-      defaultState: calendarPanelHeaderStateShape.prefault({}),
-      hover: calendarPanelHeaderStateShape.prefault({}),
-      focus: calendarPanelHeaderStateShape.prefault({}),
-    })
-    .prefault({}),
-})
+export const calendarPanelHeaderShape = z
+  .object({
+    defaultVariant: z
+      .object({
+        defaultState: calendarPanelHeaderStateShape.prefault({}),
+        hover: calendarPanelHeaderStateShape.prefault({}),
+        focus: calendarPanelHeaderStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarPanelHeaderVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarPanelHeaderShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the calendar panel header.

@@ -1,21 +1,36 @@
 import type { CssRule } from '../../../mapper.types'
 
 export const filterViewRules: CssRule[] = [
-  // Focus ring on "show more" chip
   {
-    selector: '.filter-view-focusable:focus',
+    selector: 'ocx-filter-view',
     declarations: [
       {
-        property: 'outline-color',
-        from: 'usages.interactiveDataView.filterView.chip.color',
+        property: 'border-color',
+        from: 'usages.interactiveDataView.filterView.border.color',
       },
       {
-        property: 'outline-offset',
-        from: 'usages.interactiveDataView.filterView.chip.focusRing.offset',
+        property: 'border-width',
+        from: 'usages.interactiveDataView.filterView.border.width',
       },
       {
-        property: 'border-radius',
-        from: 'usages.interactiveDataView.filterView.chip.focusRing.radius',
+        property: 'background',
+        from: 'usages.interactiveDataView.filterView.background',
+      },
+      {
+        property: 'color',
+        from: 'usages.interactiveDataView.filterView.color',
+      },
+      {
+        property: 'gap',
+        from: 'usages.interactiveDataView.filterView.gap',
+      },
+      {
+        property: 'padding-inline',
+        from: 'usages.interactiveDataView.filterView.paddingX',
+      },
+      {
+        property: 'padding-block',
+        from: 'usages.interactiveDataView.filterView.paddingY',
       },
     ],
   },

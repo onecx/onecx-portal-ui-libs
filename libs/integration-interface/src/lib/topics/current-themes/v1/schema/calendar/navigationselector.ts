@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { bg, border, borderWithShadow, color, font, withRef } from '../primitives'
+import { themeSchemaRegistry } from '../registry'
 
 /**
  * Shape of a single state block for calendar navigation selectors. No named severities exist for
@@ -19,15 +20,23 @@ const calendarNavigationSelectorStateShape = z.object({
  * `defaultVariant.defaultState`.
  * All keys are optional — defaults are applied at the calendar schema level.
  */
-export const calendarNavigationSelectorShape = z.object({
-  focusRing: borderWithShadow.optional(),
+export const calendarNavigationSelectorShape = z
+  .object({
+    focusRing: borderWithShadow
+      .extend({})
+      .register(themeSchemaRegistry, { id: 'calendarNavigationSelectorFocusRing', axis: 'none' })
+      .optional(),
 
-  defaultVariant: z.object({
-    defaultState: calendarNavigationSelectorStateShape.prefault({}),
-    hover: calendarNavigationSelectorStateShape.prefault({}),
-    focus: calendarNavigationSelectorStateShape.prefault({}),
-  }).prefault({}),
-})
+    defaultVariant: z
+      .object({
+        defaultState: calendarNavigationSelectorStateShape.prefault({}),
+        hover: calendarNavigationSelectorStateShape.prefault({}),
+        focus: calendarNavigationSelectorStateShape.prefault({}),
+      })
+      .register(themeSchemaRegistry, { id: 'calendarNavigationSelectorVariantShape', axis: 'state' })
+      .prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'calendarNavigationSelectorShape', axis: 'variant', child: true })
 
 /**
  * Default tokens for the navigation selector.

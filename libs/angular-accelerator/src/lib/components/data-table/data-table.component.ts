@@ -36,7 +36,7 @@ import { ObjectUtils } from '../../utils/objectutils'
 import { findTemplate } from '../../utils/template.utils'
 import { PermissionInput } from '../../model/permission.model'
 import { DataSortBase } from '../data-sort-base/data-sort-base'
-import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
+import { HAS_PERMISSION_CHECKER, useAcceleratorTableThemeDefaults } from '@onecx/angular-utils'
 import { LiveAnnouncer } from '@angular/cdk/a11y'
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toObservable } from '@angular/core/rxjs-interop'
@@ -219,8 +219,19 @@ export class DataTableComponent extends DataSortBase implements OnInit {
   })
 
   additionalActions = model<DataAction[]>([])
-  frozenActionColumn = input<boolean>(false)
-  actionColumnPosition = input<'left' | 'right'>('right')
+
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = input<boolean | undefined>(undefined)
+  actionColumnPosition = input<'left' | 'right' | undefined>(undefined)
+
+  private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
+  checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+  frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
+  actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
+
+  checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
 
   expandedRows = model<Row[] | string[] | number[]>([])
   expandedRowIds = computed<(string | number)[]>(() =>
@@ -564,6 +575,7 @@ export class DataTableComponent extends DataSortBase implements OnInit {
     })
 
     this.rowSelectable = this.rowSelectable.bind(this)
+
   }
 
   ngOnInit(): void {

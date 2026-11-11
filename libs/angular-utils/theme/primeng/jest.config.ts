@@ -2,8 +2,8 @@
 import { createReportsConfig } from '../../../../jest-config-factory'
 
 export default {
-  ...createReportsConfig('angular-utils/theme'),
-  displayName: 'angular-utils/theme',
+  ...createReportsConfig('angular-utils/theme/primeng'),
+  displayName: 'angular-utils/theme/primeng',
   preset: '../../jest.preset.js',
   testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],

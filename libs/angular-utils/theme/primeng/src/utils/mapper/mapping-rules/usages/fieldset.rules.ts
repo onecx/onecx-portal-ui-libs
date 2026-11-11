@@ -3,100 +3,80 @@ import { toColorString } from '../../mapper.utils'
 
 const FIELDSET_CONTAINER: MappingRule[] = [
   {
-    from: 'usages.fieldset.background.color',
+    from: 'usages.fieldset.defaultVariant.background.color',
     to: 'components.fieldset.root.background',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.border.color',
+    from: 'usages.fieldset.defaultVariant.border.color',
     to: 'components.fieldset.root.borderColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.border.radius',
+    from: 'usages.fieldset.defaultVariant.border.radius',
     to: 'components.fieldset.root.borderRadius',
   },
   {
-    from: 'usages.fieldset.color',
+    from: 'usages.fieldset.defaultVariant.color',
     to: 'components.fieldset.root.color',
     transform: toColorString,
   },
-  {
-    from: 'usages.fieldset.padding',
-    to: 'components.fieldset.root.padding',
-  },
 ]
 
-const FIELDSET_LEGEND: MappingRule[] = [
+const FIELDSET_LEGEND_BUTTON: MappingRule[] = [
   {
-    from: 'usages.fieldset.legend.background.color',
+    from: 'usages.fieldset.legendButton.defaultState.background.color',
     to: 'components.fieldset.legend.background',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.color',
+    from: 'usages.fieldset.legendButton.defaultState.color',
     to: 'components.fieldset.legend.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.hover.color',
+    from: 'usages.fieldset.legendButton.hover.color',
     to: 'components.fieldset.legend.hoverColor',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.padding',
-    to: 'components.fieldset.legend.padding',
-  },
-  {
-    from: 'usages.fieldset.legend.font.weight',
+    from: 'usages.fieldset.legendButton.defaultState.font.weight',
     to: 'components.fieldset.legend.fontWeight',
   },
   {
-    from: 'usages.fieldset.legend.focusRing.width',
+    from: 'usages.fieldset.legendButton.defaultState.focusRing.width',
     to: 'components.fieldset.legend.focusRing.width',
   },
   {
-    from: 'usages.fieldset.legend.focusRing.style',
+    from: 'usages.fieldset.legendButton.defaultState.focusRing.style',
     to: 'components.fieldset.legend.focusRing.style',
   },
   {
-    from: 'usages.fieldset.legend.focus.color',
+    from: 'usages.fieldset.legendButton.focus.focusRing.color',
     to: 'components.fieldset.legend.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.focusRing.offset',
+    from: 'usages.fieldset.legendButton.defaultState.focusRing.offset',
     to: 'components.fieldset.legend.focusRing.offset',
-  },
-  {
-    from: 'usages.fieldset.legend.focusRing.shadow',
-    to: 'components.fieldset.legend.focusRing.shadow',
-  },
+  }
 ]
 
 const FIELDSET_TOGGLE_ICON: MappingRule[] = [
   {
-    from: 'usages.fieldset.legend.toggleIcon.color',
+    from: 'usages.fieldset.legendButton.defaultState.toggleIcon.color',
     to: 'components.fieldset.toggleIcon.color',
     transform: toColorString,
   },
   {
-    from: 'usages.fieldset.legend.toggleIcon.hover.color',
+    from: 'usages.fieldset.legendButton.hover.toggleIcon.color',
     to: 'components.fieldset.toggleIcon.hoverColor',
     transform: toColorString,
   },
 ]
 
-const FIELDSET_CONTENT: MappingRule[] = [
-  {
-    from: 'usages.fieldset.padding',
-    to: 'components.fieldset.content.padding',
-  },
-]
-
 export const fieldsetMappingRules: MappingRule[] = [
   ...FIELDSET_CONTAINER,
-  ...FIELDSET_LEGEND,
-  ...FIELDSET_CONTENT,
+  ...FIELDSET_LEGEND_BUTTON,
   ...FIELDSET_TOGGLE_ICON,
 ]

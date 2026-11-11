@@ -45,6 +45,7 @@ import { FilterViewComponentState, FilterViewDisplayMode } from '../filter-view/
 import { observableOutput } from '../../utils/observable-output.utils'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { PermissionInput } from '../../model/permission.model'
+import { useAcceleratorTableThemeDefaults } from '@onecx/angular-utils'
 
 export type ViewLayout = 'grid' | 'list' | 'table'
 
@@ -146,8 +147,19 @@ export class InteractiveDataViewComponent implements OnInit {
       []
     )
   })
-  frozenActionColumn = model<boolean>(false)
-  actionColumnPosition = model<'left' | 'right'>('right')
+  checkboxColumnPosition = input<'left' | 'right' | undefined>(undefined)
+  frozenActionColumn = model<boolean | undefined>(undefined)
+  actionColumnPosition = model<'left' | 'right' | undefined>(undefined)
+
+  private readonly tableThemeDefaults = useAcceleratorTableThemeDefaults()
+  checkboxColumnPositionThemeSetting = this.tableThemeDefaults.checkboxColumnPositionThemeSetting
+  frozenActionColumnThemeSetting = this.tableThemeDefaults.frozenActionColumnThemeSetting
+  actionColumnPositionThemeSetting = this.tableThemeDefaults.actionColumnPositionThemeSetting
+
+  checkboxColumnPositionResolved = computed(() => this.checkboxColumnPosition() ?? this.checkboxColumnPositionThemeSetting() ?? 'left')
+  frozenActionColumnResolved = computed(() => this.frozenActionColumn() ?? this.frozenActionColumnThemeSetting() ?? false)
+  actionColumnPositionResolved = computed(() => this.actionColumnPosition() ?? this.actionColumnPositionThemeSetting() ?? 'right')
+
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
@@ -584,8 +596,8 @@ export class InteractiveDataViewComponent implements OnInit {
       customGroupColumnSelectorComponentState$ = customGroupColumnSelectorComponentState$.pipe(
         startWith({
           actionColumnConfig: {
-            frozen: this.frozenActionColumn(),
-            position: this.actionColumnPosition(),
+            frozen: this.frozenActionColumnResolved(),
+            position: this.actionColumnPositionResolved(),
           },
           displayedColumns: this.displayedColumns(),
           activeColumnGroupKey: this.selectedGroupKey(),

@@ -2,7 +2,7 @@ import type { CssRule } from '../../mapper.types';
 
 // CSS rules for properties that have no PrimeNG preset equivalent.
 // Add a CssRule entry only when the property genuinely cannot be expressed
-// via a mapping rule. See dev-docs/theming/theme-v2.adoc § Adding a New CSS Rule.
+// via a mapping rule. See dev-docs/theming/theme-v2/theme-v2.adoc § Adding a New CSS Rule.
 
 export const toggleswitchCssRules: CssRule[] = [
   // border.style has no preset-token equivalent; applied as CSS custom prop.
@@ -11,7 +11,7 @@ export const toggleswitchCssRules: CssRule[] = [
     declarations: [
       {
         property: 'border-style',
-        from: 'usages.toggleswitch.border.style',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.border.style',
       },
     ],
   },
@@ -22,11 +22,11 @@ export const toggleswitchCssRules: CssRule[] = [
     declarations: [
       {
         property: 'width',
-        from: 'usages.toggleswitch.handle.width',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.width',
       },
       {
         property: 'height',
-        from: 'usages.toggleswitch.handle.height',
+        from: 'usages.toggleswitch.defaultVariant.defaultState.slider.handle.height',
       },
     ],
   },

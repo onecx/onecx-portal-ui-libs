@@ -4,6 +4,7 @@
 import * as z from 'zod'
 import { bg, border, color, withRef } from './primitives'
 import { themeSchemaRegistry } from './registry'
+import { applyDefaultsRecursive } from './defaults-helper'
 
 export const tooltipSettings = z
   .object({
@@ -13,23 +14,35 @@ export const tooltipSettings = z
   })
   .register(themeSchemaRegistry, { id: 'tooltipSettings' })
 
-export const tooltip = z
-  .object({
-    settings: (tooltipSettings as typeof tooltipSettings).optional(),
-    maxWidth: withRef(z.string()).default('{{primitives.layout.overlayMaxWidth}}'),
-    gutter: withRef(z.string()).default('{{primitives.space.sm}}'),
-    shadow: withRef(z.string()).default('{{primitives.shadow.md}}'),
-    padding: withRef(z.string()).default('{{primitives.space.md}}'),
-    border: border.default({
-      color: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.color}}',
-      style: '{{primitives.area.overlay.defaultState.defaultVariant.defaulSeverity.border.style}}',
-      width: '{{primitives.border.width.sm}}',
-      offset: '{{primitives.border.offset.sm}}',
-      radius: '{{primitives.border.radius.md}}',
-    }),
-    background: z
-      .union([bg, withRef(z.string())])
-      .default('{{primitives.area.overlay.defaultState.defaultVariant.bg}}'),
-    color: color.default('{{primitives.area.overlay.defaultState.defaultVariant.contrast}}'),
-  })
-  .register(themeSchemaRegistry, { id: 'tooltip' })
+export const tooltipShape = z.object({
+  settings: (tooltipSettings as typeof tooltipSettings).optional(),
+  maxWidth: withRef(z.string()).optional(),
+  gutter: withRef(z.string()).optional(),
+  shadow: withRef(z.string()).optional(),
+  paddingX: withRef(z.string()).optional(),
+  paddingY: withRef(z.string()).optional(),
+  border: border.optional(),
+  background: z.union([bg, withRef(z.string())]).optional(),
+  color: color.optional(),
+})
+
+export const tooltipDefaults = {
+  maxWidth: '{{primitives.layout.overlayMaxWidth}}',
+  gutter: '{{primitives.space.sm}}',
+  shadow: '{{primitives.shadow.md}}',
+  paddingX: '{{primitives.space.md}}',
+  paddingY: '{{primitives.space.md}}',
+  border: {
+    color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',
+    style: '{{primitives.area.overlay.defaultState.defaultSeverity.border.style}}',
+    width: '{{primitives.border.width.sm}}',
+    offset: '{{primitives.border.offset.sm}}',
+    radius: '{{primitives.border.radius.md}}',
+  },
+  background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
+  color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
+}
+
+export const tooltip = applyDefaultsRecursive(tooltipShape, tooltipDefaults).register(themeSchemaRegistry, {
+  id: 'tooltip',
+})

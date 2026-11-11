@@ -34,11 +34,11 @@ export const dialogMappingRules: MappingRule[] = [
     to: 'components.dialog.header.gap',
   },
   {
-    from: 'usages.dialog.title.fontSize',
+    from: 'usages.dialog.header.title.fontSize',
     to: 'components.dialog.title.fontSize',
   },
   {
-    from: 'usages.dialog.title.fontWeight',
+    from: 'usages.dialog.header.title.fontWeight',
     to: 'components.dialog.title.fontWeight',
   },
   {

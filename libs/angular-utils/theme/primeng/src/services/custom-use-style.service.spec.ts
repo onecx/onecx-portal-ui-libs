@@ -22,13 +22,18 @@ class ElementMock {
   // Element data
   isConnected = false
   textContent = ''
-  attribute = ''
+  private attributes = new Map<string, string>()
+
   constructor(tagName: string) {
     this.tagName = tagName
   }
 
   setAttribute(attr: string, value: string) {
-    this.attribute = `${attr}="${value}"`
+    this.attributes.set(attr, value)
+  }
+
+  getAttribute(attr: string): string | null {
+    return this.attributes.get(attr) ?? null
   }
 }
 
@@ -36,14 +41,22 @@ function removeSpacesAndNewlines(str?: string) {
   return str?.replace(/\s+/g, '')
 }
 
-jest.mock('@primeuix/utils', () => ({
-  setAttribute: (element: ElementMock, name: string, value: string) => {
-    element.setAttribute(name, value)
-  },
-  setAttributes: (element: ElementMock, attributes: Record<string, string>) => {
-    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value))
-  },
-}))
+// `virtual: true` is required: primeng's `primeng-usestyle` pulls in `@primeuix/utils` from its
+// own (transformed) `.mjs`, and without it this mock does not intercept that transitive import, so
+// the real `@primeuix/utils` runs — whose `isElement` guard no-ops on the fake element and never
+// sets `data-primeng-style-id`, breaking primeng's dedup-by-name.
+jest.mock(
+  '@primeuix/utils',
+  () => ({
+    setAttribute: (element: ElementMock, name: string, value: string) => {
+      element.setAttribute(name, value)
+    },
+    setAttributes: (element: ElementMock, attributes: Record<string, string>) => {
+      Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value))
+    },
+  }),
+  { virtual: true }
+)
 
 describe('CustomUseStyleService', () => {
   let service: CustomUseStyle
@@ -53,7 +66,12 @@ describe('CustomUseStyleService', () => {
 
   const documentMock: Partial<Document> = {
     querySelector(selectors: string) {
-      return styleList.find((s) => `style[${s.attribute}]` === selectors) ?? null
+      // Matches the single-attribute selectors primeng/the service issue, e.g.
+      // `style[data-primeng-style-id="name"]` / `style[data-variable-override-id="id"]`.
+      const match = /style\[([^\]=]+)="([^"]*)"\]/.exec(selectors)
+      if (!match) return null
+      const [, attr, value] = match
+      return styleList.find((s) => s.tagName === 'style' && s.getAttribute(attr) === value) ?? null
     },
     createElement(tagName: string) {
       return new ElementMock(tagName) as any as HTMLElement

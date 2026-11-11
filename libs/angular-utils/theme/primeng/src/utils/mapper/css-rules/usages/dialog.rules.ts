@@ -2,7 +2,7 @@ import type { CssRule } from '../../mapper.types'
 
 // CSS rules for properties that have no PrimeNG preset equivalent.
 // Add a CssRule entry only when the property genuinely cannot be expressed
-// via a mapping rule. See dev-docs/theming/theme-v2.adoc § Adding a New CSS Rule.
+// via a mapping rule. See dev-docs/theming/theme-v2/theme-v2.adoc § Adding a New CSS Rule.
 
 export const dialogCssRules: CssRule[] = [
   {
@@ -49,6 +49,24 @@ export const dialogCssRules: CssRule[] = [
       {
         property: 'justify-content',
         from: 'usages.dialog.footer.justifyContent',
+      },
+    ],
+  },
+  {
+    selector: '.p-dialog-close-button',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.dialog.header.closeButton.defaultState.color',
+      },
+    ],
+  },
+  {
+    selector: '.p-dialog-close-button:not(:disabled):hover',
+    declarations: [
+      {
+        property: 'color',
+        from: 'usages.dialog.header.closeButton.hover.color',
       },
     ],
   },

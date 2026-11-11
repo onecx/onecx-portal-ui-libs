@@ -1,3 +1,1 @@
-import { TabsSchema } from './tabs/tabs'
-
-export const tabs = TabsSchema.schema
+export { tabs, tabsShape } from './tabs/tabs'

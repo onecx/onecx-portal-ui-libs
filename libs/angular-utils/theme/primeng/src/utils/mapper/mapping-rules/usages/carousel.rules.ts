@@ -4,13 +4,13 @@ import { toColorString } from '../../mapper.utils';
 export const carouselMappingRules: MappingRule[] = [
   // ─── Transition ───────────────────────────────────────────────────────────
   {
-    from: 'usages.carousel.transition.duration',
+    from: 'usages.carousel.transitionDuration',
     to: 'components.carousel.root.transitionDuration',
   },
 
   // ─── Content ──────────────────────────────────────────────────────────────
   {
-    from: 'usages.carousel.content.gap',
+    from: 'usages.carousel.defaultVariant.content.gap',
     to: 'components.carousel.content.gap',
   },
 
@@ -20,57 +20,57 @@ export const carouselMappingRules: MappingRule[] = [
 
   // ─── Indicator - default state ────────────────────────────────────────────
   {
-    from: 'usages.carousel.indicator.bg',
+    from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.background',
     to: 'components.carousel.colorScheme.{mode}.indicator.background',
     transform: toColorString,
   },
   {
-    from: 'usages.carousel.indicator.width',
+    from: 'usages.carousel.defaultVariant.indicator.width',
     to: 'components.carousel.indicator.width',
   },
   {
-    from: 'usages.carousel.indicator.height',
+    from: 'usages.carousel.defaultVariant.indicator.height',
     to: 'components.carousel.indicator.height',
   },
   {
-    from: 'usages.carousel.indicator.border.radius',
+    from: 'usages.carousel.defaultVariant.indicator.defaultVariant.defaultState.border.radius',
     to: 'components.carousel.indicator.borderRadius',
   },
 
   // ─── Indicator - hover state ──────────────────────────────────────────────
   {
-    from: 'usages.carousel.indicator.hover.bg',
+    from: 'usages.carousel.defaultVariant.indicator.defaultVariant.hover.background',
     to: 'components.carousel.colorScheme.{mode}.indicator.hoverBackground',
     transform: toColorString,
   },
 
   // ─── Indicator - active state ─────────────────────────────────────────────
   {
-    from: 'usages.carousel.indicator.active.bg',
+    from: 'usages.carousel.defaultVariant.indicator.defaultVariant.active.background',
     to: 'components.carousel.colorScheme.{mode}.indicator.activeBackground',
     transform: toColorString,
   },
 
-  // ─── Indicator - focus ring (variant-level, not nested in focus state) ───
+  // ─── Indicator - focus ring (variant-level, not nested in a state) ───────
   {
-    from: 'usages.carousel.indicator.focusRing.width',
+    from: 'usages.carousel.defaultVariant.indicator.focusRing.width',
     to: 'components.carousel.indicator.focusRing.width',
   },
   {
-    from: 'usages.carousel.indicator.focusRing.style',
+    from: 'usages.carousel.defaultVariant.indicator.focusRing.style',
     to: 'components.carousel.indicator.focusRing.style',
   },
   {
-    from: 'usages.carousel.indicator.focusRing.color',
+    from: 'usages.carousel.defaultVariant.indicator.focusRing.color',
     to: 'components.carousel.colorScheme.{mode}.indicator.focusRing.color',
     transform: toColorString,
   },
   {
-    from: 'usages.carousel.indicator.focusRing.offset',
+    from: 'usages.carousel.defaultVariant.indicator.focusRing.offset',
     to: 'components.carousel.indicator.focusRing.offset',
   },
   {
-    from: 'usages.carousel.indicator.focusRing.shadow',
+    from: 'usages.carousel.defaultVariant.indicator.focusRing.shadow',
     to: 'components.carousel.indicator.focusRing.shadow',
   },
 ];

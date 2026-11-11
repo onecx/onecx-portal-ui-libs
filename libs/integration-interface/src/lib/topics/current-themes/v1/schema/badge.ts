@@ -21,27 +21,37 @@ const badgeSeverityOverrideShape = z.object({
   color: color.optional(),
 })
 
-const badgeVariantShape = z.object({
-  defaultSeverity: badgeDefaultSeverityShape.prefault({}),
-  primary: badgeSeverityOverrideShape.prefault({}),
-  secondary: badgeSeverityOverrideShape.prefault({}),
-  success: badgeSeverityOverrideShape.prefault({}),
-  info: badgeSeverityOverrideShape.prefault({}),
-  warning: badgeSeverityOverrideShape.prefault({}),
-  danger: badgeSeverityOverrideShape.prefault({}),
-  contrast: badgeSeverityOverrideShape.prefault({}),
-})
+const badgeVariantShape = z
+  .object({
+    defaultSeverity: badgeDefaultSeverityShape.prefault({}),
+    primary: badgeSeverityOverrideShape.prefault({}),
+    secondary: badgeSeverityOverrideShape.prefault({}),
+    success: badgeSeverityOverrideShape.prefault({}),
+    info: badgeSeverityOverrideShape.prefault({}),
+    warning: badgeSeverityOverrideShape.prefault({}),
+    danger: badgeSeverityOverrideShape.prefault({}),
+    contrast: badgeSeverityOverrideShape.prefault({}),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeVariantShape', axis: 'severity' })
 
-export const badgeSizeShape = z.object({
-  fontSize: withRef(z.string()).optional(),
-  minWidth: withRef(z.string()).optional(),
-  height: withRef(z.string()).optional(),
-})
+export const badgeSizeShape = z
+  .object({
+    fontSize: withRef(z.string()).optional(),
+    minWidth: withRef(z.string()).optional(),
+    height: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeSizeShape', axis: 'none' })
 
-export const badgeDotShape = z.object({
-  size: withRef(z.string()).optional(),
-})
+export const badgeDotShape = z
+  .object({
+    size: withRef(z.string()).optional(),
+  })
+  .register(themeSchemaRegistry, { id: 'badgeDotShape', axis: 'none' })
 
+// Note: `applyDefaultsRecursive` rebuilds a brand-new top-level `z.object(...)` for `badgeShape`
+// itself (see `badge`'s export below), so registering an axis directly on `badgeShape` would be
+// silently discarded — the `defaultVariant`/`sm`/`lg`/`xl`/`dot` classification instead happens on
+// the final `badge` export (which keeps this object's identity intact), below.
 export const badgeShape = z.object({
   defaultVariant: badgeVariantShape.prefault({}),
   sm: badgeSizeShape.prefault({}),
@@ -108,4 +118,6 @@ export const badgeDefaults = {
 
 export const badge = applyDefaultsRecursive(badgeShape, badgeDefaults).register(themeSchemaRegistry, {
   id: 'badge',
+  axis: 'variant',
+  child: true,
 })

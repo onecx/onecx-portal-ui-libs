@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`textarea schema resolves the expected default token tree 1`] = `
+Object {
+  "defaultVariant": Object {
+    "defaultState": Object {
+      "background": "{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.radius.md}}",
+        "shadow": "{{primitives.shadow.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "cursor": "pointer",
+      "focusRing": Object {
+        "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.color}}",
+        "offset": "{{primitives.border.offset.none}}",
+        "radius": "{{primitives.radius.md}}",
+        "shadow": "{{primitives.shadow.none}}",
+        "style": "{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}",
+        "width": "{{primitives.border.width.md}}",
+      },
+      "font": Object {
+        "letterSpacing": "{{primitives.font.letterSpacing}}",
+        "lineHeight": "{{primitives.font.lineHeight}}",
+        "style": "{{primitives.font.style}}",
+        "weight": "{{primitives.font.weight}}",
+      },
+      "lg": Object {
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+        },
+        "paddingX": "{{primitives.space.md}}",
+        "paddingY": "{{primitives.space.md}}",
+      },
+      "md": Object {
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+        },
+        "paddingX": "{{primitives.space.md}}",
+        "paddingY": "{{primitives.space.md}}",
+      },
+      "placeholderColor": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
+      "sm": Object {
+        "font": Object {
+          "size": "{{primitives.font.size}}",
+        },
+        "paddingX": "{{primitives.space.xs}}",
+        "paddingY": "{{primitives.space.xs}}",
+      },
+      "transitionDuration": "{{primitives.transition.duration}}",
+    },
+    "disabled": Object {
+      "background": "{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.border.color}}",
+      },
+      "color": "{{primitives.defaultVariant.state.disabled.defaultSeverity.contrast}}",
+    },
+    "focus": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}",
+      },
+    },
+    "hover": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}",
+      },
+    },
+    "invalid": Object {
+      "border": Object {
+        "color": "{{primitives.defaultVariant.state.invalid.defaultSeverity.border.color}}",
+      },
+      "placeholderColor": "{{primitives.defaultVariant.state.invalid.defaultSeverity.contrast}}",
+    },
+  },
+  "filled": Object {
+    "defaultState": Object {
+      "background": "{{primitives.variant.primary.defaultState.defaultSeverity.bg}}",
+      "color": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+      "placeholderColor": "{{primitives.variant.primary.defaultState.defaultSeverity.contrast}}",
+    },
+    "disabled": Object {
+      "background": "{{primitives.variant.primary.state.disabled.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.variant.primary.state.disabled.defaultSeverity.border.color}}",
+      },
+      "color": "{{primitives.variant.primary.state.disabled.defaultSeverity.contrast}}",
+    },
+    "focus": Object {
+      "background": "{{primitives.variant.primary.state.focus.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.variant.primary.state.focus.defaultSeverity.border.color}}",
+      },
+    },
+    "hover": Object {
+      "background": "{{primitives.variant.primary.state.hover.defaultSeverity.bg}}",
+      "border": Object {
+        "color": "{{primitives.variant.primary.state.hover.defaultSeverity.border.color}}",
+      },
+    },
+    "invalid": Object {
+      "border": Object {
+        "color": "{{primitives.variant.primary.state.invalid.defaultSeverity.border.color}}",
+      },
+      "placeholderColor": "{{primitives.variant.primary.state.invalid.defaultSeverity.contrast}}",
+    },
+  },
+}
+`;

@@ -15,7 +15,7 @@ export const tooltipMappingRules: MappingRule[] = [
     to: 'components.tooltip.root.shadow',
   },
   {
-    from: 'usages.tooltip.padding',
+    from: 'usages.tooltip.paddingX',
     to: 'components.tooltip.root.padding',
   },
   {

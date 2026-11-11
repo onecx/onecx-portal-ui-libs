@@ -1,34 +1,58 @@
-import z from 'zod'
-import { themeSchemaRegistry } from '../registry'
-import { PrimaryCloseMessageSchema } from './primary-close'
-import { SecondaryCloseMessageSchema } from './secondary-close'
+import * as z from 'zod'
+import { bg, color, withRef } from '../primitives'
 
-export class CloseButtonMessageSchema {
-  private static readonly closeBaseTokens = {
-    width: z.string().default('{{primitives.icon.size.md}}'),
-    height: z.string().default('{{primitives.icon.size.md}}'),
-    focusRing: z
-      .object({
-        width: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.width}}'),
-        offset: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.offset}}'),
-        radius: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.radius}}'),
-        style: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}'),
-        shadow: z.string().default('{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.shadow}}'),
-      })
-      .prefault({}),
-    border: z
-      .object({
-        radius: z.string().default('{{primitives.radius.md}}'),
-        width: z.string().default('{{primitives.border.width.md}}'),
-      })
-      .prefault({}),
-  }
-
-  static readonly schema = z
+/**
+ * Structural tokens for the message close/dismiss button (size, shape, focus-ring geometry).
+ * A dismiss affordance is typically sized/shaped the same regardless of the message's severity
+ * or look, so these sit outside the per-severity tree (verified against PrimeNG's `p-message`).
+ */
+export const messageCloseButtonShape = z.object({
+  width: withRef(z.string()).optional(),
+  height: withRef(z.string()).optional(),
+  border: z.object({ radius: withRef(z.string()).optional() }).prefault({}),
+  focusRing: z
     .object({
-      ...this.closeBaseTokens,
-      primary: PrimaryCloseMessageSchema.schema as typeof PrimaryCloseMessageSchema.schema,
-      secondary: SecondaryCloseMessageSchema.schema as typeof SecondaryCloseMessageSchema.schema,
+      width: withRef(z.string()).optional(),
+      style: withRef(z.string()).optional(),
+      offset: withRef(z.string()).optional(),
     })
-    .register(themeSchemaRegistry, { id: 'messageCloseButton' })
+    .prefault({}),
+})
+
+export const messageCloseButtonDefaults = {
+  width: '1.75rem',
+  height: '1.75rem',
+  border: { radius: '{{primitives.radius.full}}' },
+  focusRing: {
+    width: '{{primitives.border.width.md}}',
+    style: '{{primitives.defaultVariant.defaultState.defaultSeverity.focusRing.style}}',
+    offset: '{{primitives.border.offset.none}}',
+  },
+}
+
+/**
+ * Per-severity close button color tokens — only meaningful for the filled `defaultVariant`
+ * look; the bordered/plain looks render the close button without its own background, so no
+ * hover/focus color needs theming there.
+ */
+export const messageCloseButtonSeverityShape = z.object({
+  hover: z.object({ background: z.union([bg, withRef(z.string())]).optional() }).prefault({}),
+  focus: z.object({ color: color.optional(), shadow: withRef(z.string()).optional() }).prefault({}),
+})
+
+/**
+ * `defaultSeverity`'s close button = structural tokens + the neutral-default severity colors
+ * (the theme's own fallback look, not tied to any single named severity).
+ */
+export const messageDefaultSeverityCloseButtonShape = messageCloseButtonShape.extend(
+  messageCloseButtonSeverityShape.shape
+)
+
+export const messageDefaultSeverityCloseButtonDefaults = {
+  ...messageCloseButtonDefaults,
+  hover: { background: '{{primitives.defaultVariant.state.hover.defaultSeverity.bg}}' },
+  focus: {
+    color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
+    shadow: '{{primitives.shadow.none}}',
+  },
 }

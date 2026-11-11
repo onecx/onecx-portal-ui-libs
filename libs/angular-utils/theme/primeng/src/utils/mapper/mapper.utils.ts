@@ -21,6 +21,7 @@ export function setByPath(
   value: unknown
 ): void {
   const segments = path.split('.');
+  if (segments.length === 0 || segments.includes('__proto__')) return;
   let current: Record<string, unknown> = obj;
   for (let i = 0; i < segments.length - 1; i++) {
     const key = segments[i];
@@ -37,7 +38,7 @@ export function setByPath(
  * `--onecx-theme-` prefix. Dots are replaced with hyphens.
  *
  * @example
- * cssVar('usages.table.base.bg') // 'var(--onecx-theme-usages-table-base-bg)'
+ * cssVar('usages.dataTable.base.background') // 'var(--onecx-theme-usages-data-table-base-background)'
  */
 export function cssVar(path: string): string {
   return `var(--onecx-theme-${path.replace(/\./g, '-')})`;

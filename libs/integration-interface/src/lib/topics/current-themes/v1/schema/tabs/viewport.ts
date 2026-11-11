@@ -1,22 +1,19 @@
-import z from "zod"
-import { themeSchemaRegistry } from "../registry"
-import { withRef } from "../primitives"
+import * as z from 'zod'
+import { withRef } from '../primitives'
 
 /**
- * Tabs viewport component schema definition 
- * 
-*/
-export class TabsViewportSchema {
-    private static readonly tokens = {
-        scrollBehavior: withRef(z.string()).default("smooth"),
-        overscrollBehavior: withRef(z.string()).default("contain auto"),
-        scrollbarWidth: withRef(z.string()).default("none"),
-        webkitScrollbarDisplay: withRef(z.string()).default("none"),
-    }
+ * Tabs viewport shape. Scroll behavior configuration for the tablist viewport.
+ */
+export const tabsViewportShape = z.object({
+  scrollBehavior: withRef(z.string()).optional(),
+  overscrollBehavior: withRef(z.string()).optional(),
+  scrollbarWidth: withRef(z.string()).optional(),
+  webkitScrollbarDisplay: withRef(z.string()).optional(),
+})
 
-    static readonly schema = z
-        .object({
-            ...this.tokens,
-        })
-        .register(themeSchemaRegistry, { id: 'tabsViewport' })
-}   
+export const tabsViewportDefaults = {
+  scrollBehavior: 'smooth',
+  overscrollBehavior: 'contain auto',
+  scrollbarWidth: 'none',
+  webkitScrollbarDisplay: 'none',
+}
