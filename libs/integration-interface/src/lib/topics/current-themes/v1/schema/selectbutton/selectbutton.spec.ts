@@ -1,5 +1,4 @@
-import { expectDefaultsMatchShape } from './test-utils'
-
+import { expectDefaultsMatchShape } from '../test-utils'
 import { selectbutton, selectbuttonShape, selectbuttonDefaults } from './selectbutton'
 
 describe('selectbutton schema', () => {

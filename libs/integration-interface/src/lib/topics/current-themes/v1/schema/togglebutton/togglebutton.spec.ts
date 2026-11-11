@@ -1,5 +1,4 @@
-import { expectDefaultsMatchShape } from './test-utils'
-
+import { expectDefaultsMatchShape } from '../test-utils'
 import { togglebutton, togglebuttonShape, togglebuttonDefaults } from './togglebutton'
 
 describe('togglebutton schema', () => {
