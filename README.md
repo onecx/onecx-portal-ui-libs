@@ -2,21 +2,6 @@
 
 OneCx portal UI libraries
 
-# Agent component verification
-
-Use `/test-component` in Claude Code or GitHub Copilot to verify component changes
-in a temporary generated OneCX app with Playwright. The
-[shared skill](.agents/skills/test-component/SKILL.md) downloads the latest stable
-`run-test-instance` release using `gh`, verifies its checksum, and tests fresh
-local library builds without a shell or backend. Before committing, the agent
-copies the complete freshly built packages into the temporary app's
-`node_modules/@onecx`, repeating the copy after every library rebuild so the app
-tests the current uncommitted changes.
-
-The workflow requires authenticated `gh`, Node/npm, the OneCX documentation MCP,
-and Playwright browser tools. Apps, mocks, and screenshots stay outside this
-repository for reuse; the test server is stopped after verification.
-
 # Changelog
 
 [Changelog](CHANGELOG.md)
