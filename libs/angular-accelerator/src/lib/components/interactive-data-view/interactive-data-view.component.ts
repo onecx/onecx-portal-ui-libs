@@ -68,7 +68,6 @@ export interface ColumnGroupData {
   standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
-  styleUrls: ['./interactive-data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
