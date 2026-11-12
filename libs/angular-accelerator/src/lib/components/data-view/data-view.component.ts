@@ -40,7 +40,6 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
-  styleUrls: ['./data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: 'DataViewComponent', useExisting: DataViewComponent }, 
@@ -504,5 +503,4 @@ export class DataViewComponent implements OnInit {
     this.stateService.pageSize.set(event)
   }
 }
-
 
