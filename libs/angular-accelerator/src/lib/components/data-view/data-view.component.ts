@@ -22,6 +22,7 @@ import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 import { Filter } from '../../model/filter.model'
 import { InteractiveExpandedRows, ViewLayout } from '../../model/view-layout.model'
 import {
@@ -39,7 +40,6 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
-  styleUrls: ['./data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: 'DataViewComponent', useExisting: DataViewComponent }, 
@@ -159,11 +159,23 @@ export class DataViewComponent implements OnInit {
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
   sortStates = input<DataSortDirection[]>([])
   pageSizes = input<number[]>([10, 25, 50])
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  groupCellTemplate = input<TemplateRef<any> | undefined>()
+  groupCellChildTemplate = contentChild<TemplateRef<any>>('groupCellTemplate')
+  get groupCell(): TemplateRef<any> | undefined {
+    return this.groupCellTemplate() || this.groupCellChildTemplate()
+  }
 
   stringTableCellTemplate = input<TemplateRef<any> | undefined>()
   stringTableCellChildTemplate = contentChild<TemplateRef<any>>('stringTableCellTemplate')
@@ -495,5 +507,4 @@ export class DataViewComponent implements OnInit {
     this.stateService.pageSize.set(event)
   }
 }
-
 

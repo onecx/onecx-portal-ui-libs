@@ -1,3 +1,5 @@
+@use "sass:list";
+
 // core
 .p-fluid .p-icon-field-left,
 .p-fluid .p-icon-field-right {
@@ -5,11 +7,11 @@
 }
 
 .p-icon-field-left > .p-input-icon:first-of-type {
-  left: nth($inputPadding, 2);
+  left: list.nth($inputPadding, 2);
   color: $inputIconColor;
 }
 
 .p-icon-field-right > .p-input-icon:last-of-type {
-  right: nth($inputPadding, 2);
+  right: list.nth($inputPadding, 2);
   color: $inputIconColor;
 }

@@ -15,6 +15,13 @@ import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import * as loggerUtils from '../../utils/logger.utils'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideRouter } from '@angular/router'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { ColumnType } from '../../model/column-type.model'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -1593,5 +1600,54 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled()
       jest.restoreAllMocks()
     })
+  })
+
+  describe('row grouping pass-through', () => {
+    it('should resolve the group cell template from the content child when no input is set', () => {
+      const childTpl = {} as any
+
+      const { component: withChild } = createComponent()
+      setInputSignal(withChild, 'groupCellTemplate', undefined)
+      setInputSignal(withChild, 'optimusGroupCell', undefined)
+      setInputSignal(withChild, 'childGroupCell', childTpl)
+      expect((withChild as any)._groupCell()).toBe(childTpl)
+    })
+
+    it('should default rowGrouping to undefined', () => {
+      const { component } = createComponent()
+      expect(component.rowGrouping()).toBeUndefined()
+    })
+  })
+})
+
+describe('InteractiveDataViewComponent (rendering)', () => {
+  it('should forward tableAriaLabel through ocx-data-view to the rendered table', async () => {
+    const slotService: Pick<SlotService, 'isSomeComponentDefinedForSlot'> = {
+      isSomeComponentDefinedForSlot: () => new BehaviorSubject<boolean>(false).asObservable(),
+    }
+    await TestBed.configureTestingModule({
+      imports: [AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService({ en: {} }),
+        provideUserServiceMock(),
+        provideAppStateServiceMock(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: SlotService, useValue: slotService },
+      ],
+    }).compileComponents()
+
+    const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    fixture.componentRef.setInput('columns', [{ id: 'name', nameKey: 'NAME', columnType: ColumnType.STRING }])
+    fixture.componentRef.setInput('data', [{ id: '1', name: 'Alice' }])
+    fixture.componentRef.setInput('tableAriaLabel', 'Orders overview')
+    fixture.componentInstance.layout = 'table'
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    const table = (fixture.nativeElement as HTMLElement).querySelector('table')
+    expect(table?.getAttribute('aria-label')).toBe('Orders overview')
   })
 })

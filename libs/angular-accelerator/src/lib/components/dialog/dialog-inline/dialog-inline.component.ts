@@ -7,7 +7,6 @@ import { DialogState } from '../../../services/portal-dialog.service'
   selector: 'ocx-dialog-inline',
   templateUrl: './dialog-inline.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./dialog-inline.component.scss'],
 })
 export class DialogInlineComponent {
   config = input<ButtonDialogConfig>({})

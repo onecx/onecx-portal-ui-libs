@@ -1,6 +1,6 @@
 {
   "name": "@onecx/angular-linter-rules",
-  "version": "9.0.0-rc.16",
+  "version": "9.2.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -12,6 +12,8 @@
     "access": "public"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "@typescript-eslint/utils": "8.70.1",
+    "tslib": "^2.3.0",
+    "typescript": "6.0.3"
   }
 }

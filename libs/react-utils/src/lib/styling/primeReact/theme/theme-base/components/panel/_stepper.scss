@@ -1,3 +1,5 @@
+@use "sass:meta";
+
 @use "sass:math";
 
 //theme
@@ -60,7 +62,7 @@
     }
 
     &:has(~ .p-highlight) {
-      @if variable-exists(primaryColor) {
+      @if meta.variable-exists(primaryColor) {
         .p-stepper-separator {
           background-color: $primaryColor;
         }
@@ -119,7 +121,7 @@
       }
 
       &:has(~ .p-stepper-panel-active) {
-        @if variable-exists(primaryColor) {
+        @if meta.variable-exists(primaryColor) {
           .p-stepper-separator {
             background-color: $primaryColor;
           }

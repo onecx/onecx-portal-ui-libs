@@ -28,6 +28,7 @@ import { Observable, startWith } from 'rxjs'
 import { DataAction } from '../../model/data-action'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import { DataTableColumn } from '../../model/data-table-column.model'
+import { DataTableRowGroupingConfig } from '../../model/data-table-row-grouping.model'
 import { Filter } from '../../model/filter.model'
 import { limit } from '../../utils/filter.utils'
 import {
@@ -67,7 +68,6 @@ export interface ColumnGroupData {
   standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
-  styleUrls: ['./interactive-data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
@@ -239,6 +239,10 @@ export class InteractiveDataViewComponent implements OnInit {
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
@@ -317,6 +321,19 @@ export class InteractiveDataViewComponent implements OnInit {
     const optimusListItemSubtitleLines = this.optimusListItemSubtitleLines()
     const childListItemSubtitleLines = this.childListItemSubtitleLines()
     return optimusListItemSubtitleLines ?? childListItemSubtitleLines ?? undefined
+  })
+
+  rowGrouping = input<DataTableRowGroupingConfig | undefined>(undefined)
+
+  groupCellTemplate = input<TemplateRef<any> | undefined>(undefined)
+  childGroupCell = contentChild<TemplateRef<any> | undefined>('groupCell')
+  optimusGroupCell = computed(() => {
+    const templates = this.templates()
+    const groupCellTemplate = templates.find((t) => t.getType() === 'groupCell')
+    return groupCellTemplate?.template ?? undefined
+  })
+  _groupCell = computed(() => {
+    return this.groupCellTemplate() ?? this.optimusGroupCell() ?? this.childGroupCell() ?? undefined
   })
 
   childStringTableCell = contentChild<TemplateRef<any> | undefined>('stringTableCell')
