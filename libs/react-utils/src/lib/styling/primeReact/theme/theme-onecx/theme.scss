@@ -10,9 +10,9 @@ $highlightBg: #eff6ff !default;
 $highlightTextColor: $primaryDarkerColor !default;
 $highlightFocusBg: rgba($primaryColor, 0.24) !default;
 
-@import "./_variables";
-@import "../theme-base/_components";
-@import "./_extensions";
+@import "./variables";
+@import "../theme-base/components";
+@import "./extensions";
 
 @layer tokens {
   :scope {
