@@ -2628,25 +2628,25 @@ describe('DataTableComponent', () => {
 
       expect(await renderedSequence()).toEqual([
         'B',
-        'ocx-expanded-row-B1',
-        'ocx-expanded-row-B2',
+        'ocx-data-row-B1',
+        'ocx-data-row-B2',
         'A',
-        'ocx-expanded-row-A1',
-        'ocx-expanded-row-A2',
+        'ocx-data-row-A1',
+        'ocx-data-row-A2',
         'C',
-        'ocx-expanded-row-C1',
+        'ocx-data-row-C1',
       ])
       expect(rows.map((row) => row.id)).toEqual(['B1', 'A1', 'B2', 'C1', 'A2'])
 
       child.onPageChange({ first: 3, rows: 3 })
       fixture.detectChanges()
-      expect(await renderedSequence()).toEqual(['A', 'ocx-expanded-row-A2', 'C', 'ocx-expanded-row-C1'])
+      expect(await renderedSequence()).toEqual(['A', 'ocx-data-row-A2', 'C', 'ocx-data-row-C1'])
       expect(child.getGroupContext(rows[4])).toMatchObject({ groupKey: 'A', memberCount: 2 })
 
       child.onPageChange({ first: 0, rows: 10 })
       fixture.componentInstance.rowGrouping = undefined
       fixture.detectChanges()
-      expect(await renderedSequence()).toEqual(rows.map((row) => `ocx-expanded-row-${row.id}`))
+      expect(await renderedSequence()).toEqual(rows.map((row) => `ocx-data-row-${row.id}`))
     })
 
     it('should preserve filtered and sorted row order when the configured grouping column is missing', async () => {
@@ -2674,7 +2674,7 @@ describe('DataTableComponent', () => {
       expect(child.groupedRows().map((row) => row.id)).toEqual(['r3', 'r2', 'r1'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
         (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-expanded-row-r3', 'ocx-expanded-row-r2', 'ocx-expanded-row-r1'])
+      ))).toEqual(['ocx-data-row-r3', 'ocx-data-row-r2', 'ocx-data-row-r1'])
       expect(child.isRowGroupStart(rows[0])).toBe(false)
       expect(child.getGroupContext(rows[0])).toBeUndefined()
     })
@@ -2697,7 +2697,7 @@ describe('DataTableComponent', () => {
       expect(child.groupedRows().map((row) => row.id)).toEqual(['A1', 'B1', 'A2'])
       expect(await Promise.all((await harness.getRows()).map(async (row) =>
         (await row.host()).getAttribute('id')
-      ))).toEqual(['ocx-expanded-row-A1', 'ocx-expanded-row-B1', 'ocx-expanded-row-A2'])
+      ))).toEqual(['ocx-data-row-A1', 'ocx-data-row-B1', 'ocx-data-row-A2'])
 
       fixture.componentInstance.columns = groupColumns
       fixture.detectChanges()

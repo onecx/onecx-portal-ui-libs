@@ -254,7 +254,7 @@
       </th>
     </tr>
     } }
-    <tr>
+    <tr [attr.id]="'ocx-data-row-' + rowObject.id">
       <ng-container *ngTemplateOutlet="expansionColumn; context: {localRowObject: rowObject}"></ng-container>
       @if (selectionChangedObserved) {
       <td>
