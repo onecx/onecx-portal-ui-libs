@@ -18,8 +18,8 @@ export class LegendSchema {
     padding: withRef(z.string()).default('{{primitives.space.md}}'),
     gap: withRef(z.string()).default('{{primitives.space.md}}'),
     font: font.pick({ weight: true, family: true, size: true }).default({
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
       family: '{{primitives.font.family}}',
     }),
     focusRing: z

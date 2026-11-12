@@ -21,7 +21,7 @@ export const calendarTimeSeperatorDefaults = {
   padding: '{{primitives.space.xs}}',
   font: {
     family: '{{primitives.font.family}}',
-    size: '{{primitives.font.size}}',
-    weight: '{{primitives.font.weight}}',
+    size: '{{primitives.font.size.md}}',
+    weight: '{{primitives.font.weight.normal}}',
   },
 }

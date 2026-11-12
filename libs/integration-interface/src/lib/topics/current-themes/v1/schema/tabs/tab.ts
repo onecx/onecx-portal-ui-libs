@@ -45,7 +45,7 @@ export const tabsTabDefaults = {
         icon: {
             size: '{{primitives.icon.size.sm}}',
             color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
-            font: { weight: '{{primitives.font.weight}}' },
+            font: { weight: '{{primitives.font.weight.normal}}' },
         },
         activeBar: tabsActiveBarDefaults,
         border: {
@@ -69,7 +69,7 @@ export const tabsTabDefaults = {
             color: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.color}}',
             style: '{{primitives.defaultVariant.state.hover.defaultSeverity.border.style}}',
         },
-        font: { weight: '{{primitives.font.weight}}' },
+        font: { weight: '{{primitives.font.weight.normal}}' },
     },
     focus: {
         background: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg}}',
@@ -79,7 +79,7 @@ export const tabsTabDefaults = {
             color: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.color}}',
             style: '{{primitives.defaultVariant.state.focus.defaultSeverity.border.style}}',
         },
-        font: { weight: '{{primitives.font.weight}}' },
+        font: { weight: '{{primitives.font.weight.normal}}' },
     },
     active: {
         background: '{{primitives.defaultVariant.state.active.defaultSeverity.bg}}',
@@ -89,7 +89,7 @@ export const tabsTabDefaults = {
             color: '{{primitives.defaultVariant.state.active.defaultSeverity.border.color}}',
             style: '{{primitives.defaultVariant.state.active.defaultSeverity.border.style}}',
         },
-        font: { weight: '{{primitives.font.weight}}' },
+        font: { weight: '{{primitives.font.weight.normal}}' },
     },
     disabled: {
         background: '{{primitives.defaultVariant.state.disabled.defaultSeverity.bg}}',

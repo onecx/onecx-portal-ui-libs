@@ -83,8 +83,8 @@ const messageDefaultSeverityDefaults = {
   content: { padding: '{{primitives.space.sm}}', gap: '{{primitives.space.sm}}' },
   text: {
     font: {
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
   },
   icon: { size: '{{primitives.icon.md}}' },

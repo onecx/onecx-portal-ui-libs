@@ -83,8 +83,8 @@ export const pageHeaderContentDefaults = {
   },
   font: {
     family: '{{primitives.font.family}}',
-    size: '{{primitives.font.size}}',
-    weight: '{{primitives.font.weight}}',
+    size: '{{primitives.font.size.md}}',
+    weight: '{{primitives.font.weight.normal}}',
   },
 
   value: {
@@ -93,8 +93,8 @@ export const pageHeaderContentDefaults = {
     paddingY: '{{primitives.space.md}}',
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
     infoIcon: {
       color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
@@ -125,8 +125,8 @@ export const pageHeaderContentDefaults = {
     gap: '{{primitives.space.md}}',
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
   },
 }
