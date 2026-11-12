@@ -40,7 +40,6 @@ export type DataViewComponentState = DataListGridComponentState & DataTableCompo
   standalone: false,
   selector: 'ocx-data-view',
   templateUrl: './data-view.component.html',
-  styleUrls: ['./data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     { provide: 'DataViewComponent', useExisting: DataViewComponent }, 
@@ -160,6 +159,10 @@ export class DataViewComponent implements OnInit {
   currentPageShowingKey = input<string>('OCX_DATA_TABLE.SHOWING')
   currentPageShowingWithTotalOnServerKey = input<string>('OCX_DATA_TABLE.SHOWING_WITH_TOTAL_ON_SERVER')
   
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
@@ -504,5 +507,4 @@ export class DataViewComponent implements OnInit {
     this.stateService.pageSize.set(event)
   }
 }
-
 

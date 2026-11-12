@@ -68,7 +68,6 @@ export interface ColumnGroupData {
   standalone: false,
   selector: 'ocx-interactive-data-view',
   templateUrl: './interactive-data-view.component.html',
-  styleUrls: ['./interactive-data-view.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
@@ -240,6 +239,10 @@ export class InteractiveDataViewComponent implements OnInit {
 
   headerStyleClass = input<string | undefined>(undefined)
   contentStyleClass = input<string | undefined>(undefined)
+  /**
+   * Accessible name of the table. Falls back to the translated default (`OCX_DATA_TABLE.TABLE_ARIA_LABEL`).
+   */
+  tableAriaLabel = input<string | undefined>(undefined)
   expandable = input<boolean>(false)
   frozenExpandColumn = input<boolean>(false)
 
