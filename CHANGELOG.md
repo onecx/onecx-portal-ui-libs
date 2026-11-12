@@ -1,3 +1,13 @@
+## [7.16.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.15.0...v7.16.0) (2026-11-12)
+
+### Features
+
+* **angular-remote-components:** load slot components from non-default share scopes (v7) ([#1966](https://github.com/onecx/onecx-portal-ui-libs/issues/1966)) ([1dde3a8](https://github.com/onecx/onecx-portal-ui-libs/commit/1dde3a854f2508b285d3e004d2e5a1e3b538e40d))
+
+### Bug Fixes
+
+* make OcxTooltipDirective host cursor configurable (v7) ([#1944](https://github.com/onecx/onecx-portal-ui-libs/issues/1944)) ([7f4bf25](https://github.com/onecx/onecx-portal-ui-libs/commit/7f4bf2500a79cfe95becc428adb36fd1830817ba)), closes [onecx/internal-tasks#1266](https://github.com/onecx/internal-tasks/issues/1266)
+
 ## [7.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v7.14.1...v7.15.0) (2026-11-03)
 
 ### Features
