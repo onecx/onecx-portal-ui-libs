@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { themeSchemaRegistry } from './registry'
 
 /**
  * Recursively walks a zod object shape and applies `.default(value)` for every
@@ -27,6 +28,17 @@ import * as z from 'zod'
  * axis-annotated wrappers, which the relaxed-axis introspection (see `utils/axis-metadata.ts`)
  * relies on to classify the non-default `state`/`severity` keys. Replacing a wrapper with a fresh,
  * unregistered object would drop that classification and corrupt the derived fallback order.
+ *
+ * The union path is deliberately scoped to *anonymous* object options — the unregistered
+ * scale objects of the typography primitive — because a union option that is a
+ * `withRef(registeredObject)` (an object registered in `themeSchemaRegistry`, e.g. a future
+ * `font: withRef(fontShape)`) is **kept verbatim** instead. Rebuilding such an option would be
+ * both wrong and unsafe: it would drop the option's registered identity (so `z.toJSONSchema`,
+ * see `scripts/generate-json-schema.ts`, could no longer `$ref` it) and, if it were re-registered
+ * under the same `id` as a raw instance that is also in the tree, would make `toJSONSchema` throw
+ * on a duplicate schema `id`. A named, shared schema is not the kind of partial baseline this path
+ * exists to fill, so the object default is left unapplied to it (the option stays optional), matching
+ * how a plain object default was never applied to a wrapped option before either.
  *
  * The helper is deliberately **field-name agnostic**: it inspects only the *shape* of a schema
  * (object / union / scalar) and the type of the supplied default value, never a key name.
@@ -79,18 +91,31 @@ function isPlainObjectValue(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Builds a union whose object option(s) are filled recursively with `defaultValue` (so a scale
- * default fills a partial baseline) and whose non-object option(s) are left untouched. The filled
- * union carries `defaultValue` as its own default.
+ * Builds a union whose *anonymous* object option(s) are filled recursively with `defaultValue` (so
+ * a scale default fills a partial baseline) and whose non-object option(s) are left untouched.
+ * Object option(s) that carry {@link themeSchemaRegistry} metadata are likewise left untouched —
+ * kept verbatim, not rebuilt — so a `withRef(registeredObject)` keeps its registered identity and a
+ * filled copy never duplicates a raw instance's `id` (which would make `z.toJSONSchema` throw). The
+ * filled union carries `defaultValue` as its own default.
  */
 function fillUnionOptions(base: z.ZodUnion, defaultValue: Record<string, unknown>): z.ZodTypeAny {
   const options: z.ZodTypeAny[] = (base.options as z.ZodTypeAny[]).map((option: z.ZodTypeAny) => {
     const optionBase = unwrapToBase(option)
-    return optionBase instanceof z.ZodObject
+    return optionBase instanceof z.ZodObject && !isRegistered(optionBase)
       ? applyDefaultsRecursive(optionBase, defaultValue)
       : option
   })
   return z.union(options).default(defaultValue)
+}
+
+/**
+ * True when `schema` is a named, shared schema — one that carries metadata in
+ * {@link themeSchemaRegistry} — rather than an anonymous inline object. Only anonymous object
+ * options are safe to rebuild in {@link fillUnionOptions}; a registered one is kept verbatim so its
+ * identity survives the union rebuild and it does not duplicate a raw instance's `id` downstream.
+ */
+function isRegistered(schema: z.ZodTypeAny): boolean {
+  return themeSchemaRegistry.get(schema) !== undefined
 }
 
 /**
