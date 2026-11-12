@@ -13,4 +13,5 @@ export type RemoteComponent = {
   exposedModule: string
   remoteName: string
   technology: Technologies
+  shareScope?: string
 }
