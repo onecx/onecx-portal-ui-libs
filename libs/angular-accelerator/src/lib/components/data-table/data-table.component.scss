@@ -47,6 +47,13 @@ $clr-neutral-700: #262626;
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   border: 0;
+}
+
+.ocx-data-table-group-row th[scope='rowgroup'] {
+  background: $clr-neutral-100;
+  color: $clr-neutral-700;
+  font-weight: 700;
+  text-align: left;
 }
