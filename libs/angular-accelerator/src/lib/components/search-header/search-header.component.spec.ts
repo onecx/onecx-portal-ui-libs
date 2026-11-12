@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { Component, viewChild } from '@angular/core'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
 import { RouterTestingModule } from '@angular/router/testing'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { SlotHarness } from '../../../../testing/slot.harness'
@@ -230,4 +232,69 @@ describe('SearchHeaderComponent', () => {
       sub.unsubscribe()
     })
   })
+})
+
+@Component({
+  standalone: false,
+  template: `
+    <ocx-search-header>
+      <form [formGroup]="form">
+        <input formControlName="name" />
+        <input formControlName="status" />
+      </form>
+    </ocx-search-header>
+  `,
+})
+class SearchHeaderWithFormComponent {
+  searchHeader = viewChild.required(SearchHeaderComponent)
+  form = new FormGroup({
+    name: new FormControl<string | null>(null),
+    status: new FormControl<string | null>('active'),
+  })
+}
+
+describe('SearchHeaderComponent field values', () => {
+  let fixture: ComponentFixture<SearchHeaderWithFormComponent>
+  let host: SearchHeaderWithFormComponent
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [SearchHeaderWithFormComponent, SearchHeaderComponent, PageHeaderComponent, IfPermissionDirective],
+      imports: [RouterTestingModule, ReactiveFormsModule, ButtonModule, BreadcrumbModule, AngularAcceleratorModule],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+        provideUserServiceMock(),
+        provideTranslateTestingService({ en: require('../../../../assets/i18n/en.json') }),
+        provideConfigurationServiceMock(),
+      ],
+    }).compileComponents()
+
+    fixture = TestBed.createComponent(SearchHeaderWithFormComponent)
+    host = fixture.componentInstance
+    fixture.detectChanges()
+  })
+
+  it('should report every search field with its current value before the form is changed', fakeAsync(() => {
+    const values: { [key: string]: unknown }[] = []
+    host.searchHeader().fieldValues$?.subscribe((v) => values.push(v))
+    fixture.detectChanges()
+
+    tick(100)
+
+    expect(values).toEqual([{ name: undefined, status: 'active' }])
+  }))
+
+  it('should report the changed values when the form changes', fakeAsync(() => {
+    const values: { [key: string]: unknown }[] = []
+    host.searchHeader().fieldValues$?.subscribe((v) => values.push(v))
+    fixture.detectChanges()
+    tick(100)
+
+    host.form.patchValue({ name: 't1' })
+    tick(100)
+
+    expect(values[values.length - 1]).toEqual({ name: 't1', status: 'active' })
+  }))
 })
