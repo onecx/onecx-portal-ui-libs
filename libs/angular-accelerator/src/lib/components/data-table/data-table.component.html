@@ -212,13 +212,11 @@
     </tr>
   </ng-template>
 
+  @if (captionTemplate()) {
   <ng-template pTemplate="caption">
-    @if (captionTemplate()) {
-    <ng-container>
-      <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
-    </ng-container>
-    }
+    <ng-container [ngTemplateOutlet]="captionTemplate()"></ng-container>
   </ng-template>
+  }
 
   <ng-template #body let-rowObject>
     @if (columnTemplates) {
