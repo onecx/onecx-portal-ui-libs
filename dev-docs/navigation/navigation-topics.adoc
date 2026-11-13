@@ -52,7 +52,7 @@ The payload is link:{libs}/integration-interface/src/lib/topics/current-mfe/v1/m
 |`mountPath` |`string` |The MFE mount path containing Workspace and application base path.
 |`remoteBaseUrl` |`string` |Remote URL used to fetch the module's assets, e.g. `'/mfe/mfe_name'`.
 |`shellName` |`string` |Name of the shell, always `'portal'`.
-|`displayName?` |`string` |Display name for the MFE.
+|`displayName?` |`string` |Display name for the MFE. The libs' `BreadcrumbService` labels the first breadcrumb with it, falling back to `productName` when it is empty or missing.
 |`elementName?` |`string` |Custom-element name the MFE module renders into, e.g. `'mfe-component'`.
 |`remoteName?` |`string` |Remote name set up in the MFE's webpack (WebComponents integration).
 |`version?` |`string` |Version of the Microfrontend.
