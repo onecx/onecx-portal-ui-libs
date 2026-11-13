@@ -50,3 +50,8 @@ $clr-neutral-700: #262626;
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+:host ::ng-deep .p-datatable-table-container {
+  position: relative;
+  z-index: 0;
+}
