@@ -120,6 +120,10 @@ class ObjectDetailItemHarness extends ContentContainerComponentHarness {
     )
   }
 
+  async getActionItemButton() {
+    return await this.locatorForOptional('[name="object-detail-value"] button')()
+  }
+
   async getActionItemTooltipContent(): Promise<string | null> {
     return this.getTooltipFromElement(
       await this.locatorForOptional('[name="object-detail-value"] p-button')()
