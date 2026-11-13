@@ -1,0 +1,60 @@
+= Migrate OneCX App from Angular 21 to Angular 22
+:page-aliases: migrations/angular-22/migration-plan.adoc
+
+:idprefix:
+:idseparator: -
+
+[#overview]
+== Overview
+
+This guide provides step-by-step instructions for migrating OneCX applications from Angular 21 to Angular 22.
+As part of upgrading to Angular 22, you must update your OneCX UI libraries to version 9. This library update is not a standalone migration but a required part of the Angular version upgrade process, as OneCX v9 libraries provide Angular 22 compatibility and include required breaking changes.
+
+The most visible change in v9 is the component library the `@onecx/*` UI libraries are built on: they move from **PrimeNG** to **Optimus UI**, an open-source fork of PrimeNG that keeps the PrimeNG API. PrimeNG stopped being open source; Optimus UI keeps the OneCX libraries fully open source while staying close to the APIs most applications already use. The move is a hard cutover: OneCX UI libraries v9 no longer support PrimeNG, while applications staying on PrimeNG remain on OneCX UI libraries v8 (Angular 21).
+
+Angular 22 applications are loaded by the Angular 22 preloader, which is shipped with OneCX Shell 3.10.0 and later.
+
+[#prerequisites]
+== Prerequisites
+
+Before starting this migration:
+
+* Your OneCX application is currently running on Angular 21
+* You have OneCX UI libraries v8.x installed
+* You have a working development environment
+
+[#migration-steps-before-angular-22]
+== Migration Steps before upgrading to Angular 22
+
+To simplify the migration process, it is recommended to complete the following steps before upgrading to Angular 22.
+You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
+
+[%interactive]
+** [ ] xref:./update-node-version.adoc[Update Node.js to a version supported by Angular 22]
+** [ ] xref:./use-build-utils-for-shared-config.adoc[Import shared library configuration helpers from `@onecx/build-utils`]
+
+[#upgrade-to-angular-22]
+== Upgrade to Angular 22
+
+After completing the pre-migration steps, you can proceed with upgrading your application to Angular 22.
+
+If the project is an NX workspace, follow the instructions in xref:./update-nx-angular-version-22.adoc[Upgrade NX Application to Angular 22]. After completing the NX migration steps, also review the official Angular update guide for any additional steps or considerations: https://angular.dev/update-guide?v=21.0-22.0&l=1[Angular Update Guide].
+
+If the project is not an NX workspace, follow the official Angular update guide to perform the version upgrade by following this link: https://angular.dev/update-guide?v=21.0-22.0&l=1[Angular Update Guide].
+
+[#migration-steps-after-angular-22]
+== Migration Steps after upgrading to Angular 22
+
+Once the previous steps are completed, **the application should be upgraded to Angular 22 and libs v9 should be installed**. After the version updates are completed, the remaining steps of the migration can be followed.
+
+[%interactive]
+** [ ] xref:./update-v9-packages.adoc[Required Package Updates]
+** [ ] xref:./migrate-to-optimus-ui.adoc[Migrate from PrimeNG to Optimus UI]
+** [ ] xref:./add-share-scope-angular-22.adoc[Set shareScope values in Helm]
+
+[#related-resources]
+== Related resources
+
+* xref:migrations/angular-21/index.adoc[Angular 21 migration guide] (the previous version)
+* xref:migrations/angular-23/migration-plan.adoc[Angular 23 migration guide] (the next step: Angular Material and Tailwind CSS)
+* https://github.com/openng-org/optimus-ui[Optimus UI repository]
