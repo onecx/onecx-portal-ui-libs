@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing'
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { Component, ViewChild } from '@angular/core'
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing'
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
 import { RouterTestingModule } from '@angular/router/testing'
 import { SlotHarness } from '@onecx/angular-accelerator/testing'
 import { AppStateService } from '@onecx/angular-integration-interface'
@@ -126,4 +128,74 @@ describe('SearchHeaderComponent', () => {
 
     expect(buttons.length).toBe(0)
   })
+})
+
+@Component({
+  standalone: false,
+  template: `
+    <ocx-search-header>
+      <form [formGroup]="form">
+        <input formControlName="name" />
+        <input formControlName="status" />
+      </form>
+    </ocx-search-header>
+  `,
+})
+class SearchHeaderWithFormComponent {
+  @ViewChild(SearchHeaderComponent, { static: true }) searchHeader!: SearchHeaderComponent
+  form = new FormGroup({
+    name: new FormControl<string | null>(null),
+    status: new FormControl<string | null>('active'),
+  })
+}
+
+describe('SearchHeaderComponent field values', () => {
+  let fixture: ComponentFixture<SearchHeaderWithFormComponent>
+  let host: SearchHeaderWithFormComponent
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [SearchHeaderWithFormComponent, SearchHeaderComponent, PageHeaderComponent, IfPermissionDirective],
+      imports: [
+        TranslateTestingModule.withTranslations({}),
+        RouterTestingModule,
+        ReactiveFormsModule,
+        ButtonModule,
+        BreadcrumbModule,
+        AngularAcceleratorModule,
+        TooltipModule,
+        OcxTooltipDirective,
+      ],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideAppStateServiceMock(),
+        provideUserServiceMock(),
+      ],
+    }).compileComponents()
+
+    fixture = TestBed.createComponent(SearchHeaderWithFormComponent)
+    host = fixture.componentInstance
+    fixture.detectChanges()
+  })
+
+  it('should report every search field with its current value before the form is changed', fakeAsync(() => {
+    const values: { [key: string]: unknown }[] = []
+    host.searchHeader.fieldValues$?.subscribe((v) => values.push(v))
+
+    tick(100)
+
+    expect(values).toEqual([{ name: undefined, status: 'active' }])
+  }))
+
+  it('should report the changed values when the form changes', fakeAsync(() => {
+    const values: { [key: string]: unknown }[] = []
+    host.searchHeader.fieldValues$?.subscribe((v) => values.push(v))
+    tick(100)
+
+    host.form.patchValue({ name: 't1' })
+    tick(100)
+
+    expect(values[values.length - 1]).toEqual({ name: 't1', status: 'active' })
+  }))
 })
