@@ -66,6 +66,7 @@ All Units of this Area, in reading order. Every Unit follows the link:../unit-te
 . link:./app-load-failures-and-global-errors.adoc[App load failures & global errors]: the two post-bootstrap failures (a remote module that fails to load, and a `globalError` value) and their distinct destinations.
 . link:./global-loading.adoc[Global loading]: the page-wide `globalLoading` flag and the separate route-area spinner it does not drive.
 . link:./portal-messages-and-notifications.adoc[Portal Messages & Notifications]: the `message` and `notification` Topics and the Shell's toast Remote Component.
+. link:./form-validation.adoc[Accessible form validation]: the `ocxForm` / `ocxFormField` pattern for required, invalid and error state, and failed saves inside dialogs.
 
 == Related Areas
 

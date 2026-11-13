@@ -57,6 +57,10 @@ import { LoadingIndicatorDirective } from './directives/loading-indicator.direct
 import { MessageService } from '@openng/optimus-ui/api'
 import { ConsentComponent } from './components/consent/consent.component'
 import { LIB_VERSION } from '../version'
+import { OcxFormDirective } from './components/form-field/form.directive'
+import { OcxFormFieldDirective } from './components/form-field/form-field.directive'
+import { FormFieldErrorComponent } from './components/form-field/form-field-error.component'
+import { FormErrorSummaryComponent } from './components/form-field/form-error-summary.component'
 import { providePortalDialogService } from './services/portal-dialog.service'
 
 export class AngularAcceleratorMissingTranslationHandler extends MultiLanguageMissingTranslationHandler {}
@@ -82,7 +86,11 @@ function appInitializer(userService: UserService) {
     RouterModule,
     ReactiveFormsModule,
     OcxTooltipDirective,
-    AddFilterDialogComponent
+    AddFilterDialogComponent,
+    OcxFormDirective,
+    OcxFormFieldDirective,
+    FormFieldErrorComponent,
+    FormErrorSummaryComponent,
   ],
   declarations: [
     ColumnGroupSelectionComponent,
@@ -165,6 +173,10 @@ function appInitializer(userService: UserService) {
     IfBreakpointDirective,
     SrcDirective,
     OcxTooltipDirective,
+    OcxFormDirective,
+    OcxFormFieldDirective,
+    FormFieldErrorComponent,
+    FormErrorSummaryComponent,
     OcxTimeAgoPipe,
     AdvancedDirective,
     TooltipOnOverflowDirective,

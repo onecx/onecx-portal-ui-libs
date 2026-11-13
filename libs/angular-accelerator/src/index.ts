@@ -12,6 +12,8 @@ export * from './lib/directives/template.directive'
 export * from './lib/directives/basic.directive'
 export * from './lib/directives/loading-indicator.directive'
 export * from './lib/directives/tooltip.directive'
+export * from './lib/components/form-field/form.directive'
+export * from './lib/components/form-field/form-field.directive'
 
 // components
 export * from './lib/components/column-group-selection/column-group-selection.component'
@@ -37,6 +39,8 @@ export * from './lib/components/dialog/dialog-content/dialog-content.component'
 export * from './lib/components/dialog/dialog-inline/dialog-inline.component'
 export * from './lib/components/dialog/dialog-footer/dialog-footer.component'
 export * from './lib/components/error-component/global-error.component'
+export * from './lib/components/form-field/form-field-error.component'
+export * from './lib/components/form-field/form-error-summary.component'
 
 // services
 export * from './lib/services/breadcrumb.service'
