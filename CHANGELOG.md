@@ -1,3 +1,12 @@
+## [8.15.1](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.15.0...v8.15.1) (2026-11-13)
+
+### Bug Fixes
+
+* **angular-accelerator:** report the search fields to the search config slot (v8) ([#1970](https://github.com/onecx/onecx-portal-ui-libs/issues/1970)) ([7c53347](https://github.com/onecx/onecx-portal-ui-libs/commit/7c533472c97e3f89181046dd98af087bb8d85b4c))
+* column-header getting focused ([#1949](https://github.com/onecx/onecx-portal-ui-libs/issues/1949)) ([c4a0574](https://github.com/onecx/onecx-portal-ui-libs/commit/c4a0574a0e30616172f56b807ddeb7764c2ceb8f))
+* fix data-table header spacing + overflow v8 ([#1974](https://github.com/onecx/onecx-portal-ui-libs/issues/1974)) ([277f623](https://github.com/onecx/onecx-portal-ui-libs/commit/277f6230c5fe1bf4f47a7650ecd2319415d7ce8b))
+* make OcxTooltipDirective host cursor configurable (v8) ([#1943](https://github.com/onecx/onecx-portal-ui-libs/issues/1943)) ([7847839](https://github.com/onecx/onecx-portal-ui-libs/commit/784783973484c0b6b0bc5776f743e9e864bb4f27)), closes [onecx/internal-tasks#1266](https://github.com/onecx/internal-tasks/issues/1266)
+
 ## [8.15.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.14.0...v8.15.0) (2026-11-03)
 
 ### Features
