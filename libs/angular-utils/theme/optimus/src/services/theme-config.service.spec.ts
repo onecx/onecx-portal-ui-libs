@@ -13,7 +13,7 @@ describe('ThemeConfigService', () => {
     id: 'my-test-theme',
     properties: {
       general: {
-        'primary-color': '#ababab',
+        'primary-color': '#274b5f',
       },
       font: {},
       topbar: {},

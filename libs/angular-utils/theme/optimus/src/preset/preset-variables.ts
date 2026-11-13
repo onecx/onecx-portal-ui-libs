@@ -1,6 +1,7 @@
 import { createPalette, standardColorAdjustment } from '../utils/create-color-palette'
 
 import defaultVariables from './default-theme-variables'
+import { resolveFocusRingColors } from '../utils/focus-ring'
 import breadcrumb from './component-presets/breadcrumb'
 import autocomplete from './component-presets/autocomplete'
 import button from './component-presets/button'
@@ -11,6 +12,16 @@ import floatlabel from './component-presets/floatlabel'
 import inputtext from './component-presets/inputtext'
 import paginator from './component-presets/paginator'
 import fileupload from './component-presets/fileupload'
+
+// INFO: Focus ring colours resolved from the default theme colours (>= 3:1, WCAG 1.4.11). ThemeConfig resolves them
+// again for the active theme. Token names (CSS variables): --p-focus-ring-*, --p-onecx-focus-ring-color and
+// --p-onecx-focus-ring-inverse-color
+const focusRingColors = resolveFocusRingColors({
+  primaryColor: defaultVariables.general.primaryColor,
+  surfaceColor: defaultVariables.general.contentBgColor,
+  bodyBgColor: defaultVariables.general.bodyBgColor,
+  topbarBgColor: defaultVariables.topbar.topbarBgColor,
+})
 
 // Structure of this object has to match https://github.com/primefaces/primeuix/tree/main/packages/themes/src/presets/aura
 export default {
@@ -35,14 +46,17 @@ export default {
         ...defaultVariables.sidebar,
         ...defaultVariables.general,
         errorColor: '#b00020',
+        // Focus ring on dark surfaces (top bar, menu); use instead of focus.ring.color there
+        focusRingColor: focusRingColors.color,
+        focusRingInverseColor: focusRingColors.inverseColor,
         animationDuration: '0.2s',
       },
     },
     transitionDuration: '0.2s',
     focusRing: {
-      width: '1px',
+      width: '2px',
       style: 'solid',
-      color: '{primary.color}',
+      color: focusRingColors.color,
       offset: '2px',
       shadow: 'none',
     },
@@ -72,10 +86,11 @@ export default {
         paddingY: '0.875rem', // equal to paddingX
       },
       borderRadius: '{border.radius.md}',
+      // INFO: Ring in addition to the border colour change on focus
       focusRing: {
-        width: '0',
-        style: 'none',
-        color: 'transparent',
+        width: '{focus.ring.width}',
+        style: '{focus.ring.style}',
+        color: '{focus.ring.color}',
         offset: '0',
         shadow: 'none',
       },
@@ -282,15 +297,13 @@ export default {
           // disabledColor: '{surface.500}',
           disabledColor: '{surface.400}', // lighter color than default
 
-          // INFO: --emphasis-low is used for default input border color
-          // TODO: Check with surface value
-          // TODO: Can be borderColor: rgba(0, 0, 0, 0.38)
-          // borderColor: '{surface.300}',
-          borderColor: '{surface.200}', // lighter color than default
-          // INFO: --emphasis-high is used for default input border color
-          // TODO: Check with surface value
-          // TODO: Can be hoverBorderColor: rgba(0, 0, 0, 0.87)
-          hoverBorderColor: '{surface.400}',
+          // INFO: WCAG 1.4.11 (non-text contrast): the boundary of a form field has to reach 3:1 against
+          // the content (#ffffff) and body (#f7f7f7) background. surface.400 gives 3.32:1 / 3.10:1.
+          // Also used by checkbox and radiobutton (they reference {form.field.border.color}).
+          // The contrast is verified in form-field-contrast.spec.ts (axe cannot check it in jsdom).
+          borderColor: '{surface.400}',
+          // INFO: has to stay clearly distinguishable from borderColor (>= 1.5:1), surface.600 gives 1.85:1
+          hoverBorderColor: '{surface.600}',
 
           // INFO: --emphasis-high is used for default input text color
           // TODO: Check with surface value

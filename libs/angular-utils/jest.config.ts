@@ -8,11 +8,18 @@ export default {
   ...createReportsConfig('angular-utils'),
   displayName: 'angular-utils',
   preset: '../../jest.preset.js',
-  testMatch: ['<rootDir>/src/lib/**/*.spec.ts', '<rootDir>/guards/**/*.spec.ts', '<rootDir>/cdk/**/*.spec.ts'],
+  testMatch: [
+    '<rootDir>/src/lib/**/*.spec.ts',
+    '<rootDir>/guards/**/*.spec.ts',
+    '<rootDir>/cdk/**/*.spec.ts',
+    '<rootDir>/theme/optimus/src/preset/**/*.spec.ts',
+    '<rootDir>/theme/optimus/src/utils/**/*.spec.ts',
+    '<rootDir>/theme/optimus/src/services/theme-config.service.spec.ts',
+  ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   moduleNameMapper: {
-    '@openng/optimus-ui-themes':
-      '<rootDir>/../../node_modules/@openng/optimus-ui-themes/dist/index.mjs',
+    '^@openng/optimus-ui-themes/aura$': '<rootDir>/../../node_modules/@openng/optimus-ui-themes/dist/aura/index.mjs',
+    '^@openng/optimus-ui-themes$': '<rootDir>/../../node_modules/@openng/optimus-ui-themes/dist/index.mjs',
   },
   transform: {
     '^.+\\.(mjs|js|html)$': [
