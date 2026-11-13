@@ -56,6 +56,40 @@ The steps in that method:
 * *Merge onto the base preset.* link:{custom_preset}[`CustomPreset`] is `definePreset(normalizeKeys(Aura), normalizeKeys(presetVariables))`: PrimeNG's *Aura* preset overlaid with OneCX's link:{preset_variables}[token tree]. The theme-driven part from the previous step is merged on top, so theme values win over the defaults.
 * *Apply.* `primeNG.setThemeConfig(...)` installs the merged preset; PrimeNG re-renders its CSS variables from it.
 
+[#focus-ring-tokens]
+==== Focus ring tokens
+
+The preset defines one focus ring for the whole platform (WCAG 2.4.7, 1.4.11, 2.4.13). Consumers (shell top bar, menu, other apps) must use these tokens and not define their own.
+
+[cols="2,2,3"]
+|===
+|Preset key |CSS variable |Meaning
+
+|`semantic.focusRing.width` / `style` / `offset`
+|`--p-focus-ring-width` / `-style` / `-offset`
+|`2px` / `solid` / `2px`. The ring is an `outline`, so it also survives forced-colors mode.
+
+|`semantic.focusRing.color`
+|`--p-focus-ring-color`
+|Ring on light surfaces. At least 3:1 against the content surface and the body background.
+
+|`semantic.extend.onecx.focusRingColor`
+|`--p-onecx-focus-ring-color`
+|Same value as `focus.ring.color`, for consumers outside PrimeNG components.
+
+|`semantic.extend.onecx.focusRingInverseColor`
+|`--p-onecx-focus-ring-inverse-color`
+|Ring on dark surfaces such as the top bar (and a dark menu, if the theme defines one). Checked for at least 3:1 against the top bar background only; themes with a dark menu background must verify it against `sidebar.menu-bg-color`.
+
+|`semantic.formField.focusRing`
+|`--p-form-field-focus-ring-*`
+|Form fields show the ring in addition to the border colour change (references the shared tokens, offset `0`).
+|===
+
+The colours are resolved from the theme by `resolveFocusRingColors` (`focus-ring.ts`): start at the primary colour (inverse: white) and mix towards black or white until the 3:1 contrast against the backgrounds is reached. `ThemeConfig.getConfig()` runs it for the active theme (`general.primary-color`, `general.content-bg-color`, `general.body-bg-color`, `topbar.topbar-bg-color`). A theme author who wants a different ring colour sets the token via a theme override and is responsible for the contrast.
+
+Components must not hide `overflow` around focusable elements without leaving room for the ring (2px width + 2px offset), see the page header, which inherits its border radius on the first and last child instead of using `overflow: hidden`.
+
 [#angular-overrides]
 ==== Theme overrides (advanced)
 
