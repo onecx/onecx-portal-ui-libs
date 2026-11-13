@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
+import { Select } from '@openng/optimus-ui/select'
 import { TranslateModule } from '@ngx-translate/core'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
@@ -36,6 +38,17 @@ describe('DataListGridSortingComponent', () => {
   it('should create', () => {
     fixture.detectChanges()
     expect(component).toBeTruthy()
+  })
+
+  it('should not autofocus the sorting select', () => {
+    fixture.detectChanges()
+
+    const select = fixture.debugElement.query(By.directive(Select))
+    const focusInput = select.nativeElement.querySelector('#dataListGridSortingDropdownInput')
+
+    expect(select.componentInstance.autofocus).toBe(false)
+    expect(focusInput.hasAttribute('autofocus')).toBe(false)
+    expect(document.activeElement).not.toBe(focusInput)
   })
 
   describe('dropdownOptions + selectedSortingOption', () => {
