@@ -2157,3 +2157,34 @@ xdescribe('InteractiveDataViewComponent', () => {
     expect(await interactiveDataViewHarness.getContentStyleClasses()).toEqual(expectedStyleClasses)
   })
 })
+
+describe('InteractiveDataViewComponent action URL inputs', () => {
+  it('should pass View/Edit URL inputs through to the data-view child', async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        TranslateModule.forRoot(),
+        AngularAcceleratorModule,
+        AngularAcceleratorPrimeNgModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        provideUserServiceMock(),
+        provideSlotServiceMock(),
+        provideHttpClient(withInterceptorsFromDi()),
+        provideRouter([]),
+        provideAppStateServiceMock(),
+        TooltipStyle,
+      ],
+    }).compileComponents()
+
+    const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    const viewActionUrl = (row: { id: string }) => `/details/${row.id}`
+    fixture.componentInstance.viewActionUrl = viewActionUrl
+    fixture.componentInstance.editActionUrl = '/edit'
+    fixture.detectChanges()
+
+    const dataView = fixture.debugElement.query(By.directive(DataViewComponent)).componentInstance as DataViewComponent
+    expect(dataView.viewActionUrl).toBe(viewActionUrl)
+    expect(dataView.editActionUrl).toBe('/edit')
+  })
+})
