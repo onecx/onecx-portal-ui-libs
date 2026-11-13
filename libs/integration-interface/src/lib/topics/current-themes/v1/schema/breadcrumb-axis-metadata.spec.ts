@@ -1,14 +1,35 @@
-import { collectAxisScopes } from './test-utils'
+import { collectAxisScopes, expectAxes, expectFallback } from './test-utils'
 
 const BREADCRUMB = 'v2.usages.breadcrumb'
 
-// The breadcrumb is a static container: its root and `item` tokens sit flat (with `settings`
-// marked `axis: 'setting'`), and the item's `hover`/`focus`/`disabled`/`active` groups are flat
-// token partial-overrides alongside the base tokens — not `variant`/`state`/`severity` containers.
-// There is no axis wrapper anywhere, so its tokens carry no relaxed-axis fallback. Zero scopes is
-// correct.
 describe('breadcrumb axis metadata', () => {
-  it('opens no fallback scopes (static container)', () => {
-    expect(collectAxisScopes(BREADCRUMB).size).toBe(0)
+  const scopes = collectAxisScopes(BREADCRUMB)
+
+  it('opens a scope only for the item child', () => {
+    expect([...scopes.keys()]).toEqual([`${BREADCRUMB}.item`])
+  })
+
+  describe('item', () => {
+    it('has its default variant, state and severity members', () => {
+      expectAxes(scopes, 'item', {
+        variant: ['defaultVariant'],
+        state: ['defaultState', 'hover', 'focus', 'active', 'disabled'],
+        severity: ['defaultSeverity'],
+      })
+    })
+
+    it('hover falls back to defaultState', () => {
+      expectFallback(BREADCRUMB, {
+        from: 'item.defaultVariant.hover.defaultSeverity.background',
+        to: 'item.defaultVariant.defaultState.defaultSeverity.background',
+      })
+    })
+
+    it('defaultState has no fallback (item re-roots, no parent scope)', () => {
+      expectFallback(BREADCRUMB, {
+        from: 'item.defaultVariant.defaultState.defaultSeverity.background',
+        to: undefined,
+      })
+    })
   })
 })
