@@ -57,3 +57,8 @@ $clr-neutral-700: #262626;
   font-weight: 700;
   text-align: left;
 }
+
+:host ::ng-deep .p-datatable-table-container {
+  position: relative;
+  z-index: 0;
+}
