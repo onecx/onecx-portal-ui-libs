@@ -1,7 +1,8 @@
 {
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Bestätigen",
-    "CANCEL": "Abbrechen"
+    "CANCEL": "Abbrechen",
+    "CONTENT_REGION": "Dialoginhalt"
   },
   "OCX_CONSENT": {
     "TITLE": "Zustimmung erforderlich",

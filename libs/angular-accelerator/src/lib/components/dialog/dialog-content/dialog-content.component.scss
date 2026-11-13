@@ -1,5 +1,14 @@
+// Let the content shrink with the dialog (e.g. at 400% zoom) so this element,
+// and not an unnamed ancestor, is the scroll container.
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .buttonDialogScrollableContent {
-    overflow: auto;
-    max-height: 500px;
-    margin-bottom: 20px;
+  overflow: auto;
+  min-height: 0;
+  max-height: 500px;
+  margin-bottom: 20px;
 }

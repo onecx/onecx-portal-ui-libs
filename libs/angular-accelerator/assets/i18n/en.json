@@ -1,7 +1,8 @@
 {
   "OCX_BUTTON_DIALOG": {
     "CONFIRM": "Confirm",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "CONTENT_REGION": "Dialog content"
   },
   "OCX_CONSENT": {
     "TITLE": "Consent required",
