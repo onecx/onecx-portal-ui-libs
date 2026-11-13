@@ -14,6 +14,8 @@ export * from './lib/directives/loading-indicator.directive'
 export * from './lib/directives/tooltip.directive'
 
 // components
+export * from './lib/components/ai-assist/ai-assist.component'
+export * from './lib/components/ai-assist/ai-assist.model'
 export * from './lib/components/column-group-selection/column-group-selection.component'
 export * from './lib/components/content/content.component'
 export * from './lib/components/content-container/content-container.component'
