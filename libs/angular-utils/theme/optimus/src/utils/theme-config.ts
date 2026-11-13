@@ -1,4 +1,5 @@
 import { createPalette, standardColorAdjustment } from './create-color-palette'
+import { resolveFocusRingColors } from './focus-ring'
 import { normalizeKeys } from './normalize-preset-keys.utils'
 
 interface ThemeVariables {
@@ -14,14 +15,24 @@ export default class ThemeConfig {
 
   getConfig() {
     const primaryColor = (this.themeVariables as any)['general']['primaryColor']
+    const vars = this.themeVariables as any
+    const focusRing = resolveFocusRingColors({
+      primaryColor,
+      surfaceColor: vars['general']['contentBgColor'],
+      bodyBgColor: vars['general']['bodyBgColor'],
+      topbarBgColor: vars['topbar']?.['topbarBgColor'],
+    })
     return normalizeKeys({
       semantic: {
+        focusRing: { color: focusRing.color },
         extend: {
           onecx: {
             ...(this.themeVariables as any)['font'],
             ...(this.themeVariables as any)['topbar'],
             ...(this.themeVariables as any)['sidebar'],
             ...(this.themeVariables as any)['general'],
+            focusRingColor: focusRing.color,
+            focusRingInverseColor: focusRing.inverseColor,
           },
         },
         primary: {
