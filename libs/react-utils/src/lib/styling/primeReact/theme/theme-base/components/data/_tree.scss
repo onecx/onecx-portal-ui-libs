@@ -1,3 +1,6 @@
+@use "sass:color";
+@use "sass:list";
+
 // core
 .p-tree-container {
   margin: 0;
@@ -140,11 +143,11 @@
 
     .p-tree-filter {
       width: 100%;
-      padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+      padding-right: list.nth($inputPadding, 2) + $primeIconFontSize;
     }
 
     .p-tree-filter-icon {
-      right: nth($inputPadding, 2);
+      right: list.nth($inputPadding, 2);
       color: $inputIconColor;
     }
   }
@@ -166,7 +169,7 @@
     height: $inlineSpacing;
 
     &.p-treenode-droppoint-active {
-      background: scale-color($highlightBg, $lightness: -20%);
+      background: color.scale($highlightBg, $lightness: -20%);
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   Output,
   Signal,
   TemplateRef,
+  computed,
   contentChild,
   contentChildren,
   effect,
@@ -17,7 +18,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core'
 import { toObservable } from '@angular/core/rxjs-interop'
-import { FormControlName, FormGroup } from '@angular/forms'
+import { FormControlName, FormGroup, FormGroupDirective } from '@angular/forms'
 import {
   Observable,
   combineLatest,
@@ -114,7 +115,10 @@ export class SearchHeaderComponent {
     return this.selectedSearchConfigChanged.observed
   }
 
-  formGroup = contentChild<FormGroup | undefined>(FormGroup)
+  // The projected `<form [formGroup]>` contributes a `FormGroupDirective`, not a `FormGroup`, so the query
+  // targets the directive and exposes its form.
+  private readonly formGroupDirective = contentChild(FormGroupDirective)
+  formGroup = computed<FormGroup | undefined>(() => this.formGroupDirective()?.form)
   visibleFormControls = contentChildren<FormControlName>(FormControlName, { descendants: true })
 
   hasAdvanced = signal<boolean>(false)
@@ -131,7 +135,9 @@ export class SearchHeaderComponent {
   fieldValues$: Observable<{ [key: string]: unknown }> | undefined = combineLatest([
     toObservable(this.formGroup).pipe(
       filter((fg) => !!fg),
-      mergeMap((fg) => fg.valueChanges.pipe(startWith({})))
+      // Start from the form's current value, not from an empty object, so the search config slot knows
+      // the search fields before the user changes the form for the first time.
+      mergeMap((fg) => fg.valueChanges.pipe(startWith(fg.value)))
     ),
     toObservable(this.visibleFormControls).pipe(startWith(null)),
   ]).pipe(

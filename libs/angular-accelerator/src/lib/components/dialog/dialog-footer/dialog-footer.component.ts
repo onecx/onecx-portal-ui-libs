@@ -43,7 +43,6 @@ export const defaultDialogData: ButtonDialogData = {
   selector: 'ocx-dialog-footer',
   templateUrl: './dialog-footer.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrls: ['./dialog-footer.component.scss'],
 })
 export class DialogFooterComponent implements OnInit {
   dynamicDialogConfig = inject(DynamicDialogConfig)
