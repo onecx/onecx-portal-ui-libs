@@ -12,7 +12,7 @@
 @if (data()) { @if (shownDiagramTypes().length > 1) {
 <div class="flex justify-center pb-2">
   <p-selectbutton [options]="shownDiagramTypes()" [ngModel]="selectedDiagramType()" optionLabel="id"
-    (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false"
+    (onChange)="onDiagramTypeChanged($event)" name="diagram-type-select-button" [allowEmpty]="false" autofocus="false"
     [ariaLabel]="'OCX_DIAGRAM.SELECT_BUTTON.ARIA_LABEL' | translate">
     <ng-template #item let-item>
       <i [class]="item.icon" [ocxTooltip]="item.tooltipKey | translate" tooltipPosition="top" tooltipEvent="hover"></i>
