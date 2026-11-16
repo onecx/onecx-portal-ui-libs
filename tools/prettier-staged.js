@@ -15,12 +15,15 @@ async function checkStagedFiles() {
   let failed = false
 
   for (const file of stagedFiles) {
-    const fileInfo = await prettier.getFileInfo(file)
+    const fileInfo = await prettier.getFileInfo(file, { ignorePath: '.prettierignore' })
     if (fileInfo.ignored || !fileInfo.inferredParser) {
       continue
     }
 
-    const content = execFileSync('git', ['show', `:${file}`], { encoding: 'utf8' })
+    const content = execFileSync('git', ['show', `:${file}`], {
+      encoding: 'utf8',
+      maxBuffer: 10 * 1024 * 1024,
+    })
     const config = await prettier.resolveConfig(file)
     if (!(await prettier.check(content, { ...config, filepath: file }))) {
       console.error(`Formatting check failed for staged file: ${file}`)

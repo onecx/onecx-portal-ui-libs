@@ -31,8 +31,12 @@ done
 
 if [ -n "$CI" ] || [ -n "$FORCE_CI_COMMIT_HOOKS" ]; then
   echo "pre-commit: CI/FORCE_CI_COMMIT_HOOKS detected, running remaining configured QA checks..."
+  test_script="test:ci"
+  if ! has_script "$test_script"; then
+    test_script="test"
+  fi
   # shellcheck disable=SC2086 # EXTRA_QA_SCRIPTS is intentionally word-split, one script name per word
-  for name in build test:ci sonar test:arch test:a11y $EXTRA_QA_SCRIPTS; do
+  for name in build "$test_script" sonar test:arch test:a11y $EXTRA_QA_SCRIPTS; do
     if has_script "$name"; then
       run_check "$name"
     fi

@@ -8,7 +8,7 @@
     "build": "nx run-many -t build",
     "build-copy": "npm run build && node copy-build.js",
     "test": "nx affected -t test",
-    "lint": "nx affected -t lint",
+    "lint": "nx affected -t lint && npm run lint:styles",
     "lint:eslint": "nx run-many -t lint",
     "lint:styles": "stylelint \"**/*.{css,scss}\"",
     "clean": "npm cache clean --force && rm -rf *.log dist reports .angular .eslintcache ./node_modules/.cache/prettier/.prettier-cache .nx tmp",
