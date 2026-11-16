@@ -1,0 +1,98 @@
+[#migrate-to-optimus-ui-v1]
+= Migrate your own PrimeNG usage to Optimus UI v1
+
+Complete this step *before* upgrading to Angular 22. It swaps the application's own direct PrimeNG usage to **Optimus UI v1** — the Angular 21-compatible major — so the app still builds and is fully verifiable on Angular 21 before the framework bump.
+
+[#why-before]
+== Why this step happens before the Angular bump
+
+Optimus UI v1 declares Angular 21 peer dependencies, so it installs cleanly on the Angular 21 workspace your application is currently on. Running the swap here means the only new variable in each step is the one you intend:
+
+1. This step — PrimeNG → Optimus UI, still on Angular 21.
+2. The toolchain upgrade to Angular 22.
+3. The OneCX UI libraries bump to v9.
+
+[#keep-primeng-installed]
+== Keep `primeng` installed
+
+Do **not** remove `primeng` in this step. The OneCX UI libraries v8 still peer-depend on `primeng` and consume it from the shared scope. The `primeng` and `@openng/*` package lines coexist until the xref:./update-onecx-libs-v9.adoc[v9 libs bump], which is where `primeng` and the remaining PrimeNG packages are removed.
+
+For a workspace that uses module federation, this means the `primeng` shared scope stays in place during this step and is replaced by the `@openng/optimus-ui` shared scope only in the v9 step.
+
+[#package-replacements]
+== Package replacements
+
+Replace the PrimeNG packages your own code uses with their Optimus UI v1 equivalents:
+
+[cols="2,2,3"]
+|===
+| PrimeNG package | Optimus UI v1 package | Notes
+
+| `primeng`
+| `@openng/optimus-ui` (`^1.0.2`)
+| Main component library (A21 peer: `@angular/*` `^21.0.0`)
+
+| `primeicons`
+| `@openng/icons` (`^1.0.0`)
+| Icon font
+
+| `@primeng/themes`
+| `@openng/optimus-ui-themes` (`^1.0.2`)
+| Presets and theme utilities (Aura, Lara, Nora, Material)
+
+| `@primeuix/themes`
+| `@openng/optimus-ui-themes` (`^1.0.2`)
+| If you used the PrimeUix themes package directly
+
+| `@primeuix/styled`
+| `@openng/optimus-ui-styled` (`^1.0.2`)
+| Low-level styled utilities
+
+| `primelocale`
+| `@openng/optimus-ui-locale` (`^1.0.2`)
+| Locale data
+
+|===
+
+For a fresh install you can add the Optimus UI v1 packages directly:
+
+[source,bash]
+----
+npm install @openng/optimus-ui@^1.0.2 \
+  @openng/icons@^1.0.0 \
+  @openng/optimus-ui-themes@^1.0.2 \
+  @openng/optimus-ui-locale@^1.0.2
+----
+
+[#automated-migration]
+== Automated migration (codemod)
+
+Optimus UI v1 ships an Angular CLI schematic that performs the bulk of the swap — rewriting imports, updating identifiers, and swapping the packages in `package.json`:
+
+[source,bash]
+----
+ng generate @openng/optimus-ui@1:migrate-from-primeng
+----
+
+Pass `--skip-install` to skip the scheduled `npm install`, or `--force` to run even when the installed PrimeNG major is not the expected one. The codemod:
+
+* Rewrites component-library imports from `primeng` to `@openng/optimus-ui` (e.g. `primeng/button` → `@openng/optimus-ui/button`).
+* Rewrites theme imports (e.g. `@primeuix/themes/aura` → `@openng/optimus-ui-themes/aura`).
+* Renames the config API: `providePrimeNG` → `provideOptimus`, `PrimeNG` → `Optimus`.
+* Lists anything it cannot migrate as a warning for manual review.
+
+Run the codemod first; then complete the manual steps it cannot cover.
+
+[#verification]
+== Verification
+
+After completing the swap, your own PrimeNG usage should be on Optimus UI v1:
+
+1. Your own component-library imports resolve to `@openng/optimus-ui` (the OneCX libraries v8 still reference `primeng` internally — that changes in the v9 step).
+2. `provideOptimus(...)` is configured in your application bootstrap.
+3. Run your test suite and a manual smoke test on Angular 21. The application must still build and behave identically before you move on to the xref:./update-nx-angular-version-22.adoc[toolchain upgrade].
+
+[NOTE]
+====
+This step does **not** change the OneCX UI libraries — they remain on v8 and continue to use `primeng`. Only your application's own direct PrimeNG usage moves to Optimus UI v1.
+====
