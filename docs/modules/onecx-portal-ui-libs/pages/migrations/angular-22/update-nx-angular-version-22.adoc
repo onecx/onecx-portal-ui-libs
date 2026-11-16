@@ -10,12 +10,17 @@ The OneCX UI libraries v9 ship with this upgrade. The toolchain step and the xre
 
 == Update @onecx/nx-plugin
 
-Update `@onecx/nx-plugin` to the Nx 23 line, alongside the `nx`/`@nx/*` packages. `@onecx/nx-plugin` is versioned independently of the `@onecx/*` libs in this repository, so it does not follow the libs `^9.0.0` scheme — install it at the same Nx 23 version the toolchain uses:
+Update `@onecx/nx-plugin` to the Nx 23 line, alongside the `nx`/`@nx/*` packages. `@onecx/nx-plugin` is versioned independently of the `@onecx/*` libs in this repository, so it does not follow the libs `^9.0.0` scheme — install the Nx 23 release of the plugin (in this reference app `^23.2.1`, matching the pinned `nx`/`@nx/*` `23.2.1`):
 
 [source, bash]
 ----
 npm install @onecx/nx-plugin@^23.2.1
 ----
+
+[NOTE]
+====
+Like `@onecx/nx-plugin@^22.1.3` in the xref:../angular-21/update-nx-angular-version-21.adoc[Angular 21 guide], the Nx 23 line of `@onecx/nx-plugin` is not published to the public npm registry. Install it from the registry your `@onecx/*` packages are resolved from.
+====
 
 == Update NX and Angular packages
 
