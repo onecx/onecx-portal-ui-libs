@@ -9,12 +9,8 @@ has_script() {
 
 run_check() {
   name="$1"
-  script="$name"
-  if [ "$name" = "prettier" ] && has_script "prettier:staged"; then
-    script="prettier:staged"
-  fi
-  echo "-> $name: npm run $script"
-  if npm run "$script"; then
+  echo "-> $name: npm run $name"
+  if npm run "$name"; then
     echo "OK: $name"
   else
     echo "FAILED: $name"
