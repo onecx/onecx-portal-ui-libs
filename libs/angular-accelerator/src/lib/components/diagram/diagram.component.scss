@@ -75,7 +75,6 @@
   }
 }
 
-// custom legends: two columns, scrollable when there are many entries (contains focusable buttons)
 .custom-legends-container .diagram-legend-list {
   display: grid;
   grid-template-columns: repeat(2, auto);

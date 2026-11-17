@@ -255,7 +255,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     return translated || undefined
   }
 
-  /** A disabled action that explains why; its wrapper is made keyboard-focusable to expose the reason. */
   hasDisabledReason(action: Action): boolean {
     return !!action.disabled && !!(action.disabledTooltipKey || action.disabledTooltip)
   }
@@ -276,10 +275,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     )
   }
 
-  /**
-   * Accessible name of the object detail action button:
-   * actionItemAriaLabelKey, actionItemAriaLabel, actionItemTooltipKey, object detail label.
-   */
   getActionItemAriaLabel(item: ObjectDetailItem): string {
     const name =
       this.translateKey(item.actionItemAriaLabelKey) ||
@@ -295,7 +290,6 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
     return item.label
   }
 
-  /** Text alternative for an icon-only object detail value. */
   getIconOnlyDetailText(item: ObjectDetailItem): string | undefined {
     return this.translateKey(item.valueTooltipKey)
   }

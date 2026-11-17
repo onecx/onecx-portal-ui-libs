@@ -35,9 +35,7 @@ export interface DiagramComponentState {
  * Emitted when a chart segment is clicked and when a legend entry is activated (click, Enter or Space).
  */
 export interface DiagramDataSelectedEvent {
-  /** Position of the selected entry in the `data` input. */
   index: number
-  /** The selected entry of the `data` input. */
   data: DiagramData
 }
 
@@ -86,9 +84,6 @@ export class DiagramComponent implements OnDestroy {
   fullHeight = input<boolean>(false)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
-  /**
-   * Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the page outline.
-   */
   titleHeadingLevel = input<number>(2)
   customLegends = input<boolean>(false)
   /**
@@ -104,9 +99,6 @@ export class DiagramComponent implements OnDestroy {
 
   selectedDiagramType = computed(() => allDiagramTypes.find((v) => v.layout === this.diagramType()))
   chartType = computed(() => this.diagramTypeToChartType(this.diagramType()))
-  /**
-   * Emits the selected entry when a chart segment is clicked or a legend entry is activated with mouse or keyboard.
-   */
   dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<DiagramComponentState>()
@@ -159,7 +151,6 @@ export class DiagramComponent implements OnDestroy {
 
     this.amountOfData.set(data.reduce((acc, current) => acc + current.value, 0))
     const COLORS = this.generateColors(data, colorScale, colorRangeInfo)
-    // Segments are separated by a border in the background color, so adjacent segments stay distinguishable
     const segmentBorderColor = getThemeColor('--content-bg-color')
     this.chartData.set({
       labels: data.map((d) => d.label),
@@ -181,7 +172,6 @@ export class DiagramComponent implements OnDestroy {
     const labelColor = getLabelColor(this.highContrast())
     this.chartOptions.set({
       plugins: {
-        // the legend is rendered as keyboard accessible HTML below the chart
         legend: {
           display: false,
           labels: { color: labelColor },
@@ -245,7 +235,6 @@ export class DiagramComponent implements OnDestroy {
     })
   }
 }
-// Generated colors are adjusted to the theme so every segment reaches 3:1 against the background (WCAG 1.4.11)
 function interpolateColors(amountOfData: number, colorScale: any, colorRangeInfo: any): string[] {
   const background = getThemeColor('--content-bg-color')
   const towards = getThemeColor('--text-color')

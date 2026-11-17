@@ -34,9 +34,6 @@ export class GroupByCountDiagramComponent {
   diagramType = model<DiagramType>(DiagramType.PIE)
   chartTitleKey = input<string>('')
   chartDescriptionKey = input<string>('')
-  /**
-   * Level (1-6) of the heading rendered for `chartTitleKey`. Choose it so that the heading fits into the page outline.
-   */
   titleHeadingLevel = input<number>(2)
   /**
    * This property determines if diagram should generate the colors for the data that does not have any set.
@@ -65,9 +62,6 @@ export class GroupByCountDiagramComponent {
   
   colors = model<Record<string, string>>({})
 
-  /**
-   * Emits the selected entry when a chart segment is clicked or a legend entry is activated with mouse or keyboard.
-   */
   dataSelected = output<DiagramDataSelectedEvent>()
   diagramTypeChanged = output<DiagramType>()
   componentStateChanged = output<GroupByCountDiagramComponentState>()
