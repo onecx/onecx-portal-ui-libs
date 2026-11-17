@@ -13,7 +13,7 @@ OneCX UI libraries v9 change the component library the `@onecx/*` libraries are 
 
 [NOTE]
 ====
-This is the Angular 22 / v9 migration. A separate, later effort moves OneCX's own components to Angular Material + Tailwind CSS with Angular 23 support — see the xref:migrations/angular-23/migration-plan.adoc[Angular 23 migration guide].
+This is the Angular 22 / v9 migration. A separate, later effort moves OneCX's own components to Angular Material + Tailwind CSS with Angular 23 support.
 ====
 
 [#prerequisites]
