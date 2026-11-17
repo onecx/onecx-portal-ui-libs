@@ -89,7 +89,7 @@ Run the codemod first; then complete the manual steps it cannot cover.
 After completing the swap, the application's own PrimeNG usage should be on Optimus UI v1:
 
 1. The application's own component-library imports resolve to `@openng/optimus-ui` (the OneCX libraries v8 still reference `primeng` internally — that changes in the v9 step).
-2. `provideOptimus(...)` is configured in the application bootstrap.
+2. The application's own component library is configured with `provideOptimus(...)`: a direct standalone `providePrimeNG(...)` call is renamed to `provideOptimus(...)`. Applications that never called `providePrimeNG` directly need no change here. The OneCX UI libraries v8 keep configuring PrimeNG internally for their own components; both configurations coexist until the xref:./update-onecx-libs-v9.adoc[v9 libraries bump].
 3. Run the test suite and a manual smoke test on Angular 21. The application must still build and behave identically before moving on to the xref:./update-nx-angular-version-22.adoc[toolchain upgrade].
 
 [NOTE]
