@@ -33,6 +33,8 @@ To keep the migration verifiable on a single framework version at a time, comple
 You can click the name of any change to open a detailed migration guide with instructions, code examples, and explanations.
 
 [%interactive]
+** [ ] xref:./update-node-version.adoc[Update Node.js to a version supported by Angular 22]
+** [ ] xref:./use-build-utils-for-shared-config.adoc[Import shared library configuration helpers from `@onecx/build-utils`]
 ** [ ] xref:./migrate-to-optimus-ui-v1.adoc[Migrate your own PrimeNG usage to Optimus UI v1]
 
 [#upgrade-to-angular-22]
@@ -57,3 +59,4 @@ Once the previous steps are completed, **the application should be upgraded to A
 [%interactive]
 ** [ ] xref:./primeflex-to-tailwind-v4.adoc[PrimeFlex to Tailwind CSS v4]
 ** [ ] xref:./post-v9-behavior-changes.adoc[Verify the post-v9 behavior changes]
+** [ ] xref:./add-share-scope-angular-22.adoc[Set shareScope values in Helm]

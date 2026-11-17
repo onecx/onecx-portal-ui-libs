@@ -1,0 +1,16 @@
+[#update-node-version]
+= Update Node.js to a version supported by Angular 22
+
+Angular 22 requires one of the following Node.js versions:
+
+* `^22.22.3`
+* `^24.15.0`
+* `>=26.0.0`
+
+Older Node.js versions, including Node.js 20, are not supported. Update the Node.js version in your local development environment and in every place your build pins it, for example:
+
+* `.nvmrc` or `.node-version` files
+* the `node-version` of `actions/setup-node` (or the equivalent setting) in your CI pipelines
+* the Node.js base image in your `Dockerfile`, if the application is built inside a container
+
+You can do this step while your application is still on Angular 21, because these Node.js versions are supported by Angular 21 as well.
