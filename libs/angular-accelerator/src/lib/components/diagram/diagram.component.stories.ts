@@ -17,6 +17,7 @@ import { DiagramData } from '../../model/diagram-data'
 import { StorybookThemeModule } from '../../storybook-theme.module'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { TooltipModule } from '@openng/optimus-ui/tooltip'
+import { action } from 'storybook/actions'
 
 function generateMockData(count = 10): DiagramData[] {
   const fruits = Array.from({ length: count }, (_, i) => `Fruit ${i + 1}`)
@@ -34,6 +35,10 @@ export default {
   argTypes: {
     diagramType: {
       options: [DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR, DiagramType.PIE],
+      control: { type: 'select' },
+    },
+    titleHeadingLevel: {
+      options: [1, 2, 3, 4, 5, 6],
       control: { type: 'select' },
     },
   },
@@ -88,8 +93,8 @@ export const PieChart = {
   args: {
     diagramType: DiagramType.PIE,
     data: mockData,
-    chartTitle: 'OCX_DIAGRAM.TITLE',
-    chartDescription: 'OCX_DIAGRAM.DESCRIPTION',
+    chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
+    chartDescriptionKey: 'OCX_DIAGRAM.ACCESSIBILITY_DESCRIPTION',
   },
 }
 
@@ -163,52 +168,35 @@ export const WithForcedCustomColors = {
     fillMissingColors: true,
   },
 }
-
 export const WithAccessibilityImprovements = {
-  render: Template,
+  render: (args: any) => ({
+    props: { ...args, onDataSelected: action('dataSelected') },
+    template: `
+      <ocx-diagram
+        [diagramType]="diagramType"
+        [data]="data"
+        [customLegends]="customLegends"
+        [supportedDiagramTypes]="supportedDiagramTypes"
+        [chartTitleKey]="chartTitleKey"
+        [chartDescriptionKey]="chartDescriptionKey"
+        [titleHeadingLevel]="titleHeadingLevel"
+        [sumKey]="sumKey"
+        (dataSelected)="onDataSelected($event)"
+      ></ocx-diagram>
+    `,
+  }),
   args: {
     diagramType: DiagramType.PIE,
     customLegends: true,
-    data: [
-      {
-        label: 'Fruit 1',
-        value: 1,
-      },
-      {
-        label: 'Fruit 2',
-        value: 21,
-      },
-      {
-        label: 'Fruit 3',
-        value: 41,
-      },
-      {
-        label: 'Fruit 4',
-        value: 61,
-      },
-      {
-        label: 'Fruit 5',
-        value: 81,
-      },
-      {
-        label: 'Fruit 6',
-        value: 101,
-      },
-      {
-        label: 'Fruit 7',
-        value: 121,
-      },
-      {
-        label: 'Fruit 8',
-        value: 141,
-      },
-    ],
+    data: Array.from({ length: 12 }, (_, i) => ({ label: `Fruit ${i + 1}`, value: i * 20 + 1 })),
     supportedDiagramTypes: [DiagramType.PIE, DiagramType.HORIZONTAL_BAR, DiagramType.VERTICAL_BAR],
     chartTitleKey: 'OCX_DIAGRAM.ACCESSIBILITY_TITLE',
     chartDescriptionKey: 'OCX_DIAGRAM.ACCESSIBILITY_DESCRIPTION',
+    titleHeadingLevel: 3,
     sumKey: 'OCX_DIAGRAM.SUM',
   },
 }
+
 const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
   template: `
     <div class="flex justify-center">
@@ -219,7 +207,9 @@ const TemplateWithContainer: StoryFn<DiagramComponent> = (args) => ({
         [sumKey]="sumKey"
         [supportedDiagramTypes]="supportedDiagramTypes"
         [fillMissingColors]="fillMissingColors"
-        [fullHeight]="true"     
+        [fullHeight]="true"
+        [chartTitleKey]="chartTitleKey"
+        [titleHeadingLevel]="titleHeadingLevel"
       ></ocx-diagram>
       </div>
     </div>
