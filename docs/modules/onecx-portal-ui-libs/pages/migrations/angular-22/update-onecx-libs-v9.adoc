@@ -30,7 +30,7 @@ npm install @openng/optimus-ui@^2.0.2 \
 npm uninstall primeng primeflex primeicons primelocale
 ----
 
-If you used the PrimeUix themes or styled packages directly, replace `@primeuix/themes` and `@primeuix/styled` with `@openng/optimus-ui-themes` and `@openng/optimus-ui-styled` respectively.
+If the PrimeUix themes or styled packages are used directly, replace `@primeuix/themes` and `@primeuix/styled` with `@openng/optimus-ui-themes` and `@openng/optimus-ui-styled` respectively.
 
 [NOTE]
 ====
@@ -90,7 +90,7 @@ import { provideThemeConfig, CustomPreset } from '@onecx/angular-utils/theme/opt
 The `OverrideType` change is a breaking change for the `current-theme` v1 integration topic: a `ThemeOverride` previously typed `type: OverrideType.PRIMENG` now uses `type: OverrideType.OPTIMUS` (the enum value string changes from `PRIMENG` to `OPTIMUS`).
 ====
 
-The theme-override i18n namespace emitted by `@onecx/angular-accelerator` moves from `assets/i18n/primeng/` to `assets/i18n/optimus/`. If your application references that asset path directly (for example in a bundler config), update it.
+The theme-override i18n namespace emitted by `@onecx/angular-accelerator` moves from `assets/i18n/primeng/` to `assets/i18n/optimus/`. Where that asset path is referenced directly (for example in a bundler config), update it.
 
 For a module-federation workspace, update the shared-scope pattern for the component library from `/^primeng.*$/` to `/^@openng\/optimus-ui.*$/` so the shared scope covers the Optimus UI packages.
 
@@ -98,10 +98,10 @@ For a module-federation workspace, update the shared-scope pattern for the compo
 
 [IMPORTANT]
 ====
-The `p-dialog` / `DynamicDialog` `header` input became a **signal** rather than a plain `string`/`TemplateRef` input. If you bind `header` directly, verify the dialog still renders its header as expected and update the binding if the API changed. This is the area most likely to break silently, so confirm it explicitly before merging.
+The `p-dialog` / `DynamicDialog` `header` input became a **signal** rather than a plain `string`/`TemplateRef` input. Where `header` is bound directly, verify the dialog still renders its header as expected and update the binding if the API changed. This is the area most likely to break silently, so confirm it explicitly before merging.
 ====
 
-`@openng/optimus-ui-themes` types are not a byte-for-byte match with PrimeNG's. Notably, `definePreset(...)` returns Optimus's `Preset` type, whose `semantic` member is typed as `unknown`. If your code reaches into `preset.semantic.colorScheme` (for example to seed a dark-mode block), you will hit an `Object is of type 'unknown'` compile error. The runtime object is unchanged; narrow the value to the shape you read:
+`@openng/optimus-ui-themes` types are not a byte-for-byte match with PrimeNG's. Notably, `definePreset(...)` returns Optimus's `Preset` type, whose `semantic` member is typed as `unknown`. Code that reaches into `preset.semantic.colorScheme` (for example to seed a dark-mode block) hits an `Object is of type 'unknown'` compile error. The runtime object is unchanged; narrow the value to the shape it is read as:
 
 [source,typescript]
 ----
@@ -114,5 +114,5 @@ After completing the bump:
 
 1. No `primeng`, `primeicons`, `@primeng/*`, or `@primeuix/*` imports or dependencies remain — everything is `@openng/*` or OneCX.
 2. The renamed module and theme entry point compile (the old names no longer resolve).
-3. Run your test suite and a manual Storybook smoke test, paying particular attention to `p-dialog` / `DynamicDialog` (see the known breakage areas above).
+3. Run the test suite and a manual Storybook smoke test, paying particular attention to `p-dialog` / `DynamicDialog` (see the known breakage areas above).
 4. Confirm the application builds and the xref:./keep-build-angular-22-2-3-and-webpack.adoc[build-angular / webpack pins] are still in place.

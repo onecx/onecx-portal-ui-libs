@@ -1,12 +1,12 @@
 [#migrate-to-optimus-ui-v1]
-= Migrate your own PrimeNG usage to Optimus UI v1
+= Migrate the application's own PrimeNG usage to Optimus UI v1
 
 Complete this step *before* upgrading to Angular 22. It swaps the application's own direct PrimeNG usage to **Optimus UI v1** — the Angular 21-compatible major — so the app still builds and is fully verifiable on Angular 21 before the framework bump.
 
 [#why-before]
 == Why this step happens before the Angular bump
 
-Optimus UI v1 declares Angular 21 peer dependencies, so it installs cleanly on the Angular 21 workspace your application is currently on. Running the swap here means the only new variable in each step is the one you intend:
+Optimus UI v1 declares Angular 21 peer dependencies, so it installs cleanly on the Angular 21 workspace the application is currently on. Running the swap here means the only new variable in each step is the one this migration intends:
 
 1. This step — PrimeNG → Optimus UI, still on Angular 21.
 2. The toolchain upgrade to Angular 22.
@@ -22,7 +22,7 @@ For a workspace that uses module federation, this means the `primeng` shared sco
 [#package-replacements]
 == Package replacements
 
-Replace the PrimeNG packages your own code uses with their Optimus UI v1 equivalents:
+Replace the PrimeNG packages the application's own code uses with their Optimus UI v1 equivalents:
 
 [cols="2,2,3"]
 |===
@@ -42,7 +42,7 @@ Replace the PrimeNG packages your own code uses with their Optimus UI v1 equival
 
 | `@primeuix/themes`
 | `@openng/optimus-ui-themes` (`^1.0.2`)
-| If you used the PrimeUix themes package directly
+| If the PrimeUix themes package was used directly
 
 | `@primeuix/styled`
 | `@openng/optimus-ui-styled` (`^1.0.2`)
@@ -54,7 +54,7 @@ Replace the PrimeNG packages your own code uses with their Optimus UI v1 equival
 
 |===
 
-For a fresh install you can add the Optimus UI v1 packages directly:
+For a fresh install, the Optimus UI v1 packages can be added directly:
 
 [source,bash]
 ----
@@ -86,13 +86,13 @@ Run the codemod first; then complete the manual steps it cannot cover.
 [#verification]
 == Verification
 
-After completing the swap, your own PrimeNG usage should be on Optimus UI v1:
+After completing the swap, the application's own PrimeNG usage should be on Optimus UI v1:
 
-1. Your own component-library imports resolve to `@openng/optimus-ui` (the OneCX libraries v8 still reference `primeng` internally — that changes in the v9 step).
-2. `provideOptimus(...)` is configured in your application bootstrap.
-3. Run your test suite and a manual smoke test on Angular 21. The application must still build and behave identically before you move on to the xref:./update-nx-angular-version-22.adoc[toolchain upgrade].
+1. The application's own component-library imports resolve to `@openng/optimus-ui` (the OneCX libraries v8 still reference `primeng` internally — that changes in the v9 step).
+2. `provideOptimus(...)` is configured in the application bootstrap.
+3. Run the test suite and a manual smoke test on Angular 21. The application must still build and behave identically before moving on to the xref:./update-nx-angular-version-22.adoc[toolchain upgrade].
 
 [NOTE]
 ====
-This step does **not** change the OneCX UI libraries — they remain on v8 and continue to use `primeng`. Only your application's own direct PrimeNG usage moves to Optimus UI v1.
+This step does **not** change the OneCX UI libraries — they remain on v8 and continue to use `primeng`. Only the application's own direct PrimeNG usage moves to Optimus UI v1.
 ====

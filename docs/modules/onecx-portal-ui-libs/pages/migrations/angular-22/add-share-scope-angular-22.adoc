@@ -1,7 +1,7 @@
 [#add-share-scope-angular-22]
 = Set shareScope values in Helm
 
-After migration to Angular 22, update the `shareScope` field of every microfrontend spec entry in your Helm values from `angular_21` to `angular_22`.
+After migration to Angular 22, update the `shareScope` field of every microfrontend spec entry in the Helm values from `angular_21` to `angular_22`.
 
 == Required change
 
@@ -25,9 +25,9 @@ app:
           shareScope: angular_22
 ----
 
-The value must match the share scope used in your Module Federation build. `getOneCXSharedLibraryConfig` from `@onecx/build-utils` derives it from the major version of `@angular/core` in your `package.json`, so it generates `angular_22` automatically after the upgrade.
+The value must match the share scope used in the Module Federation build. `getOneCXSharedLibraryConfig` from `@onecx/build-utils` derives it from the major version of `@angular/core` in the `package.json`, so it generates `angular_22` automatically after the upgrade.
 
 [NOTE]
 ====
-Angular 22 applications share their Angular 22 package instances through the Angular 22 preloader, which is provided by OneCX Shell 3.10.0 and later. Make sure the Shell in your target environment has at least this version.
+Angular 22 applications share their Angular 22 package instances through the Angular 22 preloader, which is provided by OneCX Shell 3.10.0 and later. Make sure the Shell in the target environment has at least this version.
 ====
