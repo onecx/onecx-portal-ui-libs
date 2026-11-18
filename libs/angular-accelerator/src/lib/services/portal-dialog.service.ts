@@ -506,6 +506,8 @@ export class PortalDialogService implements OnDestroy {
           modal: true,
           appendTo: 'body', // Important for the function findBodyChild
           ...dialogOptions,
+          // Lets ocx-dialog-content shrink with the dialog so its named, focusable region scrolls (WCAG 1.4.10)
+          contentStyle: { display: 'flex', flexDirection: 'column' },
           focusOnShow: false,
           duplicate: true, // Since dialog always opens DialogContentComponent, duplicates must be always allowed
           templates: {
@@ -606,10 +608,7 @@ export class PortalDialogService implements OnDestroy {
 
   private buttonDetailsOrTranslationKey(
     buttonTranslationKeyOrDetails:
-      | TranslationKey
-      | ButtonDialogButtonDetails
-      | ButtonDialogCustomButtonDetails
-      | undefined
+      TranslationKey | ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined
   ): ButtonDialogButtonDetails | ButtonDialogCustomButtonDetails | undefined {
     if (buttonTranslationKeyOrDetails === undefined) {
       return undefined
@@ -672,6 +671,23 @@ export class PortalDialogService implements OnDestroy {
 
   private isType(obj: any): obj is Type<any> {
     return obj instanceof Type
+  }
+
+  private setFocusOnInitiator(dialogOptions: PortalDialogConfig) {
+    const hasOnCloseFocus = Object.hasOwn(dialogOptions, 'onCloseFocus') && dialogOptions.onCloseFocus !== 'initiator'
+    if (hasOnCloseFocus) return
+
+    const initiator = dialogOptions.initiatorRef
+    if (
+      !initiator ||
+      typeof document === 'undefined' ||
+      !document.contains(initiator) ||
+      dialogOptions.onCloseFocus !== 'initiator'
+    )
+      return
+    else {
+      initiator.focus()
+    }
   }
 
   private getShowXStatus(isSecondaryButtonPresent: boolean, configuration: PortalDialogConfig): boolean {
