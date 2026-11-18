@@ -18,8 +18,8 @@ Object {
       },
       "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       "font": Object {
-        "size": "{{primitives.font.size}}",
-        "weight": "{{primitives.font.weight}}",
+        "size": "{{primitives.font.size.md}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "height": "1.5rem",
       "minWidth": "1.5rem",
@@ -50,17 +50,17 @@ Object {
     "size": "0.5rem",
   },
   "lg": Object {
-    "fontSize": "{{primitives.font.size}}",
+    "fontSize": "{{primitives.font.size.md}}",
     "height": "1.75rem",
     "minWidth": "1.75rem",
   },
   "sm": Object {
-    "fontSize": "{{primitives.font.size}}",
+    "fontSize": "{{primitives.font.size.md}}",
     "height": "1.25rem",
     "minWidth": "1.25rem",
   },
   "xl": Object {
-    "fontSize": "{{primitives.font.size}}",
+    "fontSize": "{{primitives.font.size.md}}",
     "height": "2rem",
     "minWidth": "2rem",
   },

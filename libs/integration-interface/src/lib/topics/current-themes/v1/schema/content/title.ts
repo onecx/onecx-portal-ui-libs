@@ -18,8 +18,8 @@ export const contentTitleDefaults = {
     family: '{{primitives.font.family}}',
     size: '{{primitives.font.size.lg}}',
     weight: '{{primitives.font.weight.medium}}',
-    lineHeight: '{{primitives.font.lineHeight}}',
-    letterSpacing: '{{primitives.font.letterSpacing}}',
+    lineHeight: '{{primitives.font.lineHeight.md}}',
+    letterSpacing: '{{primitives.font.letterSpacing.normal}}',
     style: '{{primitives.font.style}}',
   },
 }

@@ -20,8 +20,8 @@ export const multiselectGroupHeaderDefaults = {
   background: '{{primitives.defaultVariant.defaultState.defaultSeverity.bg}}',
   color: '{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}',
   font: {
-    weight: '{{primitives.font.weight}}',
-    size: '{{primitives.font.size}}',
+    weight: '{{primitives.font.weight.normal}}',
+    size: '{{primitives.font.size.md}}',
     // Fixed: previously referenced `primitives.font.color` (no such primitive) instead of
     // `primitives.font.style` — a copy-paste bug found during the Step 5 audit.
     style: '{{primitives.font.style}}',

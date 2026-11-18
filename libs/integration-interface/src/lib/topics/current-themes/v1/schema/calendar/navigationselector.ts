@@ -54,8 +54,8 @@ export const calendarNavigationSelectorDefaults = {
     defaultState: {
       padding: '{{primitives.space.sm}}',
       font: {
-        weight: '{{primitives.font.weight}}',
-        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight.normal}}',
+        size: '{{primitives.font.size.md}}',
       },
       border: {
         color: '{{primitives.area.overlay.defaultState.defaultSeverity.border.color}}',

@@ -21,7 +21,7 @@ import { dropdown, dropdownShape } from './schema/dropdown'
 import { textarea, textareaShape } from './schema/textarea'
 import { input, inputShape } from './schema/input'
 import { picklist } from './schema/picklist'
-import { togglebutton } from './schema/togglebutton'
+import { togglebutton, togglebuttonShape } from './schema/togglebutton'
 import { calendar } from './schema/calendar'
 import type { CalendarShapeInput } from './schema/calendar'
 import { interactiveDataView } from './schema/interactive-data-view'
@@ -29,7 +29,7 @@ import { interactiveDataViewShape } from './schema/interactive-data-view/interac
 import { accordion } from './schema/accordion'
 import { message } from './schema/message'
 import { messageShape } from './schema/message/message'
-import { selectbutton } from './schema/selectbutton'
+import { selectbutton, selectbuttonShape } from './schema/selectbutton'
 import { loadingIndicator } from './schema/loading-indicator'
 import { loadingIndicatorShape } from './schema/loading-indicator'
 import { ripple, rippleShape } from './schema/ripple'
@@ -67,12 +67,12 @@ type UsagesInput = {
   textarea?: z.input<typeof textareaShape>
   input?: z.input<typeof inputShape>
   picklist?: z.input<typeof picklist>
-  togglebutton?: z.input<typeof togglebutton>
+  togglebutton?: z.input<typeof togglebuttonShape>
   calendar?: CalendarShapeInput
   interactiveDataView?: z.input<typeof interactiveDataViewShape>
   accordion?: z.input<typeof accordion>
   message?: z.input<typeof messageShape>
-  selectbutton?: z.input<typeof selectbutton>
+  selectbutton?: z.input<typeof selectbuttonShape>
   loadingIndicator?: z.input<typeof loadingIndicatorShape>
   ripple?: z.input<typeof rippleShape>
   panelmenu?: PanelMenuShapeInput

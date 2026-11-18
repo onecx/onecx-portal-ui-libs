@@ -188,6 +188,12 @@ export const bgContrast = z.object({
   contrast: color.optional(),
 })
 
+// The global typography primitive. Each of size/weight/lineHeight/letterSpacing is an
+// **independent scale**: a scalar CSS string/ref or an object of named tokens (the scales are
+// intentionally partial — a theme only needs to supply the entries it uses, and no scale gains a
+// `default` member). `family` and `style` are scalar. This is distinct from the scalar `font`
+// below, which stays the shape for per-usage (local) typography where a whole scale must not be
+// supplied.
 export const fontShape = z
   .object({
     family: withRef(z.string()).optional(),
@@ -227,6 +233,17 @@ export const fontShape = z
         }),
       ])
       .optional(),
+    letterSpacing: z
+      .union([
+        withRef(z.string()).optional(),
+        z.object({
+          tight: withRef(z.string()).optional(),
+          normal: withRef(z.string()).optional(),
+          wide: withRef(z.string()).optional(),
+        }),
+      ])
+      .optional(),
+    style: withRef(z.string()).optional(),
   })
   .register(themeSchemaRegistry, { id: 'fontShape' })
 
@@ -389,7 +406,7 @@ type PrimitivesShape = {
   screenSettings: z.ZodOptional<typeof screenSettings>
   area: z.ZodOptional<typeof areas>
   shadow: z.ZodOptional<typeof shadowSizes>
-  font: z.ZodOptional<typeof font>
+  font: z.ZodOptional<typeof fontShape>
   space: z.ZodOptional<typeof space>
   layout: z.ZodOptional<typeof layout>
   radius: z.ZodOptional<typeof radiusSizes>
@@ -405,8 +422,9 @@ const primitivesShape: PrimitivesShape = {
   screenSettings: (screenSettings as typeof screenSettings).optional(),
   area: (areas as typeof areas).optional(),
   shadow: (shadowSizes as typeof shadowSizes).optional(),
-  // Global typography baseline applied to all text unless overridden at a more specific level
-  font: (font as typeof font).optional(),
+  // Global typography baseline applied to all text unless overridden at a more specific level.
+  // Scale-capable (independent size/weight/lineHeight/letterSpacing scales + scalar family/style).
+  font: (fontShape as typeof fontShape).optional(),
   space: (space as typeof space).optional(),
   layout: (layout as typeof layout).optional(),
   radius: (radiusSizes as typeof radiusSizes).optional(),

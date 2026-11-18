@@ -172,8 +172,8 @@ const dropdownContainerStateTokens = (state: 'defaultState' | 'hover' | 'focus' 
       paddingY: '{{primitives.space.sm}}',
     },
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
     },
     space: {
       sm: '{{primitives.space.sm}}',
@@ -225,8 +225,8 @@ const dropdownOptionStateTokens = (
     background: `{{primitives.area.overlay.${base}.defaultSeverity.bg}}`,
     color: `{{primitives.area.overlay.${base}.defaultSeverity.contrast}}`,
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
     },
     padding: '{{primitives.space.md}}',
   }
@@ -275,8 +275,8 @@ export const dropdownDefaults = {
       sm: '{{primitives.space.sm}}',
     },
     font: {
-      weight: '{{primitives.font.weight}}',
-      size: '{{primitives.font.size}}',
+      weight: '{{primitives.font.weight.normal}}',
+      size: '{{primitives.font.size.md}}',
     },
   },
 
@@ -290,8 +290,8 @@ export const dropdownDefaults = {
       background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
       font: {
-        weight: '{{primitives.font.weight}}',
-        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight.normal}}',
+        size: '{{primitives.font.size.md}}',
       },
       padding: '{{primitives.space.md}}',
     },
@@ -308,8 +308,8 @@ export const dropdownDefaults = {
   empty: {
     message: {
       font: {
-        weight: '{{primitives.font.weight}}',
-        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight.normal}}',
+        size: '{{primitives.font.size.md}}',
       },
     },
     space: {

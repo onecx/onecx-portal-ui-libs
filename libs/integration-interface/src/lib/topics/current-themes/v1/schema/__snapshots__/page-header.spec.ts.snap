@@ -42,16 +42,16 @@ Object {
     "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
     "font": Object {
       "family": "{{primitives.font.family}}",
-      "size": "{{primitives.font.size}}",
-      "weight": "{{primitives.font.weight}}",
+      "size": "{{primitives.font.size.md}}",
+      "weight": "{{primitives.font.weight.normal}}",
     },
     "gap": "{{primitives.space.md}}",
     "label": Object {
       "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       "font": Object {
         "family": "{{primitives.font.family}}",
-        "size": "{{primitives.font.size}}",
-        "weight": "{{primitives.font.weight}}",
+        "size": "{{primitives.font.size.md}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "gap": "{{primitives.space.md}}",
       "paddingX": "{{primitives.space.md}}",
@@ -73,8 +73,8 @@ Object {
       "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       "font": Object {
         "family": "{{primitives.font.family}}",
-        "size": "{{primitives.font.size}}",
-        "weight": "{{primitives.font.weight}}",
+        "size": "{{primitives.font.size.md}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "infoIcon": Object {
         "color": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
@@ -108,8 +108,8 @@ Object {
     "subtitle": Object {
       "font": Object {
         "family": "{{primitives.font.family}}",
-        "size": "{{primitives.font.size}}",
-        "weight": "{{primitives.font.weight}}",
+        "size": "{{primitives.font.size.md}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "paddingX": "{{primitives.space.md}}",
       "paddingY": "{{primitives.space.md}}",
@@ -117,8 +117,8 @@ Object {
     "title": Object {
       "font": Object {
         "family": "{{primitives.font.family}}",
-        "size": "{{primitives.font.size}}",
-        "weight": "{{primitives.font.weight}}",
+        "size": "{{primitives.font.size.md}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "paddingX": "{{primitives.space.md}}",
       "paddingY": "{{primitives.space.md}}",

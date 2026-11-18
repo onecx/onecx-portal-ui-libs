@@ -71,8 +71,8 @@ export const pageHeaderTitleBarDefaults = {
   title: {
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
     paddingX: '{{primitives.space.md}}',
     paddingY: '{{primitives.space.md}}',
@@ -80,8 +80,8 @@ export const pageHeaderTitleBarDefaults = {
   subtitle: {
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
-      weight: '{{primitives.font.weight}}',
+      size: '{{primitives.font.size.md}}',
+      weight: '{{primitives.font.weight.normal}}',
     },
     paddingX: '{{primitives.space.md}}',
     paddingY: '{{primitives.space.md}}',

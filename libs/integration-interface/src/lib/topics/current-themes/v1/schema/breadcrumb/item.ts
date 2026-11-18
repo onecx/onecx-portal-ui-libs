@@ -52,8 +52,8 @@ export class BreadcrumbItemSchema {
     },
     label: {
       font: {
-        weight: '{{primitives.font.weight}}',
-        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight.normal}}',
+        size: '{{primitives.font.size.md}}',
       },
     },
     focusRing: {

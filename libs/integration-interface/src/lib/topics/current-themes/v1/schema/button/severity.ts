@@ -14,9 +14,9 @@ export type ButtonSeverity = (typeof BUTTON_SEVERITIES)[number]
  * `const` in the TDZ when `severity.ts`'s top-level leaf shape runs).
  */
 export const buttonFont = font.omit({ family: true, size: true }).default({
-  weight: '{{primitives.font.weight}}',
-  lineHeight: '{{primitives.font.lineHeight}}',
-  letterSpacing: '{{primitives.font.letterSpacing}}',
+  weight: '{{primitives.font.weight.normal}}',
+  lineHeight: '{{primitives.font.lineHeight.md}}',
+  letterSpacing: '{{primitives.font.letterSpacing.normal}}',
   style: '{{primitives.font.style}}',
 })
 

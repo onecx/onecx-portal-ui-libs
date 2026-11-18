@@ -6,10 +6,10 @@
 :toc: macro
 :toclevels: 3
 :source-highlighter: highlight.js
-:schema_root: ../../libs/integration-interface/src/lib/topics/current-themes/v1
-:mapper_root: ../../libs/angular-utils/theme/primeng/src/utils/mapper
-:theme_service_root: ../../libs/angular-utils/theme/primeng/src/services
-:shell_root: ../../../onecx-shell/onecx-shell-ui/src/app/shell
+:schema_root: ../../../libs/integration-interface/src/lib/topics/current-themes/v1
+:mapper_root: ../../../libs/angular-utils/theme/primeng/src/utils/mapper
+:theme_service_root: ../../../libs/angular-utils/theme/primeng/src/services
+:shell_root: ../../../../onecx-shell/onecx-shell-ui/src/app/shell
 
 This document describes the Theme V2 schema, the mapping pipeline that translates theme tokens into PrimeNG presets, and the runtime mechanisms in the Shell and MFEs. It is aimed at developers who will **extend** the schema or add new mapping rules.
 
@@ -22,8 +22,8 @@ Familiarity with:
 
 * https://primeng.org/theming[PrimeNG theming (design tokens & presets)]
 * https://zod.dev[Zod schema library]
-* link:concept.adoc[OneCX theming concept]
-* link:primeng.adoc[OneCX × PrimeNG theming integration]
+* link:../concept.adoc[OneCX theming concept]
+* link:../primeng.adoc[OneCX × PrimeNG theming integration]
 
 [#top-level-structure]
 == Top-Level Structure
@@ -95,7 +95,7 @@ primitives = {
   variant: colorVariants               // primary, secondary, tertiary, quaternary, quinary
   area?: areas                         // canvas, surface, onSurface, overlay
   shadow?: shadow                      // none, sm, md, lg, xl
-  font?: font                          // family, size, weight, lineHeight, letterSpacing, style
+  font?: fontShape                     // scalar family/style + independent size/weight/lineHeight/letterSpacing scales
   space?: space                        // xs, sm, md, lg, xl, xxl
   layout?: layout                      // contentMaxWidth, gap
   radius?: radius                      // none, sm, md, lg, xl, full
@@ -141,6 +141,56 @@ A color value is either a plain CSS string or a dual-mode object:
 ----
 
 At runtime the Shell injects both as separate CSS custom properties and combines them with the CSS `light-dark()` function. See <<shell-css-variable-injection>>.
+
+[#global-typography]
+=== Global Typography (Font Scales)
+
+The global `font` primitive (link:{schema_root}/schema/primitives.ts[`fontShape`]) exposes the six agreed properties: scalar `family` and `style`, and **independent named scales** for `size`, `weight`, `lineHeight`, and `letterSpacing`. Each scale is optional and may be partial — a theme only needs to configure the values it actually supplies.
+
+[source,typescript]
+----
+fontShape = {
+  family?: string | ref                 // scalar (no named entries)
+  style?:  string | ref                 // scalar (no named entries)
+  size?:       string | ref | { xs?, sm?, md?, lg?, xl? }
+  weight?:     string | ref | { light?, normal?, medium?, semibold?, bold? }
+  lineHeight?: string | ref | { xs?, sm?, md?, lg?, xl? }
+  letterSpacing?: string | ref | { tight?, normal?, wide? }
+}
+----
+
+The scales are **independent** — changing `size` does not implicitly change `lineHeight`. There is no scale member named `default` and no coordinated typography recipe; a scale object never synthesizes a value a theme did not supply.
+
+[caption="Canonical baseline entries"]
+[caption="Each scaled property reduces to a single canonical value where a scalar is required (e.g. at a PrimeNG preset token or a CSS `var()`). `family`/`style` are scalar and have no canonical entry."]
+[cols="1,1,3"]
+|===
+| Property | Canonical entry | Named entries
+
+| `size`
+| `md`
+| `xs`, `sm`, `md`, `lg`, `xl`
+
+| `weight`
+| `normal`
+| `light`, `normal`, `medium`, `semibold`, `bold`
+
+| `lineHeight`
+| `md`
+| `xs`, `sm`, `md`, `lg`, `xl`
+
+| `letterSpacing`
+| `normal`
+| `tight`, `normal`, `wide`
+|===
+
+**Local usage typography stays scalar.** Per-usage (variant/state/severity/leaf) font tokens remain plain CSS strings or explicit `{{path}}` references — a usage override cannot supply an entire global scale. Baseline defaults reference the canonical named tokens (`{{primitives.font.size.md}}`, `{{primitives.font.weight.normal}}`, `{{primitives.font.lineHeight.md}}`, `{{primitives.font.letterSpacing.normal}}`), while deliberate usage selections keep their own named tokens (e.g. a smaller-control `size.sm`).
+
+**Sparse axis inheritance.** A sparse severity override that changes only a single property does **not** reset the unrelated properties — the established variant/state/severity fallback order is preserved, so a selected-state semibold weight survives a severity override that changes only size (see <<shell-css-variable-injection>> for the fallback mechanism).
+
+**Legacy compatibility.** A legacy theme that sets a global font property to a plain scalar string is still supported. A canonical reference (`{{primitives.font.size.md}}`) against a scalar resolves to that scalar (the canonical baseline); a non-canonical reference (`{{primitives.font.size.sm}}`) against a scalar is unavailable and is *not* synthesized.
+
+**Missing canonical tokens.** Where a scale is present but lacks its canonical entry, the mapper emits **nothing** for that property at a scalar-typography boundary (no scale object, no dangling `var()`) so existing fallback/CSS inheritance takes over — the library does not invent a value to complete the scale.
 
 [#areas]
 === Areas
@@ -607,7 +657,7 @@ this.primeNG.setThemeConfig({
 * All PrimeNG style sheets are scoped per-MFE using `@scope` rules and prefixed CSS variable names.
 * Theme overrides (if provided) are appended as the last style sheet in the document head.
 
-This ensures that multiple MFEs on the same page each receive correctly scoped PrimeNG styles. Details are covered in link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping].
+This ensures that multiple MFEs on the same page each receive correctly scoped PrimeNG styles. Details are covered in link:../../styles/primeng-scoping.adoc[PrimeNG Styles Scoping].
 
 [#webpack-modifications]
 === Webpack Modifications (Shell)
@@ -701,8 +751,9 @@ If you add a new schema property and reference it in a mapping rule, the type sy
 [#cross-references]
 == Related Documentation
 
-* link:concept.adoc[Theming Concept] — what themes are in OneCX, how variables work
-* link:primeng.adoc[PrimeNG Theming Integration] — v1 preset, OneCX extend section, appliance
-* link:theme-overrides.adoc[Theme Overrides] — per-application PrimeNG token overrides
-* link:../styles/primeng-scoping.adoc[PrimeNG Styles Scoping] — how PrimeNG CSS is scoped per-MFE
-* link:../styles/primeng-token-variables.adoc[PrimeNG Token Variables] — CSS variable prefixing
+* link:../concept.adoc[Theming Concept] — what themes are in OneCX, how variables work
+* link:../primeng.adoc[PrimeNG Theming Integration] — v1 preset, OneCX extend section, appliance
+* link:../theme-overrides.adoc[Theme Overrides] — per-application PrimeNG token overrides
+* link:../../styles/primeng-scoping.adoc[PrimeNG Styles Scoping] — how PrimeNG CSS is scoped per-MFE
+* link:../../styles/primeng-token-variables.adoc[PrimeNG Token Variables] — CSS variable prefixing
+* link:settings/index.adoc[Theme V2 Usage Settings] — how usage settings become component input defaults for PrimeNG and OneCX components

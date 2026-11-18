@@ -20,7 +20,7 @@ export const calendarWeekDayLabelDefaults = {
   padding: '{{primitives.space.xs}}',
   font: {
     weight: '{{primitives.font.weight.bold}}',
-    size: '{{primitives.font.size}}',
+    size: '{{primitives.font.size.md}}',
   },
   color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
 }

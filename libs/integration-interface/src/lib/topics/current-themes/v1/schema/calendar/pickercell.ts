@@ -49,8 +49,8 @@ export const calendarPickerCellDefaults = {
       height: '2.5rem',
       padding: '{{primitives.space.xs}}',
       font: {
-        weight: '{{primitives.font.weight}}',
-        size: '{{primitives.font.size}}',
+        weight: '{{primitives.font.weight.normal}}',
+        size: '{{primitives.font.size.md}}',
       },
       color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
       background: '{{primitives.area.overlay.defaultState.defaultSeverity.bg}}',

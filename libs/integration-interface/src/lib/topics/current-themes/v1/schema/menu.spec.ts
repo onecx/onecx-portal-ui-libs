@@ -35,7 +35,7 @@ const MENU_ITEM_BASE_TOKENS = {
   label: {
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
+      size: '{{primitives.font.size.md}}',
       weight: '{{primitives.font.weight.normal}}',
     },
   },
@@ -51,7 +51,7 @@ const MENU_ITEM_BASE_TOKENS = {
     padding: '{{primitives.spacing.sm}}',
     font: {
       family: '{{primitives.font.family}}',
-      size: '{{primitives.font.size}}',
+      size: '{{primitives.font.size.md}}',
       weight: '{{primitives.font.weight.normal}}',
     },
     background: { color: '{{primitives.defaultVariant.state.focus.defaultSeverity.bg.color}}' },
@@ -177,7 +177,7 @@ describe('menu schema - should validate following default tokens', () => {
         paddingX: '{{primitives.spacing.sm}}',
         paddingY: '{{primitives.spacing.sm}}',
         font: {
-          size: '{{primitives.font.size}}',
+          size: '{{primitives.font.size.md}}',
           weight: '{{primitives.font.weight.normal}}',
         },
       })

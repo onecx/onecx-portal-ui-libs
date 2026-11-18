@@ -34,10 +34,10 @@ export const stateBorderTokens = (state: string) => ({
 /** The full font token set (every leaf of the font primitive). */
 export const fontTokens = {
   family: '{{primitives.font.family}}',
-  size: '{{primitives.font.size}}',
-  weight: '{{primitives.font.weight}}',
-  lineHeight: '{{primitives.font.lineHeight}}',
-  letterSpacing: '{{primitives.font.letterSpacing}}',
+  size: '{{primitives.font.size.md}}',
+  weight: '{{primitives.font.weight.normal}}',
+  lineHeight: '{{primitives.font.lineHeight.md}}',
+  letterSpacing: '{{primitives.font.letterSpacing.normal}}',
   style: '{{primitives.font.style}}',
 }
 

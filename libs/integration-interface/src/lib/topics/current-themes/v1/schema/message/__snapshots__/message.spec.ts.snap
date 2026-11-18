@@ -77,8 +77,8 @@ Object {
       "shadow": "{{primitives.shadow.sm}}",
       "text": Object {
         "font": Object {
-          "size": "{{primitives.font.size}}",
-          "weight": "{{primitives.font.weight}}",
+          "size": "{{primitives.font.size.md}}",
+          "weight": "{{primitives.font.weight.normal}}",
         },
       },
       "transition": Object {
@@ -166,7 +166,7 @@ Object {
     },
     "text": Object {
       "font": Object {
-        "size": "{{primitives.font.size}}",
+        "size": "{{primitives.font.size.md}}",
       },
     },
   },
@@ -253,7 +253,7 @@ Object {
     },
     "text": Object {
       "font": Object {
-        "size": "{{primitives.font.size}}",
+        "size": "{{primitives.font.size.md}}",
       },
     },
   },

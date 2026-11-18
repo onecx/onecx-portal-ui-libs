@@ -24,21 +24,21 @@ Object {
         "width": "{{primitives.border.width.md}}",
       },
       "font": Object {
-        "letterSpacing": "{{primitives.font.letterSpacing}}",
-        "lineHeight": "{{primitives.font.lineHeight}}",
+        "letterSpacing": "{{primitives.font.letterSpacing.normal}}",
+        "lineHeight": "{{primitives.font.lineHeight.md}}",
         "style": "{{primitives.font.style}}",
-        "weight": "{{primitives.font.weight}}",
+        "weight": "{{primitives.font.weight.normal}}",
       },
       "lg": Object {
         "font": Object {
-          "size": "{{primitives.font.size}}",
+          "size": "{{primitives.font.size.md}}",
         },
         "paddingX": "{{primitives.space.md}}",
         "paddingY": "{{primitives.space.md}}",
       },
       "md": Object {
         "font": Object {
-          "size": "{{primitives.font.size}}",
+          "size": "{{primitives.font.size.md}}",
         },
         "paddingX": "{{primitives.space.md}}",
         "paddingY": "{{primitives.space.md}}",
@@ -46,7 +46,7 @@ Object {
       "placeholderColor": "{{primitives.defaultVariant.defaultState.defaultSeverity.contrast}}",
       "sm": Object {
         "font": Object {
-          "size": "{{primitives.font.size}}",
+          "size": "{{primitives.font.size.md}}",
         },
         "paddingX": "{{primitives.space.xs}}",
         "paddingY": "{{primitives.space.xs}}",

@@ -68,8 +68,8 @@ export const calendarPanelHeaderDefaults = {
       yearMonthNav: {
         gap: '{{primitives.space.sm}}',
         font: {
-          weight: '{{primitives.font.weight}}',
-          size: '{{primitives.font.size}}',
+          weight: '{{primitives.font.weight.normal}}',
+          size: '{{primitives.font.size.md}}',
         },
         color: '{{primitives.area.overlay.defaultState.defaultSeverity.contrast}}',
       },

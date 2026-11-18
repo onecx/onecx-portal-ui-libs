@@ -67,8 +67,8 @@ const defaultSeverityTokens = {
     radius: '{{primitives.radius.full}}',
   },
   font: {
-    size: '{{primitives.font.size}}',
-    weight: '{{primitives.font.weight}}',
+    size: '{{primitives.font.size.md}}',
+    weight: '{{primitives.font.weight.normal}}',
   },
   padding: '{{primitives.space.sm}}',
   minWidth: '1.5rem',
@@ -97,17 +97,17 @@ export const badgeDefaults = {
     contrast: severityOverride('contrast'),
   },
   sm: {
-    fontSize: '{{primitives.font.size}}',
+    fontSize: '{{primitives.font.size.md}}',
     minWidth: '1.25rem',
     height: '1.25rem',
   },
   lg: {
-    fontSize: '{{primitives.font.size}}',
+    fontSize: '{{primitives.font.size.md}}',
     minWidth: '1.75rem',
     height: '1.75rem',
   },
   xl: {
-    fontSize: '{{primitives.font.size}}',
+    fontSize: '{{primitives.font.size.md}}',
     minWidth: '2rem',
     height: '2rem',
   },

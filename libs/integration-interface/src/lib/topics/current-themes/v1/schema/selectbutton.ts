@@ -14,17 +14,16 @@ export const selectbuttonSettings = z
 export const selectbutton = z
   .object({
     settings: (selectbuttonSettings as typeof selectbuttonSettings).optional(),
-    gap: withRef(z.string().register(themeSchemaRegistry, { id: 'selectbuttonGap', axis: 'none' })).default('{{primitives.space.xs}}'),
-    border: border
-      .extend({})
-      .register(themeSchemaRegistry, { id: 'selectbuttonBorder', axis: 'none' })
-      .default({
-        color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
-        style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
-        width: '{{primitives.border.width.sm}}',
-        offset: '{{primitives.border.offset.sm}}',
-        radius: '{{primitives.border.radius.md}}',
-      }),
+    gap: withRef(z.string().register(themeSchemaRegistry, { id: 'selectbuttonGap', axis: 'none' })).default(
+      '{{primitives.space.xs}}'
+    ),
+    border: border.extend({}).register(themeSchemaRegistry, { id: 'selectbuttonBorder', axis: 'none' }).default({
+      color: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.color}}',
+      style: '{{primitives.defaultVariant.defaultState.defaultSeverity.border.style}}',
+      width: '{{primitives.border.width.sm}}',
+      offset: '{{primitives.border.offset.sm}}',
+      radius: '{{primitives.border.radius.md}}',
+    }),
     // The button is an embedded togglebutton component. It is a child boundary (`child: true`)
     // that re-roots the fallback, but it is a flat static container (no `defaultVariant`/
     // `defaultState`/`defaultSeverity` wrapper), so it carries no axis of its own and opens no
