@@ -1,4 +1,4 @@
-import { collectAxisScopes } from './test-utils'
+import { collectAxisScopes } from '../test-utils'
 
 const MENU = 'v2.usages.menu'
 

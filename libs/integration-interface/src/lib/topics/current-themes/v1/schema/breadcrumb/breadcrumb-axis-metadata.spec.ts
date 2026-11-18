@@ -1,4 +1,4 @@
-import { collectAxisScopes, expectAxes, expectFallback } from './test-utils'
+import { collectAxisScopes, expectAxes, expectFallback } from '../test-utils'
 
 const BREADCRUMB = 'v2.usages.breadcrumb'
 

@@ -29,7 +29,7 @@ export const multiselectFilterInputShape = z
     focus: multiselectFilterInputStateShape.prefault({}),
     active: multiselectFilterInputStateShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectFilterInputShape', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'multiselectFilterInputShape', axis: 'state', child: true })
 
 const commonBorder = {
   width: '{{primitives.border.width.md}}',

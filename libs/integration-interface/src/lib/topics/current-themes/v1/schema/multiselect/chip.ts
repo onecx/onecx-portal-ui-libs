@@ -33,7 +33,7 @@ export const multiselectChipShape = z
     focus: multiselectChipStateShape.prefault({}),
     chipRemoveIcon: multiselectChipRemoveIconShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectChipShape', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'multiselectChipShape', axis: 'state', child: true })
 
 export const multiselectChipDefaults = {
   defaultState: {

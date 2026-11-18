@@ -1,4 +1,4 @@
-import { collectAxisScopes } from './test-utils'
+import { collectAxisScopes } from '../test-utils'
 
 const PICKLIST = 'v2.usages.picklist'
 

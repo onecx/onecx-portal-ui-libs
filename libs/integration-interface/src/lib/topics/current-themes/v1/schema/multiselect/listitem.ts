@@ -29,7 +29,7 @@ export const multiselectListItemShape = z
     focus: multiselectListItemStateShape.prefault({}),
     selected: multiselectListItemStateShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectListItemShape', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'multiselectListItemShape', axis: 'state', child: true })
 
 export const multiselectListItemDefaults = {
   checkbox: multiselectCheckboxDefaults,

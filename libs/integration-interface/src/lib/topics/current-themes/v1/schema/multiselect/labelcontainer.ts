@@ -41,7 +41,7 @@ export const multiselectLabelContainerShape = z
     invalid: multiselectLabelContainerStateShape.prefault({}),
     disabled: multiselectLabelContainerStateShape.prefault({}),
   })
-  .register(themeSchemaRegistry, { id: 'multiselectLabelContainerShape', axis: 'state' })
+  .register(themeSchemaRegistry, { id: 'multiselectLabelContainerShape', axis: 'state', child: true })
 
 const stateTokens = (state: 'defaultState' | 'hover' | 'focus' | 'invalid' | 'disabled') => {
   const ref = state === 'defaultState' ? 'defaultState' : `state.${state}`

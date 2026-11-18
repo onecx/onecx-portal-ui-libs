@@ -1,4 +1,4 @@
-import { collectAxisScopes } from './test-utils'
+import { collectAxisScopes } from '../test-utils'
 
 const PAGE_HEADER = 'v2.usages.pageHeader'
 
