@@ -451,7 +451,7 @@ const actionsWithDifferingLabelAndTitle: Action[] = [
   },
   {
     id: 'lock',
-    icon: OpenngIcons.LOCK,
+    icon: PrimeIcons.LOCK,
     title: 'Title only',
     ariaLabel: 'Aria label for lock',
     actionCallback: () => {
@@ -480,12 +480,12 @@ export const ActionsWithDifferingLabelAndTitle = {
 const objectDetailsIconOnlyWithTooltip: ObjectDetailItem[] = [
   {
     label: 'Event Completed',
-    icon: OpenngIcons.CHECK_CIRCLE,
+    icon: PrimeIcons.CHECK_CIRCLE,
     valueTooltipKey: 'pageheader.valueTooltip',
   },
   {
     label: 'Needs Review',
-    icon: OpenngIcons.INFO_CIRCLE,
+    icon: PrimeIcons.INFO_CIRCLE,
     valueTooltipKey: { key: 'pageheader.statusValueTooltip', parameters: { value: 'needs review' } },
   },
 ]
