@@ -1,3 +1,41 @@
+## [9.3.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.2.0...v9.3.0) (2026-11-13)
+
+### Features
+
+* Add pre-commit component verification skill ([#1959](https://github.com/onecx/onecx-portal-ui-libs/issues/1959)) ([95b8e13](https://github.com/onecx/onecx-portal-ui-libs/commit/95b8e13c5b9c9de15c036193aabcaa4cb1020196))
+
+### Bug Fixes
+
+* **a11y:** one results announcement per search, filter or sort, none at load ([#1883](https://github.com/onecx/onecx-portal-ui-libs/issues/1883)) ([c68fc8f](https://github.com/onecx/onecx-portal-ui-libs/commit/c68fc8f74f86eb33d1fcd83f2c3e305849cbed40)), closes [onecx/internal-tasks#1094](https://github.com/onecx/internal-tasks/issues/1094) [onecx/internal-tasks#1111](https://github.com/onecx/internal-tasks/issues/1111)
+* **a11y:** table, list and grid semantics in data table and data list grid ([#1896](https://github.com/onecx/onecx-portal-ui-libs/issues/1896)) ([d329cb7](https://github.com/onecx/onecx-portal-ui-libs/commit/d329cb70c78a1ef85f23fd69b4285e748ef4b06a)), closes [onecx/internal-tasks#1098](https://github.com/onecx/internal-tasks/issues/1098)
+* **angular-accelerator:** disable autofocus on p-select in column-group-selection ([#1927](https://github.com/onecx/onecx-portal-ui-libs/issues/1927)) ([87282e7](https://github.com/onecx/onecx-portal-ui-libs/commit/87282e71a8e2edbfffa8b1b48e3a7ba93727f388)), closes [onecx/internal-tasks#511](https://github.com/onecx/internal-tasks/issues/511) [onecx/internal-tasks#512](https://github.com/onecx/internal-tasks/issues/512)
+* **angular-accelerator:** disable autofocus on p-select in data-list-grid-sorting ([#1929](https://github.com/onecx/onecx-portal-ui-libs/issues/1929)) ([b0bc41f](https://github.com/onecx/onecx-portal-ui-libs/commit/b0bc41f41e627449c44e42d1d0cbb470cc3247b0)), closes [onecx/internal-tasks#513](https://github.com/onecx/internal-tasks/issues/513)
+* **angular-accelerator:** report the search fields to the search config slot (v9) ([#1971](https://github.com/onecx/onecx-portal-ui-libs/issues/1971)) ([0e741aa](https://github.com/onecx/onecx-portal-ui-libs/commit/0e741aaa6dfc69b8c07405c6b803c518ef4b3758))
+* fix data-table header spacing + overflow ([#1972](https://github.com/onecx/onecx-portal-ui-libs/issues/1972)) ([79fb996](https://github.com/onecx/onecx-portal-ui-libs/commit/79fb99627eb5016fde0cb5b22676177e9b657a42))
+* make OcxTooltipDirective host cursor configurable (v9) ([#1942](https://github.com/onecx/onecx-portal-ui-libs/issues/1942)) ([5997529](https://github.com/onecx/onecx-portal-ui-libs/commit/5997529267f286b6c98d7ce8a32ea2b6bc0e8458)), closes [onecx/internal-tasks#1266](https://github.com/onecx/internal-tasks/issues/1266)
+
+### Chores
+
+* configure repository lint and fix stylesheet violations ([#1960](https://github.com/onecx/onecx-portal-ui-libs/issues/1960)) ([a7b75aa](https://github.com/onecx/onecx-portal-ui-libs/commit/a7b75aaa9ca15ad947d17ee49168a346adfa5405))
+
+## [9.2.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.1.0...v9.2.0) (2026-11-06)
+
+### Features
+
+* move tailwind angular 22 app plugins to build-utils ([#1952](https://github.com/onecx/onecx-portal-ui-libs/issues/1952)) ([371b17e](https://github.com/onecx/onecx-portal-ui-libs/commit/371b17ed7dc0bc6d11847cf0cd30d6413ee592e8))
+
+### Bug Fixes
+
+* **angular-accelerator:** disable autofocus in filter-view ([#1928](https://github.com/onecx/onecx-portal-ui-libs/issues/1928)) ([9c64e0d](https://github.com/onecx/onecx-portal-ui-libs/commit/9c64e0db0f8f57d765c3a6d3f7a9d17628d79b7b)), closes [onecx/internal-tasks#514](https://github.com/onecx/internal-tasks/issues/514)
+* v9 column-header getting focused ([#1950](https://github.com/onecx/onecx-portal-ui-libs/issues/1950)) ([abdfd45](https://github.com/onecx/onecx-portal-ui-libs/commit/abdfd45417e3db2254e7db2524e5830e6d07022e))
+
+## [9.1.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v9.0.0...v9.1.0) (2026-11-03)
+
+### Features
+
+* add tooltips to data table column headers ([#1940](https://github.com/onecx/onecx-portal-ui-libs/issues/1940)) ([5d942c9](https://github.com/onecx/onecx-portal-ui-libs/commit/5d942c9bf32abde07e995232a655035900ede7bf))
+* implement issue [#387](https://github.com/onecx/onecx-portal-ui-libs/issues/387) - Render basic row groups in DataTable ([#1815](https://github.com/onecx/onecx-portal-ui-libs/issues/1815)) ([07df0e9](https://github.com/onecx/onecx-portal-ui-libs/commit/07df0e9be820a89c45e72e1402029a5171c310fc))
+
 ## [9.0.0](https://github.com/onecx/onecx-portal-ui-libs/compare/v8.9999.0...v9.0.0) (2026-10-29)
 
 ### ⚠ BREAKING CHANGES

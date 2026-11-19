@@ -1,3 +1,5 @@
+@use "sass:list";
+
 @use "sass:math";
 
 .p-treeselect {
@@ -16,7 +18,7 @@
 
   &.p-treeselect-clearable {
     .p-treeselect-label {
-      padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+      padding-right: list.nth($inputPadding, 2) + $primeIconFontSize;
     }
   }
 
@@ -43,7 +45,7 @@
 
   &.p-treeselect-chip {
     .p-treeselect-token {
-      padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+      padding: math.div(list.nth($inputPadding, 1), 2) list.nth($inputPadding, 2);
       margin-right: $inlineSpacing;
       background: $chipBg;
       color: $chipTextColor;
@@ -73,7 +75,7 @@
   &.p-treeselect {
     &.p-treeselect-chip {
       .p-treeselect-label {
-        padding: math.div(nth($inputPadding, 1), 2) nth($inputPadding, 2);
+        padding: math.div(list.nth($inputPadding, 1), 2) list.nth($inputPadding, 2);
       }
     }
   }
@@ -99,21 +101,21 @@
       margin-right: $inlineSpacing;
 
       .p-treeselect-filter {
-        padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+        padding-right: list.nth($inputPadding, 2) + $primeIconFontSize;
       }
 
       .p-treeselect-filter-icon {
-        right: nth($inputPadding, 2);
+        right: list.nth($inputPadding, 2);
         color: $inputIconColor;
       }
 
       &.p-treeselect-clearable-filter {
         .p-treeselect-filter {
-          padding-right: 2 * (nth($inputPadding, 2) + $primeIconFontSize);
+          padding-right: 2 * (list.nth($inputPadding, 2) + $primeIconFontSize);
         }
 
         .p-treeselect-filter-clear-icon {
-          right: (2 * nth($inputPadding, 2)) + $primeIconFontSize;
+          right: (2 * list.nth($inputPadding, 2)) + $primeIconFontSize;
         }
       }
     }
