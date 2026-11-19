@@ -1,4 +1,3 @@
-import {ViewChild,} from '@angular/core'
 import {
   AfterViewInit,
   Component,
@@ -10,6 +9,7 @@ import {
   inject,
   signal,
   viewChild,
+  ViewChild,
 } from '@angular/core'
 import { Observable, Subscription, from, isObservable, of, startWith } from 'rxjs'
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog'
