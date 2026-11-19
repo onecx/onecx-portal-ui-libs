@@ -1,4 +1,4 @@
-import { Meta, applicationConfig, moduleMetadata } from '@storybook/angular'
+import { Meta, applicationConfig, moduleMetadata } from '@storybook/angular-vite'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
 import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'

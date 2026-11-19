@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate } from '@storybook/angular-vite'
 import { RouterModule } from '@angular/router'
 import { importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'

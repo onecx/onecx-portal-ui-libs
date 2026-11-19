@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser'
 import { LOCALE_ID, importProvidersFrom, inject, provideAppInitializer } from '@angular/core'
-import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular'
+import { Meta, moduleMetadata, applicationConfig, argsToTemplate, StoryFn } from '@storybook/angular-vite'
 import { RouterModule } from '@angular/router'
 import { TableModule } from '@openng/optimus-ui/table'
 import { ButtonModule } from '@openng/optimus-ui/button'

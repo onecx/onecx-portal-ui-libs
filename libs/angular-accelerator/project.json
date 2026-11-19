@@ -78,13 +78,12 @@
       }
     },
     "storybook": {
-      "executor": "@storybook/angular:start-storybook",
+      "executor": "@storybook/angular-vite:start-storybook",
       "dependsOn": ["build:styles"],
       "options": {
         "port": 4400,
         "configDir": "libs/angular-accelerator/.storybook",
-        "browserTarget": "angular-accelerator:build-storybook",
-        "compodoc": false,
+        "zoneless": false,
         "styles": [
           "node_modules/@openng/icons/openng-icons.css",
           "libs/angular-accelerator/assets/tailwind.css",
@@ -100,14 +99,13 @@
       }
     },
     "build-storybook": {
-      "executor": "@storybook/angular:build-storybook",
+      "executor": "@storybook/angular-vite:build-storybook",
       "dependsOn": ["build:styles"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/angular-accelerator",
         "configDir": "libs/angular-accelerator/.storybook",
-        "browserTarget": "angular-accelerator:build-storybook",
-        "compodoc": false,
+        "zoneless": false,
         "styles": [
           "node_modules/@openng/icons/openng-icons.css",
           "libs/angular-accelerator/assets/tailwind.css",
@@ -120,6 +118,13 @@
         "ci": {
           "quiet": true
         }
+      }
+    },
+    "test-a11y": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build:styles"],
+      "options": {
+        "command": "vitest run --config libs/angular-accelerator/vitest.storybook.config.mts"
       }
     }
   }

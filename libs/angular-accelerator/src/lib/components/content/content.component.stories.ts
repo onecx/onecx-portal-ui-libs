@@ -1,6 +1,6 @@
 import { OcxContentDirective } from '../../directives/content.directive';
 import { OcxContentComponent } from './content.component';
-import { moduleMetadata, Meta } from '@storybook/angular'
+import { moduleMetadata, Meta } from '@storybook/angular-vite'
 
 export default {
   title: 'Components/ContentComponent',
