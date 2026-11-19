@@ -1,12 +1,27 @@
-import { SlotService } from '@onecx/angular-remote-components'
-import { TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { By } from '@angular/platform-browser'
+import { TestBed, ComponentFixture } from '@angular/core/testing'
 import { TemplateRef } from '@angular/core'
+import { TranslateModule } from '@ngx-translate/core'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { SlotService } from '@onecx/angular-remote-components'
 import { BehaviorSubject } from 'rxjs'
 import { PrimeTemplate } from '@openng/optimus-ui/api'
 import { InteractiveDataViewComponent } from './interactive-data-view.component'
+import { CustomGroupColumnSelectorComponent } from '../custom-group-column-selector/custom-group-column-selector.component'
+import { AngularAcceleratorOptimusModule } from '../../angular-accelerator-optimus.module'
+import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { DataViewStateService } from '../../services/data-view-state.service'
 import { DataSortDirection } from '../../model/data-sort-direction'
 import * as loggerUtils from '../../utils/logger.utils'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideRouter } from '@angular/router'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { provideAppStateServiceMock, provideUserServiceMock } from '@onecx/angular-integration-interface/mocks'
+import { AngularAcceleratorModule } from '../../angular-accelerator.module'
+import { ColumnType } from '../../model/column-type.model'
 
 describe('InteractiveDataViewComponent (class logic)', () => {
   /**
@@ -559,6 +574,78 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       const { component } = createComponent(true)
 
       expect(component.groupSelectionNoGroupSelectedKey()).toBe('OCX_INTERACTIVE_DATA_VIEW.NO_GROUP_SELECTED')
+    })
+  })
+
+  describe('column group selector dialog configuration', () => {
+    it('should default resizableColumnGroupSelectorDialog to true', () => {
+      const { component } = createComponent(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    it('should default restoreColumnGroupSelectorOrder to false', () => {
+      const { component } = createComponent(true)
+      expect(component.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should default draggableColumnGroupSelectorDialog to true independently of resizing', () => {
+      const { component } = createComponent(true)
+      expect(component.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(component.resizableColumnGroupSelectorDialog()).toBe(true)
+    })
+
+    // The hosted selector only renders in the 'table' layout, so the fixture must switch to it.
+    // The selector (standalone: false) plus its own template dependencies are declared/imported so
+    // the child instance can be inspected; the other ocx-* children in the IDV template only emit
+    // non-fatal "unknown element" warnings and do not affect the assertion.
+    const createTableLayoutFixture = (): ComponentFixture<InteractiveDataViewComponent> => {
+      const slotService = {
+        isSomeComponentDefinedForSlot: jest.fn(() => new BehaviorSubject<boolean>(true).asObservable()),
+      } as unknown as SlotService
+
+      TestBed.configureTestingModule({
+        declarations: [InteractiveDataViewComponent, CustomGroupColumnSelectorComponent],
+        imports: [CommonModule, AngularAcceleratorOptimusModule, FormsModule, TranslateModule.forRoot(), OcxTooltipDirective],
+        providers: [
+          { provide: SlotService, useValue: slotService },
+          DataViewStateService,
+          provideTranslateTestingService({}),
+        ],
+      })
+
+      const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+
+      fixture.componentRef.setInput('layout', 'table')
+      return fixture
+    }
+
+    const querySelectorChild = (fixture: ComponentFixture<InteractiveDataViewComponent>): CustomGroupColumnSelectorComponent => {
+      const selectorDebugElement = fixture.debugElement.query(By.css('ocx-custom-group-column-selector'))
+      expect(selectorDebugElement).toBeTruthy()
+      return selectorDebugElement.componentInstance as CustomGroupColumnSelectorComponent
+    }
+
+    it('should forward the default dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(false)
+    })
+
+    it('should forward custom dialog settings to the hosted column selector', () => {
+      const fixture = createTableLayoutFixture()
+      fixture.componentRef.setInput('draggableColumnGroupSelectorDialog', false)
+      fixture.componentRef.setInput('resizableColumnGroupSelectorDialog', true)
+      fixture.componentRef.setInput('restoreColumnGroupSelectorOrder', true)
+      fixture.detectChanges()
+
+      const selector = querySelectorChild(fixture)
+      expect(selector.draggableColumnGroupSelectorDialog()).toBe(false)
+      expect(selector.resizableColumnGroupSelectorDialog()).toBe(true)
+      expect(selector.restoreColumnGroupSelectorOrder()).toBe(true)
     })
   })
 
@@ -1513,5 +1600,54 @@ describe('InteractiveDataViewComponent (class logic)', () => {
       expect(consoleWarnSpy).not.toHaveBeenCalled()
       jest.restoreAllMocks()
     })
+  })
+
+  describe('row grouping pass-through', () => {
+    it('should resolve the group cell template from the content child when no input is set', () => {
+      const childTpl = {} as any
+
+      const { component: withChild } = createComponent()
+      setInputSignal(withChild, 'groupCellTemplate', undefined)
+      setInputSignal(withChild, 'optimusGroupCell', undefined)
+      setInputSignal(withChild, 'childGroupCell', childTpl)
+      expect((withChild as any)._groupCell()).toBe(childTpl)
+    })
+
+    it('should default rowGrouping to undefined', () => {
+      const { component } = createComponent()
+      expect(component.rowGrouping()).toBeUndefined()
+    })
+  })
+})
+
+describe('InteractiveDataViewComponent (rendering)', () => {
+  it('should forward tableAriaLabel through ocx-data-view to the rendered table', async () => {
+    const slotService: Pick<SlotService, 'isSomeComponentDefinedForSlot'> = {
+      isSomeComponentDefinedForSlot: () => new BehaviorSubject<boolean>(false).asObservable(),
+    }
+    await TestBed.configureTestingModule({
+      imports: [AngularAcceleratorModule],
+      providers: [
+        provideTranslateTestingService({ en: {} }),
+        provideUserServiceMock(),
+        provideAppStateServiceMock(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: SlotService, useValue: slotService },
+      ],
+    }).compileComponents()
+
+    const fixture = TestBed.createComponent(InteractiveDataViewComponent)
+    fixture.componentRef.setInput('columns', [{ id: 'name', nameKey: 'NAME', columnType: ColumnType.STRING }])
+    fixture.componentRef.setInput('data', [{ id: '1', name: 'Alice' }])
+    fixture.componentRef.setInput('tableAriaLabel', 'Orders overview')
+    fixture.componentInstance.layout = 'table'
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+
+    const table = (fixture.nativeElement as HTMLElement).querySelector('table')
+    expect(table?.getAttribute('aria-label')).toBe('Orders overview')
   })
 })

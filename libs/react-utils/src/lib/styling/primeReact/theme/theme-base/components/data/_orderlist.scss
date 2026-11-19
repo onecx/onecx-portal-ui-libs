@@ -1,3 +1,5 @@
+@use "sass:list";
+
 .p-orderlist {
   .p-orderlist-controls {
     padding: $panelContentPadding;
@@ -25,11 +27,11 @@
     border-bottom: 0 none;
 
     .p-orderlist-filter-input {
-      padding-right: nth($inputPadding, 2) + $primeIconFontSize;
+      padding-right: list.nth($inputPadding, 2) + $primeIconFontSize;
     }
 
     .p-orderlist-filter-icon {
-      right: nth($inputPadding, 2);
+      right: list.nth($inputPadding, 2);
       color: $inputIconColor;
     }
   }
