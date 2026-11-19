@@ -17,6 +17,22 @@ import {
 
 const UNKNOWN_ERROR_CODE = 'UNKNOWN'
 
+/**
+ * Inline AI assistant for a text field.
+ *
+ * Renders a toggle button that opens a panel where the user picks an AI agent and an action
+ * (Translate, Summarize, Generate, or a host-defined action), runs it on `inputText` and reviews
+ * the suggestion. The suggestion is applied only when the user chooses Replace text, which emits
+ * it through `replaceText`.
+ *
+ * Agents are loaded for `appId`, or for the current MFE when `appId` is not set. When no agent is
+ * available, the panel shows an empty state and the action cannot run.
+ *
+ * @example
+ * ```html
+ * <ocx-ai-assist [inputText]="description" (replaceText)="description = $event"></ocx-ai-assist>
+ * ```
+ */
 @Component({
   standalone: false,
   selector: 'ocx-ai-assist',
@@ -36,15 +52,21 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   /** Emits the accepted AI suggestion when the user chooses Replace text. */
   @Output() replaceText = new EventEmitter<string>()
 
+  /** State of the agent list: `loading`, `ready`, `empty`, or `error`. */
   loadState: AiAssistLoadState = 'loading'
+  /** Whether the assistant panel is visible. */
   open = false
   agents: AiAgentResponse[] = []
   selectedAgentId?: string
   selectedActionId?: string
   parameterValues: Record<string, string> = {}
+  /** State of the current run: `idle`, `running`, `success`, or `error`. */
   runState: AiAssistRunState = 'idle'
+  /** Raw result returned by the completion service for the last successful run. */
   result?: unknown
+  /** Text offered for replacement. Empty until a run succeeds. */
   suggestion = ''
+  /** Error code of the last failed request, such as `NO_PROVIDER` or `AGENT_NOT_FOUND`. */
   errorCode?: string
 
   private readonly agentService = new OneCXAiAgentService()
@@ -63,6 +85,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.completionService.destroy()
   }
 
+  /** All offered actions: `defaultActions` followed by `additionalActions`. */
   get actions(): AiAssistActionDefinition<unknown>[] {
     return [...this.defaultActions, ...this.additionalActions]
   }
@@ -100,16 +123,19 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     return 'OCX_AI_ASSIST.ERRORS.GENERIC'
   }
 
+  /** Opens the panel if it is closed, and closes it if it is open. */
   toggle(): void {
     this.open = !this.open
   }
 
+  /** Closes the panel and resets the action and agent selection to the first options. */
   close(): void {
     this.open = false
     this.selectAction(this.actions[0].id)
     this.selectAgent(this.agents[0]?.id)
   }
 
+  /** Returns up to two uppercase initials of a name, used for the agent avatar. */
   initials(name: string | undefined): string {
     return (name ?? '')
       .split(/\s+/)
@@ -119,6 +145,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
       .join('')
   }
 
+  /** Reloads the agent list for `appId`, or for the current MFE when `appId` is not set. */
   loadAgents(): void {
     this.loadState = 'loading'
     this.errorCode = undefined
@@ -128,11 +155,13 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     })
   }
 
+  /** Selects the agent used for the next run. Clears any previous result. */
   selectAgent(agentId: string | undefined): void {
     this.selectedAgentId = agentId
     this.resetResult()
   }
 
+  /** Selects the action, resets its parameters to their defaults and clears any previous result. */
   selectAction(actionId: string | undefined): void {
     this.selectedActionId = actionId
     this.parameterValues = {}
@@ -142,6 +171,11 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.resetResult()
   }
 
+  /**
+   * Runs the selected action with the selected agent on `inputText`.
+   * Does nothing when no action or agent is selected, or when `inputText` is blank.
+   * A run whose selection was changed while it was in flight is discarded.
+   */
   async run(): Promise<void> {
     const action = this.selectedAction
     const agent = this.selectedAgent
@@ -181,18 +215,22 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Runs again after a failed run. Does nothing in other states. */
   retry(): Promise<void> {
     return this.runState === 'error' ? this.run() : Promise.resolve()
   }
 
+  /** Runs again from the review state with the current selection and input. */
   tryAgain(): Promise<void> {
     return this.run()
   }
 
+  /** Returns from the review state to the selection state, keeping the chosen action and agent. */
   editSettings(): void {
     this.resetResult()
   }
 
+  /** Emits `suggestion` through `replaceText`, clears the result and closes the panel. */
   replace(): void {
     this.replaceText.emit(this.suggestion)
     this.resetResult()
