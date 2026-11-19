@@ -1,4 +1,4 @@
-<section class="ocx-ai-assist" aria-labelledby="ocxAiAssistTitle">
+<section class="ocx-ai-assist" [attr.aria-labelledby]="open ? uid + '-title' : null">
   <div class="ocx-ai-assist__field">
     <div class="ocx-ai-assist__input">
       <ng-content></ng-content>
@@ -11,7 +11,7 @@
         [text]="true"
         [rounded]="true"
         [attr.aria-expanded]="open"
-        aria-controls="ocxAiAssistPanel"
+        [attr.aria-controls]="uid + '-panel'"
         [attr.aria-label]="'OCX_AI_ASSIST.TOGGLE' | translate"
         (onClick)="toggle()"
       ></p-button>
@@ -19,9 +19,9 @@
   </div>
 
   @if (open) {
-  <section class="ocx-ai-assist__panel" id="ocxAiAssistPanel" aria-labelledby="ocxAiAssistTitle">
+  <section class="ocx-ai-assist__panel" [id]="uid + '-panel'" [attr.aria-labelledby]="uid + '-title'">
     <header class="ocx-ai-assist__header">
-      <h3 id="ocxAiAssistTitle" class="ocx-ai-assist__title">
+      <h3 [id]="uid + '-title'" class="ocx-ai-assist__title">
         <i class="pi pi-sparkles" aria-hidden="true"></i>
         {{ 'OCX_AI_ASSIST.TITLE' | translate }}
       </h3>
@@ -57,12 +57,12 @@
       </div>
       <div class="ocx-ai-assist__review-columns">
         <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
-          <textarea pTextarea id="ocxAiAssistBefore" class="w-full" rows="6" readonly [value]="inputText"></textarea>
-          <label for="ocxAiAssistBefore">{{ 'OCX_AI_ASSIST.BEFORE' | translate }}</label>
+          <textarea pTextarea [id]="uid + '-before'" class="w-full" rows="6" readonly [value]="inputText"></textarea>
+          <label [for]="uid + '-before'">{{ 'OCX_AI_ASSIST.BEFORE' | translate }}</label>
         </p-floatlabel>
         <p-floatlabel variant="on" class="ocx-ai-assist__review-column">
-          <textarea pTextarea id="ocxAiAssistSuggestion" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
-          <label for="ocxAiAssistSuggestion">{{ 'OCX_AI_ASSIST.AI_SUGGESTION' | translate }}</label>
+          <textarea pTextarea [id]="uid + '-suggestion'" class="w-full" rows="6" [(ngModel)]="suggestion"></textarea>
+          <label [for]="uid + '-suggestion'">{{ 'OCX_AI_ASSIST.AI_SUGGESTION' | translate }}</label>
         </p-floatlabel>
       </div>
       <div class="ocx-ai-assist__actions">
@@ -92,7 +92,7 @@
     <div class="ocx-ai-assist__selectors">
       <p-floatlabel variant="on">
         <p-select
-          inputId="ocxAiAssistAgent"
+          [inputId]="uid + '-agent'"
           [options]="agents"
           [ngModel]="selectedAgentId"
           (ngModelChange)="selectAgent($event)"
@@ -107,12 +107,12 @@
             </span>
           </ng-template>
         </p-select>
-        <label for="ocxAiAssistAgent">{{ 'OCX_AI_ASSIST.AGENT' | translate }}</label>
+        <label [for]="uid + '-agent'">{{ 'OCX_AI_ASSIST.AGENT' | translate }}</label>
       </p-floatlabel>
 
       <p-floatlabel variant="on">
         <p-select
-          inputId="ocxAiAssistAction"
+          [inputId]="uid + '-action'"
           [options]="actions"
           [ngModel]="selectedActionId"
           (ngModelChange)="selectAction($event)"
@@ -122,7 +122,7 @@
           <ng-template let-item #item>{{ item.labelKey | translate }}</ng-template>
           <ng-template let-item #selectedItem>{{ item.labelKey | translate }}</ng-template>
         </p-select>
-        <label for="ocxAiAssistAction">{{ 'OCX_AI_ASSIST.ACTION' | translate }}</label>
+        <label [for]="uid + '-action'">{{ 'OCX_AI_ASSIST.ACTION' | translate }}</label>
       </p-floatlabel>
     </div>
 
@@ -132,23 +132,25 @@
       <p-floatlabel variant="on" class="ocx-ai-assist__parameter">
         @if (parameter.options) {
         <p-select
-          [inputId]="'ocxAiAssistParam-' + parameter.key"
+          [inputId]="uid + '-param-' + parameter.key"
           [options]="parameter.options"
           [(ngModel)]="parameterValues[parameter.key]"
-          optionLabel="label"
           optionValue="value"
           styleClass="w-full"
-        ></p-select>
+        >
+          <ng-template let-option #item>{{ option.label | translate }}</ng-template>
+          <ng-template let-option #selectedItem>{{ option.label | translate }}</ng-template>
+        </p-select>
         } @else {
         <input
           pInputText
           type="text"
           class="w-full"
-          [id]="'ocxAiAssistParam-' + parameter.key"
+          [id]="uid + '-param-' + parameter.key"
           [(ngModel)]="parameterValues[parameter.key]"
         />
         }
-        <label [for]="'ocxAiAssistParam-' + parameter.key">{{ parameter.labelKey | translate }}</label>
+        <label [for]="uid + '-param-' + parameter.key">{{ parameter.labelKey | translate }}</label>
       </p-floatlabel>
       }
       <p-button

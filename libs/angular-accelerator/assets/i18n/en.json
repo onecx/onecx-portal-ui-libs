@@ -25,6 +25,14 @@
     "PARAMETERS": {
       "TARGET_LANGUAGE": "Translate field content to"
     },
+    "LANGUAGES": {
+      "EN": "English",
+      "DE": "German",
+      "PL": "Polish",
+      "FR": "French",
+      "ES": "Spanish",
+      "IT": "Italian"
+    },
     "ERRORS": {
       "NO_PROVIDER": "No AI provider is configured for this application.",
       "AGENT_NOT_FOUND": "No AI agent is configured for this context.",

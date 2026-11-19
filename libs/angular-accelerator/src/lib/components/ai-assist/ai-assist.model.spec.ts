@@ -22,12 +22,12 @@ describe('DEFAULT_AI_ASSIST_ACTIONS', () => {
         labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE',
         defaultValue: 'en',
         options: [
-          { value: 'en', label: 'English' },
-          { value: 'de', label: 'German' },
-          { value: 'pl', label: 'Polish' },
-          { value: 'fr', label: 'French' },
-          { value: 'es', label: 'Spanish' },
-          { value: 'it', label: 'Italian' },
+          { value: 'en', label: 'OCX_AI_ASSIST.LANGUAGES.EN' },
+          { value: 'de', label: 'OCX_AI_ASSIST.LANGUAGES.DE' },
+          { value: 'pl', label: 'OCX_AI_ASSIST.LANGUAGES.PL' },
+          { value: 'fr', label: 'OCX_AI_ASSIST.LANGUAGES.FR' },
+          { value: 'es', label: 'OCX_AI_ASSIST.LANGUAGES.ES' },
+          { value: 'it', label: 'OCX_AI_ASSIST.LANGUAGES.IT' },
         ],
       },
     ])
