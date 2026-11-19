@@ -228,18 +228,8 @@
       <dl class="flex flex-wrap m-0">
         @for (col of filteredColumns(); track col) {
         <div class="ocx-data-list-grid-cell w-[12rem] max-w-full min-w-0 my-2 mr-2 wrap-anywhere">
-          <dt
-            class="ocx-data-list-grid-cell-label font-bold"
-            [ocxTooltipOnOverflow]="col.nameKey | translate"
-            tooltipPosition="top"
-          >
-            {{ col.nameKey | translate }}
-          </dt>
-          <dd
-            class="ocx-data-list-grid-cell-value m-0"
-            [ocxTooltipOnOverflow]="col.columnType === columnType.TRANSLATION_KEY ? (resolveFieldData(item,col.id) | translate) : resolveFieldData(item, col.id)"
-            tooltipPosition="top"
-          >
+          <dt class="ocx-data-list-grid-cell-label font-bold">{{ col.nameKey | translate }}</dt>
+          <dd class="ocx-data-list-grid-cell-value m-0">
             @defer(on viewport;){
             <ng-container
               [ngTemplateOutlet]="listValue ?? defaultListValue"
