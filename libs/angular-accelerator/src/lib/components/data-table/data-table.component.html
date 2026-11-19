@@ -309,6 +309,7 @@
   <span
     class="column-header-label"
     [ocxTooltip]="column.tooltip || (column.tooltipKey | translate)"
+    ocxTooltipCursor="default"
     tooltipPosition="top"
   >
     {{ column.nameKey | translate }}
@@ -350,7 +351,6 @@
     appendTo="body"
     filterBy="toFilterBy"
     (onFocus)="onFilterChosen(column)"
-    [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
     [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
     tooltipPosition="top"
     [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
@@ -389,7 +389,6 @@
     placeholder=" "
     appendTo="body"
     (onFocus)="onFilterChosen(column)"
-    [title]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
     [ocxTooltip]="'OCX_DATA_TABLE.FILTER_TITLE' | translate"
     tooltipPosition="top"
     [ariaLabel]="'OCX_DATA_TABLE.COLUMN_FILTER_ARIA_LABEL' | translate"
