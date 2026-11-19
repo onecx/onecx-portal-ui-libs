@@ -8,7 +8,8 @@
     (onChange)="changeGroupSelection($event)"
     [options]="allGroupKeys()"
     [placeholder]="placeholderKey() | translate"
-    [(ngModel)]="selectedGroupKey"
+    [ngModel]="stateService.activeColumnGroupKey()"
+    (ngModelChange)="selectedGroupKey = $event"
     [ariaLabel]="'OCX_CUSTOM_GROUP_COLUMN_SELECTOR.ARIA_LABEL' | translate"
   >
     <ng-template let-item #item> {{ item ? (item | translate) : ''}} </ng-template>
