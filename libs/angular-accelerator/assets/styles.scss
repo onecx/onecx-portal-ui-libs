@@ -9,8 +9,8 @@
  */
 @import './tailwind';
 
-@import '../src/lib/directives/loading-indicator.directive.scss';
+@import '../src/lib/directives/loading-indicator.directive';
 
-@import '../src/lib/directives/content.directive.scss';
+@import '../src/lib/directives/content.directive';
 
 @import './reduced-motion';
