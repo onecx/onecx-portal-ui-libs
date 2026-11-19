@@ -32,6 +32,15 @@ export class AiProviderError extends Error {
   }
 }
 
+/**
+ * Checks the error by its name and code instead of `instanceof`, so errors created by another copy
+ * of this package (for example in a different micro-frontend bundle) are recognised too.
+ */
 export function isAiProviderError(value: unknown): value is AiProviderError {
-  return value instanceof AiProviderError
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value as { name?: unknown }).name === 'AiProviderError' &&
+    typeof (value as { code?: unknown }).code === 'string'
+  )
 }

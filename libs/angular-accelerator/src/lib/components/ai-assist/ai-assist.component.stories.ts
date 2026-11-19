@@ -50,6 +50,7 @@ export const WithAdditionalActions = {
         buildInstruction: () => 'Extract the most relevant keywords from the user text.',
         outputDescription: '{"keywords": string[]}',
         outputSchema: z.object({ keywords: z.array(z.string()) }),
+        toSuggestion: (result) => (result as { keywords: string[] }).keywords.join(', '),
       },
     ],
   },

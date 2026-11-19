@@ -3,6 +3,7 @@ import { z, type ZodType } from 'zod'
 /** A selectable option of an action parameter. */
 export interface AiAssistParameterOption {
   value: string
+  /** Translation key, or plain text when no translation exists for the key. */
   label: string
 }
 
@@ -43,6 +44,11 @@ export interface AiAssistActionDefinition<T = unknown> {
   outputSchema: ZodType<T>
   /** Optional user-adjustable parameters shown before the action runs. */
   parameters?: AiAssistActionParameter[]
+  /**
+   * Maps the validated result to the text offered for replacement. Required when the result is not
+   * `{ text: string }`. When it is omitted, or returns `undefined`, the panel shows the generic warning.
+   */
+  toSuggestion?(result: T): string | undefined
 }
 
 /** Result shape of the built-in actions: a single text value. */
@@ -67,12 +73,12 @@ export const DEFAULT_AI_ASSIST_ACTIONS: AiAssistActionDefinition<AiAssistTextRes
         labelKey: 'OCX_AI_ASSIST.PARAMETERS.TARGET_LANGUAGE',
         defaultValue: 'en',
         options: [
-          { value: 'en', label: 'English' },
-          { value: 'de', label: 'German' },
-          { value: 'pl', label: 'Polish' },
-          { value: 'fr', label: 'French' },
-          { value: 'es', label: 'Spanish' },
-          { value: 'it', label: 'Italian' },
+          { value: 'en', label: 'OCX_AI_ASSIST.LANGUAGES.EN' },
+          { value: 'de', label: 'OCX_AI_ASSIST.LANGUAGES.DE' },
+          { value: 'pl', label: 'OCX_AI_ASSIST.LANGUAGES.PL' },
+          { value: 'fr', label: 'OCX_AI_ASSIST.LANGUAGES.FR' },
+          { value: 'es', label: 'OCX_AI_ASSIST.LANGUAGES.ES' },
+          { value: 'it', label: 'OCX_AI_ASSIST.LANGUAGES.IT' },
         ],
       },
     ],

@@ -17,6 +17,8 @@ import {
 
 const UNKNOWN_ERROR_CODE = 'UNKNOWN'
 
+let instanceCount = 0
+
 /**
  * Inline AI assistant for a text field.
  *
@@ -64,20 +66,25 @@ export class AiAssistComponent implements OnInit, OnDestroy {
   runState: AiAssistRunState = 'idle'
   /** Raw result returned by the completion service for the last successful run. */
   result?: unknown
-  /** Text offered for replacement. Empty until a run succeeds. */
+  /** Text offered for replacement. Empty until a run produces a suggestion. */
   suggestion = ''
+  /** Whether the last successful run produced a suggestion that can be reviewed. */
+  hasSuggestion = false
   /** Error code of the last failed request, such as `NO_PROVIDER` or `AGENT_NOT_FOUND`. */
   errorCode?: string
+
+  /** Prefix of the element ids in this instance, so several assistants can share a page. */
+  readonly uid = `ocx-ai-assist-${++instanceCount}`
 
   private readonly agentService = new OneCXAiAgentService()
   private readonly completionService = new OneCXAiCompletionService()
   private readonly appStateService = inject(AppStateService)
   // Incremented whenever the action, agent, or result is reset, so a late completion can detect it is stale.
   private runCounter = 0
+  private agentsRequested = false
 
   ngOnInit(): void {
     this.selectAction(this.actions[0]?.id)
-    this.loadAgents()
   }
 
   ngOnDestroy(): void {
@@ -98,13 +105,13 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     return this.agents.find((agent) => agent.id === this.selectedAgentId)
   }
 
+  /** Text of the current suggestion, or `undefined` when there is none to review. */
   get resultText(): string | undefined {
-    const text = (this.result as Partial<AiAssistTextResult> | undefined)?.text
-    return typeof text === 'string' ? text : undefined
+    return this.hasSuggestion ? this.suggestion : undefined
   }
 
   get isReviewReady(): boolean {
-    return this.runState === 'success' && this.resultText !== undefined
+    return this.runState === 'success' && this.hasSuggestion
   }
 
   get canRun(): boolean {
@@ -123,15 +130,21 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     return 'OCX_AI_ASSIST.ERRORS.GENERIC'
   }
 
-  /** Opens the panel if it is closed, and closes it if it is open. */
+  /**
+   * Opens the panel if it is closed, and closes it if it is open.
+   * Agents are requested the first time the panel opens.
+   */
   toggle(): void {
     this.open = !this.open
+    if (this.open && !this.agentsRequested) {
+      this.loadAgents()
+    }
   }
 
   /** Closes the panel and resets the action and agent selection to the first options. */
   close(): void {
     this.open = false
-    this.selectAction(this.actions[0].id)
+    this.selectAction(this.actions[0]?.id)
     this.selectAgent(this.agents[0]?.id)
   }
 
@@ -147,6 +160,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
 
   /** Reloads the agent list for `appId`, or for the current MFE when `appId` is not set. */
   loadAgents(): void {
+    this.agentsRequested = true
     this.loadState = 'loading'
     this.errorCode = undefined
     this.appStateService.currentMfe$.pipe(take(1)).subscribe({
@@ -187,6 +201,7 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.errorCode = undefined
     this.result = undefined
     this.suggestion = ''
+    this.hasSuggestion = false
     const systemPrompt = [
       action.buildInstruction(this.parameterValues),
       `Respond only with JSON matching ${action.outputDescription}. Do not write anything outside the JSON.`,
@@ -204,7 +219,9 @@ export class AiAssistComponent implements OnInit, OnDestroy {
         return
       }
       this.result = result
-      this.suggestion = this.resultText ?? ''
+      const suggestion = this.toSuggestionText(action, result)
+      this.suggestion = suggestion ?? ''
+      this.hasSuggestion = suggestion !== undefined
       this.runState = 'success'
     } catch (error) {
       if (runId !== this.runCounter) {
@@ -253,7 +270,17 @@ export class AiAssistComponent implements OnInit, OnDestroy {
     this.runCounter++
     this.result = undefined
     this.suggestion = ''
+    this.hasSuggestion = false
     this.runState = 'idle'
     this.errorCode = undefined
+  }
+
+  /** Uses the action's `toSuggestion`, or the `text` field of a text result. */
+  private toSuggestionText(action: AiAssistActionDefinition<unknown>, result: unknown): string | undefined {
+    if (action.toSuggestion) {
+      return action.toSuggestion(result)
+    }
+    const text = (result as Partial<AiAssistTextResult> | undefined)?.text
+    return typeof text === 'string' ? text : undefined
   }
 }

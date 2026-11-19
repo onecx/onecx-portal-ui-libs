@@ -11,10 +11,21 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { AngularAcceleratorModule } from '../../angular-accelerator.module'
 import { AiAssistComponent } from './ai-assist.component'
-import { DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
+import { AiAssistActionDefinition, DEFAULT_AI_ASSIST_ACTIONS } from './ai-assist.model'
 import { z } from 'zod'
 
 const agent: AiAgentResponse = { id: 'agent-1', name: 'Content partner', appId: 'app-1' }
+
+const extractKeywordsAction = (
+  toSuggestion?: (result: { keywords: string[] }) => string | undefined
+): AiAssistActionDefinition<{ keywords: string[] }> => ({
+  id: 'extractKeywords',
+  labelKey: 'Extract keywords',
+  buildInstruction: () => 'Extract keywords.',
+  outputDescription: '{"keywords": string[]}',
+  outputSchema: z.object({ keywords: z.array(z.string()) }),
+  toSuggestion,
+})
 
 describe('AiAssistComponent', () => {
   let fixture: ComponentFixture<AiAssistComponent>
@@ -22,12 +33,22 @@ describe('AiAssistComponent', () => {
   let getAgents: jest.SpyInstance
   let getCompletion: jest.SpyInstance
 
-  const createComponent = async (): Promise<void> => {
+  const openPanel = async (): Promise<void> => {
+    component.toggle()
+    fixture.detectChanges()
+    await fixture.whenStable()
+    fixture.detectChanges()
+  }
+
+  const createComponent = async (open = true): Promise<void> => {
     fixture = TestBed.createComponent(AiAssistComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
     await fixture.whenStable()
     fixture.detectChanges()
+    if (open) {
+      await openPanel()
+    }
   }
 
   beforeEach(async () => {
@@ -146,19 +167,32 @@ describe('AiAssistComponent', () => {
   })
 
   it('should keep the panel closed by default and toggle it', async () => {
-    await createComponent()
+    await createComponent(false)
+    const panelSelector = `#${component.uid}-panel`
 
     expect(component.open).toBe(false)
-    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).toBeNull()
+    expect(fixture.nativeElement.querySelector(panelSelector)).toBeNull()
 
     component.toggle()
     fixture.detectChanges()
     expect(component.open).toBe(true)
-    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).not.toBeNull()
+    expect(fixture.nativeElement.querySelector(panelSelector)).not.toBeNull()
 
     component.close()
     fixture.detectChanges()
-    expect(fixture.nativeElement.querySelector('#ocxAiAssistPanel')).toBeNull()
+    expect(fixture.nativeElement.querySelector(panelSelector)).toBeNull()
+  })
+
+  it('should request agents only when the panel is first opened', async () => {
+    await createComponent(false)
+    expect(getAgents).not.toHaveBeenCalled()
+
+    await openPanel()
+    component.close()
+    await openPanel()
+
+    expect(getAgents).toHaveBeenCalledTimes(1)
+    expect(component.selectedAgentId).toBe('agent-1')
   })
 
   it('should close without an agent selected when no agents are available', async () => {
@@ -181,7 +215,7 @@ describe('AiAssistComponent', () => {
     await fixture.whenStable()
     fixture.detectChanges()
 
-    const suggestion = fixture.nativeElement.querySelector('#ocxAiAssistSuggestion') as HTMLTextAreaElement
+    const suggestion = fixture.nativeElement.querySelector(`#${component.uid}-suggestion`) as HTMLTextAreaElement
     expect(suggestion.value).toBe('Hallo')
     expect(fixture.nativeElement.textContent).toContain('Replace text')
     expect(fixture.nativeElement.textContent).toContain('Try again')
@@ -237,6 +271,7 @@ describe('AiAssistComponent', () => {
     component.appId = 'app-2'
     fixture.detectChanges()
     await fixture.whenStable()
+    await openPanel()
 
     expect(getAgents).toHaveBeenCalledWith({ appId: 'app-2' })
   })
@@ -333,10 +368,43 @@ describe('AiAssistComponent', () => {
     expect(component.errorCode).toBeUndefined()
   })
 
-  it('should not expose the raw response envelope when no text is returned', async () => {
+  it('should offer a suggestion mapped from a custom result shape by toSuggestion', async () => {
+    getCompletion.mockResolvedValueOnce({ keywords: ['alpha', 'beta'] })
     await createComponent()
-    component.result = { conversationId: null, message: '{}' } as never
+    component.additionalActions = [extractKeywordsAction((result) => result.keywords.join(', '))]
+    component.selectAction('extractKeywords')
+    component.inputText = 'Alpha and beta'
 
+    await component.run()
+
+    expect(component.isReviewReady).toBe(true)
+    expect(component.suggestion).toBe('alpha, beta')
+  })
+
+  it('should show the generic warning when toSuggestion returns no suggestion', async () => {
+    getCompletion.mockResolvedValueOnce({ keywords: [] })
+    await createComponent()
+    component.additionalActions = [extractKeywordsAction(() => undefined)]
+    component.selectAction('extractKeywords')
+    component.inputText = 'Nothing here'
+
+    await component.run()
+
+    expect(component.runState).toBe('success')
+    expect(component.isReviewReady).toBe(false)
+    expect(component.resultText).toBeUndefined()
+  })
+
+  it('should show the generic warning for a custom result without toSuggestion', async () => {
+    getCompletion.mockResolvedValueOnce({ keywords: ['alpha'] })
+    await createComponent()
+    component.additionalActions = [extractKeywordsAction()]
+    component.selectAction('extractKeywords')
+    component.inputText = 'Alpha'
+
+    await component.run()
+
+    expect(component.isReviewReady).toBe(false)
     expect(component.resultText).toBeUndefined()
   })
 
@@ -408,14 +476,23 @@ describe('AiAssistComponent', () => {
     component.appId = 'app-3'
     fixture.detectChanges()
     await fixture.whenStable()
+    await openPanel()
 
     expect(getAgents).toHaveBeenCalledWith({ appId: 'app-3' })
   })
 
-  it('should return no text when the result does not contain a text field', () => {
-    component.result = { summary: 'no text here' }
+  it('should close safely when no actions are offered', async () => {
+    fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
+    component.defaultActions = []
+    component.additionalActions = []
+    fixture.detectChanges()
+    await fixture.whenStable()
+    await openPanel()
 
-    expect(component.resultText).toBeUndefined()
+    expect(() => component.close()).not.toThrow()
+    expect(component.open).toBe(false)
+    expect(component.selectedActionId).toBeUndefined()
   })
 
   it('should return no text when there is no result yet', async () => {
@@ -428,8 +505,10 @@ describe('AiAssistComponent', () => {
     const appStateService = TestBed.inject(AppStateService) as unknown as { currentMfe$: unknown }
     appStateService.currentMfe$ = of(undefined)
     fixture = TestBed.createComponent(AiAssistComponent)
+    component = fixture.componentInstance
     fixture.detectChanges()
     await fixture.whenStable()
+    await openPanel()
 
     expect(getAgents).toHaveBeenCalledWith({ appId: undefined })
   })
