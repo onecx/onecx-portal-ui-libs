@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterTestingModule } from '@angular/router/testing'
 import { TranslateService } from '@ngx-translate/core'
@@ -12,7 +13,7 @@ import {
   UserServiceMock,
 } from '@onecx/angular-integration-interface/mocks'
 import { HAS_PERMISSION_CHECKER } from '@onecx/angular-utils'
-import { PrimeIcons } from 'primeng/api'
+import { MenuItem, PrimeIcons } from 'primeng/api'
 import { BreadcrumbModule } from 'primeng/breadcrumb'
 import { ButtonModule } from 'primeng/button'
 import { MenuModule } from 'primeng/menu'
@@ -24,6 +25,8 @@ import { Action, ObjectDetailItem, PageHeaderComponent } from './page-header.com
 import { PButtonHarness } from '@onecx/angular-testing'
 import { OcxTooltipDirective } from '../../directives/tooltip.directive'
 import { firstValueFrom, of } from 'rxjs'
+import { ElementRef, Injectable, Renderer2 } from '@angular/core'
+import { BreadcrumbService } from '../../services/breadcrumb.service'
 
 const mockActions: Action[] = [
   {
@@ -52,6 +55,35 @@ const mockActions: Action[] = [
     disabled: true,
   },
 ]
+
+export function provideBreadcrumbServiceMock() {
+  return [BreadcrumbServiceMock, { provide: BreadcrumbService, useExisting: BreadcrumbServiceMock }]
+}
+
+@Injectable({ providedIn: 'root' })
+export class BreadcrumbServiceMock {
+  itemsHandler = of<MenuItem[]>([
+    {
+      label: 'Test breadcrumb from itemsHandler',
+      show: 'always',
+      routerLink: '/test-breadcrumb',
+      permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+    },
+  ])
+
+  generatedItemsSource = of<MenuItem[]>([
+    {
+      label: 'Test breadcrumb from generated source',
+      show: 'always',
+      routerLink: '/test-breadcrumb',
+      permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+    },
+  ])
+
+  generateBreadcrumbs() {
+    return this.generatedItemsSource
+  }
+}
 
 describe('PageHeaderComponent', () => {
   let mockAppStateService: AppStateServiceMock
@@ -82,6 +114,7 @@ describe('PageHeaderComponent', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideAppStateServiceMock(),
+        provideBreadcrumbServiceMock(),
         {
           provide: HAS_PERMISSION_CHECKER,
           useExisting: UserService,
@@ -113,6 +146,82 @@ describe('PageHeaderComponent', () => {
     expect(component).toBeTruthy()
     const pageHeaderWrapper = await pageHeaderHarness.getPageHeaderWrapperHarness()
     expect(pageHeaderWrapper).toBeTruthy()
+  })
+
+  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is true', async () => {
+    fixture = TestBed.createComponent(PageHeaderComponent)
+    component = fixture.componentInstance
+    component.manualBreadcrumbs = true
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    pageHeaderHarness = await TestbedHarnessEnvironment.harnessForFixture(fixture, PageHeaderHarness)
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from itemsHandler')
+    expect(breadcrumbItem).toBeTruthy()
+    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from itemsHandler page')
+  })
+
+  it('should apply translated aria-label to breadcrumb links when manualBreadcrumbs is false', async () => {
+    component.manualBreadcrumbs = false
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb from generated source')
+    expect(breadcrumbItem).toBeTruthy()
+    expect(await breadcrumbItem?.getText()).toContain('Test breadcrumb')
+    expect(await breadcrumbItem?.getLinkAriaLabel()).toBe('Go to Test breadcrumb from generated source page')
+  })
+
+  it('should test if breadcrumb is not rendered when there are no breadcrumbs', async () => {
+    component.breadcrumbs$ = of([])
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    expect(breadcrumbItem).toBeNull()
+    expect(await breadcrumbItem?.getText()).toBeUndefined()
+  })
+
+  it('should not add aria-current for non-last breadcrumb with empty label', async () => {
+    component.breadcrumbs$ = of([
+      {
+        label: 'Second breadcrumb',
+        show: 'always',
+        routerLink: '/second',
+        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+      },
+      {
+        label: '',
+        show: 'always',
+        routerLink: '/empty',
+        permission: 'TEST#TEST_BREADCRUMB_PERMISSION',
+      },
+    ])
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbLinks = fixture.debugElement.queryAll(By.css('.p-breadcrumb-item-link'))
+    expect(breadcrumbLinks[0].attributes['aria-current']).toBeUndefined()
+  })
+
+  it('should handle null ViewChild', async () => {
+    component.breadcrumbElementRef = undefined
+
+    fixture.detectChanges()
+    await fixture.whenStable()
+    component.ngAfterViewInit()
+
+    const breadcrumbItem = await pageHeaderHarness.getBreadcrumbItem('Test breadcrumb')
+    expect(breadcrumbItem).toBeNull()
   })
 
   it("should check permissions and not render button that user isn't allowed to see", async () => {
@@ -1030,6 +1139,43 @@ describe('PageHeaderComponent', () => {
       fixture.detectChanges()
 
       expect(await pageHeaderHarness.getInlineActionButtons()).toHaveLength(1)
+    })
+  })
+
+  describe('breadcrumb aria labels', () => {
+    it('should skip aria-current on the last breadcrumb link when its text is empty', () => {
+      const breadcrumbService = TestBed.inject(BreadcrumbServiceMock)
+      breadcrumbService.itemsHandler = of([
+        { label: 'First', show: 'always', routerLink: '/first', permission: 'TEST#TEST_BREADCRUMB_PERMISSION' },
+        { label: '', show: 'always', routerLink: '/empty', permission: 'TEST#TEST_BREADCRUMB_PERMISSION' },
+      ])
+
+      const newFixture = TestBed.createComponent(PageHeaderComponent)
+      newFixture.componentInstance.manualBreadcrumbs = true
+      newFixture.detectChanges()
+
+      const links = newFixture.debugElement.queryAll(By.css('.p-breadcrumb-item-link'))
+      expect(links.length).toBeGreaterThan(0)
+      expect(links[links.length - 1].attributes['aria-current']).toBeUndefined()
+    })
+
+    it('should ignore breadcrumb links that are not elements or have no innerText (defensive null-guards)', () => {
+      const setAttributeSpy = jest.fn()
+      const renderer = { setAttribute: setAttributeSpy } as unknown as Renderer2
+      ;(component as unknown as { renderer: Renderer2 }).renderer = renderer
+      // A fabricated breadcrumb host exercising the `?.` null-guards in applyBreadcrumbAriaLabels.
+      const host = {
+        querySelectorAll: () => [null, { innerText: undefined }],
+      } as unknown as HTMLElement
+      component.breadcrumbElementRef = new ElementRef(host)
+
+      // must not throw; no aria attributes set for non-text links
+      expect(setAttributeSpy).not.toHaveBeenCalled()
+
+      // a normal link still gets labelled
+      const normalHost = { querySelectorAll: () => [{ innerText: 'A page' }] } as unknown as HTMLElement
+      component.breadcrumbElementRef = new ElementRef(normalHost)
+      expect(setAttributeSpy).toHaveBeenCalled()
     })
   })
 })
