@@ -1,3 +1,5 @@
+@use "sass:list";
+
 .p-inputotp {
   display: flex;
   align-items: center;
@@ -6,5 +8,5 @@
 
 .p-inputotp-input {
   text-align: center;
-  width: 2 * nth($inputPadding, 2) + 1rem;
+  width: 2 * list.nth($inputPadding, 2) + 1rem;
 }
