@@ -1,0 +1,4 @@
+// Long unbroken words must wrap instead of forcing horizontal scrolling (WCAG 1.4.10)
+.dialogMessageContent {
+  overflow-wrap: anywhere;
+}
